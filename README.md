@@ -1,32 +1,67 @@
 # join-quant
 
-Automated JoinQuant strategy backtest pipeline. Fetches strategies from community posts or local files and runs backtests via Playwright browser automation + JoinQuant API.
+Automated JoinQuant strategy discovery, cloning, and backtest pipeline.
 
 ## Features
 
-- **Community Pipeline**: Fetch a strategy from a JoinQuant community post and run a backtest automatically
-- **Custom Pipeline**: Load your own `.py` strategy files and run them on JoinQuant
-- **Modular Architecture**: Each component (auth, strategy loading, backtest runner) is independent and reusable
-- **Cookie Management**: Automatic login with persistent cookie caching, captcha handling
-- **Polling & Results**: Robust backtest completion polling with normalized results parsing
+- **Strategy Discovery**: Scrapes the JoinQuant community via the listV2 API to find strategies, sorted by composite score (likes + clones×0.5)
+- **Auto-Clone Pipeline**: Iterates through the copy queue, clones each strategy via Playwright browser, saves source to `strategies/`, and fetches performance stats
+- **Daily Cron**: Runs discovery + copy loop daily, stopping only when hitting the access limit (VIP strategy cap)
+- **WeChat Alerts**: Sends strategy summaries to your WeChat session after each successful clone
+- **Modular Architecture**: Each component (auth, discovery, clone runner, backtest) is independent and reusable
 
 ## Architecture
 
 ```
 join-quant/
 ├── utils/
-│   ├── login.js          # LoginManager: Playwright login, cookie persistence
-│   ├── fetcher.js          # StrategyFetcher: Get source from JoinQuant API
-│   └── loader.js          # StrategyLoader: Load local .py/.json strategies
+│   ├── login.js           # LoginManager: Playwright login, cookie persistence
+│   ├── fetcher.js        # StrategyFetcher: Get source from JoinQuant API
+│   ├── loader.js         # StrategyLoader: Load local .py/.json strategies
+│   └── strategy-discover.js  # Community listV2 API crawler + data store
 ├── backtest/
-│   └── runner.js           # BacktestRunner: Clone → Poll → Parse results
+│   └── runner.js         # BacktestRunner: Clone → Poll → Parse results
 ├── pipelines/
-│   ├── community.js       # CommunityPipeline: post → fetch → backtest
-│   └── custom.js          # CustomPipeline: local file → backtest
-├── strategies/            # Python strategy files
-├── tests/                 # Unit tests (node --test)
-└── index.js               # CLI entry point
+│   ├── community.js      # CommunityPipeline: post → fetch → backtest
+│   └── custom.js         # CustomPipeline: local file → backtest
+├── strategies/           # Python strategy files (cloned strategies saved here)
+├── data/                 # Discovery state (gitignored)
+│   ├── discovered.json   # All discovered strategies (keyed by postId)
+│   └── copy-queue.json  # Pending strategies sorted by composite score
+├── tests/               # Unit tests (30 cases, all pass)
+└── index.js             # CLI entry point
 ```
+
+## Quick Start
+
+```bash
+cd ~/repos/join-quant
+npm install
+
+# Discover strategies (2 API calls ≈ 147 strategies)
+node utils/strategy-discover.js 2
+
+# Show discovery status
+node utils/strategy-discover.js status
+
+# Run the daily pipeline (discovery + clone loop with WeChat alerts)
+node utils/strategy-daily.js
+```
+
+## Data Files
+
+| File | Description |
+|------|-------------|
+| `data/discovered.json` | All strategies ever discovered, deduplicated by postId |
+| `data/copy-queue.json` | Pending strategies sorted by composite score (`likes + clones×0.5`), excludes already-copied |
+
+
+**Composite Score** = `likes + clones × 0.5` — weights community validation (clones) alongside author popularity (likes).
+
+**Top Strategies in Queue:**
+1. 【量化课堂】多因子策略入门 (likes=2436, clones=58610, score=31741)
+2. 【网格交易策略-年化30%+】 (likes=477, clones=8069, score=4511)
+3. 收益狂飙，年化收益100% (likes=749, clones=6988, score=4243)
 
 ## Installation
 
@@ -37,13 +72,29 @@ npm install
 
 ## Configuration
 
-Set credentials via environment variables or `.env` file:
-
 ```bash
 # .env
 JOINQUANT_USERNAME=15656096430
 JOINQUANT_PASSWORD=your_password_here
 ```
+
+## Cron Job (Daily)
+
+
+Set up via OpenClaw cron:
+
+```bash
+# Daily at 9:00 AM Shanghai time
+openclaw cron add \
+  --name "join-quant daily pipeline" \
+  --schedule "cron 0 9 * * *" \
+  --tz "Asia/Shanghai" \
+  --session-target "isolated" \
+  --payload.kind "agentTurn" \
+  --payload.message "Run: cd ~/repos/join-quant && node utils/strategy-daily.js"
+```
+
+The cron runs in an isolated session so it doesn't block your main chat.
 
 Or export directly:
 
