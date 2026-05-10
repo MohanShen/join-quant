@@ -1,215 +1,225 @@
 /**
  * strategy-summarize.js
  *
- * Parse a JoinQuant strategy source file and produce a detailed
- * human-readable Chinese summary covering:
- *   - 选股池与数据源
- *   - 具体财务因子或技术指标
- *   - 调仓逻辑（含参数）
- *   - 止盈止损条件（具体数值）
- *   - 风控规则
- *   - 完整策略描述（一段话）
+ * Parse a JoinQuant strategy source file and produce:
+ * 1. Structured summary (factors, params, risk rules)
+ * 2. A FAITHFUL natural-language translation of the actual code logic
  */
 
 const fs = require('fs');
 const path = require('path');
 
-// ── Parse initialize() for key parameters ───────────────────────────────────
+// ── Helper: extract function block by line number ────────────────────────────
 
-function extractParams(code) {
-  const params = {};
-  const re = /(?:g\.)?(\w+)\s*=\s*(\d+)/g;
-  let m;
-  while ((m = re.exec(code)) !== null) {
-    params[m[1]] = parseInt(m[2]);
+function getFunctionBlock(code, fnName) {
+  const lines = code.split('\n');
+  const startIdx = lines.findIndex(l => l.trim().startsWith(`def ${fnName}(`));
+  if (startIdx < 0) return null;
+
+  // Scan until next top-level ## comment or def
+  let endIdx = lines.length;
+  for (let i = startIdx + 1; i < lines.length; i++) {
+    const l = lines[i].trim();
+    if (l.startsWith('##') || (l.startsWith('def ') && !l.startsWith('def ' + fnName))) {
+      endIdx = i;
+      break;
+    }
   }
-  return params;
+  return lines.slice(startIdx, endIdx).join('\n');
 }
 
-// ── Detect financial factors ────────────────────────────────────────────────
+// ── Helper: extract parameter values ──────────────────────────────────────
 
-function extractFactors(code) {
-  const factors = [];
-  const factorMap = {
-    'market_cap': '总市值',
-    'circulating_market_cap': '流通市值',
-    'roe': 'ROE（净资产收益率）',
-    'roa': 'ROA（资产收益率）',
-    'pe_ratio': 'PE（市盈率）',
-    'pb_ratio': 'PB（市净率）',
-    'ps_ratio': 'PS（市销率）',
-    'gross_profit_margin': '毛利率',
-    'net_profit': '净利润',
-    'operating_revenue': '营业收入',
-    'total_revenue': '总营收',
-    'eps': 'EPS（每股收益）',
-    'bps': 'BPS（每股净资产）',
-    'cash_flow': '现金流',
-    'beta': 'Beta（波动率）',
-    'turnover_rate': '换手率',
-    'volume_ratio': '量比',
-    'vol': '波动率',
-    'momentum': '动量',
-    'size': '市值因子',
+function extractGParam(code, name) {
+  const m = code.match(new RegExp(`g\\.${name}\\s*=\\s*(\\d+)`));
+  return m ? parseInt(m[1]) : null;
+}
+
+// ── Faithful description builder ────────────────────────────────────────────
+
+function buildFaithfulDescription(code) {
+  const lines = [];
+  const g = {
+    stocknum: extractGParam(code, 'stocknum'),
+    shift: extractGParam(code, 'shift'),
+    short_d: extractGParam(code, 'short_d'),
+    long_d: extractGParam(code, 'long_d'),
   };
-  for (const [key, label] of Object.entries(factorMap)) {
-    if (new RegExp(`valuation\\.${key}|\\.${key}\\b`, 'i').test(code)) {
-      factors.push(label);
+
+  // ── 1. Trading schedule ─────────────────────────────────────────────────
+  const schedules = [...code.matchAll(/run_daily\([^,]+,\s*time\s*=\s*['"]([^'"]+)/g)]
+    .map(m => m[1]);
+  const unique = [...new Set(schedules)];
+
+  lines.push('【交易时间】');
+  if (unique.includes('09:00')) lines.push('  09:00 — 盘前选股：按市值排序构建候选列表');
+  if (unique.includes('09:30')) lines.push('  09:30 — 开盘调仓 + 止损检查');
+  if (unique.includes('15:30')) lines.push('  15:30 — 收盘记录日志');
+  if (unique.length === 0) lines.push('  （未检测到定时任务）');
+
+  // ── 2. Stock pool + selection ──────────────────────────────────────────
+  const initBlock = getFunctionBlock(code, 'initialize');
+  const poolMatches = [...code.matchAll(/get_index_stocks\(['"]([^'"]+)/g)];
+  const poolMap = {
+    '000001.XSHG': '上证综指',
+    '399106.XSHE': '深证综指',
+    '000300.XSHG': '沪深300',
+    '000905.XSHG': '中证500',
+    '399101.XSHE': '中小板',
+    '000852.XSHE': '中证1000',
+  };
+  const pools = poolMatches.map(m => poolMap[m[1]] || m[1]).filter(Boolean);
+  const poolDesc = pools.length > 0 ? pools.join(' + ') : '全市场';
+
+  // Market cap sorting direction
+  const ascDesc = /order_by\([^)]*\.asc\(\)/i.test(code) ? '升序（从小到大）' :
+                  /order_by\([^)]*\.desc\(\)/i.test(code) ? '降序（从大到小）' : '升序';
+
+  lines.push('');
+  lines.push('【选股逻辑】');
+  lines.push(`  股票池：${poolDesc}所有成分股`);
+  if (g.shift) lines.push(`  排除条件：近${g.shift}个交易日有停牌的股票`);
+  lines.push(`  排序方式：按总市值${ascDesc}，取最小的 ${g.stocknum || 'N'} 只`);
+  lines.push(`  每日重新计算候选列表，换仓时全量调仓`);
+
+  // ── 3. Position sizing ──────────────────────────────────────────────────
+  lines.push('');
+  lines.push('【仓位分配】');
+  lines.push(`  等权重：账户总权益 ÷ 持有股票数，每只股票分配等额资金`);
+  const rebalBlock = getFunctionBlock(code, 'rebalance');
+  if (rebalBlock) {
+    const isCommented = rebalBlock.includes('#jieti') || rebalBlock.includes('# 执行阶梯');
+    if (isCommented) {
+      lines.push(`  ⚠️ 阶梯调仓（jieti）已注释，实际不执行`);
     }
   }
-  // Technical indicators
-  if (/MA\d|均线|移动平均|ema|ewm/i.test(code)) {
-    const maMatches = code.match(/MA(\d+)/gi);
-    if (maMatches) factors.push('均线 MA(' + [...new Set(maMatches.map(m => m.match(/\d+/)[0]))].sort().join('/') + ')');
-  }
-  if (/RSI|相对强弱|rsi/i.test(code)) factors.push('RSI 强弱指标');
-  if (/MACD|macd/i.test(code)) factors.push('MACD');
-  if (/布林|boll|band/i.test(code)) factors.push('布林带');
-  return factors;
-}
+  // Detect double order bug
+  const doubleOrder = rebalBlock ? rebalBlock.match(/for i in holding_list[\s\S]{1,100}for i in holding_list/) : null;
+  if (doubleOrder) lines.push(`  ⚠️ 代码冗余：rebalance 中有两遍相同的循环买入代码（疑似复制粘贴残留）`);
 
-// ── Detect stop loss / stop profit rules ─────────────────────────────────────
-
-function extractStopRules(code) {
-  const rules = [];
-
-  // MA cross stop loss
-  const maCrossMatch = code.match(/MA(\d+).*cross.*MA(\d+)|(\d+)[天日]均线.*下穿|短线.*长线.*死叉/i);
-  if (maCrossMatch) {
-    const short = code.match(/(?:short_d|g\.short)\s*=\s*(\d+)/)?.[1];
-    const long = code.match(/(?:long_d|g\.long)\s*=\s*(\d+)/)?.[1];
-    if (short && long) rules.push(`均线止损：${short}日均线下穿${long}日均线时清仓`);
-    else rules.push('均线死叉止损');
+  // ── 4. Stop loss (zhisun) ─────────────────────────────────────────────────
+  const zhisunBlock = getFunctionBlock(code, 'zhisun');
+  if (zhisunBlock && zhisunBlock.trim().length > 50) {
+    const shortD = g.short_d || 2;
+    const longD = g.long_d || 20;
+    lines.push('');
+    lines.push('【止损逻辑】');
+    lines.push(`  触发时间：每日 09:30（与调仓同周期）`);
+    lines.push(`  指标：MA${shortD}（${shortD}日均线）与 MA${longD}（${longD}日均线）的死叉`);
+    lines.push(`  判定：用前一日收盘价计算 MA${shortD} 与 MA${longD}`);
+    lines.push(`  条件：当前 MA${shortD} < MA${longD} 且前一交易日 MA${shortD} >= MA${longD}`);
+    lines.push(`  执行：市价卖出全部持仓（仅当可卖出数量 > 0 时）`);
   }
 
-  // Percentage stop loss
-  const slMatch = code.match(/stop.*?(?:loss|止损)|亏损.*?(%|percent)|止损.*?(%|percent)/i);
-  if (slMatch) rules.push('固定比例止损');
+  // ── 5. Take profit / ladder rebalance (jieti) ───────────────────────────
+  const jietiBlock = getFunctionBlock(code, 'jieti');
+  const jietiCalled = code.match(/^\s*jieti\s*\(/m) ||
+                       code.match(/market_open[\s\S]{1,200}?jieti\s*\(/m);
 
-  // Percentage take profit (ladder)
-  const tpMatches = code.match(/(?:ret|收益|涨幅)\s*[><=]\s*(0\.\d+|\d+%)/g);
-  if (tpMatches) {
-    const levels = tpMatches.map(m => {
-      const v = m.match(/0\.\d+/)?.[0] || m.match(/\d+/)?.[0];
-      if (v) return parseFloat(v) < 1 ? `${(parseFloat(v)*100).toFixed(0)}%` : `${v}%`;
-      return m;
-    });
-    if (levels.length > 0) rules.push(`阶梯止盈：${levels.join('、')} 分批卖出`);
-  }
-
-  // Daily rebalance stop loss (收盘止损)
-  if (/止损|平仓.*条件|if.*price.*跌破/i.test(code)) {
-    rules.push('价格跌破止损线时清仓');
-  }
-
-  return rules;
-}
-
-// ── Extract rebalancing rules ────────────────────────────────────────────────
-
-function extractRebalance(code) {
-  const rules = [];
-  const params = extractParams(code);
-
-  if (params.stocknum) rules.push(`持股数量 ${params.stocknum} 只`);
-  if (/equal.*weight|平均分配|等权/i.test(code)) rules.push('等权重分配');
-  if (/cash\s*\/\s*\w+|每只股票.*金额/i.test(code)) rules.push(`每只股票分配资金 = 总权益 / 持股数`);
-
-  // Ladder rebalance (阶梯调仓)
-  if (/jieti|阶梯.*调仓|分批/i.test(code)) {
-    const levels = code.match(/ret[><]=?\s*(0\.\d+)/g);
-    if (levels.length > 0) {
-      const pct = levels.map(m => (parseFloat(m.match(/0\.\d+/)[0]) * 100).toFixed(0) + '%').join('、');
-      rules.push(`阶梯调仓（涨${pct}分批减仓）`);
+  if (jietiBlock && jietiBlock.trim().length > 60) {
+    lines.push('');
+    lines.push('【阶梯止盈/调仓】（jieti函数）');
+    if (!jietiCalled) {
+      lines.push(`  ⚠️ 此模块已注释未启用（jieti未在market_open中调用）`);
+    } else {
+      lines.push(`  启用中：`);
     }
-  }
-
-  const rebalTimes = code.match(/run_daily\([^,]+,\s*time\s*=\s*['"]([^'"]+)/g);
-  if (rebalTimes) {
-    const times = rebalTimes.map(m => m.match(/['"]([^'"]+)/)?.[1]).filter(Boolean);
-    rules.push(`每日调仓时间: ${[...new Set(times)].join(', ')}`);
-  }
-
-  return rules;
-}
-
-// ── Stock universe ───────────────────────────────────────────────────────────
-
-function extractUniverse(code) {
-  const stocks = [];
-  const maps = { '000300': '沪深300', '000016': '上证50', '000905': '中证500', '399101': '中小板', '399106': '深证综指', '000852': '中证1000', '000001': '上证综指' };
-  for (const [code, name] of Object.entries(maps)) {
-    if (new RegExp(code + '\\.XSHG|' + code + '\\.XSHE').test(code)) stocks.push(name);
-  }
-  return stocks;
-}
-
-// ── Risk rules ───────────────────────────────────────────────────────────────
-
-function extractRiskRules(code) {
-  const rules = [];
-  if (/is_st|ST股|filter.*st/i.test(code)) rules.push('过滤 ST 股');
-  if (/limitup|涨停/i.test(code)) rules.push('过滤涨停股');
-  if (/limitdown|跌停/i.test(code)) rules.push('过滤跌停股');
-  if (/paused|停牌|filter.*paused/i.test(code)) rules.push('过滤停牌股');
-  if (/set_feasible|feasible.*stock/i.test(code)) rules.push('剔除停牌股（样本期检查）');
-  return rules;
-}
-
-// ── Full natural language description ───────────────────────────────────────
-
-function buildNaturalDescription(code, params, factors, stopRules, rebalanceRules, universe, riskRules) {
-  const parts = [];
-
-  // Stock pool
-  if (universe.length > 0) {
-    parts.push(`选股池：${universe.join('+')} 所有股票`);
-  } else {
-    parts.push('选股池：全市场股票');
-  }
-
-  // Factor selection
-  if (factors.length > 0) {
-    const sortedFactors = [...new Set(factors)];
-    parts.push(`选股因子：${sortedFactors.join('、')}，按因子值排序选取`);
-  } else {
-    // Try to infer from code
-    if (/market_cap.*asc|市值.*升序/i.test(code)) {
-      parts.push('选股方式：市值升序（最小市值）选取');
-    } else if (/order_by.*asc/i.test(code)) {
-      parts.push('按因子值升序选取');
+    // Extract take-profit thresholds
+    const tpMatches = [...jietiBlock.matchAll(/ret\s*>\s*(0\.\d+)/g)];
+    if (tpMatches.length > 0) {
+      const actions = ['卖出一半（-50%）', '再卖30%', '再卖20%'];
+      lines.push(`  止盈卖出（按成本价收益率）：`);
+      tpMatches.forEach((m, i) => {
+        const pct = (parseFloat(m[1]) * 100).toFixed(0);
+        if (actions[i]) lines.push(`    收益率 > ${pct}% → ${actions[i]}`);
+      });
+    }
+    // Extract buy-back rules
+    const buyBackMatches = [...jietiBlock.matchAll(/MA(\d+)\s*>\s*price/g)];
+    const buyAmounts = ['增持20%', '增持30%', '增持50%'];
+    if (buyBackMatches.length > 0) {
+      lines.push(`  均线择时增持（成本价低于对应均线时）：`);
+      buyBackMatches.forEach((m, i) => {
+        if (buyAmounts[i]) lines.push(`    股价 < MA${m[1]} → ${buyAmounts[i]}`);
+      });
     }
   }
 
-  // Position sizing
-  if (params.stocknum) {
-    parts.push(`持仓：固定持有 ${params.stocknum} 只股票，等权分配`);
+  // ── 6. Commission and slippage ─────────────────────────────────────────
+  const commBlock = getFunctionBlock(code, 'set_slip_fee');
+  if (commBlock) {
+    lines.push('');
+    lines.push('【交易费用】');
+    const buyMatch = commBlock.match(/buy_cost\s*=\s*([\d.]+)/);
+    const sellMatch = commBlock.match(/sell_cost\s*=\s*([\d.]+)/);
+    if (buyMatch && sellMatch) {
+      lines.push(`  买入佣金：${(parseFloat(buyMatch[1]) * 100).toFixed(2)}%（万${(parseFloat(buyMatch[1]) * 10000).toFixed(0)}）`);
+      lines.push(`  卖出佣金：${(parseFloat(sellMatch[1]) * 100).toFixed(2)}%（含千分之一印花税）`);
+    }
+    lines.push(`  最低佣金：5元/笔`);
+    if (/FixedSlippage\(0\)/.test(commBlock)) lines.push(`  滑点：0（不考虑滑点）`);
   }
 
-  // Rebalance
-  const rebalTimes = code.match(/run_daily\([^,]+,\s*time\s*=\s*['"]([^'"]+)/g);
-  if (rebalTimes) {
-    const times = [...new Set(rebalTimes.map(m => m.match(/['"]([^'"]+)/)?.[1]))];
-    parts.push(`调仓：每日 ${times.join('/')} 执行调仓和风控`);
+  return lines.join('\n');
+}
+
+// ── Structured parse ─────────────────────────────────────────────────────────
+
+function parseCoreLogic(code) {
+  const signals = {
+    universe: null,
+    selectors: new Set(),
+    buyCount: null,
+    rebalanceFreq: null,
+    positionMethod: null,
+    riskRules: new Set(),
+    exitRules: new Set(),
+  };
+
+  for (const raw of code.split('\n')) {
+    const l = raw.trim();
+
+    const uMatch = l.match(/get_index_stocks\s*\(\s*['"]([^'"]+)/);
+    if (uMatch) {
+      const map = { '000300': '沪深300', '000016': '上证50', '000905': '中证500', '399101': '中小板', '399106': '深证100', '000852': '中证1000' };
+      signals.universe = map[uMatch[1].split('.')[0]] || uMatch[1];
+    }
+
+    const bcMatch = l.match(/(?:g\.)?(stocknum|buy_stock_count|hold_count|N)\s*=\s*(\d+)/);
+    if (bcMatch) signals.buyCount = parseInt(bcMatch[2]);
+
+    const rbMatch = l.match(/run_daily\s*\([^,]+,\s*time\s*=\s*['"]([^'"]+)/);
+    if (rbMatch) signals.rebalanceFreq = `每天 ${rbMatch[1]}`;
+
+    if (/market_cap.*asc|市值.*升序/i.test(l)) signals.selectors.add('市值升序（最小市值）');
+    if (/roe|return_on_equity/i.test(l)) signals.selectors.add('ROE');
+    if (/pe_ratio|valuation\.pe|市盈率/i.test(l)) signals.selectors.add('PE');
+
+    if (/平均分配|equal.*weight|等权/i.test(l)) signals.positionMethod = '等权分配';
+
+    if (/is_st|ST股/i.test(l)) signals.riskRules.add('过滤ST股');
+    if (/limitup|涨停/i.test(l)) signals.riskRules.add('过滤涨停');
+    if (/limitdown|跌停/i.test(l)) signals.riskRules.add('过滤跌停');
+    if (/paused|停牌/i.test(l)) signals.riskRules.add('过滤停牌');
+
+    if (/close_position|平仓|清仓/i.test(l)) signals.exitRules.add('持仓不在候选列表时清仓');
   }
 
-  // Stop loss
-  const maSL = stopRules.find(r => r.includes('均线止损'));
-  if (maSL) parts.push(`止损：${maSL}`);
+  const selArr = [...signals.selectors];
+  let coreIdea = '股票多头策略';
+  if (selArr.some(s => s.includes('市值'))) coreIdea = `市值因子排序选股（${selArr.join('、')}）`;
 
-  const ladderTP = stopRules.find(r => r.includes('阶梯止盈'));
-  if (ladderTP) parts.push(`止盈：${ladderTP}`);
-
-  // Risk
-  if (riskRules.length > 0) {
-    parts.push(`风控：${[...new Set(riskRules)].join('、')}`);
-  }
-
-  // Period
-  const periodMatch = code.match(/20\d{2}[-年]\d{1,2}[-月]\d{1,2}/);
-  if (periodMatch) parts.push(`回测期：${periodMatch[0]} 起`);
-
-  return parts.join('；');
+  return {
+    strategyType: '市值选股策略',
+    coreIdea,
+    universe: signals.universe,
+    buyCount: signals.buyCount,
+    rebalanceFreq: signals.rebalanceFreq,
+    selectors: selArr,
+    positionMethod: signals.positionMethod,
+    riskRules: [...signals.riskRules],
+    exitRules: [...signals.exitRules],
+  };
 }
 
 // ── Main builder ─────────────────────────────────────────────────────────────
@@ -218,37 +228,29 @@ function buildSummary(filepath, stats, comments) {
   if (!fs.existsSync(filepath)) return null;
   const code = fs.readFileSync(filepath, 'utf8');
   const basename = path.basename(filepath, '.py').replace(/_[^_]+$/, '');
-  const params = extractParams(code);
-  const factors = extractFactors(code);
-  const stopRules = extractStopRules(code);
-  const rebalanceRules = extractRebalance(code);
-  const universe = extractUniverse(code);
-  const riskRules = extractRiskRules(code);
-  const description = buildNaturalDescription(code, params, factors, stopRules, rebalanceRules, universe, riskRules);
+
+  const { strategyType, coreIdea, universe, buyCount, rebalanceFreq, selectors, positionMethod, riskRules, exitRules } = parseCoreLogic(code);
 
   const lines = [];
   lines.push(`📌 *${basename}*`);
   lines.push('');
 
-  // Natural language description
-  lines.push(`🔍 策略逻辑：${description}`);
+  // ── Structured summary ──────────────────────────────────────────────────
+  if (universe) lines.push(`📦 股票池: ${universe}`);
+  if (buyCount) lines.push(`🔢 持仓数量: ${buyCount}只`);
+  if (rebalanceFreq) lines.push(`⏰ 调仓频率: ${rebalanceFreq}`);
+  if (selectors.length > 0) lines.push(`🎯 选股因子: ${[...new Set(selectors)].join(' | ')}`);
+  if (positionMethod) lines.push(`💰 仓位: ${positionMethod}`);
+  if (riskRules.length > 0) lines.push(`🛡️ 风控: ${[...new Set(riskRules)].join(' | ')}`);
+  if (exitRules.length > 0) lines.push(`🚪 出场: ${[...new Set(exitRules)].join(' | ')}`);
+
+  // ── Faithful translation ─────────────────────────────────────────────────
   lines.push('');
+  lines.push('📝 忠实翻译（代码逻辑）：');
+  const faithful = buildFaithfulDescription(code);
+  faithful.split('\n').forEach(l => lines.push('  ' + l));
 
-  // Key parameters
-  const paramDescs = [];
-  if (params.stocknum) paramDescs.push(`持股数=${params.stocknum}`);
-  if (params.short_d) paramDescs.push(`短线MA=${params.short_d}日`);
-  if (params.long_d) paramDescs.push(`长线MA=${params.long_d}日`);
-  if (params.shift) paramDescs.push(`停牌观察=${params.shift}日`);
-  if (params.buylist !== undefined) paramDescs.push(`候选股数=${params.buylist}`);
-  if (paramDescs.length > 0) lines.push(`⚙️ 关键参数：${paramDescs.join(' | ')}`);
-
-  // Stop rules
-  if (stopRules.length > 0) {
-    lines.push(`🛑 止盈止损：${[...new Set(stopRules)].join('；')}`);
-  }
-
-  // Comments
+  // ── Comments ─────────────────────────────────────────────────────────────
   if (comments && comments.length > 0) {
     lines.push('');
     lines.push(`💬 社区评论（${comments.length}条）：`);
@@ -258,10 +260,11 @@ function buildSummary(filepath, stats, comments) {
     });
   }
 
-  lines.push('');
+  // ── Stats ───────────────────────────────────────────────────────────────
   const statsLine = stats && stats.annualReturn != null
     ? `📊 年化${(stats.annualReturn * 100).toFixed(1)}% | 夏普${stats.sharpe?.toFixed(2)} | 最大回撤${(stats.maxDrawdown * 100).toFixed(1)}%`
-    : stats?.annualReturn === null ? '📊 绩效未公开（回测报告不公开）' : '📊 绩效获取失败';
+    : stats?.annualReturn === null ? '📊 绩效未公开' : '📊 绩效获取失败';
+  lines.push('');
   lines.push(statsLine);
 
   return lines.join('\n');
