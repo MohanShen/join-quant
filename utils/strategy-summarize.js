@@ -91,6 +91,11 @@ function buildFaithfulDescription(code) {
   const bmNames = { '000300.XSHG': '沪深300', '000016.XSHG': '上证50', '000905.XSHG': '中证500' };
   const benchmark = bmMatch ? (bmNames[bmMatch[1]] || bmMatch[1]) : '未设定';
 
+  // Code stats
+  const lineCount = code.split('\n').length;
+  const periodMatch = code.match(/#\s*(\d{4}-\d{2}-\d{2})\s*到\s*(\d{4}-\d{2}-\d{2})/);
+  const periodStr = periodMatch ? `回测区间：${periodMatch[1]} ~ ${periodMatch[2]}` : null;
+
   // ─────────────────────────────────────────────────────────────────────────
   // Build paragraphs
   // ─────────────────────────────────────────────────────────────────────────
@@ -162,7 +167,8 @@ function buildFaithfulDescription(code) {
     const s = sellCostMatch ? `卖出千${(parseFloat(sellCostMatch[1])*1000).toFixed(1)}（含印花税）` : '';
     riskParts.push(`手续费：${[b, s].filter(Boolean).join('，')}，最低5元/笔`);
   }
-  riskParts.push(`回测基准：${benchmark}`);
+  if (periodStr) riskParts.push(periodStr);
+  riskParts.push(`代码行数：${lineCount}行`);
   paras.push(`风控：${riskParts.join('；')}。`);
 
   return paras.join('\n\n');
