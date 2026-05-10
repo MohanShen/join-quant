@@ -182,8 +182,8 @@ async function main() {
     return;
   }
 
-  // Copy phase — iterate until access limit
-  const { processQueue } = require('./utils/strategy-copy');
+  // Fetch phase — read source + stats via API, save to strategies/
+  const { processQueue } = require('./strategy-fetch');
   const { processed, limitHit } = await processQueue(0); // 0 = unlimited
 
   // Final WeChat summary

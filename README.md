@@ -15,21 +15,25 @@ Automated JoinQuant strategy discovery, cloning, and backtest pipeline.
 ```
 join-quant/
 ├── utils/
-│   ├── login.js           # LoginManager: Playwright login, cookie persistence
-│   ├── fetcher.js        # StrategyFetcher: Get source from JoinQuant API
-│   ├── loader.js         # StrategyLoader: Load local .py/.json strategies
-│   └── strategy-discover.js  # Community listV2 API crawler + data store
+│   ├── login.js              # LoginManager: Playwright login, cookie persistence
+│   ├── fetcher.js           # StrategyFetcher: Get source from JoinQuant API
+│   ├── loader.js            # StrategyLoader: Load local .py/.json strategies
+│   ├── strategy-discover.js # Community listV2 API crawler + data store
+│   ├── strategy-copy.js      # Queue walker: clone → stats → save → WeChat
+│   └── strategy-daily.js     # Cron entry point: discover → copy loop
 ├── backtest/
-│   └── runner.js         # BacktestRunner: Clone → Poll → Parse results
+│   └── runner.js            # BacktestRunner: Clone → Poll → Parse results
 ├── pipelines/
-│   ├── community.js      # CommunityPipeline: post → fetch → backtest
-│   └── custom.js         # CustomPipeline: local file → backtest
-├── strategies/           # Python strategy files (cloned strategies saved here)
-├── data/                 # Discovery state (gitignored)
-│   ├── discovered.json   # All discovered strategies (keyed by postId)
-│   └── copy-queue.json  # Pending strategies sorted by composite score
-├── tests/               # Unit tests (30 cases, all pass)
-└── index.js             # CLI entry point
+│   ├── community.js          # CommunityPipeline: post → fetch → backtest
+│   └── custom.js            # CustomPipeline: local file → backtest
+├── strategies/               # Python strategy files (cloned strategies saved here)
+├── data/                    # Discovery state (gitignored)
+│   ├── discovered.json       # All discovered strategies (keyed by postId)
+│   ├── copy-queue.json       # Pending strategies sorted by composite score
+│   ├── cookies.json          # Browser session cookies (from LoginManager)
+│   └── notifications.json   # Pending WeChat notifications
+├── tests/                   # Unit tests (30 cases, all pass)
+└── index.js                 # CLI entry point
 ```
 
 ## Quick Start
@@ -44,8 +48,20 @@ node utils/strategy-discover.js 2
 # Show discovery status
 node utils/strategy-discover.js status
 
-# Run the daily pipeline (discovery + clone loop with WeChat alerts)
+# Preview next strategies to clone (dry run)
+node utils/strategy-copy.js --dry
+
+# Copy ALL strategies in queue (until access limit hit)
+node utils/strategy-copy.js
+
+# Copy only the next N strategies
+node utils/strategy-copy.js 3
+
+# Run full daily pipeline (discovery + clone loop)
 node utils/strategy-daily.js
+
+# Run discovery-only (fast, ~5 seconds)
+node utils/strategy-daily.js --discover-only
 ```
 
 ## Data Files

@@ -157,35 +157,37 @@ async function cloneOneStrategy(entry, loginManager) {
     await page.goto(strategyUrl, { waitUntil: 'networkidle', timeout: 30000 });
     await page.waitForTimeout(2000);
 
-    // 2. Click "克隆策略" button
-    let cloneResult = await page.evaluate(() => {
-      const all = document.querySelectorAll('*');
-      for (const el of all) {
-        if ((el.textContent || '').trim() === '克隆策略') {
-          el.click();
-          return 'clicked';
-        }
-      }
-      return 'not found';
-    });
-
-    if (cloneResult === 'not found') {
-      console.log(`[copy] Clone button not found for ${postId}`);
-      // Check if access limit
-      const pageText = await page.evaluate(() => document.body.innerText);
-      if (ACCESS_LIMIT_KEYWORDS.some(k => pageText.includes(k))) {
-        limitHit = true;
-        console.log('[copy] Access limit detected (button not found)');
-      }
+    // 2. Switch to the backtest iframe (clone button lives there)
+    const frame = page.frames().find(f => f.url().includes('/algorithm/backtest/summary'));
+    if (!frame) {
+      console.log(`[copy] No backtest iframe found`);
     } else {
-      console.log(`[copy] Clone button clicked, waiting for navigation...`);
-      await page.waitForTimeout(6000);
+      // Wait for clone button inside iframe
+      try {
+        await frame.waitForSelector('text=克隆策略', { timeout: 8000 });
+      } catch (e) {
+        console.log(`[copy] Clone button not found in iframe`);
+      }
 
-      // 3. Extract new backtestId from URL
-      const finalUrl = page.url();
-      const match = finalUrl.match(/backtestId=([a-f0-9]{32})/);
-      newBacktestId = match ? match[1] : null;
-      console.log(`[copy] New backtestId: ${newBacktestId}`);
+      // 3. Click "克隆策略" inside iframe
+      let cloneResult = await frame.evaluate(() => {
+        const all = document.querySelectorAll('*');
+        for (const el of all) {
+          if ((el.textContent || '').trim() === '克隆策略') {
+            el.click();
+            return 'clicked';
+          }
+        }
+        return 'not found';
+      });
+      console.log(`[copy] Clone button: ${cloneResult}`);
+
+      if (cloneResult !== 'not found') {
+        await page.waitForTimeout(6000);
+        const match = page.url().match(/backtestId=([a-f0-9]{32})/);
+        newBacktestId = match ? match[1] : null;
+        console.log(`[copy] New backtestId: ${newBacktestId}`);
+      }
     }
 
     // 4. Fetch source code via API
@@ -260,13 +262,15 @@ async function cloneOneStrategy(entry, loginManager) {
 
 async function processQueue(maxToProcess = 0) {
   const queueData = loadQueue();
-  const { LoginManager } = require('./utils/login');
+  const { LoginManager } = require('./login');
 
-  const loginManager = new LoginManager({
-    cookiePath: path.join(DATA_DIR, 'cookies.json'),
-    username: process.env.JOINQUANT_USERNAME || '15656096430',
-    password: process.env.JOINQUANT_PASSWORD,
-  });
+  const loginManager = new LoginManager(
+    path.join(DATA_DIR, 'cookies.json'),
+    {
+      username: process.env.JOINQUANT_USERNAME || '15656096430',
+      password: process.env.JOINQUANT_PASSWORD,
+    }
+  );
 
   await loginManager.ensureLogin();
 
