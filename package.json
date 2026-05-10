@@ -1,0 +1,24 @@
+{
+  "name": "joinquant-pipeline",
+  "version": "1.0.0",
+  "description": "Automated JoinQuant strategy backtest pipeline with Playwright + API",
+  "main": "index.js",
+  "bin": {
+    "jq-pipeline": "./index.js"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "community": "node index.js community",
+    "custom": "node index.js custom",
+    "login": "node index.js login",
+    "status": "node index.js status"
+  },
+  "dependencies": {
+    "playwright": "^1.40.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "MohanShen",
+  "license": "MIT"
+}
