@@ -99,7 +99,7 @@ function extractPeriod(code) {
   return m ? m[0] : null;
 }
 
-function buildSummary(filepath, stats) {
+function buildSummary(filepath, stats, comments) {
   if (!fs.existsSync(filepath)) return null;
   const code = fs.readFileSync(filepath, 'utf8');
   const basename = path.basename(filepath, '.py').replace(/_[^_]+$/, '');
@@ -124,6 +124,15 @@ function buildSummary(filepath, stats) {
     ? `📊 年化${(stats.annualReturn * 100).toFixed(1)}% | 夏普${stats.sharpe?.toFixed(2)} | 回撤${(stats.maxDrawdown * 100).toFixed(1)}%`
     : stats?.annualReturn === null ? '📊 绩效未公开（回测报告不公开）' : '📊 绩效获取失败';
   lines.push(statsLine);
+
+  // Append top comments if available
+  if (comments && comments.length > 0) {
+    const commentLines = comments.slice(0, 2).map(c =>
+      c.isBest ? `  ✅ ${c.user}（精华）: ${c.content}` : `  💬 ${c.user}: ${c.content}`
+    );
+    lines.push(`💬 高赞评论（${comments.length}条）:`);
+    commentLines.forEach(l => lines.push(l));
+  }
 
   return lines.join('\n');
 }

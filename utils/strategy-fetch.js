@@ -255,9 +255,12 @@ async function processQueue(maxToProcess = 0) {
     // Print WeChat message to stdout (captured by cron announce delivery)
     const score = (entry.likes || 0) + (entry.clones || 0) * 0.5;
     if (fetched) {
-      // Generate strategy summary from source code
       const { buildSummary } = require('./strategy-summarize');
-      const summary = savedPath ? buildSummary(savedPath, stats) : null;
+      const { fetchComments } = require('./strategy-comments');
+      const [comments] = await Promise.all([
+        fetchComments(entry.postId, 2).catch(() => []),
+      ]);
+      const summary = savedPath ? buildSummary(savedPath, stats, comments) : null;
       if (summary) {
         console.log(summary);
       } else {
