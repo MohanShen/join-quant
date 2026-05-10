@@ -21,7 +21,7 @@
  *   const result2 = await pipeline.runFromBacktestId('existing-backtest-id-123');
  */
 
-const { StrategyLoader } = require('../strategy/loader');
+const { StrategyLoader } = require('../utils/loader');
 const { BacktestRunner } = require('../backtest/runner');
 
 class CustomPipeline {

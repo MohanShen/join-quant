@@ -31,7 +31,7 @@ describe('BacktestRunner', () => {
 
   it('should accept loginManager as option', () => {
     const { BacktestRunner } = require('../backtest/runner');
-    const { LoginManager } = require('../auth/login');
+    const { LoginManager } = require('../utils/login');
     
     const lm = new LoginManager('/tmp/test-cookies.json');
     const runner = new BacktestRunner({ loginManager: lm });

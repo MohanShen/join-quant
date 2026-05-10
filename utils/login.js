@@ -5,7 +5,7 @@
  * and captcha detection. Automatically refreshes cookies when stale.
  * 
  * Usage:
- *   const { LoginManager } = require('./auth/login');
+ *   const { LoginManager } = require('./login');
  *   const lm = new LoginManager('./auth/cookies.json');
  *   await lm.ensureLogin();
  *   const cookies = lm.getCookies();

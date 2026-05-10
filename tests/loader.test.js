@@ -20,19 +20,19 @@ beforeEach(() => {
 
 describe('StrategyLoader', () => {
   it('should be constructable with baseDir option', () => {
-    const { StrategyLoader } = require('../strategy/loader');
+    const { StrategyLoader } = require('../utils/loader');
     const loader = new StrategyLoader({ baseDir: TEST_STRATEGIES_DIR });
     assert.strictEqual(loader.baseDir, TEST_STRATEGIES_DIR);
   });
 
   it('should use cwd/strategies as default baseDir', () => {
-    const { StrategyLoader } = require('../strategy/loader');
+    const { StrategyLoader } = require('../utils/loader');
     const loader = new StrategyLoader();
     assert.ok(loader.baseDir.endsWith('strategies'));
   });
 
   it('should load a valid Python strategy', async () => {
-    const { StrategyLoader } = require('../strategy/loader');
+    const { StrategyLoader } = require('../utils/loader');
     
     // Create test strategy
     const strategyPath = path.join(TEST_STRATEGIES_DIR, 'test-strategy.py');
@@ -59,7 +59,7 @@ def handle_data(context, data):
   });
 
   it('should load a JSON config with inline source', async () => {
-    const { StrategyLoader } = require('../strategy/loader');
+    const { StrategyLoader } = require('../utils/loader');
     
     const configPath = path.join(TEST_STRATEGIES_DIR, 'config-test.json');
     fs.writeFileSync(configPath, JSON.stringify({
@@ -86,7 +86,7 @@ def handle_data(context, data):
   });
 
   it('should throw when strategy file not found', async () => {
-    const { StrategyLoader } = require('../strategy/loader');
+    const { StrategyLoader } = require('../utils/loader');
     const loader = new StrategyLoader({ baseDir: TEST_STRATEGIES_DIR });
 
     await assert.rejects(
@@ -96,7 +96,7 @@ def handle_data(context, data):
   });
 
   it('should throw for unsupported file types', async () => {
-    const { StrategyLoader } = require('../strategy/loader');
+    const { StrategyLoader } = require('../utils/loader');
     
     const badPath = path.join(TEST_STRATEGIES_DIR, 'strategy.java');
     fs.writeFileSync(badPath, 'public class Strategy {}');
@@ -110,7 +110,7 @@ def handle_data(context, data):
   });
 
   it('should warn about missing initialize and handle_data', async () => {
-    const { StrategyLoader } = require('../strategy/loader');
+    const { StrategyLoader } = require('../utils/loader');
     
     const strategyPath = path.join(TEST_STRATEGIES_DIR, 'incomplete.py');
     fs.writeFileSync(strategyPath, `
@@ -125,7 +125,7 @@ def initialize(context):
   });
 
   it('should list all strategies in baseDir', () => {
-    const { StrategyLoader } = require('../strategy/loader');
+    const { StrategyLoader } = require('../utils/loader');
     
     // Create test files
     fs.writeFileSync(path.join(TEST_STRATEGIES_DIR, 'strategy1.py'), '# strategy 1');
@@ -142,7 +142,7 @@ def initialize(context):
   });
 
   it('should return empty array when dir empty', () => {
-    const { StrategyLoader } = require('../strategy/loader');
+    const { StrategyLoader } = require('../utils/loader');
     const loader = new StrategyLoader({ baseDir: TEST_STRATEGIES_DIR });
     
     const strategies = loader.list();
@@ -150,7 +150,7 @@ def initialize(context):
   });
 
   it('should extract clone metadata from comments', async () => {
-    const { StrategyLoader } = require('../strategy/loader');
+    const { StrategyLoader } = require('../utils/loader');
     
     const strategyPath = path.join(TEST_STRATEGIES_DIR, 'cloned.py');
     fs.writeFileSync(strategyPath, `
@@ -173,7 +173,7 @@ def initialize(context):
 
 describe('StrategyLoader._extractMetadata', () => {
   it('should parse requirements comment', async () => {
-    const { StrategyLoader } = require('../strategy/loader');
+    const { StrategyLoader } = require('../utils/loader');
     
     const strategyPath = path.join(TEST_STRATEGIES_DIR, 'req-test.py');
     fs.writeFileSync(strategyPath, `

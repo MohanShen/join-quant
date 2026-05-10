@@ -10,7 +10,7 @@
  *   const result = await pipeline.run({ postId, backtestId });
  */
 
-const { StrategyFetcher } = require('../strategy/fetcher');
+const { StrategyFetcher } = require('../utils/fetcher');
 const { BacktestRunner } = require('../backtest/runner');
 
 class CommunityPipeline {

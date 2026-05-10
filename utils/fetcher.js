@@ -4,7 +4,7 @@
  * Fetches strategy source code from JoinQuant community posts via API.
  * 
  * Usage:
- *   const { StrategyFetcher } = require('./strategy/fetcher');
+ *   const { StrategyFetcher } = require('./fetcher');
  *   const fetcher = new StrategyFetcher({ loginManager });
  *   const source = await fetcher.fetch({ postId, backtestId });
  */

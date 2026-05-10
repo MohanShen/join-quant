@@ -27,7 +27,7 @@ if (require('fs').existsSync(envPath)) {
     });
 }
 
-const { LoginManager } = require('./auth/login');
+const { LoginManager } = require('./utils/login');
 const { CommunityPipeline } = require('./pipelines/community');
 const { CustomPipeline } = require('./pipelines/custom');
 

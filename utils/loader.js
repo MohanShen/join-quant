@@ -8,7 +8,7 @@
  *   - .json config files pointing to strategy + params
  * 
  * Usage:
- *   const { StrategyLoader } = require('./strategy/loader');
+ *   const { StrategyLoader } = require('./loader');
  *   const loader = new StrategyLoader();
  *   const strategy = await loader.load('./my-strategies/ma-cross.py');
  */

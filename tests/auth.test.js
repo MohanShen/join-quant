@@ -25,14 +25,14 @@ after(() => {
 
 describe('LoginManager', () => {
   it('should be constructable with just a cookie path', () => {
-    const { LoginManager } = require('../auth/login');
+    const { LoginManager } = require('../utils/login');
     const lm = new LoginManager(TEST_COOKIE_PATH);
     assert.ok(lm);
     assert.strictEqual(lm.cookiePath, TEST_COOKIE_PATH);
   });
 
   it('should accept username and password options', () => {
-    const { LoginManager } = require('../auth/login');
+    const { LoginManager } = require('../utils/login');
     const lm = new LoginManager(TEST_COOKIE_PATH, {
       username: 'test@test.com',
       password: 'secret123'
@@ -42,7 +42,7 @@ describe('LoginManager', () => {
   });
 
   it('should use environment variables as fallbacks', () => {
-    const { LoginManager } = require('../auth/login');
+    const { LoginManager } = require('../utils/login');
     
     // Set env vars
     process.env.JOINQUANT_USERNAME = 'env_user';
@@ -58,7 +58,7 @@ describe('LoginManager', () => {
   });
 
   it('should fail gracefully without password', async () => {
-    const { LoginManager } = require('../auth/login');
+    const { LoginManager } = require('../utils/login');
     const lm = new LoginManager('/tmp/nonexistent.json', {
       username: 'test',
       // No password
@@ -71,14 +71,14 @@ describe('LoginManager', () => {
   });
 
   it('should return null from cache when no cache exists', () => {
-    const { LoginManager } = require('../auth/login');
+    const { LoginManager } = require('../utils/login');
     const lm = new LoginManager('/tmp/nonexistent-cache-file.json');
     const result = lm._loadFromCache();
     assert.strictEqual(result, null);
   });
 
   it('should return null from cache when file is corrupted', () => {
-    const { LoginManager } = require('../auth/login');
+    const { LoginManager } = require('../utils/login');
     
     // Create corrupted cache
     fs.writeFileSync('/tmp/jq-test-corrupt.json', '{not valid json');
@@ -91,7 +91,7 @@ describe('LoginManager', () => {
   });
 
   it('should save and load cookies from cache', () => {
-    const { LoginManager } = require('../auth/login');
+    const { LoginManager } = require('../utils/login');
     
     const lm = new LoginManager(TEST_COOKIE_PATH);
     const testData = {
@@ -113,7 +113,7 @@ describe('LoginManager', () => {
   });
 
   it('should reject invalid cache without required cookies', () => {
-    const { LoginManager } = require('../auth/login');
+    const { LoginManager } = require('../utils/login');
     
     // Create cache without uid
     fs.writeFileSync('/tmp/jq-test-no-uid.json', JSON.stringify({
@@ -130,7 +130,7 @@ describe('LoginManager', () => {
   });
 
   it('should reject expired cache', () => {
-    const { LoginManager } = require('../auth/login');
+    const { LoginManager } = require('../utils/login');
     
     // Create expired cache
     fs.writeFileSync('/tmp/jq-test-expired.json', JSON.stringify({
@@ -152,13 +152,13 @@ describe('LoginManager', () => {
 
 describe('LoginManager.getBrowserContext', () => {
   it('should be a function', () => {
-    const { LoginManager } = require('../auth/login');
+    const { LoginManager } = require('../utils/login');
     const lm = new LoginManager(TEST_COOKIE_PATH);
     assert.strictEqual(typeof lm.getBrowserContext, 'function');
   });
 
   it('should throw if ensureLogin not called first', async () => {
-    const { LoginManager } = require('../auth/login');
+    const { LoginManager } = require('../utils/login');
     const lm = new LoginManager(TEST_COOKIE_PATH);
     
     await assert.throws(
