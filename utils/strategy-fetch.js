@@ -256,28 +256,16 @@ async function processQueue(maxToProcess = 0) {
     const score = (entry.likes || 0) + (entry.clones || 0) * 0.5;
     if (fetched) {
       // Generate strategy summary from source code
-      const { summarizeStrategy } = require('./strategy-summarize');
-      const summary = savedPath ? summarizeStrategy(savedPath) : null;
-      const statsLine = stats && stats.annualReturn != null
-        ? `年化${(stats.annualReturn * 100).toFixed(1)}% | 夏普${stats.sharpe} | 回撤${(stats.maxDrawdown * 100).toFixed(1)}%`
-        : stats?.annualReturn === null ? '绩效未公开（回测报告不公开）' : '绩效获取失败';
-
-      if (summary && !summary.error) {
-        console.log(
-          `📊 *${entry.title}*\n` +
-          `📈 类型: ${summary.strategyType}\n` +
-          `📅 调仓: ${summary.frequency}\n` +
-          `📐 数据: ${summary.dataSources.length > 0 ? summary.dataSources.join(', ') : '未说明'}\n` +
-          `💡 亮点: ${summary.innovation}\n` +
-          `🧮 ${statsLine}`
-        );
+      const { buildSummary } = require('./strategy-summarize');
+      const summary = savedPath ? buildSummary(savedPath, stats) : null;
+      if (summary) {
+        console.log(summary);
       } else {
+        const statsLine = stats && stats.annualReturn != null
+          ? `年化${(stats.annualReturn * 100).toFixed(1)}% | 夏普${stats.sharpe} | 回撤${(stats.maxDrawdown * 100).toFixed(1)}%`
+          : stats?.annualReturn === null ? '绩效未公开（回测报告不公开）' : '绩效获取失败';
         console.log(
-          `📊 *策略抓取成功*\n` +
-          `📌 ${entry.title}\n` +
-          `🔢 点赞${entry.likes} | 克隆${entry.clones} | 社区分${score.toFixed(0)}\n` +
-          `📁 ${path.basename(savedPath)}\n` +
-          `🧮 ${statsLine}`
+          `📊 *策略抓取成功*\n📌 ${entry.title}\n🧮 ${statsLine}`
         );
       }
     } else {
