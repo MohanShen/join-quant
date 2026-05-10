@@ -218,7 +218,7 @@ async function main() {
     case 'help':
     default:
       console.log(`
-joinquant-pipeline - Automated JoinQuant backtest pipeline
+join-quant - Automated JoinQuant backtest pipeline
 
 USAGE:
   node index.js community <postId> <backtestId> [replyId]

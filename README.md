@@ -31,7 +31,7 @@ joinquant-pipeline/
 ## Installation
 
 ```bash
-cd ~/.openclaw/workspace/joinquant-pipeline
+cd ~/repos/join-quant
 npm install
 ```
 
