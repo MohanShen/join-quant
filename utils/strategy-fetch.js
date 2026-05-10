@@ -239,32 +239,54 @@ async function processQueue(maxToProcess = 0) {
       break;
     }
 
-    // Save file if we got source
+    // Save file only if we got source
     let savedPath = null;
+    let fetched = false;
     if (sourceCode) {
       savedPath = saveStrategyFile(entry.postId, entry.backtestId, entry.title, sourceCode);
+      fetched = true;
+      // Mark as fetched (removes from queue)
+      markFetched(entry.postId, {
+        sourceFile: path.basename(savedPath),
+        stats,
+      });
     }
 
-    // Queue WeChat message
+    // Print WeChat message to stdout (captured by cron announce delivery)
     const score = (entry.likes || 0) + (entry.clones || 0) * 0.5;
-    const statsLine = stats && stats.annualReturn != null
-      ? `年化${(stats.annualReturn * 100).toFixed(1)}% | 夏普${stats.sharpe} | 回撤${(stats.maxDrawdown * 100).toFixed(1)}%`
-      : (sourceError || '源码获取失败');
-    const wechatMsg =
-      `📊 *策略发现*\n` +
-      `📌 ${entry.title}\n` +
-      `🔢 点赞${entry.likes} | 克隆${entry.clones} | 社区分${score.toFixed(0)}\n` +
-      `📁 ${savedPath ? path.basename(savedPath) : '存盘失败'}\n` +
-      `🧮 ${statsLine}`;
-    queueWeChatMessage(wechatMsg);
+    if (fetched) {
+      // Generate strategy summary from source code
+      const { summarizeStrategy } = require('./strategy-summarize');
+      const summary = savedPath ? summarizeStrategy(savedPath) : null;
+      const statsLine = stats && stats.annualReturn != null
+        ? `年化${(stats.annualReturn * 100).toFixed(1)}% | 夏普${stats.sharpe} | 回撤${(stats.maxDrawdown * 100).toFixed(1)}%`
+        : stats?.annualReturn === null ? '绩效未公开（回测报告不公开）' : '绩效获取失败';
 
-    // Mark as fetched
-    markFetched(entry.postId, {
-      sourceFile: savedPath ? path.basename(savedPath) : null,
-      stats,
-      sourceError,
-      statsError: statsError || undefined,
-    });
+      if (summary && !summary.error) {
+        console.log(
+          `📊 *${entry.title}*\n` +
+          `📈 类型: ${summary.strategyType}\n` +
+          `📅 调仓: ${summary.frequency}\n` +
+          `📐 数据: ${summary.dataSources.length > 0 ? summary.dataSources.join(', ') : '未说明'}\n` +
+          `💡 亮点: ${summary.innovation}\n` +
+          `🧮 ${statsLine}`
+        );
+      } else {
+        console.log(
+          `📊 *策略抓取成功*\n` +
+          `📌 ${entry.title}\n` +
+          `🔢 点赞${entry.likes} | 克隆${entry.clones} | 社区分${score.toFixed(0)}\n` +
+          `📁 ${path.basename(savedPath)}\n` +
+          `🧮 ${statsLine}`
+        );
+      }
+    } else {
+      console.log(
+        `📋 *策略抓取失败（留待重试）*\n` +
+        `📌 ${entry.title}\n` +
+        `⚠️ ${sourceError || '未知错误'} — 明日继续尝试`
+      );
+    }
 
     processed++;
 
@@ -280,10 +302,25 @@ async function processQueue(maxToProcess = 0) {
 
 // ── CLI ─────────────────────────────────────────────────────────────────────
 
+function parseArgs(args) {
+  const result = { max: 0, dry: false };
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--dry') result.dry = true;
+    if (args[i] === '--limit' && args[i + 1] != null) {
+      result.max = parseInt(args[i + 1]) || 3;
+      i++;
+    } else if (/^\d+$/.test(args[i])) {
+      result.max = parseInt(args[i]) || 3;
+    }
+  }
+  return result;
+}
+
 if (require.main === module) {
   const args = process.argv.slice(2);
+  const { max, dry } = parseArgs(args);
 
-  if (args.includes('--dry')) {
+  if (dry) {
     const queueData = loadQueue();
     const pending = queueData.queue.filter(s => !queueData.copied[s.postId]);
     console.log(`=== Next ${Math.min(5, pending.length)} strategies in queue ===`);
@@ -291,10 +328,9 @@ if (require.main === module) {
       console.log(`  #${i + 1} [likes=${s.likes} clones=${s.clones} score=${s.compositeScore}] ${s.title}`);
     });
   } else {
-    const max = parseInt(args[0] || '0');
     (async () => {
-      console.log(`=== Strategy Fetch (max=${max || 'unlimited'}) ===`);
-      const { processed, limitHit } = await processQueue(max);
+      console.log(`=== Strategy Fetch (limit=${max || 3}) ===`);
+      const { processed, limitHit } = await processQueue(max || 3);
       console.log(`Processed: ${processed}, Limit hit: ${limitHit}`);
     })().catch(e => { console.error(e); process.exit(1); });
   }

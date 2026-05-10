@@ -5,7 +5,8 @@ Automated JoinQuant strategy discovery, cloning, and backtest pipeline.
 ## Features
 
 - **Strategy Discovery**: Scrapes the JoinQuant community via the listV2 API to find strategies, sorted by composite score (likes + clones×0.5)
-- **Auto-Clone Pipeline**: Iterates through the copy queue, clones each strategy via Playwright browser, saves source to `strategies/`, and fetches performance stats
+- **Auto-Fetch Pipeline**: For each strategy in the queue, fetches source code + performance stats via API and saves to `strategies/`
+- **No Cloning Needed**: Read-only approach — no browser automation, all via API calls
 - **Daily Cron**: Runs discovery + copy loop daily, stopping only when hitting the access limit (VIP strategy cap)
 - **WeChat Alerts**: Sends strategy summaries to your WeChat session after each successful clone
 - **Modular Architecture**: Each component (auth, discovery, clone runner, backtest) is independent and reusable
@@ -19,8 +20,8 @@ join-quant/
 │   ├── fetcher.js           # StrategyFetcher: Get source from JoinQuant API
 │   ├── loader.js            # StrategyLoader: Load local .py/.json strategies
 │   ├── strategy-discover.js # Community listV2 API crawler + data store
-│   ├── strategy-copy.js      # Queue walker: clone → stats → save → WeChat
-│   └── strategy-daily.js     # Cron entry point: discover → copy loop
+│   ├── strategy-fetch.js     # Queue walker: fetch source/stats via API → save .py → WeChat
+│   └── strategy-daily.js     # Cron entry point: discover → fetch loop
 ├── backtest/
 │   └── runner.js            # BacktestRunner: Clone → Poll → Parse results
 ├── pipelines/
@@ -51,11 +52,9 @@ node utils/strategy-discover.js status
 # Preview next strategies to clone (dry run)
 node utils/strategy-copy.js --dry
 
-# Copy ALL strategies in queue (until access limit hit)
-node utils/strategy-copy.js
-
-# Copy only the next N strategies
-node utils/strategy-copy.js 3
+# Copy (fetch source + stats via API — no browser, no cloning)
+node utils/strategy-fetch.js          # process entire queue
+node utils/strategy-fetch.js 3        # process up to N strategies
 
 # Run full daily pipeline (discovery + clone loop)
 node utils/strategy-daily.js

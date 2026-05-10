@@ -161,41 +161,57 @@ async function main() {
   const mode = args[0];
   const today = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' });
 
+  // Parse --limit N
+  let limit = 3; // default 3 per day
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--limit' && args[i + 1] != null) {
+      limit = parseInt(args[i + 1]) || 3;
+      i++;
+    }
+  }
+
   console.log(`\n=== join-quant Daily Pipeline | ${today} ===`);
 
   let newCount = 0;
   if (mode !== '--copy-only') {
-    newCount = await discoveryPhase();
+    const queueData = loadQueue();
+    const pendingCount = queueData.queue.filter(s => !queueData.copied[s.postId]).length;
+    const SKIP_LIST_THRESHOLD = 100;
+    if (pendingCount > SKIP_LIST_THRESHOLD) {
+      console.log(`[daily] Queue has ${pendingCount} pending (>${SKIP_LIST_THRESHOLD}), skipping discovery`);
+    } else {
+      newCount = await discoveryPhase();
+    }
   }
 
   const queueData = buildCopyQueue();
-  console.log(`[daily] Queue: ${queueData.queue.length} pending, ${Object.keys(queueData.copied || {}).length} copied`);
+  const pendingAfterBuild = queueData.queue.filter(s => !queueData.copied[s.postId]).length;
+  console.log(`[daily] Queue: ${pendingAfterBuild} pending, ${Object.keys(queueData.copied || {}).length} copied`);
 
   if (mode === '--discover-only') {
-    console.log('[daily] Discovery-only mode, skipping copy phase');
-    await sendWeChatAlert([
-      `📡 每日策略发现完成 | ${today}`,
-      `新增: ${newCount} 个策略`,
-      `待克隆: ${queueData.queue.length} 个`,
-      `已克隆: ${Object.keys(queueData.copied || {}).length} 个`,
-    ]);
+    console.log('[daily] Discovery-only mode, skipping fetch phase');
+    console.log(
+      `📡 每日策略发现完成 | ${today}\n` +
+      `新增: ${newCount} 个策略\n` +
+      `待抓取: ${queueData.queue.length} 个\n` +
+      `已抓取: ${Object.keys(queueData.copied || {}).length} 个`
+    );
     return;
   }
 
   // Fetch phase — read source + stats via API, save to strategies/
   const { processQueue } = require('./strategy-fetch');
-  const { processed, limitHit } = await processQueue(0); // 0 = unlimited
+  const { processed, limitHit } = await processQueue(limit);
 
-  // Final WeChat summary
+  // Final summary
   const queueFinal = loadQueue();
-  const copied = Object.keys(queueFinal.copied || {}).length;
-  await sendWeChatAlert([
-    `✅ 每日策略流水线完成 | ${today}`,
-    `本轮克隆: ${processed} 个`,
-    `累计已克隆: ${copied} 个`,
-    `队列剩余: ${queueFinal.queue.length} 个`,
-    `访问限制: ${limitHit ? '是' : '否'}`,
-  ]);
+  const totalCopied = Object.keys(queueFinal.copied || {}).length;
+  console.log(
+    `\n📊 每日流水线完成 | ${today}\n` +
+    `本轮处理: ${processed}/${limit}\n` +
+    `累计已抓取: ${totalCopied} 个\n` +
+    `队列剩余: ${queueFinal.queue.length} 个`
+  );
 }
 
 // CLI
