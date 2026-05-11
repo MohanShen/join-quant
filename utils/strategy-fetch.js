@@ -224,6 +224,7 @@ async function processQueue(maxToProcess = 0) {
 
   let processed = 0;
   let limitHit = false;
+  const fetchedEntries = []; // collected for manifest
 
   for (const entry of pending) {
     if (maxToProcess > 0 && processed >= maxToProcess) break;
@@ -246,38 +247,27 @@ async function processQueue(maxToProcess = 0) {
     if (sourceCode) {
       savedPath = saveStrategyFile(entry.postId, entry.backtestId, entry.title, sourceCode);
       fetched = true;
-      // Mark as fetched (removes from queue)
       markFetched(entry.postId, {
+        sourceFile: path.basename(savedPath),
+        stats,
+      });
+      fetchedEntries.push({
+        postId: entry.postId,
+        backtestId: entry.backtestId,
+        title: entry.title,
+        url: entry.url,
         sourceFile: path.basename(savedPath),
         stats,
       });
     }
 
-    // Print WeChat message to stdout (captured by cron announce delivery)
-    const score = (entry.likes || 0) + (entry.clones || 0) * 0.5;
     if (fetched) {
-      const { buildSummary } = require('./strategy-summarize');
-      const { fetchComments } = require('./strategy-comments');
-      const [comments] = await Promise.all([
-        fetchComments(entry.postId, 2).catch(() => []),
-      ]);
-      const summary = savedPath ? buildSummary(savedPath, stats, comments) : null;
-      if (summary) {
-        console.log(summary);
-      } else {
-        const statsLine = stats && stats.annualReturn != null
-          ? `年化${(stats.annualReturn * 100).toFixed(1)}% | 夏普${stats.sharpe} | 回撤${(stats.maxDrawdown * 100).toFixed(1)}%`
-          : stats?.annualReturn === null ? '绩效未公开（回测报告不公开）' : '绩效获取失败';
-        console.log(
-          `📊 *策略抓取成功*\n📌 ${entry.title}\n🧮 ${statsLine}`
-        );
-      }
+      const statsLine = stats && stats.annualReturn != null
+        ? `年化${(stats.annualReturn * 100).toFixed(1)}% | 夏普${stats.sharpe?.toFixed(2)} | 回撤${(stats.maxDrawdown * 100).toFixed(1)}%`
+        : '绩效未公开';
+      console.log(`FETCHED|${entry.title}|${statsLine}`);
     } else {
-      console.log(
-        `📋 *策略抓取失败（留待重试）*\n` +
-        `📌 ${entry.title}\n` +
-        `⚠️ ${sourceError || '未知错误'} — 明日继续尝试`
-      );
+      console.log(`FETCH_FAILED|${entry.title}|${sourceError || 'unknown'}`);
     }
 
     processed++;
@@ -286,6 +276,12 @@ async function processQueue(maxToProcess = 0) {
     if (!limitHit && processed < total) {
       await new Promise(r => setTimeout(r, 2000));
     }
+  }
+
+  // Write manifest for LLM to read
+  if (fetchedEntries.length > 0) {
+    const { writeManifest } = require('./strategy-manifest');
+    writeManifest(fetchedEntries);
   }
 
   console.log(`\n[fetch] Done. Processed: ${processed}/${total}`);
