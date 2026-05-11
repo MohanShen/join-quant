@@ -48,7 +48,7 @@ const POOL_NAMES = {
 
 // ── Faithful description (long-form paragraphs) ──────────────────────────────
 
-function buildFaithfulDescription(code) {
+function buildFaithfulDescription(code, stats) {
   // ── Parse key parameters ────────────────────────────────────────────────────
   const stocknum  = g(code, 'stocknum');
   const shift     = g(code, 'shift');     // pause lookback days
@@ -116,14 +116,13 @@ function buildFaithfulDescription(code) {
   // ── 仓位分配 ────────────────────────────────────────────────────────────
   paras.push(
     `仓位分配：每日${rebalBlock ? ` ${uniqueTimes.includes('09:30') ? '09:30' : uniqueTimes[0]} 开盘时` : ''}，将账户总权益平均分为${stocknum || 'N'}份，每只股票分配等额资金（总权益/${stocknum || 'N'}）。` +
-    `若有持仓股票不在候选列表，则市价卖出；若候选股票不在当前持仓，则等额买入。` +
-    (doubleOrder ? ` 注意：rebalance函数中对候选股的买入循环写了两遍（疑似复制粘贴残留），实际执行效果不受影响，只是冗余代码。` : '')
+    `若有持仓股票不在候选列表，则市价卖出；若候选股票不在当前持仓，则等额买入。`
   );
 
   // ── 止损 ────────────────────────────────────────────────────────────────
   if (zhisunBlock && zhisunBlock.trim().length > 50) {
-    const sd = short_d || 2;
-    const ld = long_d  || 20;
+    const sd = short_d ?? 10;
+    const ld = long_d  ?? 50;
     paras.push(
       `止损（每日${uniqueTimes.includes('09:30') ? '09:30' : '每日调仓时'}触发）：检查全部持仓股票，计算${sd}日收盘价均线（MA${sd}）与${ld}日收盘价均线（MA${ld}）。` +
       `若 MA${sd} 从上往下穿越 MA${ld}（死叉），且该股票当前可卖出（不在停牌、且有足够可平数量），则市价清仓。` +
@@ -131,29 +130,6 @@ function buildFaithfulDescription(code) {
     );
   }
 
-  // ── 阶梯止盈/调仓 (jieti) ───────────────────────────────────────────────
-  const tpMatches = jietiBlock ? [...jietiBlock.matchAll(/ret\s*>\s*(0\.\d+)/g)] : [];
-  const bbMatches = jietiBlock ? [...jietiBlock.matchAll(/MA(\d+)\s*>\s*price/g)] : [];
-
-  if (jietiBlock && jietiBlock.trim().length > 60) {
-    if (!jietiCalled) {
-      paras.push(
-        `已注释掉的阶梯止盈/调仓（jieti函数，未启用）：该模块在代码中存在但在 market_open 中被注释掉，实际运行中不会执行。` +
-        (tpMatches.length > 0
-          ? ` 若启用：当持仓收益率（成本价计算）> ${(parseFloat(tpMatches[0][1])*100).toFixed(0)}% 时减持50%；> ${(parseFloat(tpMatches[1][1])*100).toFixed(0)}% 时再减持30%；> ${(parseFloat(tpMatches[2][1])*100).toFixed(0)}% 时再减持20%。`
-          : '')
-      );
-    } else {
-      let jietiPara = `阶梯止盈/调仓（jieti函数，已启用）：`;
-      if (tpMatches.length > 0) {
-        jietiPara += `当持仓收益率 > ${(parseFloat(tpMatches[0][1])*100).toFixed(0)}% 时减持50%；> ${(parseFloat(tpMatches[1][1])*100).toFixed(0)}% 时再减持30%；> ${(parseFloat(tpMatches[2][1])*100).toFixed(0)}% 时再减持20%。`;
-      }
-      if (bbMatches.length > 0) {
-        jietiPara += `同时若股价跌破 MA10/MA15/MA20 均线，则分别增持20%/30%/50%。`;
-      }
-      paras.push(jietiPara);
-    }
-  }
 
   // ── 风控 ────────────────────────────────────────────────────────────────
   const riskParts = [];
@@ -165,9 +141,10 @@ function buildFaithfulDescription(code) {
   if (buyCostMatch || sellCostMatch) {
     const b = buyCostMatch  ? `买入万${(parseFloat(buyCostMatch[1])*10000).toFixed(0)}`  : '';
     const s = sellCostMatch ? `卖出千${(parseFloat(sellCostMatch[1])*1000).toFixed(1)}（含印花税）` : '';
-    riskParts.push(`手续费：${[b, s].filter(Boolean).join('，')}，最低5元/笔`);
+    riskParts.push(`手续费：${[b, s].filter(Boolean).join('，')}，最低5元/笔，含印花税千分之一`);
   }
   if (periodStr) riskParts.push(periodStr);
+  if (stats?.periodLabel) riskParts.push(`回测区间：${stats.periodLabel}（起）`);
   riskParts.push(`代码行数：${lineCount}行`);
   paras.push(`风控：${riskParts.join('；')}。`);
 
@@ -221,7 +198,7 @@ function buildSummary(filepath, stats, comments) {
 
   // Faithful translation (long-form paragraphs)
   lines.push('忠实翻译（代码逻辑）：');
-  const faithful = buildFaithfulDescription(code);
+  const faithful = buildFaithfulDescription(code, stats);
   faithful.split('\n\n').forEach(p => {
     p.split('\n').forEach(l => lines.push(l));
     lines.push('');

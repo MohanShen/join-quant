@@ -184,6 +184,7 @@ async function fetchOneStrategy(entry, cookiesStr) {
         winRatio: statsJson.data.win_ratio
           ? parseFloat(statsJson.data.win_ratio) : null,
         tradingDays: statsJson.data.trading_days || null,
+        periodLabel: statsJson.data.period_label || null,
       };
     } else if (isAccessLimitError(statsJson)) {
       statsError = statsJson.msg || 'access limit';
