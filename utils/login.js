@@ -82,7 +82,11 @@ class LoginManager {
   async getBrowserContext(headless = true) {
     const { cookies } = await this.ensureLogin();
     
-    const browser = await chromium.launch({ headless });
+    const browser = await chromium.launch({
+      headless,
+      executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+      args: ['--no-sandbox', '--disable-dev-shm-usage'],
+    });
     const context = await browser.newContext();
     
     // Set cookies in context
@@ -170,7 +174,11 @@ class LoginManager {
       throw new Error('Password not set. Set JOINQUANT_PASSWORD env var or pass in constructor.');
     }
 
-    const browser = await chromium.launch({ headless: true });
+    const browser = await chromium.launch({
+      headless: true,
+      executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+      args: ['--no-sandbox', '--disable-dev-shm-usage'],
+    });
     const context = await browser.newContext();
     const page = await context.newPage();
     
