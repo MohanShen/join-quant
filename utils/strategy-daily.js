@@ -14,7 +14,7 @@
  *   node utils/strategy-daily.js --copy-only       # copy only (uses existing queue)
  */
 
-const https = require('node:https');
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -22,20 +22,18 @@ const DATA_DIR = path.join(__dirname, '..', 'data');
 const COPY_QUEUE_FILE = path.join(DATA_DIR, 'copy-queue.json');
 const DISCOVERED_FILE = path.join(DATA_DIR, 'discovered.json');
 
+/**
+ * Use curl via execSync to bypass VPN HTTPS interference.
+ * @param {string} url
+ * @returns {object} parsed JSON
+ */
 function httpGet(url) {
-  return new Promise((resolve, reject) => {
-    https.get(url, {
-      headers: {
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-      },
-    }, res => {
-      let data = '';
-      res.on('data', c => data += c);
-      res.on('end', () => resolve(JSON.parse(data)));
-    }).on('error', reject);
-  });
+  const cmd = `curl -s "${url.replace(/"/g, '\\"')}" \
+    -H "Accept: application/json" \
+    -H "X-Requested-With: XMLHttpRequest" \
+    -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"`;
+  const out = execSync(cmd, { timeout: 20000 });
+  return JSON.parse(out.toString());
 }
 
 async function fetchListPage({ cate = 3, type = 'isNew', limit = 200 }) {
@@ -95,13 +93,25 @@ function buildCopyQueue() {
   const pending = Object.values(store.strategies)
     .filter(s => !copiedPostIds.has(s.postId));
 
-  pending.sort((a, b) => {
-    const scoreA = (a.likes || 0) + (a.clones || 0) * 0.5;
-    const scoreB = (b.likes || 0) + (b.clones || 0) * 0.5;
-    return scoreB - scoreA;
-  });
+  // ── Title-based deduplication ────────────────────────────────────────────
+  // Keep the highest-scoring post per unique title.
+  const bestByTitle = new Map();
+  for (const s of pending) {
+    const score = (s.likes || 0) + (s.clones || 0) * 0.5;
+    const existing = bestByTitle.get(s.title);
+    if (!existing) {
+      bestByTitle.set(s.title, { ...s, _score: score });
+    } else {
+      if (score > existing._score ||
+          (score === existing._score && (s.clones || 0) > (existing.clones || 0))) {
+        bestByTitle.set(s.title, { ...s, _score: score });
+      }
+    }
+  }
 
-  queueData.queue = pending.map((s, idx) => ({
+  const deduped = [...bestByTitle.values()].sort((a, b) => b._score - a._score);
+
+  queueData.queue = deduped.map((s, idx) => ({
     rank: idx + 1,
     postId: s.postId,
     backtestId: s.backtestId,
@@ -110,9 +120,14 @@ function buildCopyQueue() {
     likes: s.likes || 0,
     clones: s.clones || 0,
     annualReturn: s.annualReturn,
-    compositeScore: (((s.likes || 0) + (s.clones || 0) * 0.5)).toFixed(2),
+    compositeScore: s._score.toFixed(2),
     addedToQueueAt: new Date().toISOString(),
   }));
+
+  const dupRemoved = pending.length - deduped.length;
+  if (dupRemoved > 0) {
+    console.log(`[daily] Title dedup: removed ${dupRemoved} duplicate posts (${pending.length} → ${deduped.length})`);
+  }
 
   queueData.lastUpdated = new Date().toISOString();
   saveQueueData(queueData);
@@ -206,12 +221,14 @@ async function main() {
   // Final summary
   const queueFinal = loadQueue();
   const totalCopied = Object.keys(queueFinal.copied || {}).length;
-  console.log(
-    `\n📊 每日流水线完成 | ${today}\n` +
-    `本轮处理: ${processed}/${limit}\n` +
-    `累计已抓取: ${totalCopied} 个\n` +
-    `队列剩余: ${queueFinal.queue.length} 个`
-  );
+  const summary = [
+    `📡 每日策略发现完成 | ${today}`,
+    `新增: ${newCount} 个策略`,
+    `待克隆: ${queueFinal.queue.length} 个`,
+    `已克隆: ${totalCopied} 个`,
+  ];
+  console.log('\n' + summary.join('\n'));
+  await sendWeChatAlert(summary);
 }
 
 // CLI

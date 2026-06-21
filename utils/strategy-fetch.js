@@ -9,6 +9,7 @@
  *   2. For each uncopied strategy:
  *      - Fetch source via API (GET /algorithm/backtest/source)
  *      - Fetch stats via API (POST /algorithm/backtest/stats)
+ *      - DEDUP: skip if source content matches an already-fetched strategy (SHA256)
  *      - Save to strategies/ with metadata header
  *      - Queue WeChat summary
  *   3. Stop when hitting access limit
@@ -22,12 +23,14 @@
 const https = require('node:https');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const STRATEGIES_DIR = path.join(__dirname, '..', 'strategies');
 const DISCOVERED_FILE = path.join(DATA_DIR, 'discovered.json');
 const COPY_QUEUE_FILE = path.join(DATA_DIR, 'copy-queue.json');
 const COOKIES_FILE = path.join(DATA_DIR, 'cookies.json');
+const CONTENT_HASH_FILE = path.join(DATA_DIR, 'content-hashes.json');
 
 const ACCESS_LIMIT_KEYWORDS = ['策略数已达上限', '访问受限', 'maximum strategies', '10001'];
 
@@ -85,6 +88,58 @@ function loadCookies() {
 
 function cookiesToString(cookies) {
   return cookies.map(c => `${c.name}=${c.value}`).join('; ');
+}
+
+// ── Content-hash dedup registry ──────────────────────────────────────────────
+
+/**
+ * SHA256 hex digest of source code content.
+ * @param {string} code
+ * @returns {string}
+ */
+function contentHash(code) {
+  return crypto.createHash('sha256').update(code || '', 'utf8').digest('hex');
+}
+
+function loadHashRegistry() {
+  if (!fs.existsSync(CONTENT_HASH_FILE)) return {};
+  try {
+    return JSON.parse(fs.readFileSync(CONTENT_HASH_FILE, 'utf8'));
+  } catch {
+    return {};
+  }
+}
+
+function saveHashRegistry(registry) {
+  fs.writeFileSync(CONTENT_HASH_FILE, JSON.stringify(registry, null, 2));
+}
+
+/**
+ * Find if this exact source content was already saved under a different postId.
+ * Returns the original postId if duplicate, null otherwise.
+ * @param {string} sourceCode
+ * @returns {string|null}
+ */
+function findDuplicateByContent(sourceCode) {
+  if (!sourceCode) return null;
+  const hash = contentHash(sourceCode);
+  const registry = loadHashRegistry();
+  const entry = Object.entries(registry).find(([h]) => h === hash);
+  return entry ? entry[1].postId : null;
+}
+
+/**
+ * Register source content hash after successfully saving a file.
+ * @param {string} sourceCode
+ * @param {string} postId
+ * @param {string} sourceFile
+ */
+function registerContentHash(sourceCode, postId, sourceFile) {
+  if (!sourceCode) return;
+  const hash = contentHash(sourceCode);
+  const registry = loadHashRegistry();
+  registry[hash] = { postId, sourceFile, registeredAt: new Date().toISOString() };
+  saveHashRegistry(registry);
 }
 
 // ── Queue helpers ────────────────────────────────────────────────────────────
@@ -224,6 +279,7 @@ async function processQueue(maxToProcess = 0) {
 
   let processed = 0;
   let limitHit = false;
+  let skippedDup = 0;
   const fetchedEntries = []; // collected for manifest
 
   for (const entry of pending) {
@@ -241,11 +297,26 @@ async function processQueue(maxToProcess = 0) {
       break;
     }
 
-    // Save file only if we got source
+    // ── Deduplicate by source content ───────────────────────────────────────
+    let isDuplicate = false;
+    let duplicateOfPostId = null;
+
+    if (sourceCode) {
+      duplicateOfPostId = findDuplicateByContent(sourceCode);
+      if (duplicateOfPostId) {
+        console.log(`[fetch] DUPLICATE — content matches postId=${duplicateOfPostId.slice(0, 8)}, skipping postId=${entry.postId.slice(0, 8)}`);
+        isDuplicate = true;
+        markFetched(entry.postId, { duplicateOf: duplicateOfPostId });
+        skippedDup++;
+      }
+    }
+
+    // Save file only if we got source AND it's not a duplicate
     let savedPath = null;
     let fetched = false;
-    if (sourceCode) {
+    if (sourceCode && !isDuplicate) {
       savedPath = saveStrategyFile(entry.postId, entry.backtestId, entry.title, sourceCode);
+      registerContentHash(sourceCode, entry.postId, path.basename(savedPath));
       fetched = true;
       markFetched(entry.postId, {
         sourceFile: path.basename(savedPath),
@@ -259,13 +330,27 @@ async function processQueue(maxToProcess = 0) {
         sourceFile: path.basename(savedPath),
         stats,
       });
+    } else if (isDuplicate) {
+      // Record in manifest so LLM knows it's a dup
+      fetchedEntries.push({
+        postId: entry.postId,
+        backtestId: entry.backtestId,
+        title: entry.title,
+        url: entry.url,
+        stats: stats || {},
+        duplicateOf: duplicateOfPostId,
+      });
     }
 
     if (fetched) {
       const statsLine = stats && stats.annualReturn != null
         ? `年化${(stats.annualReturn * 100).toFixed(1)}% | 夏普${stats.sharpe?.toFixed(2)} | 回撤${(stats.maxDrawdown * 100).toFixed(1)}%`
         : '绩效未公开';
+      const notifText = `📊 *策略发现*\n📌 ${entry.title}\n🔢 ${statsLine}\n📁 ${entry.sourceFile}`;
+      queueWeChatMessage(notifText);
       console.log(`FETCHED|${entry.title}|${statsLine}`);
+    } else if (isDuplicate) {
+      console.log(`DUPLICATE|${entry.title}|same content as postId=${duplicateOfPostId.slice(0, 8)}`);
     } else {
       console.log(`FETCH_FAILED|${entry.title}|${sourceError || 'unknown'}`);
     }
@@ -284,8 +369,8 @@ async function processQueue(maxToProcess = 0) {
     writeManifest(fetchedEntries);
   }
 
-  console.log(`\n[fetch] Done. Processed: ${processed}/${total}`);
-  return { processed, limitHit };
+  console.log(`\n[fetch] Done. Processed: ${processed}/${total}, duplicates skipped: ${skippedDup}`);
+  return { processed, limitHit, skippedDup };
 }
 
 // ── CLI ─────────────────────────────────────────────────────────────────────
@@ -318,8 +403,8 @@ if (require.main === module) {
   } else {
     (async () => {
       console.log(`=== Strategy Fetch (limit=${max || 3}) ===`);
-      const { processed, limitHit } = await processQueue(max || 3);
-      console.log(`Processed: ${processed}, Limit hit: ${limitHit}`);
+      const { processed, limitHit, skippedDup } = await processQueue(max || 3);
+      console.log(`Processed: ${processed}, Limit hit: ${limitHit}, Dup skipped: ${skippedDup}`);
     })().catch(e => { console.error(e); process.exit(1); });
   }
 }

@@ -162,13 +162,27 @@ function buildCopyQueue() {
   const pending = Object.values(store.strategies)
     .filter(s => !copiedPostIds.has(s.postId));
 
-  pending.sort((a, b) => {
-    const scoreA = (a.likes || 0) + (a.clones || 0) * 0.5;
-    const scoreB = (b.likes || 0) + (b.clones || 0) * 0.5;
-    return scoreB - scoreA;
-  });
+  // ── Title-based deduplication ────────────────────────────────────────────
+  // Keep the highest-scoring post per unique title.
+  // Score = likes + clones * 0.5; tiebreak: higher clones wins.
+  const bestByTitle = new Map();
+  for (const s of pending) {
+    const score = (s.likes || 0) + (s.clones || 0) * 0.5;
+    const existing = bestByTitle.get(s.title);
+    if (!existing) {
+      bestByTitle.set(s.title, { ...s, _score: score });
+    } else {
+      const exScore = existing._score;
+      if (score > exScore || (score === exScore && (s.clones || 0) > (existing.clones || 0))) {
+        bestByTitle.set(s.title, { ...s, _score: score });
+      }
+    }
+  }
 
-  queueData.queue = pending.map((s, idx) => ({
+  // Convert back to array sorted by score desc
+  const deduped = [...bestByTitle.values()].sort((a, b) => b._score - a._score);
+
+  queueData.queue = deduped.map((s, idx) => ({
     rank: idx + 1,
     postId: s.postId,
     backtestId: s.backtestId,
@@ -177,14 +191,21 @@ function buildCopyQueue() {
     likes: s.likes || 0,
     clones: s.clones || 0,
     annualReturn: s.annualReturn,
-    compositeScore: (((s.likes || 0) + (s.clones || 0) * 0.5)).toFixed(2),
+    compositeScore: s._score.toFixed(2),
     addedToQueueAt: new Date().toISOString(),
   }));
+
+  const totalRaw = pending.length;
+  const totalDeduped = deduped.length;
+  const dupRemoved = totalRaw - totalDeduped;
 
   queueData.lastUpdated = new Date().toISOString();
   saveQueueData(queueData);
 
   console.log(`[discover] Queue: ${queueData.queue.length} pending, ${copiedPostIds.size} copied`);
+  if (dupRemoved > 0) {
+    console.log(`[discover] Title dedup: removed ${dupRemoved} duplicate posts (${totalRaw} → ${totalDeduped})`);
+  }
   console.log(`[discover] Top 5:`);
   queueData.queue.slice(0, 5).forEach(s =>
     console.log(`  #${s.rank} [likes=${s.likes} clones=${s.clones} score=${s.compositeScore}] ${s.title.slice(0, 60)}`)
