@@ -4,35 +4,98 @@ Automated JoinQuant strategy discovery, cloning, and backtest pipeline.
 
 ## Features
 
-- **Strategy Discovery**: Scrapes the JoinQuant community via the listV2 API to find strategies, sorted by composite score (likes + clones×0.5)
-- **Auto-Fetch Pipeline**: For each strategy in the queue, fetches source code + performance stats via API and saves to `strategies/`
-- **Daily Cron**: Runs discovery + copy loop daily, stopping only when hitting the access limit (VIP strategy cap)
-- **WeChat Alerts**: Sends strategy summaries to your WeChat session after each successful clone
-- **Custom Strategy Backtest**: Upload any local Python strategy file → run on JoinQuant → poll results → extract metrics
+- **Pipeline 1 — Daily Discovery & Clone**: Scrapes the JoinQuant community via the listV2 API, fetches source code + performance metrics via HTTP API, saves to `strategies/`, sends WeChat alerts on new finds.
+- **Pipeline 2 — Custom Strategy Backtest**: Upload any local Python strategy file → create JQ research entry → inject code via Ace editor → trigger backtest → poll completion → extract metrics. Fully browser-automated via CDP connection to your logged-in Chrome.
+- **Daily Cron**: Pipeline 1 runs on a schedule (configured via OpenClaw cron), stopping when hitting VIP access limits.
+- **Modular**: Each component (auth, discovery, fetcher, backtest) is independent and reusable.
+
+## Implemented Pipelines
+
+Two fully-automated pipelines are implemented. Each is documented below with its exact technical implementation.
+
+---
+
+### Pipeline 1: Daily Strategy Discovery & Clone
+
+**Purpose:** Automatically discover high quality strategies from the JoinQuant community, clone their source code, and save locally.
+
+**Entry points:**
+```bash
+node utils/strategy-discover.js        # Discover top N strategies
+node utils/strategy-fetch.js            # Process entire clone queue
+node utils/strategy-fetch.js 3         # Process up to N strategies
+node utils/strategy-daily.js          # Full pipeline: discover + clone loop
+node utils/strategy-daily.js --discover-only  # Discovery only (~5s)
+```
+
+**Step-by-step technical implementation:**
+
+| Step | What happens | How |
+|------|-------------|-----|
+| 1. Login | Authenticate to JQ | `POST /user/login` with `username` + `pwd` (form encoded). Server sets cookies (`uid`, `PHPSESSID`, `token`) in response headers. Stored in `data/cookies.json`. |
+| 2. Discovery | Fetch community strategy list | `GET /data/listV2` with page/sort params. Returns JSON with `postId`, `likes`, `clones`, `communityScore`. Strategies sorted by composite score = `likes + clones×0.5`. |
+| 3. Dedupe | Filter out already-copied strategies | Compare against `data/discovered.json` (all-time) and `data/copy-queue.json` (pending). New strategies appended to queue. |
+| 4. Clone fetch | For each queued strategy: fetch source + stats | `GET /algorithm/backtest/source?backtestId=X` — returns Python source code. `POST /algorithm/backtest/stats?backtestId=X&ajax=1` — returns JSON with `annualReturn`, `maxDrawdown`, `sharpe`, etc. |
+| 5. Save | Write `.py` file to `strategies/` | Filename format: `{date}_{title}-{shortPostId}.py`. Strategy name, metrics, and `postId` embedded as comments at the top. |
+| 6. WeChat alert | Send strategy summary to user | OpenClaw WeChat channel. Message includes strategy title, metrics, and clone/link info. |
+
+**No browser automation required.** Steps 1–5 use raw HTTP API calls. Step 6 uses OpenClaw internal messaging.
+
+---
+
+### Pipeline 2: Custom Strategy Backtest
+
+**Purpose:** Upload any local Python strategy file to JoinQuant, run a backtest, poll for completion, and extract result metrics.
+
+**Entry point:**
+```bash
+node utils/strategy-post-backtest.js <path-to-strategy.py> [title]
+```
+
+**Step-by-step technical implementation:**
+
+| Step | What happens | How |
+|------|-------------|-----|
+| 1. Browser setup | Connect to running Chrome via CDP | `chromium.connectOverCDP('http://localhost:9225')`. Reuses the user's existing Chrome session (cookies, login state). **No username/password needed.** If no Chrome at 9225: launch persistent-context Chrome with `--user-data-dir=/tmp/jq-auth-browser`. |
+| 2. Create strategy | Get a new `algorithmId` | Navigate to `/algorithm/index/new?restore=0&type=stock&baseCapital=100000`. JQ does a client-side redirect to `/algorithm/index/edit?algorithmId={32-char-hex}`. Extract `algorithmId` from final URL. |
+| 3. Inject code | Put Python code into JQ's editor | JQ uses the **Ace code editor**. Code injected via `window.ace.edit(div).setValue(code, -1)`. Also synced to hidden `<textarea id="code">` (JQ's backend reads from this on save, not from Ace directly). |
+| 4. Save | Persist code to JQ servers | `page.evaluate()` clicks the "保存" button. JQ POSTs the textarea content to backend. |
+| 5. Trigger backtest | Start the backtest run | `page.evaluate()` clicks the "编译运行" button. JQ queues the backtest job. |
+| 6. Poll for completion | Wait for backtest to finish | Navigate to `/algorithm/backtest/buildList?algorithmId=X`. JQ updates this page via XHR without full page reload. **Reload on each poll iteration** (every 5s) to see fresh status. Detect `"完成"` in DOM to know when done. |
+| 7. Extract metrics | Parse result table | `document.querySelectorAll('table tbody tr')`. Find the row where `cells[6].textContent === '完成'`. Extract: `cells[7]`=策略收益, `cells[8]`=最大回撤, `cells[9]`=Alpha, `cells[10]`=Beta, `cells[11]`=Sharpe. |
+
+**Why CDP instead of Playwright launch?**
+JoinQuant sets `PHPSESSID` and `token` as `httpOnly` cookies — browsers guard these and Playwright cannot read or set them via `addCookies()`. CDP connects to the user's already-logged-in Chrome, inheriting all cookies and the full session state, bypassing authentication entirely.
+
+**Why reload polling?**
+JoinQuant updates backtest status via JavaScript XHR calls that mutate the DOM in-place. A single `page.goto()` loads a static snapshot — subsequent status changes are invisible without a full page reload. We reload the buildList URL on every poll to get the latest state.
+
+---
 
 ## Architecture
 
 ```
 join-quant/
 ├── utils/
-│   ├── login.js              # LoginManager: Playwright login, cookie persistence
-│   ├── fetcher.js           # StrategyFetcher: Get source from JoinQuant API
-│   ├── loader.js            # StrategyLoader: Load local .py/.json strategies
-│   ├── strategy-discover.js # Community listV2 API crawler + data store
-│   ├── strategy-fetch.js     # Queue walker: fetch source/stats via API → save .py → WeChat
-│   ├── strategy-daily.js     # Cron entry point: discover → fetch loop
-│   └── strategy-post-backtest.js  # ⭐ Custom strategy → JQ backtest pipeline
+│   ├── login.js              # LoginManager: raw HTTP login → cookies.json
+│   ├── fetcher.js            # StrategyFetcher: source + stats via HTTP API
+│   ├── loader.js             # StrategyLoader: load local .py/.json files
+│   ├── strategy-discover.js  # Community listV2 API crawler + data store
+│   ├── strategy-fetch.js     # Clone queue processor (Pipeline 1)
+│   ├── strategy-daily.js    # Cron entry: discover → fetch loop
+│   └── strategy-post-backtest.js  # Custom strategy backtest (Pipeline 2)
 ├── backtest/
-│   └── runner.js            # BacktestRunner: Clone → Poll → Parse results
+│   └── runner.js             # BacktestRunner: clone → poll → parse
 ├── pipelines/
-│   ├── community.js          # CommunityPipeline: post → fetch → backtest
-│   └── custom.js            # CustomPipeline: local file → backtest
-├── strategies/               # Python strategy files (cloned strategies saved here)
-├── data/                    # Discovery state (gitignored)
-│   ├── discovered.json       # All discovered strategies (keyed by postId)
-│   ├── copy-queue.json       # Pending strategies sorted by composite score
-│   └── notifications.json    # Pending WeChat notifications
-└── index.js                 # CLI entry point
+│   ├── community.js          # CommunityPipeline orchestrator (Pipeline 1)
+│   └── custom.js             # CustomPipeline orchestrator (Pipeline 2)
+├── strategies/                # Cloned + local Python strategy files
+├── data/                     # Discovery state (gitignored)
+│   ├── discovered.json        # All-time discovered strategies by postId
+│   ├── copy-queue.json        # Pending strategies sorted by score
+│   ├── notifications.json    # Pending WeChat notifications
+│   └── cookies.json          # JoinQuant session cookies
+└── index.js                  # CLI entry point
 ```
 
 ---
@@ -92,51 +155,6 @@ node utils/strategy-post-backtest.js strategies/我的策略.py "可选标题"
 
 ---
 
-## How the Pipeline Works
-
-The `strategy-post-backtest.js` script automates the full flow:
-
-```
-CDP (connect to Chrome)
-    ↓
-Create new strategy on JoinQuant (GET /algorithm/index/new → redirect to editor)
-    ↓
-Inject Python code into Ace editor (window.ace.edit().setValue())
-    ↓
-Sync to hidden textarea (JQ reads from this on save)
-    ↓
-Click 保存 (Save)
-    ↓
-Click 编译运行 (Trigger backtest)
-    ↓
-Poll /algorithm/backtest/buildList (reload every 5s, detect "完成")
-    ↓
-Extract result metrics from table (cells[1..11])
-```
-
-### Key Technical Notes
-
-- **Why CDP?** JoinQuant sets `httpOnly` cookies (`PHPSESSID`, `token`) that cannot be set via Playwright's `addCookies()`. CDP connects directly to your running Chrome's debugging interface, inheriting the full authenticated session.
-- **Why Ace editor?** JoinQuant's web editor uses Ace for code editing. We manipulate the Ace editor session directly via `window.ace.edit(div).setValue(code, -1)`, then sync to the hidden textarea that JQ's backend reads on save.
-- **Why reload polling?** JoinQuant updates buildList status via XHR, not page navigation. A single page load won't reflect live status — we reload the buildList URL on each poll iteration.
-
----
-
-## Discovery & Clone Pipeline
-
-```bash
-# Discover top strategies from community (~5 seconds)
-node utils/strategy-daily.js --discover-only
-
-# Process the clone queue (fetch source + stats → save .py → WeChat)
-node utils/strategy-fetch.js 3    # process up to N strategies
-
-# Full daily pipeline (discover + clone loop)
-node utils/strategy-daily.js
-```
-
----
-
 ## CLI Reference
 
 ```bash
@@ -186,8 +204,9 @@ npm test
 
 ## Known Limitations
 
-- **Custom backtest date range**: The pipeline uses JoinQuant's default backtest period (2019-01-01 to 2019-06-30). Custom date ranges require modifying the `newStrategy` URL parameters.
-- **Headless mode**: JoinQuant shows CAPTCHA ("拼图验证") in headless browser mode. Use headed mode (`--user-data-dir` persistent profile) or CDP connection to an existing Chrome session.
+- **Backtest date range**: Pipeline 2 uses JoinQuant's default period (2019-01-01 to 2019-06-30). Custom date ranges require changing the `newStrategy` URL parameters in `strategy-post-backtest.js`.
+- **Chrome session persistence**: Pipeline 2 relies on a running Chrome process. Closing it invalidates the session and requires re-login. Keep the Chrome process running (see Chrome Setup above).
+- **Headless mode**: JoinQuant shows CAPTCHA ("拼图验证") in headless Playwright browsers. Pipeline 2 uses CDP connection to an existing headed Chrome session to bypass this.
 
 ## License
 
