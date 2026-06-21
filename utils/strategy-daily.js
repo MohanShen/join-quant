@@ -214,6 +214,17 @@ async function main() {
     return;
   }
 
+  // Refresh session cookies before fetching. The fetch phase authenticates via
+  // data/cookies.json. We try username/password form login first (unattended),
+  // then fall back to harvesting the live session from a running Chrome over
+  // CDP when the form login is blocked by a CAPTCHA. Best-effort — if both fail
+  // we proceed with the existing cookies.
+  const { refreshCookies } = require('./refresh-cookies');
+  const cookieRes = await refreshCookies();
+  if (!cookieRes.ok) {
+    console.warn(`[daily] Cookie refresh failed: ${cookieRes.error} — using existing cookies`);
+  }
+
   // Fetch phase — read source + stats via API, save to strategies/
   const { processQueue } = require('./strategy-fetch');
   const { processed, limitHit } = await processQueue(limit);
