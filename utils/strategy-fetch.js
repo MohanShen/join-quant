@@ -184,7 +184,11 @@ function saveStrategyFile(postId, backtestId, title, sourceCode) {
     .trim()
     .replace(/^_+|_+$/g, '') || postId.slice(0, 8);
 
-  const filename = `${safeName}-${postId.slice(0, 8)}.py`;
+  // Prefix with the fetch date (Asia/Shanghai) so saved files sort
+  // chronologically and match the YYYY-MM-DD_ naming convention.
+  // 'en-CA' renders as YYYY-MM-DD.
+  const datePrefix = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
+  const filename = `${datePrefix}_${safeName}-${postId.slice(0, 8)}.py`;
   const filepath = path.join(STRATEGIES_DIR, filename);
   const header = `# Clone from JoinQuant\n# postId: ${postId}\n# backtestId: ${backtestId}\n# title: ${title}\n\n`;
   fs.writeFileSync(filepath, header + (sourceCode || ''));
