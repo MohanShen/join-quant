@@ -25,6 +25,7 @@ description: Ingest one or more join-quant strategy .py files into the wiki/ kno
    - 被注释掉/未启用的模块不写。
 4. **先填 `factors`**（§2.1 四角色：选股/择时/风控/仓位，选股按子类受控），**再据 §2「因子→concept 归并表」自动补全 `因子族`/`机制` concept**，最后手动加 `结构` concept（策略范式，如 ETF轮动）。若翻译已产出「概要要素行」（`push-format.md` §2），优先复用其字段，避免二次推断。出现新因子子类或新概念：先登记词表（标注 concept 的 `kind`），再使用。
 5. 对每个涉及概念，**追加**（不覆盖）到其概念页的「变体与差异」「绩效横评」，刷新 `strategyCount`/`updatedAt`；并在策略页「涉及概念」用 `[[概念名]]` 双向链接。
+   - **「因子构成」列不要手写**：先写好该策略页的 `factors` frontmatter，再运行 `node utils/wiki-factor-signature.js wiki/strategies/<file>.md` 取其输出，原样粘贴为该行的因子构成单元格——保证概念页与策略页零漂移。
 6. 更新 `wiki/index.md`（策略节 + 受影响概念节）。
 7. 追加 `wiki/log.md`：`## [YYYY-MM-DD] ingest | <title> (<postId8>) → concepts: <…>`。
 8. 发现与既有结论矛盾 → 写进该策略页「矛盾」小节 + `log.md` 标注，**留待人工裁决，不改既有结论**。

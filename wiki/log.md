@@ -21,3 +21,4 @@
 ## [2026-06-27] ingest | 市场温度驱动极简ETF (dc9f9dad) → concepts: ETF轮动, 择时-均线, 止损模块
 ## [2026-06-27] ingest | ETF溢价回撤 (edd94ebc) → concepts: ETF轮动 ⚠绩效存疑已标注
 ## [2026-06-27] lint | pilot 完成：12 策略页 + 2 概念页；待补概念页 [[择时-均线]] [[止损模块]] [[多因子模型]] [[动量与趋势]]（被引用但尚无独立页）
+## [2026-06-27] lint | 因子构成列改由 utils/wiki-factor-signature.js 从 factors frontmatter 生成；校验 12 单元格零漂移
