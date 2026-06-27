@@ -1,5 +1,7 @@
 ---
 concept: ETF轮动
+kind: 结构
+rollup:
 aliases: [ETF动量轮动, 基金轮动, 核心资产轮动]
 strategyCount: 6
 updatedAt: 2026-06-27
