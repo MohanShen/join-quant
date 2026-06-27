@@ -4,6 +4,10 @@ backtestId: 965db35369fd23f2ac349298273c7786
 title: 市场温度驱动的极简ETF 轮动策略--6年10倍
 sourceFile: strategies/2026-06-27_市场温度驱动的极简ETF_轮动策略--6年10倍-dc9f9dad.py
 concepts: [ETF轮动, 择时-均线, 止损模块]
+factors:
+  择时: [市场温度temp4(周期位置/EMA60平滑/积分/综合), 阈值±3.52]
+  风控: [过热切债(10日>35%或月低>40%), 最大持仓天数1060]
+  仓位: [满仓98%单标的, 空档分阶段轮动(原油→豆粕→纳指), 城投债兜底]
 ingestedAt: 2026-06-27
 codeLines: 482
 stats: { annualReturn: 0.530, sharpe: 1.88, maxDrawdown: 0.247, periodLabel: 2026-05 }

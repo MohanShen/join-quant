@@ -23,7 +23,7 @@ description: Ingest one or more join-quant strategy .py files into the wiki/ kno
    - 「忠实翻译」段**严格套用** `push-format.md`：选股池/仓位分配/止损/风控；
    - 均线周期必须从代码读取（如 `g.short_d`/`g.long_d`），不硬编码；
    - 被注释掉/未启用的模块不写。
-4. 判定涉及的**规范概念**（`wiki-schema.md` §2 受控词表）。出现新概念：先在词表登记，再建概念页。
+4. 判定涉及的**规范概念**（`wiki-schema.md` §2 受控词表）与**因子**（§2.1 四角色：选股/择时/风控/仓位，选股按子类受控）。填入 frontmatter 的 `concepts` 与 `factors`。若翻译已产出「概要要素行」（`push-format.md` §2），优先直接复用其 选股/择时/风控/概念 字段，避免二次推断。出现新概念或新选股子类：先登记词表，再使用。
 5. 对每个涉及概念，**追加**（不覆盖）到其概念页的「变体与差异」「绩效横评」，刷新 `strategyCount`/`updatedAt`；并在策略页「涉及概念」用 `[[概念名]]` 双向链接。
 6. 更新 `wiki/index.md`（策略节 + 受影响概念节）。
 7. 追加 `wiki/log.md`：`## [YYYY-MM-DD] ingest | <title> (<postId8>) → concepts: <…>`。

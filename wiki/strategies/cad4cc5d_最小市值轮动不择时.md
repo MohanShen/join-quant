@@ -4,6 +4,11 @@ backtestId: 6dfbf03d6c8c450875c435f25466a47d
 title: 最小市值轮动,不择时
 sourceFile: strategies/2026-06-17_最小市值轮动_不择时-cad4cc5d.py
 concepts: [小市值因子]
+factors:
+  选股:
+    规模价值: [最小市值, PE>100或<0过滤]
+  风控: [无]
+  仓位: [等权5只, 月度调仓]
 ingestedAt: 2026-06-27
 codeLines: 83
 stats: { annualReturn: 0.599, sharpe: 1.61, maxDrawdown: 0.437, periodLabel: 2016-11 }

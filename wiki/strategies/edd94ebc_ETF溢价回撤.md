@@ -4,6 +4,13 @@ backtestId: 6b3ab11afe6b8a117294cf3851fc5758
 title: ETF溢价回撤13.12%年化1599%，实盘效果好
 sourceFile: strategies/2026-06-19_ETF溢价回撤13_12_年化1599_实盘效果好-edd94ebc.py
 concepts: [ETF轮动]
+factors:
+  选股:
+    规模价值: [折价率(取溢价<0)]
+    技术量价: [站上MA5]
+    流动性: [成交额>80万, 价格波动<0.1]
+  风控: [无]
+  仓位: [等权2只]
 ingestedAt: 2026-06-27
 codeLines: 97
 stats: { annualReturn: 15.997, sharpe: 51.16, maxDrawdown: 0.131, periodLabel: 2025-08 }

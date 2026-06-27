@@ -6,6 +6,13 @@ sourceFile: strategies/2026-05-17_小市值排除3个bug版_22年至今收益506
 joinquantPost: https://www.joinquant.com/post/47791
 author: zycash（原帖：国九小市值策略）
 concepts: [小市值因子, 择时-均线, 止损模块]
+factors:
+  选股:
+    规模价值: [小市值]
+    质量基本面: [国九条(净利>0/营收>1亿)]
+  择时: [深证综指MA10偏离, 1/4月日历空仓]
+  风控: [止损线-9%, 大盘趋势(成分均跌≥5%), 止盈×2, 昨日涨停打开卖出]
+  仓位: [等权, 动态持仓数(MA偏离3~6), 空仓月持货币ETF]
 ingestedAt: 2026-06-27
 codeLines: 374
 stats: { annualReturn: 1.253, sharpe: 4.37, maxDrawdown: 0.110, periodLabel: 2024-04 }
