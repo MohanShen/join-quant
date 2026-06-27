@@ -184,6 +184,7 @@ updatedAt: <YYYY-MM-DD>
 2. 若 manifest 条目带 `duplicateOf` → 记 `skip-dup`，不建页，结束。
 3. 按 §3.1 写策略页；忠实翻译段严格套用 `push-format.md`。
 4. 判定其涉及的**规范概念**（§2 词表）；新概念需先登记词表再建概念页。
+   - 若该策略的翻译已产出「概要要素行」（见 `push-format.md` §2，含 基准/持股/调仓/止损/因子），**优先直接复用**其字段填充 frontmatter，避免从源码二次推断；`因子[...]` 即 frontmatter 的 `concepts`。
 5. 对每个涉及概念：**追加**该策略到概念页的「变体与差异」「绩效横评」，**不覆盖**已有内容；刷新 `strategyCount` 与 `updatedAt`。
 6. 更新 `index.md`（策略节 + 受影响概念节）。
 7. 追加 `log.md`。
