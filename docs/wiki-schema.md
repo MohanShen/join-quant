@@ -271,6 +271,7 @@ updatedAt: <YYYY-MM-DD>
 
 - 经 `index.md` 定位相关页 → 阅读 → 带引用作答（引用 = `[[页名]]` 或 `strategies/<file>.py`）。
 - 有价值的结论回填为概念页的小节或新页，并记 `log.md`。
+- 已封装为 **`/query-wiki` 技能**（`.claude/skills/query-wiki/`）：分类问题 → 选入口（概念页 / 策略页 / frontmatter 结构化检索）→ 带 `[[引用]]` 作答 → 可选回填。横比须尊重 ⚠ 绩效警示与 `periodLabel` 区间差异。
 
 ## 8. Lint 工作流（定期）
 
