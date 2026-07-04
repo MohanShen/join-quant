@@ -1,15 +1,25 @@
 /**
  * strategy-post-backtest.js
  *
- * Flow: CDP (reuse existing Chrome) -> Create new strategy -> Paste code -> Save -> Run backtest -> Poll -> Extract metrics
+ * Flow: CDP (reuse existing Chrome) -> Create new strategy -> Set backtest window/capital
+ *       -> Paste code -> Save -> Run backtest -> Poll -> Extract metrics -> Verify window ran
  *
  * Usage:
- *   node utils/strategy-post-backtest.js <path-to-strategy.py> [title]
+ *   node utils/strategy-post-backtest.js <path-to-strategy.py> [title] [options]
+ *
+ * Options (autoresearch harness — see research/harness.md):
+ *   --window <train|val|holdout>   Frozen backtest window (epoch 1). Sets start/end dates.
+ *   --start <YYYY-MM-DD>           Explicit start date (overrides --window).
+ *   --end   <YYYY-MM-DD>           Explicit end date (overrides --window).
+ *   --capital <N>                  Base capital in yuan (default 1000000 = harness ¥1M).
+ *   If neither --window nor --start/--end is given, JQ's default window is used and
+ *   window verification is SKIPPED (ad-hoc mode; not valid for logging experiments).
  *
  * Environment:
  *   JQ_CDP_URL   — Chrome debugging URL (default: http://localhost:9225)
  *   JOINQUANT_USERNAME  — JQ account (default: 15656096430)
  *   JOINQUANT_PASSWORD   — JQ password (required if CDP approach fails)
+ *   JQ_BASE_CAPITAL — default base capital if --capital omitted
  */
 
 const { chromium } = require('playwright');
@@ -23,8 +33,53 @@ const MAX_POLL_MS = 20 * 60 * 1000;
 
 const JOINQUANT_USERNAME = process.env.JOINQUANT_USERNAME || '15656096430';
 const JOINQUANT_PASSWORD = process.env.JOINQUANT_PASSWORD;
+const DEFAULT_CAPITAL = parseInt(process.env.JQ_BASE_CAPITAL || '1000000', 10);
+
+// Frozen backtest windows — MUST match research/harness.md (epoch 1).
+// HOLDOUT end rolls forward to "today" (true out-of-sample).
+function todayISO() { return new Date().toISOString().slice(0, 10); }
+const WINDOWS = {
+  train:   { start: '2022-01-01', end: '2023-12-31' },
+  val:     { start: '2024-01-01', end: '2024-12-31' },
+  holdout: { start: '2025-01-01', end: todayISO() },
+};
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── CLI parsing ──────────────────────────────────────────────────────────────
+// Returns { strategyPath, title, window, baseCapital } where window is
+// { name, start, end } or null (ad-hoc mode).
+function parseArgs(argv) {
+  const positional = [];
+  const opt = {};
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a.startsWith('--')) opt[a.slice(2)] = argv[++i];
+    else positional.push(a);
+  }
+  const baseCapital = parseInt(opt.capital || DEFAULT_CAPITAL, 10);
+
+  let window = null;
+  if (opt.start || opt.end) {
+    if (!opt.start || !opt.end) throw new Error('--start and --end must be given together');
+    window = { name: opt.window || 'custom', start: opt.start, end: opt.end };
+  } else if (opt.window) {
+    const w = WINDOWS[opt.window];
+    if (!w) throw new Error(`Unknown --window "${opt.window}". Use train|val|holdout or --start/--end.`);
+    window = { name: opt.window, start: w.start, end: w.end };
+  }
+  return { strategyPath: positional[0], title: positional[1] || null, window, baseCapital };
+}
+
+// Parse JQ result-row "时间范围" like "2022-01-01 - 2023-12-31" or "2022-01-01 至 2024-01-01".
+function parseRange(rangeStr) {
+  const m = (rangeStr || '').match(/(\d{4}-\d{2}-\d{2}).*?(\d{4}-\d{2}-\d{2})/);
+  return m ? { start: m[1], end: m[2] } : null;
+}
+
+function daysBetween(a, b) {
+  return Math.abs((new Date(a) - new Date(b)) / 86400000);
+}
 
 async function domSnapshot(page) {
   try {
@@ -36,11 +91,15 @@ async function domSnapshot(page) {
 }
 
 // ── Create new strategy ─────────────────────────────────────────────────────
-async function createNewStrategy(page) {
-  console.log('[post] Creating new stock strategy...');
-  await page.goto(`${JQ_BASE}/algorithm/index/new?restore=0&type=stock&baseCapital=100000`, {
-    waitUntil: 'domcontentloaded', timeout: 30000
-  });
+// The backtest window + base capital are set via URL params to /algorithm/index/new
+// (confirmed: JQ carries startTime/endTime/baseCapital into #startTime/#endTime/
+// #daily_backtest_capital_base_box). ensureBacktestWindow() re-checks & fixes them.
+async function createNewStrategy(page, baseCapital = DEFAULT_CAPITAL, window = null) {
+  console.log(`[post] Creating new stock strategy (baseCapital=${baseCapital}` +
+              (window ? `, window=${window.start}→${window.end})...` : ')...'));
+  let newUrl = `${JQ_BASE}/algorithm/index/new?restore=0&type=stock&baseCapital=${baseCapital}`;
+  if (window) newUrl += `&startTime=${window.start}&endTime=${window.end}`;
+  await page.goto(newUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
   // JQ client-side redirects to editor URL. Wait for the URL to contain 'algorithmId='
   await page.waitForFunction(() => window.location.href.includes('algorithmId='), { timeout: 15000 });
   await sleep(2000); // give Ace time to fully initialize
@@ -66,6 +125,41 @@ async function createNewStrategy(page) {
 
   if (algId) { console.log(`[post] algorithmId=${algId} from DOM`); return algId; }
   throw new Error(`Cannot find algorithmId in: ${url}\nDOM:\n${(await domSnapshot(page)).substring(0, 500)}`);
+}
+
+// ── Ensure backtest window is set (confirm URL params, fix via DOM if needed) ─
+// Primary path: startTime/endTime URL params on /algorithm/index/new (set in
+// createNewStrategy). Here we read the actual #startTime/#endTime datepicker inputs
+// and, if they don't match, set them directly (they're readonly for typing but JS
+// .value + change works). Verified selectors: #startTime, #endTime.
+async function ensureBacktestWindow(page, window) {
+  if (!window) { console.log('[post] No window given — using JQ default range (ad-hoc mode)'); return; }
+  await sleep(500);
+
+  const outcome = await page.evaluate(({ start, end }) => {
+    const s = document.getElementById('startTime');
+    const e = document.getElementById('endTime');
+    if (!s || !e) return { ok: false, reason: 'inputs-missing' };
+    const setVal = (el, v) => {
+      const proto = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value');
+      proto.set.call(el, v);
+      el.dispatchEvent(new Event('input',  { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+      el.dispatchEvent(new Event('blur',   { bubbles: true }));
+    };
+    let fixed = false;
+    if (s.value !== start) { setVal(s, start); fixed = true; }
+    if (e.value !== end)   { setVal(e, end);   fixed = true; }
+    return { ok: true, fixed, s: s.value, e: e.value };
+  }, window);
+
+  if (!outcome.ok) {
+    console.log(`[post] ⚠ #startTime/#endTime not found — verification will catch any mismatch.`);
+  } else {
+    console.log(`[post] Window ${window.name}: ${outcome.s} → ${outcome.e}` +
+                (outcome.fixed ? ' (set via DOM)' : ' (from URL params)'));
+  }
+  await sleep(500);
 }
 
 // ── Paste code via Ace editor ────────────────────────────────────────────────
@@ -256,16 +350,111 @@ function extractMetrics(dom) {
   return m;
 }
 
+// Annualize a total return over `days` calendar days: (1+total)^(365/days) − 1.
+// JQ's buildList row exposes TOTAL strategy return, not annualized — so we compute it
+// ourselves from the actual window length (see research/harness.md §4).
+function annualizeReturn(totalPct, days) {
+  if (totalPct == null || !days || days <= 0) return null;
+  const total = totalPct / 100;
+  return (Math.pow(1 + total, 365 / days) - 1) * 100;
+}
+
+function numPct(s) {
+  const m = (s || '').match(/-?\d+\.?\d*/);
+  return m ? parseFloat(m[0]) : null;
+}
+
+// ── Report + verify the window that actually ran ────────────────────────────
+// Prints the human summary AND a machine-readable line the /run-experiment loop
+// can grep (single line, tab-separated):
+//   SUMMARY\t<window>\t<start>\t<end>\t<days>\t<total%>\t<annual%>\t<sharpe>\t<maxdd%>\t<status>
+// annual% is computed from total% over the actual window (JQ gives only total).
+// status ∈ completed | window-mismatch | failed
+function reportResult(title, algorithmId, result, requestedWindow) {
+  console.log('\n========== BACKTEST RESULT ==========');
+  console.log(`Strategy:    ${title}`);
+  console.log(`algorithmId: ${algorithmId}`);
+
+  let status = 'failed';
+  const r = (result && result.row) || {};
+  const range = (r.range || '').replace(/\s+/g, ' ').trim();   // JQ cell may contain newlines
+  const ran = parseRange(range);
+  const days = ran ? Math.max(1, Math.round(daysBetween(ran.start, ran.end))) : null;
+  const totalPct = numPct(r.return_);
+  const annualPct = annualizeReturn(totalPct, days);
+  const maxddPct = numPct(r.maxdd);
+  const sharpe = numPct(r.sharpe);
+
+  if (result && result.success && totalPct == null) {
+    // Poll saw 完成 but no parseable metrics row (e.g. strategy made no trades).
+    console.log(`Status:      ⚠ 回测完成但无可解析指标 — 视为 failed，不可记账`);
+  } else if (result && result.success) {
+    status = 'completed';
+    console.log(`Status:      ✅ 回测完成`);
+    console.log(`时间范围:    ${range || 'N/A'}${days ? ` (${days}天)` : ''}`);
+    console.log(`运行频率:    ${r.freq || 'N/A'}`);
+    console.log(`策略收益:    ${totalPct != null ? totalPct + '%' : 'N/A'} (总收益)`);
+    console.log(`年化收益:    ${annualPct != null ? annualPct.toFixed(2) + '% (计算值)' : 'N/A'}`);
+    console.log(`最大回撤:    ${maxddPct != null ? maxddPct + '%' : 'N/A'}`);
+    console.log(`夏普比率:    ${sharpe != null ? sharpe : 'N/A'}`);
+
+    // Verify the window that actually ran matches what we requested.
+    if (requestedWindow) {
+      if (!ran) {
+        status = 'window-mismatch';
+        console.log(`⚠ WINDOW: could not parse actual range "${range}" — treat as mismatch.`);
+      } else {
+        const startOff = daysBetween(ran.start, requestedWindow.start);
+        const endOff   = daysBetween(ran.end,   requestedWindow.end);
+        // Start must be exact (±3 trading-calendar days); end tolerant for holdout "today".
+        if (startOff > 3 || endOff > 10) {
+          status = 'window-mismatch';
+          console.log(`⚠ WINDOW MISMATCH: requested ${requestedWindow.start}→${requestedWindow.end}, ` +
+                      `ran ${ran.start}→${ran.end} (startΔ=${startOff}d endΔ=${endOff}d). ` +
+                      `DO NOT log this result — fix date-setting and rerun.`);
+        } else {
+          console.log(`✓ WINDOW OK: ran ${ran.start}→${ran.end} matches ${requestedWindow.name}`);
+        }
+      }
+    }
+  } else {
+    console.log(`Status:      ❌ ${result ? result.error : 'unknown'}`);
+  }
+  console.log('====================================');
+
+  const f = (x, d = 2) => (x == null ? '' : x.toFixed(d));
+  const cells = [
+    'SUMMARY',
+    requestedWindow ? requestedWindow.name : 'adhoc',
+    ran ? ran.start : '',
+    ran ? ran.end : '',
+    days || '',
+    f(totalPct),
+    f(annualPct),
+    f(sharpe),
+    f(maxddPct),
+    status,
+  ];
+  console.log(cells.join('\t'));
+  return status;
+}
+
 // ── Main ─────────────────────────────────────────────────────────────────────
 async function main() {
-  const args = process.argv.slice(2);
-  if (args.length < 1) {
-    console.error('Usage: node strategy-post-backtest.js <path-to-strategy.py> [title]');
+  let parsed;
+  try {
+    parsed = parseArgs(process.argv.slice(2));
+  } catch (err) {
+    console.error(`[post] ${err.message}`); process.exit(1);
+  }
+  if (!parsed.strategyPath) {
+    console.error('Usage: node strategy-post-backtest.js <path-to-strategy.py> [title] ' +
+                  '[--window train|val|holdout | --start YYYY-MM-DD --end YYYY-MM-DD] [--capital N]');
     process.exit(1);
   }
 
-  const strategyPath = path.resolve(args[0]);
-  const customTitle  = args[1] || null;
+  const strategyPath  = path.resolve(parsed.strategyPath);
+  const { window, baseCapital } = parsed;
 
   const loader = new StrategyLoader();
   let strategy;
@@ -274,9 +463,10 @@ async function main() {
   } catch (err) {
     console.error(`[post] Load error: ${err.message}`); process.exit(1);
   }
-  const title = customTitle || strategy.name || path.basename(strategyPath);
+  const title = parsed.title || strategy.name || path.basename(strategyPath);
   const code  = strategy.sourceCode;
-  console.log(`[post] Strategy: "${title}" (${code.length} chars)`);
+  console.log(`[post] Strategy: "${title}" (${code.length} chars)` +
+              (window ? ` | window=${window.name} ${window.start}→${window.end}` : ' | window=adhoc'));
 
   // ----------------------------------------------------------------
   // Browser setup
@@ -314,32 +504,15 @@ async function main() {
     // ── Full workflow ────────────────────────────────────────────────
     // Use a FRESH page for the editor workflow.
     const editorPage = await ctx.newPage();
-    const algorithmId = await createNewStrategy(editorPage);
+    const algorithmId = await createNewStrategy(editorPage, baseCapital, window);
     console.log(`[post] Editor ready: ${editorPage.url().substring(0, 80)}`);
     await sleep(2000);
+    await ensureBacktestWindow(editorPage, window);
     await pasteCode(editorPage, code);
     await saveStrategy(editorPage);
     await runBacktest(editorPage);
     const result = await pollUntilComplete(editorPage, algorithmId);
-
-    console.log('\n========== BACKTEST RESULT ==========');
-    console.log(`Strategy:    ${title}`);
-    console.log(`algorithmId: ${algorithmId}`);
-    if (result.success) {
-      const r = result.row || {};
-      console.log(`Status:      ✅ 回测完成`);
-      console.log(`回测时间:    ${r.time || 'N/A'}`);
-      console.log(`时间范围:    ${r.range || 'N/A'}`);
-      console.log(`运行频率:    ${r.freq || 'N/A'}`);
-      console.log(`策略收益:    ${r.return_ || 'N/A'}`);
-      console.log(`最大回撤:    ${r.maxdd || 'N/A'}`);
-      console.log(`阿尔法:      ${r.alpha || 'N/A'}`);
-      console.log(`贝塔:        ${r.beta || 'N/A'}`);
-      console.log(`夏普比率:    ${r.sharpe || 'N/A'}`);
-    } else {
-      console.log(`Status:      ❌ ${result.error}`);
-    }
-    console.log('====================================\n');
+    reportResult(title, algorithmId, result, window);
 
   } catch (connErr) {
     // ── Approach 2: Persistent profile ──────────────────────────────
@@ -378,32 +551,15 @@ async function main() {
     console.log('[auth] ✅ Persistent profile ready');
 
     const editorPage2 = await ctx.newPage();
-    const algorithmId = await createNewStrategy(editorPage2);
+    const algorithmId = await createNewStrategy(editorPage2, baseCapital, window);
     console.log(`[post] Editor ready: ${editorPage2.url().substring(0, 80)}`);
     await sleep(3000);
+    await ensureBacktestWindow(editorPage2, window);
     await pasteCode(editorPage2, code);
     await saveStrategy(editorPage2);
     await runBacktest(editorPage2);
     const result = await pollUntilComplete(editorPage2, algorithmId);
-
-    console.log('\n========== BACKTEST RESULT ==========');
-    console.log(`Strategy:    ${title}`);
-    console.log(`algorithmId: ${algorithmId}`);
-    if (result.success) {
-      const r = result.row || {};
-      console.log(`Status:      ✅ 回测完成`);
-      console.log(`回测时间:    ${r.time || 'N/A'}`);
-      console.log(`时间范围:    ${r.range || 'N/A'}`);
-      console.log(`运行频率:    ${r.freq || 'N/A'}`);
-      console.log(`策略收益:    ${r.return_ || 'N/A'}`);
-      console.log(`最大回撤:    ${r.maxdd || 'N/A'}`);
-      console.log(`阿尔法:      ${r.alpha || 'N/A'}`);
-      console.log(`贝塔:        ${r.beta || 'N/A'}`);
-      console.log(`夏普比率:    ${r.sharpe || 'N/A'}`);
-    } else {
-      console.log(`Status:      ❌ ${result.error}`);
-    }
-    console.log('====================================\n');
+    reportResult(title, algorithmId, result, window);
   }
 
   if (browser) { try { await browser.close(); } catch {} }

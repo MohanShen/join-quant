@@ -1,6 +1,9 @@
 node_modules/
 data/
 
+# Autoresearch experiment ledger — append-only, not tracked (see docs/research-schema.md §7)
+research/results.tsv
+
 # Session credentials — never commit
 auth/
 
