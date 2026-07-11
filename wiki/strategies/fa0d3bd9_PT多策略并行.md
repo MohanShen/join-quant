@@ -11,6 +11,7 @@ factors:
 ingestedAt: 2026-06-28
 codeLines: 455
 stats: { annualReturn: 5.571, sharpe: 21.24, maxDrawdown: 0.046, periodLabel: 2024-12 }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: 3.6907, sharpe: 18.16, maxDrawdown: 0.0955, objective: 3.5952, gate: pass, ranAt: 2026-07-11 }
 ---
 
 # P-T多策略并行实战：用"自有账本"实现四大策略各安其位

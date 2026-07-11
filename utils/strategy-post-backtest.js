@@ -29,7 +29,13 @@ const fs   = require('fs');
 
 const JQ_BASE = 'https://www.joinquant.com';
 const POLL_INTERVAL_MS = 5000;
-const MAX_POLL_MS = 20 * 60 * 1000;
+// Cost control is a PRE-START USAGE GATE, not cancellation: before creating a backtest we
+// check today's used-minutes; if used >= USAGE_LIMIT we don't start (emit USAGE-STOP). A
+// running backtest is left to finish (its runtime is billed — accepted). Cancellation is
+// kept ONLY as a last-resort safety net at MAX_POLL_MS, so a truly stuck run can't block
+// the batch forever; normal slow backtests finish well before it.
+const MAX_POLL_MS = parseInt(process.env.JQ_MAX_POLL_MS || String(5 * 60 * 1000), 10);   // safety cap: hangs never finish; normal runs ~25s
+const USAGE_LIMIT = parseInt(process.env.JQ_USAGE_LIMIT || '55', 10);   // daily used-minutes ceiling to start new runs
 
 const JOINQUANT_USERNAME = process.env.JOINQUANT_USERNAME || '15656096430';
 const JOINQUANT_PASSWORD = process.env.JOINQUANT_PASSWORD;
@@ -207,10 +213,11 @@ async function pasteCode(page, code) {
 }
 
 // ── Save ─────────────────────────────────────────────────────────────────────
+// Use the stable button IDs (JQ's editor renders "保 存" with a space, so text= fails).
 async function saveStrategy(page) {
   console.log('[post] Saving...');
   try {
-    await page.click('text=保存', { timeout: 3000 });
+    await page.click('#algo-save-button', { timeout: 5000 });
   } catch {
     await page.keyboard.press('Control+s');
   }
@@ -219,22 +226,160 @@ async function saveStrategy(page) {
 }
 
 // ── Run backtest ─────────────────────────────────────────────────────────────
+// #validate-button = 编译运行 (compile + run daily backtest). Text= matches multiple
+// nested spans, so use the id.
 async function runBacktest(page) {
   console.log('[post] Starting backtest (编译运行)...');
   try {
-    await page.click('text=编译运行', { exact: true, timeout: 5000 });
+    await page.click('#validate-button', { timeout: 5000 });
   } catch {
     const clicked = await page.evaluate(() => {
-      const all = document.querySelectorAll('*');
-      for (const el of all) {
-        if ((el.textContent||'').trim() === '编译运行') { el.click(); return true; }
-      }
+      const el = document.getElementById('validate-button') || document.getElementById('buildBtn');
+      if (el) { el.click(); return true; }
       return false;
     });
-    if (!clicked) throw new Error('编译运行 button not found');
+    if (!clicked) throw new Error('编译运行 button (#validate-button) not found');
   }
   await sleep(3000);
+
+  // JQ shows "编译失败:当前并行编译或回测数量最多2个" (and syntax errors) as a transient
+  // toast/notice on the EDITOR page — check it now, before navigating to buildList,
+  // otherwise a missed toast makes us poll buildList until MAX_POLL_MS.
+  const notice = await page.evaluate(() => {
+    const txt = document.body?.innerText || '';
+    const m = txt.match(/编译失败[:：][^\n]{0,40}/);
+    return m ? m[0] : '';
+  });
+  if (notice) {
+    const rateLimited = /并行|最多|数量/.test(notice);
+    console.log(`[post] ⚠ ${notice} ${rateLimited ? '(concurrency cap)' : '(compile error)'}`);
+    return { error: notice, rateLimited };
+  }
   console.log('[post] Backtest triggered');
+  return { error: null };
+}
+
+// ── Read JQ's daily free-runtime counter via API ────────────────────────────
+// GET /algorithm/index/statistics → {data:{duration:{used,free}, running:[...]}}.
+// Direct query (uses the page's logged-in cookies) — more reliable than DOM scraping.
+// Emits a machine-readable QUOTA line for the batch runner's budget guard, incl. the
+// count of currently-running backtests (each occupies one of JQ's 2 slots + bills).
+async function readQuota(page) {
+  try {
+    const q = await page.evaluate(async () => {
+      const r = await fetch('/algorithm/index/statistics', { credentials: 'include' });
+      const j = await r.json();
+      const d = j && j.data && j.data.duration;
+      const running = (j && j.data && j.data.running) || [];
+      return d ? { used: d.used, free: d.free, running: running.length } : null;
+    });
+    console.log(q ? `QUOTA\tused=${q.used}\tfree=${q.free}\trunning=${q.running}` : 'QUOTA\tunknown');
+  } catch { console.log('QUOTA\tunknown'); }
+}
+
+// Pre-start usage gate: if today's used-minutes already meets/exceeds USAGE_LIMIT, do NOT
+// start a new backtest. Emits USAGE-STOP (the batch runner reads it and halts). Returns
+// true if ok to proceed.
+async function usageGate(page) {
+  const u = await page.evaluate(async () => {
+    try { return (await (await fetch('/algorithm/index/statistics', { credentials: 'include' })).json()).data.duration; }
+    catch { return null; }
+  });
+  if (u && u.used != null && u.used >= USAGE_LIMIT) {
+    console.log(`USAGE-STOP\tused=${u.used}\tlimit=${USAGE_LIMIT}`);
+    return false;
+  }
+  console.log(`[post] usage ${u ? u.used : '?'}/${USAGE_LIMIT}min — ok to run`);
+  return true;
+}
+
+// Parse a JQ duration string like "41分14秒" / "1时02分" / "37秒" → minutes.
+function parseCnDuration(s) {
+  if (!s) return 0;
+  const h = (s.match(/(\d+)\s*(?:时|小时)/) || [])[1];
+  const m = (s.match(/(\d+)\s*分/) || [])[1];
+  const sec = (s.match(/(\d+)\s*秒/) || [])[1];
+  return (h ? +h * 60 : 0) + (m ? +m : 0) + (sec ? +sec / 60 : 0);
+}
+
+// Live run state from the statistics API: daily used/free minutes + THIS backtest's
+// elapsed (matched by algorithmId). Used to cancel only when budget requires it.
+async function fetchRunState(page, algorithmId) {
+  try {
+    return await page.evaluate(async (algId) => {
+      const r = await fetch('/algorithm/index/statistics', { credentials: 'include' });
+      const j = await r.json();
+      const d = (j && j.data && j.data.duration) || {};
+      const running = (j && j.data && j.data.running) || [];
+      const mine = running.find(x => x.id === algId);
+      return { used: d.used, free: d.free, usedSec: mine ? mine.usedSec : null, runningCount: running.length };
+    }, algorithmId);
+  } catch { return null; }
+}
+
+// ── Cancel a running backtest to stop billing ───────────────────────────────
+// The #cancel-daily-backtest-button only opens a "确实要取消?" confirm dialog — clicking
+// it does NOT cancel. The real cancel is the API the JS calls after confirmation:
+//   Cy.ajax("/algorithm/index/cancel", { data:"backtestId="+backtestId })
+// (jQuery-style, so it also sends X-Requested-With: XMLHttpRequest — required, else JQ
+// returns a full error page). backtestId is the hidden #backtestId input on the editor
+// page. We call it directly, which reliably stops the run AND works for any backtest id.
+async function cancelBacktest(editorPage) {
+  try {
+    // backtestId is usually not on the editor DOM during a run; get it from the statistics
+    // running list (sequential batch → the single running entry is ours).
+    const bid = await editorPage.evaluate(async () => {
+      const onPage = document.getElementById('backtestId')?.value;
+      if (onPage) return onPage;
+      try {
+        const run = (await (await fetch('/algorithm/index/statistics', { credentials: 'include' })).json()).data.running || [];
+        return run.length === 1 ? run[0].id : null;
+      } catch { return null; }
+    });
+    if (!bid) { console.log('\n[post] ⚠ cancel: no backtestId found (backtest may not have started)'); return false; }
+    // The cancel API is flaky — returns {"status":"2",msg:"系统繁忙"} intermittently; success is
+    // status:"0". Retry a few times.
+    for (let attempt = 1; attempt <= 5; attempt++) {
+      const r = await editorPage.evaluate(async (id) => {
+        try {
+          const resp = await fetch('/algorithm/index/cancel', {
+            method: 'POST', credentials: 'include',
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'backtestId=' + encodeURIComponent(id),
+          });
+          const body = await resp.text();
+          let ok = false; try { ok = JSON.parse(body).status === '0'; } catch {}
+          return { ok, body: body.replace(/\s+/g, ' ').slice(0, 70) };
+        } catch (e) { return { ok: false, body: String(e).slice(0, 70) }; }
+      }, bid);
+      if (r.ok) { console.log(`\n[post] ⏹ cancelled backtestId=${bid.slice(0, 8)} (attempt ${attempt})`); await sleep(1000); return true; }
+      console.log(`\n[post] cancel attempt ${attempt}: ${r.body}`);
+      await sleep(4000);
+    }
+    console.log(`\n[post] ⚠ cancel failed after retries (backtestId=${bid.slice(0, 8)})`);
+    return false;
+  } catch (e) {
+    console.log(`\n[post] ⚠ cancel failed: ${e.message.slice(0, 70)}`);
+    return false;
+  }
+}
+
+// Detect a compile/runtime error (Python traceback, syntax error, missing module) on the
+// editor page or any of its iframes (JQ renders the run log in a frame). Reliable fast-fail:
+// only real error output matches, so healthy strategies never trip it.
+async function detectCompileError(page) {
+  const RX = /Traceback \(most recent call last\)|SyntaxError[^\n]{0,60}|NameError[^\n]{0,60}|ImportError[^\n]{0,60}|IndentationError[^\n]{0,60}|invalid syntax|编译失败[:：][^\n]{0,50}|编译错误[^\n]{0,50}/;
+  try {
+    for (const t of [page, ...page.frames()]) {
+      const hit = await t.evaluate((src) => {
+        const rx = new RegExp(src);
+        const m = (document.body ? document.body.innerText : '').match(rx);
+        return m ? m[0].slice(0, 90) : null;
+      }, RX.source).catch(() => null);
+      if (hit) return hit;
+    }
+  } catch {}
+  return null;
 }
 
 // ── Poll until done ─────────────────────────────────────────────────────────
@@ -318,11 +463,19 @@ async function pollUntilComplete(page, algorithmId) {
         return { success: false, dom, error: '回测失败' };
       }
 
+      // Compile/runtime error on the editor (traceback etc.) → fast-fail, don't wait for the cap.
+      const cerr = await detectCompileError(page);
+      if (cerr) return { success: false, error: cerr, compileError: true };
+
+      // No early cancel — let the backtest run to completion (cost accepted; gated at start).
       const elapsed = Math.round((Date.now()-start)/1000);
       const prog = `${Math.floor(elapsed/60)}m ${elapsed%60}s`;
       process.stdout.write(`\r[post] Running: ${prog}...   \r`);
     }
-    return { success: false, error: 'Timeout' };
+    // Safety net only: a truly stuck run (> MAX_POLL_MS) — last-resort cancel via the API
+    // so it can't block the batch forever. Normal slow backtests finish well before this.
+    await cancelBacktest(page);
+    return { success: false, stopped: true, error: `safety-cap (>${Math.round(MAX_POLL_MS/1000)}s)` };
   } finally {
     await listPage.close();
   }
@@ -418,7 +571,11 @@ function reportResult(title, algorithmId, result, requestedWindow) {
       }
     }
   } else {
-    console.log(`Status:      ❌ ${result ? result.error : 'unknown'}`);
+    status = (result && result.rateLimited)  ? 'rate-limited'
+           : (result && result.compileError) ? 'compile-error'
+           : (result && result.stopped)      ? 'slow-skipped'
+           : 'failed';
+    console.log(`Status:      ❌ ${result ? result.error : 'unknown'} [${status}]`);
   }
   console.log('====================================');
 
@@ -501,18 +658,27 @@ async function main() {
     console.log('[auth] ✅ Connected to existing Chrome (no CAPTCHA needed)');
     cdpSuccess = true;
 
+    // Pre-start usage gate — don't create/run a backtest if we're over the daily limit.
+    if (!(await usageGate(hubPage))) { if (browser) { try { await browser.close(); } catch {} } return { status: 'usage-stop' }; }
+
     // ── Full workflow ────────────────────────────────────────────────
     // Use a FRESH page for the editor workflow.
     const editorPage = await ctx.newPage();
     const algorithmId = await createNewStrategy(editorPage, baseCapital, window);
     console.log(`[post] Editor ready: ${editorPage.url().substring(0, 80)}`);
     await sleep(2000);
+    await readQuota(editorPage);
     await ensureBacktestWindow(editorPage, window);
     await pasteCode(editorPage, code);
     await saveStrategy(editorPage);
-    await runBacktest(editorPage);
-    const result = await pollUntilComplete(editorPage, algorithmId);
+    const bt = await runBacktest(editorPage);
+    const result = bt.error
+      ? { success: false, error: bt.error, rateLimited: bt.rateLimited }
+      : await pollUntilComplete(editorPage, algorithmId);
     reportResult(title, algorithmId, result, window);
+    // Close the editor tab we created (NOT the logged-in hub page) so batch runs
+    // don't accumulate hundreds of tabs. Session cookies live in the context.
+    try { await editorPage.close(); } catch {}
 
   } catch (connErr) {
     // ── Approach 2: Persistent profile ──────────────────────────────
@@ -550,16 +716,22 @@ async function main() {
     }
     console.log('[auth] ✅ Persistent profile ready');
 
+    if (!(await usageGate(page))) { if (browser) { try { await browser.close(); } catch {} } return { status: 'usage-stop' }; }
+
     const editorPage2 = await ctx.newPage();
     const algorithmId = await createNewStrategy(editorPage2, baseCapital, window);
     console.log(`[post] Editor ready: ${editorPage2.url().substring(0, 80)}`);
     await sleep(3000);
+    await readQuota(editorPage2);
     await ensureBacktestWindow(editorPage2, window);
     await pasteCode(editorPage2, code);
     await saveStrategy(editorPage2);
-    await runBacktest(editorPage2);
-    const result = await pollUntilComplete(editorPage2, algorithmId);
+    const bt = await runBacktest(editorPage2);
+    const result = bt.error
+      ? { success: false, error: bt.error, rateLimited: bt.rateLimited }
+      : await pollUntilComplete(editorPage2, algorithmId);
     reportResult(title, algorithmId, result, window);
+    try { await editorPage2.close(); } catch {}
   }
 
   if (browser) { try { await browser.close(); } catch {} }

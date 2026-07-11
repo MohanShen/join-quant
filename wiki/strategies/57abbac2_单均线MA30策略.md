@@ -11,6 +11,7 @@ factors:
 ingestedAt: 2026-06-27
 codeLines: 33
 stats: { annualReturn: 0.158, sharpe: 0.62, maxDrawdown: 0.221, periodLabel: 2019-03 }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: -0.0674, sharpe: -1.05, maxDrawdown: 0.2037, objective: DQ, gate: fail, ranAt: 2026-07-11 }
 ---
 
 # 年化15.84%的单均线策略

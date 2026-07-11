@@ -11,6 +11,7 @@ factors:
 ingestedAt: 2026-06-27
 codeLines: 482
 stats: { annualReturn: 0.530, sharpe: 1.88, maxDrawdown: 0.247, periodLabel: 2026-05 }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: -0.2387, sharpe: -1.24, maxDrawdown: 0.4443, objective: DQ, gate: fail, ranAt: 2026-07-11 }
 ---
 
 # 市场温度驱动的极简ETF 轮动策略--6年10倍

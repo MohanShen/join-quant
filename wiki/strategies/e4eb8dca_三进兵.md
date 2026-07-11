@@ -12,6 +12,7 @@ factors:
 ingestedAt: 2026-06-28
 codeLines: 177
 stats: { annualReturn: 0.21, sharpe: 1.1, maxDrawdown: 0.09, periodLabel: 2019-01 }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: 0.0000, sharpe: -0.49, maxDrawdown: 0.0900, objective: DQ, gate: fail, ranAt: 2026-07-11 }
 ---
 
 # 【策略研发】三进兵策略

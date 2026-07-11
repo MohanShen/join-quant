@@ -11,6 +11,7 @@ factors:
 ingestedAt: 2026-06-28
 codeLines: 291
 stats: { annualReturn: 1.692, sharpe: 3.04, maxDrawdown: 0.219, periodLabel: 2026-03 }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: 0.1404, sharpe: 0.30, maxDrawdown: 0.2949, objective: DQ, gate: fail, ranAt: 2026-07-11 }
 ---
 
 # 日内单票做T策略

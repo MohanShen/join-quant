@@ -13,6 +13,7 @@ factors:
 ingestedAt: 2026-06-27
 codeLines: 1420
 stats: { annualReturn: 2.430, sharpe: 6.83, maxDrawdown: 0.171, periodLabel: 2026-04 }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: 0.4006, sharpe: 1.48, maxDrawdown: 0.1485, objective: DQ, gate: fail, ranAt: 2026-07-11 }
 ---
 
 # 【五福闹新春】v5.1-拟合ETF池最严厉的父亲

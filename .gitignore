@@ -10,3 +10,5 @@ auth/
 # Local scratch / exploration scripts (contain hardcoded credentials)
 test-jq-login.js
 test-jq-editor.js
+__pycache__/
+research/normalize-*.tsv

@@ -12,6 +12,7 @@ factors:
 ingestedAt: 2026-06-27
 codeLines: 78
 stats: { annualReturn: 0.593, sharpe: 2.32, maxDrawdown: 0.176, periodLabel: 2021-06 }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: 1.7788, sharpe: 8.87, maxDrawdown: 0.2146, objective: 1.5642, gate: pass, ranAt: 2026-07-11 }
 ---
 
 # etf基金溢价-改进版-高收益低回撤-速度已最优

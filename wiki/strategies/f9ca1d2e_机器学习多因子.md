@@ -11,6 +11,7 @@ factors:
 ingestedAt: 2026-06-27
 codeLines: 97
 stats: { annualReturn: 0.588, sharpe: 2.13, maxDrawdown: 0.248, periodLabel: 2017-12 }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: 0.1227, sharpe: 0.47, maxDrawdown: 0.1932, objective: DQ, gate: fail, ranAt: 2026-07-11 }
 ---
 
 # 【量化课堂】机器学习多因子策略

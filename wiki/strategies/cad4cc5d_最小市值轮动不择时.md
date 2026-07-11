@@ -12,6 +12,7 @@ factors:
 ingestedAt: 2026-06-27
 codeLines: 83
 stats: { annualReturn: 0.599, sharpe: 1.61, maxDrawdown: 0.437, periodLabel: 2016-11 }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: 0.1750, sharpe: 0.68, maxDrawdown: 0.2663, objective: DQ, gate: fail, ranAt: 2026-07-11 }
 ---
 
 # 最小市值轮动,不择时

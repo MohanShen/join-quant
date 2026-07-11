@@ -13,6 +13,7 @@ factors:
 ingestedAt: 2026-06-27
 codeLines: 552
 stats: { annualReturn: 4.540, sharpe: 8.29, maxDrawdown: 0.152, periodLabel: 2026-04 }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: 0.1404, sharpe: 0.34, maxDrawdown: 0.3097, objective: DQ, gate: fail, ranAt: 2026-07-11 }
 ---
 
 # 近4个月狂揽62%！六年11倍 ETF双池动量轮动

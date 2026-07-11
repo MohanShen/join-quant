@@ -12,6 +12,7 @@ factors:
 ingestedAt: 2026-06-28
 codeLines: 1012
 stats: { annualReturn: 2.1452830833541, sharpe: 3.0639037493768, maxDrawdown: 0.32406311783752, periodLabel: "2026-04" }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: 0.1271, sharpe: 0.40, maxDrawdown: 0.3289, objective: DQ, gate: fail, ranAt: 2026-07-11 }
 ---
 
 # 这个策略今年很强，点赞回复必回赞、克隆，没积分，模拟盘快到期

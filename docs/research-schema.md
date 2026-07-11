@@ -270,3 +270,71 @@ jul3-003	d4e5f6g	0.31	0.16	2.9	discard	MA5择时 val涨但holdout崩 overfit
 - **可溯源**：账本、实验页、概念页结论均可回溯到 commit 与源码。
 - **受控命名**：因子/概念一律走 `wiki-schema.md` §2 词表，先登记后使用。
 - **追加与人裁**：概念页只追加；冲突只标记、不自行裁决。
+
+---
+
+## 11. 归一化（normalize）——把 raw 策略重测到统一基线
+
+`strategies/` 里的 144+ 策略是**不同年代、不同费率/滑点、不同回测区间**下自报绩效的 raw 层，彼此不可横比。
+归一化 = 用**冻结评测台**把每个 raw 策略在**同一 TRAIN 区间、同一成本、同一 objective** 下重测一遍，
+得到 apples-to-apples 的「谁在统一区间真能打」——这是 autoresearch 的**先验基线**：
+已知有效的策略/因子 = 归一化后过门槛者，据此挑选变异起点、避免重复造轮子。
+
+### 11.1 强制成本归一（raw 不可变）
+- 每个 raw 策略源码**尾部追加**一段 override（不改 `strategies/` 原文，写临时副本喂 Pipeline 2）：
+  重定义 `set_slippage`/`set_commission` 为**恒定冻结值**（零滑点 + `PerTrade(万3/万13/5)`），
+  这样即便策略在 `before_trading_start`/`handle_data` 里**逐 bar 重设**成本，也一律被拉回冻结值；
+  并包裹 `initialize` 补 `use_real_price=True`。见 `utils/strategy-normalize.js` 的 `OVERRIDE`。
+- 区间/基础资金（¥100万）由 Pipeline 2 平台参数强制（`--window train`）。
+
+### 11.2 批量执行器与账本
+- `node utils/strategy-normalize.js --window train [--filter <substr>] [--limit N]`：枚举 → 兼容性预检 → 追加 override → 跑 Pipeline 2 → 解析 SUMMARY → 写账本。
+- **可续跑**账本 `research/normalize-<window>.tsv`（git 不跟踪），已有终态的策略跳过。列：
+  `sourceFile  postId  title  status  start  end  days  total_pct  annual_pct  sharpe  maxdd_pct  objective  gate`
+- `status`：`normalized`（完成，可入 KB）/ `incompatible-futures`（期货，stock 回测跑不了）/ `incompatible-notrunnable`（无 `initialize` 的工具/研究页）/ `crash`（回测报错）/ `window-mismatch`。
+- `objective` / `gate` 同 §3.3（`annual−maxdd`，门槛 `sharpe≥2.5`；不过门槛记 `DQ`/`fail`）。
+
+### 11.3 KB 更新契约
+账本产出后，按下列方式更新 wiki（可分批，像 ingest 一样）：
+- **策略页 frontmatter** 增 `normalized` 块（可溯源到本次 epoch 与账本）：
+  ```yaml
+  normalized:
+    epoch: 1
+    window: TRAIN 2022-01-01..2023-12-31
+    annualReturn: <小数>   sharpe: <数>   maxDrawdown: <小数>
+    objective: <数或DQ>    gate: pass|fail
+    ranAt: <YYYY-MM-DD>
+  ```
+  与页内既有「自报绩效」并存、不覆盖；若归一化结果与自报差距大，在「备注/矛盾」注明（区间/成本差异）。
+- **概念页** 增「## 归一化绩效横评（TRAIN 2022–2023，epoch 1）」小节：按 `objective` 排序的表，
+  标 `gate pass/fail`，一眼看出该概念下**统一区间真能打的成员**；旧「绩效横评」保留（自报、区间不一）。
+- **`log.md` 新增 op** `normalize`：`## [YYYY-MM-DD] normalize | <n> 策略 @TRAIN epoch1 | pass <a> / fail <b> / incompat <c>`。
+  op 全集：`ingest` / `skip-dup` / `concept` / `query` / `lint` / `merge` / `experiment` / **`normalize`**。
+
+### 11.4 运行时预算与安全（JoinQuant 计费现实）
+
+JoinQuant 对回测**计时收费**，直接约束归一化的节奏：
+- **每日免费 60 分钟**回测运行时长（每日重置）；超出部分**每 30 分钟扣 2 积分**，**积分为负时才无法新建回测**（超免费但积分为正仍可跑，只是花积分）。
+- 用量直接查 API：`GET /algorithm/index/statistics` → `{data:{duration:{used,free}, running:[{id,name,usedSec}]}}`。
+- **并发上限 2**（`编译失败:当前并行编译或回测数量最多2个`）。
+- ⚠ **回测一经开启即运行至结束（最长 3 天），即使前端离开也在服务器端继续跑、并在结束时计入 `used`**。
+
+**成本控制 = 事前用量闸门（不是取消）**。取消一个运行中的回测既脆弱又易失败，且失败会让慢回测跑到底、全额计费——这正是早期烧积分的根因。故新策略：
+- **事前闸门**：每个回测开跑前查 `used`；`used ≥ USAGE_LIMIT`（`--usage-limit`，默认 55）就**不再新建**回测（子进程打印 `USAGE-STOP`，`strategy-normalize.js` 据此停批）。因批次**串行**，`used` 在每次检查时都是最新，无滞后。
+- **运行中不早停**：让回测跑到 `完成/失败`，其时长计费（已接受）。最坏超支 = 最后一个刚好卡在闸门下启动的回测的时长。
+- **仅保留安全网**：`MAX_POLL_MS`（默认 45 分钟）——只有**真卡死**的回测才在此调**取消 API** 兜底，防止阻塞整批；正常慢回测远早于此结束。
+- **取消 API（关键）**：`#cancel-daily-backtest-button` 只弹「确实要取消?」确认框，点它**不会取消**（早期孤儿的根因）。真正的取消是 `Cy.ajax("/algorithm/index/cancel",{data:"backtestId="+backtestId})`——即带 `X-Requested-With: XMLHttpRequest` 头请求 `/algorithm/index/cancel`，`backtestId` 取编辑页隐藏输入 `#backtestId`。`cancelBacktest()` 已直接调此 API。
+- **并发上限检测**：`编译运行` 后读编辑页 `编译失败…并行…最多` toast → `rate-limited`，退避 45s 后重试（不烧该策略）。**熔断**：连续 6 次失败即停（`process.exit(2)`），可续跑。
+
+**按日预算跑法**（用量闸门自动控成本，可花积分换吞吐）：
+```bash
+# 例：小市值概念，日用量上限 240 分钟（免费60 + ~180 积分时长）
+node utils/strategy-normalize.js --window train --concept 小市值因子 --usage-limit 240
+```
+`--concept <名>` 按 wiki 概念挑成员；`--usage-limit N` 设日用量上限（默认 55，仅免费额度内）；`--limit N` 限批量条数；账本可续跑。
+
+### 11.5 与 autoresearch 的关系
+- 归一化基线回答「**起点**在哪」：过门槛的策略/因子组合是 autoresearch 变异的高价值起点；
+  全员 DQ 的概念（如 jul4 里 2024 的裸小市值族）则提示该方向在此区间不成立。
+- 归一化用 **TRAIN**（与实验开发区间一致），故它是**先验/特征**，**不是** holdout——
+  不构成数据泄漏：VAL/HOLDOUT 仍只在 autoresearch 循环里按 §8 使用。

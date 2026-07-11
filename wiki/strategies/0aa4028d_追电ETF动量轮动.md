@@ -12,6 +12,7 @@ factors:
 ingestedAt: 2026-06-27
 codeLines: 117
 stats: { annualReturn: 0.451, sharpe: 1.61, maxDrawdown: 0.282, periodLabel: 2026-05 }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: 0.4705, sharpe: 1.67, maxDrawdown: 0.1740, objective: DQ, gate: fail, ranAt: 2026-07-11 }
 ---
 
 # 追电ETF动量轮动 —10年60多倍收益

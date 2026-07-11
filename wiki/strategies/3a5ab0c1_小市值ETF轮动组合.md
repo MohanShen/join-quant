@@ -12,6 +12,7 @@ factors:
 ingestedAt: 2026-06-28
 codeLines: 880
 stats: { annualReturn: 0.647, sharpe: 2.78, maxDrawdown: 0.162, periodLabel: 2026-01 }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: 0.4671, sharpe: 2.57, maxDrawdown: 0.0975, objective: 0.3696, gate: pass, ranAt: 2026-07-11 }
 ---
 
 # 【策略组合】优质小市值周换手与ETF轮动策略组合

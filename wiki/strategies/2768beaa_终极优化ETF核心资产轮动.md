@@ -13,6 +13,7 @@ factors:
 ingestedAt: 2026-06-27
 codeLines: 223
 stats: { annualReturn: 0.435, sharpe: 1.57, maxDrawdown: 0.306, periodLabel: 2025-07 }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: 0.2850, sharpe: 1.62, maxDrawdown: 0.1136, objective: DQ, gate: fail, ranAt: 2026-07-11 }
 ---
 
 # 终极优化-ETF核心资产轮动策略

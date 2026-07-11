@@ -12,6 +12,7 @@ factors:
 ingestedAt: 2026-06-27
 codeLines: 398
 stats: { annualReturn: 4.505, sharpe: 7.89, maxDrawdown: 0.208, periodLabel: 2026-01 }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: -0.0567, sharpe: -0.26, maxDrawdown: 0.3593, objective: DQ, gate: fail, ranAt: 2026-07-11 }
 ---
 
 # 【三部曲吃透ETF动量轮动1】纵有狂风拔地起，我亦乘风破万里

@@ -11,6 +11,7 @@ factors:
 ingestedAt: 2026-06-27
 codeLines: 47
 stats: { annualReturn: 0.209, sharpe: 0.46, maxDrawdown: 0.647, periodLabel: 2015-12 }
+normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: -0.0946, sharpe: -0.72, maxDrawdown: 0.2308, objective: DQ, gate: fail, ranAt: 2026-07-11 }
 ---
 
 # 十日均线策略
