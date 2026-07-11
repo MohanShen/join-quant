@@ -333,8 +333,14 @@ node utils/strategy-normalize.js --window train --concept 小市值因子 --usag
 ```
 `--concept <名>` 按 wiki 概念挑成员；`--usage-limit N` 设日用量上限（默认 55，仅免费额度内）；`--limit N` 限批量条数；账本可续跑。
 
-### 11.5 与 autoresearch 的关系
-- 归一化基线回答「**起点**在哪」：过门槛的策略/因子组合是 autoresearch 变异的高价值起点；
+### 11.5 与 autoresearch 的关系（起点契约）
+- 归一化基线回答「**起点**在哪」：过门槛（gate ✅）的策略/因子组合是 autoresearch 变异的高价值起点；
   全员 DQ 的概念（如 jul4 里 2024 的裸小市值族）则提示该方向在此区间不成立。
+- **autoresearch 的 `<tag>-000` baseline 必须是一个已归一化的过门槛策略**（从各概念页「归一化绩效横评」挑 gate ✅ 者），
+  而**不是**裸 `strategy_template.py`——jul4 已证裸最小市值月度轮动在 VAL 全 DQ。做法：
+  取该策略 `strategies/<file>.py` 源码 + `strategy-normalize.js` 的冻结成本 `OVERRIDE`（零滑点/PerTrade），
+  存为 `research/candidates/<tag>-000.py`；其 TRAIN objective 应≈ 该策略页 `normalized:` 值。此后小步变异，朝赢家配方靠拢。
 - 归一化用 **TRAIN**（与实验开发区间一致），故它是**先验/特征**，**不是** holdout——
   不构成数据泄漏：VAL/HOLDOUT 仍只在 autoresearch 循环里按 §8 使用。
+- **预算一致**：autoresearch 与归一化共用同一 JQ 计费现实（§11.4）——循环受 `--usage-limit` 约束，
+  `used ≥ limit` 即停、等次日重置，不为「跑满循环」烧积分。

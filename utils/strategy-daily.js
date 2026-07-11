@@ -6,12 +6,15 @@
  *   1. Discover new strategies (2 API calls ≈ 147 strategies)
  *   2. Rebuild copy-queue sorted by composite score
  *   3. Iterate queue, clone each strategy, until access limit hit
- *   4. Report summary to WeChat
+ *   4. Normalize the newly-fetched strategies on the frozen TRAIN window + auto-create
+ *      wiki stubs (utils/normalize-daily.js; best-effort, skips if CDP Chrome is down)
+ *   5. Report summary (incl. new gate-passers) to WeChat
  *
  * Usage:
- *   node utils/strategy-daily.js          # full pipeline
+ *   node utils/strategy-daily.js          # full pipeline (fetch + normalize)
  *   node utils/strategy-daily.js --discover-only   # discovery only (fast)
  *   node utils/strategy-daily.js --copy-only       # copy only (uses existing queue)
+ *   node utils/strategy-daily.js --no-normalize    # fetch, skip the normalization phase
  */
 
 const { execSync } = require('child_process');
@@ -226,17 +229,28 @@ async function main() {
   }
 
   // Fetch phase — read source + stats via API, save to strategies/
+  const copiedBefore = new Set(Object.keys(loadQueue().copied || {}));
   const { processQueue } = require('./strategy-fetch');
   const { processed, limitHit } = await processQueue(limit);
+
+  // Normalization phase — re-backtest the newly-fetched strategies on the frozen TRAIN
+  // window and auto-create wiki stubs (best-effort; skips cleanly if CDP Chrome is down).
+  const newPostIds = Object.keys(loadQueue().copied || {}).filter(p => !copiedBefore.has(p));
+  let normLines = [];
+  if (mode !== '--no-normalize') {
+    try {
+      const { normalizeNew } = require('./normalize-daily');
+      normLines = normalizeNew(newPostIds, { usageLimit: 55 }).lines;
+    } catch (e) { normLines = [`⚠ 归一化阶段异常：${(e.message || '').slice(0, 60)}`]; }
+  }
 
   // Final summary
   const queueFinal = loadQueue();
   const totalCopied = Object.keys(queueFinal.copied || {}).length;
   const summary = [
-    `📡 每日策略发现完成 | ${today}`,
-    `新增: ${newCount} 个策略`,
-    `待克隆: ${queueFinal.queue.length} 个`,
-    `已克隆: ${totalCopied} 个`,
+    `📡 每日策略发现+归一化完成 | ${today}`,
+    `新增: ${newCount} 个 | 本次克隆: ${processed} 个 | 待克隆: ${queueFinal.queue.length} | 已克隆: ${totalCopied}`,
+    ...normLines,
   ];
   console.log('\n' + summary.join('\n'));
   await sendWeChatAlert(summary);

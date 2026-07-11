@@ -151,6 +151,11 @@ function main() {
   const sleepSync = (s) => { try { execFileSync('sleep', [String(s)]); } catch {} };
 
   let files = fs.readdirSync(STRAT_DIR).filter(f => f.endsWith('.py')).sort();
+  if (opt.files) {                                   // explicit basename list (e.g. daily's new fetches)
+    const set = new Set(opt.files.split(',').map(s => s.trim()).filter(Boolean));
+    files = files.filter(f => set.has(f));
+    console.log(`[normalize] --files → ${files.length}/${set.size} present`);
+  }
   if (opt.concept) {
     const wanted = conceptSourceBasenames(opt.concept);
     files = files.filter(f => wanted.has(f));

@@ -16,24 +16,25 @@ description: Run the join-quant autoresearch loop — generate/mutate a strategy
 5. `wiki/index.md` + 相关 `wiki/concepts/*.md` —— 假设来源（尤其各概念页「待研究/空白」）。
 
 ## 前置检查
-- JoinQuant CDP Chrome 在跑（见根 `CLAUDE.md`），`node index.js status` 显示已登录。
+- CDP Chrome 在跑（见根 `CLAUDE.md`）；**登录/预算用 statistics API 查**：`curl -s http://localhost:9225/json/version` 通，`/algorithm/index/statistics` 返回 `duration.{used,free}`（不用 `index.js status`）。
+- **预算**：`used < --usage-limit`（默认 55=仅免费 60 分钟内；超出烧积分）。`used ≥ limit` → 停，等次日重置。
 - 在实验分支上：`research/<tag>`（新纪元先 `git checkout -b research/<tag>`）。
 - `research/results.tsv` 存在（不存在则建表头；该文件 git 不跟踪）。
 
-## 回测命令（唯一执行器 = Pipeline 2）
+## 回测命令（唯一执行器 = Pipeline 2，已加固）
 ```bash
-node utils/strategy-post-backtest.js research/candidates/<expId>.py "<expId>" --window <train|val|holdout>
+JQ_USAGE_LIMIT=55 node utils/strategy-post-backtest.js research/candidates/<expId>.py "<expId>" --window <train|val|holdout>
 ```
-- `--window` 映射到 `harness.md` 冻结区间；基础资金默认 ¥1,000,000。
-- 读输出末尾的机器可读行（10 列，`harness.md` §5）：
+- `--window` 经 URL 参数强制映射到 `harness.md` 冻结区间；基础资金 ¥1,000,000。UI 选择器已修（`#algo-save-button`/`#validate-button`），窗口自动核验。
+- 读输出末尾机器可读行（10 列，`harness.md` §5）：
   `SUMMARY\t<window>\t<start>\t<end>\t<days>\t<total%>\t<annual%>\t<sharpe>\t<maxdd%>\t<status>`
-  `annual%` 已由执行器从总收益按区间天数年化；直接用它算 `objective`。
-- **`status=window-mismatch` → 不得记账**：实际回测区间与请求不符，修正后重跑（见脚本内 date-input 注释，首次运行需确认选择器）。
-- `status=failed` 或无 SUMMARY → 视为 crash（`program.md` 崩溃处理）。
+  `annual%` 已由执行器年化；直接用它算 `objective`。
+- `status`：`completed`（可记账）/ `window-mismatch`（区间不符，**不得记账**，重跑）/ `slow-skipped`（超安全上限被取消）/ `USAGE-STOP`（预算到顶，停）/ `failed`/无 SUMMARY（crash）。
 
 ## 单个实验（严格按序）
-1. **提假设**：从某概念页「待研究/空白」或「变体与差异」规律出发，写一句可证伪的话。溯源页记入实验页 `sourceRefs`。
-2. **变异**：从当前分支最优 candidate 复制为 `research/candidates/<expId>.py`（`expId=<tag>-<NNN>` 递增），在四个因子槽位（选股/择时/风控/仓位）内改动，只用受控词表内的信号。首个实验 `<tag>-000` = 未变异 baseline（`research/strategy_template.py`）。
+1. **提假设**：优先从概念页「**归一化绩效横评**」的强/弱对照出发（同一区间下谁过门槛、赢家的因子构成），或「待研究/空白」。写一句可证伪的话，溯源页记入实验页 `sourceRefs`。
+2. **变异**：从当前分支最优 candidate 复制为 `research/candidates/<expId>.py`（`expId=<tag>-<NNN>` 递增），在四个因子槽位（选股/择时/风控/仓位）内**小步**改动（改一处，别多改），只用受控词表内的信号，朝赢家配方（低开小市值+国九强过滤+止损）靠拢。
+   - **首个 `<tag>-000` = 已归一化的过门槛策略源码 + 冻结成本 override**（见 `program.md` Setup 5；不要用裸 `strategy_template.py`——jul4 已证其全 DQ）。`strategy_template.py` 仅作从头造概念的脚手架。
 3. `git commit` candidate 源码。
 4. **回测 TRAIN + VAL**：分别 `--window train`、`--window val`。按 `harness.md` §4 算：`gate = sharpe(VAL)≥2.5`；`objective(VAL)=annualReturn−maxDrawdown`（小数），gate 不过记 `DQ`。
 5. **判定**：
@@ -45,8 +46,8 @@ node utils/strategy-post-backtest.js research/candidates/<expId>.py "<expId>" --
    - **回填**（schema §9）：有跨策略价值 → 追加到相关概念页「观察/待研究」小节，带 `[[<expId>]]` 指针；假设若来自某「待研究」，更新该条。
    - 追加 `wiki/log.md`：`## [YYYY-MM-DD] experiment | <expId> (<摘要>) val=<> holdout=<> <status> → 回填 [[<页>]]`。
 
-## 循环
-按 `program.md` 的 **LOOP FOREVER** 连续做实验：不要停下问「要不要继续」。**例外**：JoinQuant 限流/会话失效导致无法回测时，停在干净 git 状态、告知人类续 session/额度，不空转（`program.md`）。
+## 循环（受预算约束的 LOOP FOREVER）
+按 `program.md` 连续做实验：只要**免费额度未用尽且思路未穷**就不停下问「要不要继续」。**预算例外**（优先）：`used ≥ --usage-limit`、积分不足、或会话失效时——停在干净 git 状态，简报当前最优+剩余想法，告知人类「等次日重置/续额度/续 session」，不空转、不烧不该烧的积分。恢复后从当前最优继续。
 
 ## 完成后简报
 本纪元跑了多少实验、keep 几个、当前分支最优 `objective(VAL)`/`objective(HOLDOUT)`、发现的规律与回填落点、多少 crash/DQ/window-mismatch。
@@ -55,5 +56,6 @@ node utils/strategy-post-backtest.js research/candidates/<expId>.py "<expId>" --
 ## 红线（见 `research-schema.md` §10 / `harness.md`）
 - **评测台冻结**：objective/门槛/三窗/费率滑点不可改；改动即新纪元。
 - **HOLDOUT 只确认不选择**：任何用 holdout 调参 = 数据泄漏，纪元作废。
+- **预算优先**：`used ≥ --usage-limit` 就停；不为「跑满循环」烧积分。停≠放弃，是按天分批。
 - **零滑点高估**：高换手/微盘/打板类 keep 必标「零滑点高估」，不当可实现收益（`harness.md` §2）。
 - **真实性红线**、**raw 不可变**、**受控命名**、**概念页只追加不覆盖、冲突只标记**——与 ingest/query 一致。
