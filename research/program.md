@@ -27,7 +27,7 @@
 | **1** | `ideator`（点子官） | 通读 KB + 实验日志，产出**带推理**的新策略/改进想法；接收 TRAIN 结果，决定「继续迭代 / 定稿 / 放弃」 | 读 wiki+results；写 ideas-queue（提议） |
 | **2** | `critic`（筛选官） | 判断想法是否**成立**，成立则入**排名队列**；出队最有希望的想法交给 Agent 3 | 读 wiki；读写 `research/ideas-queue.json` |
 | **3** | `engineer`（工程师，**封闭环境**） | 生成策略 `.py`、跑回测、调试到有效结果；**严格服从 harness**；按想法类型路由结果 | 写 `research/candidates/`；只能用回测执行器 |
-| **4** | `recorder`（记账官） | 仅当拿到 **VAL 结果**时触发：写实验日志/结果、更新 KB，然后交回 Agent 1 开下一轮 | 写 `research/results.tsv`、`wiki/**` |
+| **4** | `recorder`（记账官） | 仅当拿到 **VAL 结果**时触发：写实验日志/结果、**归档策略到 `validated_strategies/`**、更新 KB，然后交回 Agent 1 开下一轮 | 写 `research/results.tsv`、`validated_strategies/`、`wiki/**` |
 
 **共享状态（磁盘为真相源，非仅靠消息 → 可断点续跑）**：
 - `research/loop-state.json` —— **断点检查点**：每次 agent 交接后由编排者**原子写入**，记录「上次停在哪」。见下「断点续跑」。
@@ -113,7 +113,7 @@
 4. **Agent 1 判 TRAIN 结果**（Type-1 回来后）：
    - **正向改进**（`gate(TRAIN)` 且 `objective(TRAIN) > 当前定稿中最优`）→ 推进为新的迭代最优，且**判断是否已「定稿」**：*已迭代充分、TRAIN 上取得正向改进、想不出更多有价值变异* → **定稿**，把该版本交 Agent 3 跑 Type-2（VAL）。否则**继续调参**：产下一个小步变异（回 Agent 3 Type-1）。
    - **无改进**（DQ 或不高于当前）→ 记一次失败迭代；若这个想法**多次变异仍无正向改进** → **放弃该想法**，报 Agent 2 取队列下一个（队列空则回 Agent 1 产新想法）。
-5. **Agent 4 记账**（仅 VAL 结果触发）：写 `results.tsv` 行 + `wiki/experiments/<expId>.md` + `wiki/log.md`，回填相关 `wiki/concepts/*.md`（向 Agent 1 要假设/推理/迭代轨迹细节）。完成后交回 Agent 1 开下一轮。
+5. **Agent 4 记账**（仅 VAL 结果触发）：写 `results.tsv` 行 + `wiki/experiments/<expId>.md` + `wiki/log.md`，回填相关 `wiki/concepts/*.md`（向 Agent 1 要假设/推理/迭代轨迹细节），并**把定稿策略归档到 `validated_strategies/<expId>.py`**（拷贝 candidate + 带指标头注；见 §记账）。完成后交回 Agent 1 开下一轮。
 
 ---
 
@@ -139,6 +139,7 @@ expId  commit  ideaId  baseExpId  train_objective  val_objective  sharpe_val  ga
 - 迭代中的 Type-1 TRAIN 结果**不单独占行**，浓缩进定稿行的 `train_objective` 与实验页的「迭代轨迹」。
 - `status`：`recorded`（定稿并记账）/ `val-dq`（定稿但 VAL 未过门槛，仍记账并标注）/ `crash`。
 - 实验页 `wiki/experiments/<expId>.md` 按 `research-schema.md` §6 模板，含：假设、推理、迭代轨迹（各 TRAIN 步）、TRAIN 与 VAL 结果、`confirmed`、`flags`、回填指针。
+- **归档策略**：把 `research/candidates/<expId>.py` 拷贝到 `validated_strategies/<expId>.py`（目录不存在则建），文件头加注释：`expId / ideaId / baseExpId / train_objective / val_objective / sharpe_val / gate_val(pass|fail) / ranAt`。**每个拿到 VAL 结果的定稿策略都归档**（`gate_val` 标 pass/fail——这里收「过了验证流程」的成品，不只是过门槛者）。此目录**git 跟踪**（是流水线的产物货架，区别于 transient 的 `results.tsv`/`ideas-queue.json`/`loop-state.json`）。
 
 ---
 

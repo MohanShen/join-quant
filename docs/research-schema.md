@@ -38,11 +38,15 @@ wiki 概念页「待研究/空白」  →  提出假设  →  生成/变异 stra
 ```
 join-quant/
 ├── research/
-│   ├── program.md              # 研究循环 agent 指令（人类编辑，见姊妹文件）
+│   ├── program.md              # 四智能体团队编排指令（人类编辑，见姊妹文件）
 │   ├── harness.md              # 冻结评测台常量的权威定义（§3，人类维护，改动即新纪元）
 │   ├── strategy_template.py    # 策略脚手架（§5）：受控因子槽位
 │   ├── candidates/<expId>.py   # 每个实验的策略源码（变异产物，raw）
+│   ├── ideas-queue.json        # Agent 2 排名想法队列（git 不跟踪）
+│   ├── loop-state.json         # 断点检查点（git 不跟踪）
 │   └── results.tsv             # 追加式账本（§7，git 不跟踪）
+├── validated_strategies/       # 定稿并跑过 VAL 的策略归档（Agent 4 写，git 跟踪 = 产物货架）
+│   └── <expId>.py              #   candidate 拷贝 + 指标头注（train/val objective, gate）
 └── wiki/
     └── experiments/<expId>.md  # 每个实验一页（§6）：假设·变异·迭代轨迹·TRAIN/VAL结果·结论·回填指针
 ```
@@ -239,7 +243,7 @@ jul3-002	c3d4e5f	idea-7	jul3-001	1.52	0.88	1.9	fail	val-dq	国九过滤：TRAIN 
 
 **定稿（Type-2，跑一次 VAL）**——Agent 1 定稿后：
 4. Agent 3 用 **`--window val`** 跑一次定稿版，得 `objective(VAL)`、`gate(VAL)`。
-5. Agent 4 记账：`status: recorded`（VAL 过门槛）或 `val-dq`（VAL 未过门槛，仍记账并标注）；`confirmed = gate(VAL) 且 VAL 与 TRAIN 同向`。写账本（§7）+ 实验页（§6）+ 回填（§9）+ `wiki/log.md`，交回 Agent 1 开下一轮。
+5. Agent 4 记账：`status: recorded`（VAL 过门槛）或 `val-dq`（VAL 未过门槛，仍记账并标注）；`confirmed = gate(VAL) 且 VAL 与 TRAIN 同向`。写账本（§7）+ 实验页（§6）+ 回填（§9）+ `wiki/log.md`，**并把定稿策略归档到 `validated_strategies/<expId>.py`**（拷贝 candidate + 指标头注；每个拿到 VAL 结果的定稿策略都归档，`gate_val` 标 pass/fail；此目录 git 跟踪，是流水线产物货架）。交回 Agent 1 开下一轮。
 
 - **首个** `<tag>-000` = **baseline**：某个已归一化的过门槛策略 + 冻结成本 override，在 TRAIN 上确立基准线（§11.5）。
 - **VAL 绝不驱动迭代选择**——只对定稿版跑一次确认。任何用 VAL 逐轮调参 = 泄漏。
