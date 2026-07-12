@@ -72,10 +72,4 @@
 ## [2026-06-28] lint | e3914be0(39706%)等已标⚠⚠；cron 期间 strategies 增至144
 ## [2026-06-28] DONE | backfill 完成：144/144 策略页，15 概念页，零漂移；0 未 ingest / 0 孤儿
 
-## [2026-07-04] experiment | harness epoch 1 冻结 | 三窗 TRAIN 2022-2023/VAL 2024/HOLDOUT 2025→今；objective=年化−回撤 gate sharpe≥2.5；零滑点
-## [2026-07-04] experiment | jul4-000 (baseline最小市值) val=DQ(sharpe0.04) keep(branch-base)
-## [2026-07-04] experiment | jul4-001 (+国九条) val=DQ(0.10/-26.5%/sharpe0.20) discard → 回填 [[小市值因子]]
-## [2026-07-04] experiment | jul4-002 (+沪深300MA20择时) val=DQ(-11%/sharpe-0.65 whipsaw) discard → 回填 [[小市值因子]] [[择时-均线]]
-## [2026-07-04] experiment | jul4-003 (+止损线-9%) val=DQ(-8%/回撤26→16%/sharpe-0.67) discard → 回填 [[小市值因子]]
-## [2026-07-04] experiment | jul4 分支结论: 000..003 全 DQ, 无 keep, 停在基线; wiki小市值高夏普强依赖有利区间, 2024微盘踩踏全线失效
 ## [2026-07-11] normalize | 82 策略 @TRAIN 2022-2023 (epoch1, 零滑点/¥100万) | 74 策略页写入 normalized 块，18 过门槛(夏普≥2.5)；8 概念页加「归一化绩效横评」表；小市值 13/19 pass 为最强族，ETF/多因子/打板多 DQ；16 terminal-fail(多缺自定义库/旧pandas API)，2 true-hang，5 incompat

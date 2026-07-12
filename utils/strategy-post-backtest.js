@@ -8,7 +8,9 @@
  *   node utils/strategy-post-backtest.js <path-to-strategy.py> [title] [options]
  *
  * Options (autoresearch harness — see research/harness.md):
- *   --window <train|val|holdout>   Frozen backtest window (epoch 1). Sets start/end dates.
+ *   --window <train|val>           Frozen backtest window (epoch 1). Sets start/end dates.
+ *                                  NOTE: holdout / any 2025+ window is HARD-BLOCKED (reserved
+ *                                  OOS) unless JQ_ALLOW_OOS=1 (user-only private final test).
  *   --start <YYYY-MM-DD>           Explicit start date (overrides --window).
  *   --end   <YYYY-MM-DD>           Explicit end date (overrides --window).
  *   --capital <N>                  Base capital in yuan (default 1000000 = harness ¥1M).
@@ -50,6 +52,26 @@ const WINDOWS = {
   holdout: { start: '2025-01-01', end: todayISO() },
 };
 
+// Enclosed-environment guard: the 2025-01-01→now window is a reserved OUT-OF-SAMPLE set
+// that the autoresearch pipeline must NEVER backtest (research/harness.md). This hard-block
+// makes it a code guarantee, not an instruction — no agent can touch OOS even via custom
+// --start/--end that overlaps 2025+. Only the user, for a private final test, may override
+// with JQ_ALLOW_OOS=1.
+const OOS_CUTOFF = '2025-01-01';
+function assertNotOOS(window) {
+  if (!window || process.env.JQ_ALLOW_OOS === '1') return;
+  const touchesOOS = (window.start && window.start >= OOS_CUTOFF) ||
+                     (window.end && window.end >= OOS_CUTOFF);   // ISO dates compare lexicographically
+  if (touchesOOS) {
+    throw new Error(
+      `OOS-BLOCKED: window "${window.name}" (${window.start}→${window.end}) reaches into the reserved ` +
+      `out-of-sample period (>= ${OOS_CUTOFF}). The frozen harness forbids backtesting 2025-01-01→now — ` +
+      `the research loop may only use train (2022-2023) and val (2024). ` +
+      `(User-only override for a private final test: JQ_ALLOW_OOS=1.)`
+    );
+  }
+}
+
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 // ── CLI parsing ──────────────────────────────────────────────────────────────
@@ -74,6 +96,7 @@ function parseArgs(argv) {
     if (!w) throw new Error(`Unknown --window "${opt.window}". Use train|val|holdout or --start/--end.`);
     window = { name: opt.window, start: w.start, end: w.end };
   }
+  assertNotOOS(window);   // hard-block 2025+ OOS unless JQ_ALLOW_OOS=1
   return { strategyPath: positional[0], title: positional[1] || null, window, baseCapital };
 }
 

@@ -12,24 +12,30 @@
 
 ## Epoch
 
-- **epoch**: 1
-- **setAt**: 2026-07-04
-- **note**: 首个纪元。
+- **epoch**: 2
+- **setAt**: 2026-07-12
+- **note**: 严格窗口协议 + 四智能体团队。相对 epoch 1 的**唯一实质改动**：选择指标由
+  `objective(VAL)` 改为 **`objective(TRAIN)`**；VAL 仅用于**已定稿策略**的泛化确认；
+  **2025→今 OOS 窗口被彻底禁用**（`strategy-post-backtest.js` 代码级硬阻断，除用户私测
+  `JQ_ALLOW_OOS=1`）。epoch 1（jul4）在旧协议下选择于 VAL、且已触碰 2025，结果就此封版，
+  不与本纪元横比。团队架构见 `research/program.md`。
 
 ---
 
-## 1. 回测三窗（period split）
+## 1. 回测窗口（period split）——严格协议
 
 由 JoinQuant Pipeline 2（`utils/strategy-post-backtest.js`）的回测区间参数实现（平台级，非策略代码）。
 
-| 窗口 | 起 | 止 | 用途 | agent 可见性 |
+| 窗口 | 起 | 止 | 用途 | 谁能跑 / 何时跑 |
 |---|---|---|---|---|
-| **TRAIN** | 2022-01-01 | 2023-12-31 | 开发/自检 | 可见，可无限次 |
-| **VAL** | 2024-01-01 | 2024-12-31 | **选择指标**（keep/discard 依据） | 可见，可无限次 |
-| **HOLDOUT** | 2025-01-01 | **回测当日最新交易日**（滚动） | **最终确认**，防过拟合 | **锁定**：仅对「验证期新最优」跑一次 |
+| **TRAIN** | 2022-01-01 | 2023-12-31 | **迭代与选择**：所有变异/调参在此搜索，选择指标 = `objective(TRAIN)` | Agent 3，迭代中（Type-1）可无限次 |
+| **VAL** | 2024-01-01 | 2024-12-31 | **定稿确认**：仅对 Agent 1 已**定稿**的策略跑一次做泛化检验 | Agent 3，仅 Type-2（定稿）时 |
+| ~~OOS~~ | 2025-01-01 | 今 | **保留样本外**——用户私有最终检验 | **任何 agent 禁用**（代码硬阻断） |
 
-- HOLDOUT 止点随时间前滚（真·样本外），每次跑取当日可得的最新数据。
-- ⚠ **区间特性**（读结果时牢记）：TRAIN 覆盖 2022 熊 + 2023 震荡，**无明显牛市**；VAL 仅 2024 一年，样本短、夏普噪声大。keep 一个验证期结果前，最好确认 TRAIN 与 HOLDOUT 方向一致，别被单年 VAL 带偏。
+- **迭代只看 TRAIN**：Agent 1 在 TRAIN 上搜索，追求 TRAIN 上的正向改进并自行判断定稿。**绝不**在迭代中看 VAL。
+- **VAL 仅定稿一次**：策略定稿后跑一次 VAL，结果由 Agent 4 记账，作泛化参考，**不回头驱动选择**（否则 VAL 泄漏）。
+- **2025→今 = 禁区**：`strategy-post-backtest.js` 对任何触及 `>= 2025-01-01` 的窗口**抛错拒跑**（`OOS-BLOCKED`）。这是代码级保证，不是口头约定。只有用户为私有最终检验可设 `JQ_ALLOW_OOS=1` 手动越过——agent 永远不设。
+- ⚠ **区间特性**（读结果时牢记）：TRAIN 覆盖 2022 熊 + 2023 震荡，**无明显牛市**；VAL 仅 2024 一年，样本短、夏普噪声大——故 VAL 只作定稿泛化参考，不作逐轮选择。
 
 ---
 
@@ -84,19 +90,21 @@ objective(w) = score(w)      若 gate(w) 为真
              = DQ (记为 -inf) 否则
 ```
 
-- **选择指标** = `objective(VAL)`；keep/discard 只看它（`research-schema.md` §8）。
+- **选择指标 = `objective(TRAIN)`**：Agent 1 迭代中的 keep/继续/定稿全看它。一个变异算「正向改进」当且仅当 `gate(TRAIN)` 为真且 `objective(TRAIN) > 当前定稿中最优`。
+- **`objective(VAL)`** 仅在策略**定稿后**算一次，作泛化确认，由 Agent 4 记账；**不参与迭代选择**。
+- **2025/OOS 永不计算**——被代码硬阻断。
 - 门槛 `2.5`、公式形式均为**冻结常量**，改动即新纪元。
 
 > **annualReturn 的来源**：JoinQuant 回测列表（buildList）只给**总收益**（策略收益），不直接给年化。
 > 故 `annualReturn` 由执行器 `strategy-post-backtest.js` 按**实际回测区间天数**从总收益年化：
 > `annualReturn = (1 + 总收益)^(365/天数) − 1`。
-> `sharpe`、`maxDrawdown` 直接取自 JQ 回测结果。三者与区间一并写入机器可读的 `SUMMARY` 行（见 §6）。
+> `sharpe`、`maxDrawdown` 直接取自 JQ 回测结果。三者与区间一并写入机器可读的 `SUMMARY` 行（见 §5）。
 
 ---
 
 ## 5. 回测执行器输出契约（SUMMARY 行）
 
-`node utils/strategy-post-backtest.js <file> "<expId>" --window <train|val|holdout>` 跑完在末尾打印一行：
+`node utils/strategy-post-backtest.js <file> "<expId>" --window <train|val>` 跑完在末尾打印一行：
 
 ```
 SUMMARY\t<window>\t<start>\t<end>\t<days>\t<total%>\t<annual%>\t<sharpe>\t<maxdd%>\t<status>
@@ -104,7 +112,8 @@ SUMMARY\t<window>\t<start>\t<end>\t<days>\t<total%>\t<annual%>\t<sharpe>\t<maxdd
 
 - `annual%` 已按 §4 从 `total%` 与实际 `days` 年化；`sharpe`/`maxdd%` 取自 JQ。
 - `status`：`completed`（可记账）/ `window-mismatch`（实际区间≠请求，**不得记账**，修正重跑）/ `failed`（崩溃，记 crash）。
-- `/run-experiment` 据此算 `objective = annual%/100 − maxdd%/100`，门槛 `sharpe ≥ 2.5`。
+- `--window` 只接受 `train` / `val`；`holdout` 或任何 `>= 2025-01-01` 的区间会被 `OOS-BLOCKED` 拒跑（除非用户 `JQ_ALLOW_OOS=1`）。
+- 迭代中（Type-1）算 `objective(TRAIN)`；定稿（Type-2）算 `objective(VAL)`。门槛 `sharpe ≥ 2.5`。
 
 ## 6. 变更协议（怎么开新纪元）
 
