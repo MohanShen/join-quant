@@ -15,8 +15,9 @@ Given an `active` idea (with `baseExpId`) and its **type**:
 
 1. Write `research/candidates/<expId>.py` (`expId = <tag>-<NNN>`, incrementing) by a **small-step mutation** from `baseExpId` (or the baseline). Only combine controlled-vocabulary factors (`wiki-schema.md` §2.1). Keep the frozen 「勿改区块」 intact (benchmark, `PerTrade`, `FixedSlippage(0)`, ST/paused/次新/涨跌停 filters — `harness.md` §2–§3). `git commit` the candidate source.
 2. Run the backtest and **debug until you get a valid `SUMMARY` line** (fix compile errors / obvious bugs and rerun), unless the failure is an unsolvable technical/platform problem (then report a crash):
-   - **Type-1 (iterating)** → `JQ_USAGE_LIMIT=<limit> node utils/strategy-post-backtest.js research/candidates/<expId>.py "<expId>" --window train`
+   - **Type-1 (iterating)** → `node utils/strategy-post-backtest.js research/candidates/<expId>.py "<expId>" --window train --usage-limit <cap>`
    - **Type-2 (finalized)** → same command with `--window val`
+   - Use the daily `<cap>` the orchestrator gave you (default **55** = free tier; the cron resume uses **240**). **Run the command plain** — do NOT prefix it with `JQ_USAGE_LIMIT=…` and do NOT pipe to `tail`/`head`. Plain form matches the `.claude/settings.json` allowlist, so it runs without a per-command approval prompt; the `SUMMARY` is the last line of stdout anyway.
 3. Parse the 10-column `SUMMARY` (`harness.md` §5): compute `objective = annual%/100 − maxdd%/100`, `gate = sharpe ≥ 2.5`.
 4. **Route the result:**
    - Type-1 → report `{expId, train: {objective, sharpe, gate, ...}}` to **Agent 1 (ideator)**.

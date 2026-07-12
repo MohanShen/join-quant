@@ -22,7 +22,15 @@
       "Bash(curl -s http://localhost:9225/*)",
       "Bash(pgrep:*)",
       "Bash(pkill:*)",
-      "Bash(sleep:*)"
+      "Bash(sleep:*)",
+      "Bash(node utils/jq-budget.js:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(grep:*)",
+      "Bash(git show:*)"
     ]
   }
 }

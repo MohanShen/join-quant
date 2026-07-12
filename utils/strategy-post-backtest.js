@@ -14,6 +14,9 @@
  *   --start <YYYY-MM-DD>           Explicit start date (overrides --window).
  *   --end   <YYYY-MM-DD>           Explicit end date (overrides --window).
  *   --capital <N>                  Base capital in yuan (default 1000000 = harness ¥1M).
+ *   --usage-limit <N>              Daily JQ backtest-minute cap to start new runs (default 55 =
+ *                                  free tier; overrides JQ_USAGE_LIMIT env). Plain arg = no env
+ *                                  prefix needed, so it matches the .claude/settings.json allowlist.
  *   If neither --window nor --start/--end is given, JQ's default window is used and
  *   window verification is SKIPPED (ad-hoc mode; not valid for logging experiments).
  *
@@ -37,7 +40,7 @@ const POLL_INTERVAL_MS = 5000;
 // kept ONLY as a last-resort safety net at MAX_POLL_MS, so a truly stuck run can't block
 // the batch forever; normal slow backtests finish well before it.
 const MAX_POLL_MS = parseInt(process.env.JQ_MAX_POLL_MS || String(5 * 60 * 1000), 10);   // safety cap: hangs never finish; normal runs ~25s
-const USAGE_LIMIT = parseInt(process.env.JQ_USAGE_LIMIT || '55', 10);   // daily used-minutes ceiling to start new runs
+let USAGE_LIMIT = parseInt(process.env.JQ_USAGE_LIMIT || '55', 10);   // daily used-minutes ceiling to start new runs (override with --usage-limit N)
 
 const JOINQUANT_USERNAME = process.env.JOINQUANT_USERNAME || '15656096430';
 const JOINQUANT_PASSWORD = process.env.JOINQUANT_PASSWORD;
@@ -86,6 +89,9 @@ function parseArgs(argv) {
     else positional.push(a);
   }
   const baseCapital = parseInt(opt.capital || DEFAULT_CAPITAL, 10);
+  // --usage-limit N overrides the JQ_USAGE_LIMIT env (lets the daily cap be a plain CLI arg,
+  // so the command needs no leading env-var assignment and matches the settings.json allowlist).
+  if (opt['usage-limit'] != null) USAGE_LIMIT = parseInt(opt['usage-limit'], 10) || USAGE_LIMIT;
 
   let window = null;
   if (opt.start || opt.end) {
