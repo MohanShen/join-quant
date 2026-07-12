@@ -29,37 +29,22 @@
 | **3** | `engineer`（工程师，**封闭环境**） | 生成策略 `.py`、跑回测、调试到有效结果；**严格服从 harness**；按想法类型路由结果 | 写 `research/candidates/`；只能用回测执行器 |
 | **4** | `recorder`（记账官） | 仅当拿到 **VAL 结果**时触发：写实验日志/结果、**归档策略到 `validated_strategies/`**、更新 KB，然后交回 Agent 1 开下一轮 | 写 `research/results.tsv`、`validated_strategies/`、`wiki/**` |
 
-**共享状态（磁盘为真相源，非仅靠消息 → 可断点续跑）**：
-- `research/loop-state.json` —— **断点检查点**：每次 agent 交接后由编排者**原子写入**，记录「上次停在哪」。见下「断点续跑」。
+**共享状态**：
+- `research/loop-state.json` —— **可选**的轻量进度快照（当前最优/活跃想法/下一步），供人类查看；**不是续跑的必需品**（续跑靠会话恢复，见下「断点续跑」），不强制每步写。
 - `research/ideas-queue.json` —— Agent 2 维护的**排名想法队列**。每项：
   `{ id, title, hypothesis, reasoning, sourceRefs:[...], baseExpId|null, rank, status: queued|active|done|dropped }`。
 - `research/candidates/<expId>.py` —— Agent 3 的策略脚本（`expId = <tag>-<NNN>` 递增）。
 - `research/results.tsv` —— Agent 4 记账（**git 不跟踪**）。列见 §记账。
 - `wiki/experiments/<expId>.md`、`wiki/log.md`、`wiki/concepts/*.md` —— Agent 4 回填。
 
-### 断点续跑（resume after interruption）
+### 断点续跑（resume after interruption）——**主要靠会话恢复**
 
-编排者在**每次 agent 交接后**把当前进度原子写入 `research/loop-state.json`（git 不跟踪），字段：
+推荐跑法：人类用 `scripts/autoresearch-interactive.sh` 在**交互式** claude 会话里跑本循环（脚本把会话 id 钉进 `data/autoresearch-session.txt`，可观察、可打断）。额度用尽会话停下后：
 
-```json
-{
-  "epoch": 2,
-  "branch": "research/<tag>",
-  "phase": "ideating | filtering | engineering-train | deciding | engineering-val | recording",
-  "activeAgent": "ideator | critic | engineer | recorder",
-  "activeIdeaId": "idea-12 | null",
-  "activeExpId": "<tag>-007 | null",
-  "iterationStep": 3,
-  "iteratingBest": { "expId": "<tag>-006", "trainObjective": 1.47 },
-  "lastAction": "engineer 报 <tag>-007 TRAIN objective=1.47 gate=pass",
-  "nextAction": "ideator 判 继续迭代 vs 定稿",
-  "updatedAt": "<ISO 时间>"
-}
-```
+- 每小时的 launchd cron（`scripts/autoresearch-loop.sh`）用 **`claude -p --resume <该会话 id>`** 恢复**同一会话**——完整上下文都在，agent **无需重读/重新初始化**，从上次断点直接续跑；额度仍不足时 `--resume` 秒退，下次 fire 在额度重置后再续。
+- cron 用会话 transcript 的 **mtime 心跳**判断会话是否正在运行（交互中或上一 fire）：新鲜则跳过，避免两个进程同写一个会话 / 抢 JQ Chrome（并发上限 2）。额度卡住的会话会变「空闲」（停止写入），mtime 转旧后即可被安全恢复。人类回来再跑一次 `autoresearch-interactive.sh` 即重开同一会话，看到 cron 期间的全部进展。
 
-**恢复时**（会话被打断/额度重置/Chrome 重连后）：编排者先读 `loop-state.json` + `ideas-queue.json`（队列与已测/待测想法）+ `results.tsv`（已定稿）+ git（当前 candidate），据 `phase`/`nextAction` **从上次断点继续**，不重跑已完成的回测、不重复已测想法。若 `loop-state.json` 不存在 = 全新纪元，从 Setup 开始。
-- 写 `loop-state.json` 用「先写临时文件再 rename」原子替换，避免半写。
-- `ideas-queue.json` 里 `status` 已区分：`queued`=待测、`active`=在测、`done`=已定稿、`dropped`=已放弃——与 `loop-state.json` 互补（一个记队列、一个记当前阶段）。
+因此**续跑不依赖把每步写进 `loop-state.json`**——上下文就在会话里。`loop-state.json` / `ideas-queue.json` 仅作**人类可查的进度快照**（可选）；只有当你要**手动冷启动一个全新会话**、又想接着旧进度时，才需要它们（那时读 `ideas-queue.json` 的 `status`=queued/active/done/dropped + `results.tsv` 已定稿 + git 当前 candidate 来重建上下文）。
 
 ---
 
@@ -72,7 +57,7 @@
    - `harness.md` epoch 2 协议已冻结（TRAIN 选择 / VAL 定稿 / OOS 禁用）；只读。
    - CDP Chrome 在跑；**登录/预算用 statistics API 查**：`curl -s localhost:9225/json/version` 通 + `node utils/jq-budget.js` 返回 `used/free`。
    - **预算**：JQ 每日免费 60 分钟、超出烧积分。定 `JQ_USAGE_LIMIT`（默认 55）。
-3. **初始化**：`research/ideas-queue.json`=`[]`；`research/results.tsv` 写表头（§记账）；`research/loop-state.json` 写初始检查点（`phase: ideating`）。（若续跑：这些已存在，读 `loop-state.json` 从断点继续，跳过本步。）
+3. **初始化**：`research/results.tsv` 写表头（§记账）；`research/ideas-queue.json`=`[]`（可选，供 Agent 2 排队）。续跑不靠这些文件而靠**会话恢复**（见「断点续跑」）。
 4. **选 baseline**：从 `wiki/concepts/*.md` 「归一化横评」挑一个 **gate ✅** 的强基线做 `<tag>-000`
    （源码 + `utils/strategy-normalize.js` 的冻结成本 `OVERRIDE`），Agent 3 在 **TRAIN** 上跑一次确立基准线。
 5. **确认即开跑**。

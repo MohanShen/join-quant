@@ -1,31 +1,32 @@
 #!/bin/bash
 #
-# autoresearch-loop.sh — resume the join-quant autoresearch loop unattended.
+# autoresearch-loop.sh — RESUME the user's autoresearch session unattended.
 #
 # Fired on a schedule by launchd (see scripts/com.mohanshen.join-quant-autoresearch.plist).
 # Solves the "Anthropic per-time-slot usage limit" problem for the AUTORESEARCH pipeline:
-# each firing is a cheap poll. When both budgets are available it does real work; when
-# either is exhausted it exits quickly, so the next firing after a reset picks up
-# automatically. The loop is resumable — state lives in the git branch (current best
-# candidate), research/results.tsv, and wiki/experiments — so a fresh `claude -p` continues
-# from wherever the last one stopped.
+# each firing is a cheap poll that RESUMES the SAME claude session the user started
+# interactively (scripts/autoresearch-interactive.sh pins its session id). Because it
+# resumes (`claude -p --resume <uuid>`) rather than cold-starting, the agents keep full
+# context — no re-reading/re-initializing. When the Anthropic quota is available it does
+# real work; when it's exhausted the resume exits fast, so the next firing after the reset
+# picks the same session back up automatically.
 #
 # Preconditions the wrapper checks (exits 0 = clean no-op if any fails):
+#   0. A pinned session exists for this branch (data/autoresearch-session.txt) AND it's not
+#      currently active (transcript mtime older than HEARTBEAT_MIN — a quota-blocked session
+#      is idle even if its window is open, so it becomes resumable).
 #   1. CDP Chrome reachable at $JQ_CDP_URL — backtests need the logged-in session.
-#   2. JQ daily backtest budget not exhausted — used < USAGE_LIMIT. Skipping here avoids
-#      burning Anthropic quota on a run that can't backtest anyway.
-#   3. Not already running — a lockfile prevents overlapping fires (a backtest can take
-#      many minutes; JQ allows max 2 concurrent).
+#   2. JQ daily backtest budget not exhausted — used < USAGE_LIMIT.
+#   Plus a PID lockfile so two fires never overlap.
 #
 # Env overrides:
-#   REPO       repo root (default: parent of this script's dir)
-#   TAG        research epoch tag; branch research/$TAG must already exist
-#              (default: current branch, which must be research/*)
-#   USAGE_LIMIT JQ backtest-minute cap (default 55 = free tier only; >60 spends credits)
-#   JQ_CDP_URL CDP endpoint (default http://localhost:9225)
-#   USE_BYPASS if =1, run claude with --dangerously-skip-permissions instead of relying
-#              on the project .claude/settings.json allowlist (use only if a run stalls
-#              on an un-allowlisted command)
+#   REPO         repo root (default: parent of this script's dir)
+#   TAG          research epoch tag; branch research/$TAG (default: current research/* branch)
+#   USAGE_LIMIT  JQ backtest-minute cap (default 55 = free tier only; >60 spends credits)
+#   HEARTBEAT_MIN session-active threshold in minutes (default 20)
+#   JQ_CDP_URL   CDP endpoint (default http://localhost:9225)
+#   USE_BYPASS   if =1, run claude with --dangerously-skip-permissions instead of the
+#                project .claude/settings.json allowlist (use only if a run stalls)
 #
 set -uo pipefail
 
@@ -71,25 +72,37 @@ if [ "$CUR_BRANCH" != "$BRANCH" ]; then
   git checkout "$BRANCH" >/dev/null 2>&1 || { log "skip: cannot checkout $BRANCH (dirty tree?)"; exit 0; }
 fi
 
-# ── Precheck 0: epoch actually started ──────────────────────────────────────
-# This wrapper only RESUMES an in-progress epoch; a human starts the epoch (Setup +
-# first foreground /run-experiment run, which writes research/loop-state.json). Until
-# that exists there is nothing to resume — skip cleanly so the timer is safe to install
-# before the epoch is kicked off.
-if [ ! -f "$REPO/research/loop-state.json" ]; then
-  log "skip: no research/loop-state.json on $BRANCH — epoch not started yet (run /run-experiment interactively first)"; exit 0
+# ── Precheck 0: a pinned interactive session exists for THIS branch ──────────
+# We RESUME the user's interactive session (same context, no cold start), rather than
+# start a fresh one. The session id is pinned by scripts/autoresearch-interactive.sh into
+# data/autoresearch-session.txt as "<branch>\t<uuid>". No matching session → nothing to
+# resume; skip. (This is what makes the timer safe to leave loaded: it only ever continues
+# a session the user has actually started interactively on this branch.)
+SID_FILE="$REPO/data/autoresearch-session.txt"
+if [ ! -f "$SID_FILE" ]; then
+  log "skip: no data/autoresearch-session.txt — start the epoch interactively first (scripts/autoresearch-interactive.sh)"; exit 0
+fi
+SID_BRANCH="$(cut -f1 "$SID_FILE" 2>/dev/null)"
+SID="$(cut -f2 "$SID_FILE" 2>/dev/null)"
+if [ "$SID_BRANCH" != "$BRANCH" ] || [ -z "$SID" ]; then
+  log "skip: session file is for '$SID_BRANCH' (uuid ${SID:-none}), not current branch '$BRANCH'"; exit 0
+fi
+# Locate the session transcript (unique by uuid across project dirs).
+TRANSCRIPT="$(ls -t "$HOME"/.claude/projects/*/"$SID".jsonl 2>/dev/null | head -1)"
+if [ -z "$TRANSCRIPT" ]; then
+  log "skip: no transcript yet for session $SID — start it interactively first"; exit 0
 fi
 
-# ── Precheck 0b: another run appears active (heartbeat) ─────────────────────
-# The orchestrator rewrites loop-state.json after every agent handoff, so a recent
-# mtime means a run — interactive OR a prior fire — is actively progressing. Skip so
-# two orchestrators don't fight over the JQ Chrome (max 2 concurrent backtests) or the
-# git branch / loop-state.json. The PID lockfile above only covers wrapper-vs-wrapper;
-# this also covers wrapper-vs-interactive. (A stopped run's mtime goes stale within
-# HEARTBEAT_MIN, so the next hourly fire resumes it.)
-HEARTBEAT_MIN="${HEARTBEAT_MIN:-25}"
-if [ -n "$(find "$REPO/research/loop-state.json" -mmin -"$HEARTBEAT_MIN" 2>/dev/null)" ]; then
-  log "skip: loop-state.json touched <${HEARTBEAT_MIN}min ago — a run appears active (avoid overlap)"; exit 0
+# ── Precheck 0b: is that session active right now? (transcript heartbeat) ────
+# The transcript is appended as the session works, so a recent mtime = actively running
+# (interactive OR a prior fire). Skip to avoid two processes writing the same session or
+# fighting over the JQ Chrome (max 2 concurrent). Crucially, a QUOTA-BLOCKED session goes
+# idle (stops writing) even if its window is left open, so its mtime goes stale within
+# HEARTBEAT_MIN and a later fire can safely resume it. The PID lockfile above only covers
+# fire-vs-fire; this covers fire-vs-interactive.
+HEARTBEAT_MIN="${HEARTBEAT_MIN:-20}"
+if [ -n "$(find "$TRANSCRIPT" -mmin -"$HEARTBEAT_MIN" 2>/dev/null)" ]; then
+  log "skip: session $SID active (transcript touched <${HEARTBEAT_MIN}min ago) — avoid overlap"; exit 0
 fi
 
 # ── Precheck 1: CDP Chrome alive ────────────────────────────────────────────
@@ -106,22 +119,25 @@ USED="$(printf '%s' "$BUDGET" | sed -n 's/.*used=\([0-9]*\).*/\1/p')"
 if [ -n "$USED" ] && [ "$USED" -ge "$USAGE_LIMIT" ] 2>/dev/null; then
   log "skip: JQ budget used=${USED}min >= limit=${USAGE_LIMIT}min — wait for daily reset"; exit 0
 fi
-log "budget ok (used=${USED:-unknown}min < ${USAGE_LIMIT}min); resuming autoresearch on $BRANCH"
+log "budget ok (used=${USED:-unknown}min); resuming session $SID on $BRANCH"
 
-# ── Run the loop headless ───────────────────────────────────────────────────
+# ── Resume the interactive session headless ─────────────────────────────────
+# claude -p --resume <uuid> continues the SAME conversation with full context — the agents
+# do not re-read/re-initialize from scratch. A short nudge is enough; the plan already
+# lives in the session.
 PERM_FLAG="--permission-mode acceptEdits"
 [ "${USE_BYPASS:-0}" = "1" ] && PERM_FLAG="--dangerously-skip-permissions"
 
 RUN_LOG="$LOG_DIR/run-$(date '+%Y%m%d-%H%M%S').log"
-PROMPT="Resume the join-quant autoresearch TEAM on the current branch ($BRANCH) via the /run-experiment skill. First read research/program.md (4-agent team protocol), research/harness.md (frozen: TRAIN selection / VAL finalized-only / 2025+ OOS hard-blocked), and docs/research-schema.md. Verify CDP Chrome + JQ budget via node utils/jq-budget.js. Then orchestrate the four agents (ideator -> critic -> engineer -> recorder) per the program.md state machine: iterate mutations on --window train (objective(TRAIN), Sharpe>=2.5 gate), and only for a finalized strategy run --window val once; record finalized experiments to research/results.tsv + wiki. NEVER run --window holdout or any 2025+ window (the executor OOS-blocks it); never set JQ_ALLOW_OOS. Backtest cap: JQ_USAGE_LIMIT=$USAGE_LIMIT. When the JQ budget is exhausted (used>=$USAGE_LIMIT) or the session/Chrome becomes unavailable, STOP at a clean git state and print a brief summary. Do NOT git commit wiki changes or results.tsv. Do NOT create a new epoch/branch."
+NUDGE="Quota is available again — continue the autoresearch loop exactly where you left off (you are already running /run-experiment per research/program.md). Backtest cap JQ_USAGE_LIMIT=$USAGE_LIMIT. NEVER touch the 2025+ OOS window. Keep iterating until the JQ budget (used>=$USAGE_LIMIT) or the Anthropic quota is hit again, then STOP at a clean git state with a one-line status. Do NOT git commit wiki/results unless asked."
 
-log "launching claude -p ($PERM_FLAG) → $RUN_LOG"
-JQ_USAGE_LIMIT="$USAGE_LIMIT" claude -p "$PROMPT" $PERM_FLAG >"$RUN_LOG" 2>&1
+log "resuming claude session $SID ($PERM_FLAG) → $RUN_LOG"
+JQ_USAGE_LIMIT="$USAGE_LIMIT" claude -p --resume "$SID" "$NUDGE" $PERM_FLAG >"$RUN_LOG" 2>&1
 rc=$?
 tail -n 3 "$RUN_LOG" 2>/dev/null | sed 's/^/    /' | tee -a "$LOG_DIR/wrapper.log" >/dev/null
 if [ $rc -ne 0 ]; then
-  log "claude exited rc=$rc (likely rate-limited or session expired — next fire retries after reset)"
+  log "claude exited rc=$rc (likely rate-limited — next fire retries after quota reset)"
 else
-  log "run complete rc=0"
+  log "resume complete rc=0"
 fi
 exit 0
