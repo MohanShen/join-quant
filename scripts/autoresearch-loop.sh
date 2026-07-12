@@ -93,16 +93,20 @@ if [ -z "$TRANSCRIPT" ]; then
   log "skip: no transcript yet for session $SID — start it interactively first"; exit 0
 fi
 
-# ── Precheck 0b: is that session active right now? (transcript heartbeat) ────
-# The transcript is appended as the session works, so a recent mtime = actively running
-# (interactive OR a prior fire). Skip to avoid two processes writing the same session or
-# fighting over the JQ Chrome (max 2 concurrent). Crucially, a QUOTA-BLOCKED session goes
-# idle (stops writing) even if its window is left open, so its mtime goes stale within
-# HEARTBEAT_MIN and a later fire can safely resume it. The PID lockfile above only covers
+# ── Precheck 0b: is another live process HOLDING this session? ──────────────
+# A `claude` process whose args carry this session id = the interactive TUI (or a run) is
+# holding the session. We cannot resume a session another process holds, so skip. This is
+# the accurate signal (the old transcript-mtime heuristic deadlocked: a left-open idle TUI
+# keeps the transcript warm, so the cron skipped forever). If NO process holds it, the
+# session is free to resume regardless of transcript age. PID lockfile above covers
 # fire-vs-fire; this covers fire-vs-interactive.
-HEARTBEAT_MIN="${HEARTBEAT_MIN:-20}"
-if [ -n "$(find "$TRANSCRIPT" -mmin -"$HEARTBEAT_MIN" 2>/dev/null)" ]; then
-  log "skip: session $SID active (transcript touched <${HEARTBEAT_MIN}min ago) — avoid overlap"; exit 0
+#
+# NOTE: to hand a running interactive session off to the cron you must CLOSE it (exit the
+# TUI). Leaving it open — even idle after a quota stop — keeps holding the session and the
+# cron will (correctly) stand aside, logging the message below.
+HOLDER="$(pgrep -f "$SID" 2>/dev/null | tr '\n' ' ')"
+if [ -n "$HOLDER" ]; then
+  log "skip: session $SID is held by live claude pid(s) ${HOLDER}. If that's an interactive TUI you left open, CLOSE it to let the cron resume."; exit 0
 fi
 
 # ── Precheck 1: CDP Chrome alive ────────────────────────────────────────────

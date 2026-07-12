@@ -37,6 +37,11 @@ if [ "$NEW" = "0" ] && [ -f "$SID_FILE" ]; then
   if [ "$saved_branch" = "$BRANCH" ] && [ -n "$saved_sid" ]; then SID="$saved_sid"; fi
 fi
 
+echo "┌─────────────────────────────────────────────────────────────────────────┐"
+echo "│ IMPORTANT: when you're done watching (or it hits the quota limit), CLOSE   │"
+echo "│ this session — exit / Ctrl-D. The hourly cron resumes it ONLY once no      │"
+echo "│ process is holding it. Leaving the TUI open (even idle) blocks the cron.   │"
+echo "└─────────────────────────────────────────────────────────────────────────┘"
 if [ -n "$SID" ] && ls "$HOME"/.claude/projects/*/"$SID".jsonl >/dev/null 2>&1; then
   echo "Reopening autoresearch session $SID on $BRANCH"
   echo "(includes any work the cron did while you were away)"
@@ -46,6 +51,6 @@ else
   printf '%s\t%s\n' "$BRANCH" "$SID" > "$SID_FILE"
   echo "New autoresearch session $SID on $BRANCH"
   echo "→ Inside claude, type:  /run-experiment   (to begin the epoch)"
-  echo "→ The hourly cron will resume THIS session when quota frees up."
+  echo "→ When you stop watching, CLOSE the session so the cron can take over."
   exec claude --session-id "$SID"
 fi
