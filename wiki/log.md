@@ -73,3 +73,5 @@
 ## [2026-06-28] DONE | backfill 完成：144/144 策略页，15 概念页，零漂移；0 未 ingest / 0 孤儿
 
 ## [2026-07-11] normalize | 82 策略 @TRAIN 2022-2023 (零滑点/¥100万) | 74 策略页写入 normalized 块，18 过门槛(夏普≥2.5)；8 概念页加「归一化绩效横评」表；小市值 13/19 pass 为最强族，ETF/多因子/打板多 DQ；16 terminal-fail(多缺自定义库/旧pandas API)，2 true-hang，5 incompat
+
+## [2026-07-12] experiment | jul12-005 (低开小市值剥头皮 + target_count 5→6) train=1.3898 val=1.3231 recorded → 回填 [[止损模块]] [[小市值因子]] [[择时-均线]] [[仓位管理]](新建)
