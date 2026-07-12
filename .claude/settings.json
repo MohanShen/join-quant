@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(node utils/strategy-normalize.js:*)",
+      "Bash(node utils/strategy-post-backtest.js:*)",
+      "Bash(node utils/strategy-daily.js:*)",
+      "Bash(node index.js:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git status:*)",
+      "Bash(git checkout:*)",
+      "Bash(git reset:*)",
+      "Bash(git push:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git branch:*)",
+      "Bash(curl -s http://localhost:9225/*)",
+      "Bash(pgrep:*)",
+      "Bash(pkill:*)",
+      "Bash(sleep:*)"
+    ]
+  }
+}

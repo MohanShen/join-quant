@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  launchd agent: resume the join-quant autoresearch loop on a schedule.
+
+  Fires scripts/autoresearch-loop.sh every 4 hours (StartInterval 14400s). Each fire is a
+  cheap poll that exits immediately unless BOTH the JQ daily backtest budget and the
+  Anthropic plan quota are available — so a run that hits the Anthropic per-time-slot limit
+  is picked up automatically on a later fire once quota resets, and the JQ 60-min/day window
+  is consumed once per day. Chrome must stay logged in at localhost:9225.
+
+  Install:
+    cp scripts/com.mohanshen.join-quant-autoresearch.plist ~/Library/LaunchAgents/
+    launchctl load  ~/Library/LaunchAgents/com.mohanshen.join-quant-autoresearch.plist
+  Verify / control:
+    launchctl list | grep join-quant-autoresearch
+    launchctl start com.mohanshen.join-quant-autoresearch   # fire once now
+  Stop it (this is the "unless I ask it to stop" off-switch):
+    launchctl unload ~/Library/LaunchAgents/com.mohanshen.join-quant-autoresearch.plist
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.mohanshen.join-quant-autoresearch</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/mshen/repos/join-quant/scripts/autoresearch-loop.sh</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/mshen/repos/join-quant</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/Users/mshen/.local/bin:/Users/mshen/.nvm/versions/node/v24.13.0/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <key>USAGE_LIMIT</key>
+    <string>55</string>
+    <key>JQ_CDP_URL</key>
+    <string>http://localhost:9225</string>
+  </dict>
+
+  <key>StartInterval</key>
+  <integer>14400</integer>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>/Users/mshen/repos/join-quant/data/autoresearch-logs/launchd.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/mshen/repos/join-quant/data/autoresearch-logs/launchd.err.log</string>
+</dict>
+</plist>
