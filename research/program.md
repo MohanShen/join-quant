@@ -20,7 +20,12 @@
 
 ## 团队与共享状态
 
-**四个智能体**（角色定义见 `.claude/agents/autoresearch-*.md`）：
+**四个智能体**（角色定义见 `.claude/agents/autoresearch-*.md`），以 **Claude Code 团队（agent teams）** 方式运行：
+
+> **持久 teammate 模型**（本项目的选择）：编排者（`/run-experiment` 主会话）在纪元开始时**一次性生成**四个**具名、常驻**的 teammate（`Agent` 工具带 `name`，如 `ideator`/`critic`/`engineer`/`recorder`，`run_in_background: true`），此后**用 `SendMessage({to: name})` 反复调度同一批 teammate**——它们**在整个循环中常驻、保留各自上下文**，不在每个周期重新生成/重读，直到用户说「停」。这样点子官不必每轮重读整个 KB、工程师保留其调试上下文，省 token、更连贯。
+> - 路由由编排者按状态机居中调度（星型）：把上一 teammate 的回复作为下一 `SendMessage` 的输入，等价于 §主循环 的 `ideator→critic→engineer→ideator/recorder` 流。
+> - **teammate 不跨会话存活**：额度停摆后 `--resume` 恢复的是**编排者会话**（§断点续跑）；teammate 进程已随会话结束而消失，编排者在续跑时**重新生成同一批具名 teammate**，再据会话上下文 + 磁盘账本从断点继续。所以 teammate 是「会话内常驻、跨会话重建」。
+> - 需要 `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`（已在 `.claude/settings.json` env 中开启）。
 
 | # | Agent | 角色 | 只读/可写 |
 |---|---|---|---|
