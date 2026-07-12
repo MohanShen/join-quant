@@ -127,7 +127,7 @@ function regenConceptTables() {
     if (mem.length < 2) { fs.writeFileSync(cf, src); continue; }
     mem.sort((a, b) => ov(b) - ov(a));
     const nP = mem.filter(m => m.gate === 'pass').length;
-    let t = `\n## 归一化绩效横评（TRAIN 2022–2023，epoch 1）\n> 同一区间/同一成本(零滑点)/同一 objective 的 apples-to-apples 横评；按 objective 排序。本概念归一化成员 ${mem.length}，过门槛(夏普≥2.5) ${nP}。⚠ 打板/涨停类成交假设不真实，其数值仅参考。\n\n| 策略 | 年化 | 回撤 | 夏普 | objective | gate |\n|------|------|------|------|-----------|------|\n`;
+    let t = `\n## 归一化绩效横评（TRAIN 2022–2023）\n> 同一区间/同一成本(零滑点)/同一 objective 的 apples-to-apples 横评；按 objective 排序。本概念归一化成员 ${mem.length}，过门槛(夏普≥2.5) ${nP}。⚠ 打板/涨停类成交假设不真实，其数值仅参考。\n\n| 策略 | 年化 | 回撤 | 夏普 | objective | gate |\n|------|------|------|------|-----------|------|\n`;
     for (const m of mem) t += `| [[${m.page}]] | ${m.annual.toFixed(0)}% | ${m.maxdd.toFixed(1)}% | ${m.sharpe.toFixed(2)} | ${m.obj} | ${m.gate === 'pass' ? '✅' : '❌'} |\n`;
     src = src.replace(/\n?$/, '\n' + t);
     src = src.replace(/^(updatedAt:).*$/m, '$1 ' + new Date().toISOString().slice(0, 10));

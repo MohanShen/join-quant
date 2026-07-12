@@ -15,7 +15,8 @@
  * carrying a terminal status are skipped on re-run.
  *
  * Usage:
- *   node utils/strategy-normalize.js [--window train|val|holdout]
+ *   node utils/strategy-normalize.js [--window train|val]   (normalization uses train;
+ *                                    2025+ is OOS-BLOCKED by the executor)
  *                                    [--filter <substr>] [--limit N] [--dry-run]
  */
 
@@ -40,7 +41,7 @@ const PER_STRATEGY_TIMEOUT_MS = parseInt(process.env.JQ_MAX_POLL_MS || String(5 
 const OVERRIDE = `
 
 # ===== AUTORESEARCH NORMALIZATION OVERRIDE (appended; strategies/ file untouched) =====
-# research/harness.md epoch 1 — force zero slippage + frozen commission regardless of
+# research/harness.md §2 — force zero slippage + frozen commission regardless of
 # what the raw strategy sets, even if it re-sets costs every bar.
 __jq_set_slippage = set_slippage
 def set_slippage(*a, **k):

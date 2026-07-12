@@ -8,7 +8,7 @@
  *   node utils/strategy-post-backtest.js <path-to-strategy.py> [title] [options]
  *
  * Options (autoresearch harness — see research/harness.md):
- *   --window <train|val>           Frozen backtest window (epoch 1). Sets start/end dates.
+ *   --window <train|val>           Frozen backtest window (research/harness.md). Sets start/end dates.
  *                                  NOTE: holdout / any 2025+ window is HARD-BLOCKED (reserved
  *                                  OOS) unless JQ_ALLOW_OOS=1 (user-only private final test).
  *   --start <YYYY-MM-DD>           Explicit start date (overrides --window).
@@ -43,7 +43,7 @@ const JOINQUANT_USERNAME = process.env.JOINQUANT_USERNAME || '15656096430';
 const JOINQUANT_PASSWORD = process.env.JOINQUANT_PASSWORD;
 const DEFAULT_CAPITAL = parseInt(process.env.JQ_BASE_CAPITAL || '1000000', 10);
 
-// Frozen backtest windows — MUST match research/harness.md (epoch 1).
+// Frozen backtest windows — MUST match research/harness.md (current epoch).
 // HOLDOUT end rolls forward to "today" (true out-of-sample).
 function todayISO() { return new Date().toISOString().slice(0, 10); }
 const WINDOWS = {

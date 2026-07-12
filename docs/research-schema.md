@@ -2,19 +2,20 @@
 
 本文件定义 `research/` 自主策略研究循环的结构与规则，是 `docs/wiki-schema.md`（知识库 Schema）的姊妹篇。
 灵感来自 Andrej Karpathy 的 [`autoresearch`](https://github.com/karpathy/autoresearch)：
-**「人类只编辑 `program.md`（研究组织的代码），AI 在冻结的评测台上自主迭代单一产物，keep/discard 全凭一个客观指标。」**
+**「人类只编辑 `program.md`/`harness.md`，AI 在冻结的评测台上自主迭代策略；迭代/选择全凭 `objective(TRAIN)`，定稿才验 VAL。」**
+本项目把「AI」实现为一个**四智能体团队**（点子/筛选/工程/记账，见 `research/program.md`）。
 
 本项目在其基础上加了 autoresearch 没有的东西：一个**持久知识库**（`wiki/`）。
 因此研究循环是闭环的：
 
 ```
-wiki 概念页「待研究/空白」  →  提出假设  →  生成/变异 strategy.py
+wiki「待研究/空白/归一化横评」 → 想法+推理 → 变异 candidate.py
         ↑                                          │
         │                                          ▼
-   回填新知识（wiki/experiments/）  ←  keep/discard  ←  冻结评测台回测
+   回填 wiki + 归档 validated_strategies/  ←  TRAIN 迭代→定稿→VAL 确认  ←  冻结评测台回测
 ```
 
-分工同 `wiki-schema.md`：**人类**提假设方向、审阅、裁决冲突、维护冻结常量；**LLM** 负责生成策略、跑回测、记账、回填。
+分工同 `wiki-schema.md`：**人类**提方向、审阅、裁决冲突、维护冻结常量、说「停」；**四智能体团队**负责产想法、筛选排队、生成/回测、记账回填。
 
 ---
 
@@ -317,9 +318,9 @@ jul3-002	c3d4e5f	idea-7	jul3-001	1.52	0.88	1.9	fail	val-dq	国九过滤：TRAIN 
     ranAt: <YYYY-MM-DD>
   ```
   与页内既有「自报绩效」并存、不覆盖；若归一化结果与自报差距大，在「备注/矛盾」注明（区间/成本差异）。
-- **概念页** 增「## 归一化绩效横评（TRAIN 2022–2023，epoch 1）」小节：按 `objective` 排序的表，
+- **概念页** 增「## 归一化绩效横评（TRAIN 2022–2023）」小节：按 `objective` 排序的表，
   标 `gate pass/fail`，一眼看出该概念下**统一区间真能打的成员**；旧「绩效横评」保留（自报、区间不一）。
-- **`log.md` 新增 op** `normalize`：`## [YYYY-MM-DD] normalize | <n> 策略 @TRAIN epoch1 | pass <a> / fail <b> / incompat <c>`。
+- **`log.md` 新增 op** `normalize`：`## [YYYY-MM-DD] normalize | <n> 策略 @TRAIN | pass <a> / fail <b> / incompat <c>`。
   op 全集：`ingest` / `skip-dup` / `concept` / `query` / `lint` / `merge` / `experiment` / **`normalize`**。
 
 ### 11.4 运行时预算与安全（JoinQuant 计费现实）
@@ -346,9 +347,9 @@ node utils/strategy-normalize.js --window train --concept 小市值因子 --usag
 
 ### 11.5 与 autoresearch 的关系（起点契约）
 - 归一化基线回答「**起点**在哪」：过门槛（gate ✅）的策略/因子组合是 autoresearch 变异的高价值起点；
-  全员 DQ 的概念（如 jul4 里 2024 的裸小市值族）则提示该方向在此区间不成立。
+  全员 DQ 的概念则提示该方向在此区间不成立。
 - **autoresearch 的 `<tag>-000` baseline 必须是一个已归一化的过门槛策略**（从各概念页「归一化绩效横评」挑 gate ✅ 者），
-  而**不是**裸 `strategy_template.py`——jul4 已证裸最小市值月度轮动在 VAL 全 DQ。做法：
+  而**不是**裸 `strategy_template.py`（裸最小市值月度轮动在归一化 TRAIN 上即 DQ，不宜作起点）。做法：
   取该策略 `strategies/<file>.py` 源码 + `strategy-normalize.js` 的冻结成本 `OVERRIDE`（零滑点/PerTrade），
   存为 `research/candidates/<tag>-000.py`；其 TRAIN objective 应≈ 该策略页 `normalized:` 值。此后小步变异，朝赢家配方靠拢。
 - 归一化用 **TRAIN**（与迭代区间一致），故它是**先验/特征**：迭代在 TRAIN 上进行本就用它，

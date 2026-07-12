@@ -49,8 +49,9 @@ node utils/strategy-daily.js --discover-only  # Discovery only (~5s)
 
 **Entry point:**
 ```bash
-node utils/strategy-post-backtest.js <path-to-strategy.py> [title]
+node utils/strategy-post-backtest.js <path-to-strategy.py> [title] [--window train|val] [--start YYYY-MM-DD --end YYYY-MM-DD] [--capital N]
 ```
+The backtest window is parameterized (`--window train` = 2022-01-01→2023-12-31, `--window val` = 2024). Any window reaching into **2025+ is hard-blocked** (`OOS-BLOCKED`, reserved out-of-sample) unless `JQ_ALLOW_OOS=1`. With no window flag, JQ's default range is used (ad-hoc mode).
 
 **Step-by-step technical implementation:**
 
@@ -69,6 +70,19 @@ JoinQuant sets `PHPSESSID` and `token` as `httpOnly` cookies — browsers guard 
 
 **Why reload polling?**
 JoinQuant updates backtest status via JavaScript XHR calls that mutate the DOM in-place. A single `page.goto()` loads a static snapshot — subsequent status changes are invisible without a full page reload. We reload the buildList URL on every poll to get the latest state.
+
+---
+
+### Pipeline 3: Autoresearch Team
+
+**Purpose:** A self-improving strategy-research loop that mines the wiki knowledge base for ideas, iterates strategy mutations on a frozen backtest harness, and writes learnings back — a **4-agent team** (run via the `/run-experiment` skill; authoritative spec in `research/program.md`).
+
+- **Agent 1 (ideator)** — reads the KB + experiment logs, generates ideas with reasoning; decides keep-iterating / finalize / give-up on TRAIN results.
+- **Agent 2 (critic)** — judges idea validity, maintains a ranked `research/ideas-queue.json`, dispatches the best idea.
+- **Agent 3 (engineer)** — writes the candidate `.py`, runs the backtest (enclosed, harness-obeying); Type-1→TRAIN, Type-2→VAL.
+- **Agent 4 (recorder)** — on a VAL result, records the experiment + archives the strategy to `validated_strategies/`, backfills the wiki.
+
+**Strict window protocol** (`research/harness.md`, frozen): iteration/selection runs on **TRAIN** (2022–2023) only; **VAL** (2024) is run once on a *finalized* strategy; the **2025→now OOS window is never touched** (hard-blocked in `strategy-post-backtest.js`). Resumable via `research/loop-state.json` + `ideas-queue.json` + `results.tsv` + git. Unattended auto-resume across quota resets: `scripts/autoresearch-loop.sh` + the launchd agent.
 
 ---
 
@@ -143,7 +157,7 @@ node utils/strategy-post-backtest.js strategies/我的策略.py "可选标题"
 # algorithmId: xyz
 # Status:      ✅ 回测完成
 # 回测时间:    2026-06-21 00:03:34
-# 时间范围:    2019-01-01 - 2019-06-30
+# 时间范围:    2022-01-01 - 2023-12-31   (--window train; illustrative)
 # 运行频率:    每天
 # 策略收益:    18%
 # 最大回撤:    11.18%
@@ -204,7 +218,7 @@ npm test
 
 ## Known Limitations
 
-- **Backtest date range**: Pipeline 2 uses JoinQuant's default period (2019-01-01 to 2019-06-30). Custom date ranges require changing the `newStrategy` URL parameters in `strategy-post-backtest.js`.
+- **Backtest date range**: Pipeline 2's window is set via `--window train|val` or `--start/--end`. The **2025-01-01→now out-of-sample window is hard-blocked** (`OOS-BLOCKED`) unless `JQ_ALLOW_OOS=1` — see `research/harness.md`. With no flag, JQ's default range applies (ad-hoc, not valid for logging experiments).
 - **Chrome session persistence**: Pipeline 2 relies on a running Chrome process. Closing it invalidates the session and requires re-login. Keep the Chrome process running (see Chrome Setup above).
 - **Headless mode**: JoinQuant shows CAPTCHA ("拼图验证") in headless Playwright browsers. Pipeline 2 uses CDP connection to an existing headed Chrome session to bypass this.
 

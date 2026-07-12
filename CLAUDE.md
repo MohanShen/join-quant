@@ -89,6 +89,7 @@ for `完成` → scrape the result table for return/drawdown/Alpha/Beta/Sharpe.
 
 - `data/` and `auth/` are gitignored (state + credentials). Never commit them.
 - Default cookie path in `index.js` is `auth/cookies.json`.
-- Pipeline 2 uses JoinQuant's default backtest window (2019-01-01 → 2019-06-30); change the
-  `newStrategy` URL params in `strategy-post-backtest.js` for a custom range.
+- Pipeline 2's backtest window is parameterized via `--window train|val` (or `--start/--end`),
+  set through the `newStrategy` URL params. The **2025+ OOS window is hard-blocked** (`OOS-BLOCKED`)
+  unless `JQ_ALLOW_OOS=1` — see `research/harness.md`. No flag = JQ default range (ad-hoc).
 - Do not close the CDP Chrome process — it invalidates the JQ session and forces re-login.

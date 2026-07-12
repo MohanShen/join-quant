@@ -1,8 +1,11 @@
-# Research candidate — join-quant autoresearch
-# expId:    <tag>-000
+# Research candidate SCAFFOLD — join-quant autoresearch
 # baseline: 最小市值月度轮动 (min-cap monthly rotation)
-# harness:  research/harness.md（冻结评测台 epoch 1）
+# harness:  research/harness.md（冻结评测台，当前 epoch 见该文件）
 # schema:   docs/research-schema.md
+#
+# 注意：这是**从零造概念**时的脚手架，不是 <tag>-000 baseline。
+# 按 research/program.md Setup / research-schema §11.5，纪元首个 <tag>-000
+# 应取一个已归一化的过门槛策略 + 冻结成本 override，而非本裸模板。
 #
 # ┌─────────────────────────────────────────────────────────────────────────┐
 # │ 这是策略脚手架。agent 只在四个「因子槽位」(FACTOR SLOT) 内变异，           │
@@ -38,7 +41,7 @@ def set_variables():
 
 
 def _set_frozen_harness():
-    # ============ FROZEN（勿改）：research/harness.md epoch 1 ============
+    # ============ FROZEN（勿改）：research/harness.md §2 ============
     set_option('use_real_price', True)
     log.set_level('order', 'error')
     set_benchmark('000300.XSHG')                                   # 仅显示用，不影响 objective
