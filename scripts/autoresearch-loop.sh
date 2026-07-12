@@ -80,6 +80,18 @@ if [ ! -f "$REPO/research/loop-state.json" ]; then
   log "skip: no research/loop-state.json on $BRANCH — epoch not started yet (run /run-experiment interactively first)"; exit 0
 fi
 
+# ── Precheck 0b: another run appears active (heartbeat) ─────────────────────
+# The orchestrator rewrites loop-state.json after every agent handoff, so a recent
+# mtime means a run — interactive OR a prior fire — is actively progressing. Skip so
+# two orchestrators don't fight over the JQ Chrome (max 2 concurrent backtests) or the
+# git branch / loop-state.json. The PID lockfile above only covers wrapper-vs-wrapper;
+# this also covers wrapper-vs-interactive. (A stopped run's mtime goes stale within
+# HEARTBEAT_MIN, so the next hourly fire resumes it.)
+HEARTBEAT_MIN="${HEARTBEAT_MIN:-25}"
+if [ -n "$(find "$REPO/research/loop-state.json" -mmin -"$HEARTBEAT_MIN" 2>/dev/null)" ]; then
+  log "skip: loop-state.json touched <${HEARTBEAT_MIN}min ago — a run appears active (avoid overlap)"; exit 0
+fi
+
 # ── Precheck 1: CDP Chrome alive ────────────────────────────────────────────
 if ! curl -s -m 5 "$JQ_CDP_URL/json/version" >/dev/null 2>&1; then
   log "skip: CDP Chrome not reachable at $JQ_CDP_URL — keep it running to allow backtests"; exit 0

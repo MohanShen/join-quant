@@ -39,7 +39,7 @@
     <key>PATH</key>
     <string>/Users/mshen/.local/bin:/Users/mshen/.nvm/versions/node/v24.13.0/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
     <key>USAGE_LIMIT</key>
-    <string>55</string>
+    <string>240</string>
     <key>JQ_CDP_URL</key>
     <string>http://localhost:9225</string>
   </dict>
