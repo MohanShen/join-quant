@@ -71,6 +71,15 @@ if [ "$CUR_BRANCH" != "$BRANCH" ]; then
   git checkout "$BRANCH" >/dev/null 2>&1 || { log "skip: cannot checkout $BRANCH (dirty tree?)"; exit 0; }
 fi
 
+# ── Precheck 0: epoch actually started ──────────────────────────────────────
+# This wrapper only RESUMES an in-progress epoch; a human starts the epoch (Setup +
+# first foreground /run-experiment run, which writes research/loop-state.json). Until
+# that exists there is nothing to resume — skip cleanly so the timer is safe to install
+# before the epoch is kicked off.
+if [ ! -f "$REPO/research/loop-state.json" ]; then
+  log "skip: no research/loop-state.json on $BRANCH — epoch not started yet (run /run-experiment interactively first)"; exit 0
+fi
+
 # ── Precheck 1: CDP Chrome alive ────────────────────────────────────────────
 if ! curl -s -m 5 "$JQ_CDP_URL/json/version" >/dev/null 2>&1; then
   log "skip: CDP Chrome not reachable at $JQ_CDP_URL — keep it running to allow backtests"; exit 0

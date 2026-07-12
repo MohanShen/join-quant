@@ -3,11 +3,13 @@
 <!--
   launchd agent: resume the join-quant autoresearch loop on a schedule.
 
-  Fires scripts/autoresearch-loop.sh every 4 hours (StartInterval 14400s). Each fire is a
-  cheap poll that exits immediately unless BOTH the JQ daily backtest budget and the
-  Anthropic plan quota are available — so a run that hits the Anthropic per-time-slot limit
-  is picked up automatically on a later fire once quota resets, and the JQ 60-min/day window
-  is consumed once per day. Chrome must stay logged in at localhost:9225.
+  Fires scripts/autoresearch-loop.sh every 1 hour (StartInterval 3600s). Each fire is a
+  cheap poll that exits immediately unless the epoch is started AND both the JQ daily
+  backtest budget and the Anthropic plan quota are available. Polling hourly (rather than
+  every 4h = the quota-window length) means a run stopped by the Anthropic per-4h-slot
+  limit is picked back up within ~1h of the quota reset instead of wasting most of a window.
+  A fire while still rate-limited is a no-op (claude -p exits immediately; when you're over
+  the limit there is no quota to consume). Chrome must stay logged in at localhost:9225.
 
   Install:
     cp scripts/com.mohanshen.join-quant-autoresearch.plist ~/Library/LaunchAgents/
@@ -43,7 +45,7 @@
   </dict>
 
   <key>StartInterval</key>
-  <integer>14400</integer>
+  <integer>3600</integer>
 
   <key>RunAtLoad</key>
   <true/>
