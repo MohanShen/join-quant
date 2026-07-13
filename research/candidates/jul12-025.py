@@ -97,8 +97,8 @@ def get_stocks(context):
     Arc-5 唯一结构改动：股票池由「全A最小市值」改为「中证1000成分股」，
     在该池内保持市值升序排名（其余管线不变）。
     """
-    # 中证1000 成分股（当日）作为候选池
-    pool = index_stocks('000852.XSHG')
+    # 中证1000 成分股（当日）作为候选池（JQ API 为 get_index_stocks）
+    pool = get_index_stocks('000852.XSHG', date=context.current_dt)
     # 在中证1000池内按市值升序取前 g.choice 只（池约1000只，等价于全池升序）
     q = (query(valuation.code, valuation.market_cap)
          .filter(valuation.code.in_(pool))
