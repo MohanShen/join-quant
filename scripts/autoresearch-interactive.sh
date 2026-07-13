@@ -44,8 +44,11 @@ echo "│ process is holding it. Leaving the TUI open (even idle) blocks the cro
 echo "└─────────────────────────────────────────────────────────────────────────┘"
 if [ -n "$SID" ] && ls "$HOME"/.claude/projects/*/"$SID".jsonl >/dev/null 2>&1; then
   echo "Reopening autoresearch session $SID on $BRANCH"
-  echo "(includes any work the cron did while you were away)"
-  exec claude --resume "$SID"
+  echo "(includes any work the cron did while you were away; auto-continuing the loop)"
+  # Auto-submit a resume nudge so you don't have to type "continue" — and tell it to rebuild
+  # the team, since teammates die with the prior session (they must be re-spawned on resume).
+  RESUME_MSG="Continue the autoresearch loop (you're already running /run-experiment). Your teammates from the prior session are gone — re-spawn the four named teammates, reconcile against git + research/results.tsv + research/ideas-queue.json (disk is ground truth, the transcript may be stale), then continue from the real breakpoint. NEVER touch the 2025+ OOS window. Keep going until I say stop or a budget/quota limit hits."
+  exec claude --resume "$SID" "$RESUME_MSG"
 else
   SID="$(uuidgen | tr 'A-Z' 'a-z')"
   printf '%s\t%s\n' "$BRANCH" "$SID" > "$SID_FILE"
