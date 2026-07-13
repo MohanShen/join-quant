@@ -20,12 +20,12 @@
 
 ## 团队与共享状态
 
-**四个智能体**（角色定义见 `.claude/agents/autoresearch-*.md`），以 **Claude Code 团队（agent teams）** 方式运行：
+**四个智能体**（角色定义见 `.claude/agents/autoresearch-*.md`），以**临时 subagent** 方式运行：
 
-> **持久 teammate 模型**（本项目的选择）：编排者（`/run-experiment` 主会话）在纪元开始时**一次性生成**四个**具名、常驻**的 teammate（`Agent` 工具带 `name`，如 `ideator`/`critic`/`engineer`/`recorder`，`run_in_background: true`），此后**用 `SendMessage({to: name})` 反复调度同一批 teammate**——它们**在整个循环中常驻、保留各自上下文**，不在每个周期重新生成/重读，直到用户说「停」。这样点子官不必每轮重读整个 KB、工程师保留其调试上下文，省 token、更连贯。
-> - 路由由编排者按状态机居中调度（星型）：把上一 teammate 的回复作为下一 `SendMessage` 的输入，等价于 §主循环 的 `ideator→critic→engineer→ideator/recorder` 流。
-> - **teammate 不跨会话存活**：额度停摆后 `--resume` 恢复的是**编排者会话**（§断点续跑）；teammate 进程已随会话结束而消失，编排者在续跑时**重新生成同一批具名 teammate**，再据会话上下文 + 磁盘账本从断点继续。所以 teammate 是「会话内常驻、跨会话重建」。
-> - 需要 `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`（已在 `.claude/settings.json` env 中开启）。
+> **临时 subagent 模型**（本项目的选择）：编排者（`/run-experiment` 主会话）在状态机的**每一步**用 `Agent` 工具**新生成**对应角色的一次性 subagent（不带 `name`、不常驻），给它**当步的具体任务 + 所需最小上下文**；subagent 干完这一件事、**把结果返回给编排者**即终止。subagent **互不寻址、不常驻**——所有路由**经编排者居中**（星型）：`ideator →(想法) critic →(出队想法) engineer →(TRAIN 结果) ideator →(定稿) engineer →(VAL 结果) recorder →(交回) ideator …`。
+> - **续跑干净**：subagent 本就一次性，`--resume` 恢复的是**编排者会话**（§断点续跑）；**没有 teammate 需要重生成、不会「找不到 teammate」**。上下文靠编排者会话 + 磁盘账本（git / `results.tsv` / `ideas-queue.json`）；transcript 与磁盘冲突时**以磁盘为准**。
+> - 代价：每次生成的 subagent 会重读它需要的最小上下文（如点子官读相关概念页）——换来续跑干净、路由可靠、无实验性 teams 依赖。
+> - **不需要** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`；不使用 `SendMessage`/常驻 teammate。
 
 | # | Agent | 角色 | 只读/可写 |
 |---|---|---|---|
@@ -46,8 +46,8 @@
 
 推荐跑法：人类用 `scripts/autoresearch-interactive.sh` 在**交互式** claude 会话里跑本循环（脚本把会话 id 钉进 `data/autoresearch-session.txt`，可观察、可打断）。额度用尽会话停下后：
 
-- 每小时的 launchd cron（`scripts/autoresearch-loop.sh`）用 **`claude -p --resume <该会话 id>`** 恢复**同一会话**——完整上下文都在，agent **无需重读/重新初始化**，从上次断点直接续跑；额度仍不足时 `--resume` 秒退，下次 fire 在额度重置后再续。
-- cron 用会话 transcript 的 **mtime 心跳**判断会话是否正在运行（交互中或上一 fire）：新鲜则跳过，避免两个进程同写一个会话 / 抢 JQ Chrome（并发上限 2）。额度卡住的会话会变「空闲」（停止写入），mtime 转旧后即可被安全恢复。人类回来再跑一次 `autoresearch-interactive.sh` 即重开同一会话，看到 cron 期间的全部进展。
+- 每小时的 launchd cron（`scripts/autoresearch-loop.sh`）用 **`claude -p --resume <该会话 id>`** 恢复**同一会话**——**编排者**的上下文都在，从上次断点直接续跑（临时 subagent 本就一次性，**没有 teammate 需要重生成**，编排者按需再新生成即可）；额度仍不足时 `--resume` 秒退，下次 fire 在额度重置后再续。
+- cron 用 **pgrep 判断是否有活着的 `claude` 进程正持有该会话 id**（交互 TUI 或上一 fire）：有则跳过（无法恢复被占用的会话）；无则可恢复，与 transcript 新旧无关。**交接规则：要让 cron 接手，必须先关闭交互会话**（退出 TUI）——开着（哪怕空闲）就一直占用、cron 会正确让路。人类回来再跑 `autoresearch-interactive.sh` 即重开同一会话（自动续跑），看到 cron 期间的全部进展。
 
 因此**续跑不依赖把每步写进 `loop-state.json`**——上下文就在会话里。`loop-state.json` / `ideas-queue.json` 仅作**人类可查的进度快照**（可选）；只有当你要**手动冷启动一个全新会话**、又想接着旧进度时，才需要它们（那时读 `ideas-queue.json` 的 `status`=queued/active/done/dropped + `results.tsv` 已定稿 + git 当前 candidate 来重建上下文）。
 
