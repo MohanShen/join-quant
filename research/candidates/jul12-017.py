@@ -74,13 +74,9 @@ def select_stocks(context):
     if not filtered:
         return []
 
-    # 选股·技术量价·低波动：批量取近 21 日收盘 -> 20 日日收益 std -> 升序取最低 hold_count 只
-    prices = get_price(filtered, count=21, end_date=context.current_dt,
-                       frequency='daily', fields=['close'], panel=False, fq='pre')
-    # 规整为宽表 close：columns=code, index=日期
-    close = prices
-    if hasattr(close.columns, 'nlevels') and close.columns.nlevels > 1:
-        close = close.xs('close', axis=1, level=0)
+    # 选股·技术量价·低波动：批量取近 21 日收盘（history 返回宽表 index=日期/columns=code）
+    # -> 20 日日收益 std -> 升序取最低 hold_count 只
+    close = history(21, unit='1d', field='close', security_list=filtered, df=True)
     vol = close.pct_change().std()        # 每只股票的 20 日实现波动率（Series，index=code）
     vol = vol.dropna()                     # 丢弃历史不足/无效的股票
     if vol.empty:
