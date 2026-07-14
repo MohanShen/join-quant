@@ -75,15 +75,16 @@ for `完成` → scrape the result table for return/drawdown/Alpha/Beta/Sharpe.
 | `pipelines/` | Orchestrators: `community.js`, `custom.js` |
 | `backtest/runner.js` | `BacktestRunner` — clone → poll → parse |
 | `strategies/` | ~155 cloned + local Python strategy files |
-| `research/` | Autoresearch team: `program.md`, `harness.md`, `candidates/`, transient `ideas-queue.json`/`loop-state.json`/`results.tsv` (gitignored) |
+| `research/` | Auto-research team (optimize): `program.md`, `harness.md`, `candidates/`, transient `ideas-queue.json`/`loop-state.json`/`results.tsv` (gitignored) |
+| `study/` | Auto-study team (understand ONE strategy): `program.md`, `<id>/target.py` + `variants/`, transient `questions.json`/`findings.tsv` (gitignored) |
 | `validated_strategies/` | Finalized strategies that completed VAL (Agent 4 archives here; **tracked** = product shelf) |
-| `wiki/` | Strategy wiki (`index.md`, `strategies/`, `authors/`, `concepts/`, `experiments/`) |
-| `docs/` | `wiki-schema.md`, `research-schema.md`, `push-format.md`, `translator-agent-prompt.md` |
+| `wiki/` | Strategy wiki (`index.md`, `strategies/`, `authors/`, `concepts/`, `experiments/`, `studies/`) |
+| `docs/` | `wiki-schema.md`, `research-schema.md`, `study-schema.md`, `push-format.md`, `translator-agent-prompt.md` |
 | `tests/` | `node --test` suites: `auth`, `loader`, `runner` |
 | `data/` | **gitignored** — discovery state + `cookies.json` |
 | `auth/` | **gitignored** — session cookies (default cookie path is `auth/cookies.json`) |
-| `.claude/skills/` | `ingest-strategy`, `query-wiki`, `run-experiment` skills |
-| `.claude/agents/` | Autoresearch team: `autoresearch-{ideator,critic,engineer,recorder}` |
+| `.claude/skills/` | `ingest-strategy`, `query-wiki`, `run-experiment`, `run-study` skills |
+| `.claude/agents/` | Auto-research `autoresearch-{ideator,critic,engineer,recorder}`; auto-study `autostudy-{questioner,prioritizer,experimenter,analyst}` |
 
 ## Notes & Gotchas
 
