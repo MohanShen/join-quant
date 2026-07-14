@@ -8,8 +8,8 @@
   until every strategy is `done` or you stop. A shared jq-pipeline lock ensures study and
   research never run backtests at the same time. Chrome must stay logged in at localhost:9225.
 
-  USAGE_LIMIT defaults to 55 (free JQ tier) — the batch is large (~82 strategies), so this
-  keeps it inside the free 60 min/day. Raise it here (e.g. 240) to spend credits for speed.
+  USAGE_LIMIT = 240 (60 free + ~180 credit-paid JQ min/day) for throughput on the large
+  ~82-strategy batch. Lower it to 55 to stay inside the free tier (slower, no credit spend).
 
   Install:  cp scripts/com.mohanshen.join-quant-autostudy.plist ~/Library/LaunchAgents/
             launchctl load ~/Library/LaunchAgents/com.mohanshen.join-quant-autostudy.plist
@@ -31,7 +31,7 @@
     <key>PATH</key>
     <string>/Users/mshen/.local/bin:/Users/mshen/.nvm/versions/node/v24.13.0/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
     <key>USAGE_LIMIT</key>
-    <string>55</string>
+    <string>240</string>
     <key>JQ_CDP_URL</key>
     <string>http://localhost:9225</string>
   </dict>
