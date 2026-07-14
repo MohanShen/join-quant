@@ -22,3 +22,4 @@ research/loop-state.json
 # Auto-study transient state (queue + findings ledger), not tracked
 study/*/findings.tsv
 study/*/questions.json
+study/manifest.json

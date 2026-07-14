@@ -24,11 +24,14 @@
 
 ## 2. 目录结构
 
+**批量模式**：解剖**所有归一化策略**（`wiki/strategies/*.md` 带 `normalized:` 块者，共 ~82）。`study/manifest.json` 列全部策略 + 每个 `status`（pending|in-progress|done），按 objective 强→弱排序；外层循环逐个做完，**不到全部 `done` 或用户说停不退出**（`program.md` 外层循环）。
+
 ```
 join-quant/
 ├── study/
 │   ├── program.md                     # 团队编排指令（人类编辑；见姊妹文件）
-│   └── <strategyId>/                   # 一次解剖 = 一个目标策略
+│   ├── manifest.json                   # 批量清单：所有归一化策略 + status（git 不跟踪）
+│   └── <strategyId>/                   # 每个策略一目录
 │       ├── target.py                   #   被解剖策略的源码快照（+ 冻结成本 override）
 │       ├── questions.json              #   排名问题队列（git 不跟踪）
 │       ├── findings.tsv                #   发现账本（git 不跟踪，§7）

@@ -36,6 +36,7 @@ USAGE_LIMIT="${USAGE_LIMIT:-55}"
 JQ_CDP_URL="${JQ_CDP_URL:-http://localhost:9225}"
 LOG_DIR="$REPO/data/autoresearch-logs"
 LOCK="$REPO/data/autoresearch.lock"
+PLOCK="$REPO/data/jq-pipeline.lock"   # shared across research+study crons: only one JQ pipeline runs at a time
 mkdir -p "$LOG_DIR"
 
 ts() { date '+%Y-%m-%d %H:%M:%S'; }
@@ -52,7 +53,7 @@ if [ -e "$LOCK" ]; then
   log "stale lock (pid ${lockpid:-?}) — clearing"
 fi
 echo $$ > "$LOCK"
-trap 'rm -f "$LOCK"' EXIT
+trap 'rm -f "$LOCK" "$PLOCK"' EXIT
 
 # ── Resolve research branch ─────────────────────────────────────────────────
 CUR_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
@@ -123,6 +124,12 @@ USED="$(printf '%s' "$BUDGET" | sed -n 's/.*used=\([0-9]*\).*/\1/p')"
 if [ -n "$USED" ] && [ "$USED" -ge "$USAGE_LIMIT" ] 2>/dev/null; then
   log "skip: JQ budget used=${USED}min >= limit=${USAGE_LIMIT}min — wait for daily reset"; exit 0
 fi
+# ── Shared lock: don't run backtests while the OTHER pipeline (study/research) runs ──
+if [ -e "$PLOCK" ]; then
+  pp="$(cat "$PLOCK" 2>/dev/null)"
+  if [ -n "$pp" ] && kill -0 "$pp" 2>/dev/null; then log "skip: another JQ pipeline (pid $pp) is running — serialize"; exit 0; fi
+fi
+echo $$ > "$PLOCK"
 log "budget ok (used=${USED:-unknown}min); resuming session $SID on $BRANCH"
 
 # ── Resume the interactive session headless ─────────────────────────────────

@@ -4,8 +4,8 @@
 人类只编辑本文件与 `research/harness.md`；团队据此**自主**提问、跑实验、记发现、写报告、反哺 KB。
 权威规则见 `docs/study-schema.md`（冲突以它为准）与 `research/harness.md`（评测台冻结，只读）。
 
-> **目标不是优化指标，而是理解一个既定策略**：各组件贡献、参数敏感性、regime 依赖、失效模式与机理。
-> 一次解剖 = 一个目标策略 `<strategyId>`，跑到问题穷尽或用户说停，产出 `wiki/studies/<strategyId>.md` 报告。
+> **目标不是优化指标，而是理解策略**：各组件贡献、参数敏感性、regime 依赖、失效模式与机理。
+> **批量模式**：遍历 `study/manifest.json` 里**所有归一化策略**，逐个做完整解剖、产出 `wiki/studies/<id>.md` 报告、标 `done`，**不到全部完成（或用户说停）不退出**。有外层循环（遍历策略）+ 内层循环（对一个策略的 4-agent 解剖）。
 
 ---
 
@@ -32,6 +32,7 @@
 | **4** | `analyst`（分析官/报告员） | 把结果解读成**发现**、记 `findings.tsv`、维护 `wiki/studies/<id>.md` 报告、反哺 KB，交回提问官 | 写 `findings.tsv`、`wiki/studies/`、`wiki/**` |
 
 **共享状态**：
+- `study/manifest.json` —— **批量清单**：所有归一化策略 + 每个的 `status`（pending|in-progress|done），按 objective 强→弱排序（git 不跟踪）。外层循环的进度真相源。
 - `study/<id>/questions.json` —— 排序问题队列（git 不跟踪，§schema 6）。
 - `study/<id>/target.py` —— 被解剖策略源码快照 + 冻结成本 override（**不可变**）。
 - `study/<id>/variants/<qId>.py` —— 各实验变体（raw）。
@@ -43,19 +44,30 @@
 
 ---
 
-## Setup（开一次解剖）
+## Setup（开批量解剖）
 
 与人类确认后：
 
-1. **定目标** `<strategyId>`（人类指定，如 `jul12-005`）。建分支 `study/<strategyId>`（从 master/当前 HEAD）。
-2. **确认评测台 + 登录 + 预算**：`research/harness.md` 只读；`curl -s localhost:9225/json/version` 通 + `node utils/jq-budget.js` 出 `used/free`；定 `--usage-limit`（默认 55=免费额度内）。
-3. **快照 target**：把目标策略源码 + 冻结成本 override 存 `study/<strategyId>/target.py`（若目标是 raw wiki 策略，追加 `strategy-normalize.js` 的 `OVERRIDE`；若是 `research/candidates/` 的策略，通常已带 override）。跑一次 `--window train`（必要时 `--window val`）确立**基线指标**，作后续所有 Δ 的参照。
-4. **初始化**：`study/<strategyId>/questions.json`=`[]`；`findings.tsv` 写表头（§schema 7）；`wiki/studies/<strategyId>.md` 起草空报告（frontmatter + 空小节）。
-5. **确认即开跑**。
+1. **建 manifest**：`study/manifest.json` 已由脚本从所有归一化 wiki 策略页生成（`id / sourceFile / objective / gate / status`，按 objective 强→弱）。不存在则重建（读 `wiki/strategies/*.md` 的 `normalized:` 块）。建分支 `study/all`（从当前 HEAD）。
+2. **确认评测台 + 登录 + 预算**：`research/harness.md` 只读；`curl -s localhost:9225/json/version` 通 + `node utils/jq-budget.js` 出 `used/free`；定 `--usage-limit`。
+3. **确认即开跑**（进入外层循环）。
 
 ---
 
-## 主循环（状态机）——**只在问题穷尽或用户说停时才停**
+## 外层循环（遍历所有归一化策略）——**不到全部 `done` 或用户说停不退出**
+
+1. 读 `study/manifest.json`，选**第一个 `status != done`** 的策略（强→弱序）；无则**全部完成**，收尾简报。
+2. 标其 `status: in-progress`。
+3. **该策略 Setup**：快照 `study/<id>/target.py` = 其 `sourceFile` 源码 + 冻结成本 `OVERRIDE`（`strategy-normalize.js`；research/candidates 的已带则直接拷）；跑一次基线（`--window train`，必要时 `--window val`）作 Δ 参照；建 `study/<id>/questions.json`=`[]`、`findings.tsv` 表头、`wiki/studies/<id>.md` 空报告。
+4. 跑**内层解剖循环**（下节）直到该策略问题穷尽 → analyst **定稿 `wiki/studies/<id>.md`**。
+5. 标其 `status: done`，回到 1 取下一个。
+6. **预算/额度到顶**：停在干净状态（当前策略进度留在磁盘），cron 续跑时从 manifest 的 `in-progress`/下一个 `pending` 接着做。
+
+> **每策略适度深度**：覆盖四轴（主组件归因 + 关键参数敏感性 + regime + 机理真实性）即可定稿，**别在单个策略上钻牛角尖**——批量要推进。强策略（gate pass）值得更深，DQ 策略重点答「为什么不行」即可。
+
+---
+
+## 内层循环（对一个策略的解剖，状态机）——问题穷尽即定稿该策略
 
 ```
    ┌──► questioner ──(问题+假设+测法)──► prioritizer
@@ -78,7 +90,7 @@
 4. **analyst 记账+报告**：把 Δ 解读成一句**发现**（含 confidence、⚠ flags），追加 `findings.tsv`，更新 `wiki/studies/<id>.md` 对应小节（归因表/敏感性/regime/机理），有跨策略价值则反哺概念页（§schema 9）。把发现交回 questioner 促发追问。
 5. 回到 1。
 
-**穷尽即收尾**：无更多有价值问题时，analyst **定稿报告**（一句话结论 + 组件归因排序 + 敏感性 + regime + 机理真实性 + 反哺 auto-research 的启示），简报给用户。
+**穷尽即定稿该策略**：无更多有价值问题时，analyst **定稿 `wiki/studies/<id>.md`**（一句话结论 + 组件归因排序 + 敏感性 + regime + 机理真实性 + 反哺 auto-research 的启示），把该策略标 `done`，**交回外层循环取下一个策略**（不停整个批量）。
 
 ---
 
