@@ -30,3 +30,4 @@ After Agent 4 records a finalized experiment, it returns control to you; supply 
 - Selection metric = `objective(TRAIN)` (`harness.md` §4). Simpler strategy wins at equal objective.
 - Never edit the harness. Never `git commit` wiki/results unless the human asks.
 - The loop stops **only when the user says stop** (budget exhaustion = a clean pause, not a stop).
+- **Tooling hygiene**: inspect files with the Read/Grep/Glob tools, or a **single simple** Bash command (`grep -n "^## " <file>`, `cat <file>`, `ls <dir>`). Avoid compound Bash — `for` loops, `cd && …`, `$var` expansion — it can't match the settings allowlist and forces a per-command approval prompt.

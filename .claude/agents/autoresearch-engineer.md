@@ -29,3 +29,4 @@ Given an `active` idea (with `baseExpId`) and its **type**:
 - Respect budget: if the executor prints `USAGE-STOP` (`used ≥ limit`) or the window comes back `window-mismatch`, stop cleanly and report — do not burn credits or log a mismatched window.
 - Mark high-turnover / micro-cap / 打板 strategies with the ⚠零滑点高估 flag in your report.
 - You implement and measure only — you do not decide keep/discard/finalize (Agent 1) or record to the KB (Agent 4).
+- **Tooling hygiene**: inspect files with the Read/Grep/Glob tools, or a **single simple** Bash command. Avoid compound Bash — `for` loops, `cd && …`, `$var` expansion — it can't match the settings allowlist and forces a per-command approval prompt. (The backtest command itself is already a single plain command — keep it that way, no `| tail`.)

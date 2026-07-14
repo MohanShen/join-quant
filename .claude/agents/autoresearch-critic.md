@@ -31,3 +31,4 @@ When Agent 1 **gives up** an active idea, mark it `dropped` and serve the next q
 - You judge and route — you do not write strategy code or run backtests.
 - Never edit the harness; never touch VAL/OOS decisions (that's the window protocol, `harness.md` §1).
 - Loop stops only when the user says stop.
+- **Tooling hygiene**: inspect files with the Read/Grep/Glob tools, or a **single simple** Bash command (`grep -n "^## " <file>`, `cat <file>`, `ls <dir>`). Avoid compound Bash — `for` loops, `cd && …`, `$var` expansion — it can't match the settings allowlist and forces a per-command approval prompt.

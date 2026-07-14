@@ -31,3 +31,4 @@ You act **only when a finalized strategy has a VAL result** (from Agent 3, Type-
 - **Do not `git commit` wiki changes or `results.tsv`** unless the human explicitly asks.
 - 2025/OOS numbers never exist here — the pipeline can't produce them.
 - Loop stops only when the user says stop.
+- **Tooling hygiene**: inspect files with the Read/Grep/Glob tools, or a **single simple** Bash command (`grep -n "^## " wiki/concepts/<name>.md`, `cat <file>`, `ls <dir>`). Avoid compound Bash — `for` loops, `cd && …`, `$var` expansion — it can't match the settings allowlist and forces a per-command approval prompt (this is exactly what tripped the concept-page check).
