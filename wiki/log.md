@@ -75,3 +75,21 @@
 ## [2026-07-11] normalize | 82 策略 @TRAIN 2022-2023 (零滑点/¥100万) | 74 策略页写入 normalized 块，18 过门槛(夏普≥2.5)；8 概念页加「归一化绩效横评」表；小市值 13/19 pass 为最强族，ETF/多因子/打板多 DQ；16 terminal-fail(多缺自定义库/旧pandas API)，2 true-hang，5 incompat
 
 ## [2026-07-12] experiment | jul12-005 (低开小市值剥头皮 + target_count 5→6) train=1.3898 val=1.3231 recorded → 回填 [[止损模块]] [[小市值因子]] [[择时-均线]] [[仓位管理]](新建)
+
+## [2026-07-13] experiment | Arc1 低开剥头皮收敛：jul12-006..012 穷尽单因子扫描确认 jul12-005 (obj 1.3898) 为联合局部最优 → 回填调参地图（无新VAL行）到 [[jul12-005]]（调参地图节）· [[止损模块]]（破开盘价承重/止盈+5%对称峰值/跨日止损死代码）· [[仓位管理]]（分散>过滤，count内点@6）· [[小市值因子]]（junk-tail=alpha二确认、振幅≤10/跌幅<−1入场阈最优、扩池撞300s执行器上限）；⚠零滑点高估贯穿整族
+
+## [2026-07-13] experiment | Arc2 裸微盘周度轮动 = 负结果（全DQ，从未过门槛/定稿/碰VAL，无results.tsv行、无归档）：jul12-013..017 三个正交降回撤杠杆各自失败，回撤=系统性微盘beta不可约减，最佳 jul12-015 obj 0.2366 仍DQ → 新建 [[arc2-microcap-rotation]] 负结果页 + 回填 [[小市值因子]]（裸轮动夏普~1.65 vs 剥头皮2.5-5.8，低回撤来自日内机器非size；低波倾斜=alpha腰斩）· [[止损模块]]（−15%止损在多日弧LIVE但压不动beta，持有周期决定live/dead vs [[jul12-002]]）· [[择时-均线]]（指数MA全书闸两速度均失败）；⚠零滑点高估（周度轮动仍高换手）
+
+## [2026-07-14] experiment | Arc3 跨资产ETF动量/反转 = 负结果（全DQ净负，从未过门槛/定稿/碰VAL，无results.tsv行、无归档）：jul12-018..021 诚实流动13-ETF基线年化−3.05%，动量与反转两向皆无edge，universe整段净drawdown；跨资产分散给出本纪元最低基线回撤16%但无正回报配对，最佳 jul12-018 obj −0.1917 仍DQ → 新建 [[arc3-etf-rotation]] 负结果页 + 回填 [[ETF轮动]]（regime依赖、纯熊/震荡无效）· [[动量与趋势]]（ETF动量ANTI-predictive，放慢更差 [[jul12-020]]）· [[均值回归]]（简单反转也败、回撤最差30% [[jul12-021]]）；本族诚实流动、DQ为真·无edge非零滑点高估
+
+## [2026-07-14] META | 两连负弧同窗口（Arc-2微盘/Arc-3 ETF 均全DQ）：本纪元唯一过门槛者仍是 Arc-1 日内剥头皮（[[jul12-005]]），因其 regime-agnostic（日内进出、无隔夜beta暴露）。TRAIN 2022熊/2023震荡窗口系统性惩罚**净多头方向暴露**对硬夏普门槛（2.5）——凡承接方向性beta的载体（微盘size beta / 跨资产ETF动量）在此窗口都过不了门槛。→ Arc-4 转向 market-neutral / low-beta / regime-agnostic 方向。
+
+## [2026-07-14] experiment | jul12-023 (Arc-4 市场中性 微盘多头−IC空头@1.2×) train=0.3202(gate PASS,sharpe2.64) val=-0.5260(gate FAIL,sharpe-0.39,maxdd 12.3→41.6) val-dq confirmed=NO → 归档 validated_strategies/jul12-023.py(gate fail仍收) + 新建 [[jul12-023]] 实验页 + 回填 [[期货与套利]](IC对微盘basis不足、对冲工具须匹配alpha规模)· [[小市值因子]](微盘beta可对冲但regime-conditional)；⚠BASIS风险主导(非成本)/期货腿未计成本/TRAIN门槛边际薄0.14窗口外反转
+
+## [2026-07-14] META | Arc-4 加入 Arc-2/Arc-3 成为 OOS/VAL 负结果序列：市场中性结构在 TRAIN 确证 beta 诊断(IC空头 maxdd 25.4→12.3)且过门槛，但 VAL 因 basis 风险灾难反转——VAL 抓住了 TRAIN 永远看不到的反转，**验证严格窗口协议**。本纪元至今**唯一同时过 TRAIN+VAL 者仍是 Arc-1 日内剥头皮 [[jul12-005]]**（regime-agnostic）；Arc-2/3/4 皆负。方向性 beta 与 basis-mismatch 对冲在此评测台都不稳健。
+
+## [2026-07-14] experiment | Arc5 流动化移植归因（jul12-025 = Arc-1 引擎 bit-identical + universe 微盘→中证1000）= 负结果（DQ baseline，无results.tsv行、无归档）：edge 不衰减而**反号**，obj 1.3898→−0.5823（annual +150→−13，sharpe 5.96→−0.67，maxdd 11.5→45.4）→ 新建 [[arc5-liquid-transplant]] 归因页 + 回填 [[均值回归]]（日内反转是微盘微观结构专属、流动名上变momentum买falling knife）· [[小市值因子]]（⚠Arc-1 winner 双重打折：零滑点高估 + universe-locked容量受限微盘alpha）；[[jul12-025]]
+
+## [2026-07-14] META | Arc-5 锐化「Arc-1 为何特殊」：其 edge 是**微盘微观结构专属**（散户超调回抽），**非可移植的日内反转配方**——bit-identical 引擎换到流动 universe 即反号亏损。5 弧至今：**仅 Arc-1（[[jul12-005]]）双窗口过关，且仅在一个规模化不可交易的微盘 universe 里**（高换手零滑点高估 + 容量受限 + universe-locked）。整个 epoch 的「赢家」都带三重保留意见。
+
+## [2026-07-14] experiment | epoch2(jul12) 收敛综述 → 新建 capstone [[epoch2-jul12-summary]]：ideator 宣告 KB 正 EV 家族在冻结 harness + 2022-23 TRAIN 下耗尽。5 弧探索完毕，恰 1 个双窗口幸存者（Arc-1 [[jul12-005]]，但三重受限=不可部署），0 个可实现产品。账本 2 行定稿（jul12-005 recorded / jul12-023 val-dq），DQ baseline(Arc-2/3/5)不占行。5 条持久 META：窗口惩罚方向性beta/basis；junk-tail alpha 与 beta/basis 不可分不可变现；日内反转微观结构锁死(流动化反号)；趋势缺失窗口 ETF 动量/反转两向无 edge；零滑点+期货未计成本使高换手/对冲类系统性偏乐观，护栏正确抓住两个 would-be winner。下一纪元若求诚实可实现赢家须换 harness(计换手成本)或换含牛市窗口。
