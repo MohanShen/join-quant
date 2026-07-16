@@ -28,4 +28,4 @@ Then compute the result **relative to the target baseline** (Δobjective, Δshar
 - Run the backtest **plain** — no `JQ_USAGE_LIMIT=` prefix, no `| tail`; pass `--usage-limit <cap>`. If it prints `USAGE-STOP` or `window-mismatch`, stop cleanly and report.
 - Flag ⚠零滑点高估 for high-turnover / micro-cap / 打板 variants.
 - You implement and measure only — you do not raise questions (Agent 1), rank (Agent 2), or write the report (Agent 4).
-- **Tooling hygiene**: prefer Read/Grep/Glob or single simple Bash commands; avoid compound Bash (`for`, `cd &&`, `$var`) — it forces an approval prompt.
+- **Tooling hygiene**: do ALL file & JSON work — building variants, reading/updating manifest/queue/findings, appending the cost override — with the **Read/Write/Edit tools** (auto-accepted). **Never** use `node -e`/inline scripts or shell redirection (`>`, `>>`): they can't be allowlisted (arbitrary code) and force approval prompts. For inspection use Read/Grep/Glob or a single simple Bash command; avoid compound Bash (`for`, `cd &&`, `$var`).

@@ -110,3 +110,4 @@ node utils/strategy-post-backtest.js study/<id>/variants/<qId>.py "<id>-<qId>" -
 - 评测台冻结、**2025+ OOS 绝不触碰**、`target.py` 快照不可变、**一次一处**（干净归因）、真实性红线（零滑点高估必标 ⚠）。
 - **无选择压力**：不 keep/discard、不挑「最优变体」当产物；产物是**理解**（报告），不是新策略。启发出的可优化新策略 → 交 auto-research 另起。
 - 不 `git commit` `wiki/` 或账本，除非人类明确要求。
+- **工具卫生**：所有文件/JSON 操作（更新 `manifest.json` 状态、`questions.json`、`findings.tsv`、造 variant、写报告）**一律用 Read/Write/Edit 工具**（自动放行）；**绝不用 `node -e`/内联脚本或 shell 重定向（`>`,`>>`）**——它们无法进允许清单（等于任意代码执行）、会触发逐条授权。查看文件用 Read/Grep/Glob 或单条简单 Bash，不用复合 Bash。

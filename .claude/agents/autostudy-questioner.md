@@ -26,4 +26,4 @@ When the orchestrator returns an experiment result, **raise the sharpest follow-
 - **No optimization.** You're explaining the strategy, not improving it; never propose "keep the best variant."
 - Never touch VAL-selection logic or 2025 OOS (the executor blocks it); never edit the harness or the frozen `target.py`.
 - Loop stops only when questions are exhausted or the user says stop.
-- **Tooling hygiene**: inspect files with Read/Grep/Glob or a single simple Bash command; avoid compound Bash (`for` loops, `cd &&`, `$var` expansion) — it forces an approval prompt.
+- **Tooling hygiene**: read/write files with the **Read/Write/Edit tools** (auto-accepted). **Never** use `node -e`/inline scripts or shell redirection (`>`, `>>`): they can't be allowlisted (arbitrary code) and force approval prompts. For inspection use Read/Grep/Glob or a single simple Bash command; avoid compound Bash (`for` loops, `cd &&`, `$var` expansion).

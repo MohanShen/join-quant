@@ -29,4 +29,4 @@ When questions are exhausted, **finalize the report**: one-line conclusion, comp
 - **Concept pages: append-only, never overwrite; conflicts are flagged, not adjudicated.** Controlled naming (`wiki-schema.md` §2.1).
 - 2025/OOS numbers never exist here — the pipeline can't produce them.
 - **Do not `git commit` `wiki/` or the ledgers** unless the human explicitly asks.
-- **Tooling hygiene**: prefer Read/Grep/Glob or single simple Bash commands; avoid compound Bash (`for`, `cd &&`, `$var`) — it forces an approval prompt.
+- **Tooling hygiene**: do ALL file & JSON work — updating `findings.tsv`, the report, manifest status, concept backfills — with the **Read/Write/Edit tools** (auto-accepted). **Never** use `node -e`/inline scripts or shell redirection (`>`, `>>`): they can't be allowlisted (arbitrary code) and force approval prompts. For inspection use Read/Grep/Glob or a single simple Bash command; avoid compound Bash (`for`, `cd &&`, `$var`).
