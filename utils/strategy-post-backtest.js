@@ -215,6 +215,11 @@ async function pasteCode(page, code) {
     if (!div || !window.ace) return 'No Ace';
     const editor = window.ace.edit(div);
     editor.setValue(c, -1); // -1 = keep cursor, don't select all
+    // Release editor focus: Ace auto-focuses its hidden textarea, which can raise the OS
+    // window. JQ saves from the #code textarea (synced below), not the live cursor, so
+    // blurring is safe. Also blur whatever else grabbed focus.
+    try { editor.blur(); } catch (e) {}
+    try { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch (e) {}
     return 'Ace OK: ' + editor.getValue().length + ' chars';
   }, code);
   console.log('[post] Ace:', result);
@@ -245,13 +250,56 @@ async function pasteCode(page, code) {
 // Use the stable button IDs (JQ's editor renders "保 存" with a space, so text= fails).
 async function saveStrategy(page) {
   console.log('[post] Saving...');
-  try {
-    await page.click('#algo-save-button', { timeout: 5000 });
-  } catch {
-    await page.keyboard.press('Control+s');
+  // DOM-level click (renderer) so we don't raise/focus the Chrome window; page.click/keyboard
+  // fall back only if the button id is missing.
+  const saved = await page.evaluate(() => {
+    const el = document.getElementById('algo-save-button');
+    if (el) { el.click(); return true; }
+    return false;
+  });
+  if (!saved) {
+    try { await page.click('#algo-save-button', { timeout: 5000 }); }
+    catch { await page.keyboard.press('Control+s'); }
   }
   await sleep(2000);
   console.log('[post] Saved');
+}
+
+// ── Free-time / credit-consumption confirm modal ─────────────────────────────
+// When JQ's daily FREE backtest time is exhausted, clicking 编译运行 pops a modal:
+//   "您的免费回测时间不足，继续运行可能会消耗积分，是否继续运行?"
+// This modal BLOCKS the backtest until confirmed — if we don't click 继续运行 the run
+// never starts and we poll buildList until MAX_POLL_MS (shows up as a spurious slow-skip).
+// Auto-confirm (credit consumption is authorized when over the free quota). Gate with
+// JQ_ALLOW_CREDITS=0 to instead leave the modal (and let the run slow-skip) if a caller
+// ever wants to hard-stop at the free tier. Polls briefly since the modal is async.
+async function confirmCreditModalIfPresent(page) {
+  if (process.env.JQ_ALLOW_CREDITS === '0') return false;
+  for (let i = 0; i < 12; i++) {                       // ~6s max
+    const res = await page.evaluate(() => {
+      const norm = s => (s || '').replace(/[\s ]+/g, '');
+      const body = norm(document.body ? document.body.innerText : '');
+      const present = body.includes('继续运行可能会消耗积分') || body.includes('免费回测时间不足');
+      if (!present) return 'none';
+      const els = Array.from(document.querySelectorAll('button, a, span, div'));
+      let btn = els.find(el => norm(el.textContent) === '继续运行' && el.offsetParent !== null);
+      if (!btn) btn = document.querySelector('.layui-layer-btn0');   // layui primary-button fallback
+      if (btn) {
+        const desc = `${btn.tagName}.${(btn.className || '').toString().replace(/\s+/g, '.')}:${(btn.textContent || '').trim().slice(0, 12)}`;
+        btn.click();
+        return 'clicked:' + desc;
+      }
+      return 'modal-no-button';
+    });
+    if (typeof res === 'string' && res.startsWith('clicked')) {
+      console.log(`[post] credit-modal detected & confirmed → ${res}`);
+      return true;
+    }
+    if (res === 'modal-no-button') console.log('[post] ⚠ credit-modal text present but 继续运行 button not found');
+    if (res === 'none' && i >= 4) return false;        // ~2s grace for the modal to appear, then none
+    await sleep(500);
+  }
+  return false;
 }
 
 // ── Run backtest ─────────────────────────────────────────────────────────────
@@ -259,16 +307,25 @@ async function saveStrategy(page) {
 // nested spans, so use the id.
 async function runBacktest(page) {
   console.log('[post] Starting backtest (编译运行)...');
-  try {
-    await page.click('#validate-button', { timeout: 5000 });
-  } catch {
-    const clicked = await page.evaluate(() => {
-      const el = document.getElementById('validate-button') || document.getElementById('buildBtn');
-      if (el) { el.click(); return true; }
-      return false;
-    });
-    if (!clicked) throw new Error('编译运行 button (#validate-button) not found');
+  // DOM-level .click() in the renderer (not page.click) so the OS never raises/focuses the
+  // Chrome window — page.click dispatches real input that steals focus from whatever the
+  // user is typing in. goto/reload polling and this DOM click leave focus alone.
+  const clicked = await page.evaluate(() => {
+    const el = document.getElementById('validate-button') || document.getElementById('buildBtn');
+    if (el) { el.click(); return true; }
+    return false;
+  });
+  if (!clicked) {
+    try { await page.click('#validate-button', { timeout: 5000 }); }   // fallback (may focus window)
+    catch { throw new Error('编译运行 button (#validate-button) not found'); }
   }
+
+  // JQ pops a "免费回测时间不足…是否继续运行?" credit modal here once free time runs out —
+  // it blocks the run until 继续运行 is clicked. Auto-confirm so the batch keeps going.
+  if (await confirmCreditModalIfPresent(page)) {
+    console.log('[post] ⚠ 免费回测时间不足 — auto-clicked 继续运行 (consuming credits)');
+  }
+
   await sleep(3000);
 
   // JQ shows "编译失败:当前并行编译或回测数量最多2个" (and syntax errors) as a transient
@@ -421,9 +478,13 @@ async function pollUntilComplete(page, algorithmId) {
   // Give the server a moment to register the submission
   await sleep(8000);
 
-  // Navigate to buildList and poll there.  IMPORTANT: reload on each poll
-  // iteration because JQ updates the status via XHR/JS — a static page load
-  // won't reflect live status changes.
+  // Poll on a SEPARATE tab (buildList), reloading each iteration because JQ fills the
+  // status table via client-side XHR — a raw fetch of the page HTML has no rows, so we
+  // must let the page's JS run (reload). This separate tab is created ONCE (a single
+  // window activation) and then only reloaded in place; reloads do NOT re-raise the
+  // window. The editor stays on `page` (the reused hub tab) so detectCompileError can
+  // still read editor tracebacks. (Do NOT navigate the hub tab here — that raises the
+  // window on every poll and steals the user's focus.)
   const listPage = await (page.context()).newPage();
   try {
     // First load
@@ -506,7 +567,7 @@ async function pollUntilComplete(page, algorithmId) {
     await cancelBacktest(page);
     return { success: false, stopped: true, error: `safety-cap (>${Math.round(MAX_POLL_MS/1000)}s)` };
   } finally {
-    await listPage.close();
+    await listPage.close();   // close the separate poll tab (not the hub tab)
   }
 }
 
@@ -691,8 +752,12 @@ async function main() {
     if (!(await usageGate(hubPage))) { if (browser) { try { await browser.close(); } catch {} } return { status: 'usage-stop' }; }
 
     // ── Full workflow ────────────────────────────────────────────────
-    // Use a FRESH page for the editor workflow.
-    const editorPage = await ctx.newPage();
+    // REUSE the existing logged-in tab (do NOT ctx.newPage()): opening a new tab
+    // activates it and raises the Chrome window on macOS, stealing focus from whatever
+    // the user is typing. Navigating an existing tab (goto/reload) does not raise it.
+    // This is the automation-dedicated Chrome (--user-data-dir=/tmp/jq-auth-browser), so
+    // re-navigating the tab each run is harmless; subsequent runs reuse it in place.
+    const editorPage = hubPage;
     const algorithmId = await createNewStrategy(editorPage, baseCapital, window);
     console.log(`[post] Editor ready: ${editorPage.url().substring(0, 80)}`);
     await sleep(2000);
@@ -705,9 +770,8 @@ async function main() {
       ? { success: false, error: bt.error, rateLimited: bt.rateLimited }
       : await pollUntilComplete(editorPage, algorithmId);
     reportResult(title, algorithmId, result, window);
-    // Close the editor tab we created (NOT the logged-in hub page) so batch runs
-    // don't accumulate hundreds of tabs. Session cookies live in the context.
-    try { await editorPage.close(); } catch {}
+    // Do NOT close editorPage — it IS the logged-in hub tab now (reused, not created).
+    // Closing it would destroy the CDP session's cookie context. It's re-navigated next run.
 
   } catch (connErr) {
     // ── Approach 2: Persistent profile ──────────────────────────────
