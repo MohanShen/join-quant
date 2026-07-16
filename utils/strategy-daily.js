@@ -17,9 +17,13 @@
  *   node utils/strategy-daily.js --no-normalize    # fetch, skip the normalization phase
  */
 
-const { execSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
+
+// Global notification CLI (~/.local/bin/notify → ~/.notify/). Delivers to WeChat via Server酱.
+const NOTIFY_BIN = path.join(os.homedir(), '.local', 'bin', 'notify');
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const COPY_QUEUE_FILE = path.join(DATA_DIR, 'copy-queue.json');
@@ -165,11 +169,23 @@ async function discoveryPhase() {
 
 async function sendWeChatAlert(lines) {
   const msg = lines.join('\n');
+  // Local record (append-only log; kept for debugging).
   const notifyFile = path.join(DATA_DIR, 'notifications.json');
   const notifs = fs.existsSync(notifyFile) ? JSON.parse(fs.readFileSync(notifyFile, 'utf8')) : [];
   notifs.push({ type: 'daily-pipeline', text: msg, at: new Date().toISOString() });
   fs.writeFileSync(notifyFile, JSON.stringify(notifs, null, 2));
-  console.log(`[daily] WeChat alert queued: ${msg.slice(0, 100)}`);
+
+  // Deliver to WeChat via the global notifier (immediate). Uses the same node running this
+  // script so PATH doesn't matter; body is piped on stdin so multi-line text needs no escaping.
+  try {
+    const title = (lines[0] || '📡 join-quant 每日').replace(/\s+/g, ' ').slice(0, 60);
+    execFileSync(process.execPath,
+      [NOTIFY_BIN, '--source', 'join-quant-daily', '--level', 'info', '--title', title, '--now'],
+      { input: msg, stdio: ['pipe', 'inherit', 'inherit'] });
+    console.log('[daily] WeChat alert delivered via notify');
+  } catch (e) {
+    console.warn(`[daily] notify delivery failed (${e.message}) — queued in notifications.json`);
+  }
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
