@@ -42,6 +42,20 @@ echo "│ IMPORTANT: when you're done watching (or it hits the quota limit), CLO
 echo "│ this session — exit / Ctrl-D. The hourly cron resumes it ONLY once no      │"
 echo "│ process is holding it. Leaving the TUI open (even idle) blocks the cron.   │"
 echo "└─────────────────────────────────────────────────────────────────────────┘"
+
+# ── Remote Control preflight: RC to your phone routes through claude.ai. Warn (non-blocking)
+# if the VPN/proxy is blocking it, so a session doesn't silently fail to appear on mobile.
+rc_code="$(curl -s -m 6 -o /dev/null -w '%{http_code}' https://claude.ai 2>/dev/null)"; rc_code="${rc_code:-000}"
+if [ "$rc_code" = "000" ]; then
+  echo "⚠  claude.ai UNREACHABLE (HTTP 000) — likely your VPN/proxy blocking it."
+  echo "   Remote Control routes through claude.ai, so this session may NOT show on your phone."
+  echo "   Fix: route claude.ai / *.anthropic.com through a working proxy node (or toggle the VPN),"
+  echo "   then verify:  curl -s -o /dev/null -w '%{http_code}\\n' https://claude.ai   (want 200/403, not 000)."
+  echo "   (Session still runs locally; only phone Remote Control is affected.)"
+else
+  echo "✓  claude.ai reachable (HTTP $rc_code) — Remote Control should register this session on your phone."
+fi
+
 if [ -n "$SID" ] && ls "$HOME"/.claude/projects/*/"$SID".jsonl >/dev/null 2>&1; then
   echo "Reopening autoresearch session $SID on $BRANCH"
   echo "(includes any work the cron did while you were away; auto-continuing the loop)"
