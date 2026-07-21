@@ -1,7 +1,5 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Overview
 
 **join-quant** is an automated pipeline for the [JoinQuant](https://www.joinquant.com) Chinese quant platform. It discovers community strategies, clones their source + performance metrics, and runs backtests — both for community posts and for local custom strategy files. Node.js (>=18), Playwright for browser automation, raw HTTP for the API paths.
@@ -63,28 +61,15 @@ for `完成` → scrape the result table for return/drawdown/Alpha/Beta/Sharpe.
 
 ## Layout
 
+Only the directories whose contents aren't self-evident:
+
 | Path | Purpose |
 |------|---------|
-| `index.js` | CLI entry (`community` / `custom` / `list` / `login` / `status`) |
-| `utils/login.js` | `LoginManager` — raw HTTP login → cookies |
-| `utils/fetcher.js` | `StrategyFetcher` — source + stats via HTTP API |
-| `utils/loader.js` | `StrategyLoader` — load local `.py`/`.json` |
-| `utils/strategy-discover.js` / `strategy-fetch.js` / `strategy-daily.js` | Pipeline 1 discovery/clone/cron |
-| `utils/strategy-post-backtest.js` | Pipeline 2 custom backtest driver |
-| `utils/refresh-cookies*.js` | Session cookie refresh (HTTP + CDP variants) |
-| `pipelines/` | Orchestrators: `community.js`, `custom.js` |
-| `backtest/runner.js` | `BacktestRunner` — clone → poll → parse |
-| `strategies/` | ~155 cloned + local Python strategy files |
 | `research/` | Auto-research team (optimize): `program.md`, `harness.md`, `candidates/`, transient `ideas-queue.json`/`loop-state.json`/`results.tsv` (gitignored) |
 | `study/` | Auto-study team (understand ONE strategy): `program.md`, `<id>/target.py` + `variants/`, transient `questions.json`/`findings.tsv` (gitignored) |
 | `validated_strategies/` | Finalized strategies that completed VAL (Agent 4 archives here; **tracked** = product shelf) |
-| `wiki/` | Strategy wiki (`index.md`, `strategies/`, `authors/`, `concepts/`, `experiments/`, `studies/`) |
-| `docs/` | `wiki-schema.md`, `research-schema.md`, `study-schema.md`, `push-format.md`, `translator-agent-prompt.md` |
-| `tests/` | `node --test` suites: `auth`, `loader`, `runner` |
 | `data/` | **gitignored** — discovery state + `cookies.json` |
 | `auth/` | **gitignored** — session cookies (default cookie path is `auth/cookies.json`) |
-| `.claude/skills/` | `ingest-strategy`, `query-wiki`, `run-experiment`, `run-study` skills |
-| `.claude/agents/` | Auto-research `autoresearch-{ideator,critic,engineer,recorder}`; auto-study `autostudy-{questioner,prioritizer,experimenter,analyst}` |
 
 ## Notes & Gotchas
 
