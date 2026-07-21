@@ -1,0 +1,66 @@
+{
+  "cookies": [
+    {
+      "name": "isFirst",
+      "value": "0",
+      "domain": "www.joinquant.com",
+      "path": "/algorithm/index",
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax",
+      "expires": 1816530119.133803
+    },
+    {
+      "name": "uid",
+      "value": "wKiXm2o2s/RXTgWbfJbjAg==",
+      "domain": "www.joinquant.com",
+      "path": "/",
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax",
+      "expires": 1816529908.074687
+    },
+    {
+      "name": "token",
+      "value": "f4f8b86cca8fcfce2968ea439600d10a7825de9b",
+      "domain": "www.joinquant.com",
+      "path": "/",
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax",
+      "expires": -1
+    },
+    {
+      "name": "PHPSESSID",
+      "value": "qrdbmo3lgvv5ntvbv7v0gvod00",
+      "domain": "www.joinquant.com",
+      "path": "/",
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax",
+      "expires": -1
+    },
+    {
+      "name": "getStrategy",
+      "value": "1",
+      "domain": "www.joinquant.com",
+      "path": "/",
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax",
+      "expires": 1816530119.140844
+    },
+    {
+      "name": "from",
+      "value": "edit",
+      "domain": "www.joinquant.com",
+      "path": "/",
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax",
+      "expires": -1
+    }
+  ],
+  "refreshedAt": "2026-06-21T09:22:59.552Z",
+  "source": "cdp"
+}

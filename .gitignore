@@ -1,11 +1,6 @@
 node_modules/
-data/
-
-# Autoresearch experiment ledger — append-only, not tracked (see docs/research-schema.md §7)
-research/results.tsv
-
-# Session credentials — never commit
-auth/
+# data/ — tracked for private backup
+# auth/ — tracked for private backup
 
 # Local scratch / exploration scripts (contain hardcoded credentials)
 test-jq-login.js

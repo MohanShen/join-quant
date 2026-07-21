@@ -1,0 +1,53 @@
+{
+  "fetchedAt": "2026-07-21T02:26:38.196Z",
+  "entries": [
+    {
+      "postId": "da82dd02f874a1a5f656b3f6725d5afa",
+      "backtestId": "4c82cb77ab8c1c8d797d721affbf4d73",
+      "title": "五境掘金全球ETF轮动（中频）",
+      "url": "https://www.joinquant.com/view/community/detail/da82dd02f874a1a5f656b3f6725d5afa",
+      "sourceFile": "2026-07-21_五境掘金全球ETF轮动_中频-da82dd02.py",
+      "stats": {
+        "annualReturn": 0.56698816521374,
+        "cumulativeReturn": 9.9277279448,
+        "maxDrawdown": 0.17557521863839,
+        "sharpe": 1.8816825604285,
+        "winRatio": 0.61363636363636,
+        "tradingDays": 1331,
+        "periodLabel": "2026-07"
+      }
+    },
+    {
+      "postId": "d86aee952623e40026f246f73cb3e04b",
+      "backtestId": "5b36376dcd9f2f7317bf81f73242972f",
+      "title": "统计局数据套利 5年年化26%",
+      "url": "https://www.joinquant.com/view/community/detail/d86aee952623e40026f246f73cb3e04b",
+      "sourceFile": "2026-07-21_统计局数据套利_5年年化26-d86aee95.py",
+      "stats": {
+        "annualReturn": 0.26369654602511,
+        "cumulativeReturn": 2.90080747236,
+        "maxDrawdown": 0.17379383744592,
+        "sharpe": 1.2477498560078,
+        "winRatio": 0.70967741935484,
+        "tradingDays": 1454,
+        "periodLabel": "2026-06"
+      }
+    },
+    {
+      "postId": "23584678e87d760cef5d12a0b778d377",
+      "backtestId": "02e19a33ad636ee782703c2f424cb724",
+      "title": "从想法到策略，我如何让 AI 帮我评审量化回测？",
+      "url": "https://www.joinquant.com/view/community/detail/23584678e87d760cef5d12a0b778d377",
+      "sourceFile": "2026-07-21_从想法到策略_我如何让_AI_帮我评审量化回测-23584678.py",
+      "stats": {
+        "annualReturn": 1.1661510257778,
+        "cumulativeReturn": 41.405186358,
+        "maxDrawdown": 0.20009606744091,
+        "sharpe": 3.6553806434877,
+        "winRatio": 0.54009819967267,
+        "tradingDays": 1212,
+        "periodLabel": "2025-12"
+      }
+    }
+  ]
+}
