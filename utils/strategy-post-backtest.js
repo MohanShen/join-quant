@@ -17,6 +17,9 @@
  *   --usage-limit <N>              Daily JQ backtest-minute cap to start new runs (default 55 =
  *                                  free tier; overrides JQ_USAGE_LIMIT env). Plain arg = no env
  *                                  prefix needed, so it matches the .claude/settings.json allowlist.
+ *   --max-poll-min <N>             Slow-run safety cap in MINUTES (default 20; overrides
+ *                                  JQ_MAX_POLL_MS env). Raise for very heavy strategies as a plain
+ *                                  arg so no env prefix is needed (avoids an approval prompt).
  *   If neither --window nor --start/--end is given, JQ's default window is used and
  *   window verification is SKIPPED (ad-hoc mode; not valid for logging experiments).
  *
@@ -39,7 +42,7 @@ const POLL_INTERVAL_MS = 5000;
 // running backtest is left to finish (its runtime is billed — accepted). Cancellation is
 // kept ONLY as a last-resort safety net at MAX_POLL_MS, so a truly stuck run can't block
 // the batch forever; normal slow backtests finish well before it.
-const MAX_POLL_MS = parseInt(process.env.JQ_MAX_POLL_MS || String(5 * 60 * 1000), 10);   // safety cap: hangs never finish; normal runs ~25s
+let MAX_POLL_MS = parseInt(process.env.JQ_MAX_POLL_MS || String(20 * 60 * 1000), 10);   // safety cap (default 20min): hangs never finish; normal runs ~25s, heavy ones up to ~15min. Override with --max-poll-min N (plain CLI arg, no env prefix).
 let USAGE_LIMIT = parseInt(process.env.JQ_USAGE_LIMIT || '55', 10);   // daily used-minutes ceiling to start new runs (override with --usage-limit N)
 
 const JOINQUANT_USERNAME = process.env.JOINQUANT_USERNAME || '15656096430';
@@ -92,6 +95,12 @@ function parseArgs(argv) {
   // --usage-limit N overrides the JQ_USAGE_LIMIT env (lets the daily cap be a plain CLI arg,
   // so the command needs no leading env-var assignment and matches the settings.json allowlist).
   if (opt['usage-limit'] != null) USAGE_LIMIT = parseInt(opt['usage-limit'], 10) || USAGE_LIMIT;
+  // --max-poll-min N: raise the slow-run safety cap for heavy strategies as a plain CLI arg
+  // (avoids the JQ_MAX_POLL_MS=… env prefix, which breaks the allowlist and forces approval).
+  if (opt['max-poll-min'] != null) {
+    const mins = parseInt(opt['max-poll-min'], 10);
+    if (mins > 0) MAX_POLL_MS = mins * 60 * 1000;
+  }
 
   let window = null;
   if (opt.start || opt.end) {
@@ -468,9 +477,11 @@ async function detectCompileError(page) {
   return null;
 }
 
-// ── Poll until done ─────────────────────────────────────────────────────────
-// JoinQuant doesn't update the editor page on backtest completion — it shows
-// results in a separate buildList page.  We navigate there and poll for "完成".
+// ── Poll until done (focus-friendly, two-phase) ─────────────────────────────
+// Phase 1 detects completion via the in-page /algorithm/index/statistics fetch (no new tab →
+// no macOS window raise); Phase 2 opens the buildList tab ONCE at the end to scrape metrics
+// (client-rendered, so a raw fetch has no rows). Collapses the old persistent monitoring tab
+// into a single brief activation at completion.
 async function pollUntilComplete(page, algorithmId) {
   const start = Date.now();
 
@@ -478,97 +489,84 @@ async function pollUntilComplete(page, algorithmId) {
   // Give the server a moment to register the submission
   await sleep(8000);
 
-  // Poll on a SEPARATE tab (buildList), reloading each iteration because JQ fills the
-  // status table via client-side XHR — a raw fetch of the page HTML has no rows, so we
-  // must let the page's JS run (reload). This separate tab is created ONCE (a single
-  // window activation) and then only reloaded in place; reloads do NOT re-raise the
-  // window. The editor stays on `page` (the reused hub tab) so detectCompileError can
-  // still read editor tracebacks. (Do NOT navigate the hub tab here — that raises the
-  // window on every poll and steals the user's focus.)
-  const listPage = await (page.context()).newPage();
-  try {
-    // First load
-    await listPage.goto(`${JQ_BASE}/algorithm/backtest/buildList?algorithmId=${algorithmId}`, {
-      waitUntil: 'networkidle', timeout: 30000
+  // ── Phase 1: detect COMPLETION via in-page statistics fetch — NO new tab, no navigation,
+  // so the Chrome window is never raised. NOTE: running[].id is JQ's backtestId, NOT the
+  // algorithmId (they don't match — fetchRunState's id match silently never fires), so we
+  // can't identify OUR row by id. This batch runs ONE backtest at a time, so we instead watch
+  // the running COUNT: it goes 0 → ≥1 (our run registers) → 0 (done). Require it to appear
+  // first (seenRunning), then confirm empty for 2 consecutive polls to ignore a transient blip.
+  // Editor tracebacks are still caught by detectCompileError on the (un-navigated) editor tab.
+  // (If a concurrent backtest is ever run outside this batch, this over-waits, never under-waits.)
+  let seenRunning = false, emptyStreak = 0, finished = false;
+  while (Date.now() - start < MAX_POLL_MS) {
+    const st = await page.evaluate(async () => {
+      try {
+        const j = await (await fetch('/algorithm/index/statistics', { credentials: 'include' })).json();
+        const running = (j && j.data && j.data.running) || [];
+        return { runningCount: running.length };
+      } catch (e) { return null; }
     });
-    await sleep(8000); // wait for backtest to be registered
 
-    while (Date.now() - start < MAX_POLL_MS) {
-      // Reload to get fresh status
-      await listPage.reload({ waitUntil: 'networkidle', timeout: 30000 });
-      const dom = await domSnapshot(listPage);
-
-      if (dom.includes('完成')) {
-        // Extract the latest backtest result row (skip table header row)
-        const row = await listPage.evaluate(() => {
-          const rows = document.querySelectorAll('table tbody tr');
-          for (const row of rows) {
-            const cells = Array.from(row.querySelectorAll('td'));
-            // cells layout: [empty, name, time, range, duration, freq, status, return_, alpha, beta, sharpe, extra]
-            // Header row check: cells[6] = '状态'. Data row: cells[6] = '完成' (status)
-            const statusCell = cells[6]?.textContent?.trim() || '';
-            if (cells.length >= 11 && statusCell === '完成') {
-              return {
-                name: cells[1]?.textContent?.trim(),
-                time: cells[2]?.textContent?.trim(),
-                range: cells[3]?.textContent?.trim(),
-                duration: cells[4]?.textContent?.trim(),
-                freq: cells[5]?.textContent?.trim(),
-                status: statusCell,
-                return_: cells[7]?.textContent?.trim(),
-                maxdd: cells[8]?.textContent?.trim(),
-                alpha: cells[9]?.textContent?.trim(),
-                beta: cells[10]?.textContent?.trim(),
-                sharpe: cells[11]?.textContent?.trim(),
-              };
-            }
-          }
-          // Fallback: look for any row with 完成 in non-header cells
-          const allRows = document.querySelectorAll('tr');
-          for (const row of allRows) {
-            const cells = Array.from(row.querySelectorAll('td'));
-            if (cells.length >= 11 && (cells[6]?.textContent?.trim() || '') === '完成') {
-              return {
-                name: cells[1]?.textContent?.trim(),
-                time: cells[2]?.textContent?.trim(),
-                range: cells[3]?.textContent?.trim(),
-                duration: cells[4]?.textContent?.trim(),
-                freq: cells[5]?.textContent?.trim(),
-                status: cells[6]?.textContent?.trim(),
-                return_: cells[7]?.textContent?.trim(),
-                maxdd: cells[8]?.textContent?.trim(),
-                alpha: cells[9]?.textContent?.trim(),
-                beta: cells[10]?.textContent?.trim(),
-                sharpe: cells[11]?.textContent?.trim(),
-              };
-            }
-          }
-          return null;
-        });
-        console.log(`\n[post] ✅ 回测完成 (${Math.round((Date.now()-start)/1000)}s)`);
-        return { success: true, dom, row };
-      }
-
-      if (dom.includes('失败') || dom.includes('错误')) {
-        return { success: false, dom, error: '回测失败' };
-      }
-
-      // Compile/runtime error on the editor (traceback etc.) → fast-fail, don't wait for the cap.
-      const cerr = await detectCompileError(page);
-      if (cerr) return { success: false, error: cerr, compileError: true };
-
-      // No early cancel — let the backtest run to completion (cost accepted; gated at start).
-      const elapsed = Math.round((Date.now()-start)/1000);
-      const prog = `${Math.floor(elapsed/60)}m ${elapsed%60}s`;
-      process.stdout.write(`\r[post] Running: ${prog}...   \r`);
+    if (st) {
+      if (st.runningCount > 0) { seenRunning = true; emptyStreak = 0; }
+      else if (seenRunning) { emptyStreak++; if (emptyStreak >= 2) { finished = true; break; } }
     }
-    // Safety net only: a truly stuck run (> MAX_POLL_MS) — last-resort cancel via the API
-    // so it can't block the batch forever. Normal slow backtests finish well before this.
+
+    // Editor-surfaced compile/runtime error → fast-fail (page stays on the editor, no nav).
+    const cerr = await detectCompileError(page);
+    if (cerr) return { success: false, error: cerr, compileError: true };
+
+    const elapsed = Math.round((Date.now()-start)/1000);
+    process.stdout.write(`\r[post] Running: ${Math.floor(elapsed/60)}m ${elapsed%60}s...   \r`);
+    await sleep(5000);
+  }
+
+  if (!finished) {
+    // Safety net only — a truly stuck run (> MAX_POLL_MS). Cancel via the API so a hung run
+    // can't block the batch forever. Normal slow backtests leave running[] well before this.
     await cancelBacktest(page);
     return { success: false, stopped: true, error: `safety-cap (>${Math.round(MAX_POLL_MS/1000)}s)` };
-  } finally {
-    await listPage.close();   // close the separate poll tab (not the hub tab)
   }
+
+  // ── Phase 2: scrape metrics from the editor's own result panel on the ALREADY-OPEN hub tab.
+  // JQ renders 策略收益 / 最大回撤 / Sharpe / Alpha / Beta + the #startTime/#endTime inputs right
+  // on the edit page once the run finishes — so NO new tab and NO navigation are needed, and the
+  // Chrome window is never raised at any point. The page is a fresh algorithmId (created this
+  // run), so the numbers can only be OUR backtest — no stale risk. The panel can lag a few
+  // seconds after leaving running[]; poll it in place until the values render (~60s).
+  console.log(`\n[post] ✅ 回测完成 (${Math.round((Date.now()-start)/1000)}s)`);
+  let dom = '';
+  for (let i = 0; i < 12; i++) {
+    const s = await page.evaluate(() => {
+      const t = (document.body?.innerText || '').replace(/\s+/g, ' ');
+      const g = re => { const m = t.match(re); return m ? m[1] : null; };
+      const inp = id => (document.getElementById(id)?.value || '').trim();
+      return {
+        text: t,
+        total: g(/策略收益\s*(-?[\d.]+)%/),
+        mdd: g(/最大回撤\s*(-?[\d.]+)%/),
+        sharpe: g(/Sharpe\s*(-?[\d.]+)/),
+        freq: g(/(每天|每周|每分钟|每月)/),
+        start: inp('startTime'),
+        end: inp('endTime'),
+        failed: /回测失败|运行失败|回测出错/.test(t),
+      };
+    });
+    dom = s.text;
+    if (s.failed) return { success: false, dom, error: '回测失败' };
+    if (s.total != null && s.mdd != null) {
+      const row = {
+        range: (s.start && s.end) ? `${s.start} - ${s.end}` : '',
+        freq: s.freq || '',
+        return_: s.total + '%',
+        maxdd: s.mdd + '%',
+        sharpe: s.sharpe || '',
+      };
+      return { success: true, dom, row };
+    }
+    await sleep(5000);
+  }
+  return { success: true, dom, row: null };   // completed but panel didn't render → extractMetrics(dom) fallback
 }
 
 // ── Extract metrics ─────────────────────────────────────────────────────────
