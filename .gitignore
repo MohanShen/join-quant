@@ -2,6 +2,10 @@ node_modules/
 # data/ — tracked for private backup
 # auth/ — tracked for private backup
 
+# Session cookies — secrets, never track (kept on disk, ignored)
+auth/cookies.json
+data/cookies.json
+
 # Local scratch / exploration scripts (contain hardcoded credentials)
 test-jq-login.js
 test-jq-editor.js
