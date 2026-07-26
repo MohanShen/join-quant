@@ -103,6 +103,7 @@
    - **Type-1（迭代中，未定稿）** → `--window train` → 把 TRAIN `objective/sharpe/gate` 报回 **Agent 1**。
    - **Type-2（Agent 1 已定稿）** → `--window val` → 把 VAL 结果报给 **Agent 4**。
    - **绝不** `--window holdout` 或任何 2025+ 区间（执行器会 `OOS-BLOCKED` 抛错）。
+   - **前台阻塞跑回测**：发一条命令等它返回再读 `SUMMARY`，**绝不**后台跑（`run_in_background`）+ 等完成通知——headless `claude -p` 无人值守跑中该通知不会重新唤起会话，循环会卡住。
 4. **Agent 1 判 TRAIN 结果**（Type-1 回来后）：
    - **正向改进**（`gate(TRAIN)` 且 `objective(TRAIN) > 当前定稿中最优`）→ 推进为新的迭代最优，且**判断是否已「定稿」**：*已迭代充分、TRAIN 上取得正向改进、想不出更多有价值变异* → **定稿**，把该版本交 Agent 3 跑 Type-2（VAL）。否则**继续调参**：产下一个小步变异（回 Agent 3 Type-1）。
    - **无改进**（DQ 或不高于当前）→ 记一次失败迭代；若这个想法**多次变异仍无正向改进** → **放弃该想法**，报 Agent 2 取队列下一个（队列空则回 Agent 1 产新想法）。

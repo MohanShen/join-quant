@@ -39,6 +39,7 @@ description: Run the join-quant autoenhance TEAM — a 4-agent loop (ideator →
 node utils/strategy-post-backtest.js enhance/candidates/<expId>.py "<expId>" --window <train|val> --usage-limit <cap>
 ```
 - **plain 形式**（不加 `JQ_USAGE_LIMIT=` 前缀、不接 `| tail`）以匹配 `.claude/settings.json` 允许清单、免逐条授权；`SUMMARY` 本就是最后一行。
+- **前台阻塞跑**——发一条命令等它返回再读 `SUMMARY`；**绝不**后台跑（`run_in_background`）+ 等完成通知：headless `claude -p` 无人值守跑中该通知不会重新唤起会话，循环会卡在半路。
 - `<cap>` = 每日 JQ 回测分钟上限（默认 **55**=免费额度；cron 续跑用 **240**）。
 - 迭代（Type-1）用 `--window train` 算 `objective(TRAIN)`；定稿（Type-2）用 `--window val` 算 `objective(VAL)`。
 - **`holdout` / 任何 2025+ 区间被 `OOS-BLOCKED` 拒跑**（除非用户私测 `JQ_ALLOW_OOS=1`——agent 绝不设）。

@@ -18,6 +18,7 @@ Given an `active` idea (with `baseExpId`) and its **type**:
    - **Type-1 (iterating)** → `node utils/strategy-post-backtest.js enhance/candidates/<expId>.py "<expId>" --window train --usage-limit <cap>`
    - **Type-2 (finalized)** → same command with `--window val`
    - Use the daily `<cap>` the orchestrator gave you (default **55** = free tier; the cron resume uses **240**). **Run the command plain** — do NOT prefix it with `JQ_USAGE_LIMIT=…` and do NOT pipe to `tail`/`head`. Plain form matches the `.claude/settings.json` allowlist, so it runs without a per-command approval prompt; the `SUMMARY` is the last line of stdout anyway.
+   - **Run it in the FOREGROUND (blocking)** — issue the one command and wait for it to return, then read `SUMMARY`. **NEVER** background it (`run_in_background`) and await a completion notification: in unattended headless `claude -p` runs that notification does not re-invoke the session, so the loop stalls. Block on each backtest synchronously.
 3. Parse the 10-column `SUMMARY` (`harness.md` §5): compute `objective = annual%/100 − maxdd%/100`, `gate = sharpe ≥ 2.5`.
 4. **Route the result:**
    - Type-1 → report `{expId, train: {objective, sharpe, gate, ...}}` to **Agent 1 (ideator)**.

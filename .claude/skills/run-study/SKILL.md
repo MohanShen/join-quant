@@ -34,7 +34,7 @@ description: Run the join-quant auto-STUDY loop — a 4-agent team (questioner �
 node utils/strategy-post-backtest.js study/<family>/variants/<qId>.py "<family>-<qId>" --window <train|val> --usage-limit <cap>
 # 分区间： --start 2022-01-01 --end 2022-12-31   （2025+ 被 OOS-BLOCKED）
 ```
-plain 形式（无 `JQ_USAGE_LIMIT=` 前缀、无 `| tail`）以免逐条授权。关心 variant 相对家族**基类基线**的 Δ。
+plain 形式（无 `JQ_USAGE_LIMIT=` 前缀、无 `| tail`）以免逐条授权。**前台阻塞跑**——发一条等它返回再读 `SUMMARY`，**绝不**后台跑+等通知（headless `claude -p` 无人值守跑中通知不会重新唤起会话，会卡住）。关心 variant 相对家族**基类基线**的 Δ。
 
 ## 红线
 评测台冻结、**2025+ OOS 永不碰**、`baseline.py` 不可变、**一次一处**（干净归因）、**无选择压力**（产物是理解不是新策略；优化/借鉴想法交 auto-enhance）、零滑点高估必标 ⚠。家族页 §2/§6 只追加不覆盖、§3 横评勿手写（`wiki-family-build.js` 生成）、概念页只追加不覆盖。不 `git commit` wiki/账本除非人类要求。
