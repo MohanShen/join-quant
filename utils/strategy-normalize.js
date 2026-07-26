@@ -29,9 +29,16 @@ const STRAT_DIR  = path.join(ROOT, 'strategies');
 const TMP_DIR    = '/tmp/jq-normalize';
 const POST_BT    = path.join(__dirname, 'strategy-post-backtest.js');
 const SHARPE_GATE = 2.5;
-// Must exceed the child's MAX_POLL_MS (JQ_MAX_POLL_MS) + cancel-retry overhead, else the
-// child is killed mid-poll → the backtest orphans → jams slots → rate-limit cascade.
-const PER_STRATEGY_TIMEOUT_MS = parseInt(process.env.JQ_MAX_POLL_MS || String(5 * 60 * 1000), 10) + 5 * 60 * 1000;
+// Child MAX_POLL safety cap in MINUTES ("slow-skip"). Precedence: --max-poll-min flag >
+// JQ_MAX_POLL_MS env > child default (20). Forwarded to the child as a plain CLI arg so no
+// JQ_MAX_POLL_MS=… env prefix is needed (that prefix breaks the allowlist and forces approval).
+// The parent timeout must exceed the child MAX_POLL_MS + cancel-retry overhead, else the child
+// is killed mid-poll → the backtest orphans → jams slots → rate-limit cascade.
+function resolveMaxPollMin(opt) {
+  if (opt['max-poll-min'] != null) { const m = parseInt(opt['max-poll-min'], 10); if (m > 0) return m; }
+  if (process.env.JQ_MAX_POLL_MS) { const m = Math.round(parseInt(process.env.JQ_MAX_POLL_MS, 10) / 60000); if (m > 0) return m; }
+  return 20;   // matches strategy-post-backtest.js default
+}
 
 // ── Frozen-harness cost override (appended to each strategy; raw file untouched) ──
 // Redefining set_slippage/set_commission at module scope shadows the JQ builtins,
@@ -148,6 +155,10 @@ function main() {
   const USAGE_LIMIT = parseInt(opt['usage-limit'] || '55', 10);   // daily used-minutes ceiling
   process.env.JQ_USAGE_LIMIT = String(USAGE_LIMIT);               // children read this for the pre-start gate
   console.log(`[normalize] usage limit = ${USAGE_LIMIT} min/day (children stop starting new backtests past this)`);
+  // Slow-skip cap (minutes) forwarded to each child; parent timeout must exceed it + cancel-retry overhead.
+  const MAX_POLL_MIN = resolveMaxPollMin(opt);
+  const PER_STRATEGY_TIMEOUT_MS = MAX_POLL_MIN * 60 * 1000 + 5 * 60 * 1000;
+  console.log(`[normalize] slow-skip cap = ${MAX_POLL_MIN} min/strategy (parent timeout ${MAX_POLL_MIN + 5} min)`);
   let consecFails = 0;
   const sleepSync = (s) => { try { execFileSync('sleep', [String(s)]); } catch {} };
 
@@ -191,7 +202,7 @@ function main() {
 
     let out = '';
     try {
-      out = execFileSync('node', [POST_BT, tmp, `norm-${tag}`, '--window', opt.window],
+      out = execFileSync('node', [POST_BT, tmp, `norm-${tag}`, '--window', opt.window, '--max-poll-min', String(MAX_POLL_MIN)],
         { encoding: 'utf8', timeout: PER_STRATEGY_TIMEOUT_MS, stdio: ['ignore', 'pipe', 'pipe'] });
     } catch (e) {
       out = (e.stdout || '') + (e.stderr || '');
