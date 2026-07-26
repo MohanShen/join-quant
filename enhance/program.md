@@ -1,10 +1,13 @@
-# enhance/program.md — 自主策略研究团队（4 智能体）
+# enhance/program.md — 自主策略增强团队（4 智能体，家族级）
 
-本文件是研究循环的 **团队编排指令**（类比 Karpathy `autoenhance` 的 `program.md`，但本项目是**四智能体团队**，不是单 agent 循环）。
-人类只编辑本文件与 `harness/harness.md`；团队据此**自主**生成想法、变异策略、跑回测、记账、回填知识库。
+本文件是**增强循环**的 **团队编排指令**（auto-study `study/program.md` 的姊妹篇；四智能体团队，不是单 agent 循环）。
+人类只编辑本文件与 `harness/harness.md`；团队据此**自主**在一个策略家族上生成改进想法、变异策略、跑回测、记账、把结果**写回家族页**。
 权威规则见 `docs/enhance-schema.md`（冲突以它为准）与 `harness/harness.md`（评测台冻结，只读）。
 
-> **为什么是团队**：把「想法生成 / 想法筛选 / 脚本+回测 / 记账」拆成四个各司其职的角色，
+> **家族级增强**：目标是**提升一个策略家族**（`wiki/families/<family>.md`）。点子官有**三种取法**：
+> 1. **族内改进**——从家族 §4 待研究 + §2 变体 + §3 横评 找可优化点，在血统内小步变异；
+> 2. **跨族借鉴**——扫其他家族页，把在别处奏效的元素（如某家族的降回撤机器 / 择时闸 / 滤波器）移植进来；
+> 3. **组合新族**——把 ≥2 个家族的要素拼成一个**新家族**（记账时登记 §2.2 词表 + 建家族页）。
 > 用**严格窗口协议**（`harness.md` §1）防过拟合：迭代只在 TRAIN，定稿才碰 VAL，2025+ OOS 永不触碰。
 
 ---
@@ -14,7 +17,7 @@
 1. `docs/enhance-schema.md` —— 结构与规则（**权威**）。
 2. `harness/harness.md` —— 冻结评测台（窗口协议、objective、门槛、OOS 硬阻断）。**只读**。
 3. `docs/wiki-schema.md` §2 / §2.1 —— 受控概念与因子词表（变异空间边界）。
-4. `wiki/index.md` 及相关 `wiki/concepts/*.md` —— 想法来源（尤其各概念页「归一化横评」与「待研究」）。
+4. **目标家族页** `wiki/families/<family>.md`（§2 变体 / §3 横评 / §4 待研究）+ **其他家族页**（跨族借鉴来源）+ 相关 `wiki/concepts/*.md`（因子/机制词表与横评）。
 
 ---
 
@@ -29,10 +32,10 @@
 
 | # | Agent | 角色 | 只读/可写 |
 |---|---|---|---|
-| **1** | `ideator`（点子官） | 通读 KB + 实验日志，产出**带推理**的新策略/改进想法；接收 TRAIN 结果，决定「继续迭代 / 定稿 / 放弃」 | 读 wiki+results；写 ideas-queue（提议） |
-| **2** | `critic`（筛选官） | 判断想法是否**成立**，成立则入**排名队列**；出队最有希望的想法交给 Agent 3 | 读 wiki；读写 `enhance/ideas-queue.json` |
+| **1** | `ideator`（点子官） | 读目标家族页 + KB，产出**带推理**的改进想法：**族内改进 / 跨族借鉴 / 组合新族**；接收 TRAIN 结果，决定「继续迭代 / 定稿 / 放弃」 | 读 wiki+results；写 ideas-queue（提议） |
+| **2** | `critic`（筛选官） | 判断想法是否**成立**（受控词表内、非族内重复、跨族借鉴有据、新族非已有家族的重复）；成立入**排名队列**；出队最优交 Agent 3 | 读 wiki；读写 `enhance/ideas-queue.json` |
 | **3** | `engineer`（工程师，**封闭环境**） | 生成策略 `.py`、跑回测、调试到有效结果；**严格服从 harness**；按想法类型路由结果 | 写 `enhance/candidates/`；只能用回测执行器 |
-| **4** | `recorder`（记账官） | 仅当拿到 **VAL 结果**时触发：写实验日志/结果、**归档策略到 `validated_strategies/`**、更新 KB，然后交回 Agent 1 开下一轮 | 写 `enhance/results.tsv`、`validated_strategies/`、`wiki/**` |
+| **4** | `recorder`（记账官） | 仅当拿到 **VAL 结果**时触发：把结果写成目标家族页 **§2 新变体**（来源 `enhance-<expId>`）、记 `results.tsv`、**归档到 `validated_strategies/`**；**组合新族**则登记 §2.2 + 建家族页；交回 Agent 1 | 写家族页 §2、`enhance/results.tsv`、`validated_strategies/`、`wiki/**` |
 
 **共享状态**：
 - `enhance/loop-state.json` —— **可选**的轻量进度快照（当前最优/活跃想法/下一步），供人类查看；**不是续跑的必需品**（续跑靠会话恢复，见下「断点续跑」），不强制每步写。
@@ -57,14 +60,14 @@
 
 与人类确认后：
 
-1. **定 run tag**、建分支 `research/<tag>`（从 master，必须不存在=全新纪元）。
+1. **选目标家族** `<family>`（用户指定，如 `五福闹新春`）+ 定 run tag、建分支 `enhance/<tag>`（从 master，必须不存在=全新纪元）。
 2. **确认评测台 + 登录 + 预算**：
    - `harness.md` epoch 2 协议已冻结（TRAIN 选择 / VAL 定稿 / OOS 禁用）；只读。
    - CDP Chrome 在跑；**登录/预算用 statistics API 查**：`curl -s localhost:9225/json/version` 通 + `node utils/jq-budget.js` 返回 `used/free`。
    - **预算**：JQ 每日免费 60 分钟、超出烧积分。定 `JQ_USAGE_LIMIT`（默认 55）。
 3. **初始化**：`enhance/results.tsv` 写表头（§记账）；`enhance/ideas-queue.json`=`[]`（可选，供 Agent 2 排队）。续跑不靠这些文件而靠**会话恢复**（见「断点续跑」）。
-4. **选 baseline**：从 `wiki/concepts/*.md` 「归一化横评」挑一个 **gate ✅** 的强基线做 `<tag>-000`
-   （源码 + `utils/strategy-normalize.js` 的冻结成本 `OVERRIDE`），Agent 3 在 **TRAIN** 上跑一次确立基准线。
+4. **定 baseline**：目标家族页的 `bestVariant`（族内改进时）或拟组合的各家族最优（组合新族时）做 `<tag>-000`
+   （源码 + `utils/strategy-normalize.js` 的冻结成本 `OVERRIDE`），Agent 3 在 **TRAIN** 上跑一次确立基准线——**增强要超过它**。
 5. **确认即开跑**。
 
 ---
@@ -91,7 +94,7 @@
 
 **逐步说明**：
 
-1. **Agent 1 产想法**：读最新 KB + `results.tsv`/实验页，产出一个**带推理**的想法（新策略或对现有的改进），推理须有据（逻辑或既往回测事实）。交 Agent 2。
+1. **Agent 1 产想法**：读目标家族页 + KB + `results.tsv`，产出一个**带推理**的想法——**三取法之一**：**族内改进**（§4 待研究 / §2 变体的可优化点）、**跨族借鉴**（把其他家族页里奏效的元素移植进来，引用来源家族+study 溯源）、**组合新族**（≥2 家族拼装）。推理须有据（逻辑或既往回测/study 事实）。交 Agent 2。
 2. **Agent 2 筛选/排队**：
    - 想法**成立** → 按预期收益/新颖度**排名入队** `ideas-queue.json`。
    - 无论成立与否，只要**队列非空** → 出队 `rank` 最高者，标 `active`，交 Agent 3（Type-1 迭代）。
@@ -103,7 +106,7 @@
 4. **Agent 1 判 TRAIN 结果**（Type-1 回来后）：
    - **正向改进**（`gate(TRAIN)` 且 `objective(TRAIN) > 当前定稿中最优`）→ 推进为新的迭代最优，且**判断是否已「定稿」**：*已迭代充分、TRAIN 上取得正向改进、想不出更多有价值变异* → **定稿**，把该版本交 Agent 3 跑 Type-2（VAL）。否则**继续调参**：产下一个小步变异（回 Agent 3 Type-1）。
    - **无改进**（DQ 或不高于当前）→ 记一次失败迭代；若这个想法**多次变异仍无正向改进** → **放弃该想法**，报 Agent 2 取队列下一个（队列空则回 Agent 1 产新想法）。
-5. **Agent 4 记账**（仅 VAL 结果触发）：写 `results.tsv` 行 + `wiki/experiments/<expId>.md` + `wiki/log.md`，回填相关 `wiki/concepts/*.md`（向 Agent 1 要假设/推理/迭代轨迹细节），并**把定稿策略归档到 `validated_strategies/<expId>.py`**（拷贝 candidate + 带指标头注；见 §记账）。完成后交回 Agent 1 开下一轮。
+5. **Agent 4 记账**（仅 VAL 结果触发）：**把定稿策略写成目标家族页 §2 的新变体行**（改动 / 来源 `enhance-<expId>` / Δ vs 基线 / 结论）；写 `results.tsv` + `wiki/log.md`；回填相关 `wiki/concepts/*.md`（向 Agent 1 要假设/推理/迭代轨迹）；**归档到 `validated_strategies/<expId>.py`**（拷贝 candidate + 带指标头注）。**若这是「组合新族」**：先在 `wiki-schema.md` §2.2 登记新家族名，建 `wiki/families/<new>.md`（§1 由人/后续 study 补），该定稿即其首个变体，并给 candidate 策略页写 `family: <new>`。完成后交回 Agent 1。
 
 ---
 
@@ -128,7 +131,7 @@ expId  commit  ideaId  baseExpId  train_objective  val_objective  sharpe_val  ga
 
 - 迭代中的 Type-1 TRAIN 结果**不单独占行**，浓缩进定稿行的 `train_objective` 与实验页的「迭代轨迹」。
 - `status`：`recorded`（定稿并记账）/ `val-dq`（定稿但 VAL 未过门槛，仍记账并标注）/ `crash`。
-- 实验页 `wiki/experiments/<expId>.md` 按 `enhance-schema.md` §6 模板，含：假设、推理、迭代轨迹（各 TRAIN 步）、TRAIN 与 VAL 结果、`confirmed`、`flags`、回填指针。
+- **主记录 = 家族页 §2 变体行**（改动 / 来源 `enhance-<expId>` / Δ vs 基线 / 结论）。完整假设·推理·迭代轨迹·TRAIN+VAL·`flags` 进实验页 `wiki/experiments/<expId>.md`（`enhance-schema.md` §6）作详情附页；既有 `wiki/experiments/*.md` 为归档，不再是主记录。
 - **归档策略**：把 `enhance/candidates/<expId>.py` 拷贝到 `validated_strategies/<expId>.py`（目录不存在则建），文件头加注释：`expId / ideaId / baseExpId / train_objective / val_objective / sharpe_val / gate_val(pass|fail) / ranAt`。**每个拿到 VAL 结果的定稿策略都归档**（`gate_val` 标 pass/fail——这里收「过了验证流程」的成品，不只是过门槛者）。此目录**git 跟踪**（是流水线的产物货架，区别于 transient 的 `results.tsv`/`ideas-queue.json`/`loop-state.json`）。
 
 ---

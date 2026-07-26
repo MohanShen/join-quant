@@ -1,6 +1,7 @@
 # join-quant 自主研究（autoenhance）Schema
 
-本文件定义 `research/` 自主策略研究循环的结构与规则，是 `docs/wiki-schema.md`（知识库 Schema）的姊妹篇。
+本文件定义 `enhance/` 自主策略**增强**循环的结构与规则（**家族级**：提升一个策略家族 `wiki/families/<family>.md`），是 `docs/wiki-schema.md`（知识库 Schema）与 `docs/study-schema.md`（解剖）的姊妹篇。
+点子官有三种取法：**族内改进 / 跨族借鉴 / 组合新族**（见 `enhance/program.md`）；定稿结果写回**家族页 §2 变体**（主记录），新族则登记 `wiki-schema.md` §2.2 并建家族页。
 灵感来自 Andrej Karpathy 的 [`autoenhance`](https://github.com/karpathy/autoenhance)：
 **「人类只编辑 `program.md`/`harness.md`，AI 在冻结的评测台上自主迭代策略；迭代/选择全凭 `objective(TRAIN)`，定稿才验 VAL。」**
 本项目把「AI」实现为一个**四智能体团队**（点子/筛选/工程/记账，见 `enhance/program.md`）。
@@ -38,9 +39,8 @@ wiki「待研究/空白/归一化横评」 → 想法+推理 → 变异 candidat
 
 ```
 join-quant/
-├── research/
+├── enhance/
 │   ├── program.md              # 四智能体团队编排指令（人类编辑，见姊妹文件）
-│   ├── harness.md              # 冻结评测台常量的权威定义（§3，人类维护，改动即新纪元）
 │   ├── strategy_template.py    # 策略脚手架（§5）：受控因子槽位
 │   ├── candidates/<expId>.py   # 每个实验的策略源码（变异产物，raw）
 │   ├── ideas-queue.json        # Agent 2 排名想法队列（git 不跟踪）
@@ -139,14 +139,16 @@ objective(w) = score(w)        若 gate(w) 为真
 
 ---
 
-## 6. 实验页格式 `wiki/experiments/<expId>.md`
+## 6. 实验页格式 `wiki/experiments/<expId>.md`（详情附页）
 
-`expId` = `<tag>-<NNN>`（如 `jul3-007`），与分支 `research/<tag>`、账本行、`candidates/<expId>.py` 一一对应。
+> **主记录是目标家族页 §2 变体行**（`改动 / 来源 enhance-<expId> / Δ vs 基线 / 结论`，见 `wiki-schema.md` §3.3）。本实验页是**详情附页**（完整假设/推理/迭代轨迹/TRAIN+VAL/flags）。既有 `wiki/experiments/*.md` 为归档。
+
+`expId` = `<tag>-<NNN>`（如 `jul3-007`），与分支 `enhance/<tag>`、账本行、`candidates/<expId>.py` 一一对应。
 
 ```markdown
 ---
 expId: jul3-007
-branch: research/jul3
+branch: enhance/jul3
 commit: <7位短哈希>                      # candidates/<expId>.py 的提交
 ideaId: idea-12                         # 来自 ideas-queue.json 的想法 id
 baseExpId: jul3-006                     # 本实验（定稿版）从哪个 candidate 变异而来（首个填 baseline）
@@ -233,7 +235,7 @@ jul3-002	c3d4e5f	idea-7	jul3-001	1.52	0.88	1.9	fail	val-dq	国九过滤：TRAIN 
 
 ## 8. 迭代 / 定稿 / branch 规则（四智能体，权威流程见 `enhance/program.md`）
 
-团队跑在专用分支 `research/<tag>`。状态机与角色见 `enhance/program.md`；此处定义 keep/finalize 的判据：
+团队跑在专用分支 `enhance/<tag>`。状态机与角色见 `enhance/program.md`；此处定义 keep/finalize 的判据：
 
 **迭代（Type-1，只在 TRAIN）**——由 Agent 3 跑、Agent 1 判：
 1. Agent 1 从当前迭代最优提一个**小步变异**（或队列新想法的初版），Agent 3 写 `candidates/<expId>.py` 并 `git commit`。

@@ -126,7 +126,7 @@ updatedAt: ${TODAY}
 - **为什么有效**：<>
 - **⚠ 现实性 / 容量**：<>
 
-## 2. 变体 (variants)   ← 待人工/study/research 填写
+## 2. 变体 (variants)   ← 待人工/study/enhance 填写
 | 变体 | 相对基类的改动 | 来源 | Δobjective | Δsharpe | ΔmaxDD | 结论 |
 |---|---|---|---|---|---|---|
 | — | — | — | — | — | — | — |

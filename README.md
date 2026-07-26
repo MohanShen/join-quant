@@ -79,10 +79,12 @@ JoinQuant updates backtest status via JavaScript XHR calls that mutate the DOM i
 
 > **Naming:** this is the renamed former "auto-research" loop. The name **auto-research** is now reserved for a future, broader pipeline (new data / factors / different trading ideas).
 
-- **Agent 1 (ideator)** — reads the KB + experiment logs, generates ideas with reasoning; decides keep-iterating / finalize / give-up on TRAIN results.
-- **Agent 2 (critic)** — judges idea validity, maintains a ranked `enhance/ideas-queue.json`, dispatches the best idea.
+Operates on a **strategy family** (`wiki/families/<family>.md`):
+
+- **Agent 1 (ideator)** — reads the target family page + KB, generates ideas in three modes — **within-family**, **cross-family borrow** (port what worked in another family), **new-family by combination** — and decides keep-iterating / finalize / give-up on TRAIN results.
+- **Agent 2 (critic)** — judges idea validity (controlled factor + family vocab; borrow grounded; new family not a dup), maintains a ranked `enhance/ideas-queue.json`, dispatches the best idea.
 - **Agent 3 (engineer)** — writes the candidate `.py`, runs the backtest (enclosed, harness-obeying); Type-1→TRAIN, Type-2→VAL.
-- **Agent 4 (recorder)** — on a VAL result, records the experiment + archives the strategy to `validated_strategies/`, backfills the wiki.
+- **Agent 4 (recorder)** — on a VAL result, **writes it back to the family page as a new §2 variant**, records `results.tsv`, archives to `validated_strategies/`, and registers a new family (§2.2 + a family page) if the idea created one.
 
 **Strict window protocol** (`harness/harness.md`, frozen): iteration/selection runs on **TRAIN** (2022–2023) only; **VAL** (2024) is run once on a *finalized* strategy; the **2025→now OOS window is never touched** (hard-blocked in `strategy-post-backtest.js`). Resumable via `enhance/loop-state.json` + `ideas-queue.json` + `results.tsv` + git. Unattended auto-resume across quota resets: `scripts/autoenhance-loop.sh` + the launchd agent.
 

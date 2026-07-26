@@ -11,7 +11,7 @@ You are spawned **fresh for a single task** and terminate when you return. The *
 
 ## Job
 
-Given an idea from **Agent 1 (ideator)**, judge whether it is **valid** — internally coherent, grounded in the KB, within the controlled factor vocabulary (`wiki-schema.md` §2.1), not a red-line violation (`harness.md` §3, unrealistic fills), and not a near-duplicate of an already-explored discard. Then:
+Given an idea from **Agent 1 (ideator)**, judge whether it is **valid** — internally coherent, grounded in the KB, within the controlled factor **and family** vocabulary (`wiki-schema.md` §2.1/§2.2), not a red-line violation (`harness.md` §3, unrealistic fills), and not a near-duplicate of an already-explored discard **within the family**. Mode-specific checks: **cross-family borrow** — the ported element must be grounded (cite source family + study finding), not a blind graft; **new-family combination** — must be a genuinely new lineage, not a rename/near-dup of an existing family. Then:
 
 - **Valid** → insert into `enhance/ideas-queue.json` at its **rank** (by expected improvement × novelty; higher = more promising), status `queued`.
 - **Regardless of this idea's validity, if the queue is non-empty** → pop the highest-`rank` `queued` idea, set it `active`, and dispatch it to **Agent 3 (engineer)** as a **Type-1 (TRAIN)** job.
