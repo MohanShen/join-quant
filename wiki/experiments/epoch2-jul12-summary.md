@@ -4,7 +4,7 @@ tag: jul12
 branch: research/jul12
 kind: epoch-summary（综述/capstone）
 window: TRAIN 2022-01-01..2023-12-31 / VAL 2024-01-01..2024-12-31（OOS 2025+ 禁用）
-harness: research/harness.md（epoch 2 冻结：零滑点 + PerTrade 万3/万13/5；objective=annual−maxdd；gate sharpe≥2.5）
+harness: harness/harness.md（epoch 2 冻结：零滑点 + PerTrade 万3/万13/5；objective=annual−maxdd；gate sharpe≥2.5）
 arcsExplored: 5
 finalizedRows: 2   # jul12-005 recorded, jul12-023 val-dq（见 research/results.tsv）
 bothWindowSurvivors: 1   # 仅 jul12-005，且不可实现/不可部署

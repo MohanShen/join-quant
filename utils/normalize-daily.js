@@ -12,7 +12,7 @@ const { createStub, regenConceptTables } = require('./kb-stub');
 
 const ROOT = path.join(__dirname, '..');
 const STRAT_DIR = path.join(ROOT, 'strategies');
-const LEDGER = path.join(ROOT, 'research/normalize-train.tsv');
+const LEDGER = path.join(ROOT, 'harness/normalize-train.tsv');
 const PENDING = path.join(ROOT, 'data/pending-normalize.json');   // fetched but not yet normalized
 const CDP_URL = process.env.JQ_CDP_URL || 'http://localhost:9225';
 

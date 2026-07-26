@@ -1,8 +1,8 @@
 # study/program.md — 自动策略解剖团队（4 智能体）
 
 本文件是解剖循环的**团队编排指令**（auto-research `research/program.md` 的姊妹篇）。
-人类只编辑本文件与 `research/harness.md`；团队据此**自主**提问、跑实验、记发现、写报告、反哺 KB。
-权威规则见 `docs/study-schema.md`（冲突以它为准）与 `research/harness.md`（评测台冻结，只读）。
+人类只编辑本文件与 `harness/harness.md`；团队据此**自主**提问、跑实验、记发现、写报告、反哺 KB。
+权威规则见 `docs/study-schema.md`（冲突以它为准）与 `harness/harness.md`（评测台冻结，只读）。
 
 > **目标不是优化指标，而是理解策略**：各组件贡献、参数敏感性、regime 依赖、失效模式与机理。
 > **批量模式**：遍历 `study/manifest.json` 里**所有归一化策略**，逐个做完整解剖、产出 `wiki/studies/<id>.md` 报告、标 `done`，**不到全部完成（或用户说停）不退出**。有外层循环（遍历策略）+ 内层循环（对一个策略的 4-agent 解剖）。
@@ -12,7 +12,7 @@
 ## 必读（每次开始前）
 
 1. `docs/study-schema.md` —— 结构与规则（**权威**）。
-2. `research/harness.md` —— 冻结评测台（成本/滑点/真实性过滤；窗口 2022–2024，2025 OOS 硬阻断）。**只读**。
+2. `harness/harness.md` —— 冻结评测台（成本/滑点/真实性过滤；窗口 2022–2024，2025 OOS 硬阻断）。**只读**。
 3. 目标策略的源码 + 其 `wiki/strategies/<...>.md` 页 + 相关 `wiki/concepts/*.md`。
 4. `docs/wiki-schema.md` §2.1 —— 受控因子词表（描述组件时用统一命名）。
 
@@ -49,7 +49,7 @@
 与人类确认后：
 
 1. **建 manifest**：`study/manifest.json` 已由脚本从所有归一化 wiki 策略页生成（`id / sourceFile / objective / gate / status`，按 objective 强→弱）。不存在则重建（读 `wiki/strategies/*.md` 的 `normalized:` 块）。建分支 `study/all`（从当前 HEAD）。
-2. **确认评测台 + 登录 + 预算**：`research/harness.md` 只读；`curl -s localhost:9225/json/version` 通 + `node utils/jq-budget.js` 出 `used/free`；定 `--usage-limit`。
+2. **确认评测台 + 登录 + 预算**：`harness/harness.md` 只读；`curl -s localhost:9225/json/version` 通 + `node utils/jq-budget.js` 出 `used/free`；定 `--usage-limit`。
 3. **确认即开跑**（进入外层循环）。
 
 ---

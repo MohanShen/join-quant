@@ -61,12 +61,12 @@ join-quant/
 ## 3. 冻结评测台（frozen harness）
 
 这是本 Schema 的核心。类比 `prepare.py`：**一经设定即冻结，agent 只读不可改**。
-**权威常量定义在 `research/harness.md`**（本节仅摘要，冲突以 harness.md 为准）。
-任何改动都视为「新纪元」，需人类在 `research/harness.md` 显式变更并记 `log.md`，此前所有实验结果就此封版、不再与新纪元横比。
+**权威常量定义在 `harness/harness.md`**（本节仅摘要，冲突以 harness.md 为准）。
+任何改动都视为「新纪元」，需人类在 `harness/harness.md` 显式变更并记 `log.md`，此前所有实验结果就此封版、不再与新纪元横比。
 
 ### 3.1 三个回测窗口（period split）
 
-用 JoinQuant Pipeline 2（`utils/strategy-post-backtest.js`）的回测区间参数实现。当前 epoch 2（权威见 `research/harness.md` §1）——**严格窗口协议**：
+用 JoinQuant Pipeline 2（`utils/strategy-post-backtest.js`）的回测区间参数实现。当前 epoch 2（权威见 `harness/harness.md` §1）——**严格窗口协议**：
 
 | 窗口 | 区间 | 用途 | 谁能跑 / 何时 |
 |---|---|---|---|
@@ -301,7 +301,7 @@ jul3-002	c3d4e5f	idea-7	jul3-001	1.52	0.88	1.9	fail	val-dq	国九过滤：TRAIN 
 
 ### 11.2 批量执行器与账本
 - `node utils/strategy-normalize.js --window train [--filter <substr>] [--limit N]`：枚举 → 兼容性预检 → 追加 override → 跑 Pipeline 2 → 解析 SUMMARY → 写账本。
-- **可续跑**账本 `research/normalize-<window>.tsv`（git 不跟踪），已有终态的策略跳过。列：
+- **可续跑**账本 `harness/normalize-<window>.tsv`（git 不跟踪），已有终态的策略跳过。列：
   `sourceFile  postId  title  status  start  end  days  total_pct  annual_pct  sharpe  maxdd_pct  objective  gate`
 - `status`：`normalized`（完成，可入 KB）/ `incompatible-futures`（期货，stock 回测跑不了）/ `incompatible-notrunnable`（无 `initialize` 的工具/研究页）/ `crash`（回测报错）/ `window-mismatch`。
 - `objective` / `gate` 同 §3.3（`annual−maxdd`，门槛 `sharpe≥2.5`；不过门槛记 `DQ`/`fail`）。

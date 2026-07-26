@@ -252,7 +252,7 @@ updatedAt: <YYYY-MM-DD>
 ### 3.3 家族页 `wiki/families/<规范家族名>.md`
 
 家族页纵向聚合**同一基类的所有变体**，是 auto-research 的取种入口。
-拆分：`§2 变体表` 与 `§3 横评` 由脚本从策略页 `family:` + `research/normalize-train.tsv` + study/research 账本**自动生成**（勿手写 Δ 列，lint 校验漂移，同 `wiki-factor-signature.js` 模式）；`§1 基类机理`、`为什么有效`、`§4 待研究`、`§5 沿革` 为**人写 / 追加**。
+拆分：`§2 变体表` 与 `§3 横评` 由脚本从策略页 `family:` + `harness/normalize-train.tsv` + study/research 账本**自动生成**（勿手写 Δ 列，lint 校验漂移，同 `wiki-factor-signature.js` 模式）；`§1 基类机理`、`为什么有效`、`§4 待研究`、`§5 沿革` 为**人写 / 追加**。
 
 ```markdown
 ---

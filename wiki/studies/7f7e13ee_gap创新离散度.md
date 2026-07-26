@@ -2,7 +2,7 @@
 studyId: 7f7e13ee_gap创新离散度
 target: strategies/2026-06-30_gap创新_离散度判断-7f7e13ee.py
 targetRefs: [[7f7e13ee_gap创新离散度]], [[ETF轮动]], [[动量与趋势]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-16
 status: done
 ---

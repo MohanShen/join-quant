@@ -2,7 +2,7 @@
 studyId: e4eb8dca_三进兵
 target: strategies/2026-06-06_策略研发_三进兵策略-e4eb8dca.py
 targetRefs: [[e4eb8dca_三进兵]], [[动量与趋势]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-16
 status: done
 ---

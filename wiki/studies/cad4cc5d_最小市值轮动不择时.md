@@ -2,7 +2,7 @@
 studyId: cad4cc5d_最小市值轮动不择时
 target: strategies/2026-06-17_最小市值轮动_不择时-cad4cc5d.py
 targetRefs: [[cad4cc5d_最小市值轮动不择时]], [[小市值因子]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-16
 status: done
 ---

@@ -11,7 +11,7 @@
  * The raw file in strategies/ is NEVER modified; a normalized copy is written to a
  * temp dir and fed to Pipeline 2.
  *
- * Resumable: results append to research/normalize-<window>.tsv; strategies already
+ * Resumable: results append to harness/normalize-<window>.tsv; strategies already
  * carrying a terminal status are skipped on re-run.
  *
  * Usage:
@@ -48,7 +48,7 @@ function resolveMaxPollMin(opt) {
 const OVERRIDE = `
 
 # ===== AUTORESEARCH NORMALIZATION OVERRIDE (appended; strategies/ file untouched) =====
-# research/harness.md §2 — force zero slippage + frozen commission regardless of
+# harness/harness.md §2 — force zero slippage + frozen commission regardless of
 # what the raw strategy sets, even if it re-sets costs every bar.
 __jq_set_slippage = set_slippage
 def set_slippage(*a, **k):
@@ -127,7 +127,7 @@ function objectiveOf(annualPct, maxddPct, sharpe) {
 
 function main() {
   const opt = parseArgs(process.argv.slice(2));
-  const ledgerPath = path.join(ROOT, `research/normalize-${opt.window}.tsv`);
+  const ledgerPath = path.join(ROOT, `harness/normalize-${opt.window}.tsv`);
   if (!fs.existsSync(TMP_DIR)) fs.mkdirSync(TMP_DIR, { recursive: true });
 
   // Ledger (resumable). Terminal statuses are skipped on resume; failed/crash are

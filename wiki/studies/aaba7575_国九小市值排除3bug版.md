@@ -2,7 +2,7 @@
 studyId: aaba7575_国九小市值排除3bug版
 target: strategies/2026-05-17_小市值排除3个bug版_22年至今收益506_回撤11-aaba7575.py
 targetRefs: [[aaba7575_国九小市值排除3bug版]], [[小市值因子]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-16
 status: done
 ---

@@ -1,0 +1,357 @@
+[2026-07-12 15:50:04] skip: no research/loop-state.json on research/jul4 — epoch not started yet (run /run-experiment interactively first)
+[2026-07-12 16:03:21] skip: previous run (pid 34160) still active
+[2026-07-12 17:03:21] skip: no data/autoresearch-session.txt — start the epoch interactively first (scripts/autoresearch-interactive.sh)
+[2026-07-12 18:03:22] budget ok (used=11min); resuming session a0e19beb-b9a0-4e29-baa1-5637402c8039 on research/jul12
+[2026-07-12 18:03:22] resuming claude session a0e19beb-b9a0-4e29-baa1-5637402c8039 (--permission-mode acceptEdits) → /Users/mshen/repos/join-quant/data/autoresearch-logs/run-20260712-180322.log
+[2026-07-12 18:03:41] claude exited rc=1 (likely rate-limited — next fire retries after quota reset)
+[2026-07-12 19:03:42] budget ok (used=11min); resuming session a0e19beb-b9a0-4e29-baa1-5637402c8039 on research/jul12
+[2026-07-12 19:03:42] resuming claude session a0e19beb-b9a0-4e29-baa1-5637402c8039 (--permission-mode acceptEdits) → /Users/mshen/repos/join-quant/data/autoresearch-logs/run-20260712-190342.log
+[2026-07-12 19:03:52] claude exited rc=1 (likely rate-limited — next fire retries after quota reset)
+[2026-07-12 20:03:53] budget ok (used=11min); resuming session a0e19beb-b9a0-4e29-baa1-5637402c8039 on research/jul12
+[2026-07-12 20:03:53] resuming claude session a0e19beb-b9a0-4e29-baa1-5637402c8039 (--permission-mode acceptEdits) → /Users/mshen/repos/join-quant/data/autoresearch-logs/run-20260712-200353.log
+[2026-07-12 20:04:01] claude exited rc=1 (likely rate-limited — next fire retries after quota reset)
+[2026-07-12 21:04:05] budget ok (used=11min); resuming session a0e19beb-b9a0-4e29-baa1-5637402c8039 on research/jul12
+[2026-07-12 21:04:05] resuming claude session a0e19beb-b9a0-4e29-baa1-5637402c8039 (--permission-mode acceptEdits) → /Users/mshen/repos/join-quant/data/autoresearch-logs/run-20260712-210405.log
+[2026-07-12 21:33:25] claude exited rc=1 (likely rate-limited — next fire retries after quota reset)
+[2026-07-12 22:33:25] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 active (transcript touched <20min ago) — avoid overlap
+[2026-07-12 23:33:25] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 active (transcript touched <20min ago) — avoid overlap
+[2026-07-13 00:33:25] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 active (transcript touched <20min ago) — avoid overlap
+[2026-07-13 01:33:25] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 active (transcript touched <20min ago) — avoid overlap
+[2026-07-13 02:33:25] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 active (transcript touched <20min ago) — avoid overlap
+[2026-07-13 03:33:26] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 active (transcript touched <20min ago) — avoid overlap
+[2026-07-13 04:33:26] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 active (transcript touched <20min ago) — avoid overlap
+[2026-07-13 05:33:26] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 active (transcript touched <20min ago) — avoid overlap
+[2026-07-13 06:33:26] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 active (transcript touched <20min ago) — avoid overlap
+[2026-07-13 07:33:27] budget ok (used=0min); resuming session a0e19beb-b9a0-4e29-baa1-5637402c8039 on research/jul12
+[2026-07-13 07:33:27] resuming claude session a0e19beb-b9a0-4e29-baa1-5637402c8039 (--permission-mode acceptEdits) → /Users/mshen/repos/join-quant/data/autoresearch-logs/run-20260713-073327.log
+[2026-07-13 07:34:12] resume complete rc=0
+[2026-07-13 07:40:33] budget ok (used=0min); resuming session a0e19beb-b9a0-4e29-baa1-5637402c8039 on research/jul12
+[2026-07-13 07:40:33] resuming claude session a0e19beb-b9a0-4e29-baa1-5637402c8039 (--permission-mode acceptEdits) → /Users/mshen/repos/join-quant/data/autoresearch-logs/run-20260713-074033.log
+[2026-07-13 07:44:49] resume complete rc=0
+[2026-07-13 08:44:50] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 45531 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-13 09:44:50] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 45531 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-13 10:44:50] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 45531 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-13 11:44:50] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 45531 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-13 12:44:50] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 45531 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-13 13:44:50] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 45531 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-13 14:44:50] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 45531 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-13 15:44:51] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 45531 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-13 16:44:51] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 45531 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-13 17:44:51] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 45531 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-13 18:44:51] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 45531 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-13 19:44:51] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 45531 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-13 20:44:51] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-13 21:44:51] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-13 22:44:52] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-13 23:44:52] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 00:44:52] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 01:44:52] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 02:44:52] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 03:44:52] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 04:44:52] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 05:44:53] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 06:44:53] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 07:44:53] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 08:44:53] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 09:44:53] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 10:44:53] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 11:44:53] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 12:44:54] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 13:44:54] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 14:44:54] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 15:44:54] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 16:44:54] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 17:44:54] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 18:44:54] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 19:44:54] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 20:44:55] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 21:44:55] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 22:44:55] skip: session a0e19beb-b9a0-4e29-baa1-5637402c8039 is held by live claude pid(s) 53453 . If that's an interactive TUI you left open, CLOSE it to let the cron resume.
+[2026-07-14 23:44:55] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 00:44:55] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 01:44:55] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 02:44:55] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 03:44:55] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 04:44:56] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 05:44:56] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 06:44:56] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 07:44:56] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 08:44:56] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 09:44:56] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 10:44:56] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 11:44:56] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 12:44:56] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 13:44:56] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 14:44:56] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 15:44:57] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 16:44:57] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 17:44:57] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 18:44:57] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 19:44:57] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 20:44:57] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 21:44:57] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 22:44:57] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-15 23:44:57] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 00:44:57] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 01:44:58] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 02:44:58] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 03:44:58] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 04:44:58] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 05:44:58] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 06:44:58] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 07:44:58] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 08:44:58] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 09:44:58] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 10:44:58] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 11:44:59] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 12:44:59] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 13:44:59] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 14:44:59] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 15:44:59] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 16:44:59] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 17:44:59] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 18:44:59] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 19:44:59] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 20:44:59] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 21:45:00] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 22:45:00] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-16 23:45:00] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 00:45:00] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 01:45:00] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 02:45:00] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 03:45:00] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 04:45:00] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 05:45:00] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 06:45:00] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 07:45:01] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 08:45:01] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 09:45:01] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 10:45:01] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 11:45:01] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 12:45:01] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 13:45:01] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 14:45:01] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 15:45:01] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 16:45:01] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 17:45:01] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 18:45:02] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 19:45:02] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 20:45:02] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 21:45:02] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 22:45:02] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-17 23:45:02] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 00:45:02] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 01:45:02] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 02:45:02] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 03:45:03] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 04:45:03] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 05:45:03] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 06:45:03] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 07:45:03] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 08:45:03] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 09:45:03] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 10:45:03] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 11:45:03] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 12:45:03] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 13:45:03] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 14:45:04] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 15:45:04] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 16:45:04] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 17:45:04] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 18:45:04] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 19:45:04] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 20:45:04] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 21:45:04] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 22:45:04] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-18 23:45:04] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 00:45:05] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 01:45:05] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 02:45:05] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 03:45:05] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 04:45:05] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 05:45:05] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 06:45:05] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 07:45:05] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 08:45:05] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 09:45:06] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 10:45:06] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 11:45:06] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 12:45:06] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 13:45:06] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 14:45:06] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 15:45:06] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 16:45:06] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 17:45:06] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 18:45:06] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 19:45:07] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 20:45:07] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 21:45:07] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 22:45:07] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-19 23:45:07] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 00:45:07] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 01:45:07] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 02:45:07] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 03:45:07] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 04:45:07] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 05:45:08] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 06:45:08] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 07:45:08] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 08:45:08] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 09:45:08] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 10:45:08] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 11:45:08] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 12:45:08] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 13:45:08] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 14:45:08] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 15:45:08] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 16:45:09] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 17:45:09] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 18:45:09] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 19:45:09] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 20:45:09] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 21:45:09] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 22:45:09] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-20 23:45:09] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 00:45:09] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 01:45:10] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 02:45:10] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 03:45:10] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 04:45:10] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 05:45:10] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 06:45:10] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 07:45:10] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 08:45:10] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 09:45:10] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 10:45:10] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 11:45:10] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 12:45:11] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 13:45:11] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 14:45:11] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 15:45:11] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 16:45:11] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 17:45:11] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 18:45:11] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 19:45:11] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 20:45:11] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 21:45:12] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 22:45:12] skip: not on a research/* branch (on 'study/all') and TAG unset. Create/checkout an epoch first.
+[2026-07-21 23:45:12] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 00:45:12] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 01:45:12] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 02:45:12] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 03:45:12] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 04:45:12] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 05:45:12] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 06:45:12] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 07:45:12] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 08:45:13] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 09:45:13] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 10:45:13] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 11:45:13] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 12:45:13] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 13:45:13] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 14:45:13] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 15:45:13] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 16:45:13] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 17:45:14] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 18:45:14] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 19:45:14] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 20:45:14] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 21:45:14] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 22:45:14] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-22 23:45:14] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 00:45:14] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 01:45:14] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 02:45:14] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 03:45:15] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 04:45:15] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 05:45:15] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 06:45:15] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 07:45:15] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 08:45:15] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 09:45:15] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 10:45:15] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 11:45:15] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 12:45:15] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 13:45:16] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 14:45:16] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 15:45:16] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 16:45:16] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 17:45:16] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 18:45:16] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 19:45:16] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 20:45:16] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 21:45:16] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 22:45:17] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-23 23:45:17] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 00:45:17] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 01:45:17] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 02:45:17] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 03:45:17] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 04:45:17] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 05:45:17] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 06:45:17] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 07:45:17] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 08:45:18] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 09:45:18] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 10:45:18] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 11:45:18] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 12:45:18] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 13:45:18] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 14:45:18] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 15:45:18] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 16:45:18] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 17:45:18] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 18:45:19] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 19:45:19] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 20:45:19] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 21:45:19] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 22:45:19] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-24 23:45:19] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 00:45:19] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 01:45:19] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 02:45:19] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 03:45:19] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 04:45:20] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 05:45:20] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 06:45:20] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 07:45:20] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 08:45:20] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 09:45:20] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 10:45:20] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 11:45:20] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 12:45:20] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 13:45:21] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 14:45:21] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 15:45:21] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 16:45:21] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 17:45:21] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 18:45:21] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 19:45:21] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 20:45:21] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 21:45:21] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 22:45:21] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-25 23:45:22] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 00:45:22] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 01:45:22] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 02:45:22] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 03:45:22] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 04:45:22] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 05:45:22] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 06:45:22] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 07:45:22] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 08:45:22] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 09:45:23] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 10:45:23] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 11:45:23] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 12:45:23] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 13:45:23] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 14:45:23] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 15:45:23] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 16:45:23] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 17:45:23] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 18:45:23] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 19:45:24] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 20:45:24] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 21:45:24] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.
+[2026-07-26 22:45:24] skip: not on a research/* branch (on 'main') and TAG unset. Create/checkout an epoch first.

@@ -2,7 +2,7 @@
 studyId: 15c36e0c_ETF溢价改进版
 target: strategies/2026-06-01_etf基金溢价-改进版-高收益低回撤-速度已最优-15c36e0c.py
 targetRefs: [[15c36e0c_ETF溢价改进版]], [[ETF轮动]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-15
 status: done
 ---

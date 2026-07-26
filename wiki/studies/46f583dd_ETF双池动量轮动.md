@@ -2,7 +2,7 @@
 studyId: 46f583dd_ETF双池动量轮动
 target: strategies/2026-05-23_近4个月狂揽62_六年11倍_ETF双池动量轮动-46f583dd.py
 targetRefs: [[46f583dd_ETF双池动量轮动]], [[ETF轮动]], [[动量与趋势]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-16
 status: done
 ---

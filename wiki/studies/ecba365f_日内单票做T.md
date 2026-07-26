@@ -2,7 +2,7 @@
 studyId: ecba365f_日内单票做T
 target: strategies/2026-06-14_日内单票做T策略-ecba365f.py
 targetRefs: [[ecba365f_日内单票做T]], [[动量与趋势]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-16
 status: done
 ---

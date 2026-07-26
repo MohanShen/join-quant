@@ -6,12 +6,12 @@ description: Run the join-quant auto-STUDY loop — a 4-agent team (questioner �
 # Run the auto-study team
 
 驱动 `study/` 的**四智能体**策略解剖团队：理解一个既定策略（不优化指标）。你是**编排者**：按 `study/program.md` 状态机，用**临时 subagent** 逐步调度四个角色，磁盘共享状态协调，**循环到问题穷尽或用户说停**，产出 `wiki/studies/<id>.md` 报告。
-**权威见 `study/program.md` 与 `docs/study-schema.md`（冲突以它们为准）、`research/harness.md`（评测台冻结，只读）**——本技能是入口，不复述全部细节。
+**权威见 `study/program.md` 与 `docs/study-schema.md`（冲突以它们为准）、`harness/harness.md`（评测台冻结，只读）**——本技能是入口，不复述全部细节。
 
 ## 必读
 1. `study/program.md` —— 团队编排主流程 + 状态机。
 2. `docs/study-schema.md` —— 结构/实验类型/发现账本/报告格式（权威）。
-3. `research/harness.md` —— 冻结成本/滑点；窗口 **2022–2024 任意子窗**，**2025 OOS 硬阻断**。只读。
+3. `harness/harness.md` —— 冻结成本/滑点；窗口 **2022–2024 任意子窗**，**2025 OOS 硬阻断**。只读。
 4. 目标策略源码 + 其 `wiki/strategies/*.md` + 相关 `wiki/concepts/*.md`。
 
 ## 团队（**临时 subagent**，角色定义见 `.claude/agents/autostudy-*.md`）

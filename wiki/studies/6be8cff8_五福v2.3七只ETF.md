@@ -2,7 +2,7 @@
 studyId: 6be8cff8_五福v2.3七只ETF
 target: strategies/2026-06-15_这个策略今年很强_点赞回复必回赞_克隆_没积分_模拟盘快到期-6be8cff8.py
 targetRefs: [[6be8cff8_五福v2.3七只ETF]], [[ETF轮动]], [[动量与趋势]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-16
 status: done
 ---

@@ -2,7 +2,7 @@
 studyId: d1cf57eb_三部曲吃透ETF动量1
 target: strategies/2026-05-22_三部曲吃透ETF动量轮动1_纵有狂风拔地起_我亦乘风破万里-d1cf57eb.py
 targetRefs: [[d1cf57eb_三部曲吃透ETF动量1]], [[ETF轮动]], [[动量与趋势]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-16
 status: done
 ---

@@ -2,7 +2,7 @@
 studyId: 0aa4028d_追电ETF动量轮动
 target: strategies/2026-06-15_追电ETF动量轮动_10年60多倍收益-0aa4028d.py
 targetRefs: [[0aa4028d_追电ETF动量轮动]], [[ETF轮动]], [[动量与趋势]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-16
 status: done
 ---

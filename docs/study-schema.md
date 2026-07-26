@@ -1,7 +1,7 @@
 # join-quant 自动研究·策略解剖（auto-study）Schema
 
 本文件定义 `study/` **自动策略解剖循环**的结构与规则，是 `docs/research-schema.md`（自动寻优）的**姊妹篇**。
-两者共用同一冻结评测台（`research/harness.md` 的成本/滑点/真实性过滤）与同一执行器，但**目标不同**：
+两者共用同一冻结评测台（`harness/harness.md` 的成本/滑点/真实性过滤）与同一执行器，但**目标不同**：
 
 - **auto-research（`research-schema.md`）**：最大化 `objective`，找更好的策略；有选择压力、护 VAL/OOS。
 - **auto-study（本文件）**：**理解一个既定策略**——各组件贡献归因、参数敏感性、区间/regime 依赖、失效模式；**没有选择压力**，每个实验都产出「发现」，最终产出一份**解剖报告**。
@@ -36,7 +36,7 @@ join-quant/
 │       ├── questions.json              #   排名问题队列（git 不跟踪）
 │       ├── findings.tsv                #   发现账本（git 不跟踪，§7）
 │       └── variants/<qId>.py           #   每个实验的消融/改参变体（raw，不可变）
-├── research/harness.md                 # 共用冻结评测台（成本/滑点/真实性过滤；只读）
+├── harness/harness.md                 # 共用冻结评测台（成本/滑点/真实性过滤；只读）
 └── wiki/
     └── studies/<strategyId>.md         # 解剖报告（§8；人类决定何时 commit）
 ```
@@ -47,7 +47,7 @@ join-quant/
 
 ---
 
-## 3. 冻结评测台（复用，权威见 `research/harness.md`）
+## 3. 冻结评测台（复用，权威见 `harness/harness.md`）
 
 - **成本/滑点/真实性过滤**：与 auto-research **完全相同**（`harness.md` §2–§3）——解剖时给 `target.py` 与所有 variant 追加同一**冻结成本 override**（零滑点/PerTrade，见 `utils/strategy-normalize.js` 的 `OVERRIDE`），使基线与变体**可比**。
 - **窗口**：解剖是「刻画」不是「选择」，故可在 **2022-01-01 → 2024-12-31** 内跑**任意子窗**（`--window train|val` 或 `--start/--end`）做 regime 分析。
@@ -124,7 +124,7 @@ qId	type	component_or_param	metric_delta	window	finding	confidence	flags	descrip
 studyId: <strategyId>
 target: research/candidates/<id>.py 或 strategies/<file>.py
 targetRefs: [[<strategy wiki 页>]], [[<相关概念>]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: <YYYY-MM-DD>
 status: in-progress | done
 ---

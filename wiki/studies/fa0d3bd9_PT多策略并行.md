@@ -2,7 +2,7 @@
 studyId: fa0d3bd9_PT多策略并行
 target: strategies/2026-06-23_P-T多策略并行实战_用_quot_自有账本_quot_实现四大策略各安其位-fa0d3bd9.py
 targetRefs: [[fa0d3bd9_PT多策略并行]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-14
 status: done
 ---

@@ -1,8 +1,8 @@
 # research/program.md — 自主策略研究团队（4 智能体）
 
 本文件是研究循环的 **团队编排指令**（类比 Karpathy `autoresearch` 的 `program.md`，但本项目是**四智能体团队**，不是单 agent 循环）。
-人类只编辑本文件与 `research/harness.md`；团队据此**自主**生成想法、变异策略、跑回测、记账、回填知识库。
-权威规则见 `docs/research-schema.md`（冲突以它为准）与 `research/harness.md`（评测台冻结，只读）。
+人类只编辑本文件与 `harness/harness.md`；团队据此**自主**生成想法、变异策略、跑回测、记账、回填知识库。
+权威规则见 `docs/research-schema.md`（冲突以它为准）与 `harness/harness.md`（评测台冻结，只读）。
 
 > **为什么是团队**：把「想法生成 / 想法筛选 / 脚本+回测 / 记账」拆成四个各司其职的角色，
 > 用**严格窗口协议**（`harness.md` §1）防过拟合：迭代只在 TRAIN，定稿才碰 VAL，2025+ OOS 永不触碰。
@@ -12,7 +12,7 @@
 ## 必读（每次开始前）
 
 1. `docs/research-schema.md` —— 结构与规则（**权威**）。
-2. `research/harness.md` —— 冻结评测台（窗口协议、objective、门槛、OOS 硬阻断）。**只读**。
+2. `harness/harness.md` —— 冻结评测台（窗口协议、objective、门槛、OOS 硬阻断）。**只读**。
 3. `docs/wiki-schema.md` §2 / §2.1 —— 受控概念与因子词表（变异空间边界）。
 4. `wiki/index.md` 及相关 `wiki/concepts/*.md` —— 想法来源（尤其各概念页「归一化横评」与「待研究」）。
 

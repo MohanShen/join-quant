@@ -2,7 +2,7 @@
 studyId: 9befa9b8_十日均线策略
 target: strategies/2026-06-08_十日均线策略-9befa9b8.py
 targetRefs: [[9befa9b8_十日均线策略]], [[动量与趋势]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-16
 status: done
 ---

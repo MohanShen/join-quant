@@ -2,7 +2,7 @@
 studyId: fd5d388d_五福v51ETF池
 target: strategies/2026-05-22_五福闹新春_v5_1-拟合ETF池最严厉的父亲-fd5d388d.py
 targetRefs: [[fd5d388d_五福v51ETF池]], [[ETF轮动]], [[动量与趋势]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-16
 status: done
 ---

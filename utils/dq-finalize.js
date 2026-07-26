@@ -86,7 +86,7 @@ const rep = `---
 studyId: ${id}
 target: ${sourceFile}
 targetRefs: [[${id}]], ${t.refs}
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-16
 status: done
 ---

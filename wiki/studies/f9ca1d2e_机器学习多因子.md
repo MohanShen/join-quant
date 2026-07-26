@@ -2,7 +2,7 @@
 studyId: f9ca1d2e_机器学习多因子
 target: strategies/2026-05-14_量化课堂_机器学习多因子策略-f9ca1d2e.py
 targetRefs: [[f9ca1d2e_机器学习多因子]], [[多因子模型]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-16
 status: done
 ---

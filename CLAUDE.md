@@ -77,5 +77,5 @@ Only the directories whose contents aren't self-evident:
 - Default cookie path in `index.js` is `auth/cookies.json`.
 - Pipeline 2's backtest window is parameterized via `--window train|val` (or `--start/--end`),
   set through the `newStrategy` URL params. The **2025+ OOS window is hard-blocked** (`OOS-BLOCKED`)
-  unless `JQ_ALLOW_OOS=1` — see `research/harness.md`. No flag = JQ default range (ad-hoc).
+  unless `JQ_ALLOW_OOS=1` — see `harness/harness.md`. No flag = JQ default range (ad-hoc).
 - Do not close the CDP Chrome process — it invalidates the JQ session and forces re-login.

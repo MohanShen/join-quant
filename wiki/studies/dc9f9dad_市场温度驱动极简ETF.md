@@ -2,7 +2,7 @@
 studyId: dc9f9dad_市场温度驱动极简ETF
 target: strategies/2026-06-27_市场温度驱动的极简ETF_轮动策略--6年10倍-dc9f9dad.py
 targetRefs: [[dc9f9dad_市场温度驱动极简ETF]], [[ETF轮动]], [[动量与趋势]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-16
 status: done
 ---

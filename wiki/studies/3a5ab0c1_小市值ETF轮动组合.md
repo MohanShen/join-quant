@@ -2,7 +2,7 @@
 studyId: 3a5ab0c1_小市值ETF轮动组合
 target: strategies/2026-06-01_策略组合_优质小市值周换手与ETF轮动策略组合-3a5ab0c1.py
 targetRefs: [[3a5ab0c1_小市值ETF轮动组合]], [[小市值因子]], [[ETF轮动]]
-harness: research/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
+harness: harness/harness.md（冻结成本；窗口 2022–2024，2025 OOS 禁用）
 startedAt: 2026-07-16
 status: done
 ---

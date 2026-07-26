@@ -1,4 +1,4 @@
-# research/harness.md — 冻结评测台常量（权威）
+# harness/harness.md — 冻结评测台常量（权威）
 
 本文件是**冻结评测台**的唯一权威定义（类比 Karpathy `autoresearch` 的 `prepare.py`）。
 `docs/research-schema.md` §3 引用本文件；如有出入，**以本文件为准**。

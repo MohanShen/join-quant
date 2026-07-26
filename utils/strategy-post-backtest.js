@@ -7,8 +7,8 @@
  * Usage:
  *   node utils/strategy-post-backtest.js <path-to-strategy.py> [title] [options]
  *
- * Options (autoresearch harness — see research/harness.md):
- *   --window <train|val>           Frozen backtest window (research/harness.md). Sets start/end dates.
+ * Options (autoresearch harness — see harness/harness.md):
+ *   --window <train|val>           Frozen backtest window (harness/harness.md). Sets start/end dates.
  *                                  NOTE: holdout / any 2025+ window is HARD-BLOCKED (reserved
  *                                  OOS) unless JQ_ALLOW_OOS=1 (user-only private final test).
  *   --start <YYYY-MM-DD>           Explicit start date (overrides --window).
@@ -49,7 +49,7 @@ const JOINQUANT_USERNAME = process.env.JOINQUANT_USERNAME || '15656096430';
 const JOINQUANT_PASSWORD = process.env.JOINQUANT_PASSWORD;
 const DEFAULT_CAPITAL = parseInt(process.env.JQ_BASE_CAPITAL || '1000000', 10);
 
-// Frozen backtest windows — MUST match research/harness.md (current epoch).
+// Frozen backtest windows — MUST match harness/harness.md (current epoch).
 // HOLDOUT end rolls forward to "today" (true out-of-sample).
 function todayISO() { return new Date().toISOString().slice(0, 10); }
 const WINDOWS = {
@@ -59,7 +59,7 @@ const WINDOWS = {
 };
 
 // Enclosed-environment guard: the 2025-01-01→now window is a reserved OUT-OF-SAMPLE set
-// that the autoresearch pipeline must NEVER backtest (research/harness.md). This hard-block
+// that the autoresearch pipeline must NEVER backtest (harness/harness.md). This hard-block
 // makes it a code guarantee, not an instruction — no agent can touch OOS even via custom
 // --start/--end that overlaps 2025+. Only the user, for a private final test, may override
 // with JQ_ALLOW_OOS=1.
@@ -593,7 +593,7 @@ function extractMetrics(dom) {
 
 // Annualize a total return over `days` calendar days: (1+total)^(365/days) − 1.
 // JQ's buildList row exposes TOTAL strategy return, not annualized — so we compute it
-// ourselves from the actual window length (see research/harness.md §4).
+// ourselves from the actual window length (see harness/harness.md §4).
 function annualizeReturn(totalPct, days) {
   if (totalPct == null || !days || days <= 0) return null;
   const total = totalPct / 100;

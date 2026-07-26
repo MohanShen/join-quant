@@ -6,11 +6,11 @@ description: Run the join-quant autoresearch TEAM — a 4-agent loop (ideator �
 # Run the autoresearch team
 
 驱动 `research/` 的**四智能体**自主策略研究团队。你是**编排者（orchestrator）**：按 `research/program.md` 的状态机，调度四个角色 agent，用磁盘共享状态（`research/ideas-queue.json`、`candidates/`、`results.tsv`、`wiki/**`）协调，**循环直到用户明确说「停」**。
-**权威规则见 `research/program.md` 与 `docs/research-schema.md`（冲突以它们为准）、`research/harness.md`（评测台冻结，只读）**——本技能是入口，不复述全部细节。
+**权威规则见 `research/program.md` 与 `docs/research-schema.md`（冲突以它们为准）、`harness/harness.md`（评测台冻结，只读）**——本技能是入口，不复述全部细节。
 
 ## 必读（每次开始前）
 1. `research/program.md` —— **团队编排主流程 + 状态机**。
-2. `research/harness.md` —— 冻结评测台：**TRAIN 选择 / VAL 定稿 / 2025+ OOS 硬阻断**。只读。
+2. `harness/harness.md` —— 冻结评测台：**TRAIN 选择 / VAL 定稿 / 2025+ OOS 硬阻断**。只读。
 3. `docs/research-schema.md` —— 结构/账本/记账格式（权威）。
 4. `docs/wiki-schema.md` §2.1 —— 受控因子词表（变异空间边界）。
 5. `wiki/index.md` + 相关 `wiki/concepts/*.md` —— 想法来源。

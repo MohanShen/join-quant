@@ -82,7 +82,7 @@ JoinQuant updates backtest status via JavaScript XHR calls that mutate the DOM i
 - **Agent 3 (engineer)** — writes the candidate `.py`, runs the backtest (enclosed, harness-obeying); Type-1→TRAIN, Type-2→VAL.
 - **Agent 4 (recorder)** — on a VAL result, records the experiment + archives the strategy to `validated_strategies/`, backfills the wiki.
 
-**Strict window protocol** (`research/harness.md`, frozen): iteration/selection runs on **TRAIN** (2022–2023) only; **VAL** (2024) is run once on a *finalized* strategy; the **2025→now OOS window is never touched** (hard-blocked in `strategy-post-backtest.js`). Resumable via `research/loop-state.json` + `ideas-queue.json` + `results.tsv` + git. Unattended auto-resume across quota resets: `scripts/autoresearch-loop.sh` + the launchd agent.
+**Strict window protocol** (`harness/harness.md`, frozen): iteration/selection runs on **TRAIN** (2022–2023) only; **VAL** (2024) is run once on a *finalized* strategy; the **2025→now OOS window is never touched** (hard-blocked in `strategy-post-backtest.js`). Resumable via `research/loop-state.json` + `ideas-queue.json` + `results.tsv` + git. Unattended auto-resume across quota resets: `scripts/autoresearch-loop.sh` + the launchd agent.
 
 ---
 
@@ -218,7 +218,7 @@ npm test
 
 ## Known Limitations
 
-- **Backtest date range**: Pipeline 2's window is set via `--window train|val` or `--start/--end`. The **2025-01-01→now out-of-sample window is hard-blocked** (`OOS-BLOCKED`) unless `JQ_ALLOW_OOS=1` — see `research/harness.md`. With no flag, JQ's default range applies (ad-hoc, not valid for logging experiments).
+- **Backtest date range**: Pipeline 2's window is set via `--window train|val` or `--start/--end`. The **2025-01-01→now out-of-sample window is hard-blocked** (`OOS-BLOCKED`) unless `JQ_ALLOW_OOS=1` — see `harness/harness.md`. With no flag, JQ's default range applies (ad-hoc, not valid for logging experiments).
 - **Chrome session persistence**: Pipeline 2 relies on a running Chrome process. Closing it invalidates the session and requires re-login. Keep the Chrome process running (see Chrome Setup above).
 - **Headless mode**: JoinQuant shows CAPTCHA ("拼图验证") in headless Playwright browsers. Pipeline 2 uses CDP connection to an existing headed Chrome session to bypass this.
 

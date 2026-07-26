@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * wiki-family-build.js — regenerate the AUTO half of wiki/families/*.md from
- * strategy pages' `family:` fields + research/normalize-train.tsv.
+ * strategy pages' `family:` fields + harness/normalize-train.tsv.
  *
  * AUTO (this script owns, never hand-edit):
  *   - §3 家族内绩效横评 (ranked metrics table)
@@ -20,7 +20,7 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const STRAT = path.join(ROOT, 'wiki/strategies');
 const FAM = path.join(ROOT, 'wiki/families');
-const LEDGER = path.join(ROOT, 'research/normalize-train.tsv');
+const LEDGER = path.join(ROOT, 'harness/normalize-train.tsv');
 
 const args = process.argv.slice(2);
 const CHECK = args.includes('--check');
