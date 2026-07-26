@@ -5,7 +5,7 @@ concepts: []
 base: [[<postId8>_<代表基类>]]
 bestVariant: [[fa0d3bd9_PT多策略并行]]
 bestObjective: 3.5952
-memberCount: 1
+memberCount: 2
 sources: { normalized: 1, study: 0, research: 0 }
 realism: "<⚠ 待人工填写>"
 status: active
@@ -34,8 +34,9 @@ updatedAt: 2026-07-26
 | 排名 | 变体 | obj | sharpe | annual% | maxDD% | gate |
 |---|---|---|---|---|---|---|
 | **1** | **[[fa0d3bd9_PT多策略并行]]** | 3.5952 | 18.16 | 369.07 | 9.55 | ✅ |
+| 2 | [[c70281d3_PT多策略分仓隔离插件V1.3]] | 3.5423 | 18.12 | 362.33 | 8.10 | ✅ |
 
-*1 gate-pass / 1 members. 快照 2026-07-26（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*2 gate-pass / 2 members. 快照 2026-07-26（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)   ← 待人工填写：本家族未试方向
 
