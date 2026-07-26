@@ -1,6 +1,7 @@
 # Pipeline Refactor Plan — family-level study + auto-enhance
 
-Status: in progress. Goal: pivot auto-study and (renamed) auto-enhance to operate on
+Status: **COMPLETE** (commits 6b22df0 harness, b133dfe study, f9b29ca rename, f096420
+enhance-behavior, + this). Goal: pivot auto-study and (renamed) auto-enhance to operate on
 **strategy families** (`wiki/families/*.md`), and reserve the name "auto-research" for a
 future broad pipeline (new data / factors / trading ideas).
 
