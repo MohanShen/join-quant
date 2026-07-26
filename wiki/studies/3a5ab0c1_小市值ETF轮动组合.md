@@ -33,7 +33,7 @@ train 2022-2023 偏好小盘 raw return，故纯小市值 raw 年化更高。ETF
 ## 机理与真实性
 ⚠ 零滑点高估：小市值周轮动 + ETF 轮动均高换手，两支绝对数被抬高，Δ 方向稳健、量级虚高。可实现性判断：这是一个 MARGINAL gate-pass 策略，且其**过门槛资格依赖 ETF sleeve**（纯小市值 Sharpe 2.34 直接 DQ）——真实滑点下 Sharpe 与门槛裕度会进一步收窄。weight-0/dynamic=False sleeve 干净不注资、无崩溃。
 
-## 待研究 / 反哺 auto-research
+## 待研究 / 反哺 auto-enhance
 - **IMPORTANT COUNTEREXAMPLE to「blend dilutes small-cap core」pattern**：一个 stability-focused 的 ETF-rotation diversifier genuinely 降低小市值 book 的回撤并让边际策略保住过门槛（对照 [[3c462ece_三马七星1.7.2大池]] 的 七星 momentum sleeve 严格拖累）。sleeve VALUE 取决于 diversifier 的**构造/质量**，不止「小盘 vs 非小盘」——勿默认 overlay sleeve 一律是拖累。
-- **objective 盲区**：annual−maxDD objective under-credits 一个真实的 Sharpe/DD 改进（不抬 annual−maxDD）——一个让策略保住过门槛的 diversifier 有该 objective 遗漏的可部署价值。auto-research 选择时应把 gate-survival / Sharpe 纳入，而非只看 annual−maxDD。
+- **objective 盲区**：annual−maxDD objective under-credits 一个真实的 Sharpe/DD 改进（不抬 annual−maxDD）——一个让策略保住过门槛的 diversifier 有该 objective 遗漏的可部署价值。auto-enhance 选择时应把 gate-survival / Sharpe 纳入，而非只看 annual−maxDD。
 - 未做：ETF sleeve 内部技术滤波逐一消融、动态再分配（blackout reallocation）机制隔离、out-of-regime（小盘崩盘）保护验证、参数 sweep。

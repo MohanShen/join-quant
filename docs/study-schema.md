@@ -1,9 +1,9 @@
 # join-quant 自动研究·策略解剖（auto-study）Schema
 
-本文件定义 `study/` **自动策略解剖循环**的结构与规则，是 `docs/research-schema.md`（自动寻优）的**姊妹篇**。
+本文件定义 `study/` **自动策略解剖循环**的结构与规则，是 `docs/enhance-schema.md`（自动寻优）的**姊妹篇**。
 两者共用同一冻结评测台（`harness/harness.md` 的成本/滑点/真实性过滤）与同一执行器，但**目标不同**：
 
-- **auto-enhance（`research-schema.md`）**：最大化 `objective`，找更好的策略；有选择压力、护 VAL/OOS。
+- **auto-enhance（`enhance-schema.md`）**：最大化 `objective`，找更好的策略；有选择压力、护 VAL/OOS。
 - **auto-study（本文件）**：**理解一个既定策略**——各组件贡献归因、参数敏感性、区间/regime 依赖、失效模式；**没有选择压力**，每个实验都产出「发现」，最终产出一份**解剖报告**。
 
 ---
@@ -24,26 +24,26 @@
 
 ## 2. 目录结构
 
-**批量模式**：解剖**所有归一化策略**（`wiki/strategies/*.md` 带 `normalized:` 块者，共 ~82）。`study/manifest.json` 列全部策略 + 每个 `status`（pending|in-progress|done），按 objective 强→弱排序；外层循环逐个做完，**不到全部 `done` 或用户说停不退出**（`program.md` 外层循环）。
+**批量模式**：解剖**所有策略家族**（`wiki/families/*.md`，不含单例桶「其他」）。`study/manifest.json` 列全部家族 + 每个 `status`（pending|in-progress|done），按家族 `bestObjective` 强→弱排序；外层循环逐个做完，**不到全部 `done` 或用户说停不退出**（`program.md` 外层循环）。
 
 ```
 join-quant/
 ├── study/
 │   ├── program.md                     # 团队编排指令（人类编辑；见姊妹文件）
-│   ├── manifest.json                   # 批量清单：所有归一化策略 + status（git 不跟踪）
-│   └── <strategyId>/                   # 每个策略一目录
-│       ├── baseline.py                   #   被解剖策略的源码快照（+ 冻结成本 override）
+│   ├── manifest.json                   # 批量清单：所有家族 + status（git 不跟踪）
+│   └── <family>/                       # 每个家族一目录
+│       ├── baseline.py                 #   家族基类源码快照（+ 冻结成本 override）
 │       ├── questions.json              #   排名问题队列（git 不跟踪）
 │       ├── findings.tsv                #   发现账本（git 不跟踪，§7）
 │       └── variants/<qId>.py           #   每个实验的消融/改参变体（raw，不可变）
 ├── harness/harness.md                 # 共用冻结评测台（成本/滑点/真实性过滤；只读）
 └── wiki/
-    └── studies/<strategyId>.md         # 解剖报告（§8；人类决定何时 commit）
+    └── families/<family>.md            # 写回目标（§8：§2 变体 + §6 研究问答）
 ```
 
-- `<strategyId>` = 被解剖策略的标识（如 `jul12-005`、`aaba7575`）。
+- `<family>` = 家族规范名（如 `五福闹新春`、`小市值`）；既有 `wiki/studies/*.md` 为单策略归档。
 - `study/<family>/variants/` 与 `enhance/candidates/` 一样属 **raw 层**：跑过即不可变（git 记录演进）。
-- 正文中文，与 `wiki-schema.md` / `research-schema.md` 一致；agent 定义为英文。
+- 正文中文，与 `wiki-schema.md` / `enhance-schema.md` 一致；agent 定义为英文。
 
 ---
 
@@ -52,7 +52,7 @@ join-quant/
 - **成本/滑点/真实性过滤**：与 auto-enhance **完全相同**（`harness.md` §2–§3）——解剖时给 `baseline.py` 与所有 variant 追加同一**冻结成本 override**（零滑点/PerTrade，见 `utils/strategy-normalize.js` 的 `OVERRIDE`），使基线与变体**可比**。
 - **窗口**：解剖是「刻画」不是「选择」，故可在 **2022-01-01 → 2024-12-31** 内跑**任意子窗**（`--window train|val` 或 `--start/--end`）做 regime 分析。
 - **2025+ OOS 仍禁用**：`strategy-post-backtest.js` 对任何 `>= 2025-01-01` 的窗口 `OOS-BLOCKED`（除用户私测 `JQ_ALLOW_OOS=1`）。解剖 agent **绝不设** `JQ_ALLOW_OOS`。
-- **指标**：与 §research-schema §3.3 同的 `objective / gate / sharpe / annualReturn / maxDrawdown`；解剖更关心**相对基线的 Δ**（归因）而非绝对值。
+- **指标**：与 §enhance-schema §3.3 同的 `objective / gate / sharpe / annualReturn / maxDrawdown`；解剖更关心**相对基线的 Δ**（归因）而非绝对值。
 
 ---
 
@@ -136,11 +136,11 @@ study **不再产出独立报告页**，而是把理解**写回家族页**（结
 
 ## 9. 知识反哺契约（write-back）
 
-解剖产生的**跨策略洞察**要回填知识库（与 `wiki-schema.md` §9、`research-schema.md` §9 一致）：
-- **可溯源**：概念页/策略页每条新结论带 `[[<studyId>]]` 指针。
+解剖产生的**跨策略洞察**要回填知识库（与 `wiki-schema.md` §9、`enhance-schema.md` §9 一致）：
+- **可溯源**：概念页/策略页每条新结论带 `[[<family>]]` 指针。
 - **只追加**：概念页只加不改；矛盾只标记留人裁决。
 - 有价值的敏感性/归因规律 → 追加到相关 `wiki/concepts/*.md`「观察」，供 auto-enhance 的 ideator 复用。
-- `wiki/log.md` 追加：`## [YYYY-MM-DD] study | <strategyId> (<摘要>) → 回填 [[<页>]]`。
+- `wiki/log.md` 追加：`## [YYYY-MM-DD] study | <family> (<摘要>) → 回填 [[<页>]]`。
 
 ---
 

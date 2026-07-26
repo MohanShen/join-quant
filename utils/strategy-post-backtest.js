@@ -7,7 +7,7 @@
  * Usage:
  *   node utils/strategy-post-backtest.js <path-to-strategy.py> [title] [options]
  *
- * Options (autoresearch harness — see harness/harness.md):
+ * Options (autoenhance harness — see harness/harness.md):
  *   --window <train|val>           Frozen backtest window (harness/harness.md). Sets start/end dates.
  *                                  NOTE: holdout / any 2025+ window is HARD-BLOCKED (reserved
  *                                  OOS) unless JQ_ALLOW_OOS=1 (user-only private final test).
@@ -59,7 +59,7 @@ const WINDOWS = {
 };
 
 // Enclosed-environment guard: the 2025-01-01→now window is a reserved OUT-OF-SAMPLE set
-// that the autoresearch pipeline must NEVER backtest (harness/harness.md). This hard-block
+// that the autoenhance pipeline must NEVER backtest (harness/harness.md). This hard-block
 // makes it a code guarantee, not an instruction — no agent can touch OOS even via custom
 // --start/--end that overlaps 2025+. Only the user, for a private final test, may override
 // with JQ_ALLOW_OOS=1.

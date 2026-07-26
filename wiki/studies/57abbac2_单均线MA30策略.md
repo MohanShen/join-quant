@@ -18,5 +18,5 @@ status: done
 ## 机理与真实性
 归因基于 normalize train 指标（Sharpe n/a）+ 家族已确立机理；未独立重跑（清晰家族迁移，节省预算）。confidence=med。
 
-## 待研究 / 反哺 auto-research
+## 待研究 / 反哺 auto-enhance
 裸单指标 TA（均线/网格/布林/MACD/RSI）冻结窗普遍无 alpha；勿当 edge。

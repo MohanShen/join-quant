@@ -108,7 +108,7 @@ base: [[<postId8>_<代表基类>]]
 bestVariant: ${best ? `[[${best.id}]]` : '[[]]'}
 bestObjective: ${best && best.obj != null ? best.obj.toFixed(4) : 'null'}
 memberCount: ${memberCount}
-sources: { normalized: ${memberCount}, study: 0, research: 0 }
+sources: { normalized: ${memberCount}, study: 0, enhance: 0 }
 realism: "<⚠ 待人工填写>"
 status: active
 updatedAt: ${TODAY}

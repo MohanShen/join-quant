@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
-  launchd agent: resume the join-quant autoresearch loop on a schedule.
+  launchd agent: resume the join-quant autoenhance loop on a schedule.
 
-  Fires scripts/autoresearch-loop.sh every 1 hour (StartInterval 3600s). Each fire is a
+  Fires scripts/autoenhance-loop.sh every 1 hour (StartInterval 3600s). Each fire is a
   cheap poll that exits immediately unless the epoch is started AND both the JQ daily
   backtest budget and the Anthropic plan quota are available. Polling hourly (rather than
   every 4h = the quota-window length) means a run stopped by the Anthropic per-4h-slot
@@ -12,23 +12,23 @@
   the limit there is no quota to consume). Chrome must stay logged in at localhost:9225.
 
   Install:
-    cp scripts/com.mohanshen.join-quant-autoresearch.plist ~/Library/LaunchAgents/
-    launchctl load  ~/Library/LaunchAgents/com.mohanshen.join-quant-autoresearch.plist
+    cp scripts/com.mohanshen.join-quant-autoenhance.plist ~/Library/LaunchAgents/
+    launchctl load  ~/Library/LaunchAgents/com.mohanshen.join-quant-autoenhance.plist
   Verify / control:
-    launchctl list | grep join-quant-autoresearch
-    launchctl start com.mohanshen.join-quant-autoresearch   # fire once now
+    launchctl list | grep join-quant-autoenhance
+    launchctl start com.mohanshen.join-quant-autoenhance   # fire once now
   Stop it (this is the "unless I ask it to stop" off-switch):
-    launchctl unload ~/Library/LaunchAgents/com.mohanshen.join-quant-autoresearch.plist
+    launchctl unload ~/Library/LaunchAgents/com.mohanshen.join-quant-autoenhance.plist
 -->
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>com.mohanshen.join-quant-autoresearch</string>
+  <string>com.mohanshen.join-quant-autoenhance</string>
 
   <key>ProgramArguments</key>
   <array>
     <string>/bin/bash</string>
-    <string>/Users/mshen/repos/join-quant/scripts/autoresearch-loop.sh</string>
+    <string>/Users/mshen/repos/join-quant/scripts/autoenhance-loop.sh</string>
   </array>
 
   <key>WorkingDirectory</key>
@@ -51,8 +51,8 @@
   <true/>
 
   <key>StandardOutPath</key>
-  <string>/Users/mshen/repos/join-quant/data/autoresearch-logs/launchd.out.log</string>
+  <string>/Users/mshen/repos/join-quant/data/autoenhance-logs/launchd.out.log</string>
   <key>StandardErrorPath</key>
-  <string>/Users/mshen/repos/join-quant/data/autoresearch-logs/launchd.err.log</string>
+  <string>/Users/mshen/repos/join-quant/data/autoenhance-logs/launchd.err.log</string>
 </dict>
 </plist>

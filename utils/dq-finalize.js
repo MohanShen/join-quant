@@ -102,7 +102,7 @@ ${t.why}
 ## 机理与真实性
 归因基于 ${measured ? 'baseline 直接观测' : 'normalize train 指标（Sharpe ' + sharpe + '）+ 家族已确立机理；未独立重跑（清晰家族迁移，节省预算）'}。confidence=${measured ? 'high' : 'med'}。
 
-## 待研究 / 反哺 auto-research
+## 待研究 / 反哺 auto-enhance
 ${t.feed}
 `;
 fs.writeFileSync(path.join(ROOT, 'wiki', 'studies', id + '.md'), rep);

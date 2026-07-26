@@ -43,13 +43,13 @@ status: done
 - **干净回测低估 国九条 质量过滤的 live 价值（本 target q-1 特有 caveat）。** 回测只把它记为 +0.08 objective 的收益贡献；真实盘中它还削减 退市/踩雷/停牌不可成交 的 junk-tail 尾部——这层保护在零滑点、无退市事件的回测里**看不见**，故其 live 价值被系统性低估。confidence=high on 实测 Δ，med on live 风险量级。
 - **可实现性判断**：国九条 质量过滤 = 真实且 live 价值被低估；日历空仓 DD 贡献 = 较可信；止损/MA-sizing 边际 = 零滑点假象放大、方向上甚至有害；微盘 crash-shielding = 不可实现。
 
-## 待研究 / 反哺 auto-research
+## 待研究 / 反哺 auto-enhance
 **未跑（future work）**：
 - **完整 国九条 过滤消融未跑**——本次只移除 2/3 条件（保留 np_parent>0），完整 3 条件（含 np_parent_company_owners>0）的消融、以及各条件独立边际未测；−0.0794 是下界。
 - **"排除 3 个 bug"声明未独立验证**——命名声称从某基修了 3 个 bug，本解剖未 diff 定位这 3 处修复、也未量化其影响。
 - 家族参数扫描（空仓月份选择、stoploss 网格、stock_num 网格）仍未跑（迁移自 17c95d16 的 future work）。
 
-**反哺 auto-research（跨策略）：**
+**反哺 auto-enhance（跨策略）：**
 1. **国九条 质量过滤（net_profit>0, operating_revenue>1e8）对 微盘 周度策略是净正、RETURN-ADDITIVE 的筛**——本 target 消融确证去掉 −0.08 objective / −8.8pt 年化。它靠把选股引向盈利最小市值赚收益，不靠可见回撤保护（maxDD 反略降）。→ 对 微盘 周度候选，质量过滤应默认 ON（收益增量为正）。
 2. **干净回测系统性低估质量过滤的 live 价值。** 退市/踩雷/停牌不可成交 尾部未建模，故 maxDD 近乎不变**不代表**质量过滤无风险价值——它是真实 junk-tail 护栏，回测只记入其收益。→ 对任何"质量过滤不降回撤所以冗余"的判断保持怀疑，须区分回测可见性与 live 保护。
 3. **与姊妹 [[5a70adc1_小市值筛选条件研究]] 对照成组**：5a70adc1 把质量过滤全**关**（纯最小市值），本 target 全**开**；两者合并证明 微盘 家族里**启用 国九条 质量过滤是净正**（+0.08 objective via 收益，外加低估的 live junk-tail 保护）。

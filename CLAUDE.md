@@ -65,8 +65,10 @@ Only the directories whose contents aren't self-evident:
 
 | Path | Purpose |
 |------|---------|
-| `research/` | Auto-research team (optimize): `program.md`, `harness.md`, `candidates/`, transient `ideas-queue.json`/`loop-state.json`/`results.tsv` (gitignored) |
-| `study/` | Auto-study team (understand ONE strategy): `program.md`, `<id>/target.py` + `variants/`, transient `questions.json`/`findings.tsv` (gitignored) |
+| `harness/` | **Shared frozen backtest台**: `harness.md` (window/cost/OOS protocol, read-only) + `normalize-*.tsv` ledgers (gitignored). Used by study + enhance + future research. |
+| `enhance/` | Auto-**enhance** team (optimize a strategy FAMILY): `program.md`, `candidates/`, `strategy_template.py`, transient `ideas-queue.json`/`loop-state.json`/`results.tsv` (gitignored) |
+| `study/` | Auto-study team (understand a strategy FAMILY): `program.md`, `<family>/baseline.py` + `variants/`, transient `questions.json`/`findings.tsv` (gitignored). Writes back to `wiki/families/`. |
+| `research/` | **Reserved (empty)** for a future auto-**research** pipeline — broad context: new data / factors / trading ideas. NOT the current optimize loop (that is `enhance/`). |
 | `validated_strategies/` | Finalized strategies that completed VAL (Agent 4 archives here; **tracked** = product shelf) |
 | `data/` | **gitignored** — discovery state + `cookies.json` |
 | `auth/` | **gitignored** — session cookies (default cookie path is `auth/cookies.json`) |

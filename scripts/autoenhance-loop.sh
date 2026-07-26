@@ -1,18 +1,18 @@
 #!/bin/bash
 #
-# autoresearch-loop.sh — RESUME the user's autoresearch session unattended.
+# autoenhance-loop.sh — RESUME the user's autoenhance session unattended.
 #
-# Fired on a schedule by launchd (see scripts/com.mohanshen.join-quant-autoresearch.plist).
+# Fired on a schedule by launchd (see scripts/com.mohanshen.join-quant-autoenhance.plist).
 # Solves the "Anthropic per-time-slot usage limit" problem for the AUTORESEARCH pipeline:
 # each firing is a cheap poll that RESUMES the SAME claude session the user started
-# interactively (scripts/autoresearch-interactive.sh pins its session id). Because it
+# interactively (scripts/autoenhance-interactive.sh pins its session id). Because it
 # resumes (`claude -p --resume <uuid>`) rather than cold-starting, the agents keep full
 # context — no re-reading/re-initializing. When the Anthropic quota is available it does
 # real work; when it's exhausted the resume exits fast, so the next firing after the reset
 # picks the same session back up automatically.
 #
 # Preconditions the wrapper checks (exits 0 = clean no-op if any fails):
-#   0. A pinned session exists for this branch (data/autoresearch-session.txt) AND it's not
+#   0. A pinned session exists for this branch (data/autoenhance-session.txt) AND it's not
 #      currently active (transcript mtime older than HEARTBEAT_MIN — a quota-blocked session
 #      is idle even if its window is open, so it becomes resumable).
 #   1. CDP Chrome reachable at $JQ_CDP_URL — backtests need the logged-in session.
@@ -21,7 +21,7 @@
 #
 # Env overrides:
 #   REPO         repo root (default: parent of this script's dir)
-#   TAG          research epoch tag; branch research/$TAG (default: current research/* branch)
+#   TAG          enhance epoch tag; branch enhance/$TAG (default: current enhance/* branch)
 #   USAGE_LIMIT  JQ backtest-minute cap (default 55 = free tier only; >60 spends credits)
 #   HEARTBEAT_MIN session-active threshold in minutes (default 20)
 #   JQ_CDP_URL   CDP endpoint (default http://localhost:9225)
@@ -34,9 +34,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="${REPO:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 USAGE_LIMIT="${USAGE_LIMIT:-55}"
 JQ_CDP_URL="${JQ_CDP_URL:-http://localhost:9225}"
-LOG_DIR="$REPO/data/autoresearch-logs"
-LOCK="$REPO/data/autoresearch.lock"
-PLOCK="$REPO/data/jq-pipeline.lock"   # shared across research+study crons: only one JQ pipeline runs at a time
+LOG_DIR="$REPO/data/autoenhance-logs"
+LOCK="$REPO/data/autoenhance.lock"
+PLOCK="$REPO/data/jq-pipeline.lock"   # shared across enhance+study crons: only one JQ pipeline runs at a time
 mkdir -p "$LOG_DIR"
 
 ts() { date '+%Y-%m-%d %H:%M:%S'; }
@@ -55,19 +55,19 @@ fi
 echo $$ > "$LOCK"
 trap 'rm -f "$LOCK" "$PLOCK"' EXIT
 
-# ── Resolve research branch ─────────────────────────────────────────────────
+# ── Resolve enhance branch ─────────────────────────────────────────────────
 CUR_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 TAG="${TAG:-}"
 if [ -z "$TAG" ]; then
   case "$CUR_BRANCH" in
-    research/*) BRANCH="$CUR_BRANCH" ;;
-    *) log "skip: not on a research/* branch (on '$CUR_BRANCH') and TAG unset. Create/checkout an epoch first."; exit 0 ;;
+    enhance/*) BRANCH="$CUR_BRANCH" ;;
+    *) log "skip: not on a enhance/* branch (on '$CUR_BRANCH') and TAG unset. Create/checkout an epoch first."; exit 0 ;;
   esac
 else
-  BRANCH="research/$TAG"
+  BRANCH="enhance/$TAG"
 fi
 if ! git rev-parse --verify "$BRANCH" >/dev/null 2>&1; then
-  log "skip: branch '$BRANCH' does not exist — create the epoch first (see research/program.md Setup)"; exit 0
+  log "skip: branch '$BRANCH' does not exist — create the epoch first (see enhance/program.md Setup)"; exit 0
 fi
 if [ "$CUR_BRANCH" != "$BRANCH" ]; then
   git checkout "$BRANCH" >/dev/null 2>&1 || { log "skip: cannot checkout $BRANCH (dirty tree?)"; exit 0; }
@@ -75,13 +75,13 @@ fi
 
 # ── Precheck 0: a pinned interactive session exists for THIS branch ──────────
 # We RESUME the user's interactive session (same context, no cold start), rather than
-# start a fresh one. The session id is pinned by scripts/autoresearch-interactive.sh into
-# data/autoresearch-session.txt as "<branch>\t<uuid>". No matching session → nothing to
+# start a fresh one. The session id is pinned by scripts/autoenhance-interactive.sh into
+# data/autoenhance-session.txt as "<branch>\t<uuid>". No matching session → nothing to
 # resume; skip. (This is what makes the timer safe to leave loaded: it only ever continues
 # a session the user has actually started interactively on this branch.)
-SID_FILE="$REPO/data/autoresearch-session.txt"
+SID_FILE="$REPO/data/autoenhance-session.txt"
 if [ ! -f "$SID_FILE" ]; then
-  log "skip: no data/autoresearch-session.txt — start the epoch interactively first (scripts/autoresearch-interactive.sh)"; exit 0
+  log "skip: no data/autoenhance-session.txt — start the epoch interactively first (scripts/autoenhance-interactive.sh)"; exit 0
 fi
 SID_BRANCH="$(cut -f1 "$SID_FILE" 2>/dev/null)"
 SID="$(cut -f2 "$SID_FILE" 2>/dev/null)"
@@ -124,7 +124,7 @@ USED="$(printf '%s' "$BUDGET" | sed -n 's/.*used=\([0-9]*\).*/\1/p')"
 if [ -n "$USED" ] && [ "$USED" -ge "$USAGE_LIMIT" ] 2>/dev/null; then
   log "skip: JQ budget used=${USED}min >= limit=${USAGE_LIMIT}min — wait for daily reset"; exit 0
 fi
-# ── Shared lock: don't run backtests while the OTHER pipeline (study/research) runs ──
+# ── Shared lock: don't run backtests while the OTHER pipeline (study/enhance) runs ──
 if [ -e "$PLOCK" ]; then
   pp="$(cat "$PLOCK" 2>/dev/null)"
   if [ -n "$pp" ] && kill -0 "$pp" 2>/dev/null; then log "skip: another JQ pipeline (pid $pp) is running — serialize"; exit 0; fi
@@ -140,7 +140,7 @@ PERM_FLAG="--permission-mode acceptEdits"
 [ "${USE_BYPASS:-0}" = "1" ] && PERM_FLAG="--dangerously-skip-permissions"
 
 RUN_LOG="$LOG_DIR/run-$(date '+%Y%m%d-%H%M%S').log"
-NUDGE="Quota is available again — continue the autoresearch loop exactly where you left off (you are already running /run-experiment per research/program.md). Backtest cap: have the engineer pass --usage-limit $USAGE_LIMIT to the backtester (plain command: no JQ_USAGE_LIMIT= prefix, no | tail). NEVER touch the 2025+ OOS window. Keep iterating until the JQ budget (used>=$USAGE_LIMIT) or the Anthropic quota is hit again, then STOP at a clean git state with a one-line status. Do NOT git commit wiki/results unless asked."
+NUDGE="Quota is available again — continue the autoenhance loop exactly where you left off (you are already running /run-enhance per enhance/program.md). Backtest cap: have the engineer pass --usage-limit $USAGE_LIMIT to the backtester (plain command: no JQ_USAGE_LIMIT= prefix, no | tail). NEVER touch the 2025+ OOS window. Keep iterating until the JQ budget (used>=$USAGE_LIMIT) or the Anthropic quota is hit again, then STOP at a clean git state with a one-line status. Do NOT git commit wiki/results unless asked."
 
 log "resuming claude session $SID ($PERM_FLAG) → $RUN_LOG"
 JQ_USAGE_LIMIT="$USAGE_LIMIT" claude -p --resume "$SID" "$NUDGE" $PERM_FLAG >"$RUN_LOG" 2>&1

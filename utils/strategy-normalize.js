@@ -3,7 +3,7 @@
  *
  * Re-backtest every raw strategy in strategies/ on the FROZEN harness window
  * (default: TRAIN) with the harness objective, producing an apples-to-apples
- * "what actually works under one regime" ledger. See docs/research-schema.md §11.
+ * "what actually works under one regime" ledger. See docs/enhance-schema.md §11.
  *
  * Cost normalization (forced): a wrapper is APPENDED to each strategy's source so
  * that any set_slippage/set_commission it calls — even per-bar via set_slip_fee —

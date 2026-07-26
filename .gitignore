@@ -12,13 +12,16 @@ test-jq-editor.js
 __pycache__/
 harness/normalize-*.tsv
 
-# Autoresearch team idea queue — transient working state, not tracked
-research/ideas-queue.json
+# Auto-enhance team idea queue — transient working state, not tracked
+enhance/ideas-queue.json
 
-# Autoresearch team loop checkpoint — transient resume state, not tracked
-research/loop-state.json
+# Auto-enhance team loop checkpoint — transient resume state, not tracked
+enhance/loop-state.json
 
 # Auto-study transient state (queue + findings ledger), not tracked
 study/*/findings.tsv
 study/*/questions.json
 study/manifest.json
+
+# Auto-enhance results ledger — transient, not tracked
+enhance/results.tsv

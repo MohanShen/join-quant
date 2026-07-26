@@ -1,8 +1,8 @@
 # validated_strategies/
 
-Finalized strategies that completed the autoresearch pipeline through **VALIDATION**.
+Finalized strategies that completed the autoenhance pipeline through **VALIDATION**.
 
-Populated by **Agent 4 (recorder)** of the autoresearch team (`research/program.md`): whenever
+Populated by **Agent 4 (recorder)** of the autoenhance team (`enhance/program.md`): whenever
 a strategy is *finalized* by Agent 1 and Agent 3 produces a **VAL (2024) result**, the recorder
 copies that candidate here as `<expId>.py` with a header recording its identity and metrics.
 
@@ -12,7 +12,7 @@ copies that candidate here as `<expId>.py` with a header recording its identity 
   this directory collects everything that *reached validation*, not only gate-passers.
 - The full write-up (hypothesis, reasoning, iteration trajectory) lives in `wiki/experiments/<expId>.md`;
   this directory is the runnable-strategy counterpart, tracked in git as a durable output.
-- Source of truth for the strategy body is `research/candidates/<expId>.py`; this is the archived copy.
+- Source of truth for the strategy body is `enhance/candidates/<expId>.py`; this is the archived copy.
 
-> This directory is **tracked** (unlike the transient `research/results.tsv` / `ideas-queue.json` /
+> This directory is **tracked** (unlike the transient `enhance/results.tsv` / `ideas-queue.json` /
 > `loop-state.json`). It is the pipeline's product shelf.

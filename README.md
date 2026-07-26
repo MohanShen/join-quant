@@ -73,16 +73,18 @@ JoinQuant updates backtest status via JavaScript XHR calls that mutate the DOM i
 
 ---
 
-### Pipeline 3: Autoresearch Team
+### Pipeline 3: Auto-enhance Team
 
-**Purpose:** A self-improving strategy-research loop that mines the wiki knowledge base for ideas, iterates strategy mutations on a frozen backtest harness, and writes learnings back — a **4-agent team** (run via the `/run-experiment` skill; authoritative spec in `research/program.md`).
+**Purpose:** A self-improving loop that optimizes strategies — mines the KB for ideas, iterates mutations on a frozen backtest harness, and writes learnings back — a **4-agent team** (run via the `/run-enhance` skill; authoritative spec in `enhance/program.md`).
+
+> **Naming:** this is the renamed former "auto-research" loop. The name **auto-research** is now reserved for a future, broader pipeline (new data / factors / different trading ideas).
 
 - **Agent 1 (ideator)** — reads the KB + experiment logs, generates ideas with reasoning; decides keep-iterating / finalize / give-up on TRAIN results.
-- **Agent 2 (critic)** — judges idea validity, maintains a ranked `research/ideas-queue.json`, dispatches the best idea.
+- **Agent 2 (critic)** — judges idea validity, maintains a ranked `enhance/ideas-queue.json`, dispatches the best idea.
 - **Agent 3 (engineer)** — writes the candidate `.py`, runs the backtest (enclosed, harness-obeying); Type-1→TRAIN, Type-2→VAL.
 - **Agent 4 (recorder)** — on a VAL result, records the experiment + archives the strategy to `validated_strategies/`, backfills the wiki.
 
-**Strict window protocol** (`harness/harness.md`, frozen): iteration/selection runs on **TRAIN** (2022–2023) only; **VAL** (2024) is run once on a *finalized* strategy; the **2025→now OOS window is never touched** (hard-blocked in `strategy-post-backtest.js`). Resumable via `research/loop-state.json` + `ideas-queue.json` + `results.tsv` + git. Unattended auto-resume across quota resets: `scripts/autoresearch-loop.sh` + the launchd agent.
+**Strict window protocol** (`harness/harness.md`, frozen): iteration/selection runs on **TRAIN** (2022–2023) only; **VAL** (2024) is run once on a *finalized* strategy; the **2025→now OOS window is never touched** (hard-blocked in `strategy-post-backtest.js`). Resumable via `enhance/loop-state.json` + `ideas-queue.json` + `results.tsv` + git. Unattended auto-resume across quota resets: `scripts/autoenhance-loop.sh` + the launchd agent.
 
 ---
 

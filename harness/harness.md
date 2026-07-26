@@ -1,7 +1,7 @@
 # harness/harness.md — 冻结评测台常量（权威）
 
-本文件是**冻结评测台**的唯一权威定义（类比 Karpathy `autoresearch` 的 `prepare.py`）。
-`docs/research-schema.md` §3 引用本文件；如有出入，**以本文件为准**。
+本文件是**冻结评测台**的唯一权威定义（类比 Karpathy `autoenhance` 的 `prepare.py`）。
+`docs/enhance-schema.md` §3 引用本文件；如有出入，**以本文件为准**。
 
 > **纪元（epoch）**：本文件全部常量一经设定即冻结。任何改动 = 新纪元：
 > 递增下方 `epoch`、记 `wiki/log.md` 一行 `experiment | harness epoch <n> ...`，
@@ -18,7 +18,7 @@
   `objective(VAL)` 改为 **`objective(TRAIN)`**；VAL 仅用于**已定稿策略**的泛化确认；
   **2025→今 OOS 窗口被彻底禁用**（`strategy-post-backtest.js` 代码级硬阻断，除用户私测
   `JQ_ALLOW_OOS=1`）。epoch 1（jul4）在旧协议下选择于 VAL、且已触碰 2025，结果就此封版，
-  不与本纪元横比。团队架构见 `research/program.md`。
+  不与本纪元横比。团队架构见 `enhance/program.md`。
 
 ---
 
@@ -120,4 +120,4 @@ SUMMARY\t<window>\t<start>\t<end>\t<days>\t<total%>\t<annual%>\t<sharpe>\t<maxdd
 1. 人类编辑本文件对应常量。
 2. `epoch` +1，更新 `setAt` 与 `note`。
 3. `wiki/log.md` 追加：`## [YYYY-MM-DD] experiment | harness epoch <n> | <改了什么>`。
-4. 旧纪元的 `research/results.tsv` 与 `wiki/experiments/` 结果封版；新实验从新 baseline 起，不与旧纪元横比。
+4. 旧纪元的 `enhance/results.tsv` 与 `wiki/experiments/` 结果封版；新实验从新 baseline 起，不与旧纪元横比。

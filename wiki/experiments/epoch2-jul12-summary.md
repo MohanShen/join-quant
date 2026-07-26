@@ -6,7 +6,7 @@ kind: epoch-summary（综述/capstone）
 window: TRAIN 2022-01-01..2023-12-31 / VAL 2024-01-01..2024-12-31（OOS 2025+ 禁用）
 harness: harness/harness.md（epoch 2 冻结：零滑点 + PerTrade 万3/万13/5；objective=annual−maxdd；gate sharpe≥2.5）
 arcsExplored: 5
-finalizedRows: 2   # jul12-005 recorded, jul12-023 val-dq（见 research/results.tsv）
+finalizedRows: 2   # jul12-005 recorded, jul12-023 val-dq（见 enhance/results.tsv）
 bothWindowSurvivors: 1   # 仅 jul12-005，且不可实现/不可部署
 deployableProducts: 0
 status: converged（ideator 宣告：KB 正 EV 家族在本 harness+窗口下耗尽）
@@ -58,7 +58,7 @@ Arc-1（[[jul12-005]]）是**本纪元冻结 harness 下最佳研究 artifact**�
 - 已登记的负结果地图（Arc-2/3/4/5）标出了本窗口下的**死路**：方向性 beta、basis-mismatch 对冲、趋势缺失窗口的 ETF 动量/反转、流动化的日内反转——下一纪元不必重推。
 
 ## 溯源
-- 账本：`research/results.tsv`（2 行定稿：jul12-005 recorded / jul12-023 val-dq；DQ baseline 不占行）。
+- 账本：`enhance/results.tsv`（2 行定稿：jul12-005 recorded / jul12-023 val-dq；DQ baseline 不占行）。
 - 归档：`validated_strategies/jul12-005.py`（gate pass）、`validated_strategies/jul12-023.py`（gate fail，仍收——完成 VAL 流程）。
 - 弧页：[[jul12-005]] / [[arc2-microcap-rotation]] / [[arc3-etf-rotation]] / [[jul12-023]] / [[arc5-liquid-transplant]]。
 - 概念回填：[[小市值因子]] · [[止损模块]] · [[仓位管理]] · [[择时-均线]] · [[动量与趋势]] · [[均值回归]] · [[ETF轮动]] · [[期货与套利]]。

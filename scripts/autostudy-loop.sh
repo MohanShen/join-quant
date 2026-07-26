@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # autostudy-loop.sh — RESUME the user's auto-STUDY session unattended (batch over all
-# normalized strategies). Sibling of autoresearch-loop.sh; same guards, study paths.
+# normalized strategies). Sibling of autoenhance-loop.sh; same guards, study paths.
 #
 # Fired hourly by launchd (scripts/com.mohanshen.join-quant-autostudy.plist). Each firing
 # resumes the pinned study session (`claude -p --resume <uuid>`) so the batch keeps grinding
@@ -11,7 +11,7 @@
 # isn't held by a live process; CDP Chrome up; JQ budget < USAGE_LIMIT; no other fire running;
 # and the SHARED jq-pipeline lock is free (study & research never backtest at the same time).
 #
-# Env: REPO, USAGE_LIMIT (default 55), JQ_CDP_URL, USE_BYPASS (see autoresearch-loop.sh).
+# Env: REPO, USAGE_LIMIT (default 55), JQ_CDP_URL, USE_BYPASS (see autoenhance-loop.sh).
 #
 set -uo pipefail
 

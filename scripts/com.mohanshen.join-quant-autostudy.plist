@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
-  launchd agent: resume the auto-STUDY batch on a schedule (sibling of the autoresearch one).
+  launchd agent: resume the auto-STUDY batch on a schedule (sibling of the autoenhance one).
 
   Fires scripts/autostudy-loop.sh every 1 hour. Each fire resumes the pinned study session so
   the batch grinds through study/manifest.json (all normalized strategies) across quota resets,

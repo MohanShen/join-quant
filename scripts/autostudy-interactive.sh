@@ -2,7 +2,7 @@
 #
 # autostudy-interactive.sh — start (or reopen) the auto-STUDY batch in an INTERACTIVE claude
 # session with a PINNED session id, so the hourly cron (scripts/autostudy-loop.sh) can resume
-# THIS SAME session when the Anthropic quota frees up. Sibling of autoresearch-interactive.sh.
+# THIS SAME session when the Anthropic quota frees up. Sibling of autoenhance-interactive.sh.
 #
 # Flow:
 #   1. Run this on the study/all branch:  ./scripts/autostudy-interactive.sh

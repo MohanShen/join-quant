@@ -6,7 +6,7 @@
  * Prints one line to stdout: `used=<min> free=<min>` (integers), or `used= free=` on failure.
  * Exit 0 = got a reading, 2 = could not read (CDP down / no logged-in page). Never throws.
  *
- * Used by scripts/autoresearch-loop.sh to skip a fire cheaply when the JQ budget is already
+ * Used by scripts/autoenhance-loop.sh to skip a fire cheaply when the JQ budget is already
  * exhausted (so we don't spend Anthropic quota on a run that can't backtest anyway).
  */
 const { chromium } = require('playwright');

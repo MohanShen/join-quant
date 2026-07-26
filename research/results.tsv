@@ -1,3 +1,0 @@
-expId	commit	ideaId	baseExpId	train_objective	val_objective	sharpe_val	gate_val	status	description
-jul12-005	3b1c641	idea-4	jul12-000	1.3898	1.3231	5.81	pass	recorded	idea-4 仓位旋钮 g.target_count 5→6; count sweep 6>10>8, 单峰内点在6; VAL过门槛与TRAIN同向; ⚠零滑点高估/高换手, TRAIN边际薄(+0.016)
-jul12-023	986a53e	idea-20	jul12-022	0.3202	-0.5260	-0.39	fail	val-dq	Arc-4 市场中性 微盘多头−IC空头@1.2×; TRAIN过门槛(2.64)但VAL灾难性反转(maxdd 12.3→41.6, 2024-02微盘崩basis风险); ⚠期货腿未计成本/IC对微盘basis不足

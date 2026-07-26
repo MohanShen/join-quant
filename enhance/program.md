@@ -1,8 +1,8 @@
-# research/program.md — 自主策略研究团队（4 智能体）
+# enhance/program.md — 自主策略研究团队（4 智能体）
 
-本文件是研究循环的 **团队编排指令**（类比 Karpathy `autoresearch` 的 `program.md`，但本项目是**四智能体团队**，不是单 agent 循环）。
+本文件是研究循环的 **团队编排指令**（类比 Karpathy `autoenhance` 的 `program.md`，但本项目是**四智能体团队**，不是单 agent 循环）。
 人类只编辑本文件与 `harness/harness.md`；团队据此**自主**生成想法、变异策略、跑回测、记账、回填知识库。
-权威规则见 `docs/research-schema.md`（冲突以它为准）与 `harness/harness.md`（评测台冻结，只读）。
+权威规则见 `docs/enhance-schema.md`（冲突以它为准）与 `harness/harness.md`（评测台冻结，只读）。
 
 > **为什么是团队**：把「想法生成 / 想法筛选 / 脚本+回测 / 记账」拆成四个各司其职的角色，
 > 用**严格窗口协议**（`harness.md` §1）防过拟合：迭代只在 TRAIN，定稿才碰 VAL，2025+ OOS 永不触碰。
@@ -11,7 +11,7 @@
 
 ## 必读（每次开始前）
 
-1. `docs/research-schema.md` —— 结构与规则（**权威**）。
+1. `docs/enhance-schema.md` —— 结构与规则（**权威**）。
 2. `harness/harness.md` —— 冻结评测台（窗口协议、objective、门槛、OOS 硬阻断）。**只读**。
 3. `docs/wiki-schema.md` §2 / §2.1 —— 受控概念与因子词表（变异空间边界）。
 4. `wiki/index.md` 及相关 `wiki/concepts/*.md` —— 想法来源（尤其各概念页「归一化横评」与「待研究」）。
@@ -20,9 +20,9 @@
 
 ## 团队与共享状态
 
-**四个智能体**（角色定义见 `.claude/agents/autoresearch-*.md`），以**临时 subagent** 方式运行：
+**四个智能体**（角色定义见 `.claude/agents/autoenhance-*.md`），以**临时 subagent** 方式运行：
 
-> **临时 subagent 模型**（本项目的选择）：编排者（`/run-experiment` 主会话）在状态机的**每一步**用 `Agent` 工具**新生成**对应角色的一次性 subagent（不带 `name`、不常驻），给它**当步的具体任务 + 所需最小上下文**；subagent 干完这一件事、**把结果返回给编排者**即终止。subagent **互不寻址、不常驻**——所有路由**经编排者居中**（星型）：`ideator →(想法) critic →(出队想法) engineer →(TRAIN 结果) ideator →(定稿) engineer →(VAL 结果) recorder →(交回) ideator …`。
+> **临时 subagent 模型**（本项目的选择）：编排者（`/run-enhance` 主会话）在状态机的**每一步**用 `Agent` 工具**新生成**对应角色的一次性 subagent（不带 `name`、不常驻），给它**当步的具体任务 + 所需最小上下文**；subagent 干完这一件事、**把结果返回给编排者**即终止。subagent **互不寻址、不常驻**——所有路由**经编排者居中**（星型）：`ideator →(想法) critic →(出队想法) engineer →(TRAIN 结果) ideator →(定稿) engineer →(VAL 结果) recorder →(交回) ideator …`。
 > - **续跑干净**：subagent 本就一次性，`--resume` 恢复的是**编排者会话**（§断点续跑）；**没有 teammate 需要重生成、不会「找不到 teammate」**。上下文靠编排者会话 + 磁盘账本（git / `results.tsv` / `ideas-queue.json`）；transcript 与磁盘冲突时**以磁盘为准**。
 > - 代价：每次生成的 subagent 会重读它需要的最小上下文（如点子官读相关概念页）——换来续跑干净、路由可靠、无实验性 teams 依赖。
 > - **不需要** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`；不使用 `SendMessage`/常驻 teammate。
@@ -30,24 +30,24 @@
 | # | Agent | 角色 | 只读/可写 |
 |---|---|---|---|
 | **1** | `ideator`（点子官） | 通读 KB + 实验日志，产出**带推理**的新策略/改进想法；接收 TRAIN 结果，决定「继续迭代 / 定稿 / 放弃」 | 读 wiki+results；写 ideas-queue（提议） |
-| **2** | `critic`（筛选官） | 判断想法是否**成立**，成立则入**排名队列**；出队最有希望的想法交给 Agent 3 | 读 wiki；读写 `research/ideas-queue.json` |
-| **3** | `engineer`（工程师，**封闭环境**） | 生成策略 `.py`、跑回测、调试到有效结果；**严格服从 harness**；按想法类型路由结果 | 写 `research/candidates/`；只能用回测执行器 |
-| **4** | `recorder`（记账官） | 仅当拿到 **VAL 结果**时触发：写实验日志/结果、**归档策略到 `validated_strategies/`**、更新 KB，然后交回 Agent 1 开下一轮 | 写 `research/results.tsv`、`validated_strategies/`、`wiki/**` |
+| **2** | `critic`（筛选官） | 判断想法是否**成立**，成立则入**排名队列**；出队最有希望的想法交给 Agent 3 | 读 wiki；读写 `enhance/ideas-queue.json` |
+| **3** | `engineer`（工程师，**封闭环境**） | 生成策略 `.py`、跑回测、调试到有效结果；**严格服从 harness**；按想法类型路由结果 | 写 `enhance/candidates/`；只能用回测执行器 |
+| **4** | `recorder`（记账官） | 仅当拿到 **VAL 结果**时触发：写实验日志/结果、**归档策略到 `validated_strategies/`**、更新 KB，然后交回 Agent 1 开下一轮 | 写 `enhance/results.tsv`、`validated_strategies/`、`wiki/**` |
 
 **共享状态**：
-- `research/loop-state.json` —— **可选**的轻量进度快照（当前最优/活跃想法/下一步），供人类查看；**不是续跑的必需品**（续跑靠会话恢复，见下「断点续跑」），不强制每步写。
-- `research/ideas-queue.json` —— Agent 2 维护的**排名想法队列**。每项：
+- `enhance/loop-state.json` —— **可选**的轻量进度快照（当前最优/活跃想法/下一步），供人类查看；**不是续跑的必需品**（续跑靠会话恢复，见下「断点续跑」），不强制每步写。
+- `enhance/ideas-queue.json` —— Agent 2 维护的**排名想法队列**。每项：
   `{ id, title, hypothesis, reasoning, sourceRefs:[...], baseExpId|null, rank, status: queued|active|done|dropped }`。
-- `research/candidates/<expId>.py` —— Agent 3 的策略脚本（`expId = <tag>-<NNN>` 递增）。
-- `research/results.tsv` —— Agent 4 记账（**git 不跟踪**）。列见 §记账。
+- `enhance/candidates/<expId>.py` —— Agent 3 的策略脚本（`expId = <tag>-<NNN>` 递增）。
+- `enhance/results.tsv` —— Agent 4 记账（**git 不跟踪**）。列见 §记账。
 - `wiki/experiments/<expId>.md`、`wiki/log.md`、`wiki/concepts/*.md` —— Agent 4 回填。
 
 ### 断点续跑（resume after interruption）——**主要靠会话恢复**
 
-推荐跑法：人类用 `scripts/autoresearch-interactive.sh` 在**交互式** claude 会话里跑本循环（脚本把会话 id 钉进 `data/autoresearch-session.txt`，可观察、可打断）。额度用尽会话停下后：
+推荐跑法：人类用 `scripts/autoenhance-interactive.sh` 在**交互式** claude 会话里跑本循环（脚本把会话 id 钉进 `data/autoenhance-session.txt`，可观察、可打断）。额度用尽会话停下后：
 
-- 每小时的 launchd cron（`scripts/autoresearch-loop.sh`）用 **`claude -p --resume <该会话 id>`** 恢复**同一会话**——**编排者**的上下文都在，从上次断点直接续跑（临时 subagent 本就一次性，**没有 teammate 需要重生成**，编排者按需再新生成即可）；额度仍不足时 `--resume` 秒退，下次 fire 在额度重置后再续。
-- cron 用 **pgrep 判断是否有活着的 `claude` 进程正持有该会话 id**（交互 TUI 或上一 fire）：有则跳过（无法恢复被占用的会话）；无则可恢复，与 transcript 新旧无关。**交接规则：要让 cron 接手，必须先关闭交互会话**（退出 TUI）——开着（哪怕空闲）就一直占用、cron 会正确让路。人类回来再跑 `autoresearch-interactive.sh` 即重开同一会话（自动续跑），看到 cron 期间的全部进展。
+- 每小时的 launchd cron（`scripts/autoenhance-loop.sh`）用 **`claude -p --resume <该会话 id>`** 恢复**同一会话**——**编排者**的上下文都在，从上次断点直接续跑（临时 subagent 本就一次性，**没有 teammate 需要重生成**，编排者按需再新生成即可）；额度仍不足时 `--resume` 秒退，下次 fire 在额度重置后再续。
+- cron 用 **pgrep 判断是否有活着的 `claude` 进程正持有该会话 id**（交互 TUI 或上一 fire）：有则跳过（无法恢复被占用的会话）；无则可恢复，与 transcript 新旧无关。**交接规则：要让 cron 接手，必须先关闭交互会话**（退出 TUI）——开着（哪怕空闲）就一直占用、cron 会正确让路。人类回来再跑 `autoenhance-interactive.sh` 即重开同一会话（自动续跑），看到 cron 期间的全部进展。
 
 因此**续跑不依赖把每步写进 `loop-state.json`**——上下文就在会话里。`loop-state.json` / `ideas-queue.json` 仅作**人类可查的进度快照**（可选）；只有当你要**手动冷启动一个全新会话**、又想接着旧进度时，才需要它们（那时读 `ideas-queue.json` 的 `status`=queued/active/done/dropped + `results.tsv` 已定稿 + git 当前 candidate 来重建上下文）。
 
@@ -62,7 +62,7 @@
    - `harness.md` epoch 2 协议已冻结（TRAIN 选择 / VAL 定稿 / OOS 禁用）；只读。
    - CDP Chrome 在跑；**登录/预算用 statistics API 查**：`curl -s localhost:9225/json/version` 通 + `node utils/jq-budget.js` 返回 `used/free`。
    - **预算**：JQ 每日免费 60 分钟、超出烧积分。定 `JQ_USAGE_LIMIT`（默认 55）。
-3. **初始化**：`research/results.tsv` 写表头（§记账）；`research/ideas-queue.json`=`[]`（可选，供 Agent 2 排队）。续跑不靠这些文件而靠**会话恢复**（见「断点续跑」）。
+3. **初始化**：`enhance/results.tsv` 写表头（§记账）；`enhance/ideas-queue.json`=`[]`（可选，供 Agent 2 排队）。续跑不靠这些文件而靠**会话恢复**（见「断点续跑」）。
 4. **选 baseline**：从 `wiki/concepts/*.md` 「归一化横评」挑一个 **gate ✅** 的强基线做 `<tag>-000`
    （源码 + `utils/strategy-normalize.js` 的冻结成本 `OVERRIDE`），Agent 3 在 **TRAIN** 上跑一次确立基准线。
 5. **确认即开跑**。
@@ -96,7 +96,7 @@
    - 想法**成立** → 按预期收益/新颖度**排名入队** `ideas-queue.json`。
    - 无论成立与否，只要**队列非空** → 出队 `rank` 最高者，标 `active`，交 Agent 3（Type-1 迭代）。
    - 想法**不成立且队列空** → 退回 Agent 1，说明「不成立」，Agent 1 重新产想法。
-3. **Agent 3 实现+回测（封闭环境）**：把 `active` 想法写成 `research/candidates/<expId>.py`（从 `baseExpId` 或 baseline 小步变异，只用受控词表内因子），跑回测、调试到有效 `SUMMARY`：
+3. **Agent 3 实现+回测（封闭环境）**：把 `active` 想法写成 `enhance/candidates/<expId>.py`（从 `baseExpId` 或 baseline 小步变异，只用受控词表内因子），跑回测、调试到有效 `SUMMARY`：
    - **Type-1（迭代中，未定稿）** → `--window train` → 把 TRAIN `objective/sharpe/gate` 报回 **Agent 1**。
    - **Type-2（Agent 1 已定稿）** → `--window val` → 把 VAL 结果报给 **Agent 4**。
    - **绝不** `--window holdout` 或任何 2025+ 区间（执行器会 `OOS-BLOCKED` 抛错）。
@@ -107,7 +107,7 @@
 
 ---
 
-## 红线与约束（`research-schema.md` §10 / `harness.md`）
+## 红线与约束（`enhance-schema.md` §10 / `harness.md`）
 
 - **严格窗口**：迭代只 TRAIN、定稿才 VAL、**2025+ 永不碰**（代码硬阻断，agent 绝不设 `JQ_ALLOW_OOS`）。
 - **评测台冻结**：objective、门槛 2.5、窗口区间、费率滑点、执行器窗口参数——全部只读，改动即新纪元。
@@ -120,7 +120,7 @@
 
 ## 记账（Agent 4，每个**定稿**策略一行）
 
-`research/results.tsv` 列（TAB 分隔，git 不跟踪）：
+`enhance/results.tsv` 列（TAB 分隔，git 不跟踪）：
 
 ```
 expId  commit  ideaId  baseExpId  train_objective  val_objective  sharpe_val  gate_val  status  description
@@ -128,8 +128,8 @@ expId  commit  ideaId  baseExpId  train_objective  val_objective  sharpe_val  ga
 
 - 迭代中的 Type-1 TRAIN 结果**不单独占行**，浓缩进定稿行的 `train_objective` 与实验页的「迭代轨迹」。
 - `status`：`recorded`（定稿并记账）/ `val-dq`（定稿但 VAL 未过门槛，仍记账并标注）/ `crash`。
-- 实验页 `wiki/experiments/<expId>.md` 按 `research-schema.md` §6 模板，含：假设、推理、迭代轨迹（各 TRAIN 步）、TRAIN 与 VAL 结果、`confirmed`、`flags`、回填指针。
-- **归档策略**：把 `research/candidates/<expId>.py` 拷贝到 `validated_strategies/<expId>.py`（目录不存在则建），文件头加注释：`expId / ideaId / baseExpId / train_objective / val_objective / sharpe_val / gate_val(pass|fail) / ranAt`。**每个拿到 VAL 结果的定稿策略都归档**（`gate_val` 标 pass/fail——这里收「过了验证流程」的成品，不只是过门槛者）。此目录**git 跟踪**（是流水线的产物货架，区别于 transient 的 `results.tsv`/`ideas-queue.json`/`loop-state.json`）。
+- 实验页 `wiki/experiments/<expId>.md` 按 `enhance-schema.md` §6 模板，含：假设、推理、迭代轨迹（各 TRAIN 步）、TRAIN 与 VAL 结果、`confirmed`、`flags`、回填指针。
+- **归档策略**：把 `enhance/candidates/<expId>.py` 拷贝到 `validated_strategies/<expId>.py`（目录不存在则建），文件头加注释：`expId / ideaId / baseExpId / train_objective / val_objective / sharpe_val / gate_val(pass|fail) / ranAt`。**每个拿到 VAL 结果的定稿策略都归档**（`gate_val` 标 pass/fail——这里收「过了验证流程」的成品，不只是过门槛者）。此目录**git 跟踪**（是流水线的产物货架，区别于 transient 的 `results.tsv`/`ideas-queue.json`/`loop-state.json`）。
 
 ---
 

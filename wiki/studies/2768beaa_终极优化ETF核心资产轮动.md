@@ -18,5 +18,5 @@ ETF 核心资产动量轮动「终极优化」版（多周期动量打分 + 周�
 ## 机理与真实性
 归因基于 normalize train Sharpe 1.62 + [[ETF轮动]] 家族机理；未独立重跑（清晰家族迁移，节省预算）。confidence=med。
 
-## 待研究 / 反哺 auto-research
+## 待研究 / 反哺 auto-enhance
 又一个 ETF 动量轮动 DQ 数据点；「终极优化/多周期/空仓信号」的叠加救不了非趋势窗的低 Sharpe。

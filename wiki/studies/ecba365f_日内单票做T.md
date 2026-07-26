@@ -18,5 +18,5 @@ status: done
 ## 机理与真实性
 baseline 直接观测（total 29.99% / annual 14.03% / sharpe 0.30 / maxdd 29.49%）。confidence=high。
 
-## 待研究 / 反哺 auto-research
+## 待研究 / 反哺 auto-enhance
 见「为什么不过门槛」——冻结 2022-23 窗对无防御/负 alpha/过度保守/不可评测策略系统性 DQ。

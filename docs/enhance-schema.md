@@ -1,11 +1,11 @@
-# join-quant 自主研究（autoresearch）Schema
+# join-quant 自主研究（autoenhance）Schema
 
 本文件定义 `research/` 自主策略研究循环的结构与规则，是 `docs/wiki-schema.md`（知识库 Schema）的姊妹篇。
-灵感来自 Andrej Karpathy 的 [`autoresearch`](https://github.com/karpathy/autoresearch)：
+灵感来自 Andrej Karpathy 的 [`autoenhance`](https://github.com/karpathy/autoenhance)：
 **「人类只编辑 `program.md`/`harness.md`，AI 在冻结的评测台上自主迭代策略；迭代/选择全凭 `objective(TRAIN)`，定稿才验 VAL。」**
-本项目把「AI」实现为一个**四智能体团队**（点子/筛选/工程/记账，见 `research/program.md`）。
+本项目把「AI」实现为一个**四智能体团队**（点子/筛选/工程/记账，见 `enhance/program.md`）。
 
-本项目在其基础上加了 autoresearch 没有的东西：一个**持久知识库**（`wiki/`）。
+本项目在其基础上加了 autoenhance 没有的东西：一个**持久知识库**（`wiki/`）。
 因此研究循环是闭环的：
 
 ```
@@ -19,16 +19,16 @@ wiki「待研究/空白/归一化横评」 → 想法+推理 → 变异 candidat
 
 ---
 
-## 1. 与 autoresearch 的对应关系
+## 1. 与 autoenhance 的对应关系
 
-| autoresearch | 本项目 | 说明 |
+| autoenhance | 本项目 | 说明 |
 |---|---|---|
-| `train.py`（被编辑的产物） | `research/candidates/<expId>.py`（策略源码） | 唯一被变异的对象 |
+| `train.py`（被编辑的产物） | `enhance/candidates/<expId>.py`（策略源码） | 唯一被变异的对象 |
 | `prepare.py`（只读评测台） | **冻结评测台**（§3）：回测窗口 + 标的池 + 费率滑点 + 目标函数 | **绝不可被 agent 修改** |
 | `val_bpb`（单标量） | `objective`（§3.3），迭代在 **TRAIN** 上度量、定稿在 **VAL** 确认 | 越大越好 |
 | 固定 5 分钟预算 | 固定回测窗口（train/val，§3.1；2025+ OOS 禁用） | 保证实验可比 |
-| `results.tsv` | `research/results.tsv`（§7） | 追加式账本，git 不跟踪 |
-| `program.md` | `research/program.md`（**四智能体团队**编排） | 研究团队的 agent 指令 |
+| `results.tsv` | `enhance/results.tsv`（§7） | 追加式账本，git 不跟踪 |
+| `program.md` | `enhance/program.md`（**四智能体团队**编排） | 研究团队的 agent 指令 |
 | keep=advance / discard=git reset | 迭代在 TRAIN 推进/回退；**定稿**才跑一次 VAL（§8） | |
 | （无持久知识） | `wiki/experiments/`（§6）+ 回填契约（§9） | **本项目独有** |
 
@@ -52,7 +52,7 @@ join-quant/
     └── experiments/<expId>.md  # 每个实验一页（§6）：假设·变异·迭代轨迹·TRAIN/VAL结果·结论·回填指针
 ```
 
-- `research/candidates/` 与 `strategies/` 一样属于 **raw 层**：一旦回测过即不可变（git 记录演进）。
+- `enhance/candidates/` 与 `strategies/` 一样属于 **raw 层**：一旦回测过即不可变（git 记录演进）。
 - `wiki/experiments/` 是 wiki 的**第四类页面**（前三类：strategies / concepts / authors）。
 - 所有正文为**中文**，与 `wiki-schema.md`、`push-format.md` 一致。
 
@@ -120,7 +120,7 @@ objective(w) = score(w)        若 gate(w) 为真
 ## 5. 策略脚手架与变异空间（mutation space）
 
 策略不是随意改代码，而是从 KB 的**受控因子词表**（`wiki-schema.md` §2.1）组合而来。
-`research/strategy_template.py` 提供带槽位的骨架，槽位对应四类因子角色：
+`enhance/strategy_template.py` 提供带槽位的骨架，槽位对应四类因子角色：
 
 ```
 选股因子  →  规模价值 / 质量基本面 / 动量 / 技术量价 / 流动性 / 情绪事件
@@ -198,9 +198,9 @@ ranAt: <YYYY-MM-DD>
 
 ---
 
-## 7. 结果账本 `research/results.tsv`
+## 7. 结果账本 `enhance/results.tsv`
 
-追加式，制表符分隔（**非逗号**，描述里会有逗号）。**git 不跟踪**（同 autoresearch，`.gitignore` 加 `research/results.tsv`）。
+追加式，制表符分隔（**非逗号**，描述里会有逗号）。**git 不跟踪**（同 autoenhance，`.gitignore` 加 `enhance/results.tsv`）。
 账本是快速 `grep` 的一手记录；`wiki/experiments/` 是其结构化、带溯源的对应物。
 
 **每个定稿策略一行**（迭代中的 TRAIN 步不单独占行，浓缩进实验页 `iterations`）。10 列：
@@ -231,9 +231,9 @@ jul3-002	c3d4e5f	idea-7	jul3-001	1.52	0.88	1.9	fail	val-dq	国九过滤：TRAIN 
 
 ---
 
-## 8. 迭代 / 定稿 / branch 规则（四智能体，权威流程见 `research/program.md`）
+## 8. 迭代 / 定稿 / branch 规则（四智能体，权威流程见 `enhance/program.md`）
 
-团队跑在专用分支 `research/<tag>`。状态机与角色见 `research/program.md`；此处定义 keep/finalize 的判据：
+团队跑在专用分支 `research/<tag>`。状态机与角色见 `enhance/program.md`；此处定义 keep/finalize 的判据：
 
 **迭代（Type-1，只在 TRAIN）**——由 Agent 3 跑、Agent 1 判：
 1. Agent 1 从当前迭代最优提一个**小步变异**（或队列新想法的初版），Agent 3 写 `candidates/<expId>.py` 并 `git commit`。
@@ -250,7 +250,7 @@ jul3-002	c3d4e5f	idea-7	jul3-001	1.52	0.88	1.9	fail	val-dq	国九过滤：TRAIN 
 - **VAL 绝不驱动迭代选择**——只对定稿版跑一次确认。任何用 VAL 逐轮调参 = 泄漏。
 - **2025+ OOS 绝不触碰**——代码 `OOS-BLOCKED` 硬阻断。
 - **崩溃**：回测跑不动/CDP 掉线/策略报错，判断是否手误可修；否则记 `crash`，跳过。
-- **超时/限流**：JoinQuant Pipeline 2 是唯一执行器，受 CDP 会话与 VIP 限额约束；throughput 远低于 autoresearch 的 100/夜。可按批次人机协作推进，但**单批次内**遵循上述自主循环。
+- **超时/限流**：JoinQuant Pipeline 2 是唯一执行器，受 CDP 会话与 VIP 限额约束；throughput 远低于 autoenhance 的 100/夜。可按批次人机协作推进，但**单批次内**遵循上述自主循环。
 
 ---
 
@@ -277,7 +277,7 @@ jul3-002	c3d4e5f	idea-7	jul3-001	1.52	0.88	1.9	fail	val-dq	国九过滤：TRAIN 
 
 - **评测台冻结**：`objective`、门槛 2.5、窗口区间、费率滑点一经设定即不可改；改动即新纪元，旧结果封版。
 - **严格窗口**：迭代只 TRAIN、定稿才 VAL、**2025+ OOS 绝不触碰**（代码 `OOS-BLOCKED` 硬阻断，agent 绝不设 `JQ_ALLOW_OOS`）。任何用 VAL 逐轮调参或触碰 OOS 都使纪元作废。
-- **raw 不可变**：`strategies/` 与已回测的 `research/candidates/` 均不改。
+- **raw 不可变**：`strategies/` 与已回测的 `enhance/candidates/` 均不改。
 - **真实性红线**：继承 wiki 的 ⚠ 约定；不真实成交的范式不得宣称「有效」。
 - **可溯源**：账本、实验页、概念页结论均可回溯到 commit 与源码。
 - **受控命名**：因子/概念一律走 `wiki-schema.md` §2 词表，先登记后使用。
@@ -289,7 +289,7 @@ jul3-002	c3d4e5f	idea-7	jul3-001	1.52	0.88	1.9	fail	val-dq	国九过滤：TRAIN 
 
 `strategies/` 里的 144+ 策略是**不同年代、不同费率/滑点、不同回测区间**下自报绩效的 raw 层，彼此不可横比。
 归一化 = 用**冻结评测台**把每个 raw 策略在**同一 TRAIN 区间、同一成本、同一 objective** 下重测一遍，
-得到 apples-to-apples 的「谁在统一区间真能打」——这是 autoresearch 的**先验基线**：
+得到 apples-to-apples 的「谁在统一区间真能打」——这是 autoenhance 的**先验基线**：
 已知有效的策略/因子 = 归一化后过门槛者，据此挑选变异起点、避免重复造轮子。
 
 ### 11.1 强制成本归一（raw 不可变）
@@ -345,14 +345,14 @@ node utils/strategy-normalize.js --window train --concept 小市值因子 --usag
 ```
 `--concept <名>` 按 wiki 概念挑成员；`--usage-limit N` 设日用量上限（默认 55，仅免费额度内）；`--limit N` 限批量条数；账本可续跑。
 
-### 11.5 与 autoresearch 的关系（起点契约）
-- 归一化基线回答「**起点**在哪」：过门槛（gate ✅）的策略/因子组合是 autoresearch 变异的高价值起点；
+### 11.5 与 autoenhance 的关系（起点契约）
+- 归一化基线回答「**起点**在哪」：过门槛（gate ✅）的策略/因子组合是 autoenhance 变异的高价值起点；
   全员 DQ 的概念则提示该方向在此区间不成立。
-- **autoresearch 的 `<tag>-000` baseline 必须是一个已归一化的过门槛策略**（从各概念页「归一化绩效横评」挑 gate ✅ 者），
+- **autoenhance 的 `<tag>-000` baseline 必须是一个已归一化的过门槛策略**（从各概念页「归一化绩效横评」挑 gate ✅ 者），
   而**不是**裸 `strategy_template.py`（裸最小市值月度轮动在归一化 TRAIN 上即 DQ，不宜作起点）。做法：
   取该策略 `strategies/<file>.py` 源码 + `strategy-normalize.js` 的冻结成本 `OVERRIDE`（零滑点/PerTrade），
-  存为 `research/candidates/<tag>-000.py`；其 TRAIN objective 应≈ 该策略页 `normalized:` 值。此后小步变异，朝赢家配方靠拢。
+  存为 `enhance/candidates/<tag>-000.py`；其 TRAIN objective 应≈ 该策略页 `normalized:` 值。此后小步变异，朝赢家配方靠拢。
 - 归一化用 **TRAIN**（与迭代区间一致），故它是**先验/特征**：迭代在 TRAIN 上进行本就用它，
   不构成对 VAL 的泄漏——VAL 仍只对定稿版跑一次（§8），2025+ OOS 永不触碰。
-- **预算一致**：autoresearch 与归一化共用同一 JQ 计费现实（§11.4）——循环受 `--usage-limit` 约束，
+- **预算一致**：autoenhance 与归一化共用同一 JQ 计费现实（§11.4）——循环受 `--usage-limit` 约束，
   `used ≥ limit` 即停、等次日重置，不为「跑满循环」烧积分。
