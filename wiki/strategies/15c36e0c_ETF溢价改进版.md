@@ -4,6 +4,8 @@ backtestId: 12ef917dcc3f9cd5a610d0efb64f1068
 title: etf基金溢价-改进版-高收益低回撤-速度已最优
 sourceFile: strategies/2026-06-01_etf基金溢价-改进版-高收益低回撤-速度已最优-15c36e0c.py
 concepts: [ETF轮动]
+family: ETF溢价
+familyRole: variant
 factors:
   选股:
     规模价值: [折价率(取折价<0)]

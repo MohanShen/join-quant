@@ -4,6 +4,8 @@ backtestId: 7ea8c4eabf18fa9344cf1ee0f0143ed9
 title: 日内单票做T策略
 sourceFile: strategies/2026-06-14_日内单票做T策略-ecba365f.py
 concepts: [日内做T]
+family: 打板短线
+familyRole: variant
 factors:
   选股:
     技术量价: [单票日内高抛低吸]

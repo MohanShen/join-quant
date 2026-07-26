@@ -4,6 +4,8 @@ backtestId: 9324c4788c0c2fbec3c0ae50aa99e84e
 title: 价值选股与RSRS择时
 sourceFile: strategies/2026-05-13_价值选股与RSRS择时-5a5ba567.py
 concepts: [多因子模型, 择时-RSRS]
+family: 多因子ML
+familyRole: variant
 factors:
   选股:
     规模价值: [价值因子选股]

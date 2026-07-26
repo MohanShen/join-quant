@@ -4,6 +4,8 @@ backtestId: bcf453f7d514ecf96f05e2840c8f0947
 title: 年化64%的市值选股策略（有止损模块）
 sourceFile: strategies/2026-05-14_年化64_的市值选股策略_有止损模块-fa9c8c9e.py
 concepts: [小市值因子, 止损模块]
+family: 小市值
+familyRole: variant
 factors:
   选股:
     规模价值: [全市场最小市值20只]

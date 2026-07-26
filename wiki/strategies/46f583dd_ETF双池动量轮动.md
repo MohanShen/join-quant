@@ -4,6 +4,8 @@ backtestId: a365b6351e2bfc7825ef9b23277fcc5c
 title: 近4个月狂揽62%！六年11倍 ETF双池动量轮动
 sourceFile: strategies/2026-05-23_近4个月狂揽62_六年11倍_ETF双池动量轮动-46f583dd.py
 concepts: [ETF轮动, 动量与趋势, 止损模块]
+family: ETF动量
+familyRole: variant
 factors:
   选股:
     动量: [动量打分(年化×R²), 安全区间0<score<5]

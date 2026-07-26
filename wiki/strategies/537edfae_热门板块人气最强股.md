@@ -4,6 +4,8 @@ backtestId: 926f977fcfe0284475c0d28478c40918
 title: 选用近5日最热门板块，人气最高最强股的策略
 sourceFile: strategies/2026-06-13_选用近5日最热门板块_人气最高最强股的策略-537edfae.py
 concepts: [行业轮动, 打板与涨停]
+family: 打板短线
+familyRole: variant
 factors:
   选股:
     情绪事件: [近5日最热门板块, 人气最高最强股]

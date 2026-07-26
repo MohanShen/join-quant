@@ -3,6 +3,8 @@ postId: 7f7e13ee082ad1a81d6a2f1ab7ce6967
 title: gap创新+离散度判断
 sourceFile: strategies/2026-06-30_gap创新_离散度判断-7f7e13ee.py
 concepts: [ETF轮动, 动量与趋势, 择时-均线]
+family: ETF动量
+familyRole: variant
 factors:
   选股:
     动量: [多资产ETF动量]

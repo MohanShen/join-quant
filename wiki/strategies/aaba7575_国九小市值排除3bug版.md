@@ -6,6 +6,8 @@ sourceFile: strategies/2026-05-17_小市值排除3个bug版_22年至今收益506
 joinquantPost: https://www.joinquant.com/post/47791
 author: zycash（原帖：国九小市值策略）
 concepts: [小市值因子, 择时-均线, 止损模块]
+family: 小市值
+familyRole: variant
 factors:
   选股:
     规模价值: [小市值]

@@ -4,6 +4,8 @@ backtestId: fc1782f0a5a3a5e1182ec36721253377
 title: 挑战纳指增强（更新）
 sourceFile: strategies/2026-06-02_挑战纳指增强_更新-77cabc3c.py
 concepts: [多因子模型, ETF轮动, 止损模块]
+family: ETF动量
+familyRole: variant
 factors:
   选股:
     动量: [纳指ETF增强信号]

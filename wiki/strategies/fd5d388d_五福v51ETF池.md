@@ -4,6 +4,8 @@ backtestId: 40e97ee2f7bbcd2eebe0309fa700dd92
 title: 【五福闹新春】v5.1-拟合ETF池最严厉的父亲
 sourceFile: strategies/2026-05-22_五福闹新春_v5_1-拟合ETF池最严厉的父亲-fd5d388d.py
 concepts: [ETF轮动, 动量与趋势, 止损模块]
+family: 五福闹新春
+familyRole: variant
 factors:
   选股:
     动量: [动量打分, 安全区间0<score≤5, R²≥0.4]

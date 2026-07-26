@@ -4,6 +4,8 @@ backtestId: 25705f085c0f4ada7e762e58957a9bcd
 title: RPS多周期趋势跟踪策略（无未来函数版）
 sourceFile: strategies/2026-06-17_RPS多周期趋势跟踪策略_无未来函数版-995abb4d.py
 concepts: [动量与趋势, 择时-均线]
+family: 趋势技术
+familyRole: variant
 factors:
   选股:
     动量: [RPS多周期相对强度]

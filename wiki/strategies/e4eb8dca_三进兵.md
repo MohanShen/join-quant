@@ -4,6 +4,8 @@ backtestId: 3bb88ef38387f723e4b780586cbbdb99
 title: 【策略研发】三进兵策略
 sourceFile: strategies/2026-06-06_策略研发_三进兵策略-e4eb8dca.py
 concepts: [动量与趋势, 择时-均线, 止损模块]
+family: 三进兵
+familyRole: variant
 factors:
   选股:
     动量: [三EMA均线组合(三进兵)]

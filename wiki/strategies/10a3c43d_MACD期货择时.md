@@ -4,6 +4,8 @@ backtestId: f07178c19e312b86c8bc3ad910defb8a
 title: MACD+波动率过滤+追踪止损 期货择时汇总
 sourceFile: strategies/2026-05-16_MACD_波动率过滤_追踪止损_期货择时汇总-10a3c43d.py
 concepts: [期货与套利, 动量与趋势]
+family: 趋势技术
+familyRole: variant
 factors:
   选股:
     动量: [MACD择时]

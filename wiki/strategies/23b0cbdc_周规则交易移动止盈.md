@@ -4,6 +4,8 @@ backtestId: b33a29307a1392db52c5cd52d41b3bec
 title: 【经典策略系列】之周规则交易策略（使用分级移动止盈、移动止盈方法，以及新api--run_daily等的用法）
 sourceFile: strategies/2026-05-28_经典策略系列_之周规则交易策略_使用分级移动止盈_移动止盈方法_以及新api--run_daily等的用法-23b0cbdc.py
 concepts: [择时-均线, 止损模块]
+family: 其他
+familyRole: variant
 factors:
   选股:
     动量: [周规则交易信号]

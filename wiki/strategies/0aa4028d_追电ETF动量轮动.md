@@ -4,6 +4,8 @@ backtestId: 776b8146bfe0da17838c3886cbf193f6
 title: 追电ETF动量轮动 —10年60多倍收益
 sourceFile: strategies/2026-06-15_追电ETF动量轮动_10年60多倍收益-0aa4028d.py
 concepts: [ETF轮动, 动量与趋势, 止损模块]
+family: ETF动量
+familyRole: variant
 factors:
   选股:
     动量: [25日加权回归动量, 安全区间0<score≤6]

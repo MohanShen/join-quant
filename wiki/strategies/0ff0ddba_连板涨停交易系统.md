@@ -4,6 +4,8 @@ backtestId: 5bce71a72322900ce3fb8fbea2fe254e
 title: 连板涨停策略交易系统_V1.100
 sourceFile: strategies/2026-06-06_连板涨停策略交易系统_V1_100-0ff0ddba.py
 concepts: [打板与涨停, 止损模块]
+family: 打板短线
+familyRole: variant
 factors:
   选股:
     技术量价: [连板涨停, 多条件交易系统]

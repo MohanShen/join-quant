@@ -4,6 +4,8 @@ backtestId: 4b6dfbd136721cfcf65e6800575ce94c
 title: 单股2014.01.01-2016.08.01，收益6508%，年化386%
 sourceFile: strategies/2026-05-19_单股2014_01_01-2016_08_01_收益6508_年化386-cf5cbac2.py
 concepts: [小市值因子]
+family: 小市值
+familyRole: variant
 factors:
   选股:
     规模价值: [eps>0最小市值100只]

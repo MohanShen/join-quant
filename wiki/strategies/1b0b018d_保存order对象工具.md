@@ -4,6 +4,8 @@ backtestId: 8c4141e1bc9435becefdb7cd1bf423b0
 title: 以csv格式保存order、trade、position对象
 sourceFile: strategies/2026-06-03_以csv格式保存order_trade_position对象-1b0b018d.py
 concepts: []
+family: 其他
+familyRole: variant
 ingestedAt: 2026-06-28
 codeLines: 108
 stats: { annualReturn: null, sharpe: null, maxDrawdown: null, periodLabel: null }

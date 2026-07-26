@@ -4,6 +4,8 @@ backtestId: 3a8ca7dc979cf3f0b91ea68e05d26c9c
 title: 终极优化-ETF核心资产轮动策略
 sourceFile: strategies/2026-05-17_终极优化-ETF核心资产轮动策略-2768beaa.py
 concepts: [ETF轮动, 动量与趋势, 止损模块]
+family: ETF动量
+familyRole: variant
 factors:
   选股:
     动量: [多周期动量打分(均值3/5/10·diff3/26)]

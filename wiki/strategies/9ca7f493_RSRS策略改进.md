@@ -4,6 +4,8 @@ backtestId: 0916e428e1c218225c2b4cb3f5bd157f
 title: 基于RSRS策略的改进年化20%
 sourceFile: strategies/2026-05-23_基于RSRS策略的改进年化20-9ca7f493.py
 concepts: [择时-RSRS]
+family: 其他
+familyRole: variant
 factors:
   选股:
     规模价值: [选股池(20只)]

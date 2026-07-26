@@ -4,6 +4,8 @@ backtestId: fe43a10c47514b73722b74379a0e8359
 title: P-T多策略并行实战：用"自有账本"实现四大策略各安其位
 sourceFile: strategies/2026-06-23_P-T多策略并行实战_用_quot_自有账本_quot_实现四大策略各安其位-fa0d3bd9.py
 concepts: [多策略组合]
+family: PT多策略
+familyRole: variant
 factors:
   选股:
     技术量价: [四大子策略各自信号]

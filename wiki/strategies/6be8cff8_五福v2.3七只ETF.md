@@ -4,6 +4,8 @@ backtestId: 441014b44f50f497ce39f057d1f2d2f3
 title: 这个策略今年很强，点赞回复必回赞、克隆，没积分，模拟盘快到期
 sourceFile: strategies/2026-06-15_这个策略今年很强_点赞回复必回赞_克隆_没积分_模拟盘快到期-6be8cff8.py
 concepts: [ETF轮动, 动量与趋势, 止损模块]
+family: ETF动量
+familyRole: variant
 factors:
   选股:
     动量: [ETF动量打分取第1, 溢价率/放量/均线多重过滤]

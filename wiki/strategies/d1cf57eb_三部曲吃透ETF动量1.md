@@ -4,6 +4,8 @@ backtestId: 0ff612d176226cdefa20ee375194cd2f
 title: 【三部曲吃透ETF动量轮动1】纵有狂风拔地起，我亦乘风破万里
 sourceFile: strategies/2026-05-22_三部曲吃透ETF动量轮动1_纵有狂风拔地起_我亦乘风破万里-d1cf57eb.py
 concepts: [ETF轮动, 动量与趋势]
+family: ETF动量
+familyRole: variant
 factors:
   选股:
     动量: [21日加权对数回归动量(年化×R²), 加速度筛选(t日得分≥t-1×1.2)]

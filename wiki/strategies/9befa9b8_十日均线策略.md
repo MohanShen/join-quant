@@ -4,6 +4,8 @@ backtestId: 048448df645ff8c2737c7214d3bd4e5c
 title: 十日均线策略
 sourceFile: strategies/2026-06-08_十日均线策略-9befa9b8.py
 concepts: [动量与趋势, 择时-均线]
+family: 趋势技术
+familyRole: variant
 factors:
   选股:
     动量: [MA10单均线择时]

@@ -4,6 +4,8 @@ backtestId: 6dfbf03d6c8c450875c435f25466a47d
 title: 最小市值轮动,不择时
 sourceFile: strategies/2026-06-17_最小市值轮动_不择时-cad4cc5d.py
 concepts: [小市值因子]
+family: 小市值
+familyRole: variant
 factors:
   选股:
     规模价值: [最小市值, PE>100或<0过滤]

@@ -4,6 +4,8 @@ backtestId: 52c418086c39ed28a43068b211bc3033
 title: 分享我的聚宽灵感挖掘Skill
 sourceFile: strategies/2026-06-10_分享我的聚宽灵感挖掘Skill-d29d708e.py
 concepts: []
+family: 其他
+familyRole: variant
 ingestedAt: 2026-06-28
 codeLines: 1555
 stats: { annualReturn: null, sharpe: null, maxDrawdown: null, periodLabel: null }

@@ -4,6 +4,8 @@ backtestId: 5304eb76b9c15bceaa6ed19eb059fa4a
 title: 【策略组合】优质小市值周换手与ETF轮动策略组合
 sourceFile: strategies/2026-06-01_策略组合_优质小市值周换手与ETF轮动策略组合-3a5ab0c1.py
 concepts: [多策略组合, 小市值因子, ETF轮动]
+family: 小市值
+familyRole: variant
 factors:
   选股:
     规模价值: [子策略:PB+同比增长正小市值周轮动]

@@ -4,6 +4,8 @@ backtestId: 2eea050c7cdd7fcb39f3bbf36bf4332b
 title: 【量化课堂】机器学习多因子策略
 sourceFile: strategies/2026-05-14_量化课堂_机器学习多因子策略-f9ca1d2e.py
 concepts: [多因子模型]
+family: 多因子ML
+familyRole: variant
 factors:
   选股:
     质量基本面: [SVR回归市值的残差因子(被低估)]

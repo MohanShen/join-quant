@@ -4,6 +4,8 @@ backtestId: 4789a9dc801ca3ba6beb688575de1b8d
 title: KAMA 趋势策略「社区最牛的趋势交易-已被私募机构征用」
 sourceFile: strategies/2026-06-11_KAMA_趋势策略_社区最牛的趋势交易-已被私募机构征用-b7269ff2.py
 concepts: [动量与趋势, 择时-均线, 止损模块]
+family: 趋势技术
+familyRole: variant
 factors:
   选股:
     动量: [KAMA自适应均线趋势]

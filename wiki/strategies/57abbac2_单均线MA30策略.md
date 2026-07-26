@@ -4,6 +4,8 @@ backtestId: 383f8adfaf82c91a916e0cb420fffa7b
 title: 年化15.84%的单均线策略
 sourceFile: strategies/2026-05-17_年化15_84_的单均线策略-57abbac2.py
 concepts: [动量与趋势, 择时-均线]
+family: 趋势技术
+familyRole: variant
 factors:
   选股:
     动量: [MA30单均线择时]
