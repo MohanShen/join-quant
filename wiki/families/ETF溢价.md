@@ -6,7 +6,7 @@ base: [[<postId8>_<代表基类>]]
 bestVariant: [[edd94ebc_ETF溢价回撤]]
 bestObjective: 3.5961
 memberCount: 2
-sources: { normalized: 2, study: 0, research: 0 }
+sources: { normalized: 2, study: 0, enhance: 0 }
 realism: "<⚠ 待人工填写>"
 status: active
 updatedAt: 2026-07-26

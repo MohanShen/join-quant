@@ -6,7 +6,7 @@ base: [[<postId8>_<代表基类>]]
 bestVariant: [[fa0d3bd9_PT多策略并行]]
 bestObjective: 3.5952
 memberCount: 2
-sources: { normalized: 1, study: 0, research: 0 }
+sources: { normalized: 1, study: 0, enhance: 0 }
 realism: "<⚠ 待人工填写>"
 status: active
 updatedAt: 2026-07-26

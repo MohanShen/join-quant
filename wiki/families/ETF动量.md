@@ -6,7 +6,7 @@ base: [[<postId8>_<代表基类>]]
 bestVariant: [[22152780_七星ETF轮动V1.7.2]]
 bestObjective: 0.3830
 memberCount: 27
-sources: { normalized: 18, study: 0, research: 0 }
+sources: { normalized: 18, study: 0, enhance: 0 }
 realism: "<⚠ 待人工填写>"
 status: active
 updatedAt: 2026-07-26

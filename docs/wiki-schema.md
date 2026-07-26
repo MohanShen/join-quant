@@ -131,7 +131,7 @@ factors:
 - **concept（横轴）**：因子/机制主题，一个策略**属于多个** concept。
 - **family（纵轴）**：策略**血统/世系**，一个策略**恰好属于一个** family；其 `variant` 是对同一基类的改动。
 
-家族捕捉「同一基类的 N 个变体」（如 22 个五福变体），使 auto-research 从**家族**（约 13 个）而非**变体**（140 篇）取种，避免在同一血统内重复探索。
+家族捕捉「同一基类的 N 个变体」（如 22 个五福变体），使 auto-enhance 从**家族**（约 13 个）而非**变体**（140 篇）取种，避免在同一血统内重复探索。
 
 新家族需先在此登记，再建页（先登记后建页，杜绝同义分叉：五福 / 五福闹新春 / 五福V5 归一）：
 
@@ -251,8 +251,8 @@ updatedAt: <YYYY-MM-DD>
 
 ### 3.3 家族页 `wiki/families/<规范家族名>.md`
 
-家族页纵向聚合**同一基类的所有变体**，是 auto-research 的取种入口。
-拆分：`§2 变体表` 与 `§3 横评` 由脚本从策略页 `family:` + `harness/normalize-train.tsv` + study/research 账本**自动生成**（勿手写 Δ 列，lint 校验漂移，同 `wiki-factor-signature.js` 模式）；`§1 基类机理`、`为什么有效`、`§4 待研究`、`§5 沿革` 为**人写 / 追加**。
+家族页纵向聚合**同一基类的所有变体**，是 auto-enhance 的取种入口。
+拆分：`§3 横评` 由 `wiki-family-build.js` 从策略页 `family:` + `harness/normalize-train.tsv` **自动生成**（勿手写，lint 校验漂移，同 `wiki-factor-signature.js` 模式）；`§2 变体` 由 normalize 播种、**study / auto-enhance 追加**（Δ 列 lint 校验）；`§1 基类机理`、`为什么有效`、`§4 待研究`、`§5 沿革` 为**人写**；`§6 研究问答` 由 **auto-study 追加**。
 
 ```markdown
 ---
@@ -263,7 +263,7 @@ base: [[<postId8>_<代表基类>]]
 bestVariant: [[<postId8>_<最优变体>]]
 bestObjective: <n>
 memberCount: <N>
-sources: { normalized: <n>, study: <n>, research: <n> }   # 变体来源分布
+sources: { normalized: <n>, study: <n>, enhance: <n> }   # 变体来源分布
 realism: "<⚠ 家族级现实性/容量警告>"
 status: active            # active | deprecated | DQ（整族为伪信号，如未来函数）
 updatedAt: <YYYY-MM-DD>
@@ -287,16 +287,20 @@ updatedAt: <YYYY-MM-DD>
 - **为什么有效**（essential driver, 溯源 [[studyId]]）：<本质驱动因子>
 - **⚠ 现实性 / 容量**：<零滑点高估 / 容量上限 / 尾风险>
 
-## 2. 变体 (variants)                   ← 自动生成 + lint
+## 2. 变体 (variants)                   ← 人写/study/enhance 追加；Δ 列由 lint 校验
 | 变体 | 相对基类的改动 | 来源 | Δobjective | Δsharpe | ΔmaxDD | 结论 |
 |---|---|---|---|---|---|---|
-| [[…]] | … | normalized-raw / study-<qId> / research-<expId> | … | … | … | … |
+| [[…]] | … | normalized-raw / study-<qId> / enhance-<expId> | … | … | … | … |
 
 ## 3. 家族内绩效横评 (auto)             ← 按 objective 排名，最优高亮
 
-## 4. 待研究 / 空白 (research gaps)     ← 直接喂 ideator：本家族未试方向
+## 4. 待研究 / 空白 (research gaps)     ← 直接喂 auto-enhance ideator：本家族未试方向
 
 ## 5. 沿革 (provenance)                 ← 首发 postId / 作者、版本演进
+
+## 6. 研究问答 (study log)              ← auto-study 追加：问题 → 结论
+- **[Q <qId>]** <问题>（type: ablation|sweep|regime|isolate|probe）
+  **→** <一句结论>（Δ…；confidence high/med/low；⚠ flags）溯源 [[study-<qId>]]
 ```
 
 **家族与 §9 原则一致**：raw 不可变、变体表/横评之外的正文追加优先不覆盖、矛盾只标记、受控命名、可溯源。
