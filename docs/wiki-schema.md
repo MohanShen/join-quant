@@ -20,6 +20,7 @@ join-quant/
     ├── log.md                  # 追加式活动日志（ingest / query / lint）
     ├── strategies/             # 每个策略一页：<postId8>_<标题>.md
     ├── concepts/               # 跨策略的概念页：因子 / 择时 / 止损 / 仓位等
+    ├── families/               # 策略血统页：同一基类的所有变体（与 concepts 正交）
     └── authors/                # （可选）聚宽作者实体页
 ```
 
@@ -123,6 +124,35 @@ factors:
 
 ---
 
+### 2.2 受控家族词表（canonical strategy families）
+
+`family` 是与 `concepts` **正交**的第二根聚合轴：
+
+- **concept（横轴）**：因子/机制主题，一个策略**属于多个** concept。
+- **family（纵轴）**：策略**血统/世系**，一个策略**恰好属于一个** family；其 `variant` 是对同一基类的改动。
+
+家族捕捉「同一基类的 N 个变体」（如 22 个五福变体），使 auto-research 从**家族**（约 13 个）而非**变体**（140 篇）取种，避免在同一血统内重复探索。
+
+新家族需先在此登记，再建页（先登记后建页，杜绝同义分叉：五福 / 五福闹新春 / 五福V5 归一）：
+
+| 规范名 | 一句话基类 | 同义/别名 |
+|--------|-----------|-----------|
+| 五福闹新春 | 跨资产 ETF 动量选第1 + 弱势防御择时 | 五福, 五福V5, 五福闹春 |
+| 七星高照 | ETF 轮动 + 多重滤波（高斯/拉普拉斯） | 七星, 七星ETF |
+| 三马 | 五福/七星血统的多池融合变体 | 三马105, 三马七星 |
+| 小市值 | 深A 小市值选股 + 日内风控机器 | 微盘, 小盘, 市值选股 |
+| 打板短线 | 首板/连板/一进二 情绪接力 | 首板, 连板, 涨停, 龙头 |
+| ETF动量 | 通用跨资产 ETF 动量轮动（非五福/七星血统） | ETF轮动, 基金轮动 |
+| 网格 | 区间网格交易 | 网格交易 |
+| 红利低频 | 高股息/固收+ 低换手价值 | 高息, 固收, 红利 |
+| 趋势技术 | 均线/布林/RPS 等纯技术趋势 | 均线, 布林, 趋势跟踪 |
+| 多因子ML | 多因子/机器学习/AI 选股 | 多因子, 机器学习, AI |
+| … | | |
+
+> 家族与概念**交叉链接**：家族页 frontmatter 的 `concepts:` 列出该血统涉及的概念；概念页照常横向聚合各家族的成员策略。两轴互不替代。
+
+---
+
 ## 3. 页面模板
 
 ### 3.1 策略页 `wiki/strategies/<postId8>_<标题>.md`
@@ -136,6 +166,8 @@ sourceFile: strategies/<带日期前缀的文件名>.py
 joinquantPost: <聚宽原帖链接，若源码头中有>
 author: <作者，若有>
 concepts: [小市值因子, 择时-均线]      # 因子族/机制 concept 由 factors 自动归并；仅 结构 concept 需手填
+family: <规范家族名>                   # §2.2 受控家族词表；每策略恰属一个血统（纵轴）
+familyRole: variant                    # base | variant —— 是否为家族基类代表
 factors:                               # 本策略用到的具体信号，按 §2.1 四角色分类（concept 的实例来源）
   选股:
     规模价值: [小市值]
@@ -213,6 +245,60 @@ updatedAt: <YYYY-MM-DD>
 
 ---
 
+### 3.3 家族页 `wiki/families/<规范家族名>.md`
+
+家族页纵向聚合**同一基类的所有变体**，是 auto-research 的取种入口。
+拆分：`§2 变体表` 与 `§3 横评` 由脚本从策略页 `family:` + `research/normalize-train.tsv` + study/research 账本**自动生成**（勿手写 Δ 列，lint 校验漂移，同 `wiki-factor-signature.js` 模式）；`§1 基类机理`、`为什么有效`、`§4 待研究`、`§5 沿革` 为**人写 / 追加**。
+
+```markdown
+---
+family: 五福闹新春
+aliases: [五福, 五福V5, 五福闹春]
+concepts: [[ETF轮动]], [[择时-均线]], [[仓位管理]]   # 交叉链接概念轴
+base: [[<postId8>_<代表基类>]]
+bestVariant: [[<postId8>_<最优变体>]]
+bestObjective: <n>
+memberCount: <N>
+sources: { normalized: <n>, study: <n>, research: <n> }   # 变体来源分布
+realism: "<⚠ 家族级现实性/容量警告>"
+status: active            # active | deprecated | DQ（整族为伪信号，如未来函数）
+updatedAt: <YYYY-MM-DD>
+---
+
+# <家族名> — strategy family
+
+**一句话**：<该血统在做什么>
+
+## 1. 基类 (base archetype)            ← 人写 + [[study]] 溯源
+- **Universe 选股池**：<标的类别 / 数量>
+- **交易频率**：<daily / weekly / minute；调仓节奏>
+- **交易机制**：
+  - *入场 / 择时*：<信号 + 触发时点>
+  - *调仓*：<持仓数 / 权重 / 换仓>
+  - *止损 / 风控*：<止损线 / 空仓 / 盈利保护>
+- **基线绩效**（frozen harness, TRAIN 2022–2023, 变体 [[base]]）：
+  | objective | sharpe | annual% | maxDD% | window |
+  |---|---|---|---|---|
+  | … | … | … | … | train |
+- **为什么有效**（essential driver, 溯源 [[studyId]]）：<本质驱动因子>
+- **⚠ 现实性 / 容量**：<零滑点高估 / 容量上限 / 尾风险>
+
+## 2. 变体 (variants)                   ← 自动生成 + lint
+| 变体 | 相对基类的改动 | 来源 | Δobjective | Δsharpe | ΔmaxDD | 结论 |
+|---|---|---|---|---|---|---|
+| [[…]] | … | normalized-raw / study-<qId> / research-<expId> | … | … | … | … |
+
+## 3. 家族内绩效横评 (auto)             ← 按 objective 排名，最优高亮
+
+## 4. 待研究 / 空白 (research gaps)     ← 直接喂 ideator：本家族未试方向
+
+## 5. 沿革 (provenance)                 ← 首发 postId / 作者、版本演进
+```
+
+**家族与 §9 原则一致**：raw 不可变、变体表/横评之外的正文追加优先不覆盖、矛盾只标记、受控命名、可溯源。
+
+---
+
 ## 4. index.md 格式
 
 每次 ingest 后更新。按类别分节，每行：链接 + 一句话 + 关键绩效。
@@ -225,6 +311,9 @@ updatedAt: <YYYY-MM-DD>
 ## 概念
 - [[小市值因子]] —— 小市值选股因子，覆盖 20 篇策略
 - [[ETF轮动]] —— ETF 动量轮动，覆盖 17 篇
+
+## 家族
+- [[五福闹新春]] —— 跨资产 ETF 动量轮动血统，22 变体，最优 obj 0.69 (v5.2)
 
 ## 策略
 - [[965618d9_60倍七星高照]] —— ETF轮动+高斯滤波；年化… | 涉及 [[ETF轮动]]
@@ -244,7 +333,7 @@ updatedAt: <YYYY-MM-DD>
 ## [YYYY-MM-DD] <op> | <说明>
 ```
 
-`op` 取值：`ingest`（建/更新策略页）、`skip-dup`（命中去重）、`concept`（新建概念页）、`query`（问答并回填）、`lint`（健康检查）、`merge`（概念归并）。
+`op` 取值：`ingest`（建/更新策略页）、`skip-dup`（命中去重）、`concept`（新建概念页）、`family`（建/更新家族页）、`query`（问答并回填）、`lint`（健康检查）、`merge`（概念归并）。
 
 示例：
 ```
