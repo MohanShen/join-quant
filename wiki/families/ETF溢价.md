@@ -9,7 +9,7 @@ memberCount: 2
 sources: { normalized: 2, study: 0, enhance: 0 }
 realism: "⚠ 零滑点高估：折价 alpha 集中在最薄/最小的 ETF-LOF，抬高成交量下界即流失（study-q-1：sharpe 8.44→3.16→1.10，1e8 DQ）；头条绩效建立在这些不可真实成交的标的上，capacity-capped、不可规模化。全家族 Δ（含 bestVariant edd94ebc 1599%⚠）须按此护栏折价看待。"
 status: active
-updatedAt: 2026-07-26
+updatedAt: 2026-08-02
 ---
 
 # ETF溢价 — strategy family
@@ -38,7 +38,7 @@ updatedAt: 2026-07-26
 | **1** | **[[edd94ebc_ETF溢价回撤]]** | 3.5961 | 14.77 | 374.38 | 14.77 | ✅ |
 | 2 | [[15c36e0c_ETF溢价改进版]] | 1.5642 | 8.87 | 177.88 | 21.46 | ✅ |
 
-*2 gate-pass / 2 members. 快照 2026-07-26（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*2 gate-pass / 2 members. 快照 2026-08-02（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)   ← 待人工填写：本家族未试方向
 - ✅ **持仓集中度扫描**（study-q-2 已答）：单峰、峰在 N=2，N=1 是分散度损失悬崖；集中度单独只占 base→edd94ebc gap 的 ~17%。

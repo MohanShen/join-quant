@@ -9,7 +9,7 @@ memberCount: 20
 sources: { normalized: 21, study: 0, enhance: 0 }
 realism: "<⚠ 待人工填写>"
 status: active
-updatedAt: 2026-07-27
+updatedAt: 2026-08-02
 ---
 
 # 多因子ML — strategy family
@@ -54,7 +54,7 @@ updatedAt: 2026-07-27
 | 19 | [[f8d8348c_投资学作业多因子]] | DQ/— | -0.82 | -12.84 | 30.69 | ❌ |
 | 20 | [[f9ca1d2e_机器学习多因子]] | DQ/— | 0.47 | 12.27 | 19.32 | ❌ |
 
-*0 gate-pass / 20 members. 快照 2026-07-27（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*0 gate-pass / 20 members. 快照 2026-08-02（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)   ← 待人工填写：本家族未试方向
 
