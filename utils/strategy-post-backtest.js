@@ -32,6 +32,7 @@
 
 const { chromium } = require('playwright');
 const { StrategyLoader } = require('./loader');
+const { ensureCdp, allowLocalFallback, describe: describeExec } = require('./exec-config');
 const path = require('path');
 const fs   = require('fs');
 
@@ -497,7 +498,17 @@ async function pollUntilComplete(page, algorithmId) {
   // first (seenRunning), then confirm empty for 2 consecutive polls to ignore a transient blip.
   // Editor tracebacks are still caught by detectCompileError on the (un-navigated) editor tab.
   // (If a concurrent backtest is ever run outside this batch, this over-waits, never under-waits.)
-  let seenRunning = false, emptyStreak = 0, finished = false;
+  // Fast runs can finish INSIDE the 8s settle above (a 2-year daily strategy costs ~0 quota
+  // minutes), so running[] may never be observed non-empty. Waiting for the 0→≥1→0 edge alone
+  // then spins to the safety cap and cancels a backtest that actually succeeded. So we accept a
+  // second, independent completion signal: the editor's own result panel has rendered metrics
+  // while running[] is empty. Same 2-poll confirmation to avoid a stale/partial render.
+  const resultsRendered = () => page.evaluate(() => {
+    const t = (document.body?.innerText || '').replace(/\s+/g, ' ');
+    return /策略收益\s*-?[\d.]+%/.test(t) && /最大回撤\s*-?[\d.]+%/.test(t);
+  }).catch(() => false);
+
+  let seenRunning = false, emptyStreak = 0, renderedStreak = 0, finished = false;
   while (Date.now() - start < MAX_POLL_MS) {
     const st = await page.evaluate(async () => {
       try {
@@ -508,8 +519,12 @@ async function pollUntilComplete(page, algorithmId) {
     });
 
     if (st) {
-      if (st.runningCount > 0) { seenRunning = true; emptyStreak = 0; }
+      if (st.runningCount > 0) { seenRunning = true; emptyStreak = 0; renderedStreak = 0; }
       else if (seenRunning) { emptyStreak++; if (emptyStreak >= 2) { finished = true; break; } }
+      else if (await resultsRendered()) {
+        renderedStreak++;
+        if (renderedStreak >= 2) { finished = true; break; }   // finished before we ever saw it run
+      } else { renderedStreak = 0; }
     }
 
     // Editor-surfaced compile/runtime error → fast-fail (page stays on the editor, no nav).
@@ -722,7 +737,10 @@ async function main() {
   // ----------------------------------------------------------------
   let browser;
 
-  const CDP_URL = process.env.JQ_CDP_URL || 'http://localhost:9225';
+  // Resolves local vs remote (SSH-tunnelled) Chrome and opens the tunnel on demand.
+  const cdp = await ensureCdp();
+  const CDP_URL = cdp.url;
+  console.log(`[auth] exec mode: ${describeExec()}`);
 
   // ── Approach 1: CDP ───────────────────────────────────────────────
   let cdpSuccess = false;
@@ -775,6 +793,17 @@ async function main() {
     // ── Approach 2: Persistent profile ──────────────────────────────
     if (browser) { try { await browser.close(); } catch {} }
     console.log('[auth] CDP failed:', connErr.message.substring(0, 100));
+
+    // In remote mode there is nothing to fall back TO: the logged-in JoinQuant
+    // session lives in the server's Chrome profile, so launching a browser here
+    // would just land on the login page + CAPTCHA. Fail loudly instead.
+    if (!allowLocalFallback()) {
+      console.error('[auth] remote mode — no local browser fallback.');
+      console.error(`[auth] check: ./scripts/cdp-tunnel.sh status   (${describeExec()})`);
+      if (cdp.error) console.error('[auth] cdp:', cdp.error);
+      throw connErr;
+    }
+
     console.log('[auth] Falling back to persistent profile...');
 
     if (!JOINQUANT_PASSWORD) {

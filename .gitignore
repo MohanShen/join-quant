@@ -25,3 +25,6 @@ study/manifest.json
 
 # Auto-enhance results ledger — transient, not tracked
 enhance/results.tsv
+
+# Execution-mode config — holds the remote server host, never track
+config/exec.env

@@ -10,9 +10,13 @@
  * exhausted (so we don't spend Anthropic quota on a run that can't backtest anyway).
  */
 const { chromium } = require('playwright');
+const { ensureCdp } = require('./exec-config');
 
 async function main() {
-  const CDP_URL = process.env.JQ_CDP_URL || 'http://localhost:9225';
+  // In remote mode this also opens the SSH tunnel to the server's Chrome if needed.
+  const cdp = await ensureCdp({ quiet: true });
+  const CDP_URL = cdp.url;
+  if (!cdp.ok) { console.log('used= free='); process.exitCode = 2; return; }
   let browser;
   try {
     browser = await chromium.connectOverCDP(CDP_URL);

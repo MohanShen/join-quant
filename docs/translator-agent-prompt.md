@@ -3,17 +3,17 @@
 请严格按顺序执行以下步骤：
 
 **Step 0 — 确认代码路径**
-- 策略代码目录：~/repos/join-quant/
-- 数据目录：~/repos/join-quant/data/
-- 源码文件：~/repos/join-quant/strategies/{sourceFile}
+- 策略代码目录：~/join-quant/
+- 数据目录：~/join-quant/data/
+- 源码文件：~/join-quant/strategies/{sourceFile}
   （{sourceFile} 必须直接取自 manifest 的 entry.sourceFile；文件名带日期前缀，
    形如 2026-06-21_xxx-1a2b3c4d.py，不要自行拼接文件名）
-- 推送格式规范：~/repos/join-quant/docs/push-format.md
+- 推送格式规范：~/join-quant/docs/push-format.md
 
 **Step 1 — 运行每日流水线**
 使用 exec 工具运行：
 ```
-cd ~/repos/join-quant && node utils/strategy-daily.js --limit 3
+cd ~/join-quant && node utils/strategy-daily.js --limit 3
 ```
 等待命令完成。流水线会自动依次完成：
 1. 发现新策略——已内置 curl 抓取，自动绕过 VPN 的 HTTPS 干扰，无需手动 curl。
@@ -33,17 +33,17 @@ cd ~/repos/join-quant && node utils/strategy-daily.js --limit 3
   若大量 FETCH_FAILED，请先确认上述登录前置条件，不要再尝试手动抓取。
 
 **Step 2 — 读取 manifest**
-读取 ~/repos/join-quant/data/fetch-manifest.json。
+读取 ~/join-quant/data/fetch-manifest.json。
 结构为 { fetchedAt, entries: [...] }，遍历 entries 数组。
 每个 entry 含 postId / backtestId / title / url / sourceFile / stats；
 重复条目额外带 duplicateOf 字段，且没有 sourceFile。
 
 **Step 3 — 读取格式规范**
-读取 ~/repos/join-quant/docs/push-format.md，熟悉推送格式要求。
+读取 ~/join-quant/docs/push-format.md，熟悉推送格式要求。
 
 **Step 4 — 忠实翻译每个策略**
 对 manifest 中每个策略（跳过带 duplicateOf 标记的重复条目）：
-- 读取源码文件：~/repos/join-quant/strategies/{sourceFile}（文件名直接用 entry.sourceFile）
+- 读取源码文件：~/join-quant/strategies/{sourceFile}（文件名直接用 entry.sourceFile）
 - 按 push-format.md 规范用中文写出忠实翻译，段落：
   - 选股池
   - 仓位分配

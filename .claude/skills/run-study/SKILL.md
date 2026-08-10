@@ -23,7 +23,7 @@ description: Run the join-quant auto-STUDY loop — a 4-agent team (questioner �
 
 ## 前置检查
 - **目标家族** `<family>`（用户指定，如 `五福闹新春`；或批量遍历 `study/manifest.json`）。在分支 `study/all` 上。
-- CDP Chrome 在跑；`node utils/jq-budget.js` 出 `used/free`；`used < --usage-limit`。
+- CDP Chrome 在跑：`node utils/jq-budget.js` 出 `used/free`（remote 模式下它会自动拉起 SSH 隧道）；`used < --usage-limit`。隧道状态可用 `./scripts/cdp-tunnel.sh status` 查。
 - Setup（首次）：快照 `study/<family>/baseline.py` = 家族 `base:` 源码（+ 冻结成本 override）、跑基类基线、初始化 `questions.json`/`findings.tsv`；读入 §2 现有变体作为待解释对象。续跑：读磁盘状态从断点继续。
 
 ## 运行方式

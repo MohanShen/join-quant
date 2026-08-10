@@ -57,7 +57,7 @@ The backtest window is parameterized (`--window train` = 2022-01-01→2023-12-31
 
 | Step | What happens | How |
 |------|-------------|-----|
-| 1. Browser setup | Connect to running Chrome via CDP | `chromium.connectOverCDP('http://localhost:9225')`. Reuses the user's existing Chrome session (cookies, login state). **No username/password needed.** If no Chrome at 9225: launch persistent-context Chrome with `--user-data-dir=/tmp/jq-auth-browser`. |
+| 1. Browser setup | Connect to running Chrome via CDP | `chromium.connectOverCDP('http://localhost:9225')`. Reuses the existing Chrome session (cookies, login state). **No username/password needed.** Endpoint resolved by `utils/exec-config.js` — in `remote` mode `localhost:9225` is an SSH tunnel to the QMT server's Chrome, opened on demand. If no Chrome at 9225: **local mode** launches persistent-context Chrome with `--user-data-dir=/tmp/jq-auth-browser`; **remote mode** fails loudly (no useful local fallback). |
 | 2. Create strategy | Get a new `algorithmId` | Navigate to `/algorithm/index/new?restore=0&type=stock&baseCapital=100000`. JQ does a client-side redirect to `/algorithm/index/edit?algorithmId={32-char-hex}`. Extract `algorithmId` from final URL. |
 | 3. Inject code | Put Python code into JQ's editor | JQ uses the **Ace code editor**. Code injected via `window.ace.edit(div).setValue(code, -1)`. Also synced to hidden `<textarea id="code">` (JQ's backend reads from this on save, not from Ace directly). |
 | 4. Save | Persist code to JQ servers | `page.evaluate()` clicks the "保存" button. JQ POSTs the textarea content to backend. |
@@ -121,7 +121,7 @@ join-quant/
 ## Quick Start
 
 ```bash
-cd ~/repos/join-quant
+cd ~/join-quant
 npm install
 ```
 
@@ -143,7 +143,7 @@ nohup /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
 ### 2. Backtest a Custom Strategy
 
 ```bash
-cd ~/repos/join-quant
+cd ~/join-quant
 
 # Run backtest on a local Python strategy file:
 node utils/strategy-post-backtest.js strategies/我的策略.py "可选标题"
@@ -190,13 +190,48 @@ node index.js login                              # Force fresh login
 
 ```bash
 # Environment variables (optional — CDP approach doesn't need credentials)
-JOINQUANT_USERNAME=15656096430
+JOINQUANT_USERNAME=your_account_here
 JOINQUANT_PASSWORD=your_password_here
-JQ_CDP_URL=http://localhost:9225          # Chrome debugging endpoint (default)
+JQ_CDP_URL=http://localhost:9225          # overrides the resolved endpoint outright
 ```
 
+### Execution modes — where the CDP Chrome runs
+
+Set in `config/exec.env` (gitignored; copy from `config/exec.env.example`):
+
+| `JQ_EXEC_MODE` | Chrome runs | Reached via | Local browser fallback |
+|---|---|---|---|
+| `local` (default) | this machine | `localhost:9225` directly | yes — persistent profile |
+| `remote` | the Windows QMT server | SSH tunnel → server `127.0.0.1:9225` | **no** (session lives server-side) |
+
+```bash
+# config/exec.env — remote example
+JQ_EXEC_MODE=remote
+JQ_CDP_PORT=9225                                   # near end of the tunnel
+JQ_REMOTE_SSH_HOST="administrator@<public-ip>"
+JQ_REMOTE_SSH_OPTS="-i $HOME/.ssh/id_ed25519"      # use $HOME, not ~
+JQ_REMOTE_CDP_PORT=9225                            # Chrome's port ON the server
+```
+
+`utils/exec-config.js` resolves the endpoint for every entry point and, in remote mode,
+**opens the SSH tunnel on demand** if nothing answers — no manual setup step. Manual control:
+
+```bash
+./scripts/cdp-tunnel.sh up      # idempotent
+./scripts/cdp-tunnel.sh status  # forward + pids + /json/version
+./scripts/cdp-tunnel.sh down
+```
+
+The tunnel deliberately presents the remote browser at `localhost:9225` so that every
+`connectOverCDP('http://localhost:9225')` call works unchanged in both modes, Chrome's
+Host-header check passes, and the debug port is never exposed to the network — CDP on a
+logged-in session is a full remote-control channel.
+
 **Chrome Setup (most important):**
-The JQ session is stored in Chrome's profile at `/tmp/jq-auth-browser`. Do NOT close the Chrome process — closing it invalidates the session and requires re-login. The Chrome process should be started once and kept running.
+The JQ session is stored in Chrome's profile — `/tmp/jq-auth-browser` locally, or
+`%LOCALAPPDATA%\JQExecutorChrome` on the server. Do NOT close the Chrome process —
+closing it invalidates the session and requires re-login. It should be started once and
+kept running.
 
 ---
 

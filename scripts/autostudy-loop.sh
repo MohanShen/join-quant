@@ -63,6 +63,12 @@ if [ -n "$HOLDER" ]; then
 fi
 
 # ── Precheck 1: CDP Chrome alive ────────────────────────────────────────────
+# In remote mode the browser lives on the QMT server behind an SSH tunnel, which a
+# launchd-spawned shell won't have inherited. Try to bring it up before giving up,
+# otherwise an unattended fire skips forever with the server sitting there idle.
+if ! curl -s -m 5 "$JQ_CDP_URL/json/version" >/dev/null 2>&1; then
+  bash "$(dirname "$0")/cdp-tunnel.sh" up >/dev/null 2>&1 || true
+fi
 if ! curl -s -m 5 "$JQ_CDP_URL/json/version" >/dev/null 2>&1; then
   log "skip: CDP Chrome not reachable at $JQ_CDP_URL — keep it running to allow backtests"; exit 0
 fi

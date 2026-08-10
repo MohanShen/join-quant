@@ -7,21 +7,22 @@
  */
 const fs = require('fs');
 const path = require('path');
-const { execFileSync, execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const { createStub, regenConceptTables } = require('./kb-stub');
 
 const ROOT = path.join(__dirname, '..');
 const STRAT_DIR = path.join(ROOT, 'strategies');
 const LEDGER = path.join(ROOT, 'harness/normalize-train.tsv');
 const PENDING = path.join(ROOT, 'data/pending-normalize.json');   // fetched but not yet normalized
-const CDP_URL = process.env.JQ_CDP_URL || 'http://localhost:9225';
+const { cdpUrl, ensureCdpSync } = require('./exec-config');
+const CDP_URL = cdpUrl();
 
 function loadPending() { try { return JSON.parse(fs.readFileSync(PENDING, 'utf8')); } catch { return []; } }
 function savePending(list) { fs.mkdirSync(path.dirname(PENDING), { recursive: true }); fs.writeFileSync(PENDING, JSON.stringify([...new Set(list)], null, 2)); }
 
+// In remote mode this also opens the SSH tunnel to the server's Chrome if it isn't up yet.
 function cdpAlive() {
-  try { execSync(`curl -s -m 4 ${CDP_URL}/json/version`, { stdio: 'pipe' }); return true; }
-  catch { return false; }
+  return ensureCdpSync().ok;
 }
 
 // postId8 -> latest ledger row (any status)

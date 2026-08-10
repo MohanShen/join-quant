@@ -29,7 +29,8 @@ const path = require('path');
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const COOKIES_FILE = path.join(DATA_DIR, 'cookies.json');
-const CDP_URL = process.env.JQ_CDP_URL || 'http://localhost:9225';
+const { cdpUrl: defaultCdpUrl, ensureCdp } = require('./exec-config');
+const CDP_URL = defaultCdpUrl();
 
 const REQUIRED_COOKIES = ['PHPSESSID', 'uid'];
 
@@ -43,9 +44,14 @@ const REQUIRED_COOKIES = ['PHPSESSID', 'uid'];
  * @returns {Promise<{ok: boolean, count?: number, names?: string[], error?: string}>}
  */
 async function refreshCookiesFromCDP(opts = {}) {
-  const cdpUrl = opts.cdpUrl || CDP_URL;
+  let cdpUrl = opts.cdpUrl || CDP_URL;
   let browser;
   try {
+    if (!opts.cdpUrl) {
+      // Opens the SSH tunnel on demand in remote mode; no-op when already reachable.
+      const r = await ensureCdp({ quiet: true });
+      cdpUrl = r.url;
+    }
     console.log(`[cookies] Connecting to Chrome via CDP at ${cdpUrl} ...`);
     browser = await chromium.connectOverCDP(cdpUrl);
 

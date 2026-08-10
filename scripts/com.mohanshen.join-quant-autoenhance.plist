@@ -28,16 +28,16 @@
   <key>ProgramArguments</key>
   <array>
     <string>/bin/bash</string>
-    <string>/Users/mshen/repos/join-quant/scripts/autoenhance-loop.sh</string>
+    <string>/Users/mshen/join-quant/scripts/autoenhance-loop.sh</string>
   </array>
 
   <key>WorkingDirectory</key>
-  <string>/Users/mshen/repos/join-quant</string>
+  <string>/Users/mshen/join-quant</string>
 
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key>
-    <string>/Users/mshen/.local/bin:/Users/mshen/.nvm/versions/node/v24.13.0/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <string>/Users/mshen/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
     <key>USAGE_LIMIT</key>
     <string>240</string>
     <key>JQ_CDP_URL</key>
@@ -51,8 +51,8 @@
   <true/>
 
   <key>StandardOutPath</key>
-  <string>/Users/mshen/repos/join-quant/data/autoenhance-logs/launchd.out.log</string>
+  <string>/Users/mshen/join-quant/data/autoenhance-logs/launchd.out.log</string>
   <key>StandardErrorPath</key>
-  <string>/Users/mshen/repos/join-quant/data/autoenhance-logs/launchd.err.log</string>
+  <string>/Users/mshen/join-quant/data/autoenhance-logs/launchd.err.log</string>
 </dict>
 </plist>

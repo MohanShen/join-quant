@@ -28,7 +28,14 @@ node utils/strategy-daily.js --discover-only
 ### Chrome / auth setup (required for Pipeline 2)
 
 Pipeline 2 connects to an already-logged-in Chrome over CDP to inherit `httpOnly`
-session cookies and bypass JoinQuant's CAPTCHA. Start Chrome once and keep it running:
+session cookies and bypass JoinQuant's CAPTCHA. **Where that Chrome runs is
+configurable** — `config/exec.env` (gitignored; template at `config/exec.env.example`):
+
+```bash
+JQ_EXEC_MODE=local     # or: remote
+```
+
+**local mode** — Chrome on this machine. Start it once and keep it running:
 
 ```bash
 nohup /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
@@ -38,8 +45,34 @@ nohup /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
 # First run: log into joinquant.com manually. Closing Chrome invalidates the session.
 ```
 
+**remote mode** — Chrome runs on the Windows QMT server (see the `QMT-server` repo).
+Its debug port is bound to the server's `127.0.0.1`, so an **SSH tunnel** bridges it:
+
+```
+localhost:9225  ->  ssh  ->  server 127.0.0.1:9225
+```
+
+The tunnel opens **automatically** — `utils/exec-config.js` probes the CDP endpoint on
+every entry point and runs `scripts/cdp-tunnel.sh up` if nothing answers. Manual control:
+
+```bash
+./scripts/cdp-tunnel.sh up|down|status
+```
+
+Because the tunnel presents the browser at `localhost:9225`, every existing
+`connectOverCDP('http://localhost:9225')` call works unchanged in both modes. This
+also keeps Chrome's Host-header check happy (it rejects non-localhost `Host` values)
+and avoids exposing the debug port — CDP on a logged-in brokerage session is a full
+remote-control channel and must never be opened to the network.
+
+In **remote mode the local-browser fallback is disabled**: the logged-in session lives
+in the server's Chrome profile, so launching a browser on the Mac would only hit the
+login page + CAPTCHA. `strategy-post-backtest.js` fails loudly instead.
+
 Environment variables (optional — CDP path needs no credentials):
-`JOINQUANT_USERNAME`, `JOINQUANT_PASSWORD`, `JQ_CDP_URL` (default `http://localhost:9225`).
+`JOINQUANT_USERNAME`, `JOINQUANT_PASSWORD`. `JQ_CDP_URL` still overrides the resolved
+URL outright; `JQ_EXEC_MODE`, `JQ_CDP_PORT`, `JQ_REMOTE_SSH_HOST`, `JQ_REMOTE_SSH_OPTS`,
+`JQ_REMOTE_CDP_PORT` override `config/exec.env` per-invocation.
 
 ## Two Pipelines
 

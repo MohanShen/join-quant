@@ -19,7 +19,7 @@ nohup /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
 # (If first time: open Chrome, log into joinquant.com manually)
 
 # 2. Run backtest on any local strategy file
-cd ~/repos/join-quant
+cd ~/join-quant
 node utils/strategy-post-backtest.js strategies/我的策略.py "可选标题"
 ```
 
