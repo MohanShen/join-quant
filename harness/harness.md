@@ -111,7 +111,7 @@ SUMMARY\t<window>\t<start>\t<end>\t<days>\t<total%>\t<annual%>\t<sharpe>\t<maxdd
 ```
 
 - `annual%` 已按 §4 从 `total%` 与实际 `days` 年化；`sharpe`/`maxdd%` 取自 JQ。
-- `status`：`completed`（可记账）/ `window-mismatch`（实际区间≠请求，**不得记账**，修正重跑）/ `failed`（崩溃，记 crash）。
+- `status`：`completed`（可记账）/ `window-mismatch`（实际区间≠请求，**不得记账**，修正重跑）/ `no-trades`（跑完但**零成交**：收益与回撤同为 0，通常是选股/数据链路断了，**不得记账**，查因而非重跑）/ `failed`（崩溃，记 crash）。
 - `--window` 只接受 `train` / `val`；`holdout` 或任何 `>= 2025-01-01` 的区间会被 `OOS-BLOCKED` 拒跑（除非用户 `JQ_ALLOW_OOS=1`）。
 - 迭代中（Type-1）算 `objective(TRAIN)`；定稿（Type-2）算 `objective(VAL)`。门槛 `sharpe ≥ 2.5`。
 

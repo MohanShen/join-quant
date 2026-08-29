@@ -625,7 +625,25 @@ function numPct(s) {
 // can grep (single line, tab-separated):
 //   SUMMARY\t<window>\t<start>\t<end>\t<days>\t<total%>\t<annual%>\t<sharpe>\t<maxdd%>\t<status>
 // annual% is computed from total% over the actual window (JQ gives only total).
-// status ∈ completed | window-mismatch | failed
+// status ∈ completed | window-mismatch | no-trades | failed
+//
+// A backtest that placed NO orders returns 策略收益 0.00% and 最大回撤 0.00%.
+// Because 0 is not null, this used to be logged as a perfectly good `completed`
+// result — eligible for results.tsv and a family page. That is the worst failure
+// mode a research harness has: a real number that is almost never a real
+// outcome. In practice it means the stock screen returned nothing (data or API
+// path broke), not that the strategy chose to stay flat.
+//
+// Both metrics must be exactly zero. A strategy that traded and finished flat
+// still moves the equity curve intraday and so reports a non-zero drawdown;
+// requiring both makes a false positive essentially impossible.
+//
+// `no-trades` is deliberately NOT in strategy-normalize.js's RETRIABLE set — a
+// zero-trade run is an outcome to investigate, not a transient failure to rerun.
+function isNoTradeRun(totalPct, maxddPct) {
+  return totalPct === 0 && maxddPct === 0;
+}
+
 function reportResult(title, algorithmId, result, requestedWindow) {
   console.log('\n========== BACKTEST RESULT ==========');
   console.log(`Strategy:    ${title}`);
@@ -644,6 +662,12 @@ function reportResult(title, algorithmId, result, requestedWindow) {
   if (result && result.success && totalPct == null) {
     // Poll saw 完成 but no parseable metrics row (e.g. strategy made no trades).
     console.log(`Status:      ⚠ 回测完成但无可解析指标 — 视为 failed，不可记账`);
+  } else if (result && result.success && isNoTradeRun(totalPct, maxddPct)) {
+    // A run that placed no orders comes back as a tidy 0.00% / 0.00% and would
+    // otherwise be logged as a legitimate `completed` result. See isNoTradeRun.
+    status = 'no-trades';
+    console.log(`Status:      ⚠ 回测完成但零成交（收益与回撤同为 0）— 通常是选股/数据链路断了，不可记账`);
+    console.log(`时间范围:    ${range || 'N/A'}${days ? ` (${days}天)` : ''}`);
   } else if (result && result.success) {
     status = 'completed';
     console.log(`Status:      ✅ 回测完成`);
