@@ -8,7 +8,7 @@ bestObjective: 3.5961
 memberCount: 2
 sources: { normalized: 2, study: 0, enhance: 0 }
 realism: "⚠ 零滑点高估：折价 alpha 集中在最薄/最小的 ETF-LOF，抬高成交量下界即流失（study-q-1：sharpe 8.44→3.16→1.10，1e8 DQ）；头条绩效建立在这些不可真实成交的标的上，capacity-capped、不可规模化。全家族 Δ（含 bestVariant edd94ebc 1599%⚠）须按此护栏折价看待。"
-status: active
+status: done
 updatedAt: 2026-07-26
 ---
 

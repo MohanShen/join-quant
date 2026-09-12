@@ -49,7 +49,7 @@
 
 与人类确认后：
 
-1. **建 manifest**：`study/manifest.json` 从 `wiki/families/*.md` 生成（`family / bestObjective / memberCount / status`，按 bestObjective 强→弱；不含单例桶「其他」）。建分支 `study/all`（从当前 HEAD）。
+1. **建 manifest**：`study/manifest.json` 从 `wiki/families/*.md` 生成（`family / bestObjective / memberCount / status`，按 bestObjective 强→弱；不含单例桶「其他」）。**在当前分支上跑**——不再新建/切换 `study/all`；要隔离就由人类自己先切分支。
 2. **确认评测台 + 登录 + 预算**：`harness/harness.md` 只读；`node utils/jq-budget.js` 出 `used/free`（remote 模式下自动拉起 SSH 隧道；裸 `curl` 不会，故不要用它做前置判断）；定 `--usage-limit`。
 3. **确认即开跑**（进入外层循环）。
 

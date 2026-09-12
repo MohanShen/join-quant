@@ -8,7 +8,7 @@ bestObjective: 3.5952
 memberCount: 2
 sources: { normalized: 1, study: 0, enhance: 0 }
 realism: "⚠⚠ 本批最被高估的家族——头条 obj 3.5955/sharpe 18 是纯薄基金 illiquidity 溢价，由构造把 universe 限死在成交额 5M–20M CNY/日的微流动 ETF、每日折价全换承载，零滑点成交在这些标的上不可实现，头条完全不可规模化；band 移到真流动基金(50M-100M)即 edge 崩塌到 DQ(sharpe 1.09)——唯一可真实成交的点恰是 edge 消失的点。溯源 study-q-1。"
-status: active
+status: done
 updatedAt: 2026-07-26
 ---
 

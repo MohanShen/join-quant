@@ -5,7 +5,7 @@
 # THIS SAME session when the Anthropic quota frees up. Sibling of autoenhance-interactive.sh.
 #
 # Flow:
-#   1. Run this on the study/all branch:  ./scripts/autostudy-interactive.sh
+#   1. Run it on whatever branch you want the study to land on:  ./scripts/autostudy-interactive.sh
 #   2. Inside claude, type:  /run-study     (works study/manifest.json — all normalized strategies)
 #   3. When you step away, CLOSE the session (exit/Ctrl-D) so the cron takes over.
 #
@@ -20,11 +20,13 @@ cd "$REPO" || { echo "cannot cd to $REPO"; exit 1; }
 SID_FILE="$REPO/data/autostudy-session.txt"
 mkdir -p "$REPO/data"
 
+# Runs on whatever branch is checked out — no study/* requirement. The branch name is
+# still the session-pin key (below), so the cron only resumes a session pinned to the
+# branch you are actually on. Checkout an isolation branch yourself if you want one.
 BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
-case "$BRANCH" in
-  study/*) ;;
-  *) echo "Not on a study/* branch (on '$BRANCH'). Create/checkout it first:"; echo "  git checkout -b study/all"; exit 1 ;;
-esac
+if [ -z "$BRANCH" ]; then
+  echo "not a git repo (or detached HEAD with no branch name) — cannot pin a session"; exit 1
+fi
 
 NEW=0; [ "${1:-}" = "--new" ] && NEW=1
 SID=""

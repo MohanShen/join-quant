@@ -7,7 +7,7 @@
 # resumes the pinned study session (`claude -p --resume <uuid>`) so the batch keeps grinding
 # through study/manifest.json across quota resets, until every strategy is `done` or you stop.
 #
-# Preconditions (exit 0 = clean no-op if any fails): a pinned session for study/* exists and
+# Preconditions (exit 0 = clean no-op if any fails): a pinned session for the CURRENT branch exists and
 # isn't held by a live process; CDP Chrome up; JQ budget < USAGE_LIMIT; no other fire running;
 # and the SHARED jq-pipeline lock is free (study & research never backtest at the same time).
 #
@@ -38,11 +38,13 @@ echo $$ > "$LOCK"
 trap 'rm -f "$LOCK" "$PLOCK"' EXIT
 
 # ── Resolve study branch ────────────────────────────────────────────────────
-CUR_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
-case "$CUR_BRANCH" in
-  study/*) BRANCH="$CUR_BRANCH" ;;
-  *) log "skip: not on a study/* branch (on '$CUR_BRANCH'). Start it interactively first (scripts/autostudy-interactive.sh)."; exit 0 ;;
-esac
+# Any branch is allowed. The gate that matters is Precheck 0 below: we only resume a
+# session that was pinned to the branch currently checked out, so a stray fire on an
+# unrelated branch still no-ops instead of studying the wrong tree.
+BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+if [ -z "$BRANCH" ]; then
+  log "skip: cannot resolve current branch (not a git repo / detached HEAD)"; exit 0
+fi
 
 # ── Precheck 0: a pinned study session exists for THIS branch ───────────────
 SID_FILE="$REPO/data/autostudy-session.txt"

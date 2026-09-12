@@ -109,3 +109,4 @@
 [2026-07-19 07:39:21] resuming claude study session ac81a8d8-e233-4642-849f-97aa24a77a5e (--permission-mode acceptEdits) → /Users/mshen/repos/join-quant/data/autostudy-logs/run-20260719-073921.log
     Baseline is running normally (52s, polling — modal handled, no slow-skip). It'll notify on completion. Everything downstream is staged: the q-1 `always-small` variant, questions, and report scaffold. When the baseline lands I'll run the variant, then dispatch the analyst to record the timing-vote attribution and finalize 2f5bc859 (15/82), and continue to the next pending strategy. Standing by.
 [2026-07-19 07:44:45] resume complete rc=0
+[2026-08-10 12:01:47] skip: session file is for 'study/all' (uuid ac81a8d8-e233-4642-849f-97aa24a77a5e), not current branch 'remote-cdp-mode'
