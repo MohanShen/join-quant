@@ -34,15 +34,20 @@
  *   node utils/strategy-discover.js --pages 50 --limit 50 --cates 3,0
  *   node utils/strategy-discover.js status
  *
- * Data files (all gitignored):
- *   data/discovered.json     - every strategy post ever seen (keyed by postId)
+ * Identity
+ *   Everything is keyed by `uniqueKey`, NOT `postId`. JoinQuant regenerates
+ *   `postId` and `backtestId` on every request — see postKey() below.
+ *
+ * Data files:
+ *   data/discovered.json     - every strategy post ever seen (keyed by uniqueKey)
  *   data/copy-queue.json     - strategies to clone, ranked by composite score
- *   data/resources.json      - every resource post ever seen (keyed by postId)
+ *   data/resources.json      - every resource post ever seen (keyed by uniqueKey)
  *   data/resource-queue.json - resources to ingest, ranked by composite score
  */
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const jq = require('./jq-http');
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
@@ -50,6 +55,53 @@ const DISCOVERED_FILE = path.join(DATA_DIR, 'discovered.json');
 const COPY_QUEUE_FILE = path.join(DATA_DIR, 'copy-queue.json');
 const RESOURCES_FILE = path.join(DATA_DIR, 'resources.json');
 const RESOURCE_QUEUE_FILE = path.join(DATA_DIR, 'resource-queue.json');
+
+/**
+ * STABLE POST IDENTITY.
+ *
+ * JoinQuant regenerates `postId` and `backtestId` on EVERY request — issue the
+ * identical listV2 call twice and the same post comes back under new ids (old
+ * ids still dereference, so nothing fails loudly). The same trick applies to the
+ * factor dashboard's `factor_id` and the tutorial list's `studyId`. Only
+ * `uniqueKey` is stable across requests.
+ *
+ * Keying the stores on `postId` therefore re-added the same post on every crawl
+ * (10% of discovered.json was redundant) and, worse, made the `copied` map
+ * permanently unmatchable so cloned strategies were re-queued forever. Only the
+ * SHA256 content-hash check in strategy-fetch.js was catching it.
+ *
+ * Legacy rows predate `uniqueKey` being stored, so fall back to a deterministic
+ * digest of title+author, which collapses the historical duplicates too.
+ */
+function postKey(item) {
+  if (item && item.uniqueKey) return item.uniqueKey;
+  return legacyKey(item);
+}
+
+/**
+ * The pre-uniqueKey fallback identity: a digest of title+author. Rows migrated
+ * from the postId era carry this. When a later crawl brings the same post back
+ * WITH its real `uniqueKey`, the store must retire the legacy row rather than
+ * keep both — otherwise the migration boundary itself becomes a duplicate
+ * source. upgradeKey() below does that swap.
+ */
+function legacyKey(item) {
+  const basis = `${(item && item.title) || ''}|${(item && item.author) || (item && item.user && item.user.name) || ''}`;
+  return 'lk_' + crypto.createHash('sha1').update(basis, 'utf8').digest('hex').slice(0, 30);
+}
+
+/**
+ * Store `row` under its stable key, retiring any legacy title+author row for the
+ * same post. Returns true when this was genuinely new.
+ */
+function upsert(map, row) {
+  const k = postKey(row);
+  const lk = legacyKey(row);
+  if (k !== lk && map[lk]) delete map[lk];   // upgrade: legacy row -> real uniqueKey
+  if (map[k]) return false;
+  map[k] = row;
+  return true;
+}
 
 /** Tags that mark a post as research material worth keeping on its own. */
 const RESEARCH_TAGS = ['研报分享', '研报复现', '研究'];
@@ -138,7 +190,8 @@ function resourceKind(item, tags) {
 
 function commonFields(item, tags) {
   return {
-    postId: item.postId,
+    uniqueKey: item.uniqueKey || null,     // stable identity; postId is not
+    postId: item.postId,                   // ephemeral — display/label only
     title: item.title,
     url: `https://www.joinquant.com/view/community/detail/${item.postId}`,
     likes: parseInt(item.likeCount) || 0,
@@ -240,15 +293,14 @@ async function scrapeCommunityList(arg = 2) {
       let addedThisPage = 0;
 
       for (const s of batch.strategies) {
-        if (!seen.has(s.postId)) { seen.add(s.postId); store.scrapedPostIds.push(s.postId); }
-        if (store.strategies[s.postId]) continue;
-        store.strategies[s.postId] = s;
+        const k = postKey(s);
+        if (!seen.has(k)) { seen.add(k); store.scrapedPostIds.push(k); }
+        if (!upsert(store.strategies, s)) continue;
         newStrategies++; comboStrat++; addedThisPage++;
       }
 
       for (const r of batch.resources) {
-        if (resStore.resources[r.postId]) continue;
-        resStore.resources[r.postId] = r;
+        if (!upsert(resStore.resources, r)) continue;
         newResources++; comboRes++; addedThisPage++;
       }
 
@@ -328,13 +380,15 @@ function dedupeByTitle(items, score) {
 function buildCopyQueue() {
   const store = loadStore();
   const queueData = loadQueue();
-  const copiedPostIds = new Set(Object.keys(queueData.copied || {}));
+  const copiedKeys = new Set(Object.keys(queueData.copied || {}));
 
-  const pending = Object.values(store.strategies).filter(s => !copiedPostIds.has(s.postId));
+  const pending = Object.values(store.strategies).filter(s => !copiedKeys.has(postKey(s)));
   const deduped = dedupeByTitle(pending, scoreOf);
 
   queueData.queue = deduped.map((s, idx) => ({
     rank: idx + 1,
+    key: postKey(s),
+    uniqueKey: s.uniqueKey || null,
     postId: s.postId,
     backtestId: s.backtestId,
     title: s.title,
@@ -350,7 +404,7 @@ function buildCopyQueue() {
   queueData.lastUpdated = new Date().toISOString();
   saveQueueData(queueData);
 
-  console.log(`[discover] Strategy queue: ${queueData.queue.length} pending, ${copiedPostIds.size} copied`);
+  console.log(`[discover] Strategy queue: ${queueData.queue.length} pending, ${copiedKeys.size} copied`);
   if (dupRemoved > 0) {
     console.log(`[discover] Title dedup: removed ${dupRemoved} duplicate posts (${pending.length} → ${deduped.length})`);
   }
@@ -376,11 +430,13 @@ function buildResourceQueue() {
     (r.fileDownloads || 0) * 0.5 +
     (r.collectionCount || 0) * 0.25;
 
-  const pending = Object.values(store.resources).filter(r => !done.has(r.postId));
+  const pending = Object.values(store.resources).filter(r => !done.has(postKey(r)));
   const deduped = dedupeByTitle(pending, score);
 
   q.queue = deduped.map((r, idx) => ({
     rank: idx + 1,
+    key: postKey(r),
+    uniqueKey: r.uniqueKey || null,
     postId: r.postId,
     kind: r.kind,
     title: r.title,
@@ -412,22 +468,22 @@ function buildResourceQueue() {
   return q;
 }
 
-function markCopied(postId, backtestId, result = {}) {
+function markCopied(key, backtestId, result = {}) {
   const queueData = loadQueue();
   if (!queueData.copied) queueData.copied = {};
-  queueData.copied[postId] = { backtestId, copiedAt: new Date().toISOString(), ...result };
-  queueData.queue = queueData.queue.filter(s => s.postId !== postId);
+  queueData.copied[key] = { backtestId, copiedAt: new Date().toISOString(), ...result };
+  queueData.queue = queueData.queue.filter(s => (s.key || s.postId) !== key);
   saveQueueData(queueData);
-  console.log(`[discover] Marked ${postId} copied. Queue: ${queueData.queue.length} remaining`);
+  console.log(`[discover] Marked ${key} copied. Queue: ${queueData.queue.length} remaining`);
 }
 
-function markResourceIngested(postId, result = {}) {
+function markResourceIngested(key, result = {}) {
   const q = loadResourceQueue();
   if (!q.ingested) q.ingested = {};
-  q.ingested[postId] = { ingestedAt: new Date().toISOString(), ...result };
-  q.queue = q.queue.filter(r => r.postId !== postId);
+  q.ingested[key] = { ingestedAt: new Date().toISOString(), ...result };
+  q.queue = q.queue.filter(r => (r.key || r.postId) !== key);
   saveResourceQueue(q);
-  console.log(`[discover] Marked resource ${postId} ingested. Queue: ${q.queue.length} remaining`);
+  console.log(`[discover] Marked resource ${key} ingested. Queue: ${q.queue.length} remaining`);
 }
 
 function showStatus() {
@@ -513,4 +569,7 @@ module.exports = {
   isStrategyPost,
   isResourcePost,
   resourceKind,
+  postKey,
+  legacyKey,
+  upsert,
 };

@@ -28,3 +28,6 @@ enhance/results.tsv
 
 # Execution-mode config — holds the remote server host, never track
 config/exec.env
+
+# One-time uniqueKey migration backups — safety copies, not history
+data/*.pre-uniquekey.bak

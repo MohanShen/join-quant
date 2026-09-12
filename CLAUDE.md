@@ -29,10 +29,22 @@ node utils/strategy-discover.js --pages 20            # walk 20 pages per (cate,
 node utils/strategy-discover.js --pages 50 --limit 50 --cates 3,0
 node utils/strategy-discover.js status                # strategy + resource queue status
 
+# Research resources (community write-ups the strategy pipeline drops)
+node utils/resource-fetch.js                          # drain the resource queue
+node utils/resource-fetch.js 10 --kind notebook       # N of one kind
+node utils/resource-fetch.js --dry
+
 # Factor library (research input)
 node utils/factorlib-ingest.js                        # zz500 / 3y, both cost levels
 node utils/factorlib-ingest.js --universe zz1000 --range 1y
 node utils/factorlib-ingest.js --list-settings        # legal universe/range/fee values
+
+# 量化课堂 (137 lessons)
+node utils/tutorial-ingest.js                         # catalog + all bodies
+node utils/tutorial-ingest.js --catalog               # catalog only
+
+# One-off: re-key the stores from postId to uniqueKey (idempotent, backs up)
+node utils/migrate-unique-key.js --dry
 ```
 
 ### Chrome / auth setup (required for Pipeline 2)
@@ -127,6 +139,8 @@ Only the directories whose contents aren't self-evident:
 | `study/` | Auto-study team (understand a strategy FAMILY): `program.md`, `<family>/baseline.py` + `variants/`, transient `questions.json`/`findings.tsv` (gitignored). Writes back to `wiki/families/`. |
 | `research/` | Reserved for a future auto-**research** pipeline — broad context: new data / factors / trading ideas. NOT the current optimize loop (that is `enhance/`). Holds `factorlib/` (below). |
 | `research/factorlib/` | JQ **因子看板** ingested by `utils/factorlib-ingest.js`: 285 factors with formulas, IC/IR, quintile returns and turnover, pulled at **both** cost levels. `factors.tsv` + generated `README.md` (tracked); raw payloads in `data/factorlib/`. |
+| `research/tutorials/` | **量化课堂**, 137 lessons in 5 categories, ingested by `utils/tutorial-ingest.js` via `detailV2` (free). Category 新手专区 is a full factor-research methodology chain. |
+| `resources/` | **Raw layer #2** (alongside `strategies/`): community RESEARCH write-ups as `.md`, fetched by `utils/resource-fetch.js`. One file per post, frontmatter + full body. Notebook/attachment availability is recorded but the notebook itself is **not** downloadable (see Notes). |
 | `validated_strategies/` | Finalized strategies that completed VAL (Agent 4 archives here; **tracked** = product shelf) |
 | `data/` | **Tracked** (private backup) — discovery + resource state, `factorlib/` raw payloads. Only `data/cookies.json` is gitignored. |
 | `auth/` | Session cookies; `auth/cookies.json` itself is **gitignored** (default cookie path). |
@@ -138,8 +152,17 @@ Only the directories whose contents aren't self-evident:
 - Default cookie path in `index.js` is `auth/cookies.json`.
 - **Never call joinquant.com with raw `https`/`curl`** — use `utils/jq-http.js`. See the
   geo-block note under Pipeline 1.
-- The factor dashboard's `factor_id` is **regenerated per request**: the same factor comes
-  back under a different id on every call. Join factor rows on `name`, never on `factor_id`.
+- ⚠⚠ **JoinQuant re-mints IDs on every request.** `postId`, `backtestId`, the factor
+  dashboard's `factor_id` and the tutorial list's `studyId` are all regenerated per call —
+  the same object comes back under a new id each time, and old ids still dereference, so
+  nothing fails loudly. **Stable handles**: community post = `uniqueKey`; factor = `name`;
+  tutorial lesson = `title`. Never key a store, a dedup or a join on an id.
+  This is why `data/discovered.json` was 10% duplicates and the `copied` map never matched
+  (fixed by `utils/migrate-unique-key.js`; `postKey()` in strategy-discover.js is the rule).
+- Community **notebooks cannot be downloaded** — the post page only offers 克隆研究, which
+  copies into your research environment and **spends 积分 (credits)**; stored `notebookReport`
+  paths 302 to 404 on old posts. `resource-fetch.js` saves the free prose and records the
+  notebook as unavailable. The account currently holds **2 credits** and no VIP.
 - The factor dashboard defaults to `commisionFee=0` (no costs), the same blind spot as
   `harness.md` §2. At `commisionFee=18` only **6 of 285** factors keep a positive excess
   annual return, down from 23 — and every survivor is low-turnover.

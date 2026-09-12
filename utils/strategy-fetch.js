@@ -132,14 +132,19 @@ function saveQueue(queueData) {
   fs.writeFileSync(COPY_QUEUE_FILE, JSON.stringify(queueData, null, 2));
 }
 
-function markFetched(postId, result = {}) {
+/**
+ * Record a queue entry as done. `key` is the post's STABLE identity (uniqueKey),
+ * never its postId — JoinQuant re-mints postIds per request, so a postId-keyed
+ * map never matches on the next crawl and the strategy is re-queued forever.
+ */
+function markFetched(key, result = {}) {
   const queueData = loadQueue();
   if (!queueData.copied) queueData.copied = {};
-  queueData.copied[postId] = {
+  queueData.copied[key] = {
     fetchedAt: new Date().toISOString(),
     ...result,
   };
-  queueData.queue = queueData.queue.filter(s => s.postId !== postId);
+  queueData.queue = queueData.queue.filter(s => (s.key || s.postId) !== key);
   saveQueue(queueData);
 }
 
@@ -255,7 +260,7 @@ async function processQueue(maxToProcess = 0) {
     console.warn(`[fetch] No cached cookies — relying on the browser session (${jq.transport()}).`);
   }
 
-  const pending = queueData.queue.filter(s => !queueData.copied[s.postId]);
+  const pending = queueData.queue.filter(s => !queueData.copied[s.key || s.postId]);
   const total = maxToProcess > 0 ? Math.min(maxToProcess, pending.length) : pending.length;
 
   console.log(`[fetch] Processing up to ${total} strategies (${pending.length} pending total)`);
@@ -289,7 +294,7 @@ async function processQueue(maxToProcess = 0) {
       if (duplicateOfPostId) {
         console.log(`[fetch] DUPLICATE — content matches postId=${duplicateOfPostId.slice(0, 8)}, skipping postId=${entry.postId.slice(0, 8)}`);
         isDuplicate = true;
-        markFetched(entry.postId, { duplicateOf: duplicateOfPostId });
+        markFetched(entry.key || entry.postId, { duplicateOf: duplicateOfPostId });
         skippedDup++;
       }
     }
@@ -301,7 +306,7 @@ async function processQueue(maxToProcess = 0) {
       savedPath = saveStrategyFile(entry.postId, entry.backtestId, entry.title, sourceCode);
       registerContentHash(sourceCode, entry.postId, path.basename(savedPath));
       fetched = true;
-      markFetched(entry.postId, {
+      markFetched(entry.key || entry.postId, {
         sourceFile: path.basename(savedPath),
         stats,
       });
@@ -378,7 +383,7 @@ if (require.main === module) {
 
   if (dry) {
     const queueData = loadQueue();
-    const pending = queueData.queue.filter(s => !queueData.copied[s.postId]);
+    const pending = queueData.queue.filter(s => !queueData.copied[s.key || s.postId]);
     console.log(`=== Next ${Math.min(5, pending.length)} strategies in queue ===`);
     pending.slice(0, 5).forEach((s, i) => {
       console.log(`  #${i + 1} [likes=${s.likes} clones=${s.clones} score=${s.compositeScore}] ${s.title}`);

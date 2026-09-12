@@ -100,3 +100,73 @@ test('isGeoBlocked', async t => {
     assert.strictEqual(isGeoBlocked(undefined), false);
   });
 });
+
+// ── Stable post identity ─────────────────────────────────────────────────────
+// JoinQuant re-mints postId/backtestId on every request; only uniqueKey is
+// stable. These guard the keying that keeps the stores from growing duplicates.
+
+const { postKey, legacyKey, upsert } = require('../utils/strategy-discover');
+
+test('postKey', async t => {
+  await t.test('prefers uniqueKey when present', () => {
+    assert.strictEqual(postKey({ uniqueKey: 'u1', postId: 'p1', title: 't' }), 'u1');
+  });
+
+  await t.test('ignores a changing postId', () => {
+    const a = postKey({ uniqueKey: 'u1', postId: 'AAA', title: 't' });
+    const b = postKey({ uniqueKey: 'u1', postId: 'BBB', title: 't' });
+    assert.strictEqual(a, b);
+  });
+
+  await t.test('falls back to a deterministic title+author digest', () => {
+    const a = postKey({ title: 'x', author: 'bob', postId: 'AAA' });
+    const b = postKey({ title: 'x', author: 'bob', postId: 'BBB' });
+    assert.strictEqual(a, b);
+    assert.match(a, /^lk_[0-9a-f]{30}$/);
+  });
+
+  await t.test('separates same title by different authors', () => {
+    assert.notStrictEqual(
+      postKey({ title: 'x', author: 'bob' }),
+      postKey({ title: 'x', author: 'ada' })
+    );
+  });
+
+  await t.test('reads the author out of a raw listV2 row', () => {
+    assert.strictEqual(
+      postKey({ title: 'x', user: { name: 'bob' } }),
+      postKey({ title: 'x', author: 'bob' })
+    );
+  });
+});
+
+test('upsert', async t => {
+  await t.test('adds a new row once', () => {
+    const m = {};
+    assert.strictEqual(upsert(m, { uniqueKey: 'u1', title: 't' }), true);
+    assert.strictEqual(upsert(m, { uniqueKey: 'u1', title: 't' }), false);
+    assert.strictEqual(Object.keys(m).length, 1);
+  });
+
+  await t.test('does not re-add the same post under a fresh postId', () => {
+    const m = {};
+    upsert(m, { uniqueKey: 'u1', postId: 'AAA', title: 't' });
+    upsert(m, { uniqueKey: 'u1', postId: 'BBB', title: 't' });
+    assert.strictEqual(Object.keys(m).length, 1);
+  });
+
+  await t.test('upgrades a legacy title+author row to its real uniqueKey', () => {
+    const legacy = { title: 't', author: 'bob' };
+    const m = { [legacyKey(legacy)]: legacy };
+    const fresh = { uniqueKey: 'u1', title: 't', author: 'bob' };
+    assert.strictEqual(upsert(m, fresh), true);
+    assert.deepStrictEqual(Object.keys(m), ['u1']);   // legacy row retired, not duplicated
+  });
+
+  await t.test('leaves unrelated legacy rows alone', () => {
+    const other = { title: 'other', author: 'ada' };
+    const m = { [legacyKey(other)]: other };
+    upsert(m, { uniqueKey: 'u1', title: 't', author: 'bob' });
+    assert.strictEqual(Object.keys(m).length, 2);
+  });
+});

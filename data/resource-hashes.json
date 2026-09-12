@@ -1,0 +1,452 @@
+{
+  "4005324a503244ca0aca7004783e02c8c20abbbad48b2e3dbf01b74f795fcb03": {
+    "key": "lk_7014e4a5cc362a8f226d1924b1fb23",
+    "file": "2026-09-13_医疗行业多因子模型及单行业多因子测试代码模板-lk_7014e.md",
+    "registeredAt": "2026-09-12T16:24:07.616Z"
+  },
+  "e9445848fcdf8ad3f37d13e551907fa0bc10dbb59aef4ea8c1aeaab44087ca2c": {
+    "key": "lk_cd9b88b003b7a7ed2a0f8edb822d7e",
+    "file": "2026-09-13_宏观数据预测大盘走势-lk_cd9b8.md",
+    "registeredAt": "2026-09-12T16:24:09.779Z"
+  },
+  "c211b3be3df6bc2e271d80cb3b3b20c8f69cbbfebf5044b5435ebf11108edceb": {
+    "key": "lk_468ceb28ff68ec936cced6054028dc",
+    "file": "2026-09-13_基本面单因子测试_以BP因子为例-lk_468ce.md",
+    "registeredAt": "2026-09-12T16:24:12.089Z"
+  },
+  "499b543f7ee8ecb41929c85d0cde1e614628d2450d2aedcf5744b7b03f423caf": {
+    "key": "df07581179e8a3c73e46978cb52d7448",
+    "file": "2026-09-13_RSRS_阻力支撑相对强度_择时策略研究-df075811.md",
+    "registeredAt": "2026-09-12T16:24:13.999Z"
+  },
+  "66f9b3bc10bfa03828f3778b8a3e708f20398483e80b1a732ff319ae502a341d": {
+    "key": "4c13f3474a2164f7ea4620105c479c73",
+    "file": "2026-09-13_海龟交易体系_股票版-4c13f347.md",
+    "registeredAt": "2026-09-12T16:24:15.741Z"
+  },
+  "baa7005d334a07ee3b06fa8ce9628893353be770957f5308bca176a3abe3ab35": {
+    "key": "b27081ecc7bccfc7acc484f8a63e2459",
+    "file": "2026-09-13_复现东方证券研报--特质波动率因子研究-b27081ec.md",
+    "registeredAt": "2026-09-12T16:24:17.528Z"
+  },
+  "181145fc939515e15c9932dc1a4f9878aa574f0d2bf9a07e96287731cd1a4c1c": {
+    "key": "lk_051ef37662778a324b26da3bc12071",
+    "file": "2026-09-13_请大家来一起收集聚宽常见的骗人把戏-lk_051ef.md",
+    "registeredAt": "2026-09-12T16:30:06.944Z"
+  },
+  "a454adb1e090754765000fa17a84136a7cf5ce7c42b20ad41e39d19110318447": {
+    "key": "a26d952b0ead86724da69492f6ea23d6",
+    "file": "2026-09-13_配对交易_基于zscore的配对交易策略_胜率88_2-a26d952b.md",
+    "registeredAt": "2026-09-12T16:30:08.857Z"
+  },
+  "304eb0a0ddec3135d730e6bdf6b4d142ae8afb7faeb8de6afb41570a7cf69ed4": {
+    "key": "lk_cbce5175d85179aaa62de51f1edfb9",
+    "file": "2026-09-13_MACD日_周_月以及分钟级别研究_包含低位二次金叉算法-lk_cbce5.md",
+    "registeredAt": "2026-09-12T16:30:10.747Z"
+  },
+  "40efafed9de198206f41302aa33d2d3f61a46d86bb9387f97d4255c262dbb3d8": {
+    "key": "lk_04005c802a07e73aefe1d0b446e9ee",
+    "file": "2026-09-13_股价日内模式中蕴藏的选股因子-lk_04005.md",
+    "registeredAt": "2026-09-12T16:30:12.497Z"
+  },
+  "83461e7bacaacddc72b2b44a1247df98da8f658d9c6c2e2c29de43ffb1759f98": {
+    "key": "lk_cd3662a5e732feef181ca54c0bed12",
+    "file": "2026-09-13_原创_国金证券大Q_MT接收端_V1_5_5_已删除-lk_cd366.md",
+    "registeredAt": "2026-09-12T16:30:14.468Z"
+  },
+  "857151739795a9f59fd1797356fb857319377aef97912d1df0d079e3a427cc9f": {
+    "key": "lk_8a0f549e535f862d3bce598f383043",
+    "file": "2026-09-13_原创_国金证券MiniQ_MT云服务器版_已删除-lk_8a0f5.md",
+    "registeredAt": "2026-09-12T16:30:16.248Z"
+  },
+  "e9875d0797646c321e1320bb33ecfd46dba61d6adfea1298373fbb5fa39ef79c": {
+    "key": "03d288fcda3ed4ccc07dba12e22aef59",
+    "file": "2026-09-13_申万异常财务指标研报研究-03d288fc.md",
+    "registeredAt": "2026-09-12T16:30:17.968Z"
+  },
+  "4c933b996529f950f322dedfcd67260ed4c667ddd0a059d8178d13c0cca0ab87": {
+    "key": "39cd4223d39b4add4bbb06263638bdb0",
+    "file": "2026-09-13_近一个月是不是跌懵了_守正出奇4_0强势回归-39cd4223.md",
+    "registeredAt": "2026-09-12T16:30:20.438Z"
+  },
+  "79e58b59d07071fcc86375f8f0ff4db6e426935336fab1e84f003281988a1704": {
+    "key": "9a9a98c9ac0b498fe66303c02f765a5f",
+    "file": "2026-09-13_文竹3_4更新_年化17_6_最大回撤12_43-9a9a98c9.md",
+    "registeredAt": "2026-09-12T16:30:22.826Z"
+  },
+  "bda3d27da31e5ea90493f65335aaec3a197b6fa653d3c60cb07457b1b33c34f0": {
+    "key": "bc13c3c38c2170de00870da71c10ef53",
+    "file": "2026-09-13_中转站模块-bc13c3c3.md",
+    "registeredAt": "2026-09-12T16:30:24.689Z"
+  },
+  "db2d9ad524c014f46a69f2f5abb2dfac94267280ab8f3b31e26c7ad06d0a3d7e": {
+    "key": "be5f95f3ea6581558702f099eba049b3",
+    "file": "2026-09-13_全自动拟合神器_别再当拟合怪的奴隶了_我要让人人都能拟合-be5f95f3.md",
+    "registeredAt": "2026-09-12T16:30:26.435Z"
+  },
+  "fb342cec4693b4c23acdbe7220c43bf9b484ac994e44dfb45f326f550cca142e": {
+    "key": "f1a1089f4d0863418de796c2c4ba741c",
+    "file": "2026-09-13_满100删_同花顺跟单器_极速1秒下单_版本V2-f1a1089f.md",
+    "registeredAt": "2026-09-12T16:30:29.236Z"
+  },
+  "a8ff90dfd05eede9f929585dbc20643d967d26777a5a91c70239b565d9dca65a": {
+    "key": "lk_6306f6638ef2f9abf18ccdaada7bff",
+    "file": "2026-09-13_原创_四行代码打通聚宽到Q_MT多策略版_已删除-lk_6306f.md",
+    "registeredAt": "2026-09-12T16:30:31.310Z"
+  },
+  "39c963528e0201a1b4b6e201edb72c44b242f5d37cc5cddc1d80e02057b9e101": {
+    "key": "lk_d7755be6b6263c6d5f38a75568ac9b",
+    "file": "2026-09-13_玄学专题_友情赠送大家一段简单算卦的代码_万事都可占卜啊-lk_d7755.md",
+    "registeredAt": "2026-09-12T16:30:33.425Z"
+  },
+  "702503f67352813e40180b1b405096c6ef586ea8c16188a41743819645164514": {
+    "key": "af6a0f16d700d660eaa4e0e8fc537f32",
+    "file": "2026-09-13_QLS-28_市场冲击模型-af6a0f16.md",
+    "registeredAt": "2026-09-12T16:30:35.474Z"
+  },
+  "4a1c189d576eb7a023c4fa6d576707b79aaa832a097c21514f7307656c0bbd8c": {
+    "key": "125658d5b84e47b2cdf474aa51fe9cad",
+    "file": "2026-09-13_指数估值方法_P_E_P_B_P_S及EV_EBIT的实现-125658d5.md",
+    "registeredAt": "2026-09-12T16:30:37.192Z"
+  },
+  "fefa513b2fb3dae2d6758788dff603163ac930a43f2f68a206f2c540e0ab1240": {
+    "key": "lk_eee5eede8d9e94c4ab9ab7c8aa18c7",
+    "file": "2026-09-13_长江机器学习股票趋势预测-lk_eee5e.md",
+    "registeredAt": "2026-09-12T16:30:38.958Z"
+  },
+  "5e9e92ed91e8edef444e30c3f989e67903acc90673c4e2860029f0fa90e2b46f": {
+    "key": "2d59cb997b71bd88a567183aae22a1b6",
+    "file": "2026-09-13_机器学习_入门第一步-2d59cb99.md",
+    "registeredAt": "2026-09-12T16:30:40.664Z"
+  },
+  "65782ecea37867f2f60d46a6521a3a64f164fc2e401818862bb832b69be12668": {
+    "key": "000fa04e5796913ff11a67a0b39ccc15",
+    "file": "2026-09-13_策略研发_三进兵策略与研究报告-000fa04e.md",
+    "registeredAt": "2026-09-12T16:30:43.232Z"
+  },
+  "62dce415535460a0ef6be0f9af11d4cf827419400b1284323972041bbd07c23a": {
+    "key": "08de5ebcdd16df0b8c97870a5f3263c8",
+    "file": "2026-09-13_我扒了聚宽社区近两年2_5万条帖子_给你一张社区地图-08de5ebc.md",
+    "registeredAt": "2026-09-12T16:30:45.160Z"
+  },
+  "46906f3fccd2cbb25666db836a22dd271960a7a1ca3370c781f888f47e93a2c7": {
+    "key": "7b979157b377f8844aba3378704351f4",
+    "file": "2026-09-13_基于RSRS策略的改进年化20-7b979157.md",
+    "registeredAt": "2026-09-12T16:30:47.014Z"
+  },
+  "5a72f630b0ff82b1565ef45ec2294cd5b9b440ef598c19a2c0372d967ff0063c": {
+    "key": "lk_9a893698022ee886c6bc52cc7c5105",
+    "file": "2026-09-13_聚宽策略-飞书接收-同花顺自动交易_免购服务器-lk_9a893.md",
+    "registeredAt": "2026-09-12T16:30:48.735Z"
+  },
+  "c5bd12b0f586ce0edf5aca543df9bc17c55c9ad1b1dddaee5e3ca0c6a106ce7f": {
+    "key": "lk_f6ad4780b866881ec7e2941a405066",
+    "file": "2026-09-13_五因子特征重要性加权综合得分选股-lk_f6ad4.md",
+    "registeredAt": "2026-09-12T16:30:50.613Z"
+  },
+  "b807bf87d5096cc57b93c96d516e44850a27f10bbecf0fff5910e6d419311e24": {
+    "key": "c9f6d07d55dd46e493bac1451c421f96",
+    "file": "2026-09-13_上市公司发布股价波动风险提示性公告的买入策略-c9f6d07d.md",
+    "registeredAt": "2026-09-12T16:30:52.328Z"
+  },
+  "e5559ab073ae863c729999167041a1300e3354aa9842ce143f634eb436cad4a6": {
+    "key": "lk_ff7f5da2e93aaec9a8218b95ba682a",
+    "file": "2026-09-13_ROE_ROA_毛利率_选择股票-lk_ff7f5.md",
+    "registeredAt": "2026-09-12T16:30:54.219Z"
+  },
+  "a5dbbe7c688df2abaeafa2a1236f6e27ba7d619fe27dc3321270d3e393648044": {
+    "key": "eac0695833b702fd04d6632baeee66d5",
+    "file": "2026-09-13_实时模拟_强者恒强_10个交易日50_多收益-eac06958.md",
+    "registeredAt": "2026-09-12T16:30:55.946Z"
+  },
+  "a29e57f932a52000ab4620d0eb8f9abedf4f2840e3ae3813397d926b5b21b6bf": {
+    "key": "lk_a1e1370ea77fd04979dc84ec3e77bb",
+    "file": "2026-09-13_最简单的动量模型_能否应对A股暴涨_二-lk_a1e13.md",
+    "registeredAt": "2026-09-12T16:30:58.239Z"
+  },
+  "bee2feb2e2a48b0f5cfef94251d8e999f8edc8f476ab278638b6ff59f2add079": {
+    "key": "lk_7f691947d1049881215f6396ce55a5",
+    "file": "2026-09-13_计算_roe_ttm-lk_7f691.md",
+    "registeredAt": "2026-09-12T16:30:59.958Z"
+  },
+  "37d2ce5f84c146162192e2c465a8398593465cb5ff4743afffc7372a5431dcd9": {
+    "key": "lk_0bdfca7dba4af78f35accf9c3d1c25",
+    "file": "2026-09-13_低估值_高股息_小市值_低价股-lk_0bdfc.md",
+    "registeredAt": "2026-09-12T16:31:01.745Z"
+  },
+  "a9fa878e4023efaea8aac1ceef69ced32fc11642597f61948ae5a04ba237aefe": {
+    "key": "lk_e94898403f63482b4e72da2d2d9a60",
+    "file": "2026-09-13_多因子共振策略-lk_e9489.md",
+    "registeredAt": "2026-09-12T16:31:04.196Z"
+  },
+  "59ded9d755caf6b7e61bf147f94a19b2b075df02d9dacc476573dbf3ffb90f41": {
+    "key": "bf21d237b21ec8b299857da33e4ffdcc",
+    "file": "2026-09-13_基础研究_关于创60日新高股票在市场内占比的研究-bf21d237.md",
+    "registeredAt": "2026-09-12T16:31:06.489Z"
+  },
+  "a4fd4a1fb8a8d4a4fe9acd5f7105697ac8bc46c023fce42750cdb6e71f6c632d": {
+    "key": "d9bc8f7b1ddf88eb6a1e7ec2d5a96022",
+    "file": "2026-09-13_20170509更正_多日换手率的累加和_菜鸟练手-d9bc8f7b.md",
+    "registeredAt": "2026-09-12T16:31:08.560Z"
+  },
+  "5551a5d2180baf05a7376a5e105c70170c3ac77dd30c6b654b44881fbcb28e9b": {
+    "key": "3521cc627a7796033370f585b3c115f9",
+    "file": "2026-09-13_行为金融学_预测结果分析1_更新_2019_03_17-3521cc62.md",
+    "registeredAt": "2026-09-12T16:31:10.290Z"
+  },
+  "859effd77cdb0173dbf5dc009c12a314dd0d95c912262210cc87276e0ab8aa2b": {
+    "key": "4a19160c8f5e46c9815a42d0276710a7",
+    "file": "2026-09-13_打板基础设施_情绪周期量化评分系统-4a19160c.md",
+    "registeredAt": "2026-09-12T16:31:11.992Z"
+  },
+  "3a5152da4469320841b7ab769e3aec5f9175359ac11278b29276bf10859c6445": {
+    "key": "lk_6ce44a7e2b879ee9292b5e90924e88",
+    "file": "2026-09-13_带涨停基因的小市值_PT迁移版_沧海横流_26年半年战报-lk_6ce44.md",
+    "registeredAt": "2026-09-12T16:31:14.255Z"
+  },
+  "b9867d9427cc6f6cefac19312f109f8afabfb712f513fe8f89c41ed457890c0c": {
+    "key": "64a3eae27e4389ac5497c3df0f63f06b",
+    "file": "2026-09-13_打板基础设施_概念温度评分系统-64a3eae2.md",
+    "registeredAt": "2026-09-12T16:31:15.927Z"
+  },
+  "c62c0a3d69affdd48ccc891ec0c056a621844a886cb597d5766633d7542e76e6": {
+    "key": "lk_6d338883e415f2f613d764f6ee8aa0",
+    "file": "2026-09-13_大小盘风格轮动_基本面选股_涨停板接力-lk_6d338.md",
+    "registeredAt": "2026-09-12T16:31:17.734Z"
+  },
+  "ed590d9b95e502fc749b97ebce9f2a8c9a05f3008a77448fdb98708b5d776470": {
+    "key": "lk_e175b357ca3f071bbf2bafcd9c9528",
+    "file": "2026-09-13_稳健型涨停基因增强策略_v1_0-lk_e175b.md",
+    "registeredAt": "2026-09-12T16:31:19.688Z"
+  },
+  "74251ca801a192f4f8290a68d144a31bda1e39adb144ccfd8ff3c44d9d3a3628": {
+    "key": "2cee6c88749178f54969cc9baee5183a",
+    "file": "2026-09-13_成长策略-2cee6c88.md",
+    "registeredAt": "2026-09-12T16:31:21.730Z"
+  },
+  "13395de82b00632f8b70bd06e8a8e7eba2178c5fe7f4edd3caa80869e76bed78": {
+    "key": "lk_d45f8522efa4f5acb382b2ebdea070",
+    "file": "2026-09-13_一进二策略小优化-lk_d45f8.md",
+    "registeredAt": "2026-09-12T16:31:23.663Z"
+  },
+  "372ea5d01b8e876f256b9a24cae89d7049c290d2f0b8670cbeed99c8f5691d9c": {
+    "key": "lk_1056d26c65693988d990d9b50d0673",
+    "file": "2026-09-13_强者恒强策略不行-lk_1056d.md",
+    "registeredAt": "2026-09-12T16:31:26.066Z"
+  },
+  "62f2bd51f661e55f706a9617a726952b969d3c49b01d62c493fcb078eccb86c7": {
+    "key": "lk_a9a3389cf7fe2d9cc0ee25e4ae20f3",
+    "file": "2026-09-13_给五福多ETF动量增加卖出冷却_7年54倍_最大回撤16-lk_a9a33.md",
+    "registeredAt": "2026-09-12T16:31:27.848Z"
+  },
+  "18e49cb921bbee0d7161fe865c9663a59e362b722c4766fa838475c767b77912": {
+    "key": "910ce4b28aeaa77ec587b96d90bfb21d",
+    "file": "2026-09-13_年化14_回撤16_对标美股SCHD的A股红利股息策略月频-910ce4b2.md",
+    "registeredAt": "2026-09-12T16:31:29.654Z"
+  },
+  "8a84d44e9266329fbb2740a44666154cf2f9df5e7a3e90bf44b172b664e149b5": {
+    "key": "lk_634ceff0623c17bde5fd4d6c7d9137",
+    "file": "2026-09-13_最近大家的五福有赚钱吗-lk_634ce.md",
+    "registeredAt": "2026-09-12T16:31:32.150Z"
+  },
+  "d889a701bffd544ec7da28ef2ca85f4747286245903f8981be3e26c25e1d823f": {
+    "key": "lk_405607ac0c9847c0a2089503878b94",
+    "file": "2026-09-13_市场大小盘风格切换多因子轮动策略-lk_40560.md",
+    "registeredAt": "2026-09-12T16:31:34.359Z"
+  },
+  "5c198a0bfc3db342d9f9c42659f928b2f82216145a65409d4d364448b58fd507": {
+    "key": "4fe68e632d97c80e255eafe3e8bbfcd6",
+    "file": "2026-09-13_七星高照-V1_7_附PT迁移版回测结果截图-4fe68e63.md",
+    "registeredAt": "2026-09-12T16:31:36.230Z"
+  },
+  "be572f65c086c4625a35b45635ccaa794d7d941f79d9a674f14c0ee72b27bb21": {
+    "key": "45495a8cb640e492e486e1e62ada83a7",
+    "file": "2026-09-13_打板基础设施_选股过滤框架-45495a8c.md",
+    "registeredAt": "2026-09-12T16:31:37.975Z"
+  },
+  "0e4fdbb772ea6323ed7098527a5964c4d5eb8c100385f9b588b069f54e52cc7a": {
+    "key": "65e21f2c18b5f695c2e416647db0be82",
+    "file": "2026-09-13_情绪周期热度板块-65e21f2c.md",
+    "registeredAt": "2026-09-12T16:31:40.335Z"
+  },
+  "3397ccadcd935227bf739bc44a6f8b4f66c78f5448ae1ce659df6a49a02468c9": {
+    "key": "78e15f2242c83ec117e6f18628b17ab0",
+    "file": "2026-09-13_打板基础设施_涨停板识别框架-78e15f22.md",
+    "registeredAt": "2026-09-12T16:31:42.701Z"
+  },
+  "dda64e65a632cba9a6775607d3549390a0d8f2f5095bc2153a36990a345cdcb6": {
+    "key": "ecc1e29c4f7e83c28d3b06e49a5c6d1f",
+    "file": "2026-09-13_ETF轮动策略不怕下跌_怕快速反转-ecc1e29c.md",
+    "registeredAt": "2026-09-12T16:31:44.418Z"
+  },
+  "96b52f28ff37a1f28c978ca02994171f5ab1d0e027159f68f36392f383420acb": {
+    "key": "9ff165d9740ac7f32b7af482550b4e46",
+    "file": "2026-09-13_海龟交易策略-9ff165d9.md",
+    "registeredAt": "2026-09-12T16:31:46.667Z"
+  },
+  "7ee42df26f0b484981010d0b17bc4419674f96825a746f1334cff83c95365209": {
+    "key": "e02d625e6961530f97eb96cc3295774d",
+    "file": "2026-09-13_这个东西蛮好_模拟位不够的可以看看-e02d625e.md",
+    "registeredAt": "2026-09-12T16:31:49.133Z"
+  },
+  "513e76fa5af0aeb42b4e20c2b1a5e958660d9ae1f8bc344f1bc37af8a7699b65": {
+    "key": "f109a472a7022dbe26b3bb0e9ed574e5",
+    "file": "2026-09-13_自己搭建的一个10年230_收益率的银行股策略-f109a472.md",
+    "registeredAt": "2026-09-12T16:31:51.098Z"
+  },
+  "98ad96c87a06bcb10bb7bf1489e53b8ee912d3511bfe7cce9044bfdde58b2e61": {
+    "key": "6ab21adac8e8f4d96f4c9312fd1525ff",
+    "file": "2026-09-13_胜率19比1低风险策略-6ab21ada.md",
+    "registeredAt": "2026-09-12T16:31:52.959Z"
+  },
+  "52d0e035c616564c4f6fd52ed54c52a485e9d52049c8b0eb4f0a000bf3ab03cb": {
+    "key": "lk_bd5ce7fbe66b0c82ea5d9f13531503",
+    "file": "2026-09-13_弱转强_首板高开_低开混合策略优化-lk_bd5ce.md",
+    "registeredAt": "2026-09-12T16:31:54.730Z"
+  },
+  "6e234215ef53c0e5f80367dcd1d479f2c2838c6c2ad728abaa2f109580767724": {
+    "key": "ab74acf08a2f8c1245b6114e22c6c8da",
+    "file": "2026-09-13_周期共振进化版-ab74acf0.md",
+    "registeredAt": "2026-09-12T16:31:57.105Z"
+  },
+  "45fe04058b0ed73607b45f0bd73f4bdeecd7fb3eba2d5f9b476ed7c2c6416917": {
+    "key": "97047643154d6897bcf6113951ae35f9",
+    "file": "2026-09-13_Walk-Forward分析_滚动样本外验证实战-97047643.md",
+    "registeredAt": "2026-09-12T16:31:58.958Z"
+  },
+  "3caf5b5da8f8bcaeb340a11005649046d95d8ac9cd5682ce1527873d55cd2802": {
+    "key": "73d811011bc4b4d44c4bf5780354516e",
+    "file": "2026-09-13_一个防守型策率_不会大赚-73d81101.md",
+    "registeredAt": "2026-09-12T16:32:01.098Z"
+  },
+  "5921822cdc5304617de6780d6715bc2c7ff3de0417247b84672d2f0132adc50d": {
+    "key": "694763596249dbbd5acb6471bad7b321",
+    "file": "2026-09-13_六因子选股版破净策略_附PT迁移版在各时期的回测截图-69476359.md",
+    "registeredAt": "2026-09-12T16:32:02.926Z"
+  },
+  "cd7854684d958e0bee614c33ee631dc02bade0cb64f3ceee9e69c0dd61601cce": {
+    "key": "c075585c3784246ccd7e6ca0727a254b",
+    "file": "2026-09-13_解构巴菲特神话_在a股重现复利奇迹_2-c075585c.md",
+    "registeredAt": "2026-09-12T16:32:04.777Z"
+  },
+  "0082420f55931b9329400be8c36aabc7c65f0825e478394d2a09f30d3a81aa0b": {
+    "key": "526c24d6d9d8e414f74bf6a1ce383074",
+    "file": "2026-09-13_5年15倍的收益年化79_93可_拿走不谢-526c24d6.md",
+    "registeredAt": "2026-09-12T16:32:06.693Z"
+  },
+  "e1a2cea7acc6200b22a22d9a25e3478b5289796f89be37fdd69c24c8421341ab": {
+    "key": "7e16f6338d6a6f531916138f3b512ef1",
+    "file": "2026-09-13_微盘反转策略-7e16f633.md",
+    "registeredAt": "2026-09-12T16:32:08.555Z"
+  },
+  "3bc4c3e52fab039af57c8a52ff263ba2b0d47c57095e8cc7726c5c2ca38bb2e0": {
+    "key": "56fd65db041f7b61a5295a149295fa72",
+    "file": "2026-09-13_收益率极致优化_年化5150_夏普109_含未来函数_求修正-56fd65db.md",
+    "registeredAt": "2026-09-12T16:32:10.298Z"
+  },
+  "1f7f3e0c9ba4d6c83d42557e52ba6d98a1116a277011e135ee719c90131c93b0": {
+    "key": "lk_675962038293f73068c4e87b217944",
+    "file": "2026-09-13_小市值策略优化-lk_67596.md",
+    "registeredAt": "2026-09-12T16:32:12.086Z"
+  },
+  "2e372e101b3abaf91aba3b1ec5a3eeb5058a858f93edb3e888e5eec78901fb48": {
+    "key": "c46daccb62d1e7d2f0abeb434d60cd4c",
+    "file": "2026-09-13_模拟_最近三个月收益_74_38-c46daccb.md",
+    "registeredAt": "2026-09-12T16:32:14.510Z"
+  },
+  "b060026dcade41ed703219371d6d7a1941b0ba4a168d042e18173e3fb58fdf47": {
+    "key": "61ee57c547e6d6755e16e88ae94d5349",
+    "file": "2026-09-13_无未来函数_衡量点低位买入_超短线策略3_0-61ee57c5.md",
+    "registeredAt": "2026-09-12T16:32:16.541Z"
+  },
+  "5229ce09b7ba06031afd2c07182385ad0cf076de5af1938387399851e17f9894": {
+    "key": "lk_33d0b41219249e4c3a0cc8229c8ff3",
+    "file": "2026-09-13_美股昨晚大跌_A股今天跟不跟-lk_33d0b.md",
+    "registeredAt": "2026-09-12T16:32:18.598Z"
+  },
+  "4df4a1965017b94104cf0eab0d815316ffb3af9e79a981345ad02badde19bcd7": {
+    "key": "lk_ec5c2fda9fbffe4e1e5c751c8b9e83",
+    "file": "2026-09-13_连绿三天了_只能留点资金做T了_啥时候是个头呀-lk_ec5c2.md",
+    "registeredAt": "2026-09-12T16:32:20.319Z"
+  },
+  "3e73c2af2eb81b61dfc79b690d9d06fa721684c7f5e0bbb2bb04e871a573c11a": {
+    "key": "lk_0274695c4d960ff3f9094a56c19ea0",
+    "file": "2026-09-13_模拟_为啥还在显示委托的符号-lk_02746.md",
+    "registeredAt": "2026-09-12T16:32:22.272Z"
+  },
+  "c2cd38ca9c437b5d38e05bfc60de6dc7df21431626e382ad3de7e021cb84f251": {
+    "key": "lk_a93cb066c4615abacf1fba6df8af83",
+    "file": "2026-09-13_研究环境感觉快好了-lk_a93cb.md",
+    "registeredAt": "2026-09-12T16:32:24.170Z"
+  },
+  "e75db63b14a7cab7b12b1dfad6979afdc98a5f8eee3c2c18236f45e652158e85": {
+    "key": "lk_dfffd9d75794cb343a38aa64bd2e9b",
+    "file": "2026-09-13_聚宽的研究环境挂了-lk_dfffd.md",
+    "registeredAt": "2026-09-12T16:32:25.894Z"
+  },
+  "db11a11f070e75874d6015b4a4fc61c749d217b1c7702a2fcb2450ddfbd8b9c4": {
+    "key": "lk_272f89b3139865817d78676da546d1",
+    "file": "2026-09-13_择时微盘策略2017年至今_回撤仅20_一四月不择时-lk_272f8.md",
+    "registeredAt": "2026-09-12T16:32:27.780Z"
+  },
+  "cb525649dacab148e2bd12c4638682990be8eb2ba1506c6823a47a3b1d3cfb98": {
+    "key": "lk_9b78146c3c701f2500e38638e2ad87",
+    "file": "2026-09-13_9月11日复盘-lk_9b781.md",
+    "registeredAt": "2026-09-12T16:32:29.614Z"
+  },
+  "db641a12e1e3be83e12958f0df109076a85bf9ea07c3525f1858ffd98578929b": {
+    "key": "lk_614aa872c4b05c8c47e985efb506ba",
+    "file": "2026-09-13_让GPT-6分析小市值指数单日下跌3_后续走势-lk_614aa.md",
+    "registeredAt": "2026-09-12T16:32:31.464Z"
+  },
+  "dc736fd368f7937443570c7a497b657fbcc335511b640145aaccf48332c4e18f": {
+    "key": "lk_e367902df1f654a11ee5c348c6bbf6",
+    "file": "2026-09-13_是遇到极端行情还是我策略不行-lk_e3679.md",
+    "registeredAt": "2026-09-12T16:32:33.184Z"
+  },
+  "2925c9930fb7e3b44925dffb08c5462fbe873b0e5cd0dab8862eb196c9c8816e": {
+    "key": "lk_35b35f6e83976d6f97e2930de6e819",
+    "file": "2026-09-13_研究环境终于通了-lk_35b35.md",
+    "registeredAt": "2026-09-12T16:32:34.906Z"
+  },
+  "2abfd6fac6ac01f9970534fb9d8b0751772dd6f7e7dcc6fbf9b22c3f438e331d": {
+    "key": "lk_555d71fedca1d08372e6c2dac7c5d3",
+    "file": "2026-09-13_研究环境打不开-lk_555d7.md",
+    "registeredAt": "2026-09-12T16:32:36.631Z"
+  },
+  "be0d5ff4efa9d1f2076fe876062aaa48de8ba8e556bb79492a97900c5f8081c0": {
+    "key": "lk_46743637aea9fb812a0b0f5456e647",
+    "file": "2026-09-13_自动交易最坑的不是延迟_是重复下单_我被坑过一次-lk_46743.md",
+    "registeredAt": "2026-09-12T16:32:38.315Z"
+  },
+  "72eeb15c7305a7563dc672e17b8e5203d90e905b7b6b85d6e509d0494b540862": {
+    "key": "b58a6cae330cbf9320dd622b23559643",
+    "file": "2026-09-13_用_净利润增速_选股的聚宽策略_逻辑其实很朴素-b58a6cae.md",
+    "registeredAt": "2026-09-12T16:32:40.445Z"
+  },
+  "e3b1a0d808e6276cc810af9191e9ad3193e95b1945117537a49538b4f615f2e2": {
+    "key": "lk_fe70fe3d81211064d66cd78580ed5e",
+    "file": "2026-09-13_6_周回测验证_异动股池三连板命中率从_18_提升到_75-lk_fe70f.md",
+    "registeredAt": "2026-09-12T16:32:42.160Z"
+  },
+  "795777396890588a7bd36500efbe4c6b12b164ac52e530c52722b241d4a0ba74": {
+    "key": "lk_876f077cec71b98cdb39832674b173",
+    "file": "2026-09-13_打板破板-lk_876f0.md",
+    "registeredAt": "2026-09-12T16:32:43.881Z"
+  },
+  "64dfabe06f1bf8f21aebd7012cbd388994e674e9c3a754c1276e3e4b24d916ad": {
+    "key": "lk_4c9dcac0679296b86b269a0b4dfa18",
+    "file": "2026-09-13_把PEG从散户指标做成选股因子-lk_4c9dc.md",
+    "registeredAt": "2026-09-12T16:32:45.606Z"
+  },
+  "98205439647f2759b1053b1935d8b50ccdd4ed09ef6d57f457baa9e840da2b21": {
+    "key": "1a848344cec91b148a89c789f341b5b3",
+    "file": "2026-09-13_这版再修改了下_有兴趣的宽友可以一起交流-1a848344.md",
+    "registeredAt": "2026-09-12T16:32:47.368Z"
+  },
+  "327c90945f1c0bb86f3e456fb4e5179d7899f4795aa424fa4ba41a986e9a7fac": {
+    "key": "92d94185311ed3a54b0101c53ac7e1d0",
+    "file": "2026-09-13_小市值策略的鼻祖_年化收益56_89_10年160倍-92d94185.md",
+    "registeredAt": "2026-09-12T16:32:49.309Z"
+  }
+}

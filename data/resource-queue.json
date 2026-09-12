@@ -1,1564 +1,547 @@
 {
-  "lastUpdated": "2026-09-12T08:42:44.000Z",
-  "queue": [
-    {
-      "rank": 1,
-      "postId": "8924a29684cfae9152e5ef5ea7ea433b",
+  "lastUpdated": "2026-09-12T16:23:14.116Z",
+  "queue": [],
+  "ingested": {
+    "lk_7014e4a5cc362a8f226d1924b1fb23": {
+      "ingestedAt": "2026-09-12T16:24:07.617Z",
+      "file": "2026-09-13_医疗行业多因子模型及单行业多因子测试代码模板-lk_7014e.md",
       "kind": "notebook",
-      "title": "医疗行业多因子模型及单行业多因子测试代码模板",
-      "url": "https://www.joinquant.com/view/community/detail/8924a29684cfae9152e5ef5ea7ea433b",
-      "likes": 439,
-      "notebookPath": "行业IC模型_python3版.ipynb",
-      "notebookClones": 607,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "72b9b8cfbbddb2348bcde59c302c01cd",
-      "tags": [
-        "研究",
-        "多因子",
-        "策略"
-      ],
-      "compositeScore": "1222.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 2927
     },
-    {
-      "rank": 2,
-      "postId": "ddf73222ec196c85661a456d6a56ab74",
+    "lk_cd9b88b003b7a7ed2a0f8edb822d7e": {
+      "ingestedAt": "2026-09-12T16:24:09.780Z",
+      "file": "2026-09-13_宏观数据预测大盘走势-lk_cd9b8.md",
       "kind": "notebook",
-      "title": "宏观数据预测大盘走势",
-      "url": "https://www.joinquant.com/view/community/detail/ddf73222ec196c85661a456d6a56ab74",
-      "likes": 246,
-      "notebookPath": "/myproject/宏观数据预测大盘走势.ipynb",
-      "notebookClones": 482,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "机器学习",
-        "研究",
-        "择时",
-        "策略"
-      ],
-      "compositeScore": "839.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 1330
     },
-    {
-      "rank": 3,
-      "postId": "59a259d1a4e330ccccbd1e466a2a65d0",
+    "lk_468ceb28ff68ec936cced6054028dc": {
+      "ingestedAt": "2026-09-12T16:24:12.090Z",
+      "file": "2026-09-13_基本面单因子测试_以BP因子为例-lk_468ce.md",
       "kind": "notebook",
-      "title": "基本面单因子测试——以BP因子为例",
-      "url": "https://www.joinquant.com/view/community/detail/59a259d1a4e330ccccbd1e466a2a65d0",
-      "likes": 198,
-      "notebookPath": "单因子测试框架.ipynb",
-      "notebookClones": 499,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "e7832dbb57a1822773e8ea2226bcd4cc",
-      "tags": [],
-      "compositeScore": "796.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 2573
     },
-    {
-      "rank": 4,
-      "postId": "563d57415c3cb0404f972825c62bfe15",
+    "df07581179e8a3c73e46978cb52d7448": {
+      "ingestedAt": "2026-09-12T16:24:14.000Z",
+      "file": "2026-09-13_RSRS_阻力支撑相对强度_择时策略研究-df075811.md",
       "kind": "notebook",
-      "title": "RSRS(阻力支撑相对强度)择时策略研究",
-      "url": "https://www.joinquant.com/view/community/detail/563d57415c3cb0404f972825c62bfe15",
-      "likes": 236,
-      "notebookPath": "RSRS研究.ipynb",
-      "notebookClones": 370,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "轮动",
-        "研究",
-        "仓位管理",
-        "择时"
-      ],
-      "compositeScore": "708.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 383
     },
-    {
-      "rank": 5,
-      "postId": "258b34e1f4009b751f230889e3bb1d4c",
+    "4c13f3474a2164f7ea4620105c479c73": {
+      "ingestedAt": "2026-09-12T16:24:15.742Z",
+      "file": "2026-09-13_海龟交易体系_股票版-4c13f347.md",
       "kind": "research-note",
-      "title": "海龟交易体系（股票版）",
-      "url": "https://www.joinquant.com/view/community/detail/258b34e1f4009b751f230889e3bb1d4c",
-      "likes": 527,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "718ef9bc0fb2d6bf86a27cae8d5f7b62",
-      "tags": [
-        "研究",
-        "选股",
-        "仓位管理",
-        "择时"
-      ],
-      "compositeScore": "681.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 2399
     },
-    {
-      "rank": 6,
-      "postId": "f27c3e3c19dad8407ef202f901a4b34f",
+    "b27081ecc7bccfc7acc484f8a63e2459": {
+      "ingestedAt": "2026-09-12T16:24:17.529Z",
+      "file": "2026-09-13_复现东方证券研报--特质波动率因子研究-b27081ec.md",
       "kind": "notebook",
-      "title": "复现东方证券研报--特质波动率因子研究",
-      "url": "https://www.joinquant.com/view/community/detail/f27c3e3c19dad8407ef202f901a4b34f",
-      "likes": 184,
-      "notebookPath": "/东方证券--特质波动率研究.ipynb",
-      "notebookClones": 275,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "f1bb52ba4bbaa021ce4a3418e81f1537",
-      "tags": [
-        "研究",
-        "选股",
-        "特质波动率"
-      ],
-      "compositeScore": "545.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 4280
     },
-    {
-      "rank": 7,
-      "postId": "bf096cf8f90227641470a2c612e49a88",
+    "lk_051ef37662778a324b26da3bc12071": {
+      "ingestedAt": "2026-09-12T16:30:06.945Z",
+      "file": "2026-09-13_请大家来一起收集聚宽常见的骗人把戏-lk_051ef.md",
       "kind": "notebook",
-      "title": "请大家来一起收集聚宽常见的骗人把戏",
-      "url": "https://www.joinquant.com/view/community/detail/bf096cf8f90227641470a2c612e49a88",
-      "likes": 317,
-      "notebookPath": "/检测潜在虚假回测策略-归零韭菜.ipynb",
-      "notebookClones": 53,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "讨论",
-        "研究",
-        "心得"
-      ],
-      "compositeScore": "438.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 4322
     },
-    {
-      "rank": 8,
-      "postId": "95ede187598a85013f3a06cbb83c6fe8",
+    "a26d952b0ead86724da69492f6ea23d6": {
+      "ingestedAt": "2026-09-12T16:30:08.858Z",
+      "file": "2026-09-13_配对交易_基于zscore的配对交易策略_胜率88_2-a26d952b.md",
       "kind": "notebook",
-      "title": "【配对交易】基于zscore的配对交易策略（胜率88.2%）",
-      "url": "https://www.joinquant.com/view/community/detail/95ede187598a85013f3a06cbb83c6fe8",
-      "likes": 130,
-      "notebookPath": "配对交易.ipynb",
-      "notebookClones": 145,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "c79b4d81bd23cb76493d5fd3c7d5ff6f",
-      "tags": [
-        "讨论",
-        "研究",
-        "选股",
-        "择时",
-        "策略"
-      ],
-      "compositeScore": "343.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 618
     },
-    {
-      "rank": 9,
-      "postId": "054bcb9aa6b91ef0af3fcd98e92a6734",
+    "lk_cbce5175d85179aaa62de51f1edfb9": {
+      "ingestedAt": "2026-09-12T16:30:10.748Z",
+      "file": "2026-09-13_MACD日_周_月以及分钟级别研究_包含低位二次金叉算法-lk_cbce5.md",
       "kind": "notebook",
-      "title": "MACD日、周、月以及分钟级别研究（包含低位二次金叉算法）",
-      "url": "https://www.joinquant.com/view/community/detail/054bcb9aa6b91ef0af3fcd98e92a6734",
-      "likes": 122,
-      "notebookPath": "/【指标研究】MACD日、周、月以及分别级别研究（包含低位二次金叉算法）.ipynb",
-      "notebookClones": 164,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "讨论",
-        "函数",
-        "研究",
-        "心得"
-      ],
-      "compositeScore": "328.25",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 17
     },
-    {
-      "rank": 10,
-      "postId": "66ddcf2329cb4aafe2a5b5b50c2b0f74",
+    "lk_04005c802a07e73aefe1d0b446e9ee": {
+      "ingestedAt": "2026-09-12T16:30:12.498Z",
+      "file": "2026-09-13_股价日内模式中蕴藏的选股因子-lk_04005.md",
       "kind": "notebook",
-      "title": "股价日内模式中蕴藏的选股因子",
-      "url": "https://www.joinquant.com/view/community/detail/66ddcf2329cb4aafe2a5b5b50c2b0f74",
-      "likes": 82,
-      "notebookPath": "股价日内模式中蕴藏的选股因子.ipynb",
-      "notebookClones": 180,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [],
-      "compositeScore": "305.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 1385
     },
-    {
-      "rank": 11,
-      "postId": "fd4c33f4eca3467b787b710ce062007f",
-      "kind": "research-note",
-      "title": "「原创」四行代码打通聚宽到Q.MT多策略版[已删除]",
-      "url": "https://www.joinquant.com/view/community/detail/fd4c33f4eca3467b787b710ce062007f",
-      "likes": 170,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "研究",
-        "心得",
-        "讨论",
-        "函数"
-      ],
-      "compositeScore": "244.25",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 12,
-      "postId": "94c86cb857637edb3ecbe906cdd31379",
+    "lk_cd3662a5e732feef181ca54c0bed12": {
+      "ingestedAt": "2026-09-12T16:30:14.469Z",
+      "file": "2026-09-13_原创_国金证券大Q_MT接收端_V1_5_5_已删除-lk_cd366.md",
       "kind": "file",
-      "title": "「原创」国金证券大Q.MT接收端[V1.5.5][已删除]",
-      "url": "https://www.joinquant.com/view/community/detail/94c86cb857637edb3ecbe906cdd31379",
-      "likes": 83,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": "Redis-x64-5.0.14.1.zip",
-      "fileType": "application/x-zip-compressed",
-      "fileDownloads": 207,
-      "backtestId": null,
-      "tags": [
-        "工具"
-      ],
-      "compositeScore": "213.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 430
     },
-    {
-      "rank": 13,
-      "postId": "65ef26490ed3754755ec576b7ea37cf9",
+    "lk_8a0f549e535f862d3bce598f383043": {
+      "ingestedAt": "2026-09-12T16:30:16.249Z",
+      "file": "2026-09-13_原创_国金证券MiniQ_MT云服务器版_已删除-lk_8a0f5.md",
       "kind": "file",
-      "title": "「原创」国金证券MiniQ.MT云服务器版[已删除]",
-      "url": "https://www.joinquant.com/view/community/detail/65ef26490ed3754755ec576b7ea37cf9",
-      "likes": 100,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": "Redis-x64-5.0.14.1.zip",
-      "fileType": "application/x-zip-compressed",
-      "fileDownloads": 130,
-      "backtestId": null,
-      "tags": [
-        "研究",
-        "心得",
-        "策略",
-        "工具"
-      ],
-      "compositeScore": "196.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 2770
     },
-    {
-      "rank": 14,
-      "postId": "670d437af782568777de9104d04a64ad",
+    "03d288fcda3ed4ccc07dba12e22aef59": {
+      "ingestedAt": "2026-09-12T16:30:17.969Z",
+      "file": "2026-09-13_申万异常财务指标研报研究-03d288fc.md",
+      "kind": "notebook",
+      "bytes": 3633
+    },
+    "39cd4223d39b4add4bbb06263638bdb0": {
+      "ingestedAt": "2026-09-12T16:30:20.439Z",
+      "file": "2026-09-13_近一个月是不是跌懵了_守正出奇4_0强势回归-39cd4223.md",
       "kind": "research-note",
-      "title": "近一个月是不是跌懵了？守正出奇4.0强势回归！",
-      "url": "https://www.joinquant.com/view/community/detail/670d437af782568777de9104d04a64ad",
-      "likes": 99,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 106,
-      "backtestId": "c25bcd90b0b5f84914d7be1c34c0af1b",
-      "tags": [
-        "本地数据JQData",
-        "讨论",
-        "研究",
-        "策略"
-      ],
-      "compositeScore": "176.25",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 3558
     },
-    {
-      "rank": 15,
-      "postId": "6d1a6f0994e198e076282d417c5da853",
+    "9a9a98c9ac0b498fe66303c02f765a5f": {
+      "ingestedAt": "2026-09-12T16:30:22.827Z",
+      "file": "2026-09-13_文竹3_4更新_年化17_6_最大回撤12_43-9a9a98c9.md",
       "kind": "research-note",
-      "title": "【文竹3.4更新】年化17.6%|最大回撤12.43%",
-      "url": "https://www.joinquant.com/view/community/detail/6d1a6f0994e198e076282d417c5da853",
-      "likes": 135,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "67f80f337e369d626ec6410826206f6e",
-      "tags": [
-        "本地数据JQData",
-        "讨论",
-        "多因子",
-        "研究",
-        "策略"
-      ],
-      "compositeScore": "175.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 4400
     },
-    {
-      "rank": 16,
-      "postId": "d1f6667a095e680677421017efdd048a",
+    "bc13c3c38c2170de00870da71c10ef53": {
+      "ingestedAt": "2026-09-12T16:30:24.690Z",
+      "file": "2026-09-13_中转站模块-bc13c3c3.md",
       "kind": "file",
-      "title": "中转站模块",
-      "url": "https://www.joinquant.com/view/community/detail/d1f6667a095e680677421017efdd048a",
-      "likes": 50,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": "Project1mysql.exe",
-      "fileType": "application/x-msdownload",
-      "fileDownloads": 209,
-      "backtestId": null,
-      "tags": [
-        "讨论"
-      ],
-      "compositeScore": "169.25",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 241
     },
-    {
-      "rank": 17,
-      "postId": "c4bfd3d4597d848a072b938a30f839c9",
+    "be5f95f3ea6581558702f099eba049b3": {
+      "ingestedAt": "2026-09-12T16:30:26.436Z",
+      "file": "2026-09-13_全自动拟合神器_别再当拟合怪的奴隶了_我要让人人都能拟合-be5f95f3.md",
       "kind": "notebook",
-      "title": "全自动拟合神器 别再当拟合怪的奴隶了 我要让人人都能拟合",
-      "url": "https://www.joinquant.com/view/community/detail/c4bfd3d4597d848a072b938a30f839c9",
-      "likes": 56,
-      "notebookPath": "/寻优演示.ipynb",
-      "notebookClones": 92,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "44ca47bc4130142c1e55f6b3a62c1139",
-      "tags": [
-        "讨论",
-        "机器学习",
-        "心得",
-        "策略"
-      ],
-      "compositeScore": "168.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 2626
     },
-    {
-      "rank": 18,
-      "postId": "e8f58cbf6fe6e1a5da1307003d481c0d",
+    "f1a1089f4d0863418de796c2c4ba741c": {
+      "ingestedAt": "2026-09-12T16:30:29.237Z",
+      "file": "2026-09-13_满100删_同花顺跟单器_极速1秒下单_版本V2-f1a1089f.md",
       "kind": "file",
-      "title": "「满100删」同花顺跟单器：极速1秒下单「版本V2」",
-      "url": "https://www.joinquant.com/view/community/detail/e8f58cbf6fe6e1a5da1307003d481c0d",
-      "likes": 58,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": "聚宽转同花顺跟单器使用说明书.txt",
-      "fileType": "text/plain",
-      "fileDownloads": 175,
-      "backtestId": "2883f3af9e2ece37ef711711e65bff36",
-      "tags": [
-        "讨论",
-        "研究",
-        "选股",
-        "仓位管理",
-        "心得"
-      ],
-      "compositeScore": "164.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 2537
     },
-    {
-      "rank": 19,
-      "postId": "2535bb79065d0fdf98152879cf598bf5",
-      "kind": "notebook",
-      "title": "玄学专题：友情赠送大家一段简单算卦的代码，万事都可占卜啊",
-      "url": "https://www.joinquant.com/view/community/detail/2535bb79065d0fdf98152879cf598bf5",
-      "likes": 14,
-      "notebookPath": "易经算卦.ipynb",
-      "notebookClones": 89,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "函数",
-        "研究"
-      ],
-      "compositeScore": "106.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 20,
-      "postId": "c34abc5090db917e64f915f5ea5d889f",
-      "kind": "notebook",
-      "title": "【QLS-28】市场冲击模型",
-      "url": "https://www.joinquant.com/view/community/detail/c34abc5090db917e64f915f5ea5d889f",
-      "likes": 35,
-      "notebookPath": "市场冲击模型_new.ipynb",
-      "notebookClones": 48,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "讨论",
-        "研究",
-        "心得"
-      ],
-      "compositeScore": "95.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 21,
-      "postId": "cd087468b197535dafbc4a63f2af88bc",
-      "kind": "notebook",
-      "title": "长江机器学习股票趋势预测",
-      "url": "https://www.joinquant.com/view/community/detail/cd087468b197535dafbc4a63f2af88bc",
-      "likes": 25,
-      "notebookPath": "MNL.ipynb",
-      "notebookClones": 33,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "18681697d2ad6b3389fa8693a03d62e0",
-      "tags": [],
-      "compositeScore": "76.25",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 22,
-      "postId": "7194ee927ac06c1a8267471ed426eae5",
+    "lk_6306f6638ef2f9abf18ccdaada7bff": {
+      "ingestedAt": "2026-09-12T16:30:31.311Z",
+      "file": "2026-09-13_原创_四行代码打通聚宽到Q_MT多策略版_已删除-lk_6306f.md",
       "kind": "research-note",
-      "title": "基于RSRS策略的改进年化20%",
-      "url": "https://www.joinquant.com/view/community/detail/7194ee927ac06c1a8267471ed426eae5",
-      "likes": 38,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "dd263d4952d0b19d4bdb496c1af6ee62",
-      "tags": [
-        "讨论",
-        "研究"
-      ],
-      "compositeScore": "50.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 1185
     },
-    {
-      "rank": 23,
-      "postId": "dc0e1a4d32dd9913a231cbea2671f275",
-      "kind": "research-note",
-      "title": "聚宽策略-飞书接收-同花顺自动交易（免购服务器）",
-      "url": "https://www.joinquant.com/view/community/detail/dc0e1a4d32dd9913a231cbea2671f275",
-      "likes": 34,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "研究",
-        "事件驱动",
-        "基金",
-        "心得",
-        "策略"
-      ],
-      "compositeScore": "45.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 24,
-      "postId": "fce37d09e84c16ce0875c138526fae4d",
-      "kind": "research-note",
-      "title": "五因子特征重要性加权综合得分选股",
-      "url": "https://www.joinquant.com/view/community/detail/fce37d09e84c16ce0875c138526fae4d",
-      "likes": 33,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "28aa916562ab1b568f3af613542ae6da",
-      "tags": [
-        "讨论",
-        "择时",
-        "研究",
-        "选股",
-        "策略"
-      ],
-      "compositeScore": "44.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 25,
-      "postId": "9c888c2d9b334825f7048f1d457ce725",
+    "lk_d7755be6b6263c6d5f38a75568ac9b": {
+      "ingestedAt": "2026-09-12T16:30:33.426Z",
+      "file": "2026-09-13_玄学专题_友情赠送大家一段简单算卦的代码_万事都可占卜啊-lk_d7755.md",
       "kind": "notebook",
-      "title": "ROE ROA 毛利率 选择股票",
-      "url": "https://www.joinquant.com/view/community/detail/9c888c2d9b334825f7048f1d457ce725",
-      "likes": 4,
-      "notebookPath": "Roe_Roa_毛利选股.ipynb",
-      "notebookClones": 34,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [],
-      "compositeScore": "39.25",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 46
     },
-    {
-      "rank": 26,
-      "postId": "4f53fc3fc6d5eba2f1ab9d7ebc54fc1e",
+    "af6a0f16d700d660eaa4e0e8fc537f32": {
+      "ingestedAt": "2026-09-12T16:30:35.476Z",
+      "file": "2026-09-13_QLS-28_市场冲击模型-af6a0f16.md",
       "kind": "notebook",
-      "title": "我扒了聚宽社区近两年2.5万条帖子，给你一张社区地图",
-      "url": "https://www.joinquant.com/view/community/detail/4f53fc3fc6d5eba2f1ab9d7ebc54fc1e",
-      "likes": 20,
-      "notebookPath": "/社区全量数据-近两年25406帖.ipynb",
-      "notebookClones": 12,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "研究",
-        "心得",
-        "策略"
-      ],
-      "compositeScore": "37.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 199
     },
-    {
-      "rank": 27,
-      "postId": "22050d9e0ba8b6fdb4f2b27f9e7e21aa",
-      "kind": "research-note",
-      "title": "最简单的动量模型，能否应对A股暴涨？(二)",
-      "url": "https://www.joinquant.com/view/community/detail/22050d9e0ba8b6fdb4f2b27f9e7e21aa",
-      "likes": 27,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "e51302121607d01c59f979182afe084d",
-      "tags": [
-        "讨论",
-        "研究",
-        "心得",
-        "策略"
-      ],
-      "compositeScore": "37.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 28,
-      "postId": "0d8c2bd2a8cce6abec355dbafc7747bd",
-      "kind": "research-note",
-      "title": "实时模拟，强者恒强，10个交易日50%多收益",
-      "url": "https://www.joinquant.com/view/community/detail/0d8c2bd2a8cce6abec355dbafc7747bd",
-      "likes": 25,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "研究",
-        "函数",
-        "选股",
-        "策略"
-      ],
-      "compositeScore": "36.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 29,
-      "postId": "527bd89231a36b941ef9aea81fe7e869",
+    "125658d5b84e47b2cdf474aa51fe9cad": {
+      "ingestedAt": "2026-09-12T16:30:37.193Z",
+      "file": "2026-09-13_指数估值方法_P_E_P_B_P_S及EV_EBIT的实现-125658d5.md",
       "kind": "notebook",
-      "title": "计算 roe_ttm",
-      "url": "https://www.joinquant.com/view/community/detail/527bd89231a36b941ef9aea81fe7e869",
-      "likes": 6,
-      "notebookPath": "roe_TTM.ipynb",
-      "notebookClones": 27,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [],
-      "compositeScore": "36.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 344
     },
-    {
-      "rank": 30,
-      "postId": "11d9562ea12f13147006711cfd442f05",
-      "kind": "research-note",
-      "title": "低估值 + 高股息 + 小市值 + 低价股",
-      "url": "https://www.joinquant.com/view/community/detail/11d9562ea12f13147006711cfd442f05",
-      "likes": 28,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "db4224ac75d416500158aab1b181d1ef",
-      "tags": [
-        "讨论",
-        "择时",
-        "研究",
-        "选股",
-        "策略"
-      ],
-      "compositeScore": "35.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 31,
-      "postId": "5d88889d80fa69d9f630d452799827e1",
-      "kind": "research-note",
-      "title": "多因子共振策略",
-      "url": "https://www.joinquant.com/view/community/detail/5d88889d80fa69d9f630d452799827e1",
-      "likes": 21,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "64d963e81a66bebd7d9020b788ae7cff",
-      "tags": [
-        "讨论",
-        "多因子",
-        "研究",
-        "选股",
-        "策略"
-      ],
-      "compositeScore": "30.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 32,
-      "postId": "3f43b9ccc49b5b92520c0ca026f85616",
+    "lk_eee5eede8d9e94c4ab9ab7c8aa18c7": {
+      "ingestedAt": "2026-09-12T16:30:38.959Z",
+      "file": "2026-09-13_长江机器学习股票趋势预测-lk_eee5e.md",
       "kind": "notebook",
-      "title": "“行为金融学”预测结果分析1(更新: 2019/03/17)",
-      "url": "https://www.joinquant.com/view/community/detail/3f43b9ccc49b5b92520c0ca026f85616",
-      "likes": 12,
-      "notebookPath": "/duyi_html/duyi_html.ipynb",
-      "notebookClones": 9,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "e77b178218a12016aca26ace5d4bb0bf",
-      "tags": [
-        "讨论",
-        "研究",
-        "择时",
-        "心得",
-        "策略"
-      ],
-      "compositeScore": "27.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 897
     },
-    {
-      "rank": 33,
-      "postId": "c1aa608dadf7e2859fe8ff4c5a51afff",
-      "kind": "file",
-      "title": "带涨停基因的小市值 PT迁移版 沧海横流? 26年半年战报",
-      "url": "https://www.joinquant.com/view/community/detail/c1aa608dadf7e2859fe8ff4c5a51afff",
-      "likes": 13,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": "Ptrade回测日志：20260101-20260630 ￥100000 分钟周期.txt",
-      "fileType": "text/plain",
-      "fileDownloads": 19,
-      "backtestId": "9204c258dc25d605ec77a7b1c5e7624e",
-      "tags": [
-        "轮动",
-        "小市值",
-        "涨停"
-      ],
-      "compositeScore": "25.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+    "2d59cb997b71bd88a567183aae22a1b6": {
+      "ingestedAt": "2026-09-12T16:30:40.665Z",
+      "file": "2026-09-13_机器学习_入门第一步-2d59cb99.md",
+      "kind": "notebook",
+      "bytes": 8385
     },
-    {
-      "rank": 34,
-      "postId": "0992d122e9a02e72a04d6dd2d6c2cb6a",
+    "000fa04e5796913ff11a67a0b39ccc15": {
+      "ingestedAt": "2026-09-12T16:30:43.233Z",
+      "file": "2026-09-13_策略研发_三进兵策略与研究报告-000fa04e.md",
+      "kind": "notebook",
+      "bytes": 260
+    },
+    "08de5ebcdd16df0b8c97870a5f3263c8": {
+      "ingestedAt": "2026-09-12T16:30:45.161Z",
+      "file": "2026-09-13_我扒了聚宽社区近两年2_5万条帖子_给你一张社区地图-08de5ebc.md",
+      "kind": "notebook",
+      "bytes": 1785
+    },
+    "7b979157b377f8844aba3378704351f4": {
+      "ingestedAt": "2026-09-12T16:30:47.015Z",
+      "file": "2026-09-13_基于RSRS策略的改进年化20-7b979157.md",
+      "kind": "research-note",
+      "bytes": 324
+    },
+    "lk_9a893698022ee886c6bc52cc7c5105": {
+      "ingestedAt": "2026-09-12T16:30:48.736Z",
+      "file": "2026-09-13_聚宽策略-飞书接收-同花顺自动交易_免购服务器-lk_9a893.md",
+      "kind": "research-note",
+      "bytes": 648
+    },
+    "lk_f6ad4780b866881ec7e2941a405066": {
+      "ingestedAt": "2026-09-12T16:30:50.614Z",
+      "file": "2026-09-13_五因子特征重要性加权综合得分选股-lk_f6ad4.md",
+      "kind": "research-note",
+      "bytes": 897
+    },
+    "c9f6d07d55dd46e493bac1451c421f96": {
+      "ingestedAt": "2026-09-12T16:30:52.330Z",
+      "file": "2026-09-13_上市公司发布股价波动风险提示性公告的买入策略-c9f6d07d.md",
+      "kind": "notebook",
+      "bytes": 453
+    },
+    "lk_ff7f5da2e93aaec9a8218b95ba682a": {
+      "ingestedAt": "2026-09-12T16:30:54.220Z",
+      "file": "2026-09-13_ROE_ROA_毛利率_选择股票-lk_ff7f5.md",
+      "kind": "notebook",
+      "bytes": 37
+    },
+    "eac0695833b702fd04d6632baeee66d5": {
+      "ingestedAt": "2026-09-12T16:30:55.947Z",
+      "file": "2026-09-13_实时模拟_强者恒强_10个交易日50_多收益-eac06958.md",
+      "kind": "research-note",
+      "bytes": 203
+    },
+    "lk_a1e1370ea77fd04979dc84ec3e77bb": {
+      "ingestedAt": "2026-09-12T16:30:58.240Z",
+      "file": "2026-09-13_最简单的动量模型_能否应对A股暴涨_二-lk_a1e13.md",
+      "kind": "research-note",
+      "bytes": 417
+    },
+    "lk_7f691947d1049881215f6396ce55a5": {
+      "ingestedAt": "2026-09-12T16:30:59.959Z",
+      "file": "2026-09-13_计算_roe_ttm-lk_7f691.md",
+      "kind": "notebook",
+      "bytes": 127
+    },
+    "lk_0bdfca7dba4af78f35accf9c3d1c25": {
+      "ingestedAt": "2026-09-12T16:31:01.746Z",
+      "file": "2026-09-13_低估值_高股息_小市值_低价股-lk_0bdfc.md",
+      "kind": "research-note",
+      "bytes": 2530
+    },
+    "lk_e94898403f63482b4e72da2d2d9a60": {
+      "ingestedAt": "2026-09-12T16:31:04.197Z",
+      "file": "2026-09-13_多因子共振策略-lk_e9489.md",
+      "kind": "research-note",
+      "bytes": 323
+    },
+    "bf21d237b21ec8b299857da33e4ffdcc": {
+      "ingestedAt": "2026-09-12T16:31:06.490Z",
+      "file": "2026-09-13_基础研究_关于创60日新高股票在市场内占比的研究-bf21d237.md",
       "kind": "notebook+file",
-      "title": "【基础研究】关于创60日新高股票在市场内占比的研究",
-      "url": "https://www.joinquant.com/view/community/detail/0992d122e9a02e72a04d6dd2d6c2cb6a",
-      "likes": 11,
-      "notebookPath": "/A股创60日新高股票占比走势.ipynb",
-      "notebookClones": 7,
-      "fileName": "new_high_ratio_cache.xlsx",
-      "fileType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "fileDownloads": 4,
-      "backtestId": null,
-      "tags": [
-        "多因子",
-        "研究",
-        "60日新高占比"
-      ],
-      "compositeScore": "21.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 511
     },
-    {
-      "rank": 35,
-      "postId": "18586a2d9a5257822b2a3170c4aab348",
-      "kind": "research-note",
-      "title": "大小盘风格轮动 基本面选股 涨停板接力",
-      "url": "https://www.joinquant.com/view/community/detail/18586a2d9a5257822b2a3170c4aab348",
-      "likes": 14,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "8172c21a883ab6dec33268d6ad8cd36c",
-      "tags": [
-        "讨论",
-        "择时",
-        "研究",
-        "选股",
-        "策略"
-      ],
-      "compositeScore": "20.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 36,
-      "postId": "1d3cd90089d8d974e7e8ca1e5f663052",
-      "kind": "research-note",
-      "title": "稳健型涨停基因增强策略 v1.0",
-      "url": "https://www.joinquant.com/view/community/detail/1d3cd90089d8d974e7e8ca1e5f663052",
-      "likes": 12,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "2bf5cdc0ee493073435a2db5d3bf782d",
-      "tags": [
-        "择时",
-        "研究",
-        "函数",
-        "选股",
-        "策略"
-      ],
-      "compositeScore": "19.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 37,
-      "postId": "b6bc89ebde5f44295c4ad0d1bd0752cd",
-      "kind": "research-note",
-      "title": "一进二策略小优化",
-      "url": "https://www.joinquant.com/view/community/detail/b6bc89ebde5f44295c4ad0d1bd0752cd",
-      "likes": 11,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "fb9e5e46c857a2c46fac67efe7e1bc25",
-      "tags": [
-        "讨论",
-        "择时",
-        "研究",
-        "选股",
-        "策略"
-      ],
-      "compositeScore": "16.25",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 38,
-      "postId": "158c3d10ab37f6550c6eb3ac27dd9ca4",
-      "kind": "research-note",
-      "title": "强者恒强策略不行",
-      "url": "https://www.joinquant.com/view/community/detail/158c3d10ab37f6550c6eb3ac27dd9ca4",
-      "likes": 10,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "113946560a32c6ba91c4f96119d312e3",
-      "tags": [
-        "本地数据JQData",
-        "择时",
-        "多因子",
-        "研究",
-        "选股"
-      ],
-      "compositeScore": "14.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 39,
-      "postId": "1cc495be1432103381eee10658637d34",
-      "kind": "research-note",
-      "title": "给五福多ETF动量增加卖出冷却，7年54倍，最大回撤16%",
-      "url": "https://www.joinquant.com/view/community/detail/1cc495be1432103381eee10658637d34",
-      "likes": 10,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "b66f15644c2e8a9b8152f96030b73f4f",
-      "tags": [
-        "择时",
-        "研究",
-        "心得",
-        "策略",
-        "轮动"
-      ],
-      "compositeScore": "14.25",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 40,
-      "postId": "b5258274352086d8d775fd31d9d76942",
+    "d9bc8f7b1ddf88eb6a1e7ec2d5a96022": {
+      "ingestedAt": "2026-09-12T16:31:08.561Z",
+      "file": "2026-09-13_20170509更正_多日换手率的累加和_菜鸟练手-d9bc8f7b.md",
       "kind": "notebook",
-      "title": "最近大家的五福有赚钱吗",
-      "url": "https://www.joinquant.com/view/community/detail/b5258274352086d8d775fd31d9d76942",
-      "likes": 6,
-      "notebookPath": "/Untitled14.ipynb",
-      "notebookClones": 7,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "讨论"
-      ],
-      "compositeScore": "13.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 130
     },
-    {
-      "rank": 41,
-      "postId": "8d6831d4d62ad02f8dde8df00bf3cf12",
-      "kind": "research-note",
-      "title": "市场大小盘风格切换多因子轮动策略",
-      "url": "https://www.joinquant.com/view/community/detail/8d6831d4d62ad02f8dde8df00bf3cf12",
-      "likes": 11,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "cfa578d32d8f33ca76a363c9e105fb4a",
-      "tags": [
-        "讨论",
-        "择时",
-        "研究",
-        "选股",
-        "轮动"
-      ],
-      "compositeScore": "13.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 42,
-      "postId": "5d6e5bc16c161901e5981d87fd107656",
+    "3521cc627a7796033370f585b3c115f9": {
+      "ingestedAt": "2026-09-12T16:31:10.291Z",
+      "file": "2026-09-13_行为金融学_预测结果分析1_更新_2019_03_17-3521cc62.md",
       "kind": "notebook",
-      "title": "打板基础设施：情绪周期量化评分系统",
-      "url": "https://www.joinquant.com/view/community/detail/5d6e5bc16c161901e5981d87fd107656",
-      "likes": 3,
-      "notebookPath": "/Untitled31.ipynb",
-      "notebookClones": 5,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "讨论",
-        "研究",
-        "心得"
-      ],
-      "compositeScore": "9.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 1123
     },
-    {
-      "rank": 43,
-      "postId": "957e9778b32e5514b6821be1ee3b74bc",
-      "kind": "research-note",
-      "title": "胜率19比1低风险策略",
-      "url": "https://www.joinquant.com/view/community/detail/957e9778b32e5514b6821be1ee3b74bc",
-      "likes": 7,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "6719b904b5642e1f50b8596c30d9fdf7",
-      "tags": [
-        "策略",
-        "研究",
-        "高胜率"
-      ],
-      "compositeScore": "8.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+    "4a19160c8f5e46c9815a42d0276710a7": {
+      "ingestedAt": "2026-09-12T16:31:11.993Z",
+      "file": "2026-09-13_打板基础设施_情绪周期量化评分系统-4a19160c.md",
+      "kind": "notebook",
+      "bytes": 1527
     },
-    {
-      "rank": 44,
-      "postId": "52f1e5afb0e91fef4f1f8b8f93768523",
-      "kind": "research-note",
-      "title": "弱转强 + 首板高开、低开混合策略优化",
-      "url": "https://www.joinquant.com/view/community/detail/52f1e5afb0e91fef4f1f8b8f93768523",
-      "likes": 7,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "0d54f25a8c435ea8f85a6fdf700bc614",
-      "tags": [
-        "择时",
-        "研究",
-        "函数",
-        "选股",
-        "策略"
-      ],
-      "compositeScore": "8.25",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 45,
-      "postId": "1de883bec3cc8f8744f10267948c30a3",
-      "kind": "research-note",
-      "title": "周期共振进化版",
-      "url": "https://www.joinquant.com/view/community/detail/1de883bec3cc8f8744f10267948c30a3",
-      "likes": 4,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "5f0f28b2fbea26694435c18a16bd2def",
-      "tags": [
-        "研究",
-        "择时",
-        "策略"
-      ],
-      "compositeScore": "8.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 46,
-      "postId": "d4034be34c04bff9d19d21c75162d161",
-      "kind": "research-note",
-      "title": "打板基础设施：选股过滤框架",
-      "url": "https://www.joinquant.com/view/community/detail/d4034be34c04bff9d19d21c75162d161",
-      "likes": 5,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "229b2bf7d8576196530add45a335a6b5",
-      "tags": [
-        "研究",
-        "心得"
-      ],
-      "compositeScore": "6.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 47,
-      "postId": "0135ca5f2652dfe791389e46023b035b",
+    "lk_6ce44a7e2b879ee9292b5e90924e88": {
+      "ingestedAt": "2026-09-12T16:31:14.256Z",
+      "file": "2026-09-13_带涨停基因的小市值_PT迁移版_沧海横流_26年半年战报-lk_6ce44.md",
       "kind": "file",
-      "title": "六因子选股版破净策略 附PT迁移版在各时期的回测截图",
-      "url": "https://www.joinquant.com/view/community/detail/0135ca5f2652dfe791389e46023b035b",
-      "likes": 4,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": "Pt交易详情：20190101-20251231.csv",
-      "fileType": "text/csv",
-      "fileDownloads": 1,
-      "backtestId": "e629e32f96a72ae33f0dacf77f9330b2",
-      "tags": [
-        "选股",
-        "策略",
-        "轮动",
-        "破净"
-      ],
-      "compositeScore": "5.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 4460
     },
-    {
-      "rank": 48,
-      "postId": "7e7459c1b8c9e61330c6d551abc72f2f",
-      "kind": "research-note",
-      "title": "小市值策略优化",
-      "url": "https://www.joinquant.com/view/community/detail/7e7459c1b8c9e61330c6d551abc72f2f",
-      "likes": 3,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "27b63d034a4d1bc6643de09f4dcf0acb",
-      "tags": [
-        "讨论",
-        "择时",
-        "研究",
-        "选股",
-        "策略"
-      ],
-      "compositeScore": "4.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 49,
-      "postId": "1484a2f02a4f27e204b890d3a5d3113c",
-      "kind": "research-note",
-      "title": "******模拟：最近三个月收益：74.38%",
-      "url": "https://www.joinquant.com/view/community/detail/1484a2f02a4f27e204b890d3a5d3113c",
-      "likes": 3,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "bfa34b8cbd792749d8a129836c4a41ca",
-      "tags": [
-        "本地数据JQData",
-        "研究",
-        "选股",
-        "仓位管理",
-        "策略"
-      ],
-      "compositeScore": "4.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 50,
-      "postId": "29060bd1ae206945c411cd1e7d3cd22c",
-      "kind": "research-note",
-      "title": "海龟交易策略",
-      "url": "https://www.joinquant.com/view/community/detail/29060bd1ae206945c411cd1e7d3cd22c",
-      "likes": 2,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "a5e75f04bb72243bdde7403696425b21",
-      "tags": [
-        "多因子",
-        "研究",
-        "选股",
-        "心得",
-        "策略"
-      ],
-      "compositeScore": "3.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 51,
-      "postId": "9236f2e6d95b8b91d84c4f08d759760c",
+    "64a3eae27e4389ac5497c3df0f63f06b": {
+      "ingestedAt": "2026-09-12T16:31:15.928Z",
+      "file": "2026-09-13_打板基础设施_概念温度评分系统-64a3eae2.md",
       "kind": "notebook",
-      "title": "打板基础设施：概念温度评分系统",
-      "url": "https://www.joinquant.com/view/community/detail/9236f2e6d95b8b91d84c4f08d759760c",
-      "likes": 2,
-      "notebookPath": "/Untitled31.ipynb",
-      "notebookClones": 1,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "讨论",
-        "研究",
-        "心得"
-      ],
-      "compositeScore": "3.25",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 1701
     },
-    {
-      "rank": 52,
-      "postId": "b8a14b4bfeab52de10b5124967f9acc8",
-      "kind": "notebook+research-report",
-      "title": "美股昨晚大跌，A股今天跟不跟？",
-      "url": "https://www.joinquant.com/view/community/detail/b8a14b4bfeab52de10b5124967f9acc8",
-      "likes": 3,
-      "notebookPath": "/Untitled3.ipynb",
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "讨论",
-        "研报分享",
-        "择时",
-        "研究"
-      ],
-      "compositeScore": "3.25",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 53,
-      "postId": "1f10e3bbcdf85929dac4589964494066",
-      "kind": "file",
-      "title": "情绪周期热度板块",
-      "url": "https://www.joinquant.com/view/community/detail/1f10e3bbcdf85929dac4589964494066",
-      "likes": 1,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": "QQ浏览器截图20260912111456.png",
-      "fileType": "image/png",
-      "fileDownloads": 4,
-      "backtestId": "f7e0bf1ad76eb849f5d6c448c0445ab3",
-      "tags": [
-        "研究",
-        "事件驱动",
-        "策略"
-      ],
-      "compositeScore": "3.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 54,
-      "postId": "457960d28f8b9c53235541a966633b2c",
+    "lk_6d338883e415f2f613d764f6ee8aa0": {
+      "ingestedAt": "2026-09-12T16:31:17.736Z",
+      "file": "2026-09-13_大小盘风格轮动_基本面选股_涨停板接力-lk_6d338.md",
       "kind": "research-note",
-      "title": "打板基础设施：涨停板识别框架",
-      "url": "https://www.joinquant.com/view/community/detail/457960d28f8b9c53235541a966633b2c",
-      "likes": 2,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "134fd2f20a877cb62bced93b565f2749",
-      "tags": [
-        "讨论",
-        "研究",
-        "心得",
-        "策略"
-      ],
-      "compositeScore": "3.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 2553
     },
-    {
-      "rank": 55,
-      "postId": "02d894a848d7d7c33830f8143286fff8",
+    "lk_e175b357ca3f071bbf2bafcd9c9528": {
+      "ingestedAt": "2026-09-12T16:31:19.689Z",
+      "file": "2026-09-13_稳健型涨停基因增强策略_v1_0-lk_e175b.md",
+      "kind": "research-note",
+      "bytes": 273
+    },
+    "2cee6c88749178f54969cc9baee5183a": {
+      "ingestedAt": "2026-09-12T16:31:21.731Z",
+      "file": "2026-09-13_成长策略-2cee6c88.md",
+      "kind": "notebook",
+      "bytes": 17
+    },
+    "lk_d45f8522efa4f5acb382b2ebdea070": {
+      "ingestedAt": "2026-09-12T16:31:23.664Z",
+      "file": "2026-09-13_一进二策略小优化-lk_d45f8.md",
+      "kind": "research-note",
+      "bytes": 694
+    },
+    "lk_1056d26c65693988d990d9b50d0673": {
+      "ingestedAt": "2026-09-12T16:31:26.067Z",
+      "file": "2026-09-13_强者恒强策略不行-lk_1056d.md",
+      "kind": "research-note",
+      "bytes": 19
+    },
+    "lk_a9a3389cf7fe2d9cc0ee25e4ae20f3": {
+      "ingestedAt": "2026-09-12T16:31:27.849Z",
+      "file": "2026-09-13_给五福多ETF动量增加卖出冷却_7年54倍_最大回撤16-lk_a9a33.md",
+      "kind": "research-note",
+      "bytes": 2949
+    },
+    "910ce4b28aeaa77ec587b96d90bfb21d": {
+      "ingestedAt": "2026-09-12T16:31:29.655Z",
+      "file": "2026-09-13_年化14_回撤16_对标美股SCHD的A股红利股息策略月频-910ce4b2.md",
+      "kind": "research-note",
+      "bytes": 5877
+    },
+    "lk_634ceff0623c17bde5fd4d6c7d9137": {
+      "ingestedAt": "2026-09-12T16:31:32.151Z",
+      "file": "2026-09-13_最近大家的五福有赚钱吗-lk_634ce.md",
+      "kind": "notebook",
+      "bytes": 68
+    },
+    "lk_405607ac0c9847c0a2089503878b94": {
+      "ingestedAt": "2026-09-12T16:31:34.360Z",
+      "file": "2026-09-13_市场大小盘风格切换多因子轮动策略-lk_40560.md",
+      "kind": "research-note",
+      "bytes": 1725
+    },
+    "4fe68e632d97c80e255eafe3e8bbfcd6": {
+      "ingestedAt": "2026-09-12T16:31:36.231Z",
+      "file": "2026-09-13_七星高照-V1_7_附PT迁移版回测结果截图-4fe68e63.md",
+      "kind": "file",
+      "bytes": 4286
+    },
+    "45495a8cb640e492e486e1e62ada83a7": {
+      "ingestedAt": "2026-09-12T16:31:37.976Z",
+      "file": "2026-09-13_打板基础设施_选股过滤框架-45495a8c.md",
+      "kind": "research-note",
+      "bytes": 2090
+    },
+    "65e21f2c18b5f695c2e416647db0be82": {
+      "ingestedAt": "2026-09-12T16:31:40.336Z",
+      "file": "2026-09-13_情绪周期热度板块-65e21f2c.md",
+      "kind": "file",
+      "bytes": 563
+    },
+    "78e15f2242c83ec117e6f18628b17ab0": {
+      "ingestedAt": "2026-09-12T16:31:42.702Z",
+      "file": "2026-09-13_打板基础设施_涨停板识别框架-78e15f22.md",
+      "kind": "research-note",
+      "bytes": 3920
+    },
+    "ecc1e29c4f7e83c28d3b06e49a5c6d1f": {
+      "ingestedAt": "2026-09-12T16:31:44.419Z",
+      "file": "2026-09-13_ETF轮动策略不怕下跌_怕快速反转-ecc1e29c.md",
+      "kind": "research-note",
+      "bytes": 2057
+    },
+    "9ff165d9740ac7f32b7af482550b4e46": {
+      "ingestedAt": "2026-09-12T16:31:46.667Z",
+      "file": "2026-09-13_海龟交易策略-9ff165d9.md",
+      "kind": "research-note",
+      "bytes": 677
+    },
+    "e02d625e6961530f97eb96cc3295774d": {
+      "ingestedAt": "2026-09-12T16:31:49.134Z",
+      "file": "2026-09-13_这个东西蛮好_模拟位不够的可以看看-e02d625e.md",
+      "kind": "research-note",
+      "bytes": 245
+    },
+    "f109a472a7022dbe26b3bb0e9ed574e5": {
+      "ingestedAt": "2026-09-12T16:31:51.099Z",
+      "file": "2026-09-13_自己搭建的一个10年230_收益率的银行股策略-f109a472.md",
+      "kind": "file",
+      "bytes": 871
+    },
+    "6ab21adac8e8f4d96f4c9312fd1525ff": {
+      "ingestedAt": "2026-09-12T16:31:52.959Z",
+      "file": "2026-09-13_胜率19比1低风险策略-6ab21ada.md",
+      "kind": "research-note",
+      "bytes": 93
+    },
+    "lk_bd5ce7fbe66b0c82ea5d9f13531503": {
+      "ingestedAt": "2026-09-12T16:31:54.731Z",
+      "file": "2026-09-13_弱转强_首板高开_低开混合策略优化-lk_bd5ce.md",
+      "kind": "research-note",
+      "bytes": 401
+    },
+    "ab74acf08a2f8c1245b6114e22c6c8da": {
+      "ingestedAt": "2026-09-12T16:31:57.106Z",
+      "file": "2026-09-13_周期共振进化版-ab74acf0.md",
+      "kind": "research-note",
+      "bytes": 49
+    },
+    "97047643154d6897bcf6113951ae35f9": {
+      "ingestedAt": "2026-09-12T16:31:58.959Z",
+      "file": "2026-09-13_Walk-Forward分析_滚动样本外验证实战-97047643.md",
+      "kind": "research-note",
+      "bytes": 1963
+    },
+    "73d811011bc4b4d44c4bf5780354516e": {
+      "ingestedAt": "2026-09-12T16:32:01.099Z",
+      "file": "2026-09-13_一个防守型策率_不会大赚-73d81101.md",
       "kind": "research-report",
-      "title": "连绿三天了，只能留点资金做T了，啥时候是个头呀！",
-      "url": "https://www.joinquant.com/view/community/detail/02d894a848d7d7c33830f8143286fff8",
-      "likes": 3,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "讨论",
-        "研报分享",
-        "事件驱动",
-        "心得"
-      ],
-      "compositeScore": "3.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 10700
     },
-    {
-      "rank": 56,
-      "postId": "ae3286ef06d144e8463257e98e851add",
+    "694763596249dbbd5acb6471bad7b321": {
+      "ingestedAt": "2026-09-12T16:32:02.927Z",
+      "file": "2026-09-13_六因子选股版破净策略_附PT迁移版在各时期的回测截图-69476359.md",
       "kind": "file",
-      "title": "自己搭建的一个10年230%收益率的银行股策略",
-      "url": "https://www.joinquant.com/view/community/detail/ae3286ef06d144e8463257e98e851add",
-      "likes": 2,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": "屏幕截图 2026-09-12 001041.png",
-      "fileType": "image/png",
-      "fileDownloads": 0,
-      "backtestId": "8405694f33cf83d7da60a6d829202f66",
-      "tags": [
-        "讨论",
-        "选股",
-        "心得",
-        "策略"
-      ],
-      "compositeScore": "2.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 6158
     },
-    {
-      "rank": 57,
-      "postId": "20fb6a620a853fc8ce3b106a024e118b",
-      "kind": "research-note",
-      "title": "这个东西蛮好，模拟位不够的可以看看",
-      "url": "https://www.joinquant.com/view/community/detail/20fb6a620a853fc8ce3b106a024e118b",
-      "likes": 2,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "30c2afd4f6a329ed4d4de7f82ba27dcd",
-      "tags": [
-        "研究",
-        "心得",
-        "策略"
-      ],
-      "compositeScore": "2.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
-    },
-    {
-      "rank": 58,
-      "postId": "42d699579b5a69ebb0c1d6eca20f47e9",
+    "c075585c3784246ccd7e6ca0727a254b": {
+      "ingestedAt": "2026-09-12T16:32:04.778Z",
+      "file": "2026-09-13_解构巴菲特神话_在a股重现复利奇迹_2-c075585c.md",
       "kind": "file",
-      "title": "模拟******为啥还在显示委托的符号",
-      "url": "https://www.joinquant.com/view/community/detail/42d699579b5a69ebb0c1d6eca20f47e9",
-      "likes": 1,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": "S60910-15282562_com.baidu.searchbox.png",
-      "fileType": "image/png",
-      "fileDownloads": 3,
-      "backtestId": null,
-      "tags": [
-        "讨论",
-        "心得"
-      ],
-      "compositeScore": "2.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 3122
     },
-    {
-      "rank": 59,
-      "postId": "b81306332388efd260ffc1c19a4a64ea",
+    "526c24d6d9d8e414f74bf6a1ce383074": {
+      "ingestedAt": "2026-09-12T16:32:06.694Z",
+      "file": "2026-09-13_5年15倍的收益年化79_93可_拿走不谢-526c24d6.md",
       "kind": "research-note",
-      "title": "研究环境感觉快好了",
-      "url": "https://www.joinquant.com/view/community/detail/b81306332388efd260ffc1c19a4a64ea",
-      "likes": 2,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "研究"
-      ],
-      "compositeScore": "2.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 26
     },
-    {
-      "rank": 60,
-      "postId": "63ca69794a1f641ac22f5c15f417f63c",
+    "7e16f6338d6a6f531916138f3b512ef1": {
+      "ingestedAt": "2026-09-12T16:32:08.556Z",
+      "file": "2026-09-13_微盘反转策略-7e16f633.md",
+      "kind": "research-report",
+      "bytes": 33
+    },
+    "56fd65db041f7b61a5295a149295fa72": {
+      "ingestedAt": "2026-09-12T16:32:10.299Z",
+      "file": "2026-09-13_收益率极致优化_年化5150_夏普109_含未来函数_求修正-56fd65db.md",
       "kind": "research-note",
-      "title": "聚宽的研究环境挂了？",
-      "url": "https://www.joinquant.com/view/community/detail/63ca69794a1f641ac22f5c15f417f63c",
-      "likes": 2,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "研究"
-      ],
-      "compositeScore": "2.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 2726
     },
-    {
-      "rank": 61,
-      "postId": "c11648592ac05cac037dbc4cd7d8fde5",
+    "lk_675962038293f73068c4e87b217944": {
+      "ingestedAt": "2026-09-12T16:32:12.087Z",
+      "file": "2026-09-13_小市值策略优化-lk_67596.md",
       "kind": "research-note",
-      "title": "择时微盘策略2017年至今，回撤仅20%，一四月不择时",
-      "url": "https://www.joinquant.com/view/community/detail/c11648592ac05cac037dbc4cd7d8fde5",
-      "likes": 1,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "择时",
-        "多因子",
-        "研究",
-        "仓位管理"
-      ],
-      "compositeScore": "1.75",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 1226
     },
-    {
-      "rank": 62,
-      "postId": "34eeeee6f0d3e4a46681229a2db1beb2",
+    "c46daccb62d1e7d2f0abeb434d60cd4c": {
+      "ingestedAt": "2026-09-12T16:32:14.511Z",
+      "file": "2026-09-13_模拟_最近三个月收益_74_38-c46daccb.md",
       "kind": "research-note",
-      "title": "Walk-Forward分析：滚动样本外验证实战",
-      "url": "https://www.joinquant.com/view/community/detail/34eeeee6f0d3e4a46681229a2db1beb2",
-      "likes": 1,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "研究",
-        "策略"
-      ],
-      "compositeScore": "1.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 261
     },
-    {
-      "rank": 63,
-      "postId": "02dc73b46aa309b57d3ef72d42cf5fc4",
+    "61ee57c547e6d6755e16e88ae94d5349": {
+      "ingestedAt": "2026-09-12T16:32:16.542Z",
+      "file": "2026-09-13_无未来函数_衡量点低位买入_超短线策略3_0-61ee57c5.md",
+      "kind": "research-note",
+      "bytes": 219
+    },
+    "lk_33d0b41219249e4c3a0cc8229c8ff3": {
+      "ingestedAt": "2026-09-12T16:32:18.599Z",
+      "file": "2026-09-13_美股昨晚大跌_A股今天跟不跟-lk_33d0b.md",
+      "kind": "notebook+research-report",
+      "bytes": 5032
+    },
+    "lk_ec5c2fda9fbffe4e1e5c751c8b9e83": {
+      "ingestedAt": "2026-09-12T16:32:20.320Z",
+      "file": "2026-09-13_连绿三天了_只能留点资金做T了_啥时候是个头呀-lk_ec5c2.md",
+      "kind": "research-report",
+      "bytes": 115
+    },
+    "lk_0274695c4d960ff3f9094a56c19ea0": {
+      "ingestedAt": "2026-09-12T16:32:22.273Z",
+      "file": "2026-09-13_模拟_为啥还在显示委托的符号-lk_02746.md",
       "kind": "file",
-      "title": "9月11日复盘",
-      "url": "https://www.joinquant.com/view/community/detail/02dc73b46aa309b57d3ef72d42cf5fc4",
-      "likes": 1,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": "海龟交易法则（珍藏版） (中信金融投资经典系列) (（美）费思) (z-library.sk, 1lib.sk, z-lib.sk).pdf",
-      "fileType": "application/pdf",
-      "fileDownloads": 1,
-      "backtestId": "709ccf26a451d00cd28179373063298a",
-      "tags": [
-        "选股",
-        "仓位管理",
-        "心得",
-        "策略",
-        "轮动"
-      ],
-      "compositeScore": "1.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 27
     },
-    {
-      "rank": 64,
-      "postId": "3e60ed64312fcb28b25aef43ceb4770a",
+    "lk_a93cb066c4615abacf1fba6df8af83": {
+      "ingestedAt": "2026-09-12T16:32:24.171Z",
+      "file": "2026-09-13_研究环境感觉快好了-lk_a93cb.md",
+      "kind": "research-note",
+      "bytes": 138
+    },
+    "lk_dfffd9d75794cb343a38aa64bd2e9b": {
+      "ingestedAt": "2026-09-12T16:32:25.895Z",
+      "file": "2026-09-13_聚宽的研究环境挂了-lk_dfffd.md",
+      "kind": "research-note",
+      "bytes": 85
+    },
+    "lk_272f89b3139865817d78676da546d1": {
+      "ingestedAt": "2026-09-12T16:32:27.781Z",
+      "file": "2026-09-13_择时微盘策略2017年至今_回撤仅20_一四月不择时-lk_272f8.md",
+      "kind": "research-note",
+      "bytes": 35
+    },
+    "lk_9b78146c3c701f2500e38638e2ad87": {
+      "ingestedAt": "2026-09-12T16:32:29.615Z",
+      "file": "2026-09-13_9月11日复盘-lk_9b781.md",
       "kind": "file",
-      "title": "让GPT-6分析小市值指数单日下跌3%后续走势",
-      "url": "https://www.joinquant.com/view/community/detail/3e60ed64312fcb28b25aef43ceb4770a",
-      "likes": 0,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": "700057_TI_5y_research.pdf",
-      "fileType": "application/pdf",
-      "fileDownloads": 2,
-      "backtestId": "cb8346f5bc5bac88d7017694b8ee7409",
-      "tags": [
-        "讨论",
-        "研究"
-      ],
-      "compositeScore": "1.25",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 6481
     },
-    {
-      "rank": 65,
-      "postId": "91d1679e65502736f7bec5d415f81107",
-      "kind": "research-note",
-      "title": "是遇到极端行情还是我策略不行？",
-      "url": "https://www.joinquant.com/view/community/detail/91d1679e65502736f7bec5d415f81107",
-      "likes": 1,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "研究",
-        "选股",
-        "仓位管理",
-        "心得",
-        "策略"
-      ],
-      "compositeScore": "1.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+    "lk_614aa872c4b05c8c47e985efb506ba": {
+      "ingestedAt": "2026-09-12T16:32:31.465Z",
+      "file": "2026-09-13_让GPT-6分析小市值指数单日下跌3_后续走势-lk_614aa.md",
+      "kind": "file",
+      "bytes": 118
     },
-    {
-      "rank": 66,
-      "postId": "774c1f23da84188f7e76108a2fda3471",
+    "lk_e367902df1f654a11ee5c348c6bbf6": {
+      "ingestedAt": "2026-09-12T16:32:33.185Z",
+      "file": "2026-09-13_是遇到极端行情还是我策略不行-lk_e3679.md",
       "kind": "research-note",
-      "title": "研究环境终于通了",
-      "url": "https://www.joinquant.com/view/community/detail/774c1f23da84188f7e76108a2fda3471",
-      "likes": 1,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "研究"
-      ],
-      "compositeScore": "1.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 22
     },
-    {
-      "rank": 67,
-      "postId": "fc82eb0df89dd35f4e78e0bc19623593",
+    "lk_35b35f6e83976d6f97e2930de6e819": {
+      "ingestedAt": "2026-09-12T16:32:34.907Z",
+      "file": "2026-09-13_研究环境终于通了-lk_35b35.md",
       "kind": "research-note",
-      "title": "研究环境打不开",
-      "url": "https://www.joinquant.com/view/community/detail/fc82eb0df89dd35f4e78e0bc19623593",
-      "likes": 1,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "讨论",
-        "研究"
-      ],
-      "compositeScore": "1.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 24
     },
-    {
-      "rank": 68,
-      "postId": "80998b0c4f3af0b44a6fad452c569a58",
+    "lk_555d71fedca1d08372e6c2dac7c5d3": {
+      "ingestedAt": "2026-09-12T16:32:36.632Z",
+      "file": "2026-09-13_研究环境打不开-lk_555d7.md",
       "kind": "research-note",
-      "title": "自动交易最坑的不是延迟，是重复下单，我被坑过一次",
-      "url": "https://www.joinquant.com/view/community/detail/80998b0c4f3af0b44a6fad452c569a58",
-      "likes": 0,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "讨论",
-        "研究",
-        "心得",
-        "策略"
-      ],
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 68
     },
-    {
-      "rank": 69,
-      "postId": "f02bfcfebb2b4607ab7859b48c4060a1",
+    "lk_46743637aea9fb812a0b0f5456e647": {
+      "ingestedAt": "2026-09-12T16:32:38.316Z",
+      "file": "2026-09-13_自动交易最坑的不是延迟_是重复下单_我被坑过一次-lk_46743.md",
       "kind": "research-note",
-      "title": "6 周回测验证：异动股池三连板命中率从 18% 提升到 75",
-      "url": "https://www.joinquant.com/view/community/detail/f02bfcfebb2b4607ab7859b48c4060a1",
-      "likes": 0,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "择时",
-        "多因子",
-        "研究",
-        "心得",
-        "策略"
-      ],
-      "compositeScore": "0.25",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 463
     },
-    {
-      "rank": 70,
-      "postId": "7ce4c670701bb2ce48b149ec8fb296fc",
-      "kind": "research-note",
-      "title": "ETF轮动策略不怕下跌，怕快速反转",
-      "url": "https://www.joinquant.com/view/community/detail/7ce4c670701bb2ce48b149ec8fb296fc",
-      "likes": 0,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "讨论",
-        "研究",
-        "心得",
-        "策略",
-        "轮动"
-      ],
-      "compositeScore": "0.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+    "b58a6cae330cbf9320dd622b23559643": {
+      "ingestedAt": "2026-09-12T16:32:40.446Z",
+      "file": "2026-09-13_用_净利润增速_选股的聚宽策略_逻辑其实很朴素-b58a6cae.md",
+      "kind": "file+research-report",
+      "bytes": 3596
     },
-    {
-      "rank": 71,
-      "postId": "c3869b00fdd45c4a3ff6ffe7ab5f0560",
+    "lk_fe70fe3d81211064d66cd78580ed5e": {
+      "ingestedAt": "2026-09-12T16:32:42.161Z",
+      "file": "2026-09-13_6_周回测验证_异动股池三连板命中率从_18_提升到_75-lk_fe70f.md",
       "kind": "research-note",
-      "title": "收益率极致优化！年化5150%夏普109（含未来函数，求修正",
-      "url": "https://www.joinquant.com/view/community/detail/c3869b00fdd45c4a3ff6ffe7ab5f0560",
-      "likes": 0,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "8be664f4a1146dabfacd8436213b2a4a",
-      "tags": [
-        "讨论",
-        "择时",
-        "机器学习",
-        "研究"
-      ],
-      "compositeScore": "0.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 1287
     },
-    {
-      "rank": 72,
-      "postId": "edc119a5aa7dcca4213e483492248860",
+    "lk_876f077cec71b98cdb39832674b173": {
+      "ingestedAt": "2026-09-12T16:32:43.881Z",
+      "file": "2026-09-13_打板破板-lk_876f0.md",
       "kind": "research-note",
-      "title": "打板破板",
-      "url": "https://www.joinquant.com/view/community/detail/edc119a5aa7dcca4213e483492248860",
-      "likes": 0,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": null,
-      "tags": [
-        "研究",
-        "选股",
-        "仓位管理",
-        "心得",
-        "策略"
-      ],
-      "compositeScore": "0.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 20
     },
-    {
-      "rank": 73,
-      "postId": "b616d8e872007a394de311fb0ac7d423",
+    "lk_4c9dcac0679296b86b269a0b4dfa18": {
+      "ingestedAt": "2026-09-12T16:32:45.607Z",
+      "file": "2026-09-13_把PEG从散户指标做成选股因子-lk_4c9dc.md",
       "kind": "research-note",
-      "title": "把PEG从散户指标做成选股因子",
-      "url": "https://www.joinquant.com/view/community/detail/b616d8e872007a394de311fb0ac7d423",
-      "likes": 0,
-      "notebookPath": null,
-      "notebookClones": 0,
-      "fileName": null,
-      "fileType": null,
-      "fileDownloads": 0,
-      "backtestId": "2935b9af2ed75eea2fdaee03618ca18d",
-      "tags": [
-        "择时",
-        "多因子",
-        "研究"
-      ],
-      "compositeScore": "0.00",
-      "addedToQueueAt": "2026-09-12T08:42:44.000Z"
+      "bytes": 1443
+    },
+    "1a848344cec91b148a89c789f341b5b3": {
+      "ingestedAt": "2026-09-12T16:32:47.369Z",
+      "file": "2026-09-13_这版再修改了下_有兴趣的宽友可以一起交流-1a848344.md",
+      "kind": "research-note",
+      "bytes": 1885
+    },
+    "92d94185311ed3a54b0101c53ac7e1d0": {
+      "ingestedAt": "2026-09-12T16:32:49.310Z",
+      "file": "2026-09-13_小市值策略的鼻祖_年化收益56_89_10年160倍-92d94185.md",
+      "kind": "research-report",
+      "bytes": 326
     }
-  ],
-  "ingested": {}
+  },
+  "migratedAt": "2026-09-12T16:22:02.029Z"
 }
