@@ -1,52 +1,49 @@
 {
-  "fetchedAt": "2026-07-21T02:26:38.196Z",
+  "fetchedAt": "2026-09-12T08:44:42.339Z",
   "entries": [
     {
-      "postId": "da82dd02f874a1a5f656b3f6725d5afa",
-      "backtestId": "4c82cb77ab8c1c8d797d721affbf4d73",
-      "title": "五境掘金全球ETF轮动（中频）",
-      "url": "https://www.joinquant.com/view/community/detail/da82dd02f874a1a5f656b3f6725d5afa",
-      "sourceFile": "2026-07-21_五境掘金全球ETF轮动_中频-da82dd02.py",
+      "postId": "6e1255fab52662fb9f50d9723ff40539",
+      "backtestId": "c5ea449b80c811edda3e831734e3feae",
+      "title": "年化64%的市值选股策略（有止损模块）",
+      "url": "https://www.joinquant.com/view/community/detail/6e1255fab52662fb9f50d9723ff40539",
       "stats": {
-        "annualReturn": 0.56698816521374,
-        "cumulativeReturn": 9.9277279448,
-        "maxDrawdown": 0.17557521863839,
-        "sharpe": 1.8816825604285,
-        "winRatio": 0.61363636363636,
-        "tradingDays": 1331,
-        "periodLabel": "2026-07"
+        "annualReturn": 0.64427018750993,
+        "cumulativeReturn": 18.84115186,
+        "maxDrawdown": 0.47150007552632,
+        "sharpe": 1.9873945294343,
+        "winRatio": 0.60163666121113,
+        "tradingDays": 1502,
+        "periodLabel": "2019-03"
       }
     },
     {
-      "postId": "d86aee952623e40026f246f73cb3e04b",
-      "backtestId": "5b36376dcd9f2f7317bf81f73242972f",
-      "title": "统计局数据套利 5年年化26%",
-      "url": "https://www.joinquant.com/view/community/detail/d86aee952623e40026f246f73cb3e04b",
-      "sourceFile": "2026-07-21_统计局数据套利_5年年化26-d86aee95.py",
+      "postId": "cefad376ab51d4b33869320a22d45d2f",
+      "backtestId": "0c644d0f69f8f35d0fe94841bf2ef3f3",
+      "title": "年化42%的市值选股与阶梯调仓策略",
+      "url": "https://www.joinquant.com/view/community/detail/cefad376ab51d4b33869320a22d45d2f",
       "stats": {
-        "annualReturn": 0.26369654602511,
-        "cumulativeReturn": 2.90080747236,
-        "maxDrawdown": 0.17379383744592,
-        "sharpe": 1.2477498560078,
-        "winRatio": 0.70967741935484,
-        "tradingDays": 1454,
-        "periodLabel": "2026-06"
+        "annualReturn": 0.42813604007356,
+        "cumulativeReturn": 7.50855148,
+        "maxDrawdown": 0.52964662643664,
+        "sharpe": 1.645923729923,
+        "winRatio": 0.51158555094607,
+        "tradingDays": 1502,
+        "periodLabel": "2019-03"
       }
     },
     {
-      "postId": "23584678e87d760cef5d12a0b778d377",
-      "backtestId": "02e19a33ad636ee782703c2f424cb724",
-      "title": "从想法到策略，我如何让 AI 帮我评审量化回测？",
-      "url": "https://www.joinquant.com/view/community/detail/23584678e87d760cef5d12a0b778d377",
-      "sourceFile": "2026-07-21_从想法到策略_我如何让_AI_帮我评审量化回测-23584678.py",
+      "postId": "258b34e1f4009b751f230889e3bb1d4c",
+      "backtestId": "718ef9bc0fb2d6bf86a27cae8d5f7b62",
+      "title": "海龟交易体系（股票版）",
+      "url": "https://www.joinquant.com/view/community/detail/258b34e1f4009b751f230889e3bb1d4c",
       "stats": {
-        "annualReturn": 1.1661510257778,
-        "cumulativeReturn": 41.405186358,
-        "maxDrawdown": 0.20009606744091,
-        "sharpe": 3.6553806434877,
-        "winRatio": 0.54009819967267,
-        "tradingDays": 1212,
-        "periodLabel": "2025-12"
+        "annualReturn": 0.30083256389495,
+        "cumulativeReturn": 2.7563157,
+        "maxDrawdown": 0.21730309773912,
+        "sharpe": 1.3066232753597,
+        "winRatio": 0.42105263157895,
+        "tradingDays": 1258,
+        "periodLabel": "2019-03"
       }
     }
   ]

@@ -1,8 +1,884 @@
 {
-  "lastUpdated": "2026-07-21T02:26:23.219Z",
+  "lastUpdated": "2026-09-12T08:42:43.996Z",
   "queue": [
     {
-      "rank": 4,
+      "rank": 5,
+      "postId": "679abdf1035be2b8b36f664a7b66c297",
+      "backtestId": "6b80700b68525e0b5168ce4aaf4fb605",
+      "title": "回馈社区，分享市盈率股息率选股+均线止盈交易策略",
+      "url": "https://www.joinquant.com/view/community/detail/679abdf1035be2b8b36f664a7b66c297",
+      "likes": 428,
+      "clones": 2144,
+      "annualReturn": null,
+      "compositeScore": "1500.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 6,
+      "postId": "2d9fe593fbf1cd4b5c1e5b907f9aa0b7",
+      "backtestId": "22da6ac4165fc4d038397e18b00bd309",
+      "title": "穿越牛熊基业长青的价值精选策略",
+      "url": "https://www.joinquant.com/view/community/detail/2d9fe593fbf1cd4b5c1e5b907f9aa0b7",
+      "likes": 246,
+      "clones": 1950,
+      "annualReturn": null,
+      "compositeScore": "1221.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 7,
+      "postId": "8924a29684cfae9152e5ef5ea7ea433b",
+      "backtestId": "72b9b8cfbbddb2348bcde59c302c01cd",
+      "title": "医疗行业多因子模型及单行业多因子测试代码模板",
+      "url": "https://www.joinquant.com/view/community/detail/8924a29684cfae9152e5ef5ea7ea433b",
+      "likes": 439,
+      "clones": 1139,
+      "annualReturn": null,
+      "compositeScore": "1008.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 8,
+      "postId": "0e28480733f78d4173e7765d56e3e9c8",
+      "backtestId": "e9273a5de74cd66b2436dc4621fb0d26",
+      "title": "趋势交易能赚钱吗？商品期货动量效应挖掘初探",
+      "url": "https://www.joinquant.com/view/community/detail/0e28480733f78d4173e7765d56e3e9c8",
+      "likes": 252,
+      "clones": 1271,
+      "annualReturn": null,
+      "compositeScore": "887.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 9,
+      "postId": "d512a7d7e8ddf4058c6773f38f96d695",
+      "backtestId": "7803aa182435f46a951422c1ee8f436e",
+      "title": "【新手入门教程】MACD均线择时策略",
+      "url": "https://www.joinquant.com/view/community/detail/d512a7d7e8ddf4058c6773f38f96d695",
+      "likes": 165,
+      "clones": 1091,
+      "annualReturn": null,
+      "compositeScore": "710.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 10,
+      "postId": "b8565d6b0eafefd1edb05a26b6fc687f",
+      "backtestId": "e84e9706350d7dbb6e74778855e4ba53",
+      "title": "年化15.84%的单均线策略",
+      "url": "https://www.joinquant.com/view/community/detail/b8565d6b0eafefd1edb05a26b6fc687f",
+      "likes": 130,
+      "clones": 956,
+      "annualReturn": null,
+      "compositeScore": "608.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 11,
+      "postId": "95ede187598a85013f3a06cbb83c6fe8",
+      "backtestId": "c79b4d81bd23cb76493d5fd3c7d5ff6f",
+      "title": "【配对交易】基于zscore的配对交易策略（胜率88.2%）",
+      "url": "https://www.joinquant.com/view/community/detail/95ede187598a85013f3a06cbb83c6fe8",
+      "likes": 130,
+      "clones": 674,
+      "annualReturn": null,
+      "compositeScore": "467.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 12,
+      "postId": "f27c3e3c19dad8407ef202f901a4b34f",
+      "backtestId": "f1bb52ba4bbaa021ce4a3418e81f1537",
+      "title": "复现东方证券研报--特质波动率因子研究",
+      "url": "https://www.joinquant.com/view/community/detail/f27c3e3c19dad8407ef202f901a4b34f",
+      "likes": 184,
+      "clones": 559,
+      "annualReturn": null,
+      "compositeScore": "463.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 13,
+      "postId": "5447f36a9acdd218468f207b50730b61",
+      "backtestId": "01e90be1d92e736f5491873c5872dbe1",
+      "title": "也谈技术指标布林通道的策略",
+      "url": "https://www.joinquant.com/view/community/detail/5447f36a9acdd218468f207b50730b61",
+      "likes": 111,
+      "clones": 619,
+      "annualReturn": null,
+      "compositeScore": "420.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 14,
+      "postId": "59a259d1a4e330ccccbd1e466a2a65d0",
+      "backtestId": "e7832dbb57a1822773e8ea2226bcd4cc",
+      "title": "基本面单因子测试——以BP因子为例",
+      "url": "https://www.joinquant.com/view/community/detail/59a259d1a4e330ccccbd1e466a2a65d0",
+      "likes": 198,
+      "clones": 428,
+      "annualReturn": null,
+      "compositeScore": "412.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 15,
+      "postId": "31109b2d1b4944b1aabd9056aea39a36",
+      "backtestId": "0d4f14457450ea4cb4a1366c9725f665",
+      "title": "均线系统",
+      "url": "https://www.joinquant.com/view/community/detail/31109b2d1b4944b1aabd9056aea39a36",
+      "likes": 10,
+      "clones": 471,
+      "annualReturn": null,
+      "compositeScore": "245.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 16,
+      "postId": "e7b1725d4e91160457644b96094c476c",
+      "backtestId": "f21c4c69f835bbccaeb258e45367b2f0",
+      "title": "把社区基础文档里的羊驼和均线策略合并了一下",
+      "url": "https://www.joinquant.com/view/community/detail/e7b1725d4e91160457644b96094c476c",
+      "likes": 8,
+      "clones": 456,
+      "annualReturn": null,
+      "compositeScore": "236.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 17,
+      "postId": "0230af9f190552f35456b50fb5cd1f09",
+      "backtestId": "827df0fc24768605a555e393396a6719",
+      "title": "年化15.48%，盈亏比3.818的双均线策略",
+      "url": "https://www.joinquant.com/view/community/detail/0230af9f190552f35456b50fb5cd1f09",
+      "likes": 42,
+      "clones": 315,
+      "annualReturn": null,
+      "compositeScore": "199.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 18,
+      "postId": "dc8ba4ac04a1b96f5f8e5d650fe409c0",
+      "backtestId": "cf86cc7d5c5c3a83501f746dcf7d14aa",
+      "title": "阿飞的狂暴之路3",
+      "url": "https://www.joinquant.com/view/community/detail/dc8ba4ac04a1b96f5f8e5d650fe409c0",
+      "likes": 2,
+      "clones": 381,
+      "annualReturn": null,
+      "compositeScore": "192.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 19,
+      "postId": "e21bb7f83a97a0df6f0ce632c2830e76",
+      "backtestId": "e03ff79bad0c52e4333946a8f787fc05",
+      "title": "传统反转因子的改进与实测",
+      "url": "https://www.joinquant.com/view/community/detail/e21bb7f83a97a0df6f0ce632c2830e76",
+      "likes": 54,
+      "clones": 272,
+      "annualReturn": null,
+      "compositeScore": "190.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 20,
+      "postId": "7194ee927ac06c1a8267471ed426eae5",
+      "backtestId": "dd263d4952d0b19d4bdb496c1af6ee62",
+      "title": "基于RSRS策略的改进年化20%",
+      "url": "https://www.joinquant.com/view/community/detail/7194ee927ac06c1a8267471ed426eae5",
+      "likes": 38,
+      "clones": 249,
+      "annualReturn": null,
+      "compositeScore": "162.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 21,
+      "postId": "fbfa58d8c94d54cc6976ea9e56318bae",
+      "backtestId": "7cf410ef6b413bf8340bdc27d00251b2",
+      "title": "基于K线最短路径构造的非流动性因子",
+      "url": "https://www.joinquant.com/view/community/detail/fbfa58d8c94d54cc6976ea9e56318bae",
+      "likes": 39,
+      "clones": 243,
+      "annualReturn": null,
+      "compositeScore": "160.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 22,
+      "postId": "6d1a6f0994e198e076282d417c5da853",
+      "backtestId": "67f80f337e369d626ec6410826206f6e",
+      "title": "【文竹3.4更新】年化17.6%|最大回撤12.43%",
+      "url": "https://www.joinquant.com/view/community/detail/6d1a6f0994e198e076282d417c5da853",
+      "likes": 135,
+      "clones": 20,
+      "annualReturn": null,
+      "compositeScore": "145.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 23,
+      "postId": "670d437af782568777de9104d04a64ad",
+      "backtestId": "c25bcd90b0b5f84914d7be1c34c0af1b",
+      "title": "近一个月是不是跌懵了？守正出奇4.0强势回归！",
+      "url": "https://www.joinquant.com/view/community/detail/670d437af782568777de9104d04a64ad",
+      "likes": 99,
+      "clones": 84,
+      "annualReturn": null,
+      "compositeScore": "141.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 24,
+      "postId": "22050d9e0ba8b6fdb4f2b27f9e7e21aa",
+      "backtestId": "e51302121607d01c59f979182afe084d",
+      "title": "最简单的动量模型，能否应对A股暴涨？(二)",
+      "url": "https://www.joinquant.com/view/community/detail/22050d9e0ba8b6fdb4f2b27f9e7e21aa",
+      "likes": 27,
+      "clones": 221,
+      "annualReturn": null,
+      "compositeScore": "137.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 25,
+      "postId": "da27a120dec839d6e519020a2bb5c487",
+      "backtestId": "2d738b50b10c81580f27b1bc862a4618",
+      "title": "能够在2018年获得10%+年化的择时策略，了解一下？",
+      "url": "https://www.joinquant.com/view/community/detail/da27a120dec839d6e519020a2bb5c487",
+      "likes": 45,
+      "clones": 170,
+      "annualReturn": null,
+      "compositeScore": "130.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 26,
+      "postId": "4535e25f5da5ad79fde7c91eedf2ee30",
+      "backtestId": "ab17ceefba5910539eb9f1026fdeaf23",
+      "title": "机器学习SVM用法示例策略",
+      "url": "https://www.joinquant.com/view/community/detail/4535e25f5da5ad79fde7c91eedf2ee30",
+      "likes": 7,
+      "clones": 216,
+      "annualReturn": null,
+      "compositeScore": "115.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 27,
+      "postId": "ad2d67e939a9c08afb32926c24331087",
+      "backtestId": "7ac63d0177dba383c0b0d87e391b5a06",
+      "title": "中长线买入卖出点选择",
+      "url": "https://www.joinquant.com/view/community/detail/ad2d67e939a9c08afb32926c24331087",
+      "likes": 7,
+      "clones": 210,
+      "annualReturn": null,
+      "compositeScore": "112.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 28,
+      "postId": "1d6c741f361a247f61a8f621e1584b85",
+      "backtestId": "133c611e906dc273d9dfb987b839ca39",
+      "title": "这年头喝茅台也没用了",
+      "url": "https://www.joinquant.com/view/community/detail/1d6c741f361a247f61a8f621e1584b85",
+      "likes": 2,
+      "clones": 219,
+      "annualReturn": null,
+      "compositeScore": "111.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 29,
+      "postId": "5d88889d80fa69d9f630d452799827e1",
+      "backtestId": "64d963e81a66bebd7d9020b788ae7cff",
+      "title": "多因子共振策略",
+      "url": "https://www.joinquant.com/view/community/detail/5d88889d80fa69d9f630d452799827e1",
+      "likes": 21,
+      "clones": 165,
+      "annualReturn": null,
+      "compositeScore": "103.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 30,
+      "postId": "4b73d09170b2450284c86e6da001e5d8",
+      "backtestId": "2873385cd9fa97d77eedc3b7f15b8b21",
+      "title": "利用爬虫进行每日市场行情推送",
+      "url": "https://www.joinquant.com/view/community/detail/4b73d09170b2450284c86e6da001e5d8",
+      "likes": 26,
+      "clones": 154,
+      "annualReturn": null,
+      "compositeScore": "103.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 31,
+      "postId": "fce37d09e84c16ce0875c138526fae4d",
+      "backtestId": "28aa916562ab1b568f3af613542ae6da",
+      "title": "五因子特征重要性加权综合得分选股",
+      "url": "https://www.joinquant.com/view/community/detail/fce37d09e84c16ce0875c138526fae4d",
+      "likes": 33,
+      "clones": 138,
+      "annualReturn": null,
+      "compositeScore": "102.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 32,
+      "postId": "e8f58cbf6fe6e1a5da1307003d481c0d",
+      "backtestId": "2883f3af9e2ece37ef711711e65bff36",
+      "title": "「满100删」同花顺跟单器：极速1秒下单「版本V2」",
+      "url": "https://www.joinquant.com/view/community/detail/e8f58cbf6fe6e1a5da1307003d481c0d",
+      "likes": 58,
+      "clones": 86,
+      "annualReturn": null,
+      "compositeScore": "101.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 33,
+      "postId": "328b2b8fc5d1fc5feafa2f590b04ee52",
+      "backtestId": "35b0ca196bd8a72a019df6041fbd4fad",
+      "title": "以csv格式保存order、trade、position对象",
+      "url": "https://www.joinquant.com/view/community/detail/328b2b8fc5d1fc5feafa2f590b04ee52",
+      "likes": 80,
+      "clones": 37,
+      "annualReturn": null,
+      "compositeScore": "98.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 34,
+      "postId": "7141b3668d8e401fe933b31a242cf88e",
+      "backtestId": "eb84c242442e825c0600f75037e7bd92",
+      "title": "跑的稳比跑得快重要！十年长测【年化77.39%】",
+      "url": "https://www.joinquant.com/view/community/detail/7141b3668d8e401fe933b31a242cf88e",
+      "likes": 18,
+      "clones": 157,
+      "annualReturn": null,
+      "compositeScore": "96.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 35,
+      "postId": "d2053e8689d74bb1d12851f667f8986a",
+      "backtestId": "a7d955654e764632bdba4527f64e54a5",
+      "title": "MACD金叉买入，死叉卖出",
+      "url": "https://www.joinquant.com/view/community/detail/d2053e8689d74bb1d12851f667f8986a",
+      "likes": 13,
+      "clones": 165,
+      "annualReturn": null,
+      "compositeScore": "95.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 36,
+      "postId": "c4bfd3d4597d848a072b938a30f839c9",
+      "backtestId": "44ca47bc4130142c1e55f6b3a62c1139",
+      "title": "全自动拟合神器 别再当拟合怪的奴隶了 我要让人人都能拟合",
+      "url": "https://www.joinquant.com/view/community/detail/c4bfd3d4597d848a072b938a30f839c9",
+      "likes": 56,
+      "clones": 76,
+      "annualReturn": null,
+      "compositeScore": "94.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 37,
+      "postId": "18a20f8f5089355b34e631ee2b4e9ba5",
+      "backtestId": "28d81f2a36c0e9f2e60a89a10d1467ce",
+      "title": "【策略研发】三进兵策略",
+      "url": "https://www.joinquant.com/view/community/detail/18a20f8f5089355b34e631ee2b4e9ba5",
+      "likes": 13,
+      "clones": 154,
+      "annualReturn": null,
+      "compositeScore": "90.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 38,
+      "postId": "9e0991dc546c36b59f6fb36a6f42562a",
+      "backtestId": "839fd50de227e4c2300afa41d3cfe40e",
+      "title": "高股息率策略修改优化",
+      "url": "https://www.joinquant.com/view/community/detail/9e0991dc546c36b59f6fb36a6f42562a",
+      "likes": 19,
+      "clones": 135,
+      "annualReturn": null,
+      "compositeScore": "86.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 39,
+      "postId": "11d9562ea12f13147006711cfd442f05",
+      "backtestId": "db4224ac75d416500158aab1b181d1ef",
+      "title": "低估值 + 高股息 + 小市值 + 低价股",
+      "url": "https://www.joinquant.com/view/community/detail/11d9562ea12f13147006711cfd442f05",
+      "likes": 28,
+      "clones": 114,
+      "annualReturn": null,
+      "compositeScore": "85.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 40,
+      "postId": "64def28bdf6453d5ea8faf896d63f620",
+      "backtestId": "3a859bf623e2d3d2054d5bc7902ca4f8",
+      "title": "多因子策略05-17",
+      "url": "https://www.joinquant.com/view/community/detail/64def28bdf6453d5ea8faf896d63f620",
+      "likes": 6,
+      "clones": 156,
+      "annualReturn": null,
+      "compositeScore": "84.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 41,
+      "postId": "d7cbf7f4482752dba4394dd0f9254f45",
+      "backtestId": "912ceaf1c81ddf92c52fa1b9008b6086",
+      "title": "七星高照ETF轮动v1.7_P_Trade版（破百更新）",
+      "url": "https://www.joinquant.com/view/community/detail/d7cbf7f4482752dba4394dd0f9254f45",
+      "likes": 34,
+      "clones": 94,
+      "annualReturn": null,
+      "compositeScore": "81.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 42,
+      "postId": "b6bc89ebde5f44295c4ad0d1bd0752cd",
+      "backtestId": "fb9e5e46c857a2c46fac67efe7e1bc25",
+      "title": "一进二策略小优化",
+      "url": "https://www.joinquant.com/view/community/detail/b6bc89ebde5f44295c4ad0d1bd0752cd",
+      "likes": 11,
+      "clones": 140,
+      "annualReturn": null,
+      "compositeScore": "81.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 43,
+      "postId": "66526629fc040d2ac4db875db239acd9",
+      "backtestId": "fefa0367aa3bac33b5beed47d9630209",
+      "title": "穿越牛熊",
+      "url": "https://www.joinquant.com/view/community/detail/66526629fc040d2ac4db875db239acd9",
+      "likes": 20,
+      "clones": 119,
+      "annualReturn": null,
+      "compositeScore": "79.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 44,
+      "postId": "e646ca1e6aedf533ad6d36ad685f81b3",
+      "backtestId": "b20ee4f0d92e95a150bef9b292bd2444",
+      "title": "因子拥挤度择时策略-性能优化",
+      "url": "https://www.joinquant.com/view/community/detail/e646ca1e6aedf533ad6d36ad685f81b3",
+      "likes": 20,
+      "clones": 116,
+      "annualReturn": null,
+      "compositeScore": "78.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 45,
+      "postId": "f5d0151dd967086f79ecd16c1e5ff068",
+      "backtestId": "8dbe0e1763de83fa214584e4ac2952db",
+      "title": "低估值+TRIX+RSI 低回撤策略",
+      "url": "https://www.joinquant.com/view/community/detail/f5d0151dd967086f79ecd16c1e5ff068",
+      "likes": 5,
+      "clones": 146,
+      "annualReturn": null,
+      "compositeScore": "78.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 46,
+      "postId": "1d3cd90089d8d974e7e8ca1e5f663052",
+      "backtestId": "2bf5cdc0ee493073435a2db5d3bf782d",
+      "title": "稳健型涨停基因增强策略 v1.0",
+      "url": "https://www.joinquant.com/view/community/detail/1d3cd90089d8d974e7e8ca1e5f663052",
+      "likes": 12,
+      "clones": 123,
+      "annualReturn": null,
+      "compositeScore": "73.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 47,
+      "postId": "f9cf1a11d82bddc3ae2cc60356d050d7",
+      "backtestId": "4458af0bb14a4a26d86093b7568b94e0",
+      "title": "DMI——大盘择时",
+      "url": "https://www.joinquant.com/view/community/detail/f9cf1a11d82bddc3ae2cc60356d050d7",
+      "likes": 16,
+      "clones": 114,
+      "annualReturn": null,
+      "compositeScore": "73.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 48,
+      "postId": "c4b1f991689db44881683dad82a4f0aa",
+      "backtestId": "e83057d8acf9bbbde520fa3e6ba0c378",
+      "title": "ETF网格交易策略 v30 — 渐进式网格策略简介",
+      "url": "https://www.joinquant.com/view/community/detail/c4b1f991689db44881683dad82a4f0aa",
+      "likes": 12,
+      "clones": 117,
+      "annualReturn": null,
+      "compositeScore": "70.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 49,
+      "postId": "cd087468b197535dafbc4a63f2af88bc",
+      "backtestId": "18681697d2ad6b3389fa8693a03d62e0",
+      "title": "长江机器学习股票趋势预测",
+      "url": "https://www.joinquant.com/view/community/detail/cd087468b197535dafbc4a63f2af88bc",
+      "likes": 25,
+      "clones": 87,
+      "annualReturn": null,
+      "compositeScore": "68.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 50,
+      "postId": "b2b61b33c2072d35741a579e718b8631",
+      "backtestId": "358751a15b54048b5666d9c13651d2cb",
+      "title": "暴跌抄底融合五福",
+      "url": "https://www.joinquant.com/view/community/detail/b2b61b33c2072d35741a579e718b8631",
+      "likes": 20,
+      "clones": 92,
+      "annualReturn": null,
+      "compositeScore": "66.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 51,
+      "postId": "bc4c510ecd9fa81b2e89039492816ed8",
+      "backtestId": "4832a685905b50b10fbb7f3301b7bc99",
+      "title": "布林带策略",
+      "url": "https://www.joinquant.com/view/community/detail/bc4c510ecd9fa81b2e89039492816ed8",
+      "likes": 3,
+      "clones": 126,
+      "annualReturn": null,
+      "compositeScore": "66.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 52,
+      "postId": "42f0060baf28e4d88784960ea77914ac",
+      "backtestId": "974cc228d135ab71ad6b95c2638d7d88",
+      "title": "曲线下面积的计算方法，玩缠论的拿去吧",
+      "url": "https://www.joinquant.com/view/community/detail/42f0060baf28e4d88784960ea77914ac",
+      "likes": 9,
+      "clones": 113,
+      "annualReturn": null,
+      "compositeScore": "65.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 53,
+      "postId": "1d73a8055d65aa5aeb68e0730b8948eb",
+      "backtestId": "b8601c92886c643f60b3e77cc1f99842",
+      "title": "小白做了一个自适应曲线策略，中证500ETF回测",
+      "url": "https://www.joinquant.com/view/community/detail/1d73a8055d65aa5aeb68e0730b8948eb",
+      "likes": 1,
+      "clones": 126,
+      "annualReturn": null,
+      "compositeScore": "64.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 54,
+      "postId": "158c3d10ab37f6550c6eb3ac27dd9ca4",
+      "backtestId": "113946560a32c6ba91c4f96119d312e3",
+      "title": "强者恒强策略不行",
+      "url": "https://www.joinquant.com/view/community/detail/158c3d10ab37f6550c6eb3ac27dd9ca4",
+      "likes": 10,
+      "clones": 93,
+      "annualReturn": null,
+      "compositeScore": "56.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 55,
+      "postId": "3f49ae7e76c160729e04220500900fa4",
+      "backtestId": "85de0640525fca85f42120295a648d5f",
+      "title": "验证 12 个月：这套 ETF 套利策略胜率高达 85%",
+      "url": "https://www.joinquant.com/view/community/detail/3f49ae7e76c160729e04220500900fa4",
+      "likes": 12,
+      "clones": 85,
+      "annualReturn": null,
+      "compositeScore": "54.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 56,
+      "postId": "1de883bec3cc8f8744f10267948c30a3",
+      "backtestId": "5f0f28b2fbea26694435c18a16bd2def",
+      "title": "周期共振进化版",
+      "url": "https://www.joinquant.com/view/community/detail/1de883bec3cc8f8744f10267948c30a3",
+      "likes": 4,
+      "clones": 100,
+      "annualReturn": null,
+      "compositeScore": "54.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 57,
+      "postId": "5946e055a6249d43e0b839d0d6a5b995",
+      "backtestId": "0ff6a59fe70f1704796f143435c4368e",
+      "title": "哒咩，禁止踩踏！小市值优化",
+      "url": "https://www.joinquant.com/view/community/detail/5946e055a6249d43e0b839d0d6a5b995",
+      "likes": 15,
+      "clones": 73,
+      "annualReturn": null,
+      "compositeScore": "51.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 58,
+      "postId": "d32291e20fe1b2d3f40e8fc8f2440cc3",
+      "backtestId": "a3092b057c22b588b523089144b650d5",
+      "title": "打板/半路策略",
+      "url": "https://www.joinquant.com/view/community/detail/d32291e20fe1b2d3f40e8fc8f2440cc3",
+      "likes": 9,
+      "clones": 78,
+      "annualReturn": null,
+      "compositeScore": "48.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 59,
+      "postId": "c85a400466b3d2137a5e688b8e72760f",
+      "backtestId": "7eb996d2d2b9e28b22aa2b65af967588",
+      "title": "沪深300MA20做分级B 3.0",
+      "url": "https://www.joinquant.com/view/community/detail/c85a400466b3d2137a5e688b8e72760f",
+      "likes": 2,
+      "clones": 87,
+      "annualReturn": null,
+      "compositeScore": "45.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 60,
+      "postId": "27a70e30112bbf544a5dbba7a74bff45",
+      "backtestId": "c24af9be1ce492db151e1951d88dd56c",
+      "title": "今年 20261.1至今 策略收益 127.35%",
+      "url": "https://www.joinquant.com/view/community/detail/27a70e30112bbf544a5dbba7a74bff45",
+      "likes": 7,
+      "clones": 76,
+      "annualReturn": null,
+      "compositeScore": "45.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 61,
+      "postId": "2382ada2419d2f5c6697792696473cd7",
+      "backtestId": "5caff74d55cef3d8ffe674d18da5468f",
+      "title": "全A增强",
+      "url": "https://www.joinquant.com/view/community/detail/2382ada2419d2f5c6697792696473cd7",
+      "likes": 2,
+      "clones": 80,
+      "annualReturn": null,
+      "compositeScore": "42.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 62,
+      "postId": "2f1a26528a6dd6846ade35478d1eecf2",
+      "backtestId": "e3052d4c31a69430a9dab08522a70258",
+      "title": "科技结束了？分享个我自己的科技策略。",
+      "url": "https://www.joinquant.com/view/community/detail/2f1a26528a6dd6846ade35478d1eecf2",
+      "likes": 15,
+      "clones": 50,
+      "annualReturn": null,
+      "compositeScore": "40.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 63,
+      "postId": "ed161b3144b2a15028971bde5a67b36e",
+      "backtestId": "38371445af0ed60e75866cc7b14a066e",
+      "title": "30日和10日的趋势追踪，大熊市考验",
+      "url": "https://www.joinquant.com/view/community/detail/ed161b3144b2a15028971bde5a67b36e",
+      "likes": 5,
+      "clones": 69,
+      "annualReturn": null,
+      "compositeScore": "39.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 64,
+      "postId": "b9b0fcae701917c3d0ca211874b7a8bd",
+      "backtestId": "328dd45c7dec2814c41b684c5ffffc04",
+      "title": "新思路！天天向上策略！2026年收益非常可观，欢迎大家优化！",
+      "url": "https://www.joinquant.com/view/community/detail/b9b0fcae701917c3d0ca211874b7a8bd",
+      "likes": 11,
+      "clones": 56,
+      "annualReturn": null,
+      "compositeScore": "39.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 65,
+      "postId": "132126631b57f65fdd2dd6a863df7db2",
+      "backtestId": "9d5aa466034b60305ac3005918d930b3",
+      "title": "场内300etf 单均线策略",
+      "url": "https://www.joinquant.com/view/community/detail/132126631b57f65fdd2dd6a863df7db2",
+      "likes": 2,
+      "clones": 74,
+      "annualReturn": null,
+      "compositeScore": "39.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 66,
+      "postId": "3f43b9ccc49b5b92520c0ca026f85616",
+      "backtestId": "e77b178218a12016aca26ace5d4bb0bf",
+      "title": "“行为金融学”预测结果分析1(更新: 2019/03/17)",
+      "url": "https://www.joinquant.com/view/community/detail/3f43b9ccc49b5b92520c0ca026f85616",
+      "likes": 12,
+      "clones": 53,
+      "annualReturn": null,
+      "compositeScore": "38.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 67,
+      "postId": "e3f97db1e9cc9e15c198ab24ee40a00d",
+      "backtestId": "b6006d316144c199a3bcf2efed8361e6",
+      "title": "抖音奥数老师阴线低吸战法，回测年化61%",
+      "url": "https://www.joinquant.com/view/community/detail/e3f97db1e9cc9e15c198ab24ee40a00d",
+      "likes": 14,
+      "clones": 48,
+      "annualReturn": null,
+      "compositeScore": "38.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 68,
+      "postId": "18586a2d9a5257822b2a3170c4aab348",
+      "backtestId": "8172c21a883ab6dec33268d6ad8cd36c",
+      "title": "大小盘风格轮动 基本面选股 涨停板接力",
+      "url": "https://www.joinquant.com/view/community/detail/18586a2d9a5257822b2a3170c4aab348",
+      "likes": 14,
+      "clones": 48,
+      "annualReturn": null,
+      "compositeScore": "38.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 69,
+      "postId": "9ffd7b36f823dcce57747c401c6fc04c",
+      "backtestId": "56957b8a0f60eeb04d15da133dd188f7",
+      "title": "三进兵小改进",
+      "url": "https://www.joinquant.com/view/community/detail/9ffd7b36f823dcce57747c401c6fc04c",
+      "likes": 8,
+      "clones": 60,
+      "annualReturn": null,
+      "compositeScore": "38.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 70,
+      "postId": "603a87f1444bca8729b0d65a5098c72b",
+      "backtestId": "2186f9ac7853f003949d08067bce7734",
+      "title": "工农配对-动态-Clone",
+      "url": "https://www.joinquant.com/view/community/detail/603a87f1444bca8729b0d65a5098c72b",
+      "likes": 2,
+      "clones": 72,
+      "annualReturn": null,
+      "compositeScore": "38.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 71,
+      "postId": "c1aa608dadf7e2859fe8ff4c5a51afff",
+      "backtestId": "9204c258dc25d605ec77a7b1c5e7624e",
+      "title": "带涨停基因的小市值 PT迁移版 沧海横流? 26年半年战报",
+      "url": "https://www.joinquant.com/view/community/detail/c1aa608dadf7e2859fe8ff4c5a51afff",
+      "likes": 13,
+      "clones": 48,
+      "annualReturn": null,
+      "compositeScore": "37.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 72,
+      "postId": "1cc495be1432103381eee10658637d34",
+      "backtestId": "b66f15644c2e8a9b8152f96030b73f4f",
+      "title": "给五福多ETF动量增加卖出冷却，7年54倍，最大回撤16%",
+      "url": "https://www.joinquant.com/view/community/detail/1cc495be1432103381eee10658637d34",
+      "likes": 10,
+      "clones": 53,
+      "annualReturn": null,
+      "compositeScore": "36.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 73,
+      "postId": "7b4d3e0cb608f3bfeb08fc1041f251aa",
+      "backtestId": "4dcc8a55a1321c8ac6158dfeef6e1dfb",
+      "title": "布林带1",
+      "url": "https://www.joinquant.com/view/community/detail/7b4d3e0cb608f3bfeb08fc1041f251aa",
+      "likes": 3,
+      "clones": 65,
+      "annualReturn": null,
+      "compositeScore": "35.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 74,
+      "postId": "d9a696aa70e86686aa30ea442bfcc752",
+      "backtestId": "9e965f3048acec42cf8b2ca181062f66",
+      "title": "简单的择时基金轮动策略",
+      "url": "https://www.joinquant.com/view/community/detail/d9a696aa70e86686aa30ea442bfcc752",
+      "likes": 6,
+      "clones": 56,
+      "annualReturn": null,
+      "compositeScore": "34.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 75,
+      "postId": "957e9778b32e5514b6821be1ee3b74bc",
+      "backtestId": "6719b904b5642e1f50b8596c30d9fdf7",
+      "title": "胜率19比1低风险策略",
+      "url": "https://www.joinquant.com/view/community/detail/957e9778b32e5514b6821be1ee3b74bc",
+      "likes": 7,
+      "clones": 48,
+      "annualReturn": null,
+      "compositeScore": "31.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 76,
+      "postId": "b632b028455fc9b1ad8d56ca453874cc",
+      "backtestId": "ad0656c263c5f6f141ca8333b9c3fe02",
+      "title": "八ETF合集",
+      "url": "https://www.joinquant.com/view/community/detail/b632b028455fc9b1ad8d56ca453874cc",
+      "likes": 7,
+      "clones": 46,
+      "annualReturn": null,
+      "compositeScore": "30.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 77,
+      "postId": "39971c62bb2c85b1d64e869e6cb6e28f",
+      "backtestId": "657e1b2a1b8200954b5b5470a96ac6d5",
+      "title": "简单的小市值策略",
+      "url": "https://www.joinquant.com/view/community/detail/39971c62bb2c85b1d64e869e6cb6e28f",
+      "likes": 3,
+      "clones": 54,
+      "annualReturn": null,
+      "compositeScore": "30.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 78,
       "postId": "99ed7de0e314d8c21fc55cc8aee4ee56",
       "backtestId": "3a310f0f1e58255d4ff44f44150ccc12",
       "title": "2012-2025  狂揽14635672.19%收益！！！",
@@ -10,10 +886,10 @@
       "likes": 8,
       "clones": 43,
       "compositeScore": "29.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 5,
+      "rank": 79,
       "postId": "00e971d4693b45777100cebb24763e3f",
       "backtestId": "16e0a4f6c642a28b3a797f8c3b31e829",
       "title": "首板一进二量化策略-更新（增加sp代码）",
@@ -21,10 +897,10 @@
       "likes": 4,
       "clones": 51,
       "compositeScore": "29.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 6,
+      "rank": 80,
       "postId": "fc6826b23d10a9759100d9e1ddc8a242",
       "backtestId": "dbf9941740cb2cb87da5cf81290e7f93",
       "title": "更新一下最近的表现，年化35%ETF轮动策略",
@@ -32,10 +908,34 @@
       "likes": 8,
       "clones": 42,
       "compositeScore": "29.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 7,
+      "rank": 81,
+      "postId": "1484a2f02a4f27e204b890d3a5d3113c",
+      "backtestId": "bfa34b8cbd792749d8a129836c4a41ca",
+      "title": "******模拟：最近三个月收益：74.38%",
+      "url": "https://www.joinquant.com/view/community/detail/1484a2f02a4f27e204b890d3a5d3113c",
+      "likes": 3,
+      "clones": 51,
+      "annualReturn": null,
+      "compositeScore": "28.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 82,
+      "postId": "6c6b89a9fa9f8254dc663e8934af04b0",
+      "backtestId": "d3546e737de76b0d61c8fe6f153ab93e",
+      "title": "底部形态选股策略",
+      "url": "https://www.joinquant.com/view/community/detail/6c6b89a9fa9f8254dc663e8934af04b0",
+      "likes": 9,
+      "clones": 39,
+      "annualReturn": null,
+      "compositeScore": "28.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 83,
       "postId": "5c1a11f75adc0ef90f1b53e217fc3cfe",
       "backtestId": "c81c35e144500d77d278845b01f893c9",
       "title": "策略讨论：大盘蓝筹股均值回归策略（持续更新版）",
@@ -43,10 +943,10 @@
       "likes": 9,
       "clones": 38,
       "compositeScore": "28.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 8,
+      "rank": 84,
       "postId": "73b13d9210889319c78d2b3a623a6aea",
       "backtestId": "998cbcc6a4c0a633ee025204b5b4313b",
       "title": "五福 ETF 轮动五年迭代：谁才是五年收益之王？",
@@ -54,10 +954,10 @@
       "likes": 12,
       "clones": 31,
       "compositeScore": "27.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 9,
+      "rank": 85,
       "postId": "a533fba3a36d8a258527738842ad59dd",
       "backtestId": "01396a0298541d09472d4da4f2bdceeb",
       "title": "ETF动量策略对比（目前看ETF才是王道）",
@@ -65,10 +965,22 @@
       "likes": 10,
       "clones": 34,
       "compositeScore": "27.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 10,
+      "rank": 86,
+      "postId": "8d6831d4d62ad02f8dde8df00bf3cf12",
+      "backtestId": "cfa578d32d8f33ca76a363c9e105fb4a",
+      "title": "市场大小盘风格切换多因子轮动策略",
+      "url": "https://www.joinquant.com/view/community/detail/8d6831d4d62ad02f8dde8df00bf3cf12",
+      "likes": 11,
+      "clones": 32,
+      "annualReturn": null,
+      "compositeScore": "27.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 87,
       "postId": "f39183042833a1215920962c038f48da",
       "backtestId": "983a2fabeee16abc8e707b61bea90605",
       "title": "量化周年札记|年化81%的“量化幻梦”",
@@ -76,10 +988,10 @@
       "likes": 17,
       "clones": 19,
       "compositeScore": "26.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 11,
+      "rank": 88,
       "postId": "5ccc17a44fbc2b34ef6ec6b3c69c19cd",
       "backtestId": "607190994018b4f1da1a526a34f2c107",
       "title": "0705更新仅一个文件实现聚宽信号转同花顺下单",
@@ -87,10 +999,22 @@
       "likes": 17,
       "clones": 18,
       "compositeScore": "26.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 12,
+      "rank": 89,
+      "postId": "8c23487ba5e734571e7ccb210f10292a",
+      "backtestId": "63a42f62beec924deb5ee920cfbf06b5",
+      "title": "无未来函数 衡量点低位买入 超短线策略3.0",
+      "url": "https://www.joinquant.com/view/community/detail/8c23487ba5e734571e7ccb210f10292a",
+      "likes": 7,
+      "clones": 38,
+      "annualReturn": null,
+      "compositeScore": "26.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 90,
       "postId": "19fa221208d0cb9f0b5c24990ddd6f3b",
       "backtestId": "66c7c30e32801284d0f34f93865097ca",
       "title": "五福5.2日内趋势第二版收益从94倍提高到117倍",
@@ -98,10 +1022,10 @@
       "likes": 21,
       "clones": 9,
       "compositeScore": "25.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 13,
+      "rank": 91,
       "postId": "f2c21c72a461131b07e57dd4d5eeba0b",
       "backtestId": "a6794869cb1879445528f41912694961",
       "title": "分享一个无需公网IP的聚宽到q-m-t端的shi盘方案",
@@ -109,10 +1033,22 @@
       "likes": 19,
       "clones": 13,
       "compositeScore": "25.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 14,
+      "rank": 92,
+      "postId": "0121f122660fd811c390e01a79371f5f",
+      "backtestId": "88576bb12af11085dec5121e6dc7c5a8",
+      "title": "自己搞了个聚宽量化策略sp网站，欢迎大家试用提意见",
+      "url": "https://www.joinquant.com/view/community/detail/0121f122660fd811c390e01a79371f5f",
+      "likes": 23,
+      "clones": 3,
+      "annualReturn": null,
+      "compositeScore": "24.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 93,
       "postId": "eda22a433508c4527764fed0cceefffb",
       "backtestId": "d0001fb0a98f840ee1d1282d8f081526",
       "title": "全天候风险平价 + 波动趋势调整策略，最大回撤2.8%",
@@ -120,10 +1056,58 @@
       "likes": 3,
       "clones": 42,
       "compositeScore": "24.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 15,
+      "rank": 94,
+      "postId": "4bd18e38d6a0c72da8350b421267eaad",
+      "backtestId": "4222c76fad16873157ea8f7b6506abfb",
+      "title": "单均线测试",
+      "url": "https://www.joinquant.com/view/community/detail/4bd18e38d6a0c72da8350b421267eaad",
+      "likes": 6,
+      "clones": 35,
+      "annualReturn": null,
+      "compositeScore": "23.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 95,
+      "postId": "a2dcaea51d8509863fa06c9037e9f57c",
+      "backtestId": "b9c049abe1561a639c484dc06258a8e6",
+      "title": "熊来（8月24日分析）",
+      "url": "https://www.joinquant.com/view/community/detail/a2dcaea51d8509863fa06c9037e9f57c",
+      "likes": 20,
+      "clones": 5,
+      "annualReturn": null,
+      "compositeScore": "22.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 96,
+      "postId": "861a8b7c03bbec6fe0f29b60afaa178a",
+      "backtestId": "7e7ab9ce5c1698862e6800c589076eb6",
+      "title": "美股全细分板块 → A股ETF 隔夜轮动。求优化",
+      "url": "https://www.joinquant.com/view/community/detail/861a8b7c03bbec6fe0f29b60afaa178a",
+      "likes": 8,
+      "clones": 29,
+      "annualReturn": null,
+      "compositeScore": "22.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 97,
+      "postId": "c26431c24879af9413673a23e757c68e",
+      "backtestId": "3c2af43efee91237a8e1ac5dabeb5b09",
+      "title": "核心资产轮动改进：中位数定仓+杠杆2",
+      "url": "https://www.joinquant.com/view/community/detail/c26431c24879af9413673a23e757c68e",
+      "likes": 6,
+      "clones": 31,
+      "annualReturn": null,
+      "compositeScore": "21.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 98,
       "postId": "d9dafab2dbfbfd7aebb6c696467c3c5c",
       "backtestId": "fa22956439cb2de67fdd2910d83a6d02",
       "title": "该相信癌股还是该相信海外？【思考再三，决定将这压轴策略奉上】",
@@ -131,10 +1115,22 @@
       "likes": 4,
       "clones": 32,
       "compositeScore": "20.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 16,
+      "rank": 99,
+      "postId": "928aed3f3c74041d0394758f0687fb7c",
+      "backtestId": "ed8fb0a8645dedee37dc4d8558aa85a5",
+      "title": "至尊抄底1号！告别“回测猛如虎、******二百五”满100删",
+      "url": "https://www.joinquant.com/view/community/detail/928aed3f3c74041d0394758f0687fb7c",
+      "likes": 5,
+      "clones": 30,
+      "annualReturn": null,
+      "compositeScore": "20.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 100,
       "postId": "f0ac613f00a1b80d261d2fad1c4138db",
       "backtestId": "66e386b091cd0c534dcc5da0728c919f",
       "title": "rsrs止损真的有效吗？社区公开的rsrs长期跑都是亏钱？",
@@ -142,10 +1138,10 @@
       "likes": 12,
       "clones": 15,
       "compositeScore": "19.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 17,
+      "rank": 101,
       "postId": "33622040733fa34e3002bd64c3a08213",
       "backtestId": "e089aa30bb43d80e99eb1ab163f9f8cb",
       "title": "四大银行轮动P-Trade移植版",
@@ -153,10 +1149,10 @@
       "likes": 6,
       "clones": 27,
       "compositeScore": "19.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 18,
+      "rank": 102,
       "postId": "e03a2ef18247dbe1deb858eaa0fd89ce",
       "backtestId": "89e1382835d9689bbb9893a471747b16",
       "title": "四合一：七星高照+搅屎棍+五境掘金+红利",
@@ -164,10 +1160,22 @@
       "likes": 4,
       "clones": 31,
       "compositeScore": "19.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 19,
+      "rank": 103,
+      "postId": "f1cdf7d92b2ca12dca0da861f899dd25",
+      "backtestId": "db938086b078851906b69ce52ee96816",
+      "title": "弱转强，年化66.53%，样本外已测。几乎可以sp.",
+      "url": "https://www.joinquant.com/view/community/detail/f1cdf7d92b2ca12dca0da861f899dd25",
+      "likes": 7,
+      "clones": 25,
+      "annualReturn": null,
+      "compositeScore": "19.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 104,
       "postId": "6f8beaed4fc192695989163e9e8ce26a",
       "backtestId": "028c3af3d0345a0898350ddebc8f2aec",
       "title": "小资金趋势量化策略，回测感觉还可以，欢迎大家指正",
@@ -175,10 +1183,10 @@
       "likes": 10,
       "clones": 18,
       "compositeScore": "19.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 20,
+      "rank": 105,
       "postId": "f120a0673eefc9f6699b1c102867e78f",
       "backtestId": "e103d41543c509a347bbe2cf7b19dcfb",
       "title": "分享-中证500趋势跟踪策略",
@@ -186,10 +1194,10 @@
       "likes": 5,
       "clones": 28,
       "compositeScore": "19.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 21,
+      "rank": 106,
       "postId": "fb28448ca1fbb1e9c316692546034d3f",
       "backtestId": "cd423227be62a151d58073db3e139f49",
       "title": "本赛道镰刀少：ST一进二修复版 年化收益  197.76%",
@@ -197,10 +1205,10 @@
       "likes": 3,
       "clones": 32,
       "compositeScore": "19.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 22,
+      "rank": 107,
       "postId": "e1393b54be37a42b47666433946e48c8",
       "backtestId": "632606679bbdefa228c4d0ab391fd6e0",
       "title": "ETF折价组合1优，1年2年年化均达到10倍，回撤不到7%",
@@ -208,10 +1216,10 @@
       "likes": 6,
       "clones": 24,
       "compositeScore": "18.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 23,
+      "rank": 108,
       "postId": "b162637c9c452789d9fe39de4260e30a",
       "backtestId": "d81a14766cdc1dacd64eac2ef658846b",
       "title": "七星高照去除过拟合优化版模拟盘记录",
@@ -219,10 +1227,10 @@
       "likes": 5,
       "clones": 26,
       "compositeScore": "18.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 24,
+      "rank": 109,
       "postId": "1ceaf0b87325b8b1e6b9aefb60570814",
       "backtestId": "6e542ba617cee863fb2cad9b4344022c",
       "title": "三年1700倍首板一进二策略的分析",
@@ -230,21 +1238,10 @@
       "likes": 6,
       "clones": 24,
       "compositeScore": "18.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 25,
-      "postId": "d34e89ed3075f76fe53d842df5f028f8",
-      "backtestId": "b192061cb69331a585c17fb5a54022ac",
-      "title": "哒咩，禁止踩踏！小市值优化",
-      "url": "https://www.joinquant.com/view/community/detail/d34e89ed3075f76fe53d842df5f028f8",
-      "likes": 12,
-      "clones": 11,
-      "compositeScore": "17.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
-    },
-    {
-      "rank": 26,
+      "rank": 110,
       "postId": "7da05cc892ce9a80eb2bb079f00b34a5",
       "backtestId": "49ef4879a76fbdbdfd9bf78730d5b11f",
       "title": "BBI 的小市值选股策略--基于多空指标（BBI）过滤",
@@ -253,10 +1250,10 @@
       "clones": 28,
       "annualReturn": null,
       "compositeScore": "17.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 27,
+      "rank": 111,
       "postId": "45fbd57db3ecc0e203a08c45defb4c87",
       "backtestId": "f9a301de414880a3d8ae5f961012aa61",
       "title": "高股息低估值策略的上限在哪里？",
@@ -265,10 +1262,10 @@
       "clones": 22,
       "annualReturn": null,
       "compositeScore": "17.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 28,
+      "rank": 112,
       "postId": "e1d95829fd9977f542e44a21cd2814e6",
       "backtestId": "732ad0e2a9249e2bf44be136cbbfadd5",
       "title": "仅一个文件实现聚宽信号转同花顺下单（测试）",
@@ -276,21 +1273,10 @@
       "likes": 8,
       "clones": 18,
       "compositeScore": "17.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 29,
-      "postId": "31f6d7d3bf7cdbbf15d95832f2873221",
-      "backtestId": "0942a2de79f90c950c37960bfe9479d1",
-      "title": "七星高照ETF轮动v1.7_P_Trade版（破百更新）",
-      "url": "https://www.joinquant.com/view/community/detail/31f6d7d3bf7cdbbf15d95832f2873221",
-      "likes": 4,
-      "clones": 26,
-      "compositeScore": "17.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
-    },
-    {
-      "rank": 30,
+      "rank": 113,
       "postId": "8e8861f0c4c759472dee046ec006b8d3",
       "backtestId": "3932ee250e33c2787da0fb67c2f80b60",
       "title": "【市场仪表盘】重大升级！从 7 维到 13 维的宏观风险模型",
@@ -298,10 +1284,10 @@
       "likes": 6,
       "clones": 21,
       "compositeScore": "16.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 31,
+      "rank": 114,
       "postId": "aec6bd0e412af0676db382768ce140f9",
       "backtestId": "9280ed782c6b77984323b64dbeaf70dc",
       "title": "「长盈智选」：既要高收益，更要低回撤——11年最大回撤12%",
@@ -309,10 +1295,10 @@
       "likes": 1,
       "clones": 31,
       "compositeScore": "16.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 32,
+      "rank": 115,
       "postId": "e309bf89559b582dbdc732d27447be89",
       "backtestId": "ec4ab6f26e69ab25d7df59e32ac63fd8",
       "title": "彼得·林奇多因子量化策略 V1.0",
@@ -321,10 +1307,34 @@
       "clones": 20,
       "annualReturn": null,
       "compositeScore": "16.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 33,
+      "rank": 116,
+      "postId": "df53a057d653432b47ed1f7db77d6725",
+      "backtestId": "0cd0d429d92c480baafd6f226b254c9a",
+      "title": "基于单因子ARBR选股-周度调仓",
+      "url": "https://www.joinquant.com/view/community/detail/df53a057d653432b47ed1f7db77d6725",
+      "likes": 5,
+      "clones": 22,
+      "annualReturn": null,
+      "compositeScore": "16.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 117,
+      "postId": "19de43a9c08dd27c98e4c6bdbecd0cb6",
+      "backtestId": "23236c157443ca9797bfbf187afddadd",
+      "title": "颈线突破的波段策略",
+      "url": "https://www.joinquant.com/view/community/detail/19de43a9c08dd27c98e4c6bdbecd0cb6",
+      "likes": 2,
+      "clones": 28,
+      "annualReturn": null,
+      "compositeScore": "16.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 118,
       "postId": "b1531180d2a053730269362207ece435",
       "backtestId": "a7146bf77abdab6540399cc02d4eea3b",
       "title": "低利率时代的稳健选择：国债量化组合（后附PT版代码）",
@@ -332,10 +1342,22 @@
       "likes": 0,
       "clones": 31,
       "compositeScore": "15.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 34,
+      "rank": 119,
+      "postId": "81aa268176721baf2f3c28db0d53dda8",
+      "backtestId": "53f0e10987241b088a3e46aecb1a054f",
+      "title": "clone策略集合(无未来函数)",
+      "url": "https://www.joinquant.com/view/community/detail/81aa268176721baf2f3c28db0d53dda8",
+      "likes": 4,
+      "clones": 23,
+      "annualReturn": null,
+      "compositeScore": "15.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 120,
       "postId": "ec42a08b5f9135027d78d6575dc001c5",
       "backtestId": "16f23866c168fd596f71f36c6185a544",
       "title": "一进二（低位连续三阳）",
@@ -344,10 +1366,10 @@
       "clones": 16,
       "annualReturn": null,
       "compositeScore": "15.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 35,
+      "rank": 121,
       "postId": "1418d676fd84ae4629e73a943221f1ea",
       "backtestId": "5eaef9d77770ce7666d45ff043d308f2",
       "title": "核心资产龙头策略",
@@ -356,10 +1378,10 @@
       "clones": 20,
       "annualReturn": null,
       "compositeScore": "15.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 36,
+      "rank": 122,
       "postId": "94888e61be61ce9dce51c6d30d0327d3",
       "backtestId": "c8365d0b74826c671c96201aace59832",
       "title": "蓝筹大盘分红策略【超稳健】",
@@ -367,10 +1389,22 @@
       "likes": 2,
       "clones": 26,
       "compositeScore": "15.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 37,
+      "rank": 123,
+      "postId": "52f1e5afb0e91fef4f1f8b8f93768523",
+      "backtestId": "0d54f25a8c435ea8f85a6fdf700bc614",
+      "title": "弱转强 + 首板高开、低开混合策略优化",
+      "url": "https://www.joinquant.com/view/community/detail/52f1e5afb0e91fef4f1f8b8f93768523",
+      "likes": 7,
+      "clones": 16,
+      "annualReturn": null,
+      "compositeScore": "15.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 124,
       "postId": "7ef910b023895d43b30de10e113db46c",
       "backtestId": "feef0d18bfd1187aa99274f04b18cd5d",
       "title": "这个你们要么，小资金操作",
@@ -379,10 +1413,10 @@
       "clones": 27,
       "annualReturn": null,
       "compositeScore": "14.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 38,
+      "rank": 125,
       "postId": "720b0743a2a930da6f851b1949b3a143",
       "backtestId": "88b61a6afc8682653d26a4c526dafd69",
       "title": "引入AI互搏后，高收益名策略潜在Bug被找到了",
@@ -391,10 +1425,10 @@
       "clones": 23,
       "annualReturn": null,
       "compositeScore": "14.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 39,
+      "rank": 126,
       "postId": "814e303a5eac7e9f4e41d52dc8062744",
       "backtestId": "43914a094aaf26bd7f94043fe93f4672",
       "title": "基金筛选与轮动策略 V2.0",
@@ -403,10 +1437,10 @@
       "clones": 11,
       "annualReturn": null,
       "compositeScore": "14.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 40,
+      "rank": 127,
       "postId": "cf1ec5bd80c4719365170ac995e38f8a",
       "backtestId": "b0fc7e4df58d4e89910a2e099ad4921b",
       "title": "红利类型选股策略",
@@ -415,10 +1449,10 @@
       "clones": 26,
       "annualReturn": null,
       "compositeScore": "14.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 41,
+      "rank": 128,
       "postId": "7f3d77e29be106cd254e16d1ef9acca1",
       "backtestId": "18b6d02730b0a02f0836935d2b2069aa",
       "title": "一阳穿三线长测版",
@@ -426,10 +1460,10 @@
       "likes": 1,
       "clones": 26,
       "compositeScore": "14.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 42,
+      "rank": 129,
       "postId": "d29621b64a60cb1a1fb651a33dae37f4",
       "backtestId": "d135a83fe8b255c9e88ca176948896c4",
       "title": "模拟近一年的打板策略/ST策略/半年的小市值策略",
@@ -437,10 +1471,22 @@
       "likes": 7,
       "clones": 13,
       "compositeScore": "13.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 43,
+      "rank": 130,
+      "postId": "29060bd1ae206945c411cd1e7d3cd22c",
+      "backtestId": "a5e75f04bb72243bdde7403696425b21",
+      "title": "海龟交易策略",
+      "url": "https://www.joinquant.com/view/community/detail/29060bd1ae206945c411cd1e7d3cd22c",
+      "likes": 2,
+      "clones": 23,
+      "annualReturn": null,
+      "compositeScore": "13.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 131,
       "postId": "bbd423251dc9446e04079c2743d0c35c",
       "backtestId": "70a8d51c94823fbac735b4fe721f10fe",
       "title": "这个策略怎么样",
@@ -448,10 +1494,10 @@
       "likes": 2,
       "clones": 22,
       "compositeScore": "13.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 44,
+      "rank": 132,
       "postId": "0d1bbe83e05b19c73d1bfe9f4efda477",
       "backtestId": "411d1cea657032b8c260eeb6b0f04be3",
       "title": "年化51%的晴雨双轨：小盘游击+ETF防御",
@@ -459,10 +1505,34 @@
       "likes": 6,
       "clones": 14,
       "compositeScore": "13.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 45,
+      "rank": 133,
+      "postId": "5a1af863a35743b424ada2a0b8cf5f9d",
+      "backtestId": "b36985c6e53f6f91b4e38ead90e12508",
+      "title": "超强打板你值得拥有",
+      "url": "https://www.joinquant.com/view/community/detail/5a1af863a35743b424ada2a0b8cf5f9d",
+      "likes": 5,
+      "clones": 16,
+      "annualReturn": null,
+      "compositeScore": "13.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 134,
+      "postId": "37c3cc935b6fa9fbb3bc78d7be1e025c",
+      "backtestId": "74e28d23c9f1487162a889a54fd097df",
+      "title": "2026年1月1日至今 策略收益 57.35%",
+      "url": "https://www.joinquant.com/view/community/detail/37c3cc935b6fa9fbb3bc78d7be1e025c",
+      "likes": 1,
+      "clones": 24,
+      "annualReturn": null,
+      "compositeScore": "13.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 135,
       "postId": "bf0e094410458e8e67053255212aa8bb",
       "backtestId": "c4b2d85a539e558b371cb83e2d19e794",
       "title": "54万3只可******",
@@ -470,10 +1540,10 @@
       "likes": 6,
       "clones": 13,
       "compositeScore": "12.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 46,
+      "rank": 136,
       "postId": "68042196d0391729784022d4e7e9d661",
       "backtestId": "b8d98d1d228a8ee45081cd8435d9c4e2",
       "title": "五福第三版日内择时",
@@ -481,10 +1551,10 @@
       "likes": 8,
       "clones": 9,
       "compositeScore": "12.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 47,
+      "rank": 137,
       "postId": "7948989ad4b27eccf5758c80b5dca5d4",
       "backtestId": "40221462b7e943568b0d4e237f1e2b57",
       "title": "五福5.2日内趋势第一版",
@@ -492,10 +1562,10 @@
       "likes": 8,
       "clones": 9,
       "compositeScore": "12.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 48,
+      "rank": 138,
       "postId": "8ad3e808894bb2a25079b4d82e3f06be",
       "backtestId": "00dd91c75acd10a4960eb7acc15f0404",
       "title": "弱转强今年还可以",
@@ -503,10 +1573,10 @@
       "likes": 1,
       "clones": 23,
       "compositeScore": "12.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 49,
+      "rank": 139,
       "postId": "75d5439fad945e5e7b4406d80edafe2d",
       "backtestId": "a47483f093107f0aceec441333fa9e8e",
       "title": "四合一V3：七星高照+菜场大妈+五境掘金+红利",
@@ -514,10 +1584,10 @@
       "likes": 5,
       "clones": 15,
       "compositeScore": "12.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 50,
+      "rank": 140,
       "postId": "16ad6ade7b7084136c37d43535d78411",
       "backtestId": "326cad73fd3ad74320a22ad2bb174e0f",
       "title": "20260628研究10步骤复盘强势股",
@@ -525,10 +1595,10 @@
       "likes": 4,
       "clones": 17,
       "compositeScore": "12.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 51,
+      "rank": 141,
       "postId": "01fa47a7fb2233e8c602a78618e34545",
       "backtestId": "24dc612af75e4acdb9729dd5d656ec84",
       "title": "动态获取ETF池子策略-",
@@ -536,10 +1606,10 @@
       "likes": 9,
       "clones": 6,
       "compositeScore": "12.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 52,
+      "rank": 142,
       "postId": "a75c48f6bb9fb7e73beb3a35239b25cc",
       "backtestId": "7fce043793fb344c03a6e30c00ea93d1",
       "title": "五福V5.0 调优记录思考-趋势狙击手，死于装备过载",
@@ -548,10 +1618,10 @@
       "clones": 15,
       "annualReturn": null,
       "compositeScore": "11.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 53,
+      "rank": 143,
       "postId": "964ee7749e6a9ffb665c434d6adba77c",
       "backtestId": "45e89f66590cba7ddffc594530f6156e",
       "title": "最强板块每天选两只，年化******175%左右",
@@ -560,10 +1630,10 @@
       "clones": 21,
       "annualReturn": null,
       "compositeScore": "11.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 54,
+      "rank": 144,
       "postId": "edac9c7ac9419d42a69099470555ac3b",
       "backtestId": "7cc2d8816c9db4008814b74efc20b2c6",
       "title": "还是这个小市值好",
@@ -571,10 +1641,10 @@
       "likes": 1,
       "clones": 21,
       "compositeScore": "11.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 55,
+      "rank": 145,
       "postId": "2a9167ecd41f5325d040e2c24bfa70d4",
       "backtestId": "5fef925a91a21ed91ab675af3c0132e8",
       "title": "400倍龙头创业板策略V2升级版",
@@ -582,10 +1652,10 @@
       "likes": 0,
       "clones": 23,
       "compositeScore": "11.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 56,
+      "rank": 146,
       "postId": "01291e360ecd43f63121cdbb90705571",
       "backtestId": "cace70f32b88c48b83d3cd527f12029c",
       "title": "震荡市回调低吸策略",
@@ -593,10 +1663,10 @@
       "likes": 9,
       "clones": 5,
       "compositeScore": "11.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 57,
+      "rank": 147,
       "postId": "29048a4fa00b2bec20dffce7385d77fc",
       "backtestId": "19388dfc5ee53799e954dd2e00d2d1bb",
       "title": "中小板弱转强，高年化率低回撤修复版",
@@ -604,10 +1674,10 @@
       "likes": 0,
       "clones": 23,
       "compositeScore": "11.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 58,
+      "rank": 148,
       "postId": "117b3bdbec5dc22a7fc8ee01eaf9136b",
       "backtestId": "e8a235d2c0a85abb481ed33fe6404057",
       "title": "涨停基因右侧交易-经典版 -",
@@ -615,10 +1685,22 @@
       "likes": 1,
       "clones": 21,
       "compositeScore": "11.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 59,
+      "rank": 149,
+      "postId": "ea1eab236de3a1f95442fe981de3a42b",
+      "backtestId": "4b2f5f5eaecf006e5c24620a199fa1ef",
+      "title": "分享一个两年前的三因子策略，至今好像还有效！",
+      "url": "https://www.joinquant.com/view/community/detail/ea1eab236de3a1f95442fe981de3a42b",
+      "likes": 2,
+      "clones": 19,
+      "annualReturn": null,
+      "compositeScore": "11.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 150,
       "postId": "004aca1c2b4beba715adaf31885c4c16",
       "backtestId": "689b7102eb16ab9f9712b1645712c620",
       "title": "重研可SHI盘的打板策略",
@@ -627,10 +1709,10 @@
       "clones": 12,
       "annualReturn": null,
       "compositeScore": "11.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 60,
+      "rank": 151,
       "postId": "71118013a574ee1c45dd1f8fb5934b90",
       "backtestId": "533ab5493ec17da9467aa7c227ab2e14",
       "title": "中证500市值前80策略：参数配置与回测调优实战指南",
@@ -638,10 +1720,22 @@
       "likes": 2,
       "clones": 18,
       "compositeScore": "11.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 61,
+      "rank": 152,
+      "postId": "7e7459c1b8c9e61330c6d551abc72f2f",
+      "backtestId": "27b63d034a4d1bc6643de09f4dcf0acb",
+      "title": "小市值策略优化",
+      "url": "https://www.joinquant.com/view/community/detail/7e7459c1b8c9e61330c6d551abc72f2f",
+      "likes": 3,
+      "clones": 16,
+      "annualReturn": null,
+      "compositeScore": "11.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 153,
       "postId": "15d723c686672a765e4077292a813dec",
       "backtestId": "31498ddd90f77ca0d459300ea5daf843",
       "title": "七星ETF策略优化，更高收益",
@@ -650,10 +1744,10 @@
       "clones": 17,
       "annualReturn": null,
       "compositeScore": "10.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 62,
+      "rank": 154,
       "postId": "d465cef02ccadeb82f1f6e543060aee3",
       "backtestId": "2bf6ac132e1fa304ff1b6ceb98999f27",
       "title": "￼ 丛林狼-五福51_三状态V2_正常震荡三ETF分仓",
@@ -662,10 +1756,10 @@
       "clones": 17,
       "annualReturn": null,
       "compositeScore": "10.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 63,
+      "rank": 155,
       "postId": "b91385ae0381f884e97385b6279c3a0a",
       "backtestId": "6bec32069fad5aadc72f0760369aa08c",
       "title": "新人入坑最大的坎不是策略 是打通******",
@@ -673,10 +1767,10 @@
       "likes": 10,
       "clones": 1,
       "compositeScore": "10.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 64,
+      "rank": 156,
       "postId": "0813047d8f4ae4adc34b0ac3a3ad5fd0",
       "backtestId": "535e7b5dfbb67934a557279c9ce4401f",
       "title": "去了未来加上zidong买卖回测12年化100多",
@@ -684,10 +1778,10 @@
       "likes": 5,
       "clones": 10,
       "compositeScore": "10.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 65,
+      "rank": 157,
       "postId": "f95907c7e3190968b33f933286de4e8e",
       "backtestId": "2c5af49dfe88c171d02f8114287e2fea",
       "title": "简单清晰的5只ETF低频轮动策略，6年半回测年化35.8%",
@@ -695,10 +1789,10 @@
       "likes": 3,
       "clones": 14,
       "compositeScore": "10.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 66,
+      "rank": 158,
       "postId": "7ec9cbf00292a0e529c008f4ee3d8239",
       "backtestId": "13bb0762fa01a1a957b8a6f63cf535e4",
       "title": "ST新规-5年8235.16%回撤24.93%",
@@ -706,10 +1800,10 @@
       "likes": 4,
       "clones": 12,
       "compositeScore": "10.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 67,
+      "rank": 159,
       "postId": "9935f951ca5e269b36f2a2b3fbfcec96",
       "backtestId": "a8c9a79a066f74d0205900ec2004e29a",
       "title": "不择时的小市值弱转强策略+研究",
@@ -717,21 +1811,46 @@
       "likes": 4,
       "clones": 11,
       "compositeScore": "9.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 68,
-      "postId": "6d61326086be0877bafd9ba04925f7b9",
-      "backtestId": "cbbef83634daf7503017a9b02e45df5f",
-      "title": "带涨停基因的小市值 PT迁移版 沧海横流? 26年半年战报",
-      "url": "https://www.joinquant.com/view/community/detail/6d61326086be0877bafd9ba04925f7b9",
-      "likes": 6,
-      "clones": 7,
+      "rank": 160,
+      "postId": "401b26016a7df6688af9863f98d0f659",
+      "backtestId": "7fa0b21bf75d13994f2f665f5d971b70",
+      "title": "自由现金流策略编制",
+      "url": "https://www.joinquant.com/view/community/detail/401b26016a7df6688af9863f98d0f659",
+      "likes": 5,
+      "clones": 9,
+      "annualReturn": null,
       "compositeScore": "9.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 69,
+      "rank": 161,
+      "postId": "318f4faa2b248d285848574a0fe75436",
+      "backtestId": "6b9895e610c242c947f16071b1e57f24",
+      "title": "修复一下多杰的策略模拟无法收到买入信号的问题",
+      "url": "https://www.joinquant.com/view/community/detail/318f4faa2b248d285848574a0fe75436",
+      "likes": 1,
+      "clones": 16,
+      "annualReturn": null,
+      "compositeScore": "9.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 162,
+      "postId": "8f182aea6e761b58abb3b50b5035f85d",
+      "backtestId": "aa18675ec61f48d6ea1d2faa9133132a",
+      "title": "小市值初筛 + 反转打分 + 市场状态门控 + 风控卖出",
+      "url": "https://www.joinquant.com/view/community/detail/8f182aea6e761b58abb3b50b5035f85d",
+      "likes": 4,
+      "clones": 10,
+      "annualReturn": null,
+      "compositeScore": "9.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 163,
       "postId": "83f5b2005791326d669c6f0a5bef03ba",
       "backtestId": "f5c5aab2db9be65a00c34834250bd702",
       "title": "******向】拒绝臃肿缝合怪！极简ETF轮动",
@@ -740,10 +1859,10 @@
       "clones": 13,
       "annualReturn": null,
       "compositeScore": "8.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 70,
+      "rank": 164,
       "postId": "5f2f36a917c700fa7f8c7954a46761e0",
       "backtestId": "6e1d667b302e844112e901aa7b070a7a",
       "title": "趋势捕捉加点低关联的ETF，烧token搞的换点分回测",
@@ -752,10 +1871,10 @@
       "clones": 9,
       "annualReturn": null,
       "compositeScore": "8.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 71,
+      "rank": 165,
       "postId": "ee715bade4eb84643df8f5b58edf3fb2",
       "backtestId": "debaab3913a87311f4529316c86c6818",
       "title": "经典ETF动量轮动 25年年化86%附PT迁移版回测结果截图",
@@ -763,10 +1882,10 @@
       "likes": 3,
       "clones": 11,
       "compositeScore": "8.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 72,
+      "rank": 166,
       "postId": "6db714aa9cede9b26f1e651436b76a50",
       "backtestId": "d195760ff6276309ff4ada1011d94e9c",
       "title": "年化194%！最大回撤仅18%，这个A股量化策略凭什么？",
@@ -774,10 +1893,10 @@
       "likes": 1,
       "clones": 15,
       "compositeScore": "8.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 73,
+      "rank": 167,
       "postId": "98024e05b191902c2e2d8b3e9cbdb1b9",
       "backtestId": "4f52458e884776944b7c444bd6445fb3",
       "title": "再谈小市值策略",
@@ -785,10 +1904,10 @@
       "likes": 3,
       "clones": 11,
       "compositeScore": "8.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 74,
+      "rank": 168,
       "postId": "419ff61d0e78854276e25a82a83ab497",
       "backtestId": "749107acab59e9300cf6ebc7607133fe",
       "title": "抄作业-QFII和社保",
@@ -796,10 +1915,22 @@
       "likes": 0,
       "clones": 17,
       "compositeScore": "8.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 75,
+      "rank": 169,
+      "postId": "715633a027e584deb9c166193b81852f",
+      "backtestId": "33eb53ad6013a41475b3ba1c60b0e796",
+      "title": "2023年11月开始运行，记录一下这套小市值策略的表现",
+      "url": "https://www.joinquant.com/view/community/detail/715633a027e584deb9c166193b81852f",
+      "likes": 3,
+      "clones": 11,
+      "annualReturn": null,
+      "compositeScore": "8.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 170,
       "postId": "091e1822b2816a02153f9c91298c6134",
       "backtestId": "5ad1541b787a944d0fa708a16cc4e0d5",
       "title": "单吊还是分散？ETF轮动1至5只黄金分仓实测分享",
@@ -808,10 +1939,10 @@
       "clones": 10,
       "annualReturn": null,
       "compositeScore": "8.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 76,
+      "rank": 171,
       "postId": "05113d43172c1dfa90276b60bc67522b",
       "backtestId": "6a3130bef0b98be14c18efc2a0e87953",
       "title": "60倍无未来函数的A股策略 欢迎高人修改",
@@ -819,10 +1950,10 @@
       "likes": 3,
       "clones": 10,
       "compositeScore": "8.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 77,
+      "rank": 172,
       "postId": "c4f480e3e9868a1173cbcf6dde16e769",
       "backtestId": "91bcf06fbf0d8f23cd1a366dd450624f",
       "title": "7.8%极限回撤，用架构解耦重构多策略动态路由",
@@ -830,10 +1961,10 @@
       "likes": 0,
       "clones": 16,
       "compositeScore": "8.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 78,
+      "rank": 173,
       "postId": "87a4787ada8b05594106a9afa4d48f9b",
       "backtestId": "754d3e1316b42b86c706bea080e77cab",
       "title": "优化了一下收溢率提高了好几倍，提前下单是不是有机会成交",
@@ -841,10 +1972,10 @@
       "likes": 2,
       "clones": 12,
       "compositeScore": "8.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 79,
+      "rank": 174,
       "postId": "8cea9856678dd667acdc25db21e92b49",
       "backtestId": "2e2a7c5e3ba2207f76df489f2bdcc94d",
       "title": "免费分享A股交易日历",
@@ -852,10 +1983,22 @@
       "likes": 8,
       "clones": 0,
       "compositeScore": "8.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 80,
+      "rank": 175,
+      "postId": "0135ca5f2652dfe791389e46023b035b",
+      "backtestId": "e629e32f96a72ae33f0dacf77f9330b2",
+      "title": "六因子选股版破净策略 附PT迁移版在各时期的回测截图",
+      "url": "https://www.joinquant.com/view/community/detail/0135ca5f2652dfe791389e46023b035b",
+      "likes": 4,
+      "clones": 8,
+      "annualReturn": null,
+      "compositeScore": "8.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 176,
       "postId": "f8ee6b77b9591bdf84d5df3fac6691ac",
       "backtestId": "dbd18dedcefcc89d14567c1377342375",
       "title": "今年以来50%，适合震荡上行市场，10盘不到一个月15%",
@@ -864,10 +2007,10 @@
       "clones": 7,
       "annualReturn": null,
       "compositeScore": "7.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 81,
+      "rank": 177,
       "postId": "de0aa8e555727019a3462d1b21026a4e",
       "backtestId": "a3d5908fb4b57e8113013da08f4d9746",
       "title": "融合“弱转强”与“首板低开”的动量策略，没想到强于原策略",
@@ -876,10 +2019,10 @@
       "clones": 15,
       "annualReturn": null,
       "compositeScore": "7.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 82,
+      "rank": 178,
       "postId": "6a933dfb8d4b8034ce2cdd0ef09543f7",
       "backtestId": "dc05fd3c6cbd4089a91ce83c7d15ff55",
       "title": "小资金适配的进攻型小市值成长趋势策略",
@@ -887,10 +2030,10 @@
       "likes": 2,
       "clones": 11,
       "compositeScore": "7.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 83,
+      "rank": 179,
       "postId": "719381a68c21d35caed887cc4535f8df",
       "backtestId": "a877998ac3ceed344ed6d8e03e06bb3d",
       "title": "50倍的创业板策略",
@@ -898,10 +2041,10 @@
       "likes": 0,
       "clones": 15,
       "compositeScore": "7.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 84,
+      "rank": 180,
       "postId": "dae84e6ca10bbb92641f4e15f9685949",
       "backtestId": "a62161f05de397882083bc28d8871975",
       "title": "七星高照 ETF池再优化，减少过拟合",
@@ -909,10 +2052,10 @@
       "likes": 2,
       "clones": 11,
       "compositeScore": "7.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 85,
+      "rank": 181,
       "postId": "aaee30357ddba224573a58a447f65aba",
       "backtestId": "b33926c8633b80309f131d72f15ab204",
       "title": "五福闹新春V5.2动态池优化",
@@ -920,10 +2063,46 @@
       "likes": 2,
       "clones": 11,
       "compositeScore": "7.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 86,
+      "rank": 182,
+      "postId": "15af739f01da52e4184a76fc14c6141a",
+      "backtestId": "227c6b9400e83db137818e26bcc58821",
+      "title": "一个很强的策略",
+      "url": "https://www.joinquant.com/view/community/detail/15af739f01da52e4184a76fc14c6141a",
+      "likes": 3,
+      "clones": 9,
+      "annualReturn": null,
+      "compositeScore": "7.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 183,
+      "postId": "589fa28188a45a674146de03d2c37d20",
+      "backtestId": "8d3037a43afdf6dc99e2c09d9e19b746",
+      "title": "短线低吸:ATR 动态止损 + 保本止盈 + 大盘守护",
+      "url": "https://www.joinquant.com/view/community/detail/589fa28188a45a674146de03d2c37d20",
+      "likes": 3,
+      "clones": 9,
+      "annualReturn": null,
+      "compositeScore": "7.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 184,
+      "postId": "4a8bcfd5092334a3a73493475f007f7a",
+      "backtestId": "bb63d032b576af1c71febb6ad20a157a",
+      "title": "【量化分享】ETF低波海龟法则与复利增强的验证",
+      "url": "https://www.joinquant.com/view/community/detail/4a8bcfd5092334a3a73493475f007f7a",
+      "likes": 1,
+      "clones": 13,
+      "annualReturn": null,
+      "compositeScore": "7.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 185,
       "postId": "d1f28165f542a7c317f88f2e06dc02bc",
       "backtestId": "8a6c5f173221e57f5051302e644ea5a3",
       "title": "首板次日竞价买入策略（加入动态市值上限）",
@@ -932,10 +2111,10 @@
       "clones": 14,
       "annualReturn": null,
       "compositeScore": "7.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 87,
+      "rank": 186,
       "postId": "00e82bf80f39c6ee716ed938c108fcf4",
       "backtestId": "d672bc437ab1ec97fbdd2121f8e969bf",
       "title": "ST tick级别打板，无未来",
@@ -944,10 +2123,10 @@
       "clones": 12,
       "annualReturn": null,
       "compositeScore": "7.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 88,
+      "rank": 187,
       "postId": "c65b0c1e699181d40d89ea5e90eaa1cc",
       "backtestId": "1d7d7b23aa55adf9017a85a05161fe0b",
       "title": "一个适合上班族懒人定投的资产配置策略（年化13%）",
@@ -956,10 +2135,10 @@
       "clones": 8,
       "annualReturn": null,
       "compositeScore": "7.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 89,
+      "rank": 188,
       "postId": "d6855860117fbfd183aa0668d14c49d8",
       "backtestId": "5c1a3c706e227a199130b3e667d152aa",
       "title": "年化70%-最大回撤22%-国九搅屎棍策略",
@@ -968,10 +2147,10 @@
       "clones": 14,
       "annualReturn": null,
       "compositeScore": "7.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 90,
+      "rank": 189,
       "postId": "ba28728a7b84b5cffb22c2ddd3e94dad",
       "backtestId": "cf566b4162874339a67123a17e50b8fd",
       "title": "ETF轮动策略",
@@ -979,10 +2158,10 @@
       "likes": 5,
       "clones": 4,
       "compositeScore": "7.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 91,
+      "rank": 190,
       "postId": "dc0f44a2bd8310242fa3919605fe4c1d",
       "backtestId": "cf0f6ac0b3b096ead1c474687162929e",
       "title": "分享一个******收益率还可以的策略，我自己一直在用",
@@ -990,10 +2169,10 @@
       "likes": 1,
       "clones": 12,
       "compositeScore": "7.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 92,
+      "rank": 191,
       "postId": "d1679937d4cb53cd990346dd1230ea2e",
       "backtestId": "6a41a87e69e75a9ec98b4a90b2349882",
       "title": "机器学习线性回归小市值-滚动训练版",
@@ -1001,10 +2180,10 @@
       "likes": 3,
       "clones": 8,
       "compositeScore": "7.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 93,
+      "rank": 192,
       "postId": "6f04114cfc47b655b141b1de61faf509",
       "backtestId": "4f08dcaa02d9937f435ca2ab3767fd5e",
       "title": "经典三马-五福-改版",
@@ -1012,10 +2191,10 @@
       "likes": 3,
       "clones": 8,
       "compositeScore": "7.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 94,
+      "rank": 193,
       "postId": "23cb8693291ae43379b640ef36aac675",
       "backtestId": "5b8400d65a02f495de88424c765e5bc3",
       "title": "小市值多因子",
@@ -1023,10 +2202,10 @@
       "likes": 2,
       "clones": 10,
       "compositeScore": "7.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 95,
+      "rank": 194,
       "postId": "a0b7e6ebf82aa3446c23ade7e896ef8e",
       "backtestId": "0199ef76b781357d889b21c6d912a1cb",
       "title": "新框架-欢迎魔改主力资金确认短线埋伏可接外部新闻聚合AI分析",
@@ -1035,10 +2214,10 @@
       "clones": 7,
       "annualReturn": null,
       "compositeScore": "6.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 96,
+      "rank": 195,
       "postId": "5ac906ea399afcf548b6336e6980e65f",
       "backtestId": "1eaa982f213e7789a06431c1a1e07081",
       "title": "五福闹新春策略分时回测 探寻最优交易入场时点",
@@ -1046,10 +2225,10 @@
       "likes": 5,
       "clones": 3,
       "compositeScore": "6.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 97,
+      "rank": 196,
       "postId": "344b312f5222306b67940e0216421472",
       "backtestId": "4938a8e124288228b7705eb0997fa5ab",
       "title": "V科技队-7月量化策略竞技场",
@@ -1057,10 +2236,10 @@
       "likes": 0,
       "clones": 13,
       "compositeScore": "6.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 98,
+      "rank": 197,
       "postId": "a1d245d4241997f385aa72135c616232",
       "backtestId": "02360027eab7039a2a749dcd6ae87350",
       "title": "对年化六倍的去未来修改",
@@ -1068,10 +2247,10 @@
       "likes": 1,
       "clones": 11,
       "compositeScore": "6.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 99,
+      "rank": 198,
       "postId": "b5dd66ebfd94579ec47e89b2bd132b82",
       "backtestId": "34a31b65048394ab2a59a82d309f66db",
       "title": "【十年十倍】纳指+黄金全天候：动态杠杆网格系统",
@@ -1079,10 +2258,10 @@
       "likes": 2,
       "clones": 9,
       "compositeScore": "6.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 100,
+      "rank": 199,
       "postId": "042aea4deda0cd08c39bb595ea9b55b2",
       "backtestId": "a411f4e87abe6e0675c50bea58490388",
       "title": "ETF低相关策略的聚宽实现：EPO优化器与资产配置实战",
@@ -1090,10 +2269,46 @@
       "likes": 0,
       "clones": 13,
       "compositeScore": "6.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 101,
+      "rank": 200,
+      "postId": "d4034be34c04bff9d19d21c75162d161",
+      "backtestId": "229b2bf7d8576196530add45a335a6b5",
+      "title": "打板基础设施：选股过滤框架",
+      "url": "https://www.joinquant.com/view/community/detail/d4034be34c04bff9d19d21c75162d161",
+      "likes": 5,
+      "clones": 3,
+      "annualReturn": null,
+      "compositeScore": "6.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 201,
+      "postId": "20fb6a620a853fc8ce3b106a024e118b",
+      "backtestId": "30c2afd4f6a329ed4d4de7f82ba27dcd",
+      "title": "这个东西蛮好，模拟位不够的可以看看",
+      "url": "https://www.joinquant.com/view/community/detail/20fb6a620a853fc8ce3b106a024e118b",
+      "likes": 2,
+      "clones": 9,
+      "annualReturn": null,
+      "compositeScore": "6.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 202,
+      "postId": "e54d8dd0524103cdeb02aa3ab176753b",
+      "backtestId": "9974bccd3c88b4054822680b02406d86",
+      "title": "五福改进版",
+      "url": "https://www.joinquant.com/view/community/detail/e54d8dd0524103cdeb02aa3ab176753b",
+      "likes": 2,
+      "clones": 9,
+      "annualReturn": null,
+      "compositeScore": "6.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 203,
       "postId": "c5d203933cd8f1060d77cfe93312eb36",
       "backtestId": "a0f34f96b6501d4ad90ceee84e2f74bf",
       "title": "优化了半个月的ETF动量轮动策略",
@@ -1102,10 +2317,10 @@
       "clones": 8,
       "annualReturn": null,
       "compositeScore": "6.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 102,
+      "rank": 204,
       "postId": "163107d7764a96a4a4eb4a451d63f2a5",
       "backtestId": "100123071fab8d55288e0784b4231729",
       "title": "一个量化开源项目：聚宽→Q*M*T 代码翻译引擎",
@@ -1113,10 +2328,10 @@
       "likes": 4,
       "clones": 4,
       "compositeScore": "6.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 103,
+      "rank": 205,
       "postId": "8724e9133c59eaf4375b4a963f2099ae",
       "backtestId": "acfac63b0e3d6f3bff9714c03bac32e0",
       "title": "涨停板第二天买入策略",
@@ -1124,10 +2339,10 @@
       "likes": 2,
       "clones": 8,
       "compositeScore": "6.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 104,
+      "rank": 206,
       "postId": "c8c942f537cf02fa2e89bb48edddbc36",
       "backtestId": "f53bc2dba8ee910b08a89773a19fa411",
       "title": "创业板低价突击策略 V3.0 (修复停牌与涨停限制) &#39;)",
@@ -1136,10 +2351,10 @@
       "clones": 9,
       "annualReturn": null,
       "compositeScore": "5.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 105,
+      "rank": 207,
       "postId": "7d57c2629921be1616ef07f41ee85793",
       "backtestId": "b353f32baf76444916d9aa6191e571c4",
       "title": "小市值轮动策略 - 20年至今年化57.87%",
@@ -1148,10 +2363,10 @@
       "clones": 9,
       "annualReturn": null,
       "compositeScore": "5.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 106,
+      "rank": 208,
       "postId": "bba81e385a9fa79435c5054f3a6493e0",
       "backtestId": "9d375022980936d802623c1ce1332141",
       "title": "热点概念追踪 低吸小市值",
@@ -1159,10 +2374,10 @@
       "likes": 1,
       "clones": 9,
       "compositeScore": "5.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 107,
+      "rank": 209,
       "postId": "0a7de9fad52e6c789cae6ef3b5032c61",
       "backtestId": "18cbe934dc6e4d24686343e5b69014dd",
       "title": "中小盘趋势策略（年化 85%）",
@@ -1170,10 +2385,10 @@
       "likes": 2,
       "clones": 7,
       "compositeScore": "5.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 108,
+      "rank": 210,
       "postId": "02c9133be60d8641e60d5eee07f7e44e",
       "backtestId": "4172c57e94a8fe41f171eb4824d6d6fc",
       "title": "固定资产投资增速也不错",
@@ -1181,10 +2396,10 @@
       "likes": 1,
       "clones": 9,
       "compositeScore": "5.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 109,
+      "rank": 211,
       "postId": "e1053979bd68950e6e09252bbb563f1e",
       "backtestId": "3f34731dfab1a20b9420c0030036b7e4",
       "title": "年化68.63%，回撤16.82连板策略",
@@ -1192,10 +2407,10 @@
       "likes": 2,
       "clones": 7,
       "compositeScore": "5.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 110,
+      "rank": 212,
       "postId": "4a67a7b0442764e0d7643831ff08abb6",
       "backtestId": "974e1227cc1a3c668adb7dcfe6d54dd2",
       "title": "多仓位再平衡22.77%年化，最大回撤11.17%",
@@ -1203,10 +2418,10 @@
       "likes": 1,
       "clones": 9,
       "compositeScore": "5.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 111,
+      "rank": 213,
       "postId": "172cce1d195f92113d0ea7da087d92af",
       "backtestId": "72123a8d4bdf0db9540bcd063157630a",
       "title": "ETF动量策略V3-懒人躲避熊市",
@@ -1215,10 +2430,10 @@
       "clones": 2,
       "annualReturn": null,
       "compositeScore": "5.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 112,
+      "rank": 214,
       "postId": "9cd2936d473f9af4247652dd0a153071",
       "backtestId": "64fc6c6e33a148ad24f5f0c5e347f960",
       "title": "让 Cdoex 辅助跑回测、查日志、批量筛选策略",
@@ -1227,10 +2442,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "5.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 113,
+      "rank": 215,
       "postId": "c002a8215306b2553b964eed9b5b60fa",
       "backtestId": "e89acc931655e539e7b2f6b3a2916d7c",
       "title": "分享一个我实战中高收益回撤还行的策略",
@@ -1238,10 +2453,10 @@
       "likes": 1,
       "clones": 8,
       "compositeScore": "5.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 114,
+      "rank": 216,
       "postId": "dd17cc2d449de31939a6a6a5ffd1adee",
       "backtestId": "05e3d04c61c91929b2c12d73955dc932",
       "title": "考夫曼自适应均线在大跌行情中的应用",
@@ -1249,10 +2464,10 @@
       "likes": 3,
       "clones": 4,
       "compositeScore": "5.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 115,
+      "rank": 217,
       "postId": "823746c0c144ed8c6bff1984697f78cc",
       "backtestId": "ab1ba4c06298888bc6f71d033ca3aae1",
       "title": "分享一个我******使用的高收益低回撤策略",
@@ -1260,10 +2475,10 @@
       "likes": 1,
       "clones": 8,
       "compositeScore": "5.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 116,
+      "rank": 218,
       "postId": "8ca6dda7fe789707d883132d8f1bea19",
       "backtestId": "dca9989b20f564da5f73e4c899277ff3",
       "title": "五福闹新春V3.5 PT迁移版 2026年半年战报",
@@ -1271,10 +2486,58 @@
       "likes": 2,
       "clones": 6,
       "compositeScore": "5.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 117,
+      "rank": 219,
+      "postId": "1f10e3bbcdf85929dac4589964494066",
+      "backtestId": "f7e0bf1ad76eb849f5d6c448c0445ab3",
+      "title": "情绪周期热度板块",
+      "url": "https://www.joinquant.com/view/community/detail/1f10e3bbcdf85929dac4589964494066",
+      "likes": 1,
+      "clones": 8,
+      "annualReturn": null,
+      "compositeScore": "5.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 220,
+      "postId": "ae3286ef06d144e8463257e98e851add",
+      "backtestId": "8405694f33cf83d7da60a6d829202f66",
+      "title": "自己搭建的一个10年230%收益率的银行股策略",
+      "url": "https://www.joinquant.com/view/community/detail/ae3286ef06d144e8463257e98e851add",
+      "likes": 2,
+      "clones": 6,
+      "annualReturn": null,
+      "compositeScore": "5.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 221,
+      "postId": "70b0746d7931616fae3bef01d5da08e0",
+      "backtestId": "8f7bcabffa44090e52f3733ce0b06424",
+      "title": "国泰证券迅投 QM-T自动打新和自动国债逆回购",
+      "url": "https://www.joinquant.com/view/community/detail/70b0746d7931616fae3bef01d5da08e0",
+      "likes": 3,
+      "clones": 4,
+      "annualReturn": null,
+      "compositeScore": "5.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 222,
+      "postId": "b87db2b904d3713f3a93d5982e707cc8",
+      "backtestId": "61de4ac20d53fc828aec01af3ef56543",
+      "title": "无脑买入最高空间板，仍有盈利",
+      "url": "https://www.joinquant.com/view/community/detail/b87db2b904d3713f3a93d5982e707cc8",
+      "likes": 1,
+      "clones": 8,
+      "annualReturn": null,
+      "compositeScore": "5.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 223,
       "postId": "beb6a131f84bc6d0efc5371cba5e7703",
       "backtestId": "03e9557a6f6b8ad97f863d3aeec71ae0",
       "title": "今年来小盘股普遍表现乏力呀",
@@ -1282,10 +2545,10 @@
       "likes": 3,
       "clones": 3,
       "compositeScore": "4.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 118,
+      "rank": 224,
       "postId": "4b0df9589186e2e572b12933b69f486c",
       "backtestId": "efd4619dc04b35fc1cc2ddf5a8734a5a",
       "title": "胜率32%、年化37%：一个反直觉的「冷门股轮动」策略",
@@ -1293,10 +2556,10 @@
       "likes": 2,
       "clones": 5,
       "compositeScore": "4.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 119,
+      "rank": 225,
       "postId": "2b4bcf2f2ddbe2094f1c21976ec6f953",
       "backtestId": "bc6e9a5d2790fe7def6e667c51b35dcc",
       "title": "ETF轮动-60日波动率最高 MCTS挖因子",
@@ -1305,10 +2568,10 @@
       "clones": 8,
       "annualReturn": null,
       "compositeScore": "4.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 120,
+      "rank": 226,
       "postId": "d864895d870621e468175ee1c07ffd26",
       "backtestId": "dee035e1e70b741875f3d66d723d599c",
       "title": "关于退市股的回测风险",
@@ -1317,10 +2580,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "4.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 121,
+      "rank": 227,
       "postId": "8463bc02e6c2ba1ca0d0c8cd4368e87b",
       "backtestId": "2ed4b87c6e916b8db6a628c2f546bc0c",
       "title": "一个不错的轮动策略。",
@@ -1329,10 +2592,10 @@
       "clones": 4,
       "annualReturn": null,
       "compositeScore": "4.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 122,
+      "rank": 228,
       "postId": "37b94e7769922c27a63caae50f89e404",
       "backtestId": "7f826b042fa04cd556d7e87b0abaa953",
       "title": "ETF折价率轮动策略",
@@ -1340,10 +2603,10 @@
       "likes": 2,
       "clones": 4,
       "compositeScore": "4.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 123,
+      "rank": 229,
       "postId": "ba87029cbd57ddd8a9d5b70be3cd5ded",
       "backtestId": "20da534a5b7ff9f7c2434b3bd9cd7e1f",
       "title": "小市值策略在各种指数上的表现",
@@ -1351,10 +2614,10 @@
       "likes": 1,
       "clones": 6,
       "compositeScore": "4.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 124,
+      "rank": 230,
       "postId": "fd55765f0e3458a24b0bb8f0b58a478b",
       "backtestId": "c86073a2275828d8939798461c2f3ff0",
       "title": "全天候策略增强：A股风格轮动",
@@ -1362,10 +2625,10 @@
       "likes": 0,
       "clones": 8,
       "compositeScore": "4.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 125,
+      "rank": 231,
       "postId": "223a137ed5b63daedcb57320c10c1207",
       "backtestId": "ed24fcb6085e668ac6e5c2bf20a86a3a",
       "title": "回测里的坑：你选的ETF那时候还没上市呢",
@@ -1373,10 +2636,10 @@
       "likes": 3,
       "clones": 2,
       "compositeScore": "4.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 126,
+      "rank": 232,
       "postId": "e84ffb529bd4cbdb003b4f8c5e6adddc",
       "backtestId": "2dd7af3ca8435d9ce7b26419d809fc11",
       "title": "价值选股与RSRS择时的Pthon3版本",
@@ -1384,10 +2647,10 @@
       "likes": 1,
       "clones": 6,
       "compositeScore": "4.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 127,
+      "rank": 233,
       "postId": "4ac4bd9a05f0a3bb565bcfa888ae2fac",
       "backtestId": "f5d52eedb33c8ac26ebc39b57665e71a",
       "title": "低相关ETF组合：回撤11.72%",
@@ -1395,10 +2658,10 @@
       "likes": 1,
       "clones": 6,
       "compositeScore": "4.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 128,
+      "rank": 234,
       "postId": "84e155b11569502c80a10978b2ccb9c2",
       "backtestId": "ce1a73b808dbadc16147fb7798410600",
       "title": "获取聚宽的ip表写入研究模块",
@@ -1406,10 +2669,10 @@
       "likes": 2,
       "clones": 4,
       "compositeScore": "4.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 129,
+      "rank": 235,
       "postId": "600ecc4b10cfc2e23815653e29f63062",
       "backtestId": "6c9309b9bb067312979f592ea3305a70",
       "title": "择时ETF轮动策略",
@@ -1418,10 +2681,10 @@
       "clones": 5,
       "annualReturn": null,
       "compositeScore": "3.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 130,
+      "rank": 236,
       "postId": "b146b91f9b146d996f54ef0d1a224469",
       "backtestId": "48f96f1ff96e1604e7067f4a238847ce",
       "title": "大市值ETF轮动无止损， 策略年化收益 98.34%",
@@ -1429,10 +2692,10 @@
       "likes": 0,
       "clones": 7,
       "compositeScore": "3.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 131,
+      "rank": 237,
       "postId": "554587175886848fe6e9476cbe77111d",
       "backtestId": "42572f97dcd52b77ef70b0d514b34a72",
       "title": "【创业板掘金】小市值轮动策略——年化收益超50%",
@@ -1440,10 +2703,10 @@
       "likes": 1,
       "clones": 5,
       "compositeScore": "3.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 132,
+      "rank": 238,
       "postId": "85928e0ec2cf1f7f25a282d2d4238781",
       "backtestId": "afd269a6ad3b30d6d5936f0aa9e2e847",
       "title": "一个涨停一个跌5个点",
@@ -1451,10 +2714,10 @@
       "likes": 0,
       "clones": 7,
       "compositeScore": "3.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 133,
+      "rank": 239,
       "postId": "476aa84d436951c350ab001a844e0ab3",
       "backtestId": "302d3c78ec08d56c3b8487180e96d0d4",
       "title": "追涨策略2",
@@ -1462,10 +2725,10 @@
       "likes": 0,
       "clones": 7,
       "compositeScore": "3.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 134,
+      "rank": 240,
       "postId": "773597231e41d125120dfe4f83474915",
       "backtestId": "8aa42d99be581d4dac2c930087d4c1bb",
       "title": "强者恒强？",
@@ -1473,10 +2736,10 @@
       "likes": 2,
       "clones": 3,
       "compositeScore": "3.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 135,
+      "rank": 241,
       "postId": "a638393c57bab90ff77b8529169fb6ef",
       "backtestId": "e26ff9e11a5ef27e81f3ee66e4da165a",
       "title": "五福闹新春V5.2-买点优化版",
@@ -1484,10 +2747,10 @@
       "likes": 0,
       "clones": 7,
       "compositeScore": "3.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 136,
+      "rank": 242,
       "postId": "05625fd91d15f21aa69b2cb6a6a00cc6",
       "backtestId": "b6ba50293ba369db8dbd37df9f96eb0c",
       "title": "小市值仓位分层实验：年化11%",
@@ -1495,10 +2758,10 @@
       "likes": 2,
       "clones": 3,
       "compositeScore": "3.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 137,
+      "rank": 243,
       "postId": "153fb5fa07f82e5409c9122e9c0d23f7",
       "backtestId": "e266114bb74b93ef824363767b1d3008",
       "title": "很简单的策略,收益感觉也还可以",
@@ -1506,10 +2769,22 @@
       "likes": 0,
       "clones": 7,
       "compositeScore": "3.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 138,
+      "rank": 244,
+      "postId": "ae4279109334b8c798afc1c2f64e542a",
+      "backtestId": "57e5408d4d92e2a4d0ff3987a204047c",
+      "title": "小市值轮动策略",
+      "url": "https://www.joinquant.com/view/community/detail/ae4279109334b8c798afc1c2f64e542a",
+      "likes": 2,
+      "clones": 3,
+      "annualReturn": null,
+      "compositeScore": "3.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 245,
       "postId": "0b7e8583af8b615a1ff4b7c9c75767d9",
       "backtestId": "32041503b4fd73aff379cb8afe46eb9f",
       "title": "牛市衰减函数控仓策略-对比KAMA策略",
@@ -1518,10 +2793,10 @@
       "clones": 2,
       "annualReturn": null,
       "compositeScore": "3.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 139,
+      "rank": 246,
       "postId": "4cef3692cf543140be2d972404ae8ac7",
       "backtestId": "3b54c46047188678020014382f11aeab",
       "title": "择时 + 轮动 双驱动策略",
@@ -1530,10 +2805,34 @@
       "clones": 2,
       "annualReturn": null,
       "compositeScore": "3.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 140,
+      "rank": 247,
+      "postId": "457960d28f8b9c53235541a966633b2c",
+      "backtestId": "134fd2f20a877cb62bced93b565f2749",
+      "title": "打板基础设施：涨停板识别框架",
+      "url": "https://www.joinquant.com/view/community/detail/457960d28f8b9c53235541a966633b2c",
+      "likes": 2,
+      "clones": 2,
+      "annualReturn": null,
+      "compositeScore": "3.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 248,
+      "postId": "e695ef8088ed80d25c8d67ec329e80bb",
+      "backtestId": "479bcea3b6be352d013611dad484b09f",
+      "title": "策略表现好到离谱",
+      "url": "https://www.joinquant.com/view/community/detail/e695ef8088ed80d25c8d67ec329e80bb",
+      "likes": 2,
+      "clones": 2,
+      "annualReturn": null,
+      "compositeScore": "3.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 249,
       "postId": "509537f14c71f2696545cb31da85d4a4",
       "backtestId": "edf0cf6e91b9da50e6ca19370c6955a9",
       "title": "趋势追踪策略：设计原理与代码实现",
@@ -1542,10 +2841,10 @@
       "clones": 5,
       "annualReturn": null,
       "compositeScore": "2.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 141,
+      "rank": 250,
       "postId": "d5040aa00b1168d9c0926f68ba673b8d",
       "backtestId": "064331ec67e5f803d7055c456e474785",
       "title": "多策略组合系统：ETF轮动 + 小市值增强",
@@ -1553,10 +2852,10 @@
       "likes": 0,
       "clones": 5,
       "compositeScore": "2.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 142,
+      "rank": 251,
       "postId": "db3a73967dc6325bccfaae4eff54cf2c",
       "backtestId": "51595abfabd264396352178dfa7f6c8f",
       "title": "突破回踩确认",
@@ -1564,10 +2863,10 @@
       "likes": 1,
       "clones": 3,
       "compositeScore": "2.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 143,
+      "rank": 252,
       "postId": "c913387f8d6cdb8096b29e839f5675fa",
       "backtestId": "47daf74fa7d82f051de5292ebf38ddec",
       "title": "哈利-布朗永久投资组合-平均年化11%，最大回撤11%",
@@ -1575,10 +2874,10 @@
       "likes": 0,
       "clones": 5,
       "compositeScore": "2.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 144,
+      "rank": 253,
       "postId": "6b71e683e1459cdd9c62a60d824a5c2c",
       "backtestId": "b6b0127c34fd5d11ff6d8f324750d17e",
       "title": "分享一个今年适用的短线策略~",
@@ -1586,10 +2885,34 @@
       "likes": 0,
       "clones": 5,
       "compositeScore": "2.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 145,
+      "rank": 254,
+      "postId": "c3869b00fdd45c4a3ff6ffe7ab5f0560",
+      "backtestId": "8be664f4a1146dabfacd8436213b2a4a",
+      "title": "收益率极致优化！年化5150%夏普109（含未来函数，求修正",
+      "url": "https://www.joinquant.com/view/community/detail/c3869b00fdd45c4a3ff6ffe7ab5f0560",
+      "likes": 0,
+      "clones": 5,
+      "annualReturn": null,
+      "compositeScore": "2.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 255,
+      "postId": "3e60ed64312fcb28b25aef43ceb4770a",
+      "backtestId": "cb8346f5bc5bac88d7017694b8ee7409",
+      "title": "让GPT-6分析小市值指数单日下跌3%后续走势",
+      "url": "https://www.joinquant.com/view/community/detail/3e60ed64312fcb28b25aef43ceb4770a",
+      "likes": 0,
+      "clones": 5,
+      "annualReturn": null,
+      "compositeScore": "2.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 256,
       "postId": "f4a15f8474b418167e70e5721b77ab44",
       "backtestId": "1af581f3d019370def3ae266d678ac92",
       "title": "一进二弱转强策略，无未来函数！",
@@ -1598,10 +2921,10 @@
       "clones": 4,
       "annualReturn": null,
       "compositeScore": "2.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 146,
+      "rank": 257,
       "postId": "5bb3ca724bb5da049dc55ab538a437cb",
       "backtestId": "209b370993cf99519a76309887227a71",
       "title": "改编自tools_v3",
@@ -1610,10 +2933,10 @@
       "clones": 2,
       "annualReturn": null,
       "compositeScore": "2.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 147,
+      "rank": 258,
       "postId": "b6739620a4966a7e4292c3fccf20bca9",
       "backtestId": "3d8f7bfb36b4ab9c32ce40ee5c25339c",
       "title": "通过ai搞了一个简单策略",
@@ -1622,10 +2945,10 @@
       "clones": 2,
       "annualReturn": null,
       "compositeScore": "2.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 148,
+      "rank": 259,
       "postId": "33eca76a52eac519ac3849e42bc04378",
       "backtestId": "933dbb635baadecb9cecb46859be1866",
       "title": "五福策略******落地精简思路",
@@ -1633,10 +2956,10 @@
       "likes": 0,
       "clones": 4,
       "compositeScore": "2.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 149,
+      "rank": 260,
       "postId": "cdecaf584fe8e4fd923af14b150b70f5",
       "backtestId": "f0ac1489036eb5c98f433d2038a58b66",
       "title": "st弱转强策略移植到非st策略上",
@@ -1644,10 +2967,10 @@
       "likes": 2,
       "clones": 0,
       "compositeScore": "2.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 150,
+      "rank": 261,
       "postId": "804c47fd8696b5a39a680e3fd2937cb0",
       "backtestId": "9bd8d1741d19c7414b1c45ad54ff141a",
       "title": "打板策略",
@@ -1655,10 +2978,10 @@
       "likes": 0,
       "clones": 4,
       "compositeScore": "2.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 151,
+      "rank": 262,
       "postId": "3127f2827f7603cb15deb26aac741647",
       "backtestId": "f1b63135e53dc50c090bdabc783e5d60",
       "title": "经典的小市值策略，低频收益更高",
@@ -1667,10 +2990,10 @@
       "clones": 3,
       "annualReturn": null,
       "compositeScore": "1.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 152,
+      "rank": 263,
       "postId": "7f91bf25fe66c4ab7709e9088c3e0aad",
       "backtestId": "03a848b9246e08d82fb74b6870f29d7a",
       "title": "sp中发现需要手动止盈",
@@ -1678,10 +3001,10 @@
       "likes": 1,
       "clones": 1,
       "compositeScore": "1.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 153,
+      "rank": 264,
       "postId": "c931f522b4f1f3236254e236b1ebee8b",
       "backtestId": "d82f63b6b9e12a87f09f7f492e3dbfe4",
       "title": "一不小心第一次就搞这么高的收益率",
@@ -1689,10 +3012,10 @@
       "likes": 1,
       "clones": 1,
       "compositeScore": "1.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 154,
+      "rank": 265,
       "postId": "88ee189b535306550736f00961c1bb8a",
       "backtestId": "122f48826a9f545e0e3acd1c517316c3",
       "title": "分享一个年化45%回撤10%的策略",
@@ -1700,10 +3023,10 @@
       "likes": 0,
       "clones": 3,
       "compositeScore": "1.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 155,
+      "rank": 266,
       "postId": "4730554eac007c4bfe89dbf2c96781e5",
       "backtestId": "1307176eae7a9d979bb5c07ea3c3e5fe",
       "title": "全天候风险平价策略的一点回测观察",
@@ -1711,10 +3034,10 @@
       "likes": 1,
       "clones": 1,
       "compositeScore": "1.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 156,
+      "rank": 267,
       "postId": "0dadd57d80ce2625daf9aa41739f23bf",
       "backtestId": "4d356b84a8cddea77f63c57d35924b8b",
       "title": "小市值策略，收益不高，胜率较高，欢迎爆改优化",
@@ -1722,10 +3045,10 @@
       "likes": 1,
       "clones": 1,
       "compositeScore": "1.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 157,
+      "rank": 268,
       "postId": "d8e44d4c6c84c3601ef26a6107e664e6",
       "backtestId": "ae3122b86045d488c3bdade832bda4d7",
       "title": "chatgpt给我的回复评价",
@@ -1733,10 +3056,22 @@
       "likes": 0,
       "clones": 3,
       "compositeScore": "1.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 158,
+      "rank": 269,
+      "postId": "4005f7f9baf495d822c24d8a6f61744b",
+      "backtestId": "a05c3ff1964caa111b5418322c59206b",
+      "title": "分享一个年化60%+的简单策略",
+      "url": "https://www.joinquant.com/view/community/detail/4005f7f9baf495d822c24d8a6f61744b",
+      "likes": 0,
+      "clones": 3,
+      "annualReturn": null,
+      "compositeScore": "1.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 270,
       "postId": "6c923b7342771b50797fc26f11ac51b9",
       "backtestId": "d25245fc1629d7e44a9f697ffb155036",
       "title": "小市值策略，请大家评价",
@@ -1745,10 +3080,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "1.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 159,
+      "rank": 271,
       "postId": "b0c225d40b7e63d8cfa5b49d27d57891",
       "backtestId": "2aa2ca1a3c49c185b847b588e865d87a",
       "title": "叠加涨停基因小市值 · 1/4 月五福 178.19%",
@@ -1756,10 +3091,10 @@
       "likes": 1,
       "clones": 0,
       "compositeScore": "1.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 160,
+      "rank": 272,
       "postId": "e999b7ed7ce5435e26959b98004ee053",
       "backtestId": "1c265681acbfa2f38330259432212519",
       "title": "为什么几个最强的多因子小市值跑出来是一坨屎啊",
@@ -1767,10 +3102,10 @@
       "likes": 1,
       "clones": 0,
       "compositeScore": "1.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 161,
+      "rank": 273,
       "postId": "d16fb306bdcfd99a4afdf2f284d33f5d",
       "backtestId": "64e0e79ba6e8dca4c9e9fa1d8d5ce51a",
       "title": "连板规律选股-v1",
@@ -1778,10 +3113,10 @@
       "likes": 0,
       "clones": 2,
       "compositeScore": "1.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 162,
+      "rank": 274,
       "postId": "428f997f12fb9401ef41b415de2a191e",
       "backtestId": "db882a62d26cc20b0bd1071e9c3e7fc1",
       "title": "经典ETF动量轮动",
@@ -1789,10 +3124,10 @@
       "likes": 0,
       "clones": 2,
       "compositeScore": "1.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 163,
+      "rank": 275,
       "postId": "92dbf9aafae2d1952f104b02f969dc33",
       "backtestId": "1b887fbce0b7d072402009ed171c94de",
       "title": "(小市值-白马-ETF组合)挺火的，模拟运行了半年多...",
@@ -1800,10 +3135,10 @@
       "likes": 0,
       "clones": 2,
       "compositeScore": "1.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 164,
+      "rank": 276,
       "postId": "a658ef560be8bdf7f3012ce60c721f35",
       "backtestId": "af18c2e416f4f1d70728eab5da94826e",
       "title": "小市值策略优化后回测不佳，求各位大佬指点迷津",
@@ -1811,10 +3146,58 @@
       "likes": 0,
       "clones": 2,
       "compositeScore": "1.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 165,
+      "rank": 277,
+      "postId": "0bc9266910557feda6845ce7dd6c1962",
+      "backtestId": "ddd9d6d5993afe268d4542d8d2930421",
+      "title": "一字千金-小市值轮动策略",
+      "url": "https://www.joinquant.com/view/community/detail/0bc9266910557feda6845ce7dd6c1962",
+      "likes": 1,
+      "clones": 0,
+      "annualReturn": null,
+      "compositeScore": "1.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 278,
+      "postId": "c0153ce239c946fb38bb246fc289131a",
+      "backtestId": "16b944b4e161d3bd03c1f14d2d3d1f63",
+      "title": "使用标普500 60日均线乖离度增加超额收益的策略",
+      "url": "https://www.joinquant.com/view/community/detail/c0153ce239c946fb38bb246fc289131a",
+      "likes": 0,
+      "clones": 2,
+      "annualReturn": null,
+      "compositeScore": "1.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 279,
+      "postId": "d22b8d7c148f62fdbce97fb8e0c56732",
+      "backtestId": "ddddd3505877142e577af1ab6b20ed35",
+      "title": "今年正向盈利的小市值【小市值做T旗舰版】",
+      "url": "https://www.joinquant.com/view/community/detail/d22b8d7c148f62fdbce97fb8e0c56732",
+      "likes": 0,
+      "clones": 2,
+      "annualReturn": null,
+      "compositeScore": "1.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 280,
+      "postId": "02dc73b46aa309b57d3ef72d42cf5fc4",
+      "backtestId": "709ccf26a451d00cd28179373063298a",
+      "title": "9月11日复盘",
+      "url": "https://www.joinquant.com/view/community/detail/02dc73b46aa309b57d3ef72d42cf5fc4",
+      "likes": 1,
+      "clones": 0,
+      "annualReturn": null,
+      "compositeScore": "1.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 281,
       "postId": "3116f2c23868336f8e641d1a56a20a0b",
       "backtestId": "986579c825e86a1f3d0d2f0a30ce4bc2",
       "title": "“大妈买菜”策略—一个能穿越牛熊的稳健策略",
@@ -1822,10 +3205,22 @@
       "likes": 0,
       "clones": 1,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 166,
+      "rank": 282,
+      "postId": "fce7a8e57ab6c0ddcea9781d15e8ecfa",
+      "backtestId": "9a3816a41b8b3b48c4636c0589f8dfd1",
+      "title": "主板小市值战法 7年半900+%无未来",
+      "url": "https://www.joinquant.com/view/community/detail/fce7a8e57ab6c0ddcea9781d15e8ecfa",
+      "likes": 0,
+      "clones": 1,
+      "annualReturn": null,
+      "compositeScore": "0.50",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 283,
       "postId": "5dda5b8faf9d64b507000777d7d388dd",
       "backtestId": "24e55677f26daf4fc3633d887d973039",
       "title": "order_value回测异常",
@@ -1834,10 +3229,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 167,
+      "rank": 284,
       "postId": "168e7d29e3640603cef43d1c1150f97e",
       "backtestId": "df62dece4de531d9ec6d35ebf6955df2",
       "title": "价值+成长ETF",
@@ -1845,10 +3240,10 @@
       "likes": 0,
       "clones": 0,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 168,
+      "rank": 285,
       "postId": "e9375fcdd147878ca9e0dd162b261508",
       "backtestId": "ca2fe4851244de00feaf2ad688deb4cb",
       "title": "最新版五福，需要的拿去研究，赚点积分",
@@ -1856,10 +3251,10 @@
       "likes": 0,
       "clones": 0,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.218Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 169,
+      "rank": 286,
       "postId": "e560c5030cf6f4a756a51ba180854302",
       "backtestId": "8af3d0c10aa349fa2a5307cfafd68922",
       "title": "稳扎稳打的rsrs",
@@ -1867,10 +3262,10 @@
       "likes": 0,
       "clones": 0,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.219Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 170,
+      "rank": 287,
       "postId": "a40bc39b8dd63ebf4ecaf5b233f7fec7",
       "backtestId": "f5c926776a065e530579413114282938",
       "title": "各位大神帮我看一下这个策略的问题在哪",
@@ -1878,10 +3273,10 @@
       "likes": 0,
       "clones": 0,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.219Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 171,
+      "rank": 288,
       "postId": "468235a27e8938a075c9016ed40968df",
       "backtestId": "10c2c61eb5ad5d1af4bc3f7f19be46b3",
       "title": "巨星农牧做T的策略",
@@ -1889,10 +3284,10 @@
       "likes": 0,
       "clones": 0,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.219Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 172,
+      "rank": 289,
       "postId": "4aeb6218c7633a38a7f901023e4e2fad",
       "backtestId": "88035ca024ebcf2c8a18d1baeb2a5e52",
       "title": "第一次做不知道还怎么提升？",
@@ -1900,10 +3295,10 @@
       "likes": 0,
       "clones": 0,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.219Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 173,
+      "rank": 290,
       "postId": "c98347e9cc8be2491ba8428a691cf20f",
       "backtestId": "5cec5ae509ad560db18633962f438a73",
       "title": "必须对发布的策略******运行才知道结果如何？",
@@ -1911,10 +3306,10 @@
       "likes": 0,
       "clones": 0,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.219Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     },
     {
-      "rank": 174,
+      "rank": 291,
       "postId": "36bf00c3fb1917c530f6185e896dc206",
       "backtestId": "69d42a2e2d64ed059b31938d0daf91c6",
       "title": "新手新策略",
@@ -1922,7 +3317,43 @@
       "likes": 0,
       "clones": 0,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-07-21T02:26:23.219Z"
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 292,
+      "postId": "fa80fe4f4b9dae3b6a0dbb35058213a8",
+      "backtestId": "50fb71b30a470abd7e596018de785d60",
+      "title": "大佬们可以看看俺的ETF策略嘛，新人不知道修改了。。",
+      "url": "https://www.joinquant.com/view/community/detail/fa80fe4f4b9dae3b6a0dbb35058213a8",
+      "likes": 0,
+      "clones": 0,
+      "annualReturn": null,
+      "compositeScore": "0.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 293,
+      "postId": "dbc9af1853ad9c890aeccadfa28c3b8a",
+      "backtestId": "c44c89a5490ab742153c24ea1fb391b0",
+      "title": "打板策略标准股票池常用写法：从入门到避坑",
+      "url": "https://www.joinquant.com/view/community/detail/dbc9af1853ad9c890aeccadfa28c3b8a",
+      "likes": 0,
+      "clones": 0,
+      "annualReturn": null,
+      "compositeScore": "0.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
+    },
+    {
+      "rank": 294,
+      "postId": "b616d8e872007a394de311fb0ac7d423",
+      "backtestId": "2935b9af2ed75eea2fdaee03618ca18d",
+      "title": "把PEG从散户指标做成选股因子",
+      "url": "https://www.joinquant.com/view/community/detail/b616d8e872007a394de311fb0ac7d423",
+      "likes": 0,
+      "clones": 0,
+      "annualReturn": null,
+      "compositeScore": "0.00",
+      "addedToQueueAt": "2026-09-12T08:42:43.996Z"
     }
   ],
   "copied": {
@@ -4864,6 +6295,22 @@
         "tradingDays": 1212,
         "periodLabel": "2025-12"
       }
+    },
+    "88081f9a14122b718a5f6d0a84e46373": {
+      "fetchedAt": "2026-09-12T08:44:27.720Z",
+      "duplicateOf": "94d9f1ce39d9db2b7aabf5875b1599cc"
+    },
+    "6e1255fab52662fb9f50d9723ff40539": {
+      "fetchedAt": "2026-09-12T08:44:37.087Z",
+      "duplicateOf": "fa9c8c9e4b94933fa65d494a92efd583"
+    },
+    "cefad376ab51d4b33869320a22d45d2f": {
+      "fetchedAt": "2026-09-12T08:44:39.720Z",
+      "duplicateOf": "052da9b4e38c64356e0258b957426b1d"
+    },
+    "258b34e1f4009b751f230889e3bb1d4c": {
+      "fetchedAt": "2026-09-12T08:44:42.334Z",
+      "duplicateOf": "11406b828df0987573b95815e75cf737"
     }
   }
 }

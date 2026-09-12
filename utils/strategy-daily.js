@@ -29,43 +29,15 @@ const DATA_DIR = path.join(__dirname, '..', 'data');
 const COPY_QUEUE_FILE = path.join(DATA_DIR, 'copy-queue.json');
 const DISCOVERED_FILE = path.join(DATA_DIR, 'discovered.json');
 
-/**
- * Use curl via execSync to bypass VPN HTTPS interference.
- * @param {string} url
- * @returns {object} parsed JSON
- */
-function httpGet(url) {
-  const cmd = `curl -s "${url.replace(/"/g, '\\"')}" \
-    -H "Accept: application/json" \
-    -H "X-Requested-With: XMLHttpRequest" \
-    -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"`;
-  const out = execSync(cmd, { timeout: 20000 });
-  return JSON.parse(out.toString());
-}
+// Discovery now delegates to utils/strategy-discover.js rather than keeping a
+// second copy of the listV2 crawl. That copy used `curl` directly, which since
+// the geo-block went up returns an HTTP 200 HTML page and made JSON.parse throw
+// on every call. strategy-discover routes through the logged-in CDP browser and
+// walks multiple pages. See utils/jq-http.js.
+const discover = require('./strategy-discover');
 
-async function fetchListPage({ cate = 3, type = 'isNew', limit = 200 }) {
-  const url = `https://www.joinquant.com/community/post/listV2?limit=${limit}&page=1&cate=${cate}&type=${type}`;
-  const json = await httpGet(url);
-  if (!json.data || !json.data.list) return [];
-  return json.data.list
-    .filter(item => {
-      if (!item.backtestId || item.backtestId.length !== 32) return false;
-      const tags = (item.tagInfo || []).map(t => t.name);
-      if (tags.includes('文章') && tags.includes('函数')) return false;
-      if (tags.includes('研报分享')) return false;
-      return true;
-    })
-    .map(item => ({
-      postId: item.postId,
-      backtestId: item.backtestId,
-      title: item.title,
-      url: `https://www.joinquant.com/view/community/detail/${item.postId}`,
-      likes: parseInt(item.likeCount) || 0,
-      clones: parseInt(item.backtestCloneCount) || 0,
-      tags: (item.tagInfo || []).map(t => t.name),
-      discoveredAt: new Date().toISOString(),
-    }));
-}
+// Pages per (cate,type) combo for the nightly sweep. Override with JQ_DISCOVER_PAGES.
+const DISCOVER_PAGES = parseInt(process.env.JQ_DISCOVER_PAGES || '5', 10);
 
 function ensureDataDir() {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -142,28 +114,18 @@ function buildCopyQueue() {
 }
 
 async function discoveryPhase() {
-  const store = loadStore();
-  let newCount = 0;
-
-  const calls = [
-    { cate: 3, type: 'isNew', limit: 200 },
-    { cate: 3, type: 'isHot', limit: 200 },
-  ];
-
-  for (const combo of calls) {
-    const strategies = await fetchListPage(combo);
-    for (const s of strategies) {
-      if (store.scrapedPostIds.includes(s.postId)) continue;
-      store.scrapedPostIds.push(s.postId);
-      store.strategies[s.postId] = s;
-      newCount++;
-    }
-    console.log(`[daily] ${combo.type}: +${strategies.length} strategies`);
-  }
-
-  store.lastScraped = new Date().toISOString();
-  saveStore(store);
-  console.log(`[daily] Discovery done. +${newCount} new. Total: ${Object.keys(store.strategies).length}`);
+  const before = Object.keys(discover.loadStore().strategies || {}).length;
+  await discover.scrapeCommunityList({
+    pages: DISCOVER_PAGES,
+    limit: 200,
+    cates: [3],
+    types: ['isNew', 'isHot'],
+  });
+  const after = Object.keys(discover.loadStore().strategies || {}).length;
+  const newCount = after - before;
+  // Rank the research resources picked up alongside the strategies.
+  try { discover.buildResourceQueue(); } catch (e) { console.error('[daily] resource queue:', e.message); }
+  console.log(`[daily] Discovery done. +${newCount} new. Total: ${after}`);
   return newCount;
 }
 

@@ -24,6 +24,7 @@ const https = require('node:https');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const jq = require('./jq-http');
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const STRATEGIES_DIR = path.join(__dirname, '..', 'strategies');
@@ -36,46 +37,23 @@ const ACCESS_LIMIT_KEYWORDS = ['策略数已达上限', '访问受限', 'maximum
 
 // ── HTTP helpers ─────────────────────────────────────────────────────────────
 
+// Both helpers delegate to jq-http, which prefers the logged-in CDP browser and
+// only falls back to raw https. Direct requests from outside mainland China come
+// back as an HTTP 200 geo-block HTML page; the old versions of these helpers
+// swallowed that into `{raw: ...}` and the caller read it as "no source found".
+// The cached `cookies` string is still passed through for the direct fallback.
+
+// These deliberately do NOT swallow errors. A geo-block or a non-JSON body must
+// reach fetchOneStrategy's try/catch so it lands in sourceError/statsError and
+// gets logged as FETCH_FAILED — silently returning a shapeless object is exactly
+// how the original failure stayed invisible for two months.
+
 function httpGet(url, cookies) {
-  return new Promise((resolve, reject) => {
-    https.get(url, {
-      headers: {
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-        'Cookie': cookies,
-      },
-    }, res => {
-      let data = '';
-      res.on('data', c => data += c);
-      res.on('end', () => { try { resolve(JSON.parse(data)); } catch { resolve({ raw: data.slice(0, 200) }); } });
-    }).on('error', reject);
-  });
+  return jq.jqJson(url, { cookies });
 }
 
 function httpPost(url, data, cookies) {
-  return new Promise((resolve, reject) => {
-    const postData = JSON.stringify(data);
-    const urlObj = new URL(url);
-    const opts = {
-      hostname: urlObj.hostname,
-      path: urlObj.pathname + urlObj.search,
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-        'Cookie': cookies,
-        'Content-Length': Buffer.byteLength(postData),
-      },
-    };
-    https.request(opts, res => {
-      let body = '';
-      res.on('data', c => body += c);
-      res.on('end', () => { try { resolve(JSON.parse(body)); } catch { resolve({ raw: body.slice(0, 200) }); } });
-    }).on('error', reject).end(postData);
-  });
+  return jq.jqPostJson(url, data, { cookies });
 }
 
 // ── Load cookies ─────────────────────────────────────────────────────────────
@@ -269,12 +247,13 @@ function queueWeChatMessage(text) {
 
 async function processQueue(maxToProcess = 0) {
   const queueData = loadQueue();
+  // Cookies are only needed by the raw-https fallback; the CDP browser carries
+  // its own logged-in session. Missing cookies is therefore a warning, not a stop.
   const cookies = loadCookies();
-  if (!cookies || cookies.length === 0) {
-    console.error('[fetch] No cookies found. Run login first.');
-    return { processed: 0, limitHit: false };
+  const cookiesStr = cookies && cookies.length ? cookiesToString(cookies) : '';
+  if (!cookiesStr) {
+    console.warn(`[fetch] No cached cookies — relying on the browser session (${jq.transport()}).`);
   }
-  const cookiesStr = cookiesToString(cookies);
 
   const pending = queueData.queue.filter(s => !queueData.copied[s.postId]);
   const total = maxToProcess > 0 ? Math.min(maxToProcess, pending.length) : pending.length;
@@ -409,7 +388,9 @@ if (require.main === module) {
       console.log(`=== Strategy Fetch (limit=${max || 3}) ===`);
       const { processed, limitHit, skippedDup } = await processQueue(max || 3);
       console.log(`Processed: ${processed}, Limit hit: ${limitHit}, Dup skipped: ${skippedDup}`);
-    })().catch(e => { console.error(e); process.exit(1); });
+    })()
+      .catch(e => { console.error(e.message || e); process.exitCode = 1; })
+      .finally(() => jq.close());
   }
 }
 
