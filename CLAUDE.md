@@ -166,6 +166,15 @@ Only the directories whose contents aren't self-evident:
 - The factor dashboard defaults to `commisionFee=0` (no costs), the same blind spot as
   `harness.md` §2. At `commisionFee=18` only **6 of 285** factors keep a positive excess
   annual return, down from 23 — and every survivor is low-turnover.
+- `harness/normalize-*.tsv` is the input to `wiki-family-build.js` (family §3 tables +
+  `memberCount`/`bestVariant`). It is **gitignored and has regressed before** — it once fell
+  from ~119 normalized rows to 18, which blocked every family page from regenerating.
+  The durable copy is the `normalized: { … }` block `kb-stub.js` stamps into each
+  `wiki/strategies/*.md`; `node utils/normalize-ledger-rebuild.js` reconstructs the ledger
+  from those pages with no backtest cost. Reconstructed rows leave `total_pct` empty (the
+  wiki does not store it) — that is how you tell them from measured rows.
+- Re-running the same strategy through normalize can shift `annual_pct` by ~0.15pp
+  (e.g. −25.87 vs −26.02 for the same file). Measured rows win over reconstructed ones.
 - Pipeline 2's backtest window is parameterized via `--window train|val` (or `--start/--end`),
   set through the `newStrategy` URL params. The **2025+ OOS window is hard-blocked** (`OOS-BLOCKED`)
   unless `JQ_ALLOW_OOS=1` — see `harness/harness.md`. No flag = JQ default range (ad-hoc).

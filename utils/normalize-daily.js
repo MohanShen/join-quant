@@ -92,7 +92,9 @@ function normalizeNew(postIds, { usageLimit = 55 } = {}) {
   if (nStub) regenConceptTables();
 
   // Prune pending: drop terminal (normalized + terminal-fails); keep retriable for next run.
-  const TERMINAL = new Set(['normalized', 'failed-final', 'incompatible-futures', 'incompatible-notrunnable', 'slow-skipped', 'compile-error']);
+  // Mirrors strategy-normalize.js's TERMINAL set — `no-trades` included, or those
+  // entries are never pruned from pending-normalize.json and re-run every day.
+  const TERMINAL = new Set(['normalized', 'failed-final', 'incompatible-futures', 'incompatible-notrunnable', 'slow-skipped', 'compile-error', 'no-trades']);
   const resByPid = {}; for (const r of results) resByPid[r.pid] = r;
   savePending(pending.filter(pid => { const r = resByPid[pid]; return !(r && TERMINAL.has(r.status)); }));
 

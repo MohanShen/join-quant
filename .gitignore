@@ -11,6 +11,8 @@ test-jq-login.js
 test-jq-editor.js
 __pycache__/
 harness/normalize-*.tsv
+harness/normalize-*.bak
+harness/normalize-*.rebuild.json
 
 # Auto-enhance team idea queue — transient working state, not tracked
 enhance/ideas-queue.json

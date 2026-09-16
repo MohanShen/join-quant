@@ -133,7 +133,13 @@ function main() {
   // Ledger (resumable). Terminal statuses are skipped on resume; failed/crash are
   // RETRIABLE (rate-limiting can cause spurious failures) until they hit failed-final.
   const HEADER = ['sourceFile','postId','title','status','start','end','days','total_pct','annual_pct','sharpe','maxdd_pct','objective','gate'].join('\t');
-  const TERMINAL = new Set(['normalized', 'incompatible-futures', 'incompatible-notrunnable', 'failed-final', 'slow-skipped', 'compile-error']);
+  // `no-trades` IS terminal. strategy-post-backtest.js calls it "an outcome to
+  // investigate, not a transient failure to rerun" — but until it was listed here
+  // it was in neither TERMINAL nor RETRIABLE, so it was never marked done AND never
+  // incremented failCount, meaning finalize() could not escalate it either. Those
+  // strategies were re-run and re-billed on every batch forever; two files already
+  // appear twice in the ledger from exactly this.
+  const TERMINAL = new Set(['normalized', 'incompatible-futures', 'incompatible-notrunnable', 'failed-final', 'slow-skipped', 'compile-error', 'no-trades']);
   const RETRIABLE = new Set(['failed', 'crash', 'window-mismatch', 'rate-limited', 'budget-stopped']);
   const done = new Set();       // sourceFile with a terminal status
   const failCount = {};         // sourceFile -> # prior retriable failures
@@ -253,6 +259,11 @@ function main() {
       appendRow(ledgerPath, [srcFile, postId, title, 'slow-skipped', start, end, days, total, annual, sharpe, maxdd, '', '']);
       console.log(`[${n}/${slice.length}] slow-skipped (safety cap, cancelled)  ${f}`);
       sleepSync(COOLDOWN_S); continue;                  // not a failure cascade — don't touch breaker
+    }
+    if (status === 'no-trades') {                       // ran clean but placed zero orders — terminal
+      appendRow(ledgerPath, [srcFile, postId, title, 'no-trades', start, end, days, total, annual, sharpe, maxdd, '', '']);
+      console.log(`[${n}/${slice.length}] no-trades (terminal — selection/data path produced no orders)  ${f}`);
+      sleepSync(COOLDOWN_S); continue;                  // not a failure cascade — don't trip the breaker
     }
     if (status !== 'completed') {                       // failed / window-mismatch
       const st = finalize(status);
