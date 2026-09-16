@@ -43,7 +43,20 @@ function normalizeNew(postIds, { usageLimit = 55 } = {}) {
   // enqueued here) — stays strictly "newly-fetched".
   const pending = [...new Set([...loadPending(), ...(postIds || [])])];
   const all = fs.readdirSync(STRAT_DIR).filter(f => f.endsWith('.py'));
-  const pidToFile = pid => all.find(f => f.includes('-' + pid.slice(0, 8) + '.py'));
+  // Accept either a saved filename (what strategy-daily now passes) or a legacy
+  // id. Ids are matched on their first 8 chars, which is the suffix saveStrategyFile
+  // puts in the name — but ids are re-minted per request, so filenames are preferred.
+  // Accept either a saved filename (what strategy-daily now passes) or a legacy id.
+  // Filenames are preferred: ids are re-minted per request. Match a filename
+  // exactly first, then by suffix — `sourceFile` values recorded before the
+  // YYYY-MM-DD_ prefix was introduced lack that prefix and would otherwise miss.
+  const pidToFile = ref => {
+    const r = String(ref);
+    if (r.endsWith('.py')) {
+      return all.includes(r) ? r : all.find(f => f === r || f.endsWith('_' + r) || f.endsWith(r));
+    }
+    return all.find(f => f.includes('-' + r.slice(0, 8) + '.py'));
+  };
   const basenames = pending.map(pidToFile).filter(Boolean);
   const todayN = (postIds || []).length;
   if (!basenames.length) { savePending(pending); return { results: [], lines: [`归一化：无待归一化策略（今日抓取 ${todayN}）`] }; }

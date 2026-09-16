@@ -64,54 +64,11 @@ function saveQueueData(queueData) {
   fs.writeFileSync(COPY_QUEUE_FILE, JSON.stringify(queueData, null, 2));
 }
 
-function buildCopyQueue() {
-  const store = loadStore();
-  const queueData = loadQueue();
-  const copiedPostIds = new Set(Object.keys(queueData.copied));
-
-  const pending = Object.values(store.strategies)
-    .filter(s => !copiedPostIds.has(s.postId));
-
-  // ── Title-based deduplication ────────────────────────────────────────────
-  // Keep the highest-scoring post per unique title.
-  const bestByTitle = new Map();
-  for (const s of pending) {
-    const score = (s.likes || 0) + (s.clones || 0) * 0.5;
-    const existing = bestByTitle.get(s.title);
-    if (!existing) {
-      bestByTitle.set(s.title, { ...s, _score: score });
-    } else {
-      if (score > existing._score ||
-          (score === existing._score && (s.clones || 0) > (existing.clones || 0))) {
-        bestByTitle.set(s.title, { ...s, _score: score });
-      }
-    }
-  }
-
-  const deduped = [...bestByTitle.values()].sort((a, b) => b._score - a._score);
-
-  queueData.queue = deduped.map((s, idx) => ({
-    rank: idx + 1,
-    postId: s.postId,
-    backtestId: s.backtestId,
-    title: s.title,
-    url: s.url,
-    likes: s.likes || 0,
-    clones: s.clones || 0,
-    annualReturn: s.annualReturn,
-    compositeScore: s._score.toFixed(2),
-    addedToQueueAt: new Date().toISOString(),
-  }));
-
-  const dupRemoved = pending.length - deduped.length;
-  if (dupRemoved > 0) {
-    console.log(`[daily] Title dedup: removed ${dupRemoved} duplicate posts (${pending.length} → ${deduped.length})`);
-  }
-
-  queueData.lastUpdated = new Date().toISOString();
-  saveQueueData(queueData);
-  return queueData;
-}
+// buildCopyQueue lives in strategy-discover.js. This file used to keep a second
+// copy that filtered on `s.postId`; after the uniqueKey re-key that copy matched
+// nothing in the `copied` map and would have re-queued every already-fetched
+// strategy. One implementation only.
+const buildCopyQueue = discover.buildCopyQueue;
 
 async function discoveryPhase() {
   const before = Object.keys(discover.loadStore().strategies || {}).length;
@@ -171,7 +128,7 @@ async function main() {
   let newCount = 0;
   if (mode !== '--copy-only') {
     const queueData = loadQueue();
-    const pendingCount = queueData.queue.filter(s => !queueData.copied[s.postId]).length;
+    const pendingCount = queueData.queue.filter(s => !queueData.copied[s.key || s.postId]).length;
     const SKIP_LIST_THRESHOLD = 100;
     if (pendingCount > SKIP_LIST_THRESHOLD) {
       console.log(`[daily] Queue has ${pendingCount} pending (>${SKIP_LIST_THRESHOLD}), skipping discovery`);
@@ -181,7 +138,7 @@ async function main() {
   }
 
   const queueData = buildCopyQueue();
-  const pendingAfterBuild = queueData.queue.filter(s => !queueData.copied[s.postId]).length;
+  const pendingAfterBuild = queueData.queue.filter(s => !queueData.copied[s.key || s.postId]).length;
   console.log(`[daily] Queue: ${pendingAfterBuild} pending, ${Object.keys(queueData.copied || {}).length} copied`);
 
   if (mode === '--discover-only') {
@@ -213,7 +170,15 @@ async function main() {
 
   // Normalization phase — re-backtest the newly-fetched strategies on the frozen TRAIN
   // window and auto-create wiki stubs (best-effort; skips cleanly if CDP Chrome is down).
-  const newPostIds = Object.keys(loadQueue().copied || {}).filter(p => !copiedBefore.has(p));
+  // Hand the normalizer the SAVED FILENAMES, not ids. The `copied` map is keyed
+  // by uniqueKey while strategy files are named after the (ephemeral) postId, so
+  // passing keys made the normalizer's id->file lookup miss every time. markFetched
+  // already records `sourceFile`, which is the only durable link between them.
+  const copiedNow = loadQueue().copied || {};
+  const newPostIds = Object.keys(copiedNow)
+    .filter(k => !copiedBefore.has(k))
+    .map(k => (copiedNow[k] && copiedNow[k].sourceFile) || k)   // filename when we have it
+    .filter(Boolean);
   let normLines = [];
   if (mode !== '--no-normalize') {
     try {
