@@ -45,6 +45,11 @@ node utils/tutorial-ingest.js --catalog               # catalog only
 
 # One-off: re-key the stores from postId to uniqueKey (idempotent, backs up)
 node utils/migrate-unique-key.js --dry
+
+# Screening — decide what deserves the 60 backtest-min/day (see screen/screen.md)
+node utils/screen-prefilter.js --stats        # deterministic hard rejects, no tokens
+node utils/screen-prefilter.js --limit 200    # + fetch bodies -> screen/candidates.json
+node utils/screen-score.js <predictions.json> # grade a screener vs the sealed 104-post set
 ```
 
 ### Chrome / auth setup (required for Pipeline 2)
@@ -137,6 +142,7 @@ Only the directories whose contents aren't self-evident:
 | `harness/` | **Shared frozen backtest台**: `harness.md` (window/cost/OOS protocol, read-only) + `normalize-*.tsv` ledgers (gitignored). Used by study + enhance + future research. |
 | `enhance/` | Auto-**enhance** team (optimize a strategy FAMILY): `program.md`, `candidates/`, `strategy_template.py`, transient `ideas-queue.json`/`loop-state.json`/`results.tsv` (gitignored) |
 | `study/` | Auto-study team (understand a strategy FAMILY): `program.md`, `<family>/baseline.py` + `variants/`, transient `questions.json`/`findings.tsv` (gitignored). Writes back to `wiki/families/`. |
+| `screen/` | **Frozen SCREENING rubric** — `screen.md` (four axes, priority formula, bands; read-only, epoch-versioned like `harness.md`) + `calibration/` (104 posts with sealed harness outcomes, the screener's held-out set). Decides what is worth fetching BEFORE backtest budget is spent. |
 | `research/` | Reserved for a future auto-**research** pipeline — broad context: new data / factors / trading ideas. NOT the current optimize loop (that is `enhance/`). Holds `factorlib/` (below). |
 | `research/factorlib/` | JQ **因子看板** ingested by `utils/factorlib-ingest.js`: 285 factors with formulas, IC/IR, quintile returns and turnover, pulled at **both** cost levels. `factors.tsv` + generated `README.md` (tracked); raw payloads in `data/factorlib/`. |
 | `research/tutorials/` | **量化课堂**, 137 lessons in 5 categories, ingested by `utils/tutorial-ingest.js` via `detailV2` (free). Category 新手专区 is a full factor-research methodology chain. |
@@ -175,6 +181,16 @@ Only the directories whose contents aren't self-evident:
   wiki does not store it) — that is how you tell them from measured rows.
 - Re-running the same strategy through normalize can shift `annual_pct` by ~0.15pp
   (e.g. −25.87 vs −26.02 for the same file). Measured rows win over reconstructed ones.
+- **Screening ranks on MARGINAL information, not pass-likelihood.** Measured on this corpus:
+  the 4 most-cloned posts all fail the gate; 57% of gate-passes are 小市值 variants of a family
+  that already holds 35; the top-objective strategy (3.595) is an ETF-discount book that dies
+  under mild friction. Popularity selects for redundancy. See `screen/screen.md` §1.
+- A screener's **hard reject must be a known fact, never a guess**. An early rule dropping
+  "titles with no mechanism keyword" discarded 287 of 549 strategies including a held family
+  with 4 gate-passes. Vague-looking posts cost ~460 tokens to screen; wrong drops are permanent.
+- Blind-test result (104 posts, 22.1% base rate): judgement on post BODIES scored 0.90 AUC vs
+  0.75 for a bare 小市值 keyword and 0.66 for popularity. Title-only screening scores ~0.75 —
+  fetch the bodies, they are free via `community/post/detailV2`.
 - Pipeline 2's backtest window is parameterized via `--window train|val` (or `--start/--end`),
   set through the `newStrategy` URL params. The **2025+ OOS window is hard-blocked** (`OOS-BLOCKED`)
   unless `JQ_ALLOW_OOS=1` — see `harness/harness.md`. No flag = JQ default range (ad-hoc).

@@ -1,0 +1,730 @@
+{
+ "P001": {
+  "gate": "pass",
+  "obj": 0.6855,
+  "annual": 83.54,
+  "sharpe": 2.87,
+  "title": "五福V5.2转pt跑通啦！"
+ },
+ "P002": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 9.56,
+  "sharpe": 0.65,
+  "title": "10万本金，我用这个量化策略三年赚了68万"
+ },
+ "P003": {
+  "gate": "pass",
+  "obj": 0.8385,
+  "annual": 95.37,
+  "sharpe": 3.86,
+  "title": "中小板微盘优化稳定-实盘1年持续中"
+ },
+ "P004": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 21.28,
+  "sharpe": 0.74,
+  "title": "告别过拟合、凸显真逻辑（五福闹新春5.1简化版）"
+ },
+ "P005": {
+  "gate": "fail",
+  "obj": null,
+  "annual": -5.93,
+  "sharpe": -1.05,
+  "title": "《趋势永存》持续16年跑赢大盘的真正靠谱策略"
+ },
+ "P006": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 36.81,
+  "sharpe": 1.28,
+  "title": "五福51-三状态V2版-11年484倍回撤20.5"
+ },
+ "P007": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 1.98,
+  "sharpe": -0.06,
+  "title": "连阳倍量首板高开 1进2 收益823% 回撤13%"
+ },
+ "P008": {
+  "gate": "pass",
+  "obj": 0.4674,
+  "annual": 58.68,
+  "sharpe": 2.52,
+  "title": "大小外择时小市值"
+ },
+ "P009": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 41.84,
+  "sharpe": 1.94,
+  "title": "开盘前输出当日交易计划的趋势跟踪策略"
+ },
+ "P010": {
+  "gate": "fail",
+  "obj": null,
+  "annual": -2.54,
+  "sharpe": -0.63,
+  "title": "双均线择时优化（考虑均线低于一定比例进行卖出判断）"
+ },
+ "P011": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 22.61,
+  "sharpe": 1.46,
+  "title": "低换手红利策略"
+ },
+ "P012": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 38.97,
+  "sharpe": 1.24,
+  "title": "【五福闹新春】v4.3-完全体动态池的实现"
+ },
+ "P013": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 26.76,
+  "sharpe": 1.01,
+  "title": "五福51_三状态V2_正常震荡三ETF分仓_走弱一ETF"
+ },
+ "P014": {
+  "gate": "pass",
+  "obj": 1.5642,
+  "annual": 177.88,
+  "sharpe": 8.87,
+  "title": "etf基金溢价-改进版-高收益低回撤-速度已最优"
+ },
+ "P015": {
+  "gate": "pass",
+  "obj": 0.4564,
+  "annual": 59.16,
+  "sharpe": 2.67,
+  "title": "四择时高息低价小市值和白马大市值轮动"
+ },
+ "P016": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 9.1,
+  "sharpe": 0.16,
+  "title": "从涨停板里淘金 — 首板次日竞价买入策略"
+ },
+ "P017": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 9.1,
+  "sharpe": 0.16,
+  "title": "低位三阳，竞价擒龙"
+ },
+ "P018": {
+  "gate": "pass",
+  "obj": 0.9026,
+  "annual": 100.14,
+  "sharpe": 4.33,
+  "title": "小市值微调：年化109%｜回撤15%｜胜率75%"
+ },
+ "P019": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 34.96,
+  "sharpe": 1.15,
+  "title": "我要稳稳的ETF轮动宇宙策略：模拟盘已启动"
+ },
+ "P020": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 45.68,
+  "sharpe": 1.6,
+  "title": "【开源】五福v5.1Q.M.T版-三状态V3-分母2万"
+ },
+ "P021": {
+  "gate": "pass",
+  "obj": 0.4771,
+  "annual": 57.26,
+  "sharpe": 3.26,
+  "title": "年化52%-回撤17%-大小盘多策略"
+ },
+ "P022": {
+  "gate": "fail",
+  "obj": null,
+  "annual": -5.47,
+  "sharpe": -0.26,
+  "title": "【三部曲吃透ETF动量轮动1】纵有狂风拔地起，我亦乘风破万里"
+ },
+ "P023": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 14.91,
+  "sharpe": 0.37,
+  "title": "低位3连阳首板接力-年收益1856%-第3版"
+ },
+ "P024": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 30.05,
+  "sharpe": 1.76,
+  "title": "回测十二年10个点超级低回撤加了自动 交易代码"
+ },
+ "P025": {
+  "gate": "fail",
+  "obj": null,
+  "annual": -9.46,
+  "sharpe": -0.72,
+  "title": "十日均线策略"
+ },
+ "P026": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 24.54,
+  "sharpe": 1.07,
+  "title": "gap创新+离散度判断"
+ },
+ "P027": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 38.63,
+  "sharpe": 1.22,
+  "title": "五福V3.5 PT迁移"
+ },
+ "P028": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 9.1,
+  "sharpe": 0.17,
+  "title": "继上一篇文章按分钟回测版-2026年153%"
+ },
+ "P029": {
+  "gate": "fail",
+  "obj": null,
+  "annual": -38.4,
+  "sharpe": -1.22,
+  "title": "创业板指长中短动量选股"
+ },
+ "P030": {
+  "gate": "fail",
+  "obj": null,
+  "annual": -4.75,
+  "sharpe": -0.38,
+  "title": "大道无形我无道"
+ },
+ "P031": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 23.32,
+  "sharpe": 1.28,
+  "title": "10年14倍！最大可容500w资金etf轮动策略"
+ },
+ "P032": {
+  "gate": "pass",
+  "obj": 0.9025,
+  "annual": 100.84,
+  "sharpe": 4.25,
+  "title": "关于小市值的不同筛选条件的差异研究"
+ },
+ "P033": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 39.59,
+  "sharpe": 1.24,
+  "title": "真金白银买的Xlstm-transformer-ai预测模型"
+ },
+ "P034": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 12.71,
+  "sharpe": 0.4,
+  "title": "这个策略今年很强，点赞回复必回赞、克隆，没积分，模拟盘快到期"
+ },
+ "P035": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 4.89,
+  "sharpe": 0.26,
+  "title": "小市值+动量止损（没有1和4空仓）|回撤15.64%"
+ },
+ "P036": {
+  "gate": "fail",
+  "obj": null,
+  "annual": -8.81,
+  "sharpe": -1.05,
+  "title": "市场时机选择量化策略 V1.01"
+ },
+ "P037": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 33.79,
+  "sharpe": 1.19,
+  "title": "【网格交易策略-年化30%+】-网格大法好，熊市不用跑~"
+ },
+ "P038": {
+  "gate": "pass",
+  "obj": 0.467,
+  "annual": 56.62,
+  "sharpe": 2.57,
+  "title": "三马105-五福35-修复版-11年收益677倍回撤14%"
+ },
+ "P039": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 2.96,
+  "sharpe": -0.06,
+  "title": "【量化课堂】高息股策略"
+ },
+ "P040": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 23.73,
+  "sharpe": 0.82,
+  "title": "七星自动下单SP验证"
+ },
+ "P041": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 23.66,
+  "sharpe": 0.81,
+  "title": "一切又是新的开始"
+ },
+ "P042": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 17.5,
+  "sharpe": 0.68,
+  "title": "最小市值轮动,不择时"
+ },
+ "P043": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 14.04,
+  "sharpe": 0.3,
+  "title": "日内单票做T策略"
+ },
+ "P044": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 28.5,
+  "sharpe": 1.02,
+  "title": "【策略优化】ETF轮动策略优化-V1.7"
+ },
+ "P045": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 42.88,
+  "sharpe": 1.44,
+  "title": "优化版｜8年累计12500%｜回撤控制极佳｜无未来函数"
+ },
+ "P046": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 23.73,
+  "sharpe": 0.81,
+  "title": "策略对比还是ETF最优收益904.06%"
+ },
+ "P047": {
+  "gate": "fail",
+  "obj": null,
+  "annual": -10.01,
+  "sharpe": -0.4,
+  "title": "左手芯片右手光-2026年5月必胜"
+ },
+ "P048": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 28.43,
+  "sharpe": 0.96,
+  "title": "五福51-三状态V5-分母2万-11年219倍回撤17%"
+ },
+ "P049": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 23.66,
+  "sharpe": 0.81,
+  "title": "实测25-26最好用的策略"
+ },
+ "P050": {
+  "gate": "pass",
+  "obj": 1.3738,
+  "annual": 148.5,
+  "sharpe": 5.81,
+  "title": "小市值低开优化-10年年化近100%，回撤15%"
+ },
+ "P051": {
+  "gate": "pass",
+  "obj": 0.3696,
+  "annual": 46.71,
+  "sharpe": 2.57,
+  "title": "【策略组合】优质小市值周换手与ETF轮动策略组合"
+ },
+ "P052": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 15.82,
+  "sharpe": 0.61,
+  "title": "聚宽三马框架整合七星+五福策略"
+ },
+ "P053": {
+  "gate": "fail",
+  "obj": null,
+  "annual": -6.48,
+  "sharpe": -0.29,
+  "title": "一份ETF动量轮动的实盘反思-无法规避下跌风险"
+ },
+ "P054": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 28.39,
+  "sharpe": 1.62,
+  "title": "终极优化-ETF核心资产轮动策略"
+ },
+ "P055": {
+  "gate": "fail",
+  "obj": null,
+  "annual": -23.87,
+  "sharpe": -1.24,
+  "title": "市场温度驱动的极简ETF 轮动策略--6年10倍"
+ },
+ "P056": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 0,
+  "sharpe": 0,
+  "title": "面向对象重构-28择时小市值V2.0.8 实盘"
+ },
+ "P057": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 39.71,
+  "sharpe": 1.24,
+  "title": "五福v3.5参数分层检验"
+ },
+ "P058": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 23.32,
+  "sharpe": 1.12,
+  "title": "七星五福三马实测对比"
+ },
+ "P059": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 33.6,
+  "sharpe": 1.71,
+  "title": "从克隆别人策略到自己造模型——一个老股民的量化探索手记"
+ },
+ "P060": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 68.39,
+  "sharpe": 2.37,
+  "title": "从想法到策略，我如何让 AI 帮我评审量化回测？"
+ },
+ "P061": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 63.51,
+  "sharpe": 2.3,
+  "title": "基于乖离率的大类ETF策略（ETF复现之五）"
+ },
+ "P062": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 4.55,
+  "sharpe": 0.03,
+  "title": "五穷六绝七翻身，下半年翻倍就靠年9倍的七星1.72了！"
+ },
+ "P063": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 24.54,
+  "sharpe": 1.08,
+  "title": "20260202万得微盘股指数868008"
+ },
+ "P064": {
+  "gate": "fail",
+  "obj": null,
+  "annual": -2.54,
+  "sharpe": -0.75,
+  "title": "中证1000交易策略——低风偏爱好者食用"
+ },
+ "P065": {
+  "gate": "pass",
+  "obj": 1.281,
+  "annual": 140.08,
+  "sharpe": 5.66,
+  "title": "一个年化180%逻辑奇怪但是却有效的小市值"
+ },
+ "P066": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 48.3,
+  "sharpe": 2.32,
+  "title": "小盘风帆30：从零做一个小市值基础策略研究"
+ },
+ "P067": {
+  "gate": "pass",
+  "obj": 3.5423,
+  "annual": 362.33,
+  "sharpe": 18.12,
+  "title": "PT多策略分仓隔离插件V1.3"
+ },
+ "P068": {
+  "gate": "fail",
+  "obj": null,
+  "annual": -15.15,
+  "sharpe": -1.6,
+  "title": "凯利公式+均值回归（只做牛市下的反弹），效果看起来还是可以的"
+ },
+ "P069": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 9.1,
+  "sharpe": 0.16,
+  "title": "低位3连阳首板接力-年化1602%-第1版"
+ },
+ "P070": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 47.05,
+  "sharpe": 1.67,
+  "title": "追电ETF动量轮动 —10年60多倍收益"
+ },
+ "P071": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 35.47,
+  "sharpe": 1.52,
+  "title": "五境掘金全球ETF轮动（中频）"
+ },
+ "P072": {
+  "gate": "pass",
+  "obj": 0.8811,
+  "annual": 99.21,
+  "sharpe": 3.85,
+  "title": "小市值排除3个bug版，22年至今收益506%回撤11%"
+ },
+ "P073": {
+  "gate": "pass",
+  "obj": 0.4737,
+  "annual": 56.98,
+  "sharpe": 3.21,
+  "title": "高质量稳定上涨策略"
+ },
+ "P074": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 60.42,
+  "sharpe": 2.1,
+  "title": "【五福闹新春】v5.0-动态池的水太深你把不住"
+ },
+ "P075": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 33.06,
+  "sharpe": 1.28,
+  "title": "七星1.7、5.0 vs 五福5.0、5.1从时间论证有效性"
+ },
+ "P076": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 51.6,
+  "sharpe": 1.97,
+  "title": "五福V5.0 调优记录思考-趋势狙击手，死于装备过载"
+ },
+ "P077": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 12.09,
+  "sharpe": 0.46,
+  "title": "【量化课堂】机器学习多因子策略"
+ },
+ "P078": {
+  "gate": "pass",
+  "obj": 0.5986,
+  "annual": 74.99,
+  "sharpe": 2.58,
+  "title": "自用备忘-v4c_五福v5_取消拉普拉斯-11年400"
+ },
+ "P079": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 0,
+  "sharpe": 0,
+  "title": "一个不太理想的机器学习模型"
+ },
+ "P080": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 29.27,
+  "sharpe": 0.92,
+  "title": "慢就是快，低频交易也能博得高收益"
+ },
+ "P081": {
+  "gate": "pass",
+  "obj": 0.3837,
+  "annual": 51.08,
+  "sharpe": 2.52,
+  "title": "三马七星172-大池子-11年收益346倍回撤15.68"
+ },
+ "P082": {
+  "gate": "pass",
+  "obj": 0.746,
+  "annual": 85.9,
+  "sharpe": 3.31,
+  "title": "动态仓位超高收益低回撤小市值策略，五年20倍"
+ },
+ "P083": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 6.31,
+  "sharpe": 0.09,
+  "title": "【七星高照V5.0】动量策略，五福V4.3和七星V5.0对比"
+ },
+ "P084": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 8.96,
+  "sharpe": 0.16,
+  "title": "一年16倍！｜从涨停板里淘金-夏普15 高盈亏比低回撤"
+ },
+ "P085": {
+  "gate": "pass",
+  "obj": 0.41,
+  "annual": 59.79,
+  "sharpe": 2.53,
+  "title": "行业热点资金流入小市值策略2.0"
+ },
+ "P086": {
+  "gate": "pass",
+  "obj": 3.5952,
+  "annual": 369.07,
+  "sharpe": 18.16,
+  "title": "P-T多策略并行实战：用\"自有账本\"实现四大策略各安其位"
+ },
+ "P087": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 19.23,
+  "sharpe": 1.18,
+  "title": "统计局数据套利 5年年化26%"
+ },
+ "P088": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 28.76,
+  "sharpe": 1.6,
+  "title": "【更新V2】52.5%年化，回撤17%--七星+红利+宽基"
+ },
+ "P089": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 17.3,
+  "sharpe": 0.66,
+  "title": "红利价值策略：年化稳赚37%的低频高股息策略"
+ },
+ "P090": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 40.06,
+  "sharpe": 1.55,
+  "title": "小市值多体系融合版本，不择时不风控也能60%+"
+ },
+ "P091": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 0,
+  "sharpe": 0,
+  "title": "巴菲特量化交易策略 V1.1"
+ },
+ "P092": {
+  "gate": "fail",
+  "obj": null,
+  "annual": -15.08,
+  "sharpe": -1.01,
+  "title": "上升趋势策略 ：少交易、试仓确认、盈利后加仓、趋势破坏退出"
+ },
+ "P093": {
+  "gate": "pass",
+  "obj": 0.6053,
+  "annual": 80.15,
+  "sharpe": 2.61,
+  "title": "五福v5-差异化滤波方案-11年538倍-深度研报"
+ },
+ "P094": {
+  "gate": "pass",
+  "obj": 0.6855,
+  "annual": 83.54,
+  "sharpe": 2.87,
+  "title": "【五福闹新春】v5.2-已解密。别再被13:10狙击了，快跑"
+ },
+ "P095": {
+  "gate": "fail",
+  "obj": null,
+  "annual": -9.46,
+  "sharpe": -0.9,
+  "title": "多ETF网格交易策略-年化10.61%"
+ },
+ "P096": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 12.16,
+  "sharpe": 0.47,
+  "title": "以混沌之火，点亮投资之路——信息熵策略"
+ },
+ "P097": {
+  "gate": "pass",
+  "obj": 0.9411,
+  "annual": 104.41,
+  "sharpe": 4.55,
+  "title": "低开小市值，年化105%，最大回撤20%"
+ },
+ "P098": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 33.73,
+  "sharpe": 0.7,
+  "title": "首板放量次日高开买入 -- 24年至今3088.53%"
+ },
+ "P099": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 4.6,
+  "sharpe": 0.13,
+  "title": "屡创新高,超稳的固收+策略,年化9%,回撤小于2%"
+ },
+ "P100": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 8.34,
+  "sharpe": 0.51,
+  "title": "【文竹3.3更新】年化18.34%|最大回撤10.68%"
+ },
+ "P101": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 24.13,
+  "sharpe": 0.83,
+  "title": "60倍七星高照+高斯+拉普拉斯"
+ },
+ "P102": {
+  "gate": "fail",
+  "obj": null,
+  "annual": -12.84,
+  "sharpe": -0.82,
+  "title": "投资学作业"
+ },
+ "P103": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 2.96,
+  "sharpe": -0.02,
+  "title": "连板龙头策略"
+ },
+ "P104": {
+  "gate": "fail",
+  "obj": null,
+  "annual": 62.01,
+  "sharpe": 1.94,
+  "title": "【三部曲吃透ETF动量3】地囚人，欲成仙，殊不知，天亦囚仙"
+ }
+}
