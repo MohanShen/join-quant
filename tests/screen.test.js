@@ -172,3 +172,31 @@ test('the frozen rubric and calibration set are present', async t => {
     assert.strictEqual(pass, 23, 'base rate changed — the reference numbers no longer apply');
   });
 });
+
+// ── merge + concentration guard (run-screen steps 3-4) ───────────────────────
+const { concentration } = require('../utils/screen-merge');
+
+test('concentration guard (rubric §7)', async t => {
+  const v = (fam, band = 'fetch-now') => ({ family: fam, band });
+
+  await t.test('trips when one family is more than half of fetch-now', () => {
+    const c = concentration({ a: v('小市值'), b: v('小市值'), c: v('小市值'), d: v('网格') });
+    assert.strictEqual(c.tripped, true);
+    assert.deepStrictEqual(c.worst, ['小市值', 3]);
+  });
+
+  await t.test('does not trip at exactly half', () => {
+    assert.strictEqual(concentration({ a: v('小市值'), b: v('小市值'), c: v('网格'), d: v('套利') }).tripped, false);
+  });
+
+  await t.test('ignores bands other than fetch-now', () => {
+    const c = concentration({ a: v('小市值', 'fetch'), b: v('小市值', 'hold'), c: v('网格'), d: v('套利'),
+                              e: v('NEW:x'), f: v('红利低频') });
+    assert.strictEqual(c.fetchNow, 4);
+    assert.strictEqual(c.tripped, false);
+  });
+
+  await t.test('does not trip on a band too small to mean anything', () => {
+    assert.strictEqual(concentration({ a: v('小市值'), b: v('小市值') }).tripped, false);
+  });
+});

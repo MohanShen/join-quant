@@ -33,3 +33,7 @@ config/exec.env
 
 # One-time uniqueKey migration backups — safety copies, not history
 data/*.pre-uniquekey.bak
+
+# Screening working state — candidates carry fetched post bodies; batches are per-run
+screen/candidates.json
+screen/batches/

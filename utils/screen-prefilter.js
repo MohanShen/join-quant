@@ -18,6 +18,8 @@
  * Usage:
  *   node utils/screen-prefilter.js                 # all discovered, un-screened
  *   node utils/screen-prefilter.js --limit 200
+ *   node utils/screen-prefilter.js --limit 200 --sample 42   # seeded random slice, not store order
+ *   node utils/screen-prefilter.js --cates 14,3               # screen 精华/文章 first; 问答 deferred
  *   node utils/screen-prefilter.js --no-bodies     # metadata only (fast, weaker screening)
  *   node utils/screen-prefilter.js --stats         # rejection breakdown, fetch nothing
  *
@@ -77,12 +79,24 @@ function hardReject(row, { hashes, copied }) {
   return null;
 }
 
-async function run({ limit = 0, bodies = true, statsOnly = false } = {}) {
+/** Deterministic shuffle so a bounded batch is a representative sample, not store order. */
+function seededShuffle(arr, seed) {
+  const a = [...arr];
+  let x = seed >>> 0 || 1;
+  const rnd = () => ((x = (x * 1103515245 + 12345) >>> 0) / 4294967296);
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+async function run({ limit = 0, bodies = true, statsOnly = false, sampleSeed = null, cates = null } = {}) {
   const disc = readJson(path.join(ROOT, 'data/discovered.json'), { strategies: {} }).strategies || {};
   const res = readJson(path.join(ROOT, 'data/resources.json'), { resources: {} }).resources || {};
   const hashes = new Set(Object.keys(readJson(path.join(ROOT, 'data/content-hashes.json'), {})));
   const copied = new Set(Object.keys(readJson(path.join(ROOT, 'data/copy-queue.json'), {}).copied || {}));
-  const seen = new Set(Object.keys(readJson(VERDICTS, {})));
+  const seen = new Set(Object.keys((readJson(VERDICTS, {}).verdicts) || {}));   // verdicts nest under .verdicts
 
   // One pool: strategies and research resources are screened by the same rubric.
   const pool = new Map();
@@ -95,6 +109,9 @@ async function run({ limit = 0, bodies = true, statsOnly = false } = {}) {
     if (seen.has(row.key)) { reasons['already screened'] = (reasons['already screened'] || 0) + 1; continue; }
     const why = hardReject(row, { hashes, copied });
     if (why) { reasons[why] = (reasons[why] || 0) + 1; continue; }
+    // Selection, not rejection: 问答 (cate=10) screened at 94% drop, so --cates lets a run
+    // spend judgement on 文章/精华 first. Q&A is deferred, never discarded (screen.md §2).
+    if (cates && !cates.includes(row.cate)) { reasons[`deferred: cate=${row.cate}`] = (reasons[`deferred: cate=${row.cate}`] || 0) + 1; continue; }
     survivors.push(row);
   }
 
@@ -105,7 +122,10 @@ async function run({ limit = 0, bodies = true, statsOnly = false } = {}) {
   if (statsOnly) return { survivors: survivors.length, reasons };
 
   const held = heldFamilies();
-  const targets = limit > 0 ? survivors.slice(0, limit) : survivors;
+  // Store order is crawl order, which front-loads the old popularity-ranked cate=3 posts.
+  // --sample <seed> takes a seeded random slice instead, so a bounded batch is representative.
+  const ordered = sampleSeed != null ? seededShuffle(survivors, sampleSeed) : survivors;
+  const targets = limit > 0 ? ordered.slice(0, limit) : ordered;
   const out = [];
   let fetched = 0, failed = 0;
 
@@ -128,6 +148,7 @@ async function run({ limit = 0, bodies = true, statsOnly = false } = {}) {
       views: row.viewCount || 0,
       replies: row.replyCount || 0,
       kind: row.kind || (row.backtestId ? 'strategy' : 'resource'),
+      cate: row.cate ?? null,
       mechanismHint: MECHANISM.test(row.title || ''),   // hint for the screener, not a filter
       body: body.slice(0, 2500),
     });
@@ -153,8 +174,11 @@ async function run({ limit = 0, bodies = true, statsOnly = false } = {}) {
 if (require.main === module) {
   const a = process.argv.slice(2);
   const li = a.indexOf('--limit');
+  const si = a.indexOf('--sample');
   run({
     limit: li >= 0 ? parseInt(a[li + 1], 10) : 0,
+    sampleSeed: si >= 0 ? parseInt(a[si + 1], 10) : null,
+    cates: a.indexOf('--cates') >= 0 ? a[a.indexOf('--cates') + 1].split(',').map(Number) : null,
     bodies: !a.includes('--no-bodies'),
     statsOnly: a.includes('--stats'),
   })

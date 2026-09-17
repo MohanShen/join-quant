@@ -50,6 +50,8 @@ node utils/migrate-unique-key.js --dry
 node utils/screen-prefilter.js --stats        # deterministic hard rejects, no tokens
 node utils/screen-prefilter.js --limit 200    # + fetch bodies -> screen/candidates.json
 node utils/screen-score.js <predictions.json> # grade a screener vs the sealed 104-post set
+node utils/screen-prefilter.js --limit 200 --sample 42 --cates 14,3   # seeded, 精华+文章 first
+node utils/screen-merge.js                    # validate batch verdicts -> screen/verdicts.json, rebuild queues
 ```
 
 ### Chrome / auth setup (required for Pipeline 2)
@@ -204,6 +206,12 @@ Only the directories whose contents aren't self-evident:
 - A screener's **hard reject must be a known fact, never a guess**. An early rule dropping
   "titles with no mechanism keyword" discarded 287 of 549 strategies including a held family
   with 4 gate-passes. Vague-looking posts cost ~460 tokens to screen; wrong drops are permanent.
+- **问答 (cate=10) is mostly help-desk traffic**: first 200-post screen dropped 94% of Q&A posts vs
+  24–30% of 文章/精华. Help-desk posts attach backtests to ask about them, so no payload rule
+  catches them. Stored rows now carry `cate`; screen with `--cates 14,3` first. Q&A is
+  deferred, not rejected — it still yielded the O'Neil pocket-pivot idea.
+- Screening verdicts live in `screen/verdicts.json` and are applied INSIDE the queue builders,
+  because every discovery run rebuilds the queues from scratch.
 - Blind-test result (104 posts, 22.1% base rate): judgement on post BODIES scored 0.90 AUC vs
   0.75 for a bare 小市值 keyword and 0.66 for popularity. Title-only screening scores ~0.75 —
   fetch the bodies, they are free via `community/post/detailV2`.

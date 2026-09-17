@@ -1,0 +1,3868 @@
+{
+ "rubric": "screen/screen.md epoch 1",
+ "verdicts": {
+  "d64daa2a815093b94257a1053bb50acc": {
+   "key": "d64daa2a815093b94257a1053bb50acc",
+   "M": 1,
+   "S": 1,
+   "R": 4,
+   "H": 3,
+   "priority": 16,
+   "band": "hold",
+   "family": "ETF动量",
+   "mechanism": "Unspecified newbie ETF rotation",
+   "why": "Body only says '感觉很一般…年化8%'; no stated difference from 27-member ETF动量; 8% annual cannot reach sharpe 2.5.",
+   "flags": [
+    "no-mechanism-described",
+    "self-reported-weak"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.377Z",
+   "batch": "verdicts-1.json"
+  },
+  "a98b7021e7391c62f6369207242700b2": {
+   "key": "a98b7021e7391c62f6369207242700b2",
+   "M": 1,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "多因子ML",
+   "mechanism": "kNN classification tutorial with rabbit example",
+   "why": "量化课堂 teaching piece on kNN basics; no market application or strategy described.",
+   "flags": [
+    "no-runnable-mechanism",
+    "tutorial",
+    "notebook-not-downloadable"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "77efaf1de25828c27a7a8cf59058ba70": {
+   "key": "77efaf1de25828c27a7a8cf59058ba70",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Help request: extract MACD values",
+   "why": "Coding help question; nothing to learn or run.",
+   "flags": [
+    "no-runnable-mechanism",
+    "help-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "263c75a967b785c99f51481bc36937cd": {
+   "key": "263c75a967b785c99f51481bc36937cd",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Help request: save dataframe in sim environment",
+   "why": "Platform usage question; no strategy.",
+   "flags": [
+    "no-runnable-mechanism",
+    "help-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "a7e0a155a328c93de3e3fb118dcdff5d": {
+   "key": "a7e0a155a328c93de3e3fb118dcdff5d",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Help request: real-time sim picks visibility",
+   "why": "Platform usage question about sim-trading lag; no strategy.",
+   "flags": [
+    "no-runnable-mechanism",
+    "help-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "63c4c86f76e09fee721366e6fb3f4ea4": {
+   "key": "63c4c86f76e09fee721366e6fb3f4ea4",
+   "M": 0,
+   "S": 0,
+   "R": 4,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "趋势技术",
+   "mechanism": "Futures MA5/MA10 crossover long/short request",
+   "why": "Request for textbook MA cross on futures; futures incompatible with stock harness (per 趋势技术 page).",
+   "flags": [
+    "futures-only",
+    "help-question",
+    "textbook-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_12d445ff48c73b728f57d388f79391": {
+   "key": "lk_12d445ff48c73b728f57d388f79391",
+   "M": 3,
+   "S": 5,
+   "R": 2,
+   "H": 5,
+   "priority": 28,
+   "band": "fetch-now",
+   "family": "小市值",
+   "mechanism": "Small-cap selection with 2+ years live record",
+   "why": "Author's own OOS: backtest 2022-04–2023-11 Sharpe 3.82/DD15% became live Sharpe 1.09/DD40%; pairs in-window pass with measured live decay.",
+   "flags": [
+    "regime-2022-23-only",
+    "live-oos-decay-evidence",
+    "zero-slippage-flattered",
+    "thin-universe"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "15cfb3cf68c6144c1fa11d6b6c96a8c0": {
+   "key": "15cfb3cf68c6144c1fa11d6b6c96a8c0",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "API question: get_index_weights empty",
+   "why": "API help question; nothing runnable.",
+   "flags": [
+    "no-runnable-mechanism",
+    "help-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "e6fc2354d465290acf4f38e117f3fdf3": {
+   "key": "e6fc2354d465290acf4f38e117f3fdf3",
+   "M": 3,
+   "S": 1,
+   "R": 5,
+   "H": 5,
+   "priority": 26,
+   "band": "fetch",
+   "family": "趋势技术",
+   "mechanism": "ATR volatility-percent position sizing on EMV HS300-ETF timing",
+   "why": "Sizing overlay untested in family; author sweep 1–10% risk, 4% best (55.6%/DD19%), but 2013–16 window, single ETF timing.",
+   "flags": [
+    "out-of-window-evidence",
+    "author-param-sweep",
+    "single-instrument"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_1056d26c65693988d990d9b50d0673": {
+   "key": "lk_1056d26c65693988d990d9b50d0673",
+   "M": 4,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 22,
+   "band": "fetch",
+   "family": "趋势技术",
+   "mechanism": "Debunk of '强者恒强' momentum stock-selection series",
+   "why": "Negative result on a popular series ('真实数据回测简直一坨屎'), 46 replies; evidence lives only in attached backtest, so M held at 4.",
+   "flags": [
+    "debunk",
+    "evidence-in-backtest-only",
+    "no-numbers-in-body"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "77790160cab3afbac3b944484e28c541": {
+   "key": "77790160cab3afbac3b944484e28c541",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Question: server maintenance, data missing",
+   "why": "Body is '如上'; platform status question.",
+   "flags": [
+    "no-runnable-mechanism",
+    "help-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "e15dbf4eea899a226325124790d70b8c": {
+   "key": "e15dbf4eea899a226325124790d70b8c",
+   "M": 2,
+   "S": 2,
+   "R": 2,
+   "H": 2,
+   "priority": 16,
+   "band": "hold",
+   "family": "小市值",
+   "mechanism": "Buy low-open stocks above MA40, index and holding-period stops",
+   "why": "Fork adding stop modules; low-open entry gate already measured as alpha in 小市值 §2; author: '13年以前不行'.",
+   "flags": [
+    "intraday-precision",
+    "open-price-fills",
+    "zero-slippage-flattered",
+    "vague-claims"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "81313c80b08ca8c8f9c4e77b3c0fb1f8": {
+   "key": "81313c80b08ca8c8f9c4e77b3c0fb1f8",
+   "M": 3,
+   "S": 1,
+   "R": 5,
+   "H": 5,
+   "priority": 26,
+   "band": "fetch",
+   "family": "大小盘轮动",
+   "mechanism": "VaR-based position sizing on 二八 rotation",
+   "why": "Risk overlay on 3-member family; author table 2013–16: 253%/DD22.7% down to 106%/DD8.2%; admits algorithm bug; window excludes 2022–23.",
+   "flags": [
+    "out-of-window-evidence",
+    "bull-tape-2015",
+    "author-param-sweep"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "5a44d17e21aededf5fcb329e7b146a40": {
+   "key": "5a44d17e21aededf5fcb329e7b146a40",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Help request: modify 做T stock list",
+   "why": "Coding help on someone else's T+0 strategy; nothing new described.",
+   "flags": [
+    "no-runnable-mechanism",
+    "help-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "5bdf70c71c52a2a455cfc8c060e30c67": {
+   "key": "5bdf70c71c52a2a455cfc8c060e30c67",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Data question: 聚源 dividend data missing",
+   "why": "Data vendor question; nothing runnable.",
+   "flags": [
+    "no-runnable-mechanism",
+    "data-quality-note"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "7201927bacac3bcfc9e986df2ef36d1b": {
+   "key": "7201927bacac3bcfc9e986df2ef36d1b",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Help request: get_price Panel output",
+   "why": "API usage question; nothing runnable.",
+   "flags": [
+    "no-runnable-mechanism",
+    "help-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "7c86e525c1a4d0a5168cdea6b7b637f0": {
+   "key": "7c86e525c1a4d0a5168cdea6b7b637f0",
+   "M": 1,
+   "S": 0,
+   "R": 0,
+   "H": 3,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Bug report: convertible-bond tick size 0.01 vs 0.001",
+   "why": "Useful data-quality fact for any CB strategy, but nothing to backtest.",
+   "flags": [
+    "no-runnable-mechanism",
+    "data-quality-note"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "d493ec96e0eb55f53578ec49a323a14e": {
+   "key": "d493ec96e0eb55f53578ec49a323a14e",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Bug report: daily bars wrong on 3/19–3/20",
+   "why": "Image-only body; data issue report, nothing runnable.",
+   "flags": [
+    "no-runnable-mechanism",
+    "data-quality-note"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "e7d5f1f70965359e350ee31c85bb8b21": {
+   "key": "e7d5f1f70965359e350ee31c85bb8b21",
+   "M": 1,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Bug report: open-end fund NAV jumps",
+   "why": "NAV spikes matter to discount/NAV books (stale-NAV risk) but no strategy to run.",
+   "flags": [
+    "no-runnable-mechanism",
+    "data-quality-note",
+    "stale-nav"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "cc60ec801d0b18a3fb5ecce8d73dd0c8": {
+   "key": "cc60ec801d0b18a3fb5ecce8d73dd0c8",
+   "M": 0,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "趋势技术",
+   "mechanism": "Buggy weekly index-then-stock 20-day momentum picker",
+   "why": "Debugging question; code's stock pool never updates (run_weekly misuse); textbook momentum, no results.",
+   "flags": [
+    "help-question",
+    "buggy-code"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_bdb6bfe81091a2022dc40badfe1b09": {
+   "key": "lk_bdb6bfe81091a2022dc40badfe1b09",
+   "M": 4,
+   "S": 2,
+   "R": 4,
+   "H": 4,
+   "priority": 28,
+   "band": "fetch-now",
+   "family": "ETF动量",
+   "mechanism": "Low-vol ETF rotation plus turtle ATR pyramiding, bond-ETF switch",
+   "why": "Low-vol ranking plus ATR adds/4N stops differs from momentum members; author admits rebalance-day range 5.4pp, DD rose 14.39→17.16% OOS.",
+   "flags": [
+    "param-tuned",
+    "rebalance-day-sensitive",
+    "overfit-risk"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "5870f758a12b674980e5324aa5f46890": {
+   "key": "5870f758a12b674980e5324aa5f46890",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Plotting question: matplotlib date axis gaps",
+   "why": "Plotting help question; nothing runnable.",
+   "flags": [
+    "no-runnable-mechanism",
+    "help-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "40c028ae60e646b8296f68540b6dce73": {
+   "key": "40c028ae60e646b8296f68540b6dce73",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "API question: previous trading dates",
+   "why": "API help question; nothing runnable.",
+   "flags": [
+    "no-runnable-mechanism",
+    "help-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "638ca1f0667df052e29351b87de58866": {
+   "key": "638ca1f0667df052e29351b87de58866",
+   "M": 2,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 16,
+   "band": "hold",
+   "family": "多因子ML",
+   "mechanism": "Random forest on RSI/KDJ/VA predicting 5-day single-stock return",
+   "why": "Standard ML-on-indicators exercise ('抛砖引玉'); no numbers in body, single stock, notebook not downloadable.",
+   "flags": [
+    "teaching-example",
+    "no-numbers-in-body",
+    "notebook-not-downloadable"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "0e37b9d8d037e4ebe0b6c4984cf7c77e": {
+   "key": "0e37b9d8d037e4ebe0b6c4984cf7c77e",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Debug question: global stock pool mutated",
+   "why": "Python aliasing help question; nothing to learn.",
+   "flags": [
+    "no-runnable-mechanism",
+    "help-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_c1994ca86dc55a28412f2954b6575f": {
+   "key": "lk_c1994ca86dc55a28412f2954b6575f",
+   "M": 2,
+   "S": 3,
+   "R": 3,
+   "H": 3,
+   "priority": 21,
+   "band": "fetch",
+   "family": "七星高照",
+   "mechanism": "De-overfit 七星高照 variant, small-cap plus ETF rotation, ATR stops",
+   "why": "Body is a sim diary (~17 days, +21%, worst day −3.53%); de-overfit changes undescribed. Family-level S prior deliberately not applied.",
+   "flags": [
+    "diary-body",
+    "variant-changes-undescribed",
+    "thin-evidence",
+    "out-of-window-evidence"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "d8eab4777aad9335845279474f1a6801": {
+   "key": "d8eab4777aad9335845279474f1a6801",
+   "M": 1,
+   "S": 0,
+   "R": 0,
+   "H": 3,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Data question: CB convert-premium table missing bonds",
+   "why": "240 CB prices vs fewer premium rows on 2022-04-11; relevant pitfall for 双低 strategies, nothing runnable.",
+   "flags": [
+    "no-runnable-mechanism",
+    "data-quality-note"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "5fea4e17fa8ad5eb32b85201375e2669": {
+   "key": "5fea4e17fa8ad5eb32b85201375e2669",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "2019 curated article link index",
+   "why": "Link catalog, not a strategy; linked posts (日内动量隔夜反转, 三进兵变形版) could seed discovery separately.",
+   "flags": [
+    "no-runnable-mechanism",
+    "link-index-for-discovery"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "9483724669aa28ce95e082aabdcec14a": {
+   "key": "9483724669aa28ce95e082aabdcec14a",
+   "M": 2,
+   "S": 0,
+   "R": 5,
+   "H": 2,
+   "priority": 18,
+   "band": "fetch",
+   "family": "红利低频",
+   "mechanism": "PE-threshold rotation between HK ETF and 上证红利",
+   "why": "Valuation-timed dividend/HK ETF switch is a small variation; author reports code errors, no results, notebook not downloadable.",
+   "flags": [
+    "code-broken-per-author",
+    "notebook-not-downloadable",
+    "etf-pe-data-dependency"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "a2500582449b50603ba4b41d3298e010": {
+   "key": "a2500582449b50603ba4b41d3298e010",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Futures order-failed debug question",
+   "why": "Order sizing bug question on CU futures; nothing to learn.",
+   "flags": [
+    "no-runnable-mechanism",
+    "help-question",
+    "futures-only"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "e576d4751e79dd49f7c9099ba0a8ae47": {
+   "key": "e576d4751e79dd49f7c9099ba0a8ae47",
+   "M": 1,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Data report: index volume 100x unit break at 2016-01-28",
+   "why": "Volume unit discontinuity is a real pitfall for volume signals spanning 2016, but nothing to backtest.",
+   "flags": [
+    "no-runnable-mechanism",
+    "data-quality-note",
+    "volume-unit-break"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "7191497e0e84e998e185e742e75a53e2": {
+   "key": "7191497e0e84e998e185e742e75a53e2",
+   "M": 1,
+   "S": 0,
+   "R": 0,
+   "H": 3,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Data report: 600865 2023q3 net profit wrong",
+   "why": "Fundamentals data error (12w vs 2000w); nothing runnable.",
+   "flags": [
+    "no-runnable-mechanism",
+    "data-quality-note"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_49eb60368b0b824fb5cfc4826650ae": {
+   "key": "lk_49eb60368b0b824fb5cfc4826650ae",
+   "M": 3,
+   "S": 2,
+   "R": 5,
+   "H": 2,
+   "priority": 25,
+   "band": "fetch",
+   "family": "UNKNOWN",
+   "mechanism": "All-weather-inspired ETF style rotation incl. US equity ETFs",
+   "why": "Could be risk-parity (no held family) or ETF动量 member; body undescribed, no numbers; hand-picked ETF list risks hindsight.",
+   "flags": [
+    "mechanism-undescribed",
+    "hindsight-etf-selection",
+    "no-numbers-in-body"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "f26a1488adb735ac0a75cb343cf5f2e9": {
+   "key": "f26a1488adb735ac0a75cb343cf5f2e9",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Newbie question: bond yield, plotting",
+   "why": "API help question; nothing runnable.",
+   "flags": [
+    "no-runnable-mechanism",
+    "help-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "57d8fc6ba1eb77e4e2c60adab3c2f8ae": {
+   "key": "57d8fc6ba1eb77e4e2c60adab3c2f8ae",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Debug question: empty-position warnings in log",
+   "why": "Log-spam help question; nothing to learn.",
+   "flags": [
+    "no-runnable-mechanism",
+    "help-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "49619ccde0cb9b9bed6f8c15b375688e": {
+   "key": "49619ccde0cb9b9bed6f8c15b375688e",
+   "M": 2,
+   "S": 0,
+   "R": 4,
+   "H": 3,
+   "priority": 17,
+   "band": "hold",
+   "family": "趋势技术",
+   "mechanism": "Commodity futures cross-sectional momentum, long top/short bottom",
+   "why": "趋势技术 already holds 商品期货动量, judged incompatible-futures on stock harness; author notes strong parameter sensitivity (K~10, H>=25).",
+   "flags": [
+    "futures-only",
+    "harness-incompatible",
+    "param-sensitive"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "8acb33a75d159b0ed683e591abfd41e5": {
+   "key": "8acb33a75d159b0ed683e591abfd41e5",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Platform question: risk-model attribution methodology",
+   "why": "Question about CNE5/CNE6 exposure calculation; no strategy.",
+   "flags": [
+    "no-runnable-mechanism",
+    "help-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "f4b8d1c6cddd116234ef104162353000": {
+   "key": "f4b8d1c6cddd116234ef104162353000",
+   "M": 2,
+   "S": 0,
+   "R": 3,
+   "H": 3,
+   "priority": 15,
+   "band": "hold",
+   "family": "套利",
+   "mechanism": "IF basis arbitrage vs HS300 basket, 1.2-std bands; slippage query",
+   "why": "Embedded fork of JQ-PM futures-spot arb; useful slippage fact (0.0005 set, ~0.00031 charged, likely split per side); needs futures.",
+   "flags": [
+    "futures-only",
+    "slippage-semantics-note",
+    "fork"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "b6c61aa1c1c77421048f7387f13414a2": {
+   "key": "b6c61aa1c1c77421048f7387f13414a2",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Debug question: lead futures PnL mismatch",
+   "why": "Futures accounting question (likely multiplier); nothing to learn for stock harness.",
+   "flags": [
+    "no-runnable-mechanism",
+    "help-question",
+    "futures-only"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "32cdb58b7b608e380b50a2b018184bba": {
+   "key": "32cdb58b7b608e380b50a2b018184bba",
+   "M": 4,
+   "S": 1,
+   "R": 5,
+   "H": 3,
+   "priority": 27,
+   "band": "fetch",
+   "family": "多因子ML",
+   "mechanism": "Decision-tree factor synthesis on ZZ500, monthly quintile test",
+   "why": "Author-documented negative result: '分层效果并不理想，未能有明显的分层效果', in/out-of-sample score gap; 2014–2019 window, numbers only in images.",
+   "flags": [
+    "negative-result",
+    "author-reports-no-layering",
+    "out-of-window-evidence",
+    "notebook-not-downloadable"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-1.json"
+  },
+  "041c3d4b1c89bec756e0977bee7e47eb": {
+   "key": "041c3d4b1c89bec756e0977bee7e47eb",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; research-env KeyError traceback",
+   "why": "Platform bug report (futures trade_time KeyError); no strategy, nothing to learn or run.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "751f520a527869784cc64067920522ed": {
+   "key": "751f520a527869784cc64067920522ed",
+   "M": 1,
+   "S": 2,
+   "R": 1,
+   "H": 1,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "龙虎榜炸板股次日低开竞价强势买入，盘中卖出",
+   "why": "Fork of held 弱转强 lineage (family 25, leg already dissected q-4); auction volume/order-book fills unhonourable on daily bars; '原版5W%' multiple claim.",
+   "flags": [
+    "auction-fill-unrealizable",
+    "intraday-timing-ignored-by-harness",
+    "multiple-claim",
+    "regime-2022-23-only"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "ee1f0b55dde3e9fe86061a3533522162": {
+   "key": "ee1f0b55dde3e9fe86061a3533522162",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; ML classifier-to-regression help request",
+   "why": "Beginner question about getting price not True/False; no mechanism or result described.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "b40a3ec2711b60b8018f554a2efb7a50": {
+   "key": "b40a3ec2711b60b8018f554a2efb7a50",
+   "M": 0,
+   "S": 2,
+   "R": 1,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "N字板追涨 (body only asks broker-app import)",
+   "why": "Body is 'how to import into 国信 app'; no stated difference from held 打板 lineage; chasing boards is fill-unrealizable.",
+   "flags": [
+    "support-question",
+    "limit-up-fill-unrealizable"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "903734b04fd012cf1b402ed18c6490bc": {
+   "key": "903734b04fd012cf1b402ed18c6490bc",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; missing live-hog futures symbol",
+   "why": "Data availability question about 生猪 futures; futures-only, nothing runnable on the stock harness.",
+   "flags": [
+    "no-mechanism-described",
+    "futures-only",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "c8e0954b4e685c582e2c680dfded14c6": {
+   "key": "c8e0954b4e685c582e2c680dfded14c6",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; get_bars 30M futures data bug",
+   "why": "API bug report for futures intraday bars; no strategy content.",
+   "flags": [
+    "no-mechanism-described",
+    "futures-only",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "7e16f6338d6a6f531916138f3b512ef1": {
+   "key": "7e16f6338d6a6f531916138f3b512ef1",
+   "M": 1,
+   "S": 3,
+   "R": 2,
+   "H": 2,
+   "priority": 15,
+   "band": "hold",
+   "family": "小市值",
+   "mechanism": "AI-generated microcap short-term reversal selection",
+   "why": "One-line body 'AI给的微盘股反转策略'; 36th 小市值 member, no stated difference; S only via 2022-23 microcap window.",
+   "flags": [
+    "regime-2022-23-only",
+    "thin-universe",
+    "zero-slippage-flattered",
+    "no-evidence-offered"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_30139fa314c02c0a02a395372a6d72": {
+   "key": "lk_30139fa314c02c0a02a395372a6d72",
+   "M": 1,
+   "S": 2,
+   "R": 1,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "首板: buy stocks touching limit-up by 11:30, sell unsealed at 10:00",
+   "why": "Another 打板 member (family 25); edge ranks by minutes-to-limit-up and buys touched boards, fills a daily bar cannot honour.",
+   "flags": [
+    "limit-up-fill-unrealizable",
+    "intraday-timing-ignored-by-harness"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "e52daf72a91fb68933de9a20d924a3bc": {
+   "key": "e52daf72a91fb68933de9a20d924a3bc",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; canceled stop-loss market order question",
+   "why": "Log debugging question (likely limit-down cancel); strategy logic never described.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "07d96f75cf3d49b1e25411e6ee39b4c7": {
+   "key": "07d96f75cf3d49b1e25411e6ee39b4c7",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; UserOrder price=0.0 question",
+   "why": "API behaviour question about canceled market orders; no strategy.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "251b3e6faf333441e28a32a9aebe4ef6": {
+   "key": "251b3e6faf333441e28a32a9aebe4ef6",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 3,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; inventory-turnover field definition discrepancy",
+   "why": "Data-definition question (0.565 vs 0.481 for 万科A); no strategy to run.",
+   "flags": [
+    "no-mechanism-described",
+    "data-quality-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "5d71610cdde6e08a88d02e566cedfbd2": {
+   "key": "5d71610cdde6e08a88d02e566cedfbd2",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; module import namespace issue in backtest",
+   "why": "Python import-scope support question; nothing runnable.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_17b42451c7a91c90a9b79e8621e7fd": {
+   "key": "lk_17b42451c7a91c90a9b79e8621e7fd",
+   "M": 3,
+   "S": 2,
+   "R": 4,
+   "H": 2,
+   "priority": 23,
+   "band": "fetch",
+   "family": "趋势技术",
+   "mechanism": "DMI directional index as market-level timing switch",
+   "why": "No DMI signal among held 趋势技术 pages; untested direction. Author only claims '择时效果尚可'; index timing rarely reaches Sharpe 2.5 in 2022-23.",
+   "flags": [
+    "no-numbers-offered",
+    "timing-overlay-only"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "258f49c4e47922f66d8c9d4c6f315a5c": {
+   "key": "258f49c4e47922f66d8c9d4c6f315a5c",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; Wyckoff system architecture, asks for help",
+   "why": "Describes an unfinished Wyckoff state-machine design with no code or results; help request.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "a0a2c60f968a8c15196a9d86e5da30c5": {
+   "key": "a0a2c60f968a8c15196a9d86e5da30c5",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; forward 10-day return question",
+   "why": "Beginner API question; no strategy.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "18fbec1c5cd1deabd6a1c28c07e40ec6": {
+   "key": "18fbec1c5cd1deabd6a1c28c07e40ec6",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; lower commission gave lower return anecdote",
+   "why": "One-line path-dependence observation, no strategy or evidence attached.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "8e9d038eb2d7d4f6206fd9025d04f0dc": {
+   "key": "8e9d038eb2d7d4f6206fd9025d04f0dc",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; industry code A01 lookup error",
+   "why": "Support question about industry code; nothing to run.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_ddf906d0d53934a0a5f7aef0848668": {
+   "key": "lk_ddf906d0d53934a0a5f7aef0848668",
+   "M": 2,
+   "S": 2,
+   "R": 2,
+   "H": 1,
+   "priority": 15,
+   "band": "hold",
+   "family": "UNKNOWN",
+   "mechanism": "attempted lookahead removal from a claimed 6x-annual strategy",
+   "why": "Author admits 'removed lookahead, result higher than 6x' — leak evidently remains; no dissection offered, so not a debunk.",
+   "flags": [
+    "lookahead-suspect",
+    "multiple-claim",
+    "mechanism-unstated"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "bfe69d7413a816937eb9f6e118df2bda": {
+   "key": "bfe69d7413a816937eb9f6e118df2bda",
+   "M": 0,
+   "S": 2,
+   "R": 3,
+   "H": 3,
+   "priority": 3,
+   "band": "drop",
+   "family": "网格",
+   "mechanism": "asymmetric grid on 10 volatile small-cap I64/I65 stocks",
+   "why": "Same title as 网格 family base 32021d45, already measured Sharpe 1.19 fail; ~99% of return from 2023-H1. Restates held strategy.",
+   "flags": [
+    "duplicate-of-held",
+    "regime-2023H1-only",
+    "most-cloned-post"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "94fda3bfc8472721160435a8d23b8ff7": {
+   "key": "94fda3bfc8472721160435a8d23b8ff7",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; alpha101 stddev import question",
+   "why": "API usage question; no strategy.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "7e4b8ad5f8b18e7cb4e67f2ffa7c40fe": {
+   "key": "7e4b8ad5f8b18e7cb4e67f2ffa7c40fe",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; why functions auto-execute question",
+   "why": "Beginner framework question with screenshot only.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "e0fe373783e1bbf728dd73ad4c884b4e": {
+   "key": "e0fe373783e1bbf728dd73ad4c884b4e",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; ST name filter differs sim vs backtest",
+   "why": "Support question on ST filtering discrepancy; strategy not described.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "15098b428fcbf0a1cd2d234a3f2c34f7": {
+   "key": "15098b428fcbf0a1cd2d234a3f2c34f7",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 3,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; annual-report pubDate coverage question (self-resolved)",
+   "why": "Author concludes 'data has no problem, extra rows are new listings'; nothing to run.",
+   "flags": [
+    "no-mechanism-described",
+    "data-quality-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "d267aa8783419fcdd5d4ddcc61d92f30": {
+   "key": "d267aa8783419fcdd5d4ddcc61d92f30",
+   "M": 4,
+   "S": 0,
+   "R": 3,
+   "H": 5,
+   "priority": 23,
+   "band": "fetch",
+   "family": "NEW:研报事件驱动",
+   "mechanism": "buy at close stocks with same-day >20-page broker reports, sell 11:20",
+   "why": "No held alt-data/research-report family. Author: 51% annual, 3.77% DD, live loss in May 2018; scraped 慧博 attachment ends 2018, cannot run 2022-23.",
+   "flags": [
+    "missing-data-dependency",
+    "data-ends-2018",
+    "intraday-timing-ignored-by-harness",
+    "author-live-trade-admission"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "4d6a35ada54c834ff9ff4dc7195e2b75": {
+   "key": "4d6a35ada54c834ff9ff4dc7195e2b75",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 3,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; PE-ttm data spike report",
+   "why": "Single data-error report for 宁波银行 PE; no strategy.",
+   "flags": [
+    "no-mechanism-described",
+    "data-quality-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "dc3a970985c182f23bbe6f534e11db1e": {
+   "key": "dc3a970985c182f23bbe6f534e11db1e",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; editor code garbled into Chinese",
+   "why": "Editor/UI bug report (likely browser translation); nothing to run.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "a5593c56c60d60d14e4528ef87d81eeb": {
+   "key": "a5593c56c60d60d14e4528ef87d81eeb",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; minute-bar no-trade detection API question",
+   "why": "API question; no strategy described.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "54f0eadb838e360398da84b467de0b9a": {
+   "key": "54f0eadb838e360398da84b467de0b9a",
+   "M": 2,
+   "S": 0,
+   "R": 2,
+   "H": 2,
+   "priority": 12,
+   "band": "hold",
+   "family": "UNKNOWN",
+   "mechanism": "unspecified broker-report replication (competition entry)",
+   "why": "Body is only competition boilerplate; replicated report never named. Notebook needs credits to clone. Keep metadata, fetch prose only if topic surfaces.",
+   "flags": [
+    "no-mechanism-described",
+    "notebook-not-downloadable",
+    "research-replication"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "246fb8edb8fbc9d5fe8b09322e944d5a": {
+   "key": "246fb8edb8fbc9d5fe8b09322e944d5a",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; unexplained debug complaint",
+   "why": "Venting post with no code or mechanism in body.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "680f6fbdf2f2021b0bca44d1c290aad5": {
+   "key": "680f6fbdf2f2021b0bca44d1c290aad5",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "趋势技术",
+   "mechanism": "broken Bollinger + adaptive exit MA on 000001 (does not run)",
+   "why": "Code defines _init_ not initialize and references undefined vars; zero return is a bug, single-stock teaching example.",
+   "flags": [
+    "cannot-run",
+    "support-question",
+    "teaching-example"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "46aa8395a02bc687a6666c77da45c22e": {
+   "key": "46aa8395a02bc687a6666c77da45c22e",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; northbound quota table not updated",
+   "why": "Data freshness question; no strategy.",
+   "flags": [
+    "no-mechanism-described",
+    "data-quality-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "944e97227027cc453298c80cbff45768": {
+   "key": "944e97227027cc453298c80cbff45768",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; investment-style advice question",
+   "why": "One-line general advice question; nothing to run.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "63295888956e80a57e74f260a3c957cd": {
+   "key": "63295888956e80a57e74f260a3c957cd",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; research-to-strategy conversion question",
+   "why": "Beginner workflow question; no mechanism.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "6ab21adac8e8f4d96f4c9312fd1525ff": {
+   "key": "6ab21adac8e8f4d96f4c9312fd1525ff",
+   "M": 2,
+   "S": 2,
+   "R": 2,
+   "H": 3,
+   "priority": 17,
+   "band": "hold",
+   "family": "UNKNOWN",
+   "mechanism": "combination of prior low-risk strategies, much idle cash",
+   "why": "Components never named ('前人的低风险策略找了几个组合'); 19:1 win ratio with no window or drawdown; low-risk books often discount/arb, R unknown.",
+   "flags": [
+    "mechanism-unstated",
+    "possible-discount-book",
+    "win-rate-only-claim"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "2480b60d24207c4a96c03c5fa66d0004": {
+   "key": "2480b60d24207c4a96c03c5fa66d0004",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; plotting in backtest environment question",
+   "why": "Support question; no strategy.",
+   "flags": [
+    "no-mechanism-described",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "7c1e10389a2e8d93a81d012a3a348ea2": {
+   "key": "7c1e10389a2e8d93a81d012a3a348ea2",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 3,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; pe_ratio>0 returns *ST name question",
+   "why": "Data-definition question (TTM PE vs EPS); query snippet only, no strategy.",
+   "flags": [
+    "no-mechanism-described",
+    "data-quality-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "ebd24dc9ebee2470e9e76f1933c80630": {
+   "key": "ebd24dc9ebee2470e9e76f1933c80630",
+   "M": 2,
+   "S": 0,
+   "R": 4,
+   "H": 2,
+   "priority": 16,
+   "band": "hold",
+   "family": "趋势技术",
+   "mechanism": "12-condition steady-uptrend / relative-strength stock screen spec",
+   "why": "Paid coding request (100元); spec only, no code or results, so nothing runnable. Momentum-quality screen resembles held 趋势技术 ideas.",
+   "flags": [
+    "no-mechanism-implemented",
+    "coding-request"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "18093a23871073db23e4767ab9e620a1": {
+   "key": "18093a23871073db23e4767ab9e620a1",
+   "M": 0,
+   "S": 1,
+   "R": 4,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "low PE*PB value screen, 3-day rebalance, 10 names",
+   "why": "Debugging help on a teaching-template value screen with errors; no result or novelty claimed.",
+   "flags": [
+    "support-question",
+    "teaching-example"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "cda28f6bd85d26f46b60b84412acca23": {
+   "key": "cda28f6bd85d26f46b60b84412acca23",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; python2 get_price HTTPError traceback",
+   "why": "Research-environment error report; python2, nothing runnable.",
+   "flags": [
+    "no-mechanism-described",
+    "python2",
+    "support-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_9a893698022ee886c6bc52cc7c5105": {
+   "key": "lk_9a893698022ee886c6bc52cc7c5105",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "execution plumbing: JQ signals via Feishu to 同花顺 autotrade",
+   "why": "Order-routing infrastructure post, explicitly a Feishu port of prior Redis version; no trading mechanism to screen.",
+   "flags": [
+    "no-mechanism-described",
+    "execution-infrastructure"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-2.json"
+  },
+  "f65d6adcb9fc2f929118076c54d39061": {
+   "key": "f65d6adcb9fc2f929118076c54d39061",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; data-availability question on report publication dates",
+   "why": "Q&A asking whether annual-report pub dates are available; no strategy, no research content despite 研报分享 tag.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "6c2d8f64f7ce9843459da061368d5efd": {
+   "key": "6c2d8f64f7ce9843459da061368d5efd",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; how to call context in research env",
+   "why": "Platform usage question with a screenshot; nothing to learn or run.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "3d984ec31143ae83ebe5faaa96c2f43a": {
+   "key": "3d984ec31143ae83ebe5faaa96c2f43a",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; NameError get_valuation in research env",
+   "why": "One-line error report; no mechanism.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "6d1c99d4a05d6c221d4be3ee8366a32c": {
+   "key": "6d1c99d4a05d6c221d4be3ee8366a32c",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; get_trade_days error on broker platform",
+   "why": "API-compatibility help request (一创 vs 聚宽); no strategy.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "889aeac0a02fc1babb1768f0b2ecfa6e": {
+   "key": "889aeac0a02fc1babb1768f0b2ecfa6e",
+   "M": 1,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; OTC fund NAV missing via get_extras",
+   "why": "Data-gap question on off-exchange fund NAVs; marginally relevant to NAV-based discount books but no analysis offered.",
+   "flags": [
+    "no-runnable-mechanism",
+    "data-quality-note"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "8cb833edeff192d363dbed2b22cea49b": {
+   "key": "8cb833edeff192d363dbed2b22cea49b",
+   "M": 1,
+   "S": 1,
+   "R": 4,
+   "H": 2,
+   "priority": 15,
+   "band": "hold",
+   "family": "ETF动量",
+   "mechanism": "unspecified; index vs tracking ETF backtest divergence",
+   "why": "One-line question 'results differ greatly'; body gives no mechanism or numbers. Tracking-error point is known, nothing new to measure.",
+   "flags": [
+    "body-too-thin",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "24d67524bf4925af5c866067972a1b45": {
+   "key": "24d67524bf4925af5c866067972a1b45",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; complaint about slow backtests",
+   "why": "Complaint post with no content.",
+   "flags": [
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "264f6fbc49e39ab11e1226cdf67656ef": {
+   "key": "264f6fbc49e39ab11e1226cdf67656ef",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; how to get prior-day close",
+   "why": "Data-timing usage question; no strategy.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "f6e4387a5d7599db7d3ae43653830e82": {
+   "key": "f6e4387a5d7599db7d3ae43653830e82",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; newbie asks how to go live",
+   "why": "Asks how to live-trade an unshown ETF rotation; no code or numbers in body.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "73574c9d5bc374fecc359661fbefed84": {
+   "key": "73574c9d5bc374fecc359661fbefed84",
+   "M": 0,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "prints 1-minute KD values for 510050, no trading",
+   "why": "Indicator-mismatch debugging snippet; no orders placed, teaching code only.",
+   "flags": [
+    "teaching-example",
+    "no-trading-logic"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "7ea3f5220a6bfe1f842fe7f5a6414ab4": {
+   "key": "7ea3f5220a6bfe1f842fe7f5a6414ab4",
+   "M": 1,
+   "S": 3,
+   "R": 2,
+   "H": 2,
+   "priority": 15,
+   "band": "hold",
+   "family": "小市值",
+   "mechanism": "二八 index timing gates holding smallest 8 market-cap stocks",
+   "why": "小市值 already holds 二八轮动小市值 and 二八择时小市值V2.0.8; no stated difference. Popularity (1212 clones) does not move M.",
+   "flags": [
+    "regime-2022-23-only",
+    "thin-universe",
+    "daily-rebalance",
+    "likely-held-duplicate"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "lk_e94898403f63482b4e72da2d2d9a60": {
+   "key": "lk_e94898403f63482b4e72da2d2d9a60",
+   "M": 3,
+   "S": 3,
+   "R": 3,
+   "H": 2,
+   "priority": 23,
+   "band": "fetch",
+   "family": "小市值",
+   "mechanism": "weighted small-cap score: EPS, fund flow, limit-up gene, industry",
+   "why": "Author removes the 1月/4月 forced-empty rule as '无依据' and softens crash exits; that direction is unmeasured. No numbers; small-cap window flatters.",
+   "flags": [
+    "regime-2022-23-only",
+    "thin-universe",
+    "no-reported-numbers"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "93eb554aa89cacca30e05787bbf16404": {
+   "key": "93eb554aa89cacca30e05787bbf16404",
+   "M": 4,
+   "S": 2,
+   "R": 4,
+   "H": 2,
+   "priority": 26,
+   "band": "fetch",
+   "family": "趋势技术",
+   "mechanism": "RSRS index timing; critique of right-skew sample overfitting",
+   "why": "Overfitting critique: an arbitrary skewed random sample 'also times tops/bottoms'. Evidence thin ('随意测试'), so M=4 not 5. Index timing rarely reaches 2.5 in 2022-23.",
+   "flags": [
+    "overfitting-critique",
+    "thin-evidence",
+    "index-timing-bear-tape"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "59ccccbe0869b80a343cf3cb546173b8": {
+   "key": "59ccccbe0869b80a343cf3cb546173b8",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; placeholder text",
+   "why": "Body is '对对对对对对'; nothing to read or run.",
+   "flags": [
+    "no-runnable-mechanism",
+    "junk"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "f9a952b1d880166483aaf1d169e96b37": {
+   "key": "f9a952b1d880166483aaf1d169e96b37",
+   "M": 4,
+   "S": 1,
+   "R": 4,
+   "H": 3,
+   "priority": 25,
+   "band": "fetch",
+   "family": "趋势技术",
+   "mechanism": "Alligator/fractal breakout with AO/AC on HS300 constituents, stops",
+   "why": "Bill Williams signal set absent from family pages. Author admits '差强人意'; the 114% is from 2015 on, not 2022-23 evidence. Old code may need porting.",
+   "flags": [
+    "out-of-window-evidence",
+    "possible-py2",
+    "author-admits-weak"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "542c55414ae601888e727e9be2033089": {
+   "key": "542c55414ae601888e727e9be2033089",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; paid request for MACD formula",
+   "why": "Solicitation with a WeChat contact; no content.",
+   "flags": [
+    "no-runnable-mechanism",
+    "solicitation"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "8c8bad5f4d8a54dfd20e52092dc6b795": {
+   "key": "8c8bad5f4d8a54dfd20e52092dc6b795",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; which API returns current price",
+   "why": "API usage question.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "9282b98c18e082da9444b628320f087f": {
+   "key": "9282b98c18e082da9444b628320f087f",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; get_price file-not-found error",
+   "why": "Platform error report.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "5b027af10ccf61da6af8ac351eade27d": {
+   "key": "5b027af10ccf61da6af8ac351eade27d",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; syntax error in an RSRS script",
+   "why": "Traceback help request; the RSRS code is not shown and does not compile.",
+   "flags": [
+    "no-runnable-mechanism",
+    "broken-code"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "786e6be084d170e6342dbda58addf422": {
+   "key": "786e6be084d170e6342dbda58addf422",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; bank RORAC query returns nothing",
+   "why": "Data-query help request.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "20a3e4f6db64055a01a04089261cfd64": {
+   "key": "20a3e4f6db64055a01a04089261cfd64",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; adjusted price differs from other vendors",
+   "why": "Single-day forward-adjusted price discrepancy question; no strategy.",
+   "flags": [
+    "no-runnable-mechanism",
+    "data-quality-note"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "19e132317c31ee23e4a369c0a0117fe4": {
+   "key": "19e132317c31ee23e4a369c0a0117fe4",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; run_weekly first-execution timing in sim",
+   "why": "Scheduler usage question.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "09bf7163446679a8e67dc4ae2d9e47dd": {
+   "key": "09bf7163446679a8e67dc4ae2d9e47dd",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; Tick object missing amount attribute",
+   "why": "API error question.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "9afb2eaa8a307c78fed73b011c4e1a58": {
+   "key": "9afb2eaa8a307c78fed73b011c4e1a58",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; cash-flow growth field miscalculated",
+   "why": "Fundamental-data error report for two tickers; no strategy.",
+   "flags": [
+    "no-runnable-mechanism",
+    "data-quality-note"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "be0b262a04adeef1bcf1d65b6324db60": {
+   "key": "be0b262a04adeef1bcf1d65b6324db60",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; jqdatasdk login hangs",
+   "why": "SDK connectivity issue.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "907f52701a640b1e14c662fcda5b9bd1": {
+   "key": "907f52701a640b1e14c662fcda5b9bd1",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; TRIX params don't change results",
+   "why": "Bug question with a screenshot only; likely a user parameter-passing error.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "205b1cf7e990afeba657ef5f6315015b": {
+   "key": "205b1cf7e990afeba657ef5f6315015b",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; account password question",
+   "why": "Account question mis-tagged 研报分享/期权.",
+   "flags": [
+    "no-runnable-mechanism",
+    "mis-tagged"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "e643ce2ea25f467871501f5b07c540da": {
+   "key": "e643ce2ea25f467871501f5b07c540da",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; duplicate column in income statement table",
+   "why": "Data-schema bug report.",
+   "flags": [
+    "no-runnable-mechanism",
+    "data-quality-note"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "abc8ef2f99f9c4064eabade126b05c2e": {
+   "key": "abc8ef2f99f9c4064eabade126b05c2e",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; asks for code to tabulate highs",
+   "why": "Body is '求助代码实现'.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "0bf47f94eaf44729291ac6e67e50a9d3": {
+   "key": "0bf47f94eaf44729291ac6e67e50a9d3",
+   "M": 2,
+   "S": 2,
+   "R": 5,
+   "H": 2,
+   "priority": 22,
+   "band": "fetch",
+   "family": "NEW:质量因子轮动",
+   "mechanism": "rotate into highest 5-year gross-margin stocks",
+   "why": "No quality family held, but factorlib already shows 销售毛利率 excess -7.18% (zz500, 3y): direction measured. Large-cap quality suffered 2022-23. Body is one line.",
+   "flags": [
+    "direction-known-from-factorlib",
+    "body-too-thin",
+    "low-turnover"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "42896e316cd8d45b556ac4d962623867": {
+   "key": "42896e316cd8d45b556ac4d962623867",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; pyfolio tear sheet via jqdatasdk locally",
+   "why": "Tooling tip on buy-and-hold 601398 returns; no strategy to learn from.",
+   "flags": [
+    "no-runnable-mechanism",
+    "tooling"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "ee49bb7b7c541aea011d421fbbd4be2a": {
+   "key": "ee49bb7b7c541aea011d421fbbd4be2a",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; stuck backtest cannot be cancelled",
+   "why": "Platform issue on a cloned strategy with external-trade deps stripped by AI.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "lk_c6b0750f628837f293dffb3404e233": {
+   "key": "lk_c6b0750f628837f293dffb3404e233",
+   "M": 1,
+   "S": 3,
+   "R": 1,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "昨日首板, 09:28 auction buy, 11:28/14:50 intraday exits",
+   "why": "Filters match held base 439385b4's 首板高开 leg (7-19亿, 70/520亿, 竞价3%, 1.00-1.06, 左压); family page says intraday times are ignored on daily harness.",
+   "flags": [
+    "auction-fill",
+    "intraday-timing-invalid-on-daily-bar",
+    "held-base-leg-duplicate",
+    "zero-slippage-flattered"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "e40a4e52ef4bdd8ffe1f95e4d83a2ae5": {
+   "key": "e40a4e52ef4bdd8ffe1f95e4d83a2ae5",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; 399001 minute low field bad",
+   "why": "Index minute-data error report.",
+   "flags": [
+    "no-runnable-mechanism",
+    "data-quality-note"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "0993877c8cf0308a971c6f60da0df57c": {
+   "key": "0993877c8cf0308a971c6f60da0df57c",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; STK_DIVIDEND fields unsupported",
+   "why": "Dividend-table schema complaint; no strategy.",
+   "flags": [
+    "no-runnable-mechanism",
+    "data-quality-note"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "e50ab221ae0606bb83a97af5a6a11b50": {
+   "key": "e50ab221ae0606bb83a97af5a6a11b50",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; backtest vs sim universe drift with 3000 cap",
+   "why": "Reproducibility question about universe truncation; no strategy logic described.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "d0b89f6e39a9401b74886133dc65316e": {
+   "key": "d0b89f6e39a9401b74886133dc65316e",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; positions count not updating after buy",
+   "why": "Debug log question; the gap-down entry logic is not described.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "637ca6968ffab7a2c08af8e505566e85": {
+   "key": "637ca6968ffab7a2c08af8e505566e85",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; which field is PB(MRQ)",
+   "why": "Newbie field-name question.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "98161f9a20283ce6167a5203e253ef2a": {
+   "key": "98161f9a20283ce6167a5203e253ef2a",
+   "M": 1,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "demo: pre-open sell then open re-buy of 000001",
+   "why": "Notes harness can't recycle auction-sale cash same morning; relevant to fill realism but a demo, not a strategy.",
+   "flags": [
+    "no-runnable-mechanism",
+    "harness-fill-mechanics"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "765dfc54266a7c9695d63f7a6efd6794": {
+   "key": "765dfc54266a7c9695d63f7a6efd6794",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; lists external A-share data sources",
+   "why": "Data-source question; no strategy.",
+   "flags": [
+    "no-runnable-mechanism",
+    "qa-not-research"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-3.json"
+  },
+  "05865c571eb1f0a6202cc8fc26107d0d": {
+   "key": "05865c571eb1f0a6202cc8fc26107d0d",
+   "M": 1,
+   "S": 3,
+   "R": 3,
+   "H": 2,
+   "priority": 17,
+   "band": "hold",
+   "family": "小市值",
+   "mechanism": "Unstated; title implies cap band that main funds can move",
+   "why": "Body is just 'rt'; title points at small-cap sizing. No stated difference from a 35-member family; 216 clones cannot move M.",
+   "flags": [
+    "body-empty",
+    "family-inferred-from-title",
+    "regime-2022-23-only"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "b02add0fe4889b20156025e34f11f9f4": {
+   "key": "b02add0fe4889b20156025e34f11f9f4",
+   "M": 0,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "趋势技术",
+   "mechanism": "MACD on holding list; talib NaN error report",
+   "why": "Debugging question about a talib NaN traceback; no strategy claim or result to learn from.",
+   "flags": [
+    "qa-debug-post"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "77f590dcc7e1ab1c2e988fa54024341a": {
+   "key": "77f590dcc7e1ab1c2e988fa54024341a",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Thank-you note plus PrepareData debugging for C-VIX replication",
+   "why": "Thanks an author and asks for a bug fix; the C-VIX work itself lives in another post.",
+   "flags": [
+    "nothing-runnable",
+    "qa-debug-post"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "2b97fa800f1562e2fe539739b5277c15": {
+   "key": "2b97fa800f1562e2fe539739b5277c15",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Platform question: changing paper-trading capital",
+   "why": "Platform usage question, no mechanism.",
+   "flags": [
+    "nothing-runnable",
+    "platform-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "bc69ae86c5826fd961c46a1b4c8d9151": {
+   "key": "bc69ae86c5826fd961c46a1b4c8d9151",
+   "M": 1,
+   "S": 1,
+   "R": 4,
+   "H": 2,
+   "priority": 15,
+   "band": "hold",
+   "family": "ETF动量",
+   "mechanism": "Qualitative sector rotation read from US sector ETF returns",
+   "why": "Retells a US etfdb article (2013 taper event); no A-share rule or backtest. Sector ETF rotation already 27 held.",
+   "flags": [
+    "no-backtest-evidence",
+    "out-of-window-evidence",
+    "teaching-article"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "ccd025c82db7cc18e6278ea584ec5129": {
+   "key": "ccd025c82db7cc18e6278ea584ec5129",
+   "M": 0,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "趋势技术",
+   "mechanism": "MA golden-cross entry, MACD exit; duplicate-buy bug",
+   "why": "Asks how to stop re-buying after MACD exit; code block empty. Nothing new.",
+   "flags": [
+    "qa-debug-post"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "7bc8d19d439257cc947a0352091dab97": {
+   "key": "7bc8d19d439257cc947a0352091dab97",
+   "M": 2,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 16,
+   "band": "hold",
+   "family": "红利低频",
+   "mechanism": "Bottom-half cap quality screen, cash-flow/dividend score, monthly top10",
+   "why": "A code request, not a strategy: 'has anyone backtested this'. Quality-dividend-smallcap blend is plausible but nothing runnable in post.",
+   "flags": [
+    "no-source-in-post",
+    "request-for-code"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "69999428827a1205ba42dff3c0e215db": {
+   "key": "69999428827a1205ba42dff3c0e215db",
+   "M": 0,
+   "S": 1,
+   "R": 4,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Long-period single-stock rotation; settings-not-honoured question",
+   "why": "Debug question about rotation period and same-day buy/sell; trade log only, no result claim.",
+   "flags": [
+    "qa-debug-post"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "428413d260ec3d4b2044addda7746e34": {
+   "key": "428413d260ec3d4b2044addda7746e34",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Question why attribute_history MA5 excludes today",
+   "why": "Basic API semantics question (history excludes current bar); no strategy.",
+   "flags": [
+    "nothing-runnable",
+    "platform-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "8e90441c940796b0951af7b2a66f275c": {
+   "key": "8e90441c940796b0951af7b2a66f275c",
+   "M": 2,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 16,
+   "band": "hold",
+   "family": "网格",
+   "mechanism": "Single-stock 3% grid with pyramid adds and 8% stop",
+   "why": "Help-fix request; stop at -8% pre-empts the -10% add branch, logic is broken. Single bank-stock grid, no results.",
+   "flags": [
+    "broken-code",
+    "single-stock",
+    "no-backtest-evidence"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "3dd42a115a4a654c162f217ee2cb5842": {
+   "key": "3dd42a115a4a654c162f217ee2cb5842",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "get_price Panel output confusion",
+   "why": "Research-env data question; no mechanism.",
+   "flags": [
+    "nothing-runnable",
+    "platform-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "24fec47ff05f575cc012c878d22908c4": {
+   "key": "24fec47ff05f575cc012c878d22908c4",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "How to sample intraday prices without memory blowup",
+   "why": "Data-access question; no mechanism.",
+   "flags": [
+    "nothing-runnable",
+    "platform-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "lk_9e6a7c04d923e9355b72d6be87f453": {
+   "key": "lk_9e6a7c04d923e9355b72d6be87f453",
+   "M": 3,
+   "S": 2,
+   "R": 2,
+   "H": 2,
+   "priority": 19,
+   "band": "fetch",
+   "family": "趋势技术",
+   "mechanism": "Index regime switch: bull breakout, bear panic-rebound, crash-day cash",
+   "why": "Regime-switched dual mode is untested in held 趋势技术. Only evidence: 'good in 2026 H1'. -2.5%/+5% stops, 5-day holds: high turnover.",
+   "flags": [
+    "no-numbers-reported",
+    "out-of-window-evidence",
+    "zero-slippage-flattered",
+    "intraday-stops"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "2e63802ce2f98c89cdd8e18d538c1baf": {
+   "key": "2e63802ce2f98c89cdd8e18d538c1baf",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Research environment 404 report",
+   "why": "Platform outage question; nothing to learn.",
+   "flags": [
+    "nothing-runnable",
+    "platform-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "26751c3ac66610f6e2efffe7cf4783b1": {
+   "key": "26751c3ac66610f6e2efffe7cf4783b1",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 3,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "IC futures stop-market order not triggering in minute backtest",
+   "why": "Futures-only engine bug report (stop at 6531.4 never fired); not a stock strategy, harness cannot run it.",
+   "flags": [
+    "futures-only",
+    "nothing-runnable",
+    "platform-bug-report"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "3521cc627a7796033370f585b3c115f9": {
+   "key": "3521cc627a7796033370f585b3c115f9",
+   "M": 3,
+   "S": 0,
+   "R": 2,
+   "H": 3,
+   "priority": 16,
+   "band": "hold",
+   "family": "NEW:问卷情绪择时",
+   "mechanism": "Trade CSI500 daily on published survey-based sentiment forecasts",
+   "why": "Novel signal, but forecasts are hand-pasted JSON ending 2019; cannot run in 2022-23. Author checks for revised data - some care.",
+   "flags": [
+    "missing-data-dependency",
+    "out-of-window-evidence",
+    "index-not-tradable"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "1a0c2ae163f1dc5ff75e90e5a88517f6": {
+   "key": "1a0c2ae163f1dc5ff75e90e5a88517f6",
+   "M": 0,
+   "S": 1,
+   "R": 2,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "Request: stop rules for buy-day-after-limit-up entries",
+   "why": "Asks for two stop-loss snippets on a limit-up follow strategy; no new mechanism or result.",
+   "flags": [
+    "request-for-code"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "3c921db113bf6a0a0a46ba6641c554e4": {
+   "key": "3c921db113bf6a0a0a46ba6641c554e4",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "How to trade on a specific date",
+   "why": "Basic API question.",
+   "flags": [
+    "nothing-runnable",
+    "platform-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "9b23c08a3be7d7952970a0444d8fdf98": {
+   "key": "9b23c08a3be7d7952970a0444d8fdf98",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "avoid_future_data warning in paper trading",
+   "why": "Platform warning question; no mechanism.",
+   "flags": [
+    "nothing-runnable",
+    "platform-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "lk_78e18b8b20d0fbd47024aa0cc810f2": {
+   "key": "lk_78e18b8b20d0fbd47024aa0cc810f2",
+   "M": 2,
+   "S": 2,
+   "R": 3,
+   "H": 2,
+   "priority": 18,
+   "band": "fetch",
+   "family": "UNKNOWN",
+   "mechanism": "Unstated; body repeats title",
+   "why": "Body equals title: 'high return, OK drawdown, live-traded'. Mechanism unknowable without source; lowest fetch, vague claim.",
+   "flags": [
+    "body-empty",
+    "no-numbers-reported"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "fea7777c064d8b7fcd5500e7d8566426": {
+   "key": "fea7777c064d8b7fcd5500e7d8566426",
+   "M": 2,
+   "S": 2,
+   "R": 1,
+   "H": 3,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "弱转强: T-2 limit-up, T-1 drop <=-4%, auction re-entry",
+   "why": "Common 弱转强 lineage in 25-member family. Entry keyed on call-auction volume ratio and open fills; evidence 2025-26 only, win rate 51%.",
+   "flags": [
+    "auction-fill",
+    "out-of-window-evidence",
+    "zero-slippage-flattered",
+    "selling-title"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "68dfd24fbc3c4766063df66669572b98": {
+   "key": "68dfd24fbc3c4766063df66669572b98",
+   "M": 1,
+   "S": 2,
+   "R": 3,
+   "H": 0,
+   "priority": 13,
+   "band": "hold",
+   "family": "UNKNOWN",
+   "mechanism": "Unstated; body is 'rt'",
+   "why": "Empty body, hype title ('这么牛逼'); same 216-clone twin as 05865c57. Popularity cannot move M.",
+   "flags": [
+    "body-empty",
+    "hype-title"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "f5baa89e154b693d555f2def718ef1ff": {
+   "key": "f5baa89e154b693d555f2def718ef1ff",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Locally-simulated tick trades replayed; return display mismatch",
+   "why": "Reporting-artifact question about an off-platform tick strategy; nothing runnable here.",
+   "flags": [
+    "nothing-runnable",
+    "platform-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "7458cc4b99662802c04e5411da0ee5eb": {
+   "key": "7458cc4b99662802c04e5411da0ee5eb",
+   "M": 2,
+   "S": 1,
+   "R": 5,
+   "H": 5,
+   "priority": 23,
+   "band": "fetch",
+   "family": "多因子ML",
+   "mechanism": "ROIC quintile sort on >100亿 caps, annual rebalance",
+   "why": "Honest factor study: top quintile 8%/yr, MDD 41%, top 2% MDD 59%. Won't clear gate; factorlib may already hold ROIC.",
+   "flags": [
+    "out-of-window-evidence",
+    "low-turnover",
+    "large-cap",
+    "likely-gate-fail"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "32355cb65fceee59089e86d8dcc5ca82": {
+   "key": "32355cb65fceee59089e86d8dcc5ca82",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "get_industry sw_l1 KeyError traceback",
+   "why": "Data error traceback only.",
+   "flags": [
+    "nothing-runnable",
+    "qa-debug-post"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "b4338a14d68e228707f4249d91aa23ea": {
+   "key": "b4338a14d68e228707f4249d91aa23ea",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Minute data fetch failure in research env",
+   "why": "Platform outage question.",
+   "flags": [
+    "nothing-runnable",
+    "platform-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "a8b02a679479f32da1bd14eda28c0de0": {
+   "key": "a8b02a679479f32da1bd14eda28c0de0",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "How to total commissions and stamp tax",
+   "why": "Newbie API question.",
+   "flags": [
+    "nothing-runnable",
+    "platform-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "9af61cddfbfb22947702759dff054a73": {
+   "key": "9af61cddfbfb22947702759dff054a73",
+   "M": 0,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Port a cloned 冲天炮 strategy to 一创聚宽",
+   "why": "Porting request for someone else's strategy; a fork with no new logic.",
+   "flags": [
+    "request-for-code",
+    "fork"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "5921d99ddb5515e174495a2b62acc724": {
+   "key": "5921d99ddb5515e174495a2b62acc724",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Futures minute backtest order cancellations",
+   "why": "Futures engine question; no strategy.",
+   "flags": [
+    "futures-only",
+    "nothing-runnable"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "46cfa68cb072c914c055e0dccb158496": {
+   "key": "46cfa68cb072c914c055e0dccb158496",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Editorial on Shenzhen index turnover data quality",
+   "why": "量化课堂 essay about vendor turnover data; one get_price snippet, no mechanism.",
+   "flags": [
+    "nothing-runnable",
+    "teaching-article"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "dc5baaf8f839c1c56f944d2a55d3013d": {
+   "key": "dc5baaf8f839c1c56f944d2a55d3013d",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Pandas question: keep codes when counting relative-strength days",
+   "why": "Coding help request.",
+   "flags": [
+    "nothing-runnable",
+    "qa-debug-post"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "06f5d9237aa33091eedc3ba0c3c6d9f3": {
+   "key": "06f5d9237aa33091eedc3ba0c3c6d9f3",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Website navigation complaint",
+   "why": "UI feedback, no content.",
+   "flags": [
+    "nothing-runnable",
+    "platform-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "d2b0d60e008b7947411a85ab90564047": {
+   "key": "d2b0d60e008b7947411a85ab90564047",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Paid code-writing solicitation",
+   "why": "Advert for a coder; no strategy described.",
+   "flags": [
+    "nothing-runnable",
+    "solicitation"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "1a179e422ad9107b2e3c9f879a284cad": {
+   "key": "1a179e422ad9107b2e3c9f879a284cad",
+   "M": 2,
+   "S": 0,
+   "R": 4,
+   "H": 2,
+   "priority": 16,
+   "band": "hold",
+   "family": "套利",
+   "mechanism": "Switch between Midea and Gree on fixed 1.1 price ratio",
+   "why": "Newbie code raises DataFrame truth-value error; fixed price-ratio threshold, no spread model. Cannot run as posted.",
+   "flags": [
+    "broken-code",
+    "teaching-example"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "54e02731bdd3839dd04fc773cec6f6ad": {
+   "key": "54e02731bdd3839dd04fc773cec6f6ad",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "jqdatasdk connection failure",
+   "why": "SDK auth question mis-tagged 研报分享.",
+   "flags": [
+    "nothing-runnable",
+    "platform-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "c2f8bd3f1edf8e083200862b23d5504a": {
+   "key": "c2f8bd3f1edf8e083200862b23d5504a",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Keep only last-5-day picks in a watchlist",
+   "why": "Coding help request.",
+   "flags": [
+    "nothing-runnable",
+    "qa-debug-post"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "6106a60358aa9c57ec0236c0c640ba74": {
+   "key": "6106a60358aa9c57ec0236c0c640ba74",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Orders filled despite insufficient volume",
+   "why": "One-line fill question, no code or evidence in body.",
+   "flags": [
+    "nothing-runnable",
+    "platform-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "9c904fa521f150429456d2dc0f39a477": {
+   "key": "9c904fa521f150429456d2dc0f39a477",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Thread/process pools unsupported in strategy sandbox",
+   "why": "Sandbox limitation question; no mechanism.",
+   "flags": [
+    "nothing-runnable",
+    "platform-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "3dbce8cb4c34d9e16984b9a8a2ec282d": {
+   "key": "3dbce8cb4c34d9e16984b9a8a2ec282d",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "get_price returns empty DataFrame",
+   "why": "Data question, body one line.",
+   "flags": [
+    "nothing-runnable",
+    "platform-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "lk_c73692ad4bc2517273818a57a7ed0e": {
+   "key": "lk_c73692ad4bc2517273818a57a7ed0e",
+   "M": 2,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 16,
+   "band": "hold",
+   "family": "趋势技术",
+   "mechanism": "Textbook MACD golden-cross buy, death-cross sell",
+   "why": "'简单策略测试': textbook MACD cross, already covered by 16-member 趋势技术. 165 clones is popularity, not information.",
+   "flags": [
+    "teaching-example",
+    "no-numbers-reported"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-4.json"
+  },
+  "ef766e0ad742164fcc76405654f63a00": {
+   "key": "ef766e0ad742164fcc76405654f63a00",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; data-access question about HIBOR",
+   "why": "Body is one word 'Hibor'; a data question with no mechanism or evidence.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "8540a7558999d41a71625d63a0ef1b34": {
+   "key": "8540a7558999d41a71625d63a0ef1b34",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; platform question about wizard Python2 mode",
+   "why": "Body is a single screenshot; platform support question, nothing to learn or run.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "7797c9e7fc6b725be6d0814e29f80330": {
+   "key": "7797c9e7fc6b725be6d0814e29f80330",
+   "M": 0,
+   "S": 0,
+   "R": 1,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "1-minute intraday index-futures trading; fill-slippage question",
+   "why": "Asks why order_target fills deviate from signal; no strategy content, futures-only and intraday fills.",
+   "flags": [
+    "qa-not-strategy",
+    "futures-only",
+    "intraday-fills"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "a8398394ddbdf31c64a79a2cd43a6fb2": {
+   "key": "a8398394ddbdf31c64a79a2cd43a6fb2",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; pandas output truncation question on factor ranks",
+   "why": "Snippet ranks five value factors but the question is pandas display truncation; no strategy.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "f3509c6ad61c2b849ab74d4c60ccbcf9": {
+   "key": "f3509c6ad61c2b849ab74d4c60ccbcf9",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; option-quote logger read_file/write_file bug",
+   "why": "Debugging question: 810 rows written, 648 read back; a data-logging script, not a strategy.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "24902db528c27c589d243ca3b388cf80": {
+   "key": "24902db528c27c589d243ca3b388cf80",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; research platform 404 report",
+   "why": "Platform outage question; no content.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "e5cc40f7cd397352ecaa1e3e702b9b8d": {
+   "key": "e5cc40f7cd397352ecaa1e3e702b9b8d",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; asks whether indicator.roe/roa are maintained",
+   "why": "Data-maintenance question with no evidence in body.",
+   "flags": [
+    "qa-not-strategy",
+    "data-quality-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "a3757ed4001167695d6f6791fea2be30": {
+   "key": "a3757ed4001167695d6f6791fea2be30",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; reports Moutai profit-growth field mismatch",
+   "why": "Data-error ticket for one stock's growth indicator; evidence only in attachment, no mechanism studied.",
+   "flags": [
+    "qa-not-strategy",
+    "data-quality-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "d08084668ed3fd1b1a327ce995c745cf": {
+   "key": "d08084668ed3fd1b1a327ce995c745cf",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; handle_bar not called debugging",
+   "why": "API debugging question; nothing runnable or learnable.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "df1d6c3a7d320baec61810ecc39349e7": {
+   "key": "df1d6c3a7d320baec61810ecc39349e7",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; pandas dropna question",
+   "why": "Beginner pandas question (dropna not assigned); no strategy.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "061761e49b097473a1e828d40374af03": {
+   "key": "061761e49b097473a1e828d40374af03",
+   "M": 1,
+   "S": 0,
+   "R": 4,
+   "H": 2,
+   "priority": 13,
+   "band": "hold",
+   "family": "趋势技术",
+   "mechanism": "RSRS slope timing on HS300, holds 3 stocks",
+   "why": "Porting request for classic RSRS timer; uses pandas.stats.api ols (Python 2), no stated difference from held RSRS variants.",
+   "flags": [
+    "python2-cannot-run",
+    "porting-request",
+    "no-numbers"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "1e814e7df2d8afd6ad277b46318bdb94": {
+   "key": "1e814e7df2d8afd6ad277b46318bdb94",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; buy-and-hold one bank vs benchmark return mismatch",
+   "why": "2005-06 benchmark-sync data question; not a strategy.",
+   "flags": [
+    "qa-not-strategy",
+    "data-quality-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "21137debcc41cfb9e37b8fc5968f7080": {
+   "key": "21137debcc41cfb9e37b8fc5968f7080",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; why is my backtest return zero",
+   "why": "One-line debugging question; no content.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "642c982f1e9835f7bce1a1c87848a6c5": {
+   "key": "642c982f1e9835f7bce1a1c87848a6c5",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; asks how to use neutralize()",
+   "why": "Request for code help on factor neutralization; teaches nothing itself.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "f2e32454a3d016d6e9c8ae4f8c672b22": {
+   "key": "f2e32454a3d016d6e9c8ae4f8c672b22",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; history() returns NaN on Mondays",
+   "why": "API behaviour question (likely dropna across paused rows); no strategy.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "c0df7e532837dbc1bcec937ee85abae6": {
+   "key": "c0df7e532837dbc1bcec937ee85abae6",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; JY CompanyCode to JQ code conversion",
+   "why": "Data-mapping debugging question; nothing to run.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "93f18c878ddde59dac61ffc0bd847d27": {
+   "key": "93f18c878ddde59dac61ffc0bd847d27",
+   "M": 1,
+   "S": 3,
+   "R": 2,
+   "H": 3,
+   "priority": 16,
+   "band": "hold",
+   "family": "小市值",
+   "mechanism": "中小板 smallest float-cap 5 stocks rotation",
+   "why": "Clone of forum small-cap; only novelty is 2017 return 43.0% vs 24.2% by start date with identical positions. Out-of-window evidence.",
+   "flags": [
+    "regime-2022-23-only",
+    "thin-universe",
+    "reproducibility-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "6cbbe3e03a043227a55a1a35ecf4228c": {
+   "key": "6cbbe3e03a043227a55a1a35ecf4228c",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; get_price date-range question",
+   "why": "Platform permissions question; no content.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "0967fbdaa5ea2eae23bb4f9dcf7778d4": {
+   "key": "0967fbdaa5ea2eae23bb4f9dcf7778d4",
+   "M": 2,
+   "S": 3,
+   "R": 4,
+   "H": 2,
+   "priority": 22,
+   "band": "fetch",
+   "family": "七星高照",
+   "mechanism": "ETF rotation, minute-level, v1.7 update with PTrade port",
+   "why": "Version update in 11-member held lineage, no stated mechanism change; body gives no numbers. 96 clones do not move M.",
+   "flags": [
+    "no-numbers",
+    "version-bump",
+    "popularity-not-evidence"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "lk_ac530cfe448176556b9f98dbcad310": {
+   "key": "lk_ac530cfe448176556b9f98dbcad310",
+   "M": 5,
+   "S": 0,
+   "R": 3,
+   "H": 3,
+   "priority": 24,
+   "band": "fetch",
+   "family": "打板短线",
+   "mechanism": "Stock-pool hygiene: ST/new/paused filters; is_st lookahead pitfall",
+   "why": "Claims get_extras('is_st') returns current status, admitting 241 ST names in 2019 pool: a lookahead audit target for held families.",
+   "flags": [
+    "research-writeup-not-strategy",
+    "no-runnable-mechanism",
+    "lookahead-claim-verify",
+    "harness-filter-audit"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "ef52ca546e700f20f04c3a8798f7bed2": {
+   "key": "ef52ca546e700f20f04c3a8798f7bed2",
+   "M": 3,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 19,
+   "band": "fetch",
+   "family": "趋势技术",
+   "mechanism": "O'Neil pocket pivot: RPS250>87, near 52w high, >5% day",
+   "why": "Untested RPS/fund-holding breakout spec in held trend family; no code, no exit rule, no numbers.",
+   "flags": [
+    "spec-only-no-code",
+    "no-exit-rule",
+    "bull-tape-dependent"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "45649da8e52a12e438706c7e20192c06": {
+   "key": "45649da8e52a12e438706c7e20192c06",
+   "M": 0,
+   "S": 0,
+   "R": 3,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Soda-ash futures inside-day breakout with stops",
+   "why": "Beginner debugging of broken futures code (RQ-style APIs); futures-only, cannot run on stock harness.",
+   "flags": [
+    "qa-not-strategy",
+    "futures-only",
+    "broken-code"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "0cee76e40466d875dc330e41f619c300": {
+   "key": "0cee76e40466d875dc330e41f619c300",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; iterate JY query result rows",
+   "why": "Pandas iteration question; nothing to learn.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "e4e0aba301203e135a7ed83191b5a07d": {
+   "key": "e4e0aba301203e135a7ed83191b5a07d",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; shareholder-count table gaps",
+   "why": "Data-gap question for two stocks; results only in attachment.",
+   "flags": [
+    "qa-not-strategy",
+    "data-quality-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "lk_1a589b87d9c9446e50e50f311e965f": {
+   "key": "lk_1a589b87d9c9446e50e50f311e965f",
+   "M": 2,
+   "S": 2,
+   "R": 1,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "Weak-to-strong auction entry ported from ST to non-ST names",
+   "why": "One-line body; 弱转强 leg already studied in 打板短线 (q-4). Auction-price fills a daily bar cannot honour: R veto.",
+   "flags": [
+    "auction-fills-unrealizable",
+    "no-numbers",
+    "r-veto"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "204bf5289944307ef67c65da51623a49": {
+   "key": "204bf5289944307ef67c65da51623a49",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; permission error on others' backtests",
+   "why": "Platform permission question; no content.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "547be8e76c062efad442e0bfe2d9d88e": {
+   "key": "547be8e76c062efad442e0bfe2d9d88e",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; deepseek-written code makes no trades",
+   "why": "Debugging question about AI-generated code with zero trades; nothing to learn.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "b1857c39d09d5ce498379f6ab99277da": {
+   "key": "b1857c39d09d5ce498379f6ab99277da",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; get_ticks order-book fields for futures",
+   "why": "Data API question about tick fields; no mechanism.",
+   "flags": [
+    "qa-not-strategy",
+    "futures-only"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "02e07389a83aaab9172556a76871c3e2": {
+   "key": "02e07389a83aaab9172556a76871c3e2",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; ROE/profit mismatch vs 同花顺 for one bank",
+   "why": "Likely quarterly vs annual reporting confusion; a data question, no strategy.",
+   "flags": [
+    "qa-not-strategy",
+    "data-quality-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "e547f7d87d1c7769b02a57fcf201d504": {
+   "key": "e547f7d87d1c7769b02a57fcf201d504",
+   "M": 0,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Single-stock intraday dip-buy below 0.99x open, sell above cost",
+   "why": "Beginner single-stock toy with order-timing bug question; nothing new, no risk control.",
+   "flags": [
+    "qa-not-strategy",
+    "teaching-example",
+    "intraday-fills"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "8062750d13df25e19293b0ad217c6781": {
+   "key": "8062750d13df25e19293b0ad217c6781",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; jqdatasdk import error",
+   "why": "Local install question; no content.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "80b8a1fa33499ce2f4270617c64c9914": {
+   "key": "80b8a1fa33499ce2f4270617c64c9914",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; empty editor template",
+   "why": "Body is the untouched code-block placeholder; nothing present.",
+   "flags": [
+    "qa-not-strategy",
+    "empty-body"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "e1e7db9364c78820805ee1cd70da80e8": {
+   "key": "e1e7db9364c78820805ee1cd70da80e8",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; request for vectorised TDX DMA formula",
+   "why": "Indicator-coding request, body a single image; no strategy.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "2335f1b550072e28f5a33fc6547df472": {
+   "key": "2335f1b550072e28f5a33fc6547df472",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; query not defined error",
+   "why": "Import error question; no content.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "023007bbb98b2e3ec6f450cec235ea9a": {
+   "key": "023007bbb98b2e3ec6f450cec235ea9a",
+   "M": 0,
+   "S": 1,
+   "R": 4,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "网格",
+   "mechanism": "3% single-stock grid on Ping An",
+   "why": "How-to question restating a basic single-stock grid already represented in 网格; no code or numbers.",
+   "flags": [
+    "qa-not-strategy",
+    "teaching-example"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "c41bccbf8c60e5936dda851794d0de5e": {
+   "key": "c41bccbf8c60e5936dda851794d0de5e",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; notebook error screenshot",
+   "why": "Body is one screenshot of an error; nothing to learn.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "86130102e469deaf5351467f24742aa4": {
+   "key": "86130102e469deaf5351467f24742aa4",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; SW industry index data staleness question",
+   "why": "Likely queries SW1 table with SW L2 codes (hence stale rows); data question, not a strategy.",
+   "flags": [
+    "qa-not-strategy",
+    "data-quality-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "a232fa78bf78e297a70e11ab37e8cab8": {
+   "key": "a232fa78bf78e297a70e11ab37e8cab8",
+   "M": 0,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Single stock: buy at 20-day volume low, sell on volume spike",
+   "why": "Beginner toy that never sells, posted as debugging question; no risk control, nothing new.",
+   "flags": [
+    "qa-not-strategy",
+    "teaching-example",
+    "broken-code"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "1de15d4eaa6486f786a4310c87daf0a6": {
+   "key": "1de15d4eaa6486f786a4310c87daf0a6",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; bokeh plotting in research env",
+   "why": "Plotting environment question; no content.",
+   "flags": [
+    "qa-not-strategy",
+    "no-runnable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  },
+  "99a58392e2635a438e2760087cdbbead": {
+   "key": "99a58392e2635a438e2760087cdbbead",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "none; top-10 float holders data differs across platforms",
+   "why": "Cross-platform data discrepancy report for a holder-change factor; no strategy or results.",
+   "flags": [
+    "qa-not-strategy",
+    "data-quality-question"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-17T15:18:21.378Z",
+   "batch": "verdicts-5.json"
+  }
+ },
+ "updatedAt": "2026-09-17T15:18:21.378Z"
+}

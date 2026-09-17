@@ -258,8 +258,10 @@ async function fetchListPage({ cate = 3, type = 'isNew', limit = 200, page = 1 }
   const resources = [];
   for (const item of list) {
     const tags = (item.tagInfo || []).map(t => t.name);
-    if (isStrategyPost(item, tags)) strategies.push(toStrategy(item, tags));
-    if (isResourcePost(item, tags)) resources.push(toResource(item, tags));
+    // Record the source tab: 问答 (cate=10) screened at 94% drop against ~27% for
+    // 文章/精华, so where a post came from is the cheapest signal the screener has.
+    if (isStrategyPost(item, tags)) strategies.push({ ...toStrategy(item, tags), cate });
+    if (isResourcePost(item, tags)) resources.push({ ...toResource(item, tags), cate });
   }
   return { strategies, resources, raw: list.length };
 }
@@ -404,6 +406,33 @@ function dedupeByTitle(items, score) {
   return [...best.values()].sort((a, b) => b._score - a._score);
 }
 
+/**
+ * Apply screening verdicts (screen/verdicts.json, written by utils/screen-merge.js) to a
+ * popularity-sorted list. Done here, inside the queue builders, because every discovery
+ * run rebuilds the queues from scratch — an ordering applied anywhere else would be wiped.
+ *
+ *   fetch-now, fetch  -> lead the queue, by rubric priority
+ *   unscreened        -> follow, in the old popularity order
+ *   hold, drop        -> kept out of the queue (still in the store)
+ */
+function applyVerdicts(sorted) {
+  const v = (readJson(path.join(__dirname, '..', 'screen/verdicts.json'), {}).verdicts) || {};
+  const screened = [];
+  const unscreened = [];
+  let held = 0;
+  for (const item of sorted) {
+    const verdict = v[postKey(item)];
+    if (!verdict) { unscreened.push(item); continue; }
+    if (verdict.band === 'fetch-now' || verdict.band === 'fetch') {
+      screened.push({ ...item, _verdict: verdict });
+    } else {
+      held++;
+    }
+  }
+  screened.sort((a, b) => b._verdict.priority - a._verdict.priority);
+  return { ordered: [...screened, ...unscreened], held, screened: screened.length };
+}
+
 function buildCopyQueue() {
   const store = loadStore();
   const queueData = loadQueue();
@@ -411,9 +440,12 @@ function buildCopyQueue() {
 
   const pending = Object.values(store.strategies).filter(s => !copiedKeys.has(postKey(s)));
   const deduped = dedupeByTitle(pending, scoreOf);
+  const { ordered, held, screened } = applyVerdicts(deduped);
 
-  queueData.queue = deduped.map((s, idx) => ({
+  queueData.queue = ordered.map((s, idx) => ({
     rank: idx + 1,
+    band: s._verdict ? s._verdict.band : 'unscreened',
+    priority: s._verdict ? s._verdict.priority : null,
     key: postKey(s),
     uniqueKey: s.uniqueKey || null,
     postId: s.postId,
@@ -431,7 +463,8 @@ function buildCopyQueue() {
   queueData.lastUpdated = new Date().toISOString();
   saveQueueData(queueData);
 
-  console.log(`[discover] Strategy queue: ${queueData.queue.length} pending, ${copiedKeys.size} copied`);
+  console.log(`[discover] Strategy queue: ${queueData.queue.length} pending, ${copiedKeys.size} copied` +
+              ` (${screened} screened to fetch, ${held} held/dropped by screening)`);
   if (dupRemoved > 0) {
     console.log(`[discover] Title dedup: removed ${dupRemoved} duplicate posts (${pending.length} → ${deduped.length})`);
   }
@@ -459,9 +492,12 @@ function buildResourceQueue() {
 
   const pending = Object.values(store.resources).filter(r => !done.has(postKey(r)));
   const deduped = dedupeByTitle(pending, score);
+  const { ordered: rOrdered, held: rHeld, screened: rScreened } = applyVerdicts(deduped);
 
-  q.queue = deduped.map((r, idx) => ({
+  q.queue = rOrdered.map((r, idx) => ({
     rank: idx + 1,
+    band: r._verdict ? r._verdict.band : 'unscreened',
+    priority: r._verdict ? r._verdict.priority : null,
     key: postKey(r),
     uniqueKey: r.uniqueKey || null,
     postId: r.postId,
@@ -486,7 +522,8 @@ function buildResourceQueue() {
 
   const byKind = {};
   q.queue.forEach(r => { byKind[r.kind] = (byKind[r.kind] || 0) + 1; });
-  console.log(`[discover] Resource queue: ${q.queue.length} pending, ${done.size} ingested`);
+  console.log(`[discover] Resource queue: ${q.queue.length} pending, ${done.size} ingested` +
+              ` (${rScreened} screened to fetch, ${rHeld} held/dropped by screening)`);
   console.log(`[discover] By kind: ${Object.entries(byKind).map(([k, v]) => `${k}=${v}`).join(' ') || '(none)'}`);
   console.log('[discover] Top 5 resources:');
   q.queue.slice(0, 5).forEach(r =>
