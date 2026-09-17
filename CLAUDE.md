@@ -120,8 +120,24 @@ Both queues ranked by composite score (strategies: `likes + clones × 0.5`).
 > returning an empty list. Never reintroduce a direct HTTP call to joinquant.com.
 
 `listV2` pagination is deep: `page=800` at `limit=50` still returns a full page, reaching
-back to 2019. Use `--pages N`; the crawler stops a combo early on the first page that adds
-nothing new.
+back to 2019. Use `--pages N`; the crawler stops a combo after **5 consecutive** pages that add
+nothing new. It used to stop after the *first* such page, which silently truncated sparse
+categories — `cate=10` yielded 7 posts out of ~17,300 because its pages carry only 4–6
+qualifying posts each, so one page of already-known items ended the sweep.
+
+**`cate` = the forum's tabs** (read off the live site 2026-09-17; the tabs are disjoint and
+`cate=0` is the superset):
+
+| cate | tab | size | note |
+|---|---|---|---|
+| 0 | (none) | 60,000+ | superset; held 50/51 of `cate=3`'s page 1 |
+| 3 | 文章 | ~42,300 | ordinary articles — the site default, and **the only slice the crawler used** |
+| 10 | 问答 | ~17,300 | Q&A — where debunking and pitfall discussion lives |
+| 13 | 公告 | small | platform announcements |
+| 14 | 精华 | ~350 | editorially featured; page 1 was 50/50 `isBest`, median likes 125 vs 5 |
+
+⚠ `strategy-discover.js` used to describe `cate=3` as 精华. **It is not** — 精华 is `cate=14`,
+which had never been crawled.
 
 **Pipeline 2 — Custom Strategy Backtest** (`pipelines/custom.js`, `backtest/runner.js`):
 Browser-automated via CDP. Create `algorithmId` → inject Python into JQ's **Ace editor**

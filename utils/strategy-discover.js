@@ -2,7 +2,7 @@
  * strategy-discover.js
  *
  * Discovers strategies AND research resources from the JoinQuant community
- * via the listV2 API.
+ * via the listV2 API (`community/post/listV2`).
  *
  * Transport
  *   Every call goes through utils/jq-http.js, which routes via the logged-in
@@ -10,12 +10,28 @@
  *   HTTP 200 HTML page, which older versions of this file silently parsed as
  *   "no results" — see jq-http.js for the full story.
  *
+ * Categories (`cate`) — read off the live forum tabs, 2026-09-17
+ *   | cate | tab   | contents                                              |
+ *   |------|-------|-------------------------------------------------------|
+ *   |  0   | (none)| the SUPERSET — contained 50/51 of cate=3's page 1     |
+ *   |  3   | 文章  | ordinary articles; the site's default tab, ~42,300    |
+ *   | 10   | 问答  | questions & answers, ~17,300                          |
+ *   | 13   | 公告  | platform announcements                                |
+ *   | 14   | 精华  | editorially featured, ~350 — every row carries isBest |
+ *   |  1   | (none)| returns a single row; appears vestigial               |
+ *
+ *   ⚠ An earlier version of this file described `cate=3` as 精华. It is not —
+ *   cate=3 is 文章 (ordinary articles) and 精华 is cate=14, which the crawler
+ *   had never touched. On page 1, cate=14 showed 50/50 isBest and a median like
+ *   count of 125 against cate=3's 1/51 and 5. The tabs are disjoint: cate=10/13/14
+ *   each shared at most 1 post with cate=3's first page.
+ *
  * Pagination
  *   listV2 honours `page`. The archive is deep: page=800 at limit=50 still
  *   returns a full page, reaching back to 2019. Earlier versions of this file
  *   only ever requested page=1, capping discovery at ~400 posts. `--pages N`
- *   now walks N pages per (cate,type) combination and stops early on the first
- *   page that yields nothing new.
+ *   now walks N pages per (cate,type) combination and stops after 5 consecutive
+ *   pages that yield nothing new (see BARREN_LIMIT).
  *
  * Two output streams
  *   STRATEGIES — posts carrying a 32-char backtestId. Queue: copy-queue.json.
@@ -277,9 +293,16 @@ async function scrapeCommunityList(arg = 2) {
   let newStrategies = 0;
   let newResources = 0;
 
+  // A sparse category needs a RUN of barren pages before we believe the seam is
+  // exhausted. Stopping on the first one silently truncated cate=10 (问答) at 7
+  // posts out of ~17,300: its pages carry only 4-6 qualifying posts each, so a
+  // single page where all of them were already known ended the sweep.
+  const BARREN_LIMIT = 5;
+
   for (const combo of combos) {
     let comboStrat = 0;
     let comboRes = 0;
+    let barren = 0;
     for (let page = 1; page <= pages; page++) {
       let batch;
       try {
@@ -304,7 +327,11 @@ async function scrapeCommunityList(arg = 2) {
         newResources++; comboRes++; addedThisPage++;
       }
 
-      if (addedThisPage === 0 && page > 1) break;   // fully-seen page: nothing deeper to gain
+      if (addedThisPage === 0 && page > 1) {
+        if (++barren >= BARREN_LIMIT) break;        // a run of fully-seen pages: seam exhausted
+      } else {
+        barren = 0;
+      }
       if (page % 10 === 0) { saveStore(store); saveResources(resStore); }
     }
     console.log(`[discover] cate=${combo.cate} ${combo.type}: +${comboStrat} strategies, +${comboRes} resources`);
