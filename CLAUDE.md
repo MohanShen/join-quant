@@ -53,6 +53,8 @@ node utils/screen-score.js <predictions.json> # grade a screener vs the sealed 1
 node utils/screen-prefilter.js --limit 200 --sample 42 --cates 14,3   # seeded, 精华+文章 first
 node utils/screen-merge.js                    # validate batch verdicts -> screen/verdicts.json, rebuild queues
 node -e "console.log(require('./utils/post-cache').size())"   # cached post bodies
+node utils/normalize-backfill.js --dry        # queue held-but-unmeasured strategies by screening priority
+node utils/strategy-normalize.js --window train --files "$(node -e "console.log(require('fs').readFileSync('data/pending-normalize.json','utf8').match(/[^\"\[\],\s]+\.py/g).join(','))")" --usage-limit 55
 ```
 
 ### Chrome / auth setup (required for Pipeline 2)
@@ -225,6 +227,16 @@ Only the directories whose contents aren't self-evident:
   `resource-fetch.js`. Post text is immutable, so entries never expire by default. Before it
   existed, re-running the prefilter re-fetched every unscreened candidate and a post that was
   both screened and ingested was fetched twice — thousands of avoidable requests at ~2,600 posts.
+- **Screening and normalization are connected through `data/pending-normalize.json`.**
+  `utils/normalize-backfill.js` writes the held-but-never-measured strategies into it in
+  screening-priority order; `normalize-daily.js` drains it and appends each day's new fetches.
+  `strategy-normalize.js --files` preserves the CALLER'S order (it used to re-sort by directory
+  listing, which silently discarded the priority). Screening already-fetched posts needs
+  `screen-prefilter.js --keys <file>`, because R3 (already fetched) is the right rule for
+  "should we download this" and the wrong one for "which file we hold deserves backtest minutes".
+- The backfill EXCLUDES S=0 files (harness cannot produce a valid result) and DEFERS files a
+  screener flagged as multi-hour — the normalizer's slow-skip cap cancels at 20 min, so one
+  such file burns a third of the daily budget to learn nothing.
 - Screening verdicts live in `screen/verdicts.json` and are applied INSIDE the queue builders,
   because every discovery run rebuilds the queues from scratch.
 - Blind-test result (104 posts, 22.1% base rate): judgement on post BODIES scored 0.90 AUC vs

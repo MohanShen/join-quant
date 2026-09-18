@@ -38,10 +38,12 @@ function ledgerByPid8() {
 
 function normalizeNew(postIds, { usageLimit = 55 } = {}) {
   const lines = [];
-  // Pending = fetched-but-not-yet-normalized. Add today's new fetches; carry over any
-  // previously skipped (Chrome down). Never touches the purged/backlog (which was never
-  // enqueued here) — stays strictly "newly-fetched".
-  const pending = [...new Set([...loadPending(), ...(postIds || [])])];
+  // Pending = anything queued for normalization. Today's new fetches are appended to
+  // whatever is already pending: entries carried over from a skipped run, AND the backlog
+  // that utils/normalize-backfill.js writes in screening-priority order. This file used to
+  // refuse the backlog on principle, which left 77 held strategies that nothing would ever
+  // measure. Order is preserved end to end (see strategy-normalize.js --files).
+  const pending = [...new Set([...loadPending(), ...(postIds || [])])];   // priority order first
   const all = fs.readdirSync(STRAT_DIR).filter(f => f.endsWith('.py'));
   // Accept either a saved filename (what strategy-daily now passes) or a legacy
   // id. Ids are matched on their first 8 chars, which is the suffix saveStrategyFile

@@ -15707,7 +15707,1285 @@
    "epoch": 1,
    "screenedAt": "2026-09-18T13:37:29.569Z",
    "batch": "verdicts-9.json"
+  },
+  "lk_fd9ddaaf7344b3977167b64a876989": {
+   "key": "lk_fd9ddaaf7344b3977167b64a876989",
+   "M": 1,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "AI research workflow template, no trading logic",
+   "why": "Skill/workflow write-up; no backtestable mechanism, no numbers. Nothing to run, nothing new to measure.",
+   "flags": [
+    "not-a-strategy",
+    "no-backtestable-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_d5ff559e4fb74e230f67dfc35e9384": {
+   "key": "lk_d5ff559e4fb74e230f67dfc35e9384",
+   "M": 1,
+   "S": 2,
+   "R": 3,
+   "H": 2,
+   "priority": 15,
+   "band": "hold",
+   "family": "多因子ML",
+   "mechanism": "Incremental-learning speedup of 涨停基因 ML rotation",
+   "why": "Same strategy as the author's own 471% post; the change is 14h-to-52min training. Returns moved 471%->472%.",
+   "flags": [
+    "slow-backtest",
+    "out-of-window-evidence",
+    "parent-post-in-batch"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_910f9461bcce6297cdc458f476cbc8": {
+   "key": "lk_910f9461bcce6297cdc458f476cbc8",
+   "M": 2,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 16,
+   "band": "hold",
+   "family": "趋势技术",
+   "mechanism": "Buy strongest stock in hottest 5-day sector",
+   "why": "Three-line body, author calls it 思路框架 with no params, no risk control, no numbers; sector-momentum direction not new.",
+   "flags": [
+    "framework-only",
+    "no-evidence"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_0381c95f006e44f23b2ec6771a6123": {
+   "key": "lk_0381c95f006e44f23b2ec6771a6123",
+   "M": 2,
+   "S": 3,
+   "R": 3,
+   "H": 1,
+   "priority": 19,
+   "band": "fetch",
+   "family": "小市值",
+   "mechanism": "50/50 subaccounts: weekly small-cap plus daily ETF momentum",
+   "why": "Exactly the hybrid shape that is ETF动量's only gate-pass of 27, so shape is known; 47倍/Sharpe 4.589 headline discounted.",
+   "flags": [
+    "multiple-claim",
+    "zero-slippage-flattered",
+    "regime-2022-23-only"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_b0c45eae8825c018fcbcaeb7085d1a": {
+   "key": "lk_b0c45eae8825c018fcbcaeb7085d1a",
+   "M": 2,
+   "S": 2,
+   "R": 1,
+   "H": 5,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "14:50 buy on 龙虎榜/涨停-gene intraday-strong stocks",
+   "why": "分时强度 filter and 09:45/11:00 exits are inert on daily bars; author himself reports -30% in the 2025 bear.",
+   "flags": [
+    "intraday-fills-not-honourable",
+    "daily-bar-destroys-mechanism",
+    "honest-reporting"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_ece4f27afa162d80d75b6d5b92b190": {
+   "key": "lk_ece4f27afa162d80d75b6d5b92b190",
+   "M": 3,
+   "S": 2,
+   "R": 2,
+   "H": 4,
+   "priority": 21,
+   "band": "fetch",
+   "family": "小市值",
+   "mechanism": "Small-cap plus intraday T plus global ETF momentum",
+   "why": "New risk control: 微盘一致性恐慌 watchdog claimed to dodge the Jan-2024 crash; the 分钟级做T leg collapses on daily bars.",
+   "flags": [
+    "needs-minute-bars",
+    "out-of-window-evidence",
+    "zero-slippage-flattered"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_eb46b38daeb7ea22935d584c6acf79": {
+   "key": "lk_eb46b38daeb7ea22935d584c6acf79",
+   "M": 3,
+   "S": 3,
+   "R": 3,
+   "H": 3,
+   "priority": 24,
+   "band": "fetch",
+   "family": "打板短线",
+   "mechanism": "Buy first-board stocks that gap down, exit next session",
+   "why": "Contrarian inversion of the family, and author publishes limits: sparse signals, clustered in weak tape (our TRAIN), poor pre-2016.",
+   "flags": [
+    "sparse-signals",
+    "author-published-limitations",
+    "open-to-close-fills-ok"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_659ba493038948bea61251a1100c87": {
+   "key": "lk_659ba493038948bea61251a1100c87",
+   "M": 0,
+   "S": 0,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "JoinQuant-to-QMT live order bridge, not a strategy",
+   "why": "Pure execution plumbing; the author himself calls the attached strategy 臭狗屎. Nothing to backtest.",
+   "flags": [
+    "not-a-strategy",
+    "tooling"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_fbb6013b276bef6119d30eb1c94848": {
+   "key": "lk_fbb6013b276bef6119d30eb1c94848",
+   "M": 4,
+   "S": 1,
+   "R": 1,
+   "H": 1,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "AI-iterated multi-leg short-term board strategy, v218 derivative",
+   "why": "Genuine negative result (10y 15000x, last six months broken), but entries are auction/intraday fills a daily bar cannot honour.",
+   "flags": [
+    "author-reports-recent-failure",
+    "multiple-claim",
+    "intraday-fills-not-honourable"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_badd7f3eccaae636a7d38f34b0b718": {
+   "key": "lk_badd7f3eccaae636a7d38f34b0b718",
+   "M": 2,
+   "S": 2,
+   "R": 1,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "趋势技术",
+   "mechanism": "MA10 trend picks with intraday rolling T trades",
+   "why": "Core edge is 日内做T buying 4% dips and selling 3% bounces, unrepresentable on daily bars; no numbers anywhere in body.",
+   "flags": [
+    "intraday-fills-not-honourable",
+    "no-evidence"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_6ca1c1a580e13722dad247c28353b6": {
+   "key": "lk_6ca1c1a580e13722dad247c28353b6",
+   "M": 4,
+   "S": 0,
+   "R": 0,
+   "H": 3,
+   "priority": 2,
+   "band": "drop",
+   "family": "ETF动量",
+   "mechanism": "Script listing all ETFs above 100M daily turnover",
+   "why": "Read-not-run: documents ETF survivorship (only 45 ETFs listed before 2020), which falsifies pre-2024 ETF-rotation backtests. Places no trades.",
+   "flags": [
+    "not-a-strategy",
+    "survivorship-evidence-for-ETF动量",
+    "worth-reading"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_2c316cc2b1570e3a867595e751df9b": {
+   "key": "lk_2c316cc2b1570e3a867595e751df9b",
+   "M": 2,
+   "S": 3,
+   "R": 3,
+   "H": 1,
+   "priority": 19,
+   "band": "fetch",
+   "family": "五福闹新春",
+   "mechanism": "小市值 book plus 五福 v5.1 ETF momentum, 50/50",
+   "why": "Third small-cap+ETF hybrid in this batch; delta is seven 五福 parameter tweaks. 87倍 headline forces H=1.",
+   "flags": [
+    "multiple-claim",
+    "gate-fragile-family",
+    "zero-slippage-flattered"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_bae3e5ca430d9228c3595fa8e23a8f": {
+   "key": "lk_bae3e5ca430d9228c3595fa8e23a8f",
+   "M": 4,
+   "S": 3,
+   "R": 3,
+   "H": 3,
+   "priority": 27,
+   "band": "fetch",
+   "family": "PT多策略",
+   "mechanism": "Six sub-accounts with weekly VASR weight optimisation",
+   "why": "Portfolio layer we hold nothing like: 250-point VASR re-weighting under 5%/10% constraints over six held mechanisms; no drawdown reported.",
+   "flags": [
+    "complex-multileg",
+    "no-drawdown-reported",
+    "ST-leg-auction-degrades-to-open"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_7ddcddd9becbb8185587aea883fb93": {
+   "key": "lk_7ddcddd9becbb8185587aea883fb93",
+   "M": 1,
+   "S": 1,
+   "R": 0,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "Consecutive limit-up board chasing with ATR sizing",
+   "why": "Marketing bullets only, no numbers; fills need sealed limit-up boards that harness section 3 forbids buying.",
+   "flags": [
+    "limit-up-fills-impossible",
+    "no-evidence"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_d59ad189158486555ba1b636e87861": {
+   "key": "lk_d59ad189158486555ba1b636e87861",
+   "M": 3,
+   "S": 2,
+   "R": 3,
+   "H": 2,
+   "priority": 21,
+   "band": "fetch",
+   "family": "五福闹新春",
+   "mechanism": "Cluster-dedupe ETF pool, then momentum-score top one",
+   "why": "Clustering out duplicate-sector ETFs is a pool-construction direction ETF动量's open q-4 has not measured; evidence is only 2026 oil ETF luck.",
+   "flags": [
+    "no-numbers",
+    "gate-fragile-family"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_18daa8a72ba768d88e14625304e7d5": {
+   "key": "lk_18daa8a72ba768d88e14625304e7d5",
+   "M": 4,
+   "S": 2,
+   "R": 3,
+   "H": 3,
+   "priority": 25,
+   "band": "fetch",
+   "family": "多因子ML",
+   "mechanism": "Orthogonal microstructure risk score sizes each buy",
+   "why": "Author's own controlled three-version comparison 376%->426%->471% on one window; risk info used for sizing, not selection, is new to us.",
+   "flags": [
+    "slow-backtest-14h",
+    "out-of-window-evidence",
+    "author-admits-overfit-risk"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_ecdae7e76c6aa1736d843b40afd5f9": {
+   "key": "lk_ecdae7e76c6aa1736d843b40afd5f9",
+   "M": 2,
+   "S": 2,
+   "R": 3,
+   "H": 0,
+   "priority": 16,
+   "band": "hold",
+   "family": "趋势技术",
+   "mechanism": "Dual KAMA trend confirmation, two mid-cap holdings",
+   "why": "Hype title (社区最牛, 私募征用) is anti-predictive per rubric; trend following into 2022-23 chop, intraday rebound trigger inert.",
+   "flags": [
+    "hype-vocabulary",
+    "intraday-trigger-inert",
+    "regime-mismatch-with-TRAIN"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_b4d4c3b078ca1522591b08441f9854": {
+   "key": "lk_b4d4c3b078ca1522591b08441f9854",
+   "M": 2,
+   "S": 3,
+   "R": 3,
+   "H": 2,
+   "priority": 20,
+   "band": "fetch",
+   "family": "小市值",
+   "mechanism": "Limit-up-gene small caps scored by BayesianRidge, industry-capped",
+   "why": "Third post of the 涨停基因 lineage here; adds uncertainty-aware scoring and industry dedupe but reports no numbers at all.",
+   "flags": [
+    "no-evidence",
+    "regime-2022-23-only"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_03adcd3802b4da842e56beae4823b3": {
+   "key": "lk_03adcd3802b4da842e56beae4823b3",
+   "M": 4,
+   "S": 2,
+   "R": 1,
+   "H": 1,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "Bull/cautious/bear gate routing five short-term legs",
+   "why": "Rich falsifiable finding (FB_pct 0.4-0.6 poison zone), but every leg enters at the 9:26-9:27 auction; daily bars cannot honour it.",
+   "flags": [
+    "auction-fills-not-honourable",
+    "multiple-claim",
+    "mechanism-worth-reading"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_fadd13baf17fd0ff0990aa264eeca8": {
+   "key": "lk_fadd13baf17fd0ff0990aa264eeca8",
+   "M": 2,
+   "S": 3,
+   "R": 3,
+   "H": 1,
+   "priority": 19,
+   "band": "fetch",
+   "family": "七星高照",
+   "mechanism": "三马 plus 七星1.6 ETF rotation, premium filter, bug-fixed",
+   "why": "Bug-fix release of a held 七星 member (premium not sold, same-day churn); 318倍 headline forces H=1, premium read off NAV.",
+   "flags": [
+    "multiple-claim",
+    "bugfix-variant",
+    "premium-filter-uses-stale-NAV"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_1bd2562f2458d7abe1256b69559e94": {
+   "key": "lk_1bd2562f2458d7abe1256b69559e94",
+   "M": 0,
+   "S": 1,
+   "R": 2,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "五福闹新春",
+   "mechanism": "Daily live-sim diary comparing 五福, 三马, 七星",
+   "why": "A 'my results' diary, M=0 by anchor; content is two months of unsystematic live commentary on already-held variants.",
+   "flags": [
+    "diary"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_a01bb27f426bcba5516233c0c6e121": {
+   "key": "lk_a01bb27f426bcba5516233c0c6e121",
+   "M": 1,
+   "S": 2,
+   "R": 1,
+   "H": 3,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "14:50 buy, next-day staged take-profit and MA5 stop",
+   "why": "Same parameters as lk_b0c45eae in this batch (2.8-4.8%, 50-520亿, MA5x1.0097); 60-minute K-line filters and intraday exits.",
+   "flags": [
+    "near-duplicate-in-batch",
+    "intraday-fills-not-honourable"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_55cdfc63a41ba0a1387275ad90b967": {
+   "key": "lk_55cdfc63a41ba0a1387275ad90b967",
+   "M": 2,
+   "S": 0,
+   "R": 2,
+   "H": 1,
+   "priority": 11,
+   "band": "hold",
+   "family": "七星高照",
+   "mechanism": "Held 七星 ETF rotation wired to QMT over Redis",
+   "why": "Strategy is already held; Redis calls cannot run in backtest. Useful realism datum: 11s JQ signal queue, 0.2% slippage needed.",
+   "flags": [
+    "needs-external-service",
+    "execution-latency-documented",
+    "multiple-claim"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_1aca3585d5b4880a3eece4d0667083": {
+   "key": "lk_1aca3585d5b4880a3eece4d0667083",
+   "M": 3,
+   "S": 2,
+   "R": 2,
+   "H": 1,
+   "priority": 18,
+   "band": "fetch",
+   "family": "五福闹新春",
+   "mechanism": "Fixed 114-ETF pool plus turnover-screened dynamic pool",
+   "why": "Own pool study: 507/742-ETF expansion hurt, short-momentum filter negative, thin ETFs produce unfillable 伪强势 signals. 2-day turnover.",
+   "flags": [
+    "multiple-claim",
+    "high-turnover-2-day",
+    "thin-universe-risk",
+    "zero-slippage-flattered"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_f1feb89303c67e97420fe98b6827e5": {
+   "key": "lk_f1feb89303c67e97420fe98b6827e5",
+   "M": 1,
+   "S": 3,
+   "R": 2,
+   "H": 2,
+   "priority": 15,
+   "band": "hold",
+   "family": "小市值",
+   "mechanism": "Daily rotation into five smallest high-ROE stocks",
+   "why": "Plain ROE plus market-cap sort with no stated difference from 35 held members; daily full rotation of microcaps.",
+   "flags": [
+    "daily-microcap-turnover",
+    "no-evidence",
+    "regime-2022-23-only"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_0bf3571fdff23a47beda0d0923cc23": {
+   "key": "lk_0bf3571fdff23a47beda0d0923cc23",
+   "M": 3,
+   "S": 2,
+   "R": 2,
+   "H": 2,
+   "priority": 19,
+   "band": "fetch",
+   "family": "NEW:ETF低开反转",
+   "mechanism": "Buy gap-down ETFs at open, sell before close",
+   "why": "Intraday reversal on ETFs rather than momentum, no held representative; author states capacity is only 几万-十来万, below the 1M harness.",
+   "flags": [
+    "capacity-below-harness",
+    "thin-universe",
+    "no-evidence"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_e4fa40ad12f54d84500fcd1ad7291a": {
+   "key": "lk_e4fa40ad12f54d84500fcd1ad7291a",
+   "M": 3,
+   "S": 0,
+   "R": 5,
+   "H": 5,
+   "priority": 24,
+   "band": "fetch",
+   "family": "多因子ML",
+   "mechanism": "HS300 LightGBM Alpha158 signals, seven names, n_drop=1",
+   "why": "Opposite realizability profile to our microcap ML members: liquid, one swap a day. But signals come from an external QLib file we lack.",
+   "flags": [
+    "unrunnable-needs-external-signal-file",
+    "liquid-low-turnover",
+    "honest-reporting"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_e640309a5c91607f2ae8285702d27f": {
+   "key": "lk_e640309a5c91607f2ae8285702d27f",
+   "M": 2,
+   "S": 2,
+   "R": 3,
+   "H": 1,
+   "priority": 17,
+   "band": "hold",
+   "family": "ETF动量",
+   "mechanism": "Switch to overseas ETF sub-pool when indices lose MA10",
+   "why": "Defensive regime switching is already the family's stock idea (银华日利 parking); 3.5年20倍 headline, no drawdown given.",
+   "flags": [
+    "multiple-claim",
+    "gate-fragile-family"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_887c8db8b1f6c78e63e2c9f54f230d": {
+   "key": "lk_887c8db8b1f6c78e63e2c9f54f230d",
+   "M": 2,
+   "S": 1,
+   "R": 4,
+   "H": 2,
+   "priority": 18,
+   "band": "fetch",
+   "family": "趋势技术",
+   "mechanism": "Triple-timeframe RPS with low-slope early-trend selection",
+   "why": "Author concedes it needs trending tape and fails in chop, which is exactly TRAIN; upside is a liquid, moderate-turnover book.",
+   "flags": [
+    "regime-mismatch-with-TRAIN",
+    "no-evidence"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_beed7b9410ca866ba55f497fdc42ae": {
+   "key": "lk_beed7b9410ca866ba55f497fdc42ae",
+   "M": 3,
+   "S": 0,
+   "R": 2,
+   "H": 2,
+   "priority": 15,
+   "band": "hold",
+   "family": "打板短线",
+   "mechanism": "弱转强 entries restricted to 同花顺 popularity top-100",
+   "why": "External popularity ranking is a data source we do not hold; backtest reads a static 2020-2026 attachment file that is not on disk.",
+   "flags": [
+    "unrunnable-needs-external-data"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_c607955c285297b754495a3920206a": {
+   "key": "lk_c607955c285297b754495a3920206a",
+   "M": 2,
+   "S": 2,
+   "R": 1,
+   "H": 0,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "Auction volume rules for 一进二, 首板低开, 弱转强",
+   "why": "Hype vocabulary (秘籍) and self-contradicting claims (title 245.83% vs body 145.48%); entries at 9:24:30 in the auction.",
+   "flags": [
+    "hype-vocabulary",
+    "auction-fills-not-honourable",
+    "inconsistent-claims"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_8c403d941cf8fd7644aaedd8c3e64a": {
+   "key": "lk_8c403d941cf8fd7644aaedd8c3e64a",
+   "M": 0,
+   "S": 1,
+   "R": 2,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "七星高照",
+   "mechanism": "Live-sim diary of three held ETF rotation variants",
+   "why": "A 'my results' diary; content is daily commentary on 七星5.1, 五福5.0, 三马七星1.7, all already held.",
+   "flags": [
+    "diary"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_fb21898c147754a6d73394812e9bf9": {
+   "key": "lk_fb21898c147754a6d73394812e9bf9",
+   "M": 2,
+   "S": 2,
+   "R": 1,
+   "H": 1,
+   "priority": 2,
+   "band": "drop",
+   "family": "五福闹新春",
+   "mechanism": "五福 v5.1 retuned for 20k-scale thin ETFs",
+   "why": "Parameters deliberately select ETFs at 20-30M daily turnover for 几万-几十万 capital; author calls it 11-year optimal tuning. R veto.",
+   "flags": [
+    "thin-universe",
+    "capacity-below-harness",
+    "multiple-claim",
+    "author-admits-overfit"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_99dc430c259e04c8a24f39596d5d89": {
+   "key": "lk_99dc430c259e04c8a24f39596d5d89",
+   "M": 2,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 16,
+   "band": "hold",
+   "family": "多因子ML",
+   "mechanism": "KNN pattern match predicts 3-day direction, weekly rebalance",
+   "why": "Different model class, but author's own read is weak (60% hit rate; 90% threshold selects nothing) and semi-annual retrain is slow.",
+   "flags": [
+    "slow-backtest",
+    "weak-self-reported-edge"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_7ea14a67e2c905d79b3640f2206fd8": {
+   "key": "lk_7ea14a67e2c905d79b3640f2206fd8",
+   "M": 1,
+   "S": 2,
+   "R": 2,
+   "H": 2,
+   "priority": 13,
+   "band": "hold",
+   "family": "UNKNOWN",
+   "mechanism": "Unstated; claims two months of live simulation",
+   "why": "One-line body, mechanism unknown, so no new information can be established; 89 clones is popularity, which never moves M.",
+   "flags": [
+    "no-body",
+    "unknown-mechanism"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_406e423f1ec4654cdfba0dab119200": {
+   "key": "lk_406e423f1ec4654cdfba0dab119200",
+   "M": 2,
+   "S": 0,
+   "R": 3,
+   "H": 2,
+   "priority": 14,
+   "band": "hold",
+   "family": "多因子ML",
+   "mechanism": "LightGBM weekly small-cap selection from offline-trained model",
+   "why": "Leakage-aware methodology write-up worth reading, but the strategy loads a pickle trained in the research env, so it cannot run.",
+   "flags": [
+    "unrunnable-needs-model-file",
+    "tutorial"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_b40031967fc10cd1d5f03bfcf61559": {
+   "key": "lk_b40031967fc10cd1d5f03bfcf61559",
+   "M": 1,
+   "S": 1,
+   "R": 3,
+   "H": 2,
+   "priority": 13,
+   "band": "hold",
+   "family": "七星高照",
+   "mechanism": "Subportfolio framework running four held ETF variants",
+   "why": "Wrapper over 七星1.7大池/小池, 五福3.5, 七星520 - four correlated held members; measures bookkeeping, not a mechanism.",
+   "flags": [
+    "framework",
+    "redundant-combination"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_5fa69ef38f2827fa0902851a66294b": {
+   "key": "lk_5fa69ef38f2827fa0902851a66294b",
+   "M": 1,
+   "S": 2,
+   "R": 3,
+   "H": 2,
+   "priority": 15,
+   "band": "hold",
+   "family": "小市值",
+   "mechanism": "Four-way blend: small-cap, blue chip, two rotations",
+   "why": "Body deleted ('删'); title implies yet another four-leg blend of held families. Nothing verifiable at screening time.",
+   "flags": [
+    "body-deleted",
+    "unknown-details"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_f0f40c648e3801779f4d427ae496a1": {
+   "key": "lk_f0f40c648e3801779f4d427ae496a1",
+   "M": 1,
+   "S": 2,
+   "R": 2,
+   "H": 1,
+   "priority": 12,
+   "band": "hold",
+   "family": "UNKNOWN",
+   "mechanism": "Unstated; '5-year 70x' learning strategy",
+   "why": "One line plus a group-chat solicitation; 70倍 claim with no window or mechanism. 349 clones is popularity, not information.",
+   "flags": [
+    "multiple-claim",
+    "no-body",
+    "promotional"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.792Z",
+   "batch": "verdicts-1.json"
+  },
+  "lk_593cf06f559acfa246827011bfd796": {
+   "key": "lk_593cf06f559acfa246827011bfd796",
+   "M": 2,
+   "S": 1,
+   "R": 3,
+   "H": 3,
+   "priority": 17,
+   "band": "hold",
+   "family": "趋势技术",
+   "mechanism": "MA5 crosses below MA10, then down-up day, all-in one stock",
+   "why": "Vanilla MA-cross direction already measured in 16-member 趋势技术; evidence window 2021-01~2022-03 barely overlaps ours.",
+   "flags": [
+    "window-mismatch",
+    "single-name-all-in",
+    "unsupported-improvement-claim"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_b52ecf496d36c274844d23dc370ec4": {
+   "key": "lk_b52ecf496d36c274844d23dc370ec4",
+   "M": 1,
+   "S": 2,
+   "R": 1,
+   "H": 1,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "Fusion of three cloned first-board / weak-to-strong auction strategies",
+   "why": "Body admits it is three cloned 打板 posts merged; 25 held members, no new signal. Auction fills a daily bar cannot honour.",
+   "flags": [
+    "auction-fill-required",
+    "claims-1138pct",
+    "within-family-remix"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_c88811985489fe46f964f88495b79c": {
+   "key": "lk_c88811985489fe46f964f88495b79c",
+   "M": 2,
+   "S": 2,
+   "R": 1,
+   "H": 2,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "Rank concepts by consecutive limit-up count, buy at auction next day",
+   "why": "Concept-heat aggregation is a mild twist on 25 held 打板; author withholds key detail, exit is 低开即卖 plus intraday 5% trail.",
+   "flags": [
+    "auction-fill-required",
+    "intraday-stops",
+    "detail-withheld"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_5b9f770a2d302eed4ecae7370645c2": {
+   "key": "lk_5b9f770a2d302eed4ecae7370645c2",
+   "M": 3,
+   "S": 4,
+   "R": 1,
+   "H": 1,
+   "priority": 2,
+   "band": "drop",
+   "family": "ETF溢价",
+   "mechanism": "Buy two most-discounted ETFs vs prior-day NAV, daily rebalance",
+   "why": "Exactly the discount book §1 names as worthless: edge is stale NAV prints plus an 800万-turnover floor. Claims 年化1599%.",
+   "flags": [
+    "stale-nav-edge",
+    "thin-universe",
+    "zero-slippage-flattered",
+    "claims->500pct"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_067747445339a840abae7f0c819099": {
+   "key": "lk_067747445339a840abae7f0c819099",
+   "M": 2,
+   "S": 3,
+   "R": 2,
+   "H": 3,
+   "priority": 19,
+   "band": "fetch",
+   "family": "小市值",
+   "mechanism": "Small-cap limit-up-gene screen, KNN up-probability, 3-day rebalance",
+   "why": "小市值 35 + 多因子ML 20 both held; KNN overlay direction likely recorded. Sharpe 5.763 claim with no window smells of train-set leakage.",
+   "flags": [
+    "no-window-stated",
+    "calendar-blackout-fitted",
+    "thin-universe",
+    "lookahead-suspect"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_ae066b22807638f2ba0b49690a760e": {
+   "key": "lk_ae066b22807638f2ba0b49690a760e",
+   "M": 2,
+   "S": 2,
+   "R": 1,
+   "H": 1,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "One-to-two limit-up continuation with limit-up sentiment timing filter",
+   "why": "Sentiment filter is a small delta on 25 held 打板. Entry is 集合竞价, exits fixed at 11:25/14:50 — daily bars cannot honour. Title claims 35倍.",
+   "flags": [
+    "auction-fill-required",
+    "intraday-timed-exits",
+    "claims-multiple"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_11508da4ecd6a6f25f2a5457e7bbe4": {
+   "key": "lk_11508da4ecd6a6f25f2a5457e7bbe4",
+   "M": 0,
+   "S": 1,
+   "R": 1,
+   "H": 0,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "Copied retail-guru lore: buy third intraday push, sell next morning",
+   "why": "Reposted essay, no code-level mechanism; rules are 分时/tick discretion ('秘籍', hold under 4 hours) a daily bar cannot express.",
+   "flags": [
+    "copy-pasted-lore",
+    "hype-vocabulary",
+    "tick-level-rules",
+    "not-implementable"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_8c783c0d1ba26968cb2898e696907c": {
+   "key": "lk_8c783c0d1ba26968cb2898e696907c",
+   "M": 3,
+   "S": 2,
+   "R": 4,
+   "H": 2,
+   "priority": 23,
+   "band": "fetch",
+   "family": "NEW:纳指形态增强",
+   "mechanism": "Candlestick patterns at support/resistance to enhance Nasdaq-100 ETF",
+   "why": "Candle-pattern timing on a QDII benchmark has no representative in the 14 families; but author concedes the edge rode a 5-6 year bull tape.",
+   "flags": [
+    "regime-bull-tape-dependent",
+    "no-numbers-in-text",
+    "single-asset"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_ba51060488669524586865def7b27f": {
+   "key": "lk_ba51060488669524586865def7b27f",
+   "M": 3,
+   "S": 2,
+   "R": 2,
+   "H": 3,
+   "priority": 20,
+   "band": "fetch",
+   "family": "NEW:竞价异动",
+   "mechanism": "Detect call-auction volume/price anomaly in strong names, T+1 trade",
+   "why": "Auction-anomaly signal is unrepresented; author states the binding gap himself — 'JQ缺少日内资金流数据…只可研究不建议实盘', backtest only 2024.",
+   "flags": [
+    "author-disclaimed",
+    "out-of-window-evidence",
+    "missing-intraday-flow-data",
+    "thin-universe"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_c56d9ea456d39cd2ac613aeb064752": {
+   "key": "lk_c56d9ea456d39cd2ac613aeb064752",
+   "M": 0,
+   "S": 0,
+   "R": 2,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Forwards JQ paper-trade orders to a 同花顺 client via cloud server",
+   "why": "Execution plumbing, not a strategy: no signal, nothing to measure. Must never consume backtest minutes.",
+   "flags": [
+    "not-a-strategy",
+    "unrunnable-on-harness",
+    "infrastructure-only"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_61fa3d695f61cb36fe402ac79dfd7c": {
+   "key": "lk_61fa3d695f61cb36fe402ac79dfd7c",
+   "M": 2,
+   "S": 1,
+   "R": 4,
+   "H": 2,
+   "priority": 18,
+   "band": "fetch",
+   "family": "趋势技术",
+   "mechanism": "Donchian four-week breakout on stocks with tiered trailing stops",
+   "why": "Classic trend direction already recorded in 16-member 趋势技術; self-described teaching demo, and it imports a custom 'mylib.dp_stoploss' we may not hold.",
+   "flags": [
+    "external-dependency-mylib",
+    "teaching-example",
+    "trend-follow-fails-2022-23",
+    "low-turnover"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_9717de3c63028ac489e42e1caeafaf": {
+   "key": "lk_9717de3c63028ac489e42e1caeafaf",
+   "M": 0,
+   "S": 0,
+   "R": 2,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Order bridge from JoinQuant to 迅投 QMT, multi-strategy",
+   "why": "Body is '已删除' and the post is an order-routing snippet tagged 函数 — no mechanism exists to measure.",
+   "flags": [
+    "body-deleted",
+    "not-a-strategy",
+    "unrunnable-on-harness"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_cd6e521947f9418d5009e9fd17607f": {
+   "key": "lk_cd6e521947f9418d5009e9fd17607f",
+   "M": 2,
+   "S": 4,
+   "R": 0,
+   "H": 1,
+   "priority": 2,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Self-admitted lookahead-contaminated selection, iterated to 1.6M×",
+   "why": "Author admits the bias but cannot locate it — specimen, not dissection. Its edge is future data, so no trade is executable at all.",
+   "flags": [
+    "confirmed-lookahead",
+    "claims-multiple",
+    "not-executable",
+    "useful-only-as-bias-test-case"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_60267d04333109daec7880b3c88a17": {
+   "key": "lk_60267d04333109daec7880b3c88a17",
+   "M": 5,
+   "S": 3,
+   "R": 2,
+   "H": 5,
+   "priority": 30,
+   "band": "fetch-now",
+   "family": "打板短线",
+   "mechanism": "Four-mode rotation with three named lookahead leaks patched",
+   "why": "Documented lookahead dissection with code: get_call_auction returns the 14:57 auction, so '竞价涨幅2~6%' was reading today's close. Falsifies held 弱转强 variants.",
+   "flags": [
+    "lookahead-dissection",
+    "backtest-cost-3h-per-year",
+    "minute-bar-logic",
+    "author-says-not-for-live",
+    "post-fix-edge-unproven"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_f4ed781cc755394e9026a8fee7477a": {
+   "key": "lk_f4ed781cc755394e9026a8fee7477a",
+   "M": 1,
+   "S": 2,
+   "R": 1,
+   "H": 3,
+   "priority": 2,
+   "band": "drop",
+   "family": "打板短线",
+   "mechanism": "Yesterday's first board to second board, auction confirmation entry",
+   "why": "Parameter-level twin of the 一进二 posts in this same batch; 25 held members. Auction entry plus 11:28/14:50 exits are not daily-bar fills.",
+   "flags": [
+    "auction-fill-required",
+    "intraday-timed-exits",
+    "out-of-window-evidence",
+    "near-duplicate-in-batch"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_9bd38314fe65039da6f9c2cb7910dc": {
+   "key": "lk_9bd38314fe65039da6f9c2cb7910dc",
+   "M": 3,
+   "S": 0,
+   "R": 4,
+   "H": 2,
+   "priority": 19,
+   "band": "fetch",
+   "family": "NEW:成长共振波动目标",
+   "mechanism": "Top-3 industry momentum, growth screen, ATR regime and vol-target sizing",
+   "why": "Vol-target plus ATR regime sizing is a risk control no held family records; but author states backtests fail without uploading arena_9db.py.",
+   "flags": [
+    "needs-external-file-arena_9db",
+    "unrunnable-as-is",
+    "keyword-matching-overfit",
+    "no-numbers-stated",
+    "low-turnover"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_03799f025f7ae217cd3b49f120f467": {
+   "key": "lk_03799f025f7ae217cd3b49f120f467",
+   "M": 2,
+   "S": 3,
+   "R": 3,
+   "H": 3,
+   "priority": 21,
+   "band": "fetch",
+   "family": "UNKNOWN",
+   "mechanism": "Multi-strategy rotation over thematic concept baskets",
+   "why": "Three-sentence body gives no mechanism detail, so novelty unknown; only concrete evidence is 年化76.66% across 2015-2026, which spans our window.",
+   "flags": [
+    "body-too-thin",
+    "no-drawdown-stated",
+    "long-window-claim-unverified"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_9d13db7526a7c1e43621f6d44a88b5": {
+   "key": "lk_9d13db7526a7c1e43621f6d44a88b5",
+   "M": 2,
+   "S": 2,
+   "R": 2,
+   "H": 2,
+   "priority": 16,
+   "band": "hold",
+   "family": "趋势技术",
+   "mechanism": "All-in single name on 3-day +12% momentum, exit below MA5 or 4 days",
+   "why": "Momentum-chase direction already recorded; no numbers of any kind offered, max 4-day holds on hot names with ¥10k stated capacity.",
+   "flags": [
+    "no-numbers-stated",
+    "single-name-all-in",
+    "high-turnover",
+    "capacity-tiny-by-design"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_072c2e41f3d78fe6ddc3d4e19a0507": {
+   "key": "lk_072c2e41f3d78fe6ddc3d4e19a0507",
+   "M": 5,
+   "S": 3,
+   "R": 3,
+   "H": 4,
+   "priority": 31,
+   "band": "fetch-now",
+   "family": "小市值",
+   "mechanism": "35/35/30 composite of small-cap, seven-star ETF rotation, blue-chip defence",
+   "why": "Audit with evidence against families we hold 35+11 of: code hard-drops 2024-10-08 from the HS300 history — god-view deletion — plus a hardcoded audit-date switch.",
+   "flags": [
+    "overfit-audit",
+    "hardcoded-date-deletion",
+    "intraday-stop-triggers",
+    "bias-outside-our-window",
+    "thin-universe"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_4bce01c9678df35317294014a836bd": {
+   "key": "lk_4bce01c9678df35317294014a836bd",
+   "M": 2,
+   "S": 1,
+   "R": 4,
+   "H": 2,
+   "priority": 18,
+   "band": "fetch",
+   "family": "趋势技术",
+   "mechanism": "MA5 golden-crosses MA10 on a single large-cap (BYD)",
+   "why": "The most-measured direction in the corpus; body is nostalgia with chart images and no numbers. Liquid and cheap to run, which is its only merit.",
+   "flags": [
+    "no-numbers-stated",
+    "single-asset",
+    "hindsight-ticker-choice"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_64d18cf8872b854e2da030b2d4dc4e": {
+   "key": "lk_64d18cf8872b854e2da030b2d4dc4e",
+   "M": 2,
+   "S": 3,
+   "R": 4,
+   "H": 2,
+   "priority": 22,
+   "band": "fetch",
+   "family": "七星高照",
+   "mechanism": "Seven-star ETF momentum rotation plus post-close relative-strength broadcast",
+   "why": "Author says buy/sell is 'basically the same as 1.72缝合全行业' — the new relative-strength scan is a manual advisory, not traded logic.",
+   "flags": [
+    "trading-logic-unchanged",
+    "manual-overlay",
+    "no-numbers-stated",
+    "liquid-etf-universe"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_36400418d8026f77bfdebe1d32b008": {
+   "key": "lk_36400418d8026f77bfdebe1d32b008",
+   "M": 3,
+   "S": 0,
+   "R": 2,
+   "H": 2,
+   "priority": 15,
+   "band": "hold",
+   "family": "NEW:L2资金流DDX",
+   "mechanism": "Verify hot concepts with external L2 DDX flow, buy MA breakout",
+   "why": "L2 fund-flow validation is a data source no family has, but it needs two 同花顺-sourced CSVs uploaded by hand — unrunnable and unmaintainable here.",
+   "flags": [
+    "needs-external-csv-L2",
+    "unrunnable-on-harness",
+    "5min-intraday-scanning",
+    "no-numbers-stated"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_09fc3028822b1c6911ce672d57722a": {
+   "key": "lk_09fc3028822b1c6911ce672d57722a",
+   "M": 1,
+   "S": 4,
+   "R": 3,
+   "H": 2,
+   "priority": 17,
+   "band": "hold",
+   "family": "小市值",
+   "mechanism": "Small-cap with limit-up gene, oversold entry, ten industries, Jan/Apr flat",
+   "why": "36th 小市值; sole delta is one fill_paused=False bugfix on a cloned post. Body is mostly an ad for paid PT code.",
+   "flags": [
+    "redundant-family-variant",
+    "advertising-post",
+    "thin-universe",
+    "regime-2022-23-flattered"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_1a0df40dcfd7b744dcd98ad5138db3": {
+   "key": "lk_1a0df40dcfd7b744dcd98ad5138db3",
+   "M": 0,
+   "S": 4,
+   "R": 3,
+   "H": 4,
+   "priority": 3,
+   "band": "drop",
+   "family": "小市值",
+   "mechanism": "Same limit-up-gene small-cap rotation, reposted with April战报",
+   "why": "Author states it outright: '本文只是修正了 PT 代码, 聚宽代码没有改动' — the JQ source is identical to the Q1 post in this batch.",
+   "flags": [
+    "duplicate-source-in-batch",
+    "advertising-post",
+    "honest-loss-reported-2026Q1"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
+  },
+  "lk_64184280b4d577f8e7f79d824f81a9": {
+   "key": "lk_64184280b4d577f8e7f79d824f81a9",
+   "M": 0,
+   "S": 0,
+   "R": 3,
+   "H": 2,
+   "priority": 3,
+   "band": "drop",
+   "family": "UNKNOWN",
+   "mechanism": "Write and launch backtests from the research notebook via API",
+   "why": "Platform API tutorial, no trading logic to measure. Worth an engineer's read for parallel-backtest tooling, not a backtest minute.",
+   "flags": [
+    "not-a-strategy",
+    "unrunnable-on-harness",
+    "tooling-value-only"
+   ],
+   "epoch": 1,
+   "screenedAt": "2026-09-18T15:45:28.793Z",
+   "batch": "verdicts-2.json"
   }
  },
- "updatedAt": "2026-09-18T13:37:29.569Z"
+ "updatedAt": "2026-09-18T15:45:28.793Z"
 }

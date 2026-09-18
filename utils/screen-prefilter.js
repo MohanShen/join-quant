@@ -20,6 +20,7 @@
  *   node utils/screen-prefilter.js --limit 200
  *   node utils/screen-prefilter.js --limit 200 --sample 42   # seeded random slice, not store order
  *   node utils/screen-prefilter.js --cates 14,3               # screen 精华/文章 first; 问答 deferred
+ *   node utils/screen-prefilter.js --keys keys.json           # screen these keys even if already fetched
  *   node utils/screen-prefilter.js --no-bodies     # metadata only (fast, weaker screening)
  *   node utils/screen-prefilter.js --stats         # rejection breakdown, fetch nothing
  *
@@ -117,13 +118,18 @@ function seededShuffle(arr, seed) {
   return a;
 }
 
-async function run({ limit = 0, bodies = true, statsOnly = false, sampleSeed = null, cates = null } = {}) {
+async function run({ limit = 0, bodies = true, statsOnly = false, sampleSeed = null, cates = null, onlyFiles = null } = {}) {
   const disc = readJson(path.join(ROOT, 'data/discovered.json'), { strategies: {} }).strategies || {};
   const res = readJson(path.join(ROOT, 'data/resources.json'), { resources: {} }).resources || {};
   const hashes = new Set(Object.keys(readJson(path.join(ROOT, 'data/content-hashes.json'), {})));
   const copied = new Set(Object.keys(readJson(path.join(ROOT, 'data/copy-queue.json'), {}).copied || {}));
   const seen = new Set(Object.keys((readJson(VERDICTS, {}).verdicts) || {}));
-  const lessons = heldLessons();   // verdicts nest under .verdicts
+  const lessons = heldLessons();
+  // `onlyFiles` screens a named set of ALREADY-FETCHED posts. R3 (already fetched)
+  // exists to stop us re-downloading source we hold; it is the wrong rule when the
+  // question is "which of the files we already hold deserve backtest minutes first".
+  // Passing keys here bypasses R3 for exactly those posts and nothing else.
+  const only = onlyFiles ? new Set(onlyFiles) : null;   // verdicts nest under .verdicts
 
   // One pool: strategies and research resources are screened by the same rubric.
   const pool = new Map();
@@ -133,8 +139,9 @@ async function run({ limit = 0, bodies = true, statsOnly = false, sampleSeed = n
   const reasons = {};
   const survivors = [];
   for (const row of pool.values()) {
+    if (only && !only.has(row.key)) continue;
     if (seen.has(row.key)) { reasons['already screened'] = (reasons['already screened'] || 0) + 1; continue; }
-    const why = hardReject(row, { hashes, copied, lessons });
+    const why = hardReject(row, { hashes, copied: only ? new Set() : copied, lessons });
     if (why) { reasons[why] = (reasons[why] || 0) + 1; continue; }
     // Selection, not rejection: 问答 (cate=10) screened at 94% drop, so --cates lets a run
     // spend judgement on 文章/精华 first. Q&A is deferred, never discarded (screen.md §2).
@@ -221,6 +228,9 @@ if (require.main === module) {
     limit: li >= 0 ? parseInt(a[li + 1], 10) : 0,
     sampleSeed: si >= 0 ? parseInt(a[si + 1], 10) : null,
     cates: a.indexOf('--cates') >= 0 ? a[a.indexOf('--cates') + 1].split(',').map(Number) : null,
+    onlyFiles: a.indexOf('--keys') >= 0
+      ? JSON.parse(fs.readFileSync(a[a.indexOf('--keys') + 1], 'utf8'))
+      : null,
     bodies: !a.includes('--no-bodies'),
     statsOnly: a.includes('--stats'),
   })
