@@ -30,6 +30,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const jq = require('./jq-http');
+const cache = require('./post-cache');
 
 const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'screen/candidates.json');
@@ -163,13 +164,12 @@ async function run({ limit = 0, bodies = true, statsOnly = false, sampleSeed = n
 
   for (const row of targets) {
     let body = '';
-    if (bodies && row.postId) {
-      try {
-        const d = await jq.jqJson(`https://www.joinquant.com/community/post/detailV2?postId=${row.postId}`);
-        body = String((d && d.data && d.data.content) || '');
-        fetched++;
-      } catch { failed++; }
-      await new Promise(r => setTimeout(r, 900));
+    if (bodies) {
+      const cached = cache.get(row.key);
+      body = await cache.body(row.key, row.postId);
+      if (body) fetched++; else failed++;
+      // Only pause when we actually hit the network — a cached run costs nothing.
+      if (!cached) await new Promise(r => setTimeout(r, 900));
     }
     const nb = normBody(body);
     if (nb.length >= 200) {
@@ -205,8 +205,9 @@ async function run({ limit = 0, bodies = true, statsOnly = false, sampleSeed = n
     posts: out,
   }, null, 1));
 
+  if (bodies) cache.save();
   console.log(`[screen] wrote ${path.relative(ROOT, OUT)}: ${out.length} candidates` +
-              (bodies ? ` (${fetched} bodies, ${failed} failed)` : ' (no bodies)'));
+              (bodies ? ` (bodies: ${cache.report()})` : ' (no bodies)'));
   console.log(`[screen] held families: ${Object.entries(held).sort((a, b) => b[1] - a[1])
     .slice(0, 5).map(([k, v]) => `${k}=${v}`).join(' ')}`);
   return { survivors: survivors.length, written: out.length, reasons };

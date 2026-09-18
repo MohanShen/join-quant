@@ -39,6 +39,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const jq = require('./jq-http');
+const cache = require('./post-cache');
 const { loadResourceQueue, markResourceIngested } = require('./strategy-discover');
 
 const REPO = path.join(__dirname, '..');
@@ -115,7 +116,10 @@ function renderMarkdown(entry, detail) {
 }
 
 async function fetchOne(entry, registry) {
-  const detail = await fetchDetail(entry.postId);
+  // Served from data/post-bodies.json when the screener already fetched this post,
+  // which is the common case — screening runs before ingestion.
+  const detail = await cache.detail(entry.key, entry.postId);
+  if (!detail) throw new Error(`detailV2 unavailable for ${entry.key}`);
   const body = String(detail.content || '');
   if (!body.trim()) return { status: 'empty' };
 
@@ -172,6 +176,7 @@ async function processQueue({ max = 0, kind = null } = {}) {
       console.error(`[resource] ✗ ${entry.title.slice(0, 40)} :: ${e.message.split('\n')[0].slice(0, 90)}`);
     }
     fs.writeFileSync(HASH_FILE, JSON.stringify(registry, null, 2));
+    cache.save();
     await new Promise(r => setTimeout(r, 1200));
   }
 

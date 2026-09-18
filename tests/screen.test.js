@@ -200,3 +200,46 @@ test('concentration guard (rubric §7)', async t => {
     assert.strictEqual(concentration({ a: v('小市值'), b: v('小市值') }).tripped, false);
   });
 });
+
+// ── post body cache ──────────────────────────────────────────────────────────
+// detailV2 is one request per post and three tools wanted the same bodies. The
+// cache is keyed by uniqueKey because postIds are re-minted per request.
+
+const cache = require('../utils/post-cache');
+
+test('post cache', async t => {
+  await t.test('stores and returns a full detail payload', () => {
+    cache.put('k-test-1', 'ephemeral-postid', { content: 'body text', title: 'T', addTime: '2022-01-01' });
+    const hit = cache.get('k-test-1');
+    assert.strictEqual(hit.content, 'body text');
+    assert.strictEqual(hit.detail.title, 'T');
+  });
+
+  await t.test('accepts a bare string body', () => {
+    cache.put('k-test-2', null, 'just text');
+    assert.strictEqual(cache.get('k-test-2').content, 'just text');
+  });
+
+  await t.test('is keyed by uniqueKey, so a new postId still hits', () => {
+    cache.put('k-test-3', 'postid-AAA', { content: 'x' });
+    const before = cache.get('k-test-3').content;
+    cache.put('k-test-3', 'postid-BBB', { content: 'x' });   // same post, re-minted id
+    assert.strictEqual(cache.get('k-test-3').content, before);
+    assert.strictEqual(Object.keys(cache.get('k-test-3')).length, 4);
+  });
+
+  await t.test('misses cleanly on an unknown or empty key', () => {
+    assert.strictEqual(cache.get('k-does-not-exist'), null);
+    assert.strictEqual(cache.get(''), null);
+    assert.strictEqual(cache.get(undefined), null);
+  });
+
+  await t.test('body() serves from cache without a postId (no network possible)', async () => {
+    cache.put('k-test-4', null, { content: 'cached body' });
+    assert.strictEqual(await cache.body('k-test-4', null), 'cached body');
+  });
+
+  await t.test('body() returns empty rather than throwing when it cannot fetch', async () => {
+    assert.strictEqual(await cache.body('k-test-absent', null), '');
+  });
+});

@@ -52,6 +52,7 @@ node utils/screen-prefilter.js --limit 200    # + fetch bodies -> screen/candida
 node utils/screen-score.js <predictions.json> # grade a screener vs the sealed 104-post set
 node utils/screen-prefilter.js --limit 200 --sample 42 --cates 14,3   # seeded, 精华+文章 first
 node utils/screen-merge.js                    # validate batch verdicts -> screen/verdicts.json, rebuild queues
+node -e "console.log(require('./utils/post-cache').size())"   # cached post bodies
 ```
 
 ### Chrome / auth setup (required for Pipeline 2)
@@ -219,6 +220,11 @@ Only the directories whose contents aren't self-evident:
   are write-ups, futures-only, or need data outside 2022–23. Bands rank information, not
   runnability — check `flags` before spending backtest minutes. Candidate fix for a future
   rubric epoch.
+- **Never re-request a post body.** `utils/post-cache.js` (`data/post-bodies.json`) caches the
+  whole `detailV2` payload keyed by `uniqueKey`, shared by `screen-prefilter.js` and
+  `resource-fetch.js`. Post text is immutable, so entries never expire by default. Before it
+  existed, re-running the prefilter re-fetched every unscreened candidate and a post that was
+  both screened and ingested was fetched twice — thousands of avoidable requests at ~2,600 posts.
 - Screening verdicts live in `screen/verdicts.json` and are applied INSIDE the queue builders,
   because every discovery run rebuilds the queues from scratch.
 - Blind-test result (104 posts, 22.1% base rate): judgement on post BODIES scored 0.90 AUC vs
