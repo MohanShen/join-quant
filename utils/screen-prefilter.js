@@ -47,6 +47,30 @@ const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8'))
  */
 const MECHANISM = /因子|择时|轮动|止损|止盈|仓位|网格|涨停|打板|套利|对冲|动量|反转|均线|突破|微盘|小市值|多因子|机器学习|深度学习|增量学习|神经|模型|回归|配对|期权|可转债|债|ETF|基金|基本面|财报|研报|龙头|竞价|首板|高开|低开|风控|组合|红利|股息|价值|成长|板块|题材|热点|情绪|资金流|北向|量价|分钟|日内|T0|做T|轮换|再平衡|五福|七星|三马|海龟|缠论|RSRS|KDJ|MACD|布林|均值回归|低频|高频/i;
 
+/**
+ * R7: the post IS a 量化课堂 lesson we already ingested into research/tutorials/.
+ * Conservative on purpose — exact title match after stripping a leading marker only.
+ * Containment would also catch 「『【量化课堂】股指期货对冲策略』之学习笔记」, which is a
+ * reader's notes ABOUT the lesson, not the lesson; that is a judgement call, and §2 reserves
+ * hard rejects for known facts. Those reach the screener and score M there.
+ */
+const normTitle = t => String(t || '')
+  .replace(/[\s_\-–—【】\[\]()（）:：,，。.、？?！!]/g, '')
+  .replace(/^(量化课堂|重磅更新|转载)/, '')
+  .toLowerCase();
+
+function heldLessons() {
+  const dir = path.join(ROOT, 'research/tutorials');
+  const out = new Set();
+  if (!fs.existsSync(dir)) return out;
+  for (const d of fs.readdirSync(dir)) {
+    const p = path.join(dir, d);
+    if (!fs.statSync(p).isDirectory()) continue;
+    for (const f of fs.readdirSync(p)) if (f.endsWith('.md')) out.add(normTitle(f.slice(0, -3)));
+  }
+  return out;
+}
+
 /** Families already held, with member counts — feeds the screener's M axis. */
 function heldFamilies() {
   const dir = path.join(ROOT, 'wiki/families');
@@ -64,7 +88,7 @@ function heldFamilies() {
  * Apply R1–R5. Returns a reject reason, or null when the post survives.
  * Order matters only for reporting; the rules are disjoint in practice.
  */
-function hardReject(row, { hashes, copied }) {
+function hardReject(row, { hashes, copied, lessons = new Set() }) {
   const tags = row.tags || [];
   const hasBacktest = row.backtestId && row.backtestId.length === 32;
   const isResource = Boolean(row.notebookPath || row.fileKey) ||
@@ -76,6 +100,7 @@ function hardReject(row, { hashes, copied }) {
   if (key && copied.has(key)) return 'R3 already fetched';
   if (row.contentHash && hashes.has(row.contentHash)) return 'R2 duplicate source';
   if (!String(row.title || '').trim()) return 'R5 empty title';
+  if (lessons.has(normTitle(row.title))) return 'R7 already held as a 量化课堂 lesson';
   return null;
 }
 
@@ -96,7 +121,8 @@ async function run({ limit = 0, bodies = true, statsOnly = false, sampleSeed = n
   const res = readJson(path.join(ROOT, 'data/resources.json'), { resources: {} }).resources || {};
   const hashes = new Set(Object.keys(readJson(path.join(ROOT, 'data/content-hashes.json'), {})));
   const copied = new Set(Object.keys(readJson(path.join(ROOT, 'data/copy-queue.json'), {}).copied || {}));
-  const seen = new Set(Object.keys((readJson(VERDICTS, {}).verdicts) || {}));   // verdicts nest under .verdicts
+  const seen = new Set(Object.keys((readJson(VERDICTS, {}).verdicts) || {}));
+  const lessons = heldLessons();   // verdicts nest under .verdicts
 
   // One pool: strategies and research resources are screened by the same rubric.
   const pool = new Map();
@@ -107,7 +133,7 @@ async function run({ limit = 0, bodies = true, statsOnly = false, sampleSeed = n
   const survivors = [];
   for (const row of pool.values()) {
     if (seen.has(row.key)) { reasons['already screened'] = (reasons['already screened'] || 0) + 1; continue; }
-    const why = hardReject(row, { hashes, copied });
+    const why = hardReject(row, { hashes, copied, lessons });
     if (why) { reasons[why] = (reasons[why] || 0) + 1; continue; }
     // Selection, not rejection: 问答 (cate=10) screened at 94% drop, so --cates lets a run
     // spend judgement on 文章/精华 first. Q&A is deferred, never discarded (screen.md §2).
@@ -122,6 +148,12 @@ async function run({ limit = 0, bodies = true, statsOnly = false, sampleSeed = n
   if (statsOnly) return { survivors: survivors.length, reasons };
 
   const held = heldFamilies();
+  // R6: identical post BODY. R2 only catches duplicate strategy SOURCE, and only after the
+  // fetch stage has already spent a request on it. Reposts under a different title are
+  // common (one ETF-discount write-up appeared twice in the first full run), and an
+  // identical body is a known fact, which is what §2 requires of a hard reject.
+  const bodySeen = new Map();
+  const normBody = b => String(b || '').replace(/\s+/g, '').slice(0, 1200);
   // Store order is crawl order, which front-loads the old popularity-ranked cate=3 posts.
   // --sample <seed> takes a seeded random slice instead, so a bounded batch is representative.
   const ordered = sampleSeed != null ? seededShuffle(survivors, sampleSeed) : survivors;
@@ -138,6 +170,15 @@ async function run({ limit = 0, bodies = true, statsOnly = false, sampleSeed = n
         fetched++;
       } catch { failed++; }
       await new Promise(r => setTimeout(r, 900));
+    }
+    const nb = normBody(body);
+    if (nb.length >= 200) {
+      const h = crypto.createHash('sha1').update(nb).digest('hex');
+      if (bodySeen.has(h)) {
+        reasons['R6 duplicate body'] = (reasons['R6 duplicate body'] || 0) + 1;
+        continue;
+      }
+      bodySeen.set(h, row.key);
     }
     out.push({
       ref: row.key,

@@ -49,6 +49,12 @@ these is dropped and never costs a token.
 | R3 | `uniqueKey` already in `copy-queue.json.copied` | already fetched |
 | R4 | Tagged `文章` + `函数` | platform API documentation, not a strategy |
 | R5 | Title is empty | nothing to identify it by |
+| R6 | Identical post BODY to an earlier candidate (first 1200 non-space chars) | a repost under a different title; R2 only catches duplicate SOURCE, and only after a fetch has been spent |
+| R7 | Title matches a 量化课堂 lesson already in `research/tutorials/` (exact, after stripping a leading 【量化课堂】-style marker) | we hold the full text already |
+
+> R7 is deliberately exact rather than fuzzy. Containment also catches 「【量化课堂】股指期货对冲
+> 策略」之学习笔记 — a reader's *notes about* the lesson, which is not the lesson. That is a
+> judgement call, so it goes to the screener and is settled on M.
 
 Everything surviving R1–R5 goes to judgement. **Do not re-litigate hard rejects in prose.**
 

@@ -210,6 +210,15 @@ Only the directories whose contents aren't self-evident:
   24–30% of 文章/精华. Help-desk posts attach backtests to ask about them, so no payload rule
   catches them. Stored rows now carry `cate`; screen with `--cates 14,3` first. Q&A is
   deferred, not rejected — it still yielded the O'Neil pocket-pivot idea.
+- Full 精华+文章 screen (793 posts): fetch-now 50 / fetch 256 / hold 183 / drop 304. The
+  fetch-now band spans **25 families, largest 12%** — axis M is doing its job. Screeners
+  proposed **71 NEW mechanism families** in the fetch band (all-weather / risk parity, macro
+  timing, northbound flow, accrual factors, overnight-gap, commodity cross-section, bonds);
+  these are candidate `wiki/families/` pages, not yet registered.
+- ⚠ **The fetch band mixes "read this" with "backtest this".** Many top picks score S=0: they
+  are write-ups, futures-only, or need data outside 2022–23. Bands rank information, not
+  runnability — check `flags` before spending backtest minutes. Candidate fix for a future
+  rubric epoch.
 - Screening verdicts live in `screen/verdicts.json` and are applied INSIDE the queue builders,
   because every discovery run rebuilds the queues from scratch.
 - Blind-test result (104 posts, 22.1% base rate): judgement on post BODIES scored 0.90 AUC vs
