@@ -224,6 +224,16 @@ Only the directories whose contents aren't self-evident:
 - Blind-test result (104 posts, 22.1% base rate): judgement on post BODIES scored 0.90 AUC vs
   0.75 for a bare 小市值 keyword and 0.66 for popularity. Title-only screening scores ~0.75 —
   fetch the bodies, they are free via `community/post/detailV2`.
+- **Two community lookahead claims were tested and NOT reproduced** (`study/_probes/`,
+  2026-09-18): `get_extras('is_st', start_date=D, end_date=D)` agrees exactly with
+  `get_current_data()[s].is_st` on two separate TRAIN windows, and an undated
+  `get_fundamentals(q)` is identical to `date=context.previous_date`. So the 15 held
+  strategies using the `get_extras` ST form and the 130 undated fundamentals calls are clean.
+  The 七星高照 NAV-premium lookahead claim is moot: study q-4 measured that filter as exactly
+  inert. Still open: LOF/QDII NAV publication lag for the discount families.
+- The backtest **log is not retrievable** via the API (`/algorithm/backtest/log` returns empty).
+  A probe must encode its answer as a marker trade, and **always needs a control** — `no-trades`
+  otherwise cannot be told apart from "the code path never ran". See `study/_probes/README.md`.
 - Pipeline 2's backtest window is parameterized via `--window train|val` (or `--start/--end`),
   set through the `newStrategy` URL params. The **2025+ OOS window is hard-blocked** (`OOS-BLOCKED`)
   unless `JQ_ALLOW_OOS=1` — see `harness/harness.md`. No flag = JQ default range (ad-hoc).
