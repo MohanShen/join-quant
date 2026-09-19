@@ -284,6 +284,21 @@ function main() {
     sleepSync(COOLDOWN_S);                               // let JQ slots free before next
   }
   console.log(`[normalize] batch done. ledger: ${ledgerPath}`);
+
+  // Bookkeeping that belongs to "a strategy was measured", not to one caller: create the
+  // wiki page for anything newly normalized and prune finished entries from the pending
+  // queue. Both used to live only in normalize-daily.js, so a direct run silently skipped
+  // them (3 results ended up with a ledger row and no page). Derived from the ledger, so
+  // running it twice is a no-op. Never fatal — a bookkeeping failure must not lose results.
+  try {
+    const { sync } = require('./normalize-sync');
+    const r = sync({ window: opt.window });
+    if (r.stubbed.length || r.pruned.length) {
+      console.log(`[normalize] sync: +${r.stubbed.length} wiki page(s), -${r.pruned.length} queue entr(ies)`);
+    }
+  } catch (e) {
+    console.error(`[normalize] ⚠ post-batch sync failed (results are safe in the ledger): ${e.message}`);
+  }
 }
 
 function appendRow(ledgerPath, cells) {

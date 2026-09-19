@@ -4,7 +4,7 @@ kind: 结构
 rollup:
 aliases: [做T, T+0, 日内回转, 高抛低吸]
 strategyCount: 1
-updatedAt: 2026-07-26
+updatedAt: 2026-09-19
 ---
 
 # 日内做T

@@ -1,0 +1,166 @@
+key	kind	stage	runId	at	outcome	note
+5a5ba567903e1b326697d71ecb7bbc6e	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.592Z	compile-error	objective=- gate=- file=2026-05-13_价值选股与RSRS择时-5a5ba567.py
+lk_88dd119f7b76d36199d76e78e35a9b	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.592Z	compile-error	objective=- gate=- file=2026-05-15_价值投资--低估价值选股策略-c748b9d5.py
+796c6f98179db57b54f7b51d76e52b0e	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.592Z	compile-error	objective=- gate=- file=2026-05-15_回馈社区_分享市盈率股息率选股_均线止盈交易策略-796c6f98.py
+b0e7b728504b30d962e03784838f7424	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.592Z	compile-error	objective=- gate=- file=2026-05-17_复现东方证券研报--特质波动率因子研究-b0e7b728.py
+lk_31245ada7afbd1101e366bf9bac739	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.592Z	compile-error	objective=- gate=- file=2026-05-17_量化课堂_季报预告信号策略的失效_-_知情交易的查证-26b52dca.py
+c18e09235b37184eb461af1c721770f8	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.593Z	compile-error	objective=- gate=- file=2026-05-18_基本面单因子测试_以BP因子为例-c18e0923.py
+lk_0f6b09fa1ef15c47973c2e8ef2e672	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.593Z	compile-error	objective=- gate=- file=2026-05-19_多任务学习一条龙框架优化修复版-77e78b06.py
+lk_9dbcc641786b1bc904f87d1210e2f4	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.593Z	normalized	objective=DQ gate=fail file=2026-06-13_以混沌之火_点亮投资之路_信息熵策略-775faa4e.py
+lk_3c1da326a0cebe8d11b1b410ba5a5b	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.593Z	compile-error	objective=- gate=- file=2026-06-24_行为金融学_预测结果分析1_更新_2019_03_17-5a127075.py
+lk_697698e838ac2a6f01a6aac386908f	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.593Z	normalized	objective=0.4737 gate=pass file=2026-06-28_高质量稳定上涨策略-d02cde29.py
+strategies/2026-05-11_量化课堂_多因子策略入门-5b915770.py	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.593Z	normalized	objective=DQ gate=fail file=2026-05-11_量化课堂_多因子策略入门-5b915770.py
+strategies/2026-05-12_网格交易策略-年化30_-网格大法好_熊市不用跑-598050b9.py	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.593Z	normalized	objective=DQ gate=fail file=2026-05-12_网格交易策略-年化30_-网格大法好_熊市不用跑-598050b9.py
+1294c538b5f7c2fdaf74368cf3222bda	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.593Z	incompatible-futures	objective=- gate=- file=2026-05-13_股指期货跨期套利策略-1294c538.py
+49efd264b1487b2bd4453933cd6c2487	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.593Z	normalized	objective=DQ gate=fail file=2026-05-13_量化课堂_多因子策略入门-49efd264.py
+052da9b4e38c64356e0258b957426b1d	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.593Z	normalized	objective=DQ gate=fail file=2026-05-14_年化42_的市值选股与阶梯调仓策略-052da9b4.py
+lk_4fd5d293c22c3a77ff4829bedc903b	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.593Z	normalized	objective=DQ gate=fail file=2026-05-14_量化课堂_机器学习多因子策略-f9ca1d2e.py
+11406b828df0987573b95815e75cf737	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.593Z	no-trades	objective=- gate=- file=2026-05-15_海龟交易体系_股票版-11406b82.py
+lk_64b0533500b9cb99478d0a663f3bb9	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.593Z	incompatible-futures	objective=- gate=- file=2026-05-16_MACD_波动率过滤_追踪止损_期货择时汇总-10a3c43d.py
+ec72055934e85240c34f7d3d9730f7dd	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.594Z	incompatible-futures	objective=- gate=- file=2026-05-16_趋势交易能赚钱吗_商品期货动量效应挖掘初探-ec720559.py
+lk_7a131e2afc1b9b7c9fbb931b5f348c	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.594Z	no-trades	objective=- gate=- file=2026-05-16_面向对象重构-28择时小市值V2_0_8_实盘_个人接口_东方财富证券-f3ca90a7.py
+lk_24335e371e09a00fc7406a1f503ec4	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.594Z	normalized	objective=0.8811 gate=pass file=2026-05-17_小市值排除3个bug版_22年至今收益506_回撤11-aaba7575.py
+57abbac20a8584f8ef8f8e0e10ebb489	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.594Z	normalized	objective=DQ gate=fail file=2026-05-17_年化15_84_的单均线策略-57abbac2.py
+lk_e33d71b98e927887452e6dd01e18f7	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.594Z	compile-error	objective=- gate=- file=2026-05-17_策略发布_CSI300_多因子截面策略_低换手-34e0e03f.py
+lk_9148c59444b1bb63435f17076894b1	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.594Z	normalized	objective=DQ gate=fail file=2026-05-17_终极优化-ETF核心资产轮动策略-2768beaa.py
+3c26946696b3bf9cc741e5abd077ef00	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.594Z	normalized	objective=DQ gate=fail file=2026-05-18_也谈技术指标布林通道的策略-3c269466.py
+lk_2c1e9098df6828090af6c866f5a970	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.594Z	compile-error	objective=- gate=- file=2026-05-18_策略发布_A股日频均值回归_低换手_多因子截面-23f07734.py
+lk_2bdd91c1a990ccf57c7768303d9f03	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.594Z	compile-error	objective=- gate=- file=2026-05-19_单股2014_01_01-2016_08_01_收益6508_年化386-cf5cbac2.py
+lk_e9b6fd5295eeb573b83eb051910e5b	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.594Z	compile-error	objective=- gate=- file=2026-05-19_首板炸板回封买入策略-9106ccaf.py
+lk_5127594834c6ca70978acd65e782d6	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.594Z	normalized	objective=0.9026 gate=pass file=2026-05-20_小市值微调_年化109_回撤15_胜率75-17c95d16.py
+lk_01c5ecb1d6598610c3e18ad765e42a	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.594Z	compile-error	objective=- gate=- file=2026-05-21_shi盘4_1-511大结局三马七星胜_五福惨遭淘汰七星小胜-c4291a66.py
+lk_ee057a62d9cc14b15c10de754a71ae	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.594Z	normalized	objective=0.4674 gate=pass file=2026-05-21_大小外择时小市值-1c80dd9a.py
+lk_ca376f038e5854e20ba239b8640b75	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.594Z	normalized	objective=DQ gate=fail file=2026-05-22_三部曲吃透ETF动量轮动1_纵有狂风拔地起_我亦乘风破万里-d1cf57eb.py
+fd5d388d9762e7d8c4ba65810366a7d1	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.594Z	normalized	objective=DQ gate=fail file=2026-05-22_五福闹新春_v5_1-拟合ETF池最严厉的父亲-fd5d388d.py
+lk_c77e10ffb5f872420eca83609f7cbf	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.595Z	normalized	objective=0.9025 gate=pass file=2026-05-22_关于小市值的不同筛选条件的差异研究-5a70adc1.py
+lk_ed6a2f1d1fd3a1f61545afb00c36e6	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.595Z	normalized	objective=DQ gate=fail file=2026-05-23_一份ETF动量轮动的实盘反思-无法规避下跌风险-71117205.py
+lk_0652eec81ee35850c8af01d9afd670	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.595Z	normalized	objective=DQ gate=fail file=2026-05-23_三部曲吃透ETF动量3_地囚人_欲成仙_殊不知_天亦囚仙-62c2664f.py
+lk_8b8b6184e864ccc0aca6b8975002e7	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.595Z	slow-skipped	objective=- gate=- file=2026-06-21_首次将实战模型转化为量化策略年化468_07_amp_11_92-b8a7451f.py
+lk_19b2c4853ddaeb19a1c2517a9a318f	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.595Z	slow-skipped	objective=- gate=- file=2026-06-22_中证500增强_优化版_24年至今收益252_4-914d5724.py
+fa9c8c9e4b94933fa65d494a92efd583	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.595Z	slow-skipped	objective=- gate=- file=2026-05-14_年化64_的市值选股策略_有止损模块-fa9c8c9e.py
+lk_a196a118d90fbb445c6a2174e32d58	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.595Z	slow-skipped	objective=- gate=- file=2026-05-15_连板龙头策略-b518f737.py
+lk_e1802d76e5d4ad197ccdc98863a475	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.595Z	slow-skipped	objective=- gate=- file=2026-05-20_双均线择时优化_考虑均线低于一定比例进行卖出判断-a67b6f26.py
+lk_d3aef120acbfdec7b402445a6fc6e0	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.595Z	slow-skipped	objective=- gate=- file=2026-05-20_四择时高息低价小市值和白马大市值轮动-2f5bc859.py
+lk_54d700d3b6b5c44f9734ed8a4d4df3	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.595Z	slow-skipped	objective=- gate=- file=2026-05-21_行业热点资金流入小市值策略2_0-9cba5a29.py
+lk_f28ae3f9ff0bb7b4b3175493735b02	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.595Z	slow-skipped	objective=- gate=- file=2026-05-23_三马105-五福35-修复版-11年收益677倍回撤14-bf30eb36.py
+lk_8cdab722b6682ca5608101a66db250	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.595Z	slow-skipped	objective=- gate=- file=2026-05-23_三马七星172-大池子-11年收益346倍回撤15_68-3c462ece.py
+02d397c0e54e8bb8415c3eaca0d7b2e1	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.595Z	normalized	objective=DQ gate=fail file=2026-07-20_简单的择时基金轮动策略-02d397c0.py
+lk_0427298007b805ed203dd978c9c23d	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.595Z	normalized	objective=DQ gate=fail file=2026-07-04_七星1_7_5_0_vs_五福5_0_5_1从时间论证有效性-0575c4a7.py
+lk_8fae000da650142d89585cd2d46539	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.596Z	normalized	objective=DQ gate=fail file=2026-06-15_追电ETF动量轮动_10年60多倍收益-0aa4028d.py
+lk_dbb277d346886e1189d86c24c7a3d1	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.596Z	normalized	objective=DQ gate=fail file=2026-06-22_聚宽对接Q_T自动下单全通链路零成本SP验证60倍七星高照-0b192155.py
+lk_cf43f1ba76fda089a3d6ef9113b744	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.596Z	normalized	objective=DQ gate=fail file=2026-06-28_五福闹新春V3_5_全网还原度最高的PT迁移版v1附回测截图-0d5f2d8b.py
+lk_828758c31ebdf0384893755db9993d	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.596Z	normalized	objective=1.5642 gate=pass file=2026-06-01_etf基金溢价-改进版-高收益低回撤-速度已最优-15c36e0c.py
+lk_0bfcd1283b95aa4f1508fb45b1a047	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.596Z	normalized	objective=0.6855 gate=pass file=2026-07-08_五福闹新春_v5_2-已解密_别再被13_10狙击了_快跑-17b3b439.py
+19ca0e6921d632677403fb2a900226bf	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.596Z	normalized	objective=DQ gate=fail file=2026-05-23_策略变身_七星高照ETF轮动策略V1_7成功变身-19ca0e69.py
+lk_fdf8456ffc2d202f27a744f6e8110e	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.596Z	normalized	objective=DQ gate=fail file=2026-07-03_上升趋势策略_少交易_试仓确认_盈利后加仓_趋势破坏退出-1a3789bf.py
+lk_0f8c030495df5000e2fa4b1b2f2e84	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.596Z	normalized	objective=DQ gate=fail file=2026-07-10_红利价值策略_年化稳赚37_的低频高股息策略-1a8a41cf.py
+lk_6d33016c17412e091aee48bcb2bcc5	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.596Z	normalized	objective=DQ gate=fail file=2026-07-13_五福51-三状态V5-分母2万-11年219倍回撤17-1c4d2393.py
+lk_fa2034a472b929710e01e5c4169dde	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.596Z	normalized	objective=DQ gate=fail file=2026-06-12_10年14倍_最大可容500w资金etf轮动策略-1c96e06b.py
+lk_3ac7aa93634cf98e7259af28b1767a	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.597Z	normalized	objective=DQ gate=fail file=2026-07-01_小市值多体系融合版本_不择时不风控也能60-1d995d0b.py
+lk_fa926ea0c13882b078fe3863b9485a	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.597Z	normalized	objective=DQ gate=fail file=2026-07-21_从想法到策略_我如何让_AI_帮我评审量化回测-23584678.py
+lk_6bf2d7df8540e53bdb14c152fb2354	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.597Z	normalized	objective=DQ gate=fail file=2026-06-10_连阳倍量首板高开_1进2_收益823_回撤13-25898ae1.py
+lk_87a0aaf80abcf4c1bedff5be06143c	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.597Z	normalized	objective=DQ gate=fail file=2026-06-11_慢就是快_低频交易也能博得高收益-2596a8ab.py
+lk_7e21c365b79d4f89dcff71269ac808	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.597Z	normalized	objective=DQ gate=fail file=2026-07-18_文竹3_3更新_年化18_34_最大回撤10_68-289177df.py
+lk_d9cf85700152ce11ab46cbc9fa0872	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.597Z	normalized	objective=0.7460 gate=pass file=2026-06-12_动态仓位超高收益低回撤小市值策略_五年20倍-2a4882de.py
+lk_af9958762c440c11514d344ca1ed36	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.597Z	normalized	objective=DQ gate=fail file=2026-07-07_网格交易策略-年化30_-网格大法好_熊市不用跑-32021d45.py
+lk_49cb6e22ec791b8da7bfe693e210e8	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.597Z	normalized	objective=DQ gate=fail file=2026-07-12_凯利公式_均值回归_只做牛市下的反弹_效果看起来还是可以的-332d3a33.py
+lk_1094e32ad994b92d5a61227644ff09	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.598Z	normalized	objective=DQ gate=fail file=2026-06-29_开盘前输出当日交易计划的趋势跟踪策略-33b1b1e3.py
+lk_03e3e296478bd10f19bb3e7b1ed63b	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.598Z	normalized	objective=DQ gate=fail file=2026-06-30_继上一篇文章按分钟回测版-2026年153-36eeb73f.py
+lk_7bc64498055963694950963b31bce4	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.598Z	normalized	objective=0.3696 gate=pass file=2026-06-01_策略组合_优质小市值周换手与ETF轮动策略组合-3a5ab0c1.py
+lk_d1a118de126be249bfe984efbd9d88	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.598Z	normalized	objective=DQ gate=fail file=2026-07-06_大道无形我无道-41553ad7.py
+lk_9e63b7b5ed00318109251f402af772	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.598Z	normalized	objective=DQ gate=fail file=2026-07-16_聚宽三马框架整合七星_五福策略-46158d11.py
+lk_1aa43e2b1f1b8650455485ce33a20f	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.598Z	normalized	objective=0.6855 gate=pass file=2026-07-20_五福V5_2转pt跑通啦-4660b6d0.py
+46f583dd76e7884710faa7c774321eba	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.598Z	normalized	objective=DQ gate=fail file=2026-05-23_近4个月狂揽62_六年11倍_ETF双池动量轮动-46f583dd.py
+lk_f67a2ff2b2ed1b25e2f7195d3a8ca5	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.598Z	normalized	objective=DQ gate=fail file=2026-07-13_从克隆别人策略到自己造模型_一个老股民的量化探索手记-4bc24480.py
+lk_ee7d1f6cd32056105f7aff371a2ae3	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.598Z	normalized	objective=DQ gate=fail file=2026-06-16_七星高照5_1_五福闹春5_0_三马七星1_7实测收益对比-4c494c9c.py
+lk_003fd7d348ddbab6b83798eca8cf6d	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.599Z	normalized	objective=DQ gate=fail file=2026-06-05_低位3连阳首板接力-年化1602_-第1版-4cce4058.py
+lk_3582303f91431f5f0bf8fac9fd4f83	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.599Z	normalized	objective=DQ gate=fail file=2026-05-23_五福闹新春_v5_0-动态池的水太深你把不住-4d4705e1.py
+lk_fdea48f907c940361fa379ced07897	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.599Z	normalized	objective=0.6053 gate=pass file=2026-06-20_五福v5-差异化滤波方案-11年538倍-深度研报-4fa17009.py
+lk_00accb8dff69620934112c75943ce2	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.599Z	normalized	objective=DQ gate=fail file=2026-07-15_一年16倍_从涨停板里淘金-夏普15_高盈亏比低回撤-5175b18b.py
+lk_32a805a4570cb4a1d559e9d4d2c6b7	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.599Z	normalized	objective=DQ gate=fail file=2026-06-06_低位3连阳首板接力-年收益1856_-第3版-51f7b3ab.py
+lk_f45f504b74153ab0eb33144e604b10	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.599Z	normalized	objective=DQ gate=fail file=2026-07-18_更新V2_52_5_年化_回撤17_--七星_红利_宽基-58ec97d9.py
+lk_5bcc0a9c4f302db71ac5f9686cd45f	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.599Z	normalized	objective=DQ gate=fail file=2026-06-28_策略对比还是ETF最优收益904_06-5dfc830e.py
+lk_1be0b365b1eeb3697c2e97559c8a0a	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.599Z	normalized	objective=0.9411 gate=pass file=2026-06-21_低开小市值_年化105_最大回撤20-5e874b5b.py
+lk_e631c5a3524705df550ee01ec64fe5	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.599Z	normalized	objective=DQ gate=fail file=2026-06-26_从涨停板里淘金_首板次日竞价买入策略-69ca427f.py
+lk_62768bf42618cb9e774e8f8d457060	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.600Z	normalized	objective=DQ gate=fail file=2026-06-22_巴菲特量化交易策略_V1_1-6ad90252.py
+lk_960269921cb67d2b5f6757aa5a204f	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.600Z	normalized	objective=DQ gate=fail file=2026-06-15_这个策略今年很强_点赞回复必回赞_克隆_没积分_模拟盘快到期-6be8cff8.py
+lk_0807d4aec93ce3a2ee9c60c2529a6d	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.600Z	normalized	objective=0.8385 gate=pass file=2026-06-21_中小板微盘优化稳定-实盘1年持续中-76593fb6.py
+lk_dc93db0f7cfe6513b5c96717bf45b6	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.600Z	normalized	objective=1.3738 gate=pass file=2026-06-21_小市值低开优化-10年年化近100_回撤15-7a1c225f.py
+lk_a72e1f75db0f0d7d28ed4fd87996b3	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.600Z	normalized	objective=DQ gate=fail file=2026-07-10_趋势永存_持续16年跑赢大盘的真正靠谱策略-7c3906c3.py
+lk_2a2422c33f01a967e767a608e624c4	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.600Z	normalized	objective=DQ gate=fail file=2026-06-03_策略研发_三进兵策略与研究报告-7d1012a5.py
+lk_4bbd5a60add89b8b78d17c6fd77f61	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.600Z	normalized	objective=DQ gate=fail file=2026-06-29_我要稳稳的ETF轮动宇宙策略_模拟盘已启动-7d6984a3.py
+lk_2fc84dc3fd96df42614dc5efc37ac7	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.600Z	normalized	objective=DQ gate=fail file=2026-07-02_首板放量次日高开买入_--_24年至今3088_53-7ddf9b79.py
+lk_22b3629ce8946331c482fb6282b04e	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.601Z	normalized	objective=DQ gate=fail file=2026-06-30_gap创新_离散度判断-7f7e13ee.py
+lk_34598965ff5a1c6048dfddeca1a52d	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.601Z	normalized	objective=DQ gate=fail file=2026-06-16_小市值_动量止损_没有1和4空仓_回撤15_64-7fc942bf.py
+lk_d2142229111d89bfdc471a1e1f0b5f	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.601Z	normalized	objective=DQ gate=fail file=2026-06-20_中证1000交易策略_低风偏爱好者食用-8101e57b.py
+lk_a6e2fac39125ddd6ba796a495cc4fc	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.601Z	normalized	objective=DQ gate=fail file=2026-07-18_五福V5_0_调优记录思考-趋势狙击手_死于装备过载-872daacb.py
+lk_fce24ab9890c39dbf32758d06f857d	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.601Z	normalized	objective=DQ gate=fail file=2026-06-23_基于乖离率的大类ETF策略_ETF复现之五-8781a24d.py
+lk_028d2d9a392ef699bc69ad11a46c93	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.601Z	normalized	objective=DQ gate=fail file=2026-06-09_七星高照V5_0_动量策略_五福V4_3和七星V5_0对比-897d12a4.py
+lk_e9dae1ffe493a91c28822340a70b08	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.601Z	normalized	objective=DQ gate=fail file=2026-06-19_20260202万得微盘股指数868008-8bafb765.py
+lk_d82830fb0a3cf81270dde223342cfe	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.601Z	normalized	objective=1.2810 gate=pass file=2026-06-04_一个年化180_逻辑奇怪但是却有效的小市值-8dbd994c.py
+lk_c6e7afcc422bf1f5f9483d9d37088e	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.602Z	normalized	objective=DQ gate=fail file=2026-07-11_五福闹新春_v4_3-完全体动态池的实现-917985c4.py
+lk_4e49480a0b62dc9f8e88feaf97f74b	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.602Z	normalized	objective=DQ gate=fail file=2026-06-27_创业板指长中短动量选股-91e4a8e4.py
+lk_5fbb5e176cf0a48e96ba29bc96ee9b	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.602Z	normalized	objective=DQ gate=fail file=2026-07-05_低换手红利策略-93379f98.py
+lk_246f9a179fff855f36bfd3fa04dd19	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.602Z	normalized	objective=DQ gate=fail file=2026-07-01_多ETF网格交易策略-年化10_61-9498d93f.py
+94d9f1ce39d9db2b7aabf5875b1599cc	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.602Z	normalized	objective=DQ gate=fail file=2026-07-07_收益狂飙_年化收益100_11年1700倍_绝无未来函数-94d9f1ce.py
+lk_5d0795709d21a15bb56ba383d28ec8	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.602Z	normalized	objective=DQ gate=fail file=2026-06-22_60倍七星高照_高斯_拉普拉斯-965618d9.py
+lk_6c8624268f975619b095ede9acc18e	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.602Z	normalized	objective=DQ gate=fail file=2026-06-08_十日均线策略-9befa9b8.py
+lk_b7ba77d20ae54650973f6431806ac7	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.603Z	normalized	objective=0.4771 gate=pass file=2026-06-18_年化52_-回撤17_-大小盘多策略-9f6f8188.py
+lk_b2602ceaed1b3908a8804de74a2814	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.603Z	normalized	objective=DQ gate=fail file=2026-05-31_策略优化_ETF轮动策略优化-V1_7-a593a36d.py
+lk_159c0bcfbf871e79dbc1c21b079210	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.603Z	normalized	objective=DQ gate=fail file=2026-05-23_五福51-三状态V2版-11年484倍回撤20_5-a722ab8a.py
+lk_41e8426040ea4e9fb7c09655b31a70	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.603Z	normalized	objective=DQ gate=fail file=2026-06-15_低位三阳_竞价擒龙-a7f60565.py
+lk_a706c1c5cad7908000573f4a056d95	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.603Z	normalized	objective=DQ gate=fail file=2026-05-27_量化课堂_高息股策略-aa9678cd.py
+lk_78da9df463ae79bb421550393d09d7	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.603Z	normalized	objective=DQ gate=fail file=2026-06-07_拒绝过拟合_量化策略参数分层检验_五福v3_5L1层参数检验-b23a4a10.py
+lk_af9a245a5d19b9f60f091f151d11a2	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.604Z	normalized	objective=DQ gate=fail file=2026-07-16_优化版_8年累计12500_回撤控制极佳_无未来函数-b9f22f04.py
+lk_897dc96baa3988bf7f0a27ff34f0fb	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.604Z	normalized	objective=DQ gate=fail file=2026-07-20_一切又是新的开始-be0c3a44.py
+lk_4433b2d6522b6d340eb49254d1bc14	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.604Z	normalized	objective=3.5423 gate=pass file=2026-07-18_PT多策略分仓隔离插件V1_3-c70281d3.py
+lk_e12dc213b4f8add2daa686d89d5c4a	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.604Z	normalized	objective=DQ gate=fail file=2026-06-17_最小市值轮动_不择时-cad4cc5d.py
+lk_bb9b5408e9326bb7b3e4874f5d04aa	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.604Z	normalized	objective=DQ gate=fail file=2026-06-14_告别过拟合_凸显真逻辑_五福闹新春5_1简化版-cd86d926.py
+lk_0b1d2114980230a156b8fdb84857ad	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.604Z	normalized	objective=0.5986 gate=pass file=2026-07-13_自用备忘-v4c_五福v5_取消拉普拉斯-11年400-d0245db8.py
+lk_0494bafdfd1defe0ba54e34d9d0215	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.605Z	normalized	objective=DQ gate=fail file=2026-07-02_左手芯片右手光-2026年5月必胜-d7987a31.py
+lk_8911f66c98c6a77bc8bac44195e0eb	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.605Z	normalized	objective=DQ gate=fail file=2026-07-21_统计局数据套利_5年年化26-d86aee95.py
+lk_dc90f5d44333f2129e7fb944b2d0aa	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.605Z	normalized	objective=DQ gate=fail file=2026-06-24_开源_五福v5_1Q_M_T版-三状态V3-分母2万-d93fc998.py
+lk_f0a509f07a0902b7dbd80149e2af47	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.605Z	normalized	objective=DQ gate=fail file=2026-07-21_五境掘金全球ETF轮动_中频-da82dd02.py
+lk_032e3adb5fbe0e7be8f5578901d1d3	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.605Z	normalized	objective=DQ gate=fail file=2026-06-27_市场温度驱动的极简ETF_轮动策略--6年10倍-dc9f9dad.py
+lk_c11b5b6ab823eb23192e8a84fa2d89	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.605Z	normalized	objective=DQ gate=fail file=2026-06-29_一个不太理想的机器学习模型-e0cbb752.py
+e3914be0ecd2f01e5b24eca659adf168	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.605Z	normalized	objective=DQ gate=fail file=2026-06-17_周期共振进化版-e3914be0.py
+lk_2e99f0f60c638bd86b7537ac1bde55	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.606Z	normalized	objective=DQ gate=fail file=2026-07-04_小盘风帆30_从零做一个小市值基础策略研究-e49b2079.py
+e4eb8dcafd7cb1b5964cf26fbcac8f59	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.606Z	normalized	objective=DQ gate=fail file=2026-06-06_策略研发_三进兵策略-e4eb8dca.py
+lk_46129ac1fa1911bc8f959ce0758e8c	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.606Z	normalized	objective=DQ gate=fail file=2026-07-04_实测25-26最好用的策略-ebe4f410.py
+lk_94eef61a1d7f93a4fcb69e76272eee	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.606Z	normalized	objective=DQ gate=fail file=2026-06-14_日内单票做T策略-ecba365f.py
+lk_b8cef87bb3850cc9d4a57142dd4026	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.606Z	normalized	objective=DQ gate=fail file=2026-06-09_回测十二年10个点超级低回撤加了自动_交易代码-ef10ee67.py
+lk_f984d6bf200bcf4f63a77df795ae13	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.606Z	normalized	objective=DQ gate=fail file=2026-06-19_10万本金_我用这个量化策略三年赚了68万-f1253042.py
+lk_180af0d8a062a444d03f3aa3e37c4c	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.607Z	normalized	objective=DQ gate=fail file=2026-07-05_市场时机选择量化策略_V1_01-f29926bf.py
+lk_8ae76e68d10aa2642d5ed909715c83	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.607Z	normalized	objective=DQ gate=fail file=2026-07-03_真金白银买的Xlstm-transformer-ai预测模型-f49104bb.py
+lk_29db1c03f794c928c70e609d853e85	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.607Z	normalized	objective=DQ gate=fail file=2026-06-25_投资学作业-f8d8348c.py
+lk_b16fe65e1393bab5304502a31a8037	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.607Z	normalized	objective=3.5952 gate=pass file=2026-06-23_P-T多策略并行实战_用_quot_自有账本_quot_实现四大策略各安其位-fa0d3bd9.py
+lk_708ac20c978cfe45379e99e0266557	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.607Z	normalized	objective=DQ gate=fail file=2026-07-11_五穷六绝七翻身_下半年翻倍就靠年9倍的七星1_72了-fb96f57a.py
+lk_ff6cd325780739cb443dc09bf9320e	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.607Z	normalized	objective=DQ gate=fail file=2026-07-05_五福51_三状态V2_正常震荡三ETF分仓_走弱一ETF-fbe8656d.py
+lk_2c6553cac5bf2daad46cebb0309f34	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.608Z	normalized	objective=DQ gate=fail file=2026-07-17_屡创新高_超稳的固收_策略_年化9_回撤小于2-fda1d813.py
+lk_072c2e41f3d78fe6ddc3d4e19a0507	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.608Z	normalized	objective=DQ gate=fail file=2026-07-17_三马_小市值_七星高照_白马_未来函数拟合分析和现实优化-7301c5c4.py
+lk_64d18cf8872b854e2da030b2d4dc4e	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.608Z	slow-skipped	objective=- gate=- file=2026-07-17_七星1_72_全行业_A股弱势播报-275daac9.py
+lk_aaf9b8625401d29578721beac65777	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.608Z	slow-skipped	objective=- gate=- file=2026-07-04_选股策略-c777b7b2.py
+lk_b6c7bf525bfed75af5afdc502791ff	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.608Z	compile-error	objective=- gate=- file=2026-07-08_均值回归_基于zscore的均值回归策略_胜率100-5b95886d.py
+lk_5706312f313c317921159430d9f123	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.609Z	compile-error	objective=- gate=- file=2026-07-09_钟摆系列3_单股票价值中枢动态调仓-c9b21e9d.py
+lk_d18660c08dbd90c83cb3fdea8b8140	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.609Z	incompatible-futures	objective=- gate=- file=2026-07-11_简易Tick盘口打板-e237d77e.py
+lk_bae3e5ca430d9228c3595fa8e23a8f	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.609Z	slow-skipped	objective=- gate=- file=2026-07-01_穿越牛熊周期-多策略组合-20至今年化103_20-5511f8f0.py
+lk_eb46b38daeb7ea22935d584c6acf79	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.609Z	slow-skipped	objective=- gate=- file=2026-07-04_年化60_的龙头首板低开战法-6ada2917.py
+lk_03799f025f7ae217cd3b49f120f467	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.609Z	normalized	objective=0.5002 gate=pass file=2026-07-18_多策略-题材概念-35ce65d2.py
+lk_b4d4c3b078ca1522591b08441f9854	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.609Z	slow-skipped	objective=- gate=- file=2026-06-30_手搓自用_涨停优选后再买入-b3751277.py
+lk_0bf3571fdff23a47beda0d0923cc23	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.610Z	normalized	objective=DQ gate=fail file=2026-07-06_一个可行的小仓位ETF低开策略-c954a48c.py
+ETF溢价	family	study	seed-manifest	2026-09-19T16:22:43.610Z	exhausted	0 findings row(s); reconstructed from study/manifest.json status=done
+PT多策略	family	study	seed-manifest	2026-09-19T16:22:43.610Z	exhausted	0 findings row(s); reconstructed from study/manifest.json status=done
+小市值	family	study	seed-manifest	2026-09-19T16:22:43.610Z	exhausted	0 findings row(s); reconstructed from study/manifest.json status=done
+打板短线	family	study	seed-manifest	2026-09-19T16:22:43.611Z	exhausted	6 findings row(s); reconstructed from study/manifest.json status=done
+五福闹新春	family	study	seed-manifest	2026-09-19T16:22:43.611Z	exhausted	0 findings row(s); reconstructed from study/manifest.json status=done
+七星高照	family	study	seed-manifest	2026-09-19T16:22:43.611Z	exhausted	6 findings row(s); reconstructed from study/manifest.json status=done
+多因子ML	family	study	seed-manifest	2026-09-19T16:22:43.611Z	exhausted	7 findings row(s); reconstructed from study/manifest.json status=done
+大小盘轮动	family	study	seed-manifest	2026-09-19T16:22:43.612Z	exhausted	7 findings row(s); reconstructed from study/manifest.json status=done
+ETF动量	family	study	seed-manifest	2026-09-19T16:22:43.612Z	exhausted	10 findings row(s); reconstructed from study/manifest.json status=done
+三进兵	family	study	seed-manifest	2026-09-19T16:22:43.612Z	exhausted	6 findings row(s); reconstructed from study/manifest.json status=done
+红利低频	family	study	seed-manifest	2026-09-19T16:22:43.612Z	exhausted	5 findings row(s); reconstructed from study/manifest.json status=done
+网格	family	study	seed-manifest	2026-09-19T16:22:43.613Z	exhausted	5 findings row(s); reconstructed from study/manifest.json status=done
+趋势技术	family	study	seed-manifest	2026-09-19T16:22:43.613Z	exhausted	4 findings row(s); reconstructed from study/manifest.json status=done
+套利	family	study	seed-manifest	2026-09-19T16:22:43.613Z	exhausted	2 findings row(s); reconstructed from study/manifest.json status=done
+小市值	family	enhance	jul12-005	2026-09-19T16:23:39.036Z	val-pass	train=1.3898 val=1.3231 base=jul12-000
+UNRESOLVED:jul12-023	family	enhance	jul12-023	2026-09-19T16:23:39.037Z	val-dq	train=0.3202 val=-0.5260 base=jul12-022 ⚠ family unresolved from header
