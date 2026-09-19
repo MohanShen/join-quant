@@ -15,6 +15,7 @@ for their own constants.
 | screen → fetch | connected | queue led by 40 fetch-now, 219 fetch |
 | fetch → normalize | connected 2026-09-18 | 54 queued in priority order |
 | normalize → wiki | **leaks** | 3 of 122 measured strategies have no page |
+| normalize queue upkeep | **leaks** | `pending-normalize.json` holds 65 entries; only 54 are still unmeasured |
 | wiki → study / enhance | **not connected** | no record of what has been consumed |
 | validation → OOS | **absent** | 2 VAL runs ever, 0 OOS, no runner |
 
@@ -60,8 +61,9 @@ every metric by exactly 0.0000 across 484 trading days, including trade counts a
 window. On a daily-bar harness the labels 09:26 / 11:25 / 14:50 are **decoration**. Grouping on
 execution time would group on something the bench cannot see.
 
-Turnover is measured for every normalized strategy and ranges 0.0065 → 0.3061 across the 14
-families, which separates the same groups intuition wants. Proposed bands:
+Turnover is measured for every normalized strategy and spans **0.0078 → 0.3061** across the 14
+families (三进兵 lowest, 打板短线 highest), which separates the same groups intuition wants.
+Proposed bands:
 
 | H | turnover (as reported by JQ) | rough meaning |
 |---|---|---|
@@ -138,6 +140,15 @@ These become the **inputs** to the loops, replacing "a human picks a family".
 
 **Acceptance**: `node utils/consumption-report.js` prints the next candidate for each loop, and
 the number it reports for study matches `study/manifest.json` (14 done) on day one.
+
+### 2.3 Prune what is done
+
+`data/pending-normalize.json` is pruned only by `normalize-daily.js`. Running
+`strategy-normalize.js` directly — which is how the 2026-09-18 backfill ran — leaves finished
+entries in the queue: the file lists **65** while only **54** are still unmeasured. Pruning
+belongs next to the ledger write, not in one caller, so every path converges on the same truth.
+Same class of bug as the wiki leak in §6 piece 1: a side effect that lives in one entry point
+instead of in the step that owns it.
 
 ---
 
@@ -241,7 +252,7 @@ failed. Build this stage last; built early it is mostly a way to burn the reserv
 
 | # | Piece | Depends on | Cost | Why this order |
 |---|---|---|---|---|
-| 1 | Fix normalize → wiki leak | — | ~1h | 3 results already lost; silent and ongoing |
+| 1 | Fix normalize → wiki leak **and queue pruning** | — | ~1h | 3 results already lost; queue is stale by 11 entries |
 | 2 | Consumption ledger + report | 1 | ~half day | every later stage needs "what is untouched" |
 | 3 | Type vocabulary + build script | 2 | ~half day | needs family membership to be trustworthy |
 | 4 | Concept backfill + lint | 2 | ~half day | independent of 3; cheap; stops further drift |
