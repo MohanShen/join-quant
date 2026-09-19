@@ -7,8 +7,17 @@ description: Answer questions against the join-quant wiki/ knowledge base (strat
 
 回答关于 `wiki/` 知识库的问题。遵循 `docs/wiki-schema.md` §7 查询工作流：**经 `index.md` 定位 → 阅读相关页 → 带引用作答 → 有价值的结论回填**。不要凭记忆答，一律以 wiki 页面与 frontmatter 为准。
 
+## ⚠ index.md 目前不完整（2026-09-19 实测）
+`wiki/index.md` 头部自称「策略 152 篇」，实际有 **187 篇**，而索引里只链到 **79 篇——108 篇
+从索引不可达**。所以 §7 的「经 index.md 定位」**不能当作唯一入口**：
+- 先查 index，**再补一次直接检索**（`ls wiki/strategies/`、`grep -rl … wiki/strategies/`）确认没漏；
+- 概念页 frontmatter 的 `strategyCount` **已严重漂移**，不可引用为事实
+  （实测：止损模块 声称 12 / 实际 83；动量与趋势 27 / 74；ETF轮动 39 / 72；择时-均线 7 / 26）。
+  要数量就现场 `grep -rl "<概念>" wiki/strategies/ | wc -l`。
+- 35 篇是 `autoStub: true` 桩页：**有归一化绩效、但没有忠实翻译**，回答机理类问题时要说明这一点。
+
 ## 必读
-- `wiki/index.md` —— 目录入口（按概念分组 + 一句话 + 绩效）。
+- `wiki/index.md` —— 目录入口（按概念分组 + 一句话 + 绩效）。⚠ 见上：不完整。
 - `wiki/concepts/*.md` —— **跨策略问题的首选入口**（变体与差异表、绩效横评、关联概念、待研究）。
 - `docs/wiki-schema.md` §7 查询、§2.1 因子分类、§ⒶⒸ 绩效警示约定。
 

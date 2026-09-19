@@ -21,6 +21,16 @@ description: Run the join-quant auto-STUDY loop — a 4-agent team (questioner �
 - **Agent 3 `autostudy-experimenter`** —— 封闭环境：造消融/改参变体或跑分区间/探针，返回相对**基类基线** Δ。
 - **Agent 4 `autostudy-analyst`** —— 把结果解读成发现、记 `findings.tsv`、**写回家族页 §2/§6**、反哺 KB。
 
+## ⚠ 批量模式已跑完（2026-09-19 实测）
+`study/manifest.json` 的 **14 个家族全部 `status: done`**——外层循环没有 pending 了。所以：
+- 用户指定单个家族 → 照常跑（可就既有家族提新问题）。
+- 想要**新目标** → 目标来自 `screen/verdicts.json`：筛选官已提出 **93 个 `NEW:<机制>` 家族**
+  （全天候/风险平价、宏观择时、北上资金、异常财务因子、隔夜跳空、商品截面、国债…），
+  **但一个都还没注册成 `wiki/families/*.md`**。必须先建家族页（受控命名，见 `docs/wiki-schema.md` §9）
+  并把成员策略归位，本技能才有东西可解剖。**不要**把 `NEW:` 字符串当家族页用。
+- §3 横评：`node utils/wiki-family-build.js` 目前对 **7 个家族仍是 BLOCKED**（账本缺 20 个策略的行）。
+  收口时 §3 跑不动是**预期**的，**绝不 `--force`**——那会抹掉页上的历史指标。
+
 ## 前置检查
 - **目标家族** `<family>`（用户指定，如 `五福闹新春`；或批量遍历 `study/manifest.json`）。**在当前分支上跑**（不再要求 `study/all`；分支由人类自行选定，续跑时会话钉住的分支需与当前一致）。
 - CDP Chrome 在跑：`node utils/jq-budget.js` 出 `used/free`（remote 模式下它会自动拉起 SSH 隧道）；`used < --usage-limit`。隧道状态可用 `./scripts/cdp-tunnel.sh status` 查。

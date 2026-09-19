@@ -13,7 +13,13 @@ description: Run the join-quant autoenhance TEAM — a 4-agent loop (ideator →
 2. `harness/harness.md` —— 冻结评测台：**TRAIN 选择 / VAL 定稿 / 2025+ OOS 硬阻断**。只读。
 3. `docs/enhance-schema.md` —— 结构/账本/记账格式（权威）。
 4. `docs/wiki-schema.md` §2.1 —— 受控因子词表（变异空间边界）。
-5. `wiki/index.md` + 相关 `wiki/concepts/*.md` —— 想法来源。
+5. `wiki/index.md` + 相关 `wiki/concepts/*.md` —— 想法来源。⚠ index 不完整（187 篇里只链 79 篇），
+   别把它当全集；概念页 `strategyCount` 已漂移，不可引用。
+6. **`screen/verdicts.json` —— 目前最富的想法来源（2026-09-19 新增）**。857 篇社区帖已按冻结
+   评测规则打分，`band=fetch-now/fetch` 的条目带 `mechanism`/`why`/`flags`，其中 **93 个
+   `NEW:<机制>`** 是 14 个家族都没有的机制轴（全天候/风险平价、宏观择时、北上资金、异常财务因子、
+   隔夜跳空、商品截面、国债）。**跨族借鉴与组合新族的想法优先从这里取**，并在想法里引用其 `key`。
+   注意：高 `priority` ≠ 好回测对象——`S=0` 的条目是**读物**（写作/期货/缺数据），不可送去跑回测。
 
 ## 团队（**临时 subagent**，角色定义见 `.claude/agents/autoenhance-*.md`）
 每步用 `Agent` 工具**新生成**对应角色的一次性 subagent，干完一件事返回即终止；不常驻、不互相寻址，**全部路由经编排者居中**（详见 `program.md`「团队与共享状态」）。
@@ -25,6 +31,9 @@ description: Run the join-quant autoenhance TEAM — a 4-agent loop (ideator →
 ## 前置检查
 - CDP Chrome 在跑；**登录/预算**：`curl -s localhost:9225/json/version` 通 + `node utils/jq-budget.js` 返回 `used/free`。
 - **预算**：`used < JQ_USAGE_LIMIT`（默认 55=仅免费 60 分钟内）。`used ≥ limit` → 干净暂停，等次日重置。
+  ⚠ **这 60 分钟是全仓库共用的**：`utils/normalize-backfill.js` 写的归一化队列
+  （`data/pending-normalize.json`，当前 54 条）与本团队抢同一份额度。开跑前先确认人类要把今天的
+  额度给谁；2026-09-18 的一次回填里 **59 分钟有 50 分钟耗在 5 次 slow-skip 超时上**，颗粒无收。
 - 在实验分支 `enhance/<tag>` 上。**断点续跑靠会话恢复**（`program.md`「断点续跑」）：本会话若是被 `--resume` 续起的，上下文已在，直接接着上次断点跑，不重跑已完成回测、不重复已测想法。若是**冷启动新会话**才需从 `enhance/ideas-queue.json`(status) + `enhance/results.tsv` + git 当前 candidate 重建上下文；都没有 → 按 `program.md` Setup 初始化（全新纪元）。
 
 ## 运行方式（交互式前台 + cron 续跑同一会话）
@@ -44,6 +53,16 @@ node utils/strategy-post-backtest.js enhance/candidates/<expId>.py "<expId>" --w
 - 迭代（Type-1）用 `--window train` 算 `objective(TRAIN)`；定稿（Type-2）用 `--window val` 算 `objective(VAL)`。
 - **`holdout` / 任何 2025+ 区间被 `OOS-BLOCKED` 拒跑**（除非用户私测 `JQ_ALLOW_OOS=1`——agent 绝不设）。
 - 读末尾 10 列 `SUMMARY`（`harness.md` §5）；`annual%` 已年化，直接算 objective。
+
+## 既有战绩（冷启动时先读，别重走弯路）
+`validated_strategies/` 只有 **2 个**跑完 VAL 的策略，两个都值得当先例引用：
+- `jul12-005`（小市值低开剥头皮，仓位 5→6）：TRAIN 1.3898 → **VAL 1.3231，过闸**。但 TRAIN 相对
+  基线只赢 0.016——**薄边际也能过 VAL**。
+- `jul12-023`（微盘多头 − IC 空头 1.2× 对冲）：TRAIN 0.3202 过闸 → **VAL −0.5260，maxDD 41.6%，惨败**。
+  归因是 **basis risk 而非成本**：IC（中证500 中盘）对中证微盘是不充分对冲，2024-02 微盘专属崩盘时
+  空头腿没保护。TRAIN 过闸只是 2022–23 两者同跌的 regime 产物。
+  ⇒ **教训**：对冲腿与多头腿标的不匹配时，TRAIN 的「市场中性」可能是假象；薄闸门边际（2.64 vs 2.5）
+  在窗口外最先反转。
 
 ## 完成后简报
 本纪元处理了多少想法、定稿几个、当前最优 `objective(TRAIN)` 及其 `objective(VAL)`、发现的规律与回填落点、多少放弃/crash、队列剩余。不 `git commit` wiki 或 `results.tsv`，除非人类明确要求。

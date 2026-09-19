@@ -22,9 +22,19 @@ axis is therefore **marginal information**, not pass-likelihood.
 
 1. **Prefilter (no tokens).**
    ```bash
-   node utils/screen-prefilter.js --stats          # see the rejection breakdown first
-   node utils/screen-prefilter.js --limit 200      # writes screen/candidates.json, with bodies
+   node utils/screen-prefilter.js --stats                       # rejection breakdown first
+   node utils/screen-prefilter.js --cates 14,3                  # 精华 + 文章; 问答 deferred
+   node utils/screen-prefilter.js --limit 200 --sample 42       # representative slice, not crawl order
+   node utils/screen-prefilter.js --keys <file.json>            # screen ALREADY-FETCHED posts
    ```
+   - `--cates 14,3` first. Measured: 问答 (cate=10) screens at **94% drop** vs 24–30% for
+     文章/精华 — help-desk posts attach a backtest in order to ask about it, so no payload rule
+     catches them. Q&A is deferred, never rejected (it still produced usable ideas).
+   - `--sample <seed>` for a bounded batch: plain `--limit` takes crawl order, which front-loads
+     the old popularity-ranked posts.
+   - `--keys` bypasses R3 (already fetched) for a named set. R3 answers "should we download
+     this"; it is the wrong rule for "which file we already hold deserves backtest minutes".
+   - Bodies are cached (`utils/post-cache.js`), so re-running costs nothing for posts seen before.
    Bodies are free and are what lifts screening from 0.75 to 0.90 AUC. Only use `--no-bodies`
    if the CDP browser is down.
 
@@ -44,8 +54,27 @@ axis is therefore **marginal information**, not pass-likelihood.
    ordered by `priority`. `hold` stays in the store but out of the queue; `drop` is recorded in
    `screen/verdicts.json` so it is never re-screened.
 
-6. **Report**: band histogram, top 10 by priority with their `mechanism` and `why`, any NEW:
+6. **Hand off to normalization.** The fetch queue is only half the job: for posts whose source
+   we ALREADY hold, `node utils/normalize-backfill.js` turns verdicts into
+   `data/pending-normalize.json` in priority order (the daily normalizer drains it).
+   It EXCLUDES `S=0` entries and DEFERS ones flagged multi-hour — both would spend the shared
+   60 backtest-min/day on a guaranteed non-result.
+
+7. **Report**: band histogram, top 10 by priority with their `mechanism` and `why`, any NEW:
    family proposals, and the concentration check.
+
+## ⚠ The bands rank INFORMATION, not runnability
+A `fetch-now` entry may be a write-up, futures-only, or need data outside 2022–23 — several top
+picks score `S=0`. **Read `flags` before queueing anything for backtest minutes.** Splitting the
+bands into read-value vs backtest-value is a candidate for a future rubric epoch; until then the
+flags are the guard.
+
+## What a full pass looked like (2026-09-18, epoch 1)
+857 posts screened → fetch-now 52 / fetch 277 / hold 200 / drop 328, spanning 25 families with
+the largest at 12%. The highest-value results were **falsifications of what we already hold**
+(lookahead dissections, an overfit audit, a list of backtest cheats), not new strategies —
+which is axis M behaving as designed. 93 `NEW:<mechanism>` families were proposed and **none is
+registered yet**; registering them is what unblocks `/run-study` and `/run-enhance`.
 
 ## Validating a rubric change
 

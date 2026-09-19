@@ -14,7 +14,24 @@ description: Ingest one or more join-quant strategy .py files into the wiki/ kno
 
 ## 输入
 - 一个或多个策略文件路径（`strategies/<…>.py`）。未指定时，向用户确认要 ingest 哪些（或哪个聚类）。
-- 绩效数据来自 `data/fetch-manifest.json` 中对应 `postId` 的 `stats`；manifest 没有则在策略页标「绩效未公开」。
+- 绩效数据**按此优先级取**（2026-09-19 更正）：
+  1. 该策略页已有的 `normalized: { … }` 块（冻结台实测，最可信）；
+  2. `harness/normalize-train.tsv` 中该 `sourceFile` 的行；
+  3. `data/fetch-manifest.json` 的 `stats`。
+  ⚠ **manifest 是每次 fetch 整体覆盖写的**（当前仅 3 条），老帖的 `stats` 早已不在盘上——
+  别据此就标「绩效未公开」，先查前两项。
+
+## 先判断：新建页，还是**升级桩页**
+`utils/kb-stub.js` 在归一化时会自动生成**桩页**（frontmatter 带 `autoStub: true`，正文是
+「⚙ 自动桩页…忠实翻译待 `/ingest-strategy` 补全」）。**当前有 35 篇这样的桩页。**
+- 目标策略已有桩页 → **原地升级**：保留 `normalized:` 块与既有 frontmatter，补写「忠实翻译」、
+  改写 `concepts`/`factors`（桩页的是正则启发式推断，常含 `未分类`），**删掉 `autoStub: true`**。
+- 没有页 → 按下方流程新建。
+**绝不因为已存在桩页就跳过**——桩页没有忠实翻译，等于没 ingest。
+
+## 范围
+本技能只处理 `strategies/**.py`（raw 层 #1）。社区**研究类帖子**存在 `resources/**.md`（raw 层 #2，
+由 `utils/resource-fetch.js` 抓取），**不归本技能**，也不要为它们建策略页。
 
 ## 流程（对每个文件，严格按序）
 1. 读源码，解析头部元数据（postId / backtestId / title / 聚宽原帖 / 作者）与代码行数。
