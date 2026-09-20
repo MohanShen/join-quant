@@ -43,7 +43,25 @@
       "Bash(git show:*)",
       "Bash(mkdir:*)",
       "Bash(cp:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(node utils/consumption-report.js:*)",
+      "Bash(node utils/consumption.js:*)",
+      "Bash(node utils/daily-pipeline.js:*)",
+      "Bash(node utils/component-scan.js:*)",
+      "Bash(node utils/components.js:*)",
+      "Bash(node utils/family-match.js:*)",
+      "Bash(node utils/factorlib-query.js:*)",
+      "Bash(node utils/type-integrate-check.js:*)",
+      "Bash(node utils/series-backfill.js:*)",
+      "Bash(node utils/backtest-series.js:*)",
+      "Bash(node utils/harness-config.js:*)",
+      "Bash(node utils/wiki-type-build.js:*)",
+      "Bash(node utils/wiki-concept-lint.js:*)",
+      "Bash(node utils/normalize-sync.js:*)",
+      "Bash(node utils/wiki-epoch-repair.js:*)",
+      "Bash(node utils/normalize-backfill.js:*)",
+      "Bash(node utils/jq-http.js:*)",
+      "Bash(node utils/post-cache.js:*)"
     ]
   }
 }
