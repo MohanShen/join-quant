@@ -472,8 +472,20 @@ async function detectCompileError(page) {
   try {
     for (const t of [page, ...page.frames()]) {
       const hit = await t.evaluate((src) => {
+        // ⚠ Scan the page MINUS the code editor. `innerText` of the whole body includes the
+        // strategy's own source as rendered by Ace, so a strategy containing the word
+        // NameError / SyntaxError / ImportError anywhere was flagged as having raised it.
+        // That is not hypothetical: CLAUDE.md prescribes `try/except NameError` around
+        // set_order_cost (it is not bound at module scope in every JQ runtime), so the
+        // repo's own frozen cost block tripped the detector and killed a healthy backtest
+        // ~40s in, reporting compile-error against a run that never failed.
+        if (!document.body) return null;
+        const clone = document.body.cloneNode(true);
+        clone.querySelectorAll(
+          '.ace_editor, .ace_content, .ace_text-layer, textarea, #code, pre.ace_line'
+        ).forEach(el => el.remove());
         const rx = new RegExp(src);
-        const m = (document.body ? document.body.innerText : '').match(rx);
+        const m = (clone.innerText || '').match(rx);
         return m ? m[0].slice(0, 90) : null;
       }, RX.source).catch(() => null);
       if (hit) return hit;

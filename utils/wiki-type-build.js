@@ -51,6 +51,14 @@ const UNIVERSE_RULES = [
   ['全A', /get_all_securities\(\s*\[?['"]stock|get_index_stocks\(\s*['"]000985/g],
 ];
 
+/**
+ * The 整合回合 section is APPENDED by the integration round and lives nowhere else on the page.
+ * A plain regenerate would delete measured integration results — the same data loss
+ * wiki-family-build.js guards against for §3 metrics — so it is carried across verbatim.
+ */
+const ROUND_HEADING = '## 整合回合';
+const ROUND_PLACEHOLDER = '本节由整合回合追加；当前无记录';
+
 /** Below this many matches the evidence is too thin to name a universe. */
 const MIN_EVIDENCE = 3;
 /** Two universes both this strong, relative to the leader, means a hybrid book. */
@@ -237,7 +245,22 @@ if (require.main === module) {
 
   fs.mkdirSync(TYPE_DIR, { recursive: true });
   for (const [k, g] of Object.entries(groups)) {
-    fs.writeFileSync(path.join(TYPE_DIR, `${k}.md`), render(k, g));
+    // ⚠ Preserve the 整合回合 section. Everything above it is generated, but that section is
+    // APPENDED BY THE INTEGRATION ROUND and exists nowhere else on the page — a plain
+    // regenerate would silently delete measured integration results, the same failure
+    // wiki-family-build.js guards against for §3 metrics. Carry it across verbatim.
+    const p = path.join(TYPE_DIR, `${k}.md`);
+    let out = render(k, g);
+    if (fs.existsSync(p)) {
+      const old = fs.readFileSync(p, 'utf8');
+      const i = old.indexOf(ROUND_HEADING);
+      const recorded = i >= 0 ? old.slice(i) : '';
+      // Only carry it when it holds more than the placeholder.
+      if (recorded && !recorded.includes(ROUND_PLACEHOLDER)) {
+        out = out.slice(0, out.indexOf(ROUND_HEADING)) + recorded;
+      }
+    }
+    fs.writeFileSync(p, out);
   }
   console.log(`[type] wrote ${Object.keys(groups).length} page(s) to wiki/types/`);
 }

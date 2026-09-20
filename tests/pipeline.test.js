@@ -354,3 +354,54 @@ test('epoch 4 execution pins (carried into epoch 5)', async t => {
     assert.match(harness.config().comparability.trainResultsFromEarlierEpochs, /not comparable/i);
   });
 });
+
+test('the integration round is not silently erased', async t => {
+  const fsx = require('fs');
+  const pathx = require('path');
+  const R = pathx.join(__dirname, '..');
+
+  await t.test('wiki-type-build carries the 整合回合 section across a regenerate', () => {
+    // That section is APPENDED by the round and exists nowhere else on the page. The builder
+    // used to overwrite unconditionally, so the next `node utils/wiki-type-build.js` would
+    // have deleted a measured integration result — the same class of loss wiki-family-build
+    // guards against for §3 metrics.
+    const src = fsx.readFileSync(pathx.join(R, 'utils/wiki-type-build.js'), 'utf8');
+    assert.match(src, /ROUND_HEADING/);
+    assert.match(src, /ROUND_PLACEHOLDER/);
+    assert.ok(!/fs\.writeFileSync\(path\.join\(TYPE_DIR, `\$\{k\}\.md`\), render\(k, g\)\);/.test(src),
+      'unconditional overwrite would discard recorded rounds');
+  });
+
+  await t.test('a recorded round survives on disk', () => {
+    const p = pathx.join(R, 'wiki/types/全A-H-low.md');
+    if (!fsx.existsSync(p)) return;
+    const t2 = fsx.readFileSync(p, 'utf8');
+    if (t2.includes('int-001')) {
+      assert.ok(!t2.includes('本节由整合回合追加；当前无记录'),
+        'a page with a recorded round must not also carry the empty placeholder');
+    }
+  });
+});
+
+test('compile-error detection ignores the editor’s own source', async t => {
+  const fsx = require('fs');
+  const pathx = require('path');
+  const src = fsx.readFileSync(
+    pathx.join(__dirname, '..', 'utils/strategy-post-backtest.js'), 'utf8');
+
+  await t.test('the scan strips the Ace editor before matching', () => {
+    // Measured incident: the frozen cost block uses `try/except NameError` (set_order_cost is
+    // not bound at module scope in every JQ runtime — CLAUDE.md). Ace renders that text into
+    // document.body.innerText, the detector matched its own strategy's source, and a healthy
+    // backtest was killed ~40s in and reported as compile-error.
+    assert.match(src, /cloneNode\(true\)/);
+    assert.match(src, /ace_editor/);
+  });
+
+  await t.test('it no longer reads the raw body', () => {
+    const fn = src.slice(src.indexOf('async function detectCompileError'));
+    const body = fn.slice(0, fn.indexOf('\n}'));
+    assert.ok(!/document\.body\.innerText\s*\)\s*\.match/.test(body),
+      'matching raw body text re-introduces the false positive');
+  });
+});
