@@ -94,7 +94,7 @@ put it at that level. If two anchors both fit, take the **lower**.
 
 ### S — Survivability on the frozen harness
 
-*Would it plausibly clear `sharpe ≥ 2.5` on 2022-01-01→2023-12-31?*
+*Would it plausibly clear `sharpe ≥ 1.5` on 2022-01-01→2023-12-31?*
 
 Base rate is **22%** — most posts fail. Calibrate to that; do not hand out 4s and 5s freely.
 

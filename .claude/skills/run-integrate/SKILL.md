@@ -38,7 +38,7 @@ celebrate it.
 node utils/type-integrate-check.js <candidate.json>
 ```
 
-1. **Beat the best MEMBER, not the gate.** Clearing sharpe 2.5 is necessary and meaningless.
+1. **Beat the best MEMBER, not the gate.** Clearing the gate is necessary and meaningless — and integration's bar is 2.0, higher than the 1.5 used elsewhere (`harness/config` stageThresholds).
 2. **Declare the diversification share.** Sharpe up while return is not up is the diversification
    signature; the checker flags it and the verdict becomes `keep-with-caveat`. ⚠ The ledger has
    no return series, so the checker detects the *signature*, not the attribution — a flagged

@@ -65,14 +65,45 @@ function gate(sharpe) {
 }
 
 /**
- * objective = annualReturn - maxDrawdown when the gate passes, else 'DQ'.
- * Inputs are PERCENTAGES (as the SUMMARY line reports them); the result is a fraction.
+ * score = annualReturn - maxDrawdown. Inputs are PERCENTAGES (as the SUMMARY line reports
+ * them); the result is a fraction. Returns null only when the inputs are unusable.
+ */
+function score(annualPct, maxddPct) {
+  const a = parseFloat(annualPct), d = parseFloat(maxddPct);
+  if (!Number.isFinite(a) || !Number.isFinite(d)) return null;
+  return Number(((a - d) / 100).toFixed(4));
+}
+
+/**
+ * The objective as the ACTIVE epoch defines it.
+ *
+ * Epoch 5 keeps the score even when the gate fails. Before that, failing set it to 'DQ'
+ * (-inf), which threw away the difference between a sharpe of 2.4 and one of -1.8 and left
+ * five of fourteen families with no comparable number at all. The gate is now a label
+ * carried alongside the score, not an eraser.
  */
 function objective(annualPct, maxddPct, sharpe) {
+  const s = score(annualPct, maxddPct);
+  if (config().objective.keepScoreOnGateFail) return s == null ? 'DQ' : s;
   if (!gate(sharpe)) return 'DQ';
-  const a = parseFloat(annualPct), d = parseFloat(maxddPct);
-  if (!Number.isFinite(a) || !Number.isFinite(d)) return 'DQ';
-  return Number(((a - d) / 100).toFixed(4));
+  return s == null ? 'DQ' : s;
+}
+
+/**
+ * The sharpe bar a given STAGE requires. Same measurement everywhere — only the standard
+ * differs, which is a decision rule rather than a different bench.
+ */
+function stageGate(stage, sharpe) {
+  const t = (config().objective.stageThresholds || {})[stage];
+  const min = t == null ? config().objective.gateMin : t;
+  const v = parseFloat(sharpe);
+  return Number.isFinite(v) && v >= min;
+}
+
+/** The threshold a stage applies, for reporting. */
+function stageThreshold(stage) {
+  const t = (config().objective.stageThresholds || {})[stage];
+  return t == null ? config().objective.gateMin : t;
 }
 
 /** The exact Python literals the frozen block must contain, generated from the config. */
@@ -154,4 +185,5 @@ if (require.main === module) {
   }
 }
 
-module.exports = { config, window, oosCutoff, gate, objective, pythonLiterals, verify, todayISO };
+module.exports = { config, window, oosCutoff, gate, objective, score, stageGate, stageThreshold,
+                   pythonLiterals, verify, todayISO };

@@ -287,6 +287,16 @@ Only the directories whose contents aren't self-evident:
   guard. ⚠ These change **fills and fees**, so TRAIN results are **not comparable across epochs**.
   The ledger gained an `epoch` column; existing rows are tagged `2` and get re-measured by
   screening priority rather than invalidated in bulk.
+- **Epoch 5 (2026-09-20)**: scoring only — the measurement bench is identical to epoch 4.
+  Gate **2.5 -> 1.5**, and the score is **kept when the gate fails** (`keepScoreOnGateFail`).
+  2.5 sat at the 88th percentile of 124 measured strategies (median sharpe 1.02) and left
+  **5 of 14 families with every member at -inf**, carrying no comparative information at all.
+  Because score = annual - maxdd is a pure function of stored columns, all 103 affected rows
+  were rescored with **no backtests**; 16 flipped fail->pass, and the five dead families now
+  rank (趋势技术 0.2936, 网格 0.1411, 红利低频 0.1348, 三进兵 -0.0900).
+- **Stage thresholds**: normalize/study/enhance/validate require sharpe 1.5, **type integration
+  requires 2.0** (`harness.stageGate(stage, sharpe)`). Same measurement, different standard —
+  a decision rule, not a different bench.
 - ⚠ **`utils/strategy-normalize.js` had no `require.main === module` guard**, so a bare
   `require()` of it started a full 214-strategy batch and spent 42 of the day's 60 backtest
   minutes before it was killed. Guard added; every entry point in `utils/` needs one.

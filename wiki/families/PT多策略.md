@@ -9,7 +9,7 @@ memberCount: 2
 sources: { normalized: 1, study: 0, enhance: 0 }
 realism: "⚠⚠ 本批最被高估的家族——头条 obj 3.5955/sharpe 18 是纯薄基金 illiquidity 溢价，由构造把 universe 限死在成交额 5M–20M CNY/日的微流动 ETF、每日折价全换承载，零滑点成交在这些标的上不可实现，头条完全不可规模化；band 移到真流动基金(50M-100M)即 edge 崩塌到 DQ(sharpe 1.09)——唯一可真实成交的点恰是 edge 消失的点。溯源 study-q-1。"
 status: done
-updatedAt: 2026-09-16
+updatedAt: 2026-09-20
 ---
 
 # PT多策略 — strategy family
@@ -46,7 +46,7 @@ updatedAt: 2026-09-16
 | **1** | **[[fa0d3bd9_PT多策略并行]]** | 3.5952 | 18.16 | 369.07 | 9.55 | ✅ |
 | 2 | [[c70281d3_PT多策略分仓隔离插件V1.3]] | 3.5423 | 18.12 | 362.33 | 8.10 | ✅ |
 
-*2 gate-pass / 2 members. 快照 2026-09-16（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*2 gate-pass / 2 members. 快照 2026-09-20（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 - **「多策略」宣称对 c70281d3 未验证**：另一成员 [[c70281d3_PT多策略分仓隔离插件V1.3]]（4357 行「分仓隔离插件」框架）是否真的并行运行**多个不同子策略**，还是同样只是单一折价 sleeve 套了账本框架？（base fa0d3bd9 已证实是单 sleeve；c70281d3 待拆）。

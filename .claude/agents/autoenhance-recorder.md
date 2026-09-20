@@ -18,7 +18,7 @@ You act **only when a finalized strategy has a VAL result** (from Agent 3, Type-
 1. **Get the full story from Agent 1 (ideator)**: hypothesis, reasoning, the iteration trajectory (each TRAIN step and what changed), `sourceRefs`, `baseExpId`, `confirmed`/`flags` judgment.
 2. **Append `enhance/results.tsv`** one row (git-untracked; columns per `program.md` §记账):
    `expId  commit  ideaId  baseExpId  train_objective  val_objective  sharpe_val  gate_val  status  description`
-   - `status`: `recorded` / `val-dq` (finalized but VAL failed the 2.5 gate — still record, flag it) / `crash`.
+   - `status`: `recorded` / `val-dq` (finalized but VAL failed the 1.5 gate — still record, flag it) / `crash`.
 3. **Write the result back to the target family page `wiki/families/<family>.md` (primary record)**: append a **§2 变体表** row — `改动 / 来源 enhance-<expId> / Δobjective / Δsharpe / ΔmaxDD (vs the family baseline) / 结论`. **Append-only, never overwrite.** Give the candidate's strategy page `family: <family>`, then run `node utils/wiki-family-build.js` so §3 横评 picks it up.
    **If the idea's `mode` was `new-family`**: first register the new family name in `wiki-schema.md` §2.2 (controlled vocab; must not dup an existing family), scaffold `wiki/families/<new>.md` (leave §1/§4 for humans / later study), set this strategy's `family: <new>` as its first variant.
    Write the full detail (hypothesis, reasoning, iteration trajectory, TRAIN+VAL, `confirmed`, `flags` incl. ⚠零滑点高估) to `wiki/experiments/<expId>.md` (`enhance-schema.md` §6) as a detail附页.

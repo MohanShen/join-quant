@@ -18,13 +18,19 @@
 
 ## Epoch
 
-- **epoch**: 4
+- **epoch**: 5
 - **setAt**: 2026-09-20
-- **note**: **钉死三个此前交给策略自己设的执行项**——`order_volume_ratio=0.05`、基金费率
-  `set_order_cost(..., type='fund')`、`avoid_future_data=True`。它们改变**成交与费用**，因此
-  **TRAIN 结果与 epoch ≤3 不可横比**；账本新增 `epoch` 列记录每行由哪个台测得，既有 157 行标 `2`，
-  按筛选优先级逐步重测，不一次性作废。窗口/门槛/滑点沿用 epoch 3 不变。
-  （epoch 3 的改动：VAL 延长为 2024–2025、OOS 起点移至 2026-01-01、OOS 预算收紧为每纪元 2 次。）
+- **note**: **只改计分，不改测量台**（成本/钉死项/窗口与 epoch 4 完全相同）。两点：
+  ①**门槛 2.5 → 1.5**；②**未过闸也保留分数**。理由：124 个实测策略的夏普中位数是 **1.02**，2.5 约在
+  **88 百分位**，且在 2.5 下 **14 个家族里有 5 个全员 DQ**（三进兵/红利低频/网格/趋势技术/套利），
+  objective 全为 −inf、**不承载任何比较信息**——红利低频页自己写着「永不报 Δobjective」。把 2.5 换算成
+  收益门槛更直白：在该家族实测波动与 JQ 平的 4% 无风险利率下，2.5 要求年化 ≥ **37.34%**，它做到 23.41%，
+  页面结论是「不是没有 edge，是 edge 装不进闸」。另外 epoch 4 钉死执行项后同一策略夏普 18.16→11.15，
+  固定的 2.5 已在无人决定的情况下变得更严。
+  **闸门自此是标签不是橡皮擦**：分数照记，`gate` 列另记 pass/fail。**因 score = 年化 − 最大回撤 是账本
+  已存列的纯函数，全部历史行已就地重算，未花一分钟回测**（103 行重算，16 行由 fail 转 pass）。
+  **分阶段门槛**：normalize/study/enhance = 1.5，**类型级整合 = 2.0**（同一测量，不同标准）。
+  （epoch 4：钉死 `order_volume_ratio=0.05`/基金费率/`avoid_future_data`；epoch 3：VAL 延至 2024–2025。）
   团队架构见 `enhance/program.md`。
 
 ---
@@ -102,16 +108,18 @@
 单标量，越大越好。在窗口 `w` 上（`sharpe / annualReturn / maxDrawdown` 取自 JQ 回测结果）：
 
 ```
-gate(w)      = ( sharpe(w) >= 2.5 )                    # 硬门槛
 score(w)     = annualReturn(w) - maxDrawdown(w)        # 均为小数，如 0.35 = 35%
-objective(w) = score(w)      若 gate(w) 为真
-             = DQ (记为 -inf) 否则
+objective(w) = score(w)                                # epoch 5：永远记分
+gate(w)      = ( sharpe(w) >= 1.5 )                    # 标签，不再抹掉分数
+# 分阶段标准（同一测量，不同门槛）：
+#   normalize / study / enhance / validate : sharpe >= 1.5
+#   type integration                       : sharpe >= 2.0
 ```
 
 - **选择指标 = `objective(TRAIN)`**：Agent 1 迭代中的 keep/继续/定稿全看它。一个变异算「正向改进」当且仅当 `gate(TRAIN)` 为真且 `objective(TRAIN) > 当前定稿中最优`。
 - **`objective(VAL)`** 仅在策略**定稿后**算一次，作泛化确认，由 Agent 4 记账；**不参与迭代选择**。
 - **2025/OOS 永不计算**——被代码硬阻断。
-- 门槛 `2.5`、公式形式均为**冻结常量**，改动即新纪元。
+- 门槛与公式形式均为**冻结常量**，改动即新纪元；数值见 `harness/config/epoch-<n>.json`。
 
 > **annualReturn 的来源**：JoinQuant 回测列表（buildList）只给**总收益**（策略收益），不直接给年化。
 > 故 `annualReturn` 由执行器 `strategy-post-backtest.js` 按**实际回测区间天数**从总收益年化：
@@ -131,7 +139,7 @@ SUMMARY\t<window>\t<start>\t<end>\t<days>\t<total%>\t<annual%>\t<sharpe>\t<maxdd
 - `annual%` 已按 §4 从 `total%` 与实际 `days` 年化；`sharpe`/`maxdd%` 取自 JQ。
 - `status`：`completed`（可记账）/ `window-mismatch`（实际区间≠请求，**不得记账**，修正重跑）/ `no-trades`（跑完但**零成交**：收益与回撤同为 0，通常是选股/数据链路断了，**不得记账**，查因而非重跑）/ `failed`（崩溃，记 crash）。
 - `--window` 只接受 `train` / `val`；`holdout` 或任何 `>= 2026-01-01` 的区间会被 `OOS-BLOCKED` 拒跑（除非用户 `JQ_ALLOW_OOS=1`）。
-- 迭代中（Type-1）算 `objective(TRAIN)`；定稿（Type-2）算 `objective(VAL)`。门槛 `sharpe ≥ 2.5`。
+- 迭代中（Type-1）算 `objective(TRAIN)`；定稿（Type-2）算 `objective(VAL)`。门槛见配置（epoch 5：`sharpe ≥ 1.5`；整合回合 2.0）。
 
 ## 6. 变更协议（怎么开新纪元）
 

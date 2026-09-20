@@ -1,7 +1,7 @@
 {
   "epoch": 4,
   "setAt": "2026-09-20",
-  "status": "active",
+  "status": "historical",
   "note": "Pins three execution settings the bench previously left to each strategy. They change FILL and COST behaviour, so TRAIN results are no longer comparable to epoch<=3 — see comparability below. Windows, gate and slippage are carried over from epoch 3 unchanged.",
   "changedFromPreviousEpoch": [
     "order_volume_ratio pinned to 0.05 (was unset: JQ defaults to 0.25, and only 9 of 215 held strategies set it at all)",
@@ -71,5 +71,6 @@
     "orderVolumeRatio": "Unset, an order can absorb an implausible share of a bar. That is the mechanism behind the two highest-scoring strategies in the library: the ETF-discount study measured sharpe falling 8.44 -> 1.10 as the volume floor rose, because the edge is constructed from the thinnest instruments. At 1,000,000 CNY, 5% of bar volume keeps a position inside what a real book could absorb.",
     "fundOrderCost": "The override patches set_commission, which does not govern type='fund'. 170 held strategies set their own fund costs, so every ETF result was running on the author's numbers rather than the bench's.",
     "avoidFutureData": "A lookahead guard left to the author means 71 of 215 strategies ran without it."
-  }
+  },
+  "supersededAt": "2026-09-20"
 }

@@ -267,13 +267,29 @@ test('harness config', async t => {
   });
 
   await t.test('gate and objective reproduce rows already in the ledger', () => {
-    // 高质量稳定上涨策略: annual 56.98, maxdd 9.61, sharpe 3.21 -> 0.4737 pass
+    // 高质量稳定上涨策略: annual 56.98, maxdd 9.61, sharpe 3.21
     assert.strictEqual(harness.objective(56.98, 9.61, 3.21), 0.4737);
-    // 网格交易策略: sharpe 1.19 is below the gate -> DQ
-    assert.strictEqual(harness.objective(33.79, 19.68, 1.19), 'DQ');
-    assert.strictEqual(harness.gate(2.5), true);
-    assert.strictEqual(harness.gate(2.49), false);
+    assert.strictEqual(harness.gate(3.21), true);
+  });
+
+  await t.test('epoch 5 keeps the score when the gate fails', () => {
+    // 网格交易策略, sharpe 1.19: used to be erased to DQ, which threw away the difference
+    // between a near-miss and a disaster and left five families with no number at all.
+    assert.strictEqual(harness.objective(33.79, 19.68, 1.19), 0.1411);
+    assert.strictEqual(harness.gate(1.19), false);
+  });
+
+  await t.test('the gate is 1.5 and still rejects unusable input', () => {
+    assert.strictEqual(harness.gate(1.5), true);
+    assert.strictEqual(harness.gate(1.49), false);
     assert.strictEqual(harness.gate('not a number'), false);
+  });
+
+  await t.test('integration holds a higher bar than the other stages', () => {
+    assert.strictEqual(harness.stageThreshold('study'), 1.5);
+    assert.strictEqual(harness.stageThreshold('integrate'), 2.0);
+    assert.strictEqual(harness.stageGate('integrate', 1.8), false);
+    assert.strictEqual(harness.stageGate('study', 1.8), true);
   });
 
   await t.test('the Python literals still match — they cannot read the JSON', () => {
@@ -294,7 +310,7 @@ test('harness config', async t => {
   });
 });
 
-test('epoch 4 execution pins', async t => {
+test('epoch 4 execution pins (carried into epoch 5)', async t => {
   const lit = harness.pythonLiterals();
 
   await t.test('the config declares all three pins', () => {
@@ -329,9 +345,12 @@ test('epoch 4 execution pins', async t => {
     assert.ok(head.split('\t').includes('epoch'), 'ledger has no epoch column');
   });
 
-  await t.test('epoch 3 is sealed and states it is not comparable', () => {
-    const e3 = JSON.parse(fs.readFileSync(path.join(ROOT, 'harness/config/epoch-3.json'), 'utf8'));
-    assert.strictEqual(e3.status, 'historical');
-    assert.match(harness.config().comparability.trainResultsFromEarlierEpochs, /NOT comparable/);
+  await t.test('superseded epochs are sealed and comparability is stated', () => {
+    for (const n of [2, 3, 4]) {
+      const e = JSON.parse(fs.readFileSync(path.join(ROOT, `harness/config/epoch-${n}.json`), 'utf8'));
+      assert.strictEqual(e.status, 'historical', `epoch ${n} is not sealed`);
+    }
+    // Epoch 5 changed only SCORING, so epoch-4 measurements stay valid; epoch<=3 do not.
+    assert.match(harness.config().comparability.trainResultsFromEarlierEpochs, /not comparable/i);
   });
 });
