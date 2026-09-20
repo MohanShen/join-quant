@@ -43,18 +43,48 @@ test('epoch comparability', async t => {
     assert.ok(harness.measurementValid(harness.config().epoch));
   });
 
-  await t.test('epoch 4 counts under epoch 5 — the bump changed scoring only', () => {
-    // Strict equality here meant re-measuring 215 strategies for a rule change that touched
-    // no fill and no fee.
-    assert.ok(harness.measurementValid('4'), 'epoch-4 rows must stay valid under epoch 5');
-    assert.ok(harness.measurementValid(4));
+  // ⚠ These are written epoch-RELATIVE on purpose. An earlier version asserted "epoch 4 counts
+  // under epoch 5" and "epoch <= 3 does not", which was true when epoch 5 was active and became
+  // false the moment epoch 6 landed — the same hard-coded-constant drift this repo keeps paying
+  // for. The rule under test is the mechanism, not any particular epoch's answer.
+  const declaredChain = () => {
+    const active = harness.config().epoch;
+    const ok = new Set([active]);
+    for (let e = active; e > 1; e--) {
+      let cfg;
+      try {
+        cfg = JSON.parse(fs.readFileSync(
+          path.join(ROOT, `harness/config/epoch-${e}.json`), 'utf8'));
+      } catch { break; }
+      if ((cfg.comparability || {}).measurementPreservedFromPrevious !== true) break;
+      ok.add(e - 1);
+    }
+    return ok;
+  };
+
+  await t.test('validity follows the declared measurement-preserved chain', () => {
+    const expected = declaredChain();
+    for (let e = 1; e <= harness.config().epoch; e++) {
+      assert.strictEqual(harness.measurementValid(String(e)), expected.has(e),
+        `epoch ${e} should be ${expected.has(e) ? 'valid' : 'invalid'} under ` +
+        `epoch ${harness.config().epoch}`);
+    }
   });
 
-  await t.test('epoch <= 3 does NOT count — epoch 4 pinned execution', () => {
-    // order_volume_ratio / fund costs / avoid_future_data change fills and fees. Accepting
-    // pre-pin rows would silently mix two benches in one table.
-    for (const e of [1, 2, 3]) {
-      assert.ok(!harness.measurementValid(String(e)), `epoch ${e} must require re-measurement`);
+  await t.test('a bump that changed fills or fees breaks the chain', () => {
+    // Every epoch that declares measurementPreservedFromPrevious:false must cut off everything
+    // older than itself, or pre-change rows silently mix into current tables.
+    const active = harness.config().epoch;
+    for (let e = 2; e <= active; e++) {
+      let cfg;
+      try {
+        cfg = JSON.parse(fs.readFileSync(
+          path.join(ROOT, `harness/config/epoch-${e}.json`), 'utf8'));
+      } catch { continue; }
+      if ((cfg.comparability || {}).measurementPreservedFromPrevious === false) {
+        assert.strictEqual(harness.measurementValid(String(e - 1)), false,
+          `epoch ${e} is not measurement-preserving, so epoch ${e - 1} must be invalid`);
+      }
     }
   });
 

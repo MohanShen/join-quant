@@ -70,6 +70,8 @@ node utils/normalize-backfill.js --dry        # queue held-but-unmeasured strate
 node utils/normalize-sync.js                  # reconcile wiki pages + pending queue against the ledger
 node utils/harness-config.js                  # print the active harness epoch
 node utils/harness-config.js --verify         # check the frozen Python literals match it
+node utils/stockcost-affected.js              # who the epoch-6 stock-cost pin actually changes
+node utils/stockcost-affected.js --enqueue    # queue those for re-measurement
 node utils/consumption-report.js --next       # what each loop should take next
 node utils/wiki-type-build.js --check         # family -> type assignment (universe x turnover)
 node utils/wiki-concept-lint.js               # concept strategyCount drift
@@ -512,6 +514,25 @@ Only the directories whose contents aren't self-evident:
   Because score = annual - maxdd is a pure function of stored columns, all 103 affected rows
   were rescored with **no backtests**; 16 flipped fail->pass, and the five dead families now
   rank (趋势技术 0.2936, 网格 0.1411, 红利低频 0.1348, 三进兵 -0.0900).
+- **Epoch 6 (2026-09-20)**: pins **stock** order costs —
+  `set_order_cost(OrderCost(open_commission=0.0003, close_commission=0.0003, close_tax=0.001,
+  min_commission=5), type='stock')`. ⚠ The bench never controlled stock fees at all: the OVERRIDE
+  intercepted only `type=='fund'` and forwarded everything else to the author's fee schedule, and
+  **`set_commission` does not govern stocks** because JQ lists it as **已废弃** in favour of
+  `set_order_cost`. Measured by probe (`study/_probes/probe-stockcost.py`): injecting a 5%/side
+  stock commission into `int-001` moved total return **+64.44% → −11.33% (−75.77pp)**, so the
+  author's setting wins outright. Same class of bug as epoch 4's fund-cost gap, on the stock leg.
+  The pinned values are economically identical to what `PerTrade(0.0003/0.0013/5)` was meant to
+  express — the bench's INTENT is unchanged, epoch 6 only makes it apply.
+- ⚠ **Epoch 6's re-measure set is 23, not 215.** `measurementValid()` is deliberately coarse and
+  invalidates every pre-6 row, but the change can only move a strategy that set its OWN stock cost
+  to something other than the bench's. `node utils/stockcost-affected.js` classifies all 215:
+  **120** never called `set_order_cost(type='stock')` (they ran on JQ's default, which *is* the
+  bench value), **57** declared bench-equivalent economics (the pin is a no-op), **37** differ —
+  of which **22** are normalized rows — plus 1 unparseable treated as affected. `--enqueue` puts
+  them at the head of `data/pending-normalize.json`. A missing `close_tax` counts as
+  bench-default, not as a difference. 36 of the affected declared a *cheaper* commission than the
+  bench, so the pre-6 ledger **flatters** them.
 - **Stage thresholds**: normalize/study/enhance/validate require sharpe 1.5, **type integration
   requires 2.0** (`harness.stageGate(stage, sharpe)`). Same measurement, different standard —
   a decision rule, not a different bench.

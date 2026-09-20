@@ -60,14 +60,28 @@ def set_commission(*a, **k):
     __jq_set_commission(PerTrade(buy_cost=0.0003, sell_cost=0.0013, min_cost=5))
 # epoch 4: set_commission does NOT govern funds, so 170 held strategies were running
 # ETF trades on their own costs. Pin the fund table too, and neutralise re-sets.
+# epoch 6: it does not govern STOCKS either. JQ deprecated set_commission in favour of
+# set_order_cost, so a strategy's own type='stock' call won outright and 95 of 215 held
+# strategies were being charged their AUTHOR's fees. Measured by probe: a 5%/side stock
+# commission injected into int-001 moved total return +64.44% -> -11.33% (-75.77pp), i.e.
+# the bench had no control over stock fees at all. Both tables are now pinned, and the
+# fall-through forwards only the types we do not model (futures, mmf, ...).
 # Guarded: unlike set_slippage/set_commission, set_order_cost is NOT bound at module
 # scope in every JQ runtime — rebinding it unguarded raised NameError at import and
 # the whole strategy came back compile-error.
 try:
     __jq_set_order_cost = set_order_cost
+    def __jq_cost_type(a, k):
+        t = k.get('type')
+        if t is None and len(a) > 1:
+            t = a[1]
+        return t
     def set_order_cost(*a, **k):
-        if k.get('type') == 'fund' or (len(a) > 1 and a[1] == 'fund'):
+        __t = __jq_cost_type(a, k)
+        if __t == 'fund':
             __jq_set_order_cost(OrderCost(open_commission=0.0003, close_commission=0.0003, close_tax=0, min_commission=5), type='fund')
+        elif __t == 'stock':
+            __jq_set_order_cost(OrderCost(open_commission=0.0003, close_commission=0.0003, close_tax=0.001, min_commission=5), type='stock')
         else:
             __jq_set_order_cost(*a, **k)
 except NameError:
@@ -84,6 +98,12 @@ try:
         set_commission(PerTrade(buy_cost=0.0003, sell_cost=0.0013, min_cost=5))
         try:
             set_order_cost(OrderCost(open_commission=0.0003, close_commission=0.0003, close_tax=0, min_commission=5), type='fund')
+        except Exception:
+            pass
+        # epoch 6: pin the stock table too, AFTER the strategy's own initialize so it wins
+        # even when the strategy set its costs there rather than at module scope.
+        try:
+            set_order_cost(OrderCost(open_commission=0.0003, close_commission=0.0003, close_tax=0.001, min_commission=5), type='stock')
         except Exception:
             pass
 except NameError:

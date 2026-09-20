@@ -466,3 +466,83 @@ test('factorlib is wired as a hypothesis source, with the bench boundary enforce
     assert.match(cri, /No borrowed numbers/);
   });
 });
+
+test('epoch 6 pins the stock order cost', async t => {
+  const h = require('../utils/harness-config');
+  const sc = require('../utils/stockcost-affected');
+
+  await t.test('the active epoch declares a stock cost table', () => {
+    const c = h.config();
+    assert.strictEqual(c.epoch, 6);
+    assert.ok(c.costs.stockOrderCost, 'epoch 6 must declare costs.stockOrderCost');
+  });
+
+  await t.test('it reproduces what the deprecated set_commission MEANT', () => {
+    // PerTrade(buy 0.0003, sell 0.0013) = 0.03% each way + 0.1% stamp on the sell. The bench's
+    // intent is unchanged; epoch 6 only makes it apply, because set_commission is 已废弃 and
+    // a strategy's own set_order_cost(type='stock') won outright.
+    const s = h.config().costs.stockOrderCost;
+    assert.strictEqual(s.openCommission, 0.0003);
+    assert.strictEqual(s.closeCommission, 0.0003);
+    assert.strictEqual(s.closeTax, 0.001);
+  });
+
+  await t.test('the literal is generated and both Python blocks carry it', () => {
+    const lit = h.pythonLiterals();
+    assert.match(lit.stockOrderCost, /type='stock'/);
+    assert.deepStrictEqual(h.verify(), [], 'frozen Python must match the config');
+  });
+
+  await t.test('the OVERRIDE intercepts stock as well as fund', () => {
+    const src = fs.readFileSync(path.join(__dirname, '..', 'utils/strategy-normalize.js'), 'utf8');
+    assert.match(src, /__t == 'fund'/);
+    assert.match(src, /__t == 'stock'/);
+    // The old shape forwarded everything that was not 'fund' to the author's settings.
+    assert.ok(!/if k\.get\('type'\) == 'fund' or \(len\(a\) > 1 and a\[1\] == 'fund'\):/.test(src),
+      'the fund-only wrapper is what let author stock costs through');
+  });
+
+  await t.test('epoch-5 rows are no longer valid measurements', () => {
+    // Costs changed, so this bump is explicitly NOT measurement-preserving.
+    assert.strictEqual(h.measurementValid('5'), false);
+    assert.strictEqual(h.measurementValid('6'), true);
+  });
+});
+
+test('the epoch-6 re-measure set is narrowed to what actually changed', async t => {
+  const sc = require('../utils/stockcost-affected');
+  const r = sc.classify();
+
+  await t.test('strategies that never set a stock cost are unaffected', () => {
+    // They ran on JQ's default (万3 + 0.1% stamp), which is exactly what epoch 6 pins.
+    assert.ok(r.unset.length > 0);
+  });
+
+  await t.test('bench-equivalent declarations are a no-op', () => {
+    assert.ok(r.equivalent.length > 0);
+    for (const f of r.equivalent.slice(0, 5)) assert.strictEqual(typeof f, 'string');
+  });
+
+  await t.test('only differing declarations are affected', () => {
+    assert.ok(r.affected.length > 0 && r.affected.length < r.unset.length,
+      'a change that touches everything would not be worth narrowing');
+    for (const a of r.affected.slice(0, 5)) {
+      const d = a.declared;
+      const same = d.open === r.bench.open && d.close === r.bench.close &&
+                   (d.ctax == null || d.ctax === r.bench.ctax);
+      assert.ok(!same, `${a.file} was classified affected but matches the bench`);
+    }
+  });
+
+  await t.test('a missing close_tax counts as bench default, not as a difference', () => {
+    // Omitting it leaves JQ's 0.1% stamp in place, which IS the bench value.
+    const d = sc.declaredStockCost(
+      "set_order_cost(OrderCost(open_commission=0.0003, close_commission=0.0003, min_commission=5), type='stock')");
+    assert.strictEqual(d.ctax, null);
+  });
+
+  await t.test('fractional literals like 2.5/10000 parse', () => {
+    assert.ok(Math.abs(sc.num('2.5/10000') - 0.00025) < 1e-12);
+    assert.strictEqual(sc.num('0.0003'), 0.0003);
+  });
+});

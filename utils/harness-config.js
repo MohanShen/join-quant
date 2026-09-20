@@ -172,6 +172,16 @@ function pythonLiterals() {
       + `close_commission=${f.closeCommission}, close_tax=${f.closeTax}, `
       + `min_commission=${f.minCommission}), type='fund')`;
   }
+  // epoch 6: the stock leg. set_commission(PerTrade) never governed it — JQ deprecated that
+  // API in favour of set_order_cost, so a strategy's own type='stock' call won outright.
+  // Measured: a 5%/side stock commission injected into int-001 moved total return
+  // +64.44% -> -11.33%, proving the bench was not in control of stock fees at all.
+  if (c.stockOrderCost) {
+    const s = c.stockOrderCost;
+    lit.stockOrderCost = `set_order_cost(OrderCost(open_commission=${s.openCommission}, `
+      + `close_commission=${s.closeCommission}, close_tax=${s.closeTax}, `
+      + `min_commission=${s.minCommission}), type='stock')`;
+  }
   return lit;
 }
 
@@ -182,7 +192,7 @@ function pythonLiterals() {
 function verify() {
   const lit = pythonLiterals();
   const problems = [];
-  const optional = ['avoidFutureData', 'orderVolumeRatio', 'fundOrderCost'].filter(k => lit[k]);
+  const optional = ['avoidFutureData', 'orderVolumeRatio', 'fundOrderCost', 'stockOrderCost'].filter(k => lit[k]);
   const files = [
     ['enhance/strategy_template.py', ['slippage', 'commission', 'benchmark', 'useRealPrice', ...optional]],
     ['utils/strategy-normalize.js', ['slippage', 'commission', ...optional]],

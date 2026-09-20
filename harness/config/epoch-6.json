@@ -1,25 +1,28 @@
 {
-  "epoch": 5,
+  "epoch": 6,
   "setAt": "2026-09-20",
-  "status": "superseded",
-  "note": "Scoring change only — the measurement bench (costs, pins, windows) is IDENTICAL to epoch 4. The gate drops to 1.5 and the score is kept even when the gate fails, so a disqualified strategy still has a comparable number instead of -inf. Because score = annualReturn - maxDrawdown is a pure function of columns the ledger already stores, every existing row was rescored WITHOUT re-running a backtest.",
+  "status": "active",
+  "note": "Pins STOCK order costs, which the bench never actually controlled. The OVERRIDE intercepted only set_order_cost(type='fund') and forwarded everything else to the author's own fee schedule; set_commission(PerTrade) does NOT re-pin stocks because JQ deprecated it in favour of set_order_cost. Measured by probe: injecting a 5%/side stock commission into int-001 moved total return from +64.44% to -11.33% (-75.77pp), i.e. the author's setting governs completely. 95 of 215 held strategies set their own stock cost; 22 normalized rows declare economics that DIFFER from the bench and must be re-measured (24 already match).",
   "changedFromPreviousEpoch": [
-    "objective.gateMin 2.5 -> 1.5 (2.5 sat at the 88th percentile of 124 measured strategies and left 5 of 14 families with no score at all)",
-    "objective.keepScoreOnGateFail false -> true (a failing strategy keeps its number; the gate becomes a label, not an eraser)",
-    "stageThresholds added: screen/study/enhance 1.5, type integration 2.0"
+    "costs.stockOrderCost pinned: OrderCost(open_commission=0.0003, close_commission=0.0003, close_tax=0.001, min_commission=5)",
+    "the OVERRIDE's set_order_cost wrapper now intercepts 'stock' as well as 'fund'",
+    "set_commission(PerTrade) retained for belt-and-braces only; it is deprecated by JQ and does not govern stocks"
   ],
   "comparability": {
-    "trainResultsFromEarlierEpochs": "Costs and windows are unchanged from epoch 4, so epoch-4 measurements remain valid. Epoch<=3 rows were measured WITHOUT the execution pins and are still not comparable. The `epoch` column records which bench MEASURED a row; objective/gate follow the ACTIVE scoring rule and are recomputed.",
-    "unchangedFromEpoch4": [
+    "trainResultsFromEarlierEpochs": "NOT comparable for any strategy that set its own stock order cost with economics differing from the bench — 22 normalized rows. The other rows are unaffected: 24 declared harness-equivalent economics already, and strategies that never called set_order_cost(type='stock') were always governed by the bench default. Re-measure the 22 by screening priority rather than invalidating the ledger wholesale, exactly as epoch 4 did.",
+    "unchangedFromEpoch5": [
       "windows",
-      "costs",
-      "pins",
+      "gate",
+      "score",
       "slippage",
+      "orderVolumeRatio",
+      "avoidFutureData",
       "capital",
-      "frequency"
+      "frequency",
+      "fundOrderCost"
     ],
-    "measurementPreservedFromPrevious": true,
-    "measurementPreservedNote": "Scoring-only change; the measurement bench is identical to epoch 4."
+    "measurementPreservedFromPrevious": false,
+    "measurementPreservedNote": "Stock fills are now charged the bench's fees instead of the author's. That changes fees for a material slice of the library, so epoch-5 rows are not current for the affected strategies."
   },
   "windows": {
     "train": {
@@ -57,6 +60,12 @@
       "closeCommission": 0.0003,
       "closeTax": 0,
       "minCommission": 5
+    },
+    "stockOrderCost": {
+      "openCommission": 0.0003,
+      "closeCommission": 0.0003,
+      "closeTax": 0.001,
+      "minCommission": 5
     }
   },
   "objective": {
@@ -79,9 +88,9 @@
   "rationale": {
     "orderVolumeRatio": "Unset, an order can absorb an implausible share of a bar. That is the mechanism behind the two highest-scoring strategies in the library: the ETF-discount study measured sharpe falling 8.44 -> 1.10 as the volume floor rose, because the edge is constructed from the thinnest instruments. At 1,000,000 CNY, 5% of bar volume keeps a position inside what a real book could absorb.",
     "fundOrderCost": "The override patches set_commission, which does not govern type='fund'. 170 held strategies set their own fund costs, so every ETF result was running on the author's numbers rather than the bench's.",
-    "avoidFutureData": "A lookahead guard left to the author means 71 of 215 strategies ran without it."
+    "avoidFutureData": "A lookahead guard left to the author means 71 of 215 strategies ran without it.",
+    "stockOrderCost": "Economically identical to what set_commission(PerTrade(buy=0.0003, sell=0.0013, min=5)) was meant to express: 0.03% each way plus 0.1% stamp duty on the sell. The bench's intent is unchanged; epoch 6 only makes it actually apply. 36 of the affected strategies declared a CHEAPER open_commission than 0.0003, so the existing ledger flatters them."
   },
-  "supersededAt": "2026-09-20",
   "rationaleForGate": {
     "distribution": "Across 124 measured strategies the median sharpe is 1.02 and 2.5 is roughly the 88th percentile; 1.5 is the top third (41 of 124).",
     "deadFamilies": "At 2.5, five of fourteen families (三进兵, 红利低频, 网格, 趋势技术, 套利) had EVERY member disqualified, so objective was -inf for all of them and carried no comparative information — 红利低频's own page records that its study could never report a delta.",
