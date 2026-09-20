@@ -203,6 +203,71 @@ test('reconcile', async t => {
   });
 });
 
+test('two-pass reconcile: tight first, relaxed only as a fallback', async t => {
+  const mkCurve = (id, totalPct, maxddPct) => ({
+    backtestId: id, start: '2022-01-04', end: '2023-12-29', points: 484,
+    totalPct, maxddPct, annualPct: backfill.annualize(totalPct, 724),
+  });
+  // A reconstructed row: no measured total, so the relaxed annual bound is available to it.
+  const recon = (sourceFile, annual, maxdd) => ({
+    sourceFile, start: '2022-01-01', end: '2023-12-31', days: 729,
+    total: null, annual, maxdd, epoch: '2',
+  });
+
+  await t.test('the relaxed bound applies ONLY to reconstructed rows', () => {
+    const cand = mkCurve('b1', 78.86, 19.68);
+    const annualAtRowDays = backfill.annualize(78.86, 729);
+    // 0.2pp away: inside the reconstructed bound, outside the tight one.
+    const row = recon('strategies/a.py', annualAtRowDays + 0.2, 19.68);
+    assert.ok(backfill.matches(row, cand, true), 'reconstructed row should match when relaxed');
+    assert.ok(!backfill.matches(row, cand, false), 'the same row must NOT match tight');
+    // A row WITH a measured total is held to the exact total regardless of the relaxed flag.
+    const measured = { ...row, total: 91.0 };
+    assert.ok(!backfill.matches(measured, cand, true), 'a measured total is never relaxed');
+  });
+
+  await t.test('drawdown is never relaxed', () => {
+    const cand = mkCurve('b1', 78.86, 19.68);
+    const row = recon('strategies/a.py', backfill.annualize(78.86, 729), 25.0);
+    assert.ok(!backfill.matches(row, cand, true));
+  });
+
+  await t.test('a tight match is not spoiled by a relaxed-only rival curve', () => {
+    // Regression: one relaxed pass over everything pulled extra curves into the candidate set
+    // of rows that already matched tightly and pushed 4 of them into "ambiguous", including
+    // the 低换手红利 component candidate.
+    const exact = backfill.annualize(78.86, 729);
+    const row = recon('strategies/tight.py', exact, 19.68);
+    const curves = [
+      mkCurve('tight', 78.86, 19.68),        // agrees to ~0.00pp
+      mkCurve('loose', 79.30, 19.68),        // only reachable under the relaxed bound
+    ];
+    const r = backfill.reconcile([row], curves);
+    assert.strictEqual(r.matched.length, 1, 'the tight match should survive');
+    assert.strictEqual(r.matched[0].curve.backtestId, 'tight');
+    assert.strictEqual(r.matched[0].relaxed, false);
+  });
+
+  await t.test('every row lands in exactly one bucket', () => {
+    // Concatenating both passes' ambiguous lists double-counted rows both passes contested,
+    // so the buckets summed to 135 against a ledger of 124.
+    const rows = [
+      recon('strategies/a.py', backfill.annualize(78.86, 729), 19.68),
+      recon('strategies/b.py', backfill.annualize(50.00, 729), 11.00),
+      recon('strategies/c.py', -999, 99.0),                       // nothing can match
+    ];
+    const curves = [mkCurve('x', 78.86, 19.68), mkCurve('y', 50.00, 11.00)];
+    const r = backfill.reconcile(rows, curves);
+    assert.strictEqual(r.matched.length + r.ambiguous.length + r.unmatched.length, rows.length);
+  });
+
+  await t.test('matchBasis records how a row was paired', () => {
+    assert.strictEqual(backfill.matchBasis({ total: 78.86 }, false), 'exact-total');
+    assert.strictEqual(backfill.matchBasis({ total: null }, false), 'tight-reconstructed');
+    assert.strictEqual(backfill.matchBasis({ total: null }, true), 'relaxed-reconstructed');
+  });
+});
+
 test('diversification decomposition', async t => {
   const n = 300;
   // Deterministic pseudo-random daily returns with a `drift` added to each day.

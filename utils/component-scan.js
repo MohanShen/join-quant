@@ -222,6 +222,7 @@ function members() {
     const family = (idx[c[0]] || {}).family || '';
     out.push({
       sourceFile: c[0], title: c[2], family, type: f2t[family] || '(untyped)',
+      days: parseInt(c[6], 10) || null,
       annual: parseFloat(c[8]), sharpe: parseFloat(c[9]), maxdd: parseFloat(c[10]),
       objective: c[11] === 'DQ' ? null : parseFloat(c[11]), gate: c[12], epoch,
       seriesKey: key, rec,
@@ -230,12 +231,20 @@ function members() {
   return out;
 }
 
-/** Compare series-derived metrics against the ledger row they belong to. */
+/**
+ * Compare series-derived metrics against the ledger row they belong to.
+ *
+ * ⚠ Annualize over the ROW's day count, not the curve's own span. The ledger uses the
+ * REQUESTED window (a uniform 729 days on TRAIN); a curve spans the trading days that
+ * occurred (724). Using each side's own span injects a systematic gap that SCALES WITH THE
+ * RETURN LEVEL — about 0.27pp at the median but 0.80pp on an 85.9% book — which made healthy
+ * rows look like bad matches and buried any real disagreement underneath a known convention.
+ */
 function validate(ms) {
   const rows = [];
   for (const m of ms) {
     const r = series.dailyReturns(m.rec.cum);
-    const days = Math.max(1, Math.round(daysBetween(m.rec.start, m.rec.end)));
+    const days = m.days || Math.max(1, Math.round(daysBetween(m.rec.start, m.rec.end)));
     const got = metrics(r, days);
     if (!got) continue;
     rows.push({

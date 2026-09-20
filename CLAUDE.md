@@ -291,6 +291,20 @@ Only the directories whose contents aren't self-evident:
   FROM the curve. A curve claimed by several rows is resolved by **body hash** (16% of fetches are
   byte-identical duplicates, which legitimately share one curve); anything still ambiguous is
   **skipped and reported**, never guessed — a wrong curve silently corrupts every correlation.
+- Matching runs in **two passes: tight, then relaxed**. Rows reconstructed from the wiki carry no
+  `total_pct` and their retained curve is often a LATER run of the same strategy — agreeing on
+  drawdown to 0.00–0.01pp while annual differs by ~0.14pp (the documented ~0.15pp re-run drift).
+  At 0.10pp that recovered 0 of 42; `TOL_ANNUAL_RECONSTRUCTED = 0.25` recovers 17. The bound sits
+  at the **tight end of a plateau** (12 rows at 0.15, 20 at 0.25, still 20 at 1.00), so a looser
+  one buys nothing and only risks a wrong pairing. **Drawdown tolerance is never relaxed.**
+  Relaxation must stay a FALLBACK: one relaxed pass over everything pulled rival curves into the
+  candidate set of rows that already matched tightly and pushed 4 into "ambiguous" — including the
+  低换手红利 component candidate. Each row gets exactly ONE verdict; concatenating both passes'
+  ambiguous lists once made the buckets sum to 135 against a ledger of 124.
+- ⚠ `component-scan.js --validate` annualizes over the **ROW's** day count. Using each side's own
+  span injects a gap that SCALES WITH RETURN LEVEL — 0.27pp at the median but 0.80pp on an 85.9%
+  book — which made healthy rows look like bad matches. With the convention removed, median
+  |Δannual| and |Δmaxdd| are both **0pp** across 88 backfilled rows and the worst is 0.24pp.
 - ⚠⚠ **`component-scan.js` blends are ex-post, cost-free and daily-rebalanced** — an upper bound and a
   screening device, never a result. Nothing from it may be written to a family page or results ledger;
   a survivor still has to be built as one strategy and run through the frozen harness. It ranks on

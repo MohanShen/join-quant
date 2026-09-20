@@ -150,8 +150,22 @@ async function scan({ limit }) {
 
 // ── Match against the ledger ────────────────────────────────────────────────
 
-const TOL_PP = 0.10;      // metrics are stored to 2dp; re-runs move annual ~0.15pp
+const TOL_PP = 0.10;      // metrics are stored to 2dp
 const TOL_DAYS = 3;       // the window check strategy-post-backtest.js already applies
+
+/**
+ * A wider ANNUAL tolerance for rows reconstructed from the wiki (those with no measured
+ * `total_pct`). Their figures were stamped by an earlier normalize run, and re-running the
+ * same file moves annual return by ~0.15pp (CLAUDE.md) — so the retained curve is often a
+ * LATER run of the same strategy, agreeing on drawdown to 0.00–0.01pp while annual differs by
+ * ~0.14pp. At 0.10pp that recovered 0 of 42; at 0.25pp it recovers 20.
+ *
+ * ⚠ Chosen at the tight end of a plateau, not by tuning for yield: recovery is 12 rows at
+ * 0.15, 20 at 0.25, and still 20 at 1.00pp. Nothing more exists to find, so a looser bound
+ * would buy no rows and only widen the chance of a wrong pairing. The drawdown tolerance is
+ * NOT relaxed — it is what keeps the match honest.
+ */
+const TOL_ANNUAL_RECONSTRUCTED = 0.25;
 
 function ledgerRows(windowName) {
   const p = LEDGER(windowName);
@@ -181,16 +195,27 @@ function ledgerRows(windowName) {
  * tolerance and matched 0 of 124 rows on the first attempt. `total_pct` agrees exactly
  * (78.86 = 78.86), so the discrepancy is purely the denominator.
  */
-function matches(row, cand) {
+function matches(row, cand, relaxed = true) {
   if (!cand.start || !cand.end || cand.totalPct == null) return false;
   if (daysBetween(row.start, cand.start) > TOL_DAYS) return false;
   if (daysBetween(row.end, cand.end) > TOL_DAYS) return false;
+  // Never relaxed: drawdown is the key that keeps a relaxed annual match honest.
   if (Math.abs(row.maxdd - cand.maxddPct) > TOL_PP) return false;
   // The strongest key when the row has it: a measured total is exact, with no annualization.
   if (row.total != null) return Math.abs(row.total - cand.totalPct) <= TOL_PP;
   const candAnnual = annualize(cand.totalPct, row.days);
-  return candAnnual != null && Math.abs(row.annual - candAnnual) <= TOL_PP;
+  if (candAnnual == null) return false;
+  return Math.abs(row.annual - candAnnual) <= (relaxed ? TOL_ANNUAL_RECONSTRUCTED : TOL_PP);
 }
+
+/**
+ * How a row was paired, recorded on the stored curve so a consumer can tell them apart.
+ * `relaxed-reconstructed` means the curve may be a LATER run of the same strategy rather than
+ * the exact run the ledger row records — the same distinction the ledger already draws between
+ * measured and reconstructed rows.
+ */
+const matchBasis = (row, relaxed) =>
+  (row.total != null ? "exact-total" : (relaxed ? "relaxed-reconstructed" : "tight-reconstructed"));
 
 /**
  * Content hash of a strategy body, ignoring the metadata header the fetcher stamps on.
@@ -208,12 +233,12 @@ const bodyHash = f => {
   } catch { return null; }
 };
 
-function reconcile(rows, curves) {
-  const pairs = [];
-  for (const row of rows) {
-    const hits = curves.filter(c => matches(row, c));
-    pairs.push({ row, hits });
-  }
+/**
+ * One matching pass at a fixed strictness. Split out so `reconcile` can run the tight rule
+ * first and offer the relaxed one only to what it could not place.
+ */
+function pass(rows, curves, relaxed) {
+  const pairs = rows.map(row => ({ row, hits: curves.filter(c => matches(row, c, relaxed)) }));
   // Which rows claim each curve. A curve claimed by several DIFFERENT strategies is ambiguous;
   // one claimed by several copies of the SAME strategy is not.
   const claimants = new Map();
@@ -245,9 +270,48 @@ function reconcile(rows, curves) {
       }
       // else: duplicates of one strategy — every copy legitimately gets the same curve.
     }
-    matched.push({ row: p.row, curve: distinct[0] });
+    matched.push({ row: p.row, curve: distinct[0], relaxed });
   }
   return { matched, ambiguous, unmatched };
+}
+
+/**
+ * Match in TWO passes: the tight rule for everyone, then the relaxed reconstructed rule only
+ * for rows the tight pass left unplaced.
+ *
+ * Relaxation must be a FALLBACK, not a replacement. Running one relaxed pass over everything
+ * pulled extra curves into the candidate set of rows that already had a clean tight match and
+ * pushed 4 of them into "ambiguous" — including 低换手红利策略, the component candidate. A row
+ * that matches uniquely at 0.10pp has strictly better evidence than one that needs 0.25pp, so
+ * the tight result wins and its curve is removed from circulation before the second pass runs.
+ */
+function reconcile(rows, curves) {
+  const tight = pass(rows, curves, false);
+
+  const leftover = [...tight.unmatched, ...tight.ambiguous.map(a => a.row)];
+  if (!leftover.length) return tight;
+
+  // Curves already spoken for cannot be offered again.
+  const taken = new Set(tight.matched.map(m => m.curve.backtestId));
+  const free = curves.filter(c => !taken.has(c.backtestId));
+  const loose = pass(leftover, free, true);
+
+  // Exactly ONE verdict per leftover row. Concatenating the two passes' ambiguous lists
+  // double-counted every row that both passes found contested, so the three buckets summed to
+  // 135 against a ledger of 124. A row the tight pass already found contested stays ambiguous
+  // even when the relaxed pass merely fails to place it — that is information, not absence.
+  const placed = new Set(loose.matched.map(m => m.row));
+  const tightAmbiguous = new Map(tight.ambiguous.map(a => [a.row, a]));
+  const looseAmbiguous = new Map(loose.ambiguous.map(a => [a.row, a]));
+
+  const ambiguous = [], unmatched = [];
+  for (const row of leftover) {
+    if (placed.has(row)) continue;
+    if (looseAmbiguous.has(row)) { ambiguous.push(looseAmbiguous.get(row)); continue; }
+    if (tightAmbiguous.has(row)) { ambiguous.push(tightAmbiguous.get(row)); continue; }
+    unmatched.push(row);
+  }
+  return { matched: [...tight.matched, ...loose.matched], ambiguous, unmatched };
 }
 
 /**
@@ -266,13 +330,14 @@ async function adopt(matched, { dry }) {
   if (!page) throw new Error('no logged-in JoinQuant tab found in the CDP browser');
 
   let written = 0;
-  for (const { row, curve } of todo) {
+  for (const { row, curve, relaxed } of todo) {
     try {
       const raw = await series.fetchViaPage(page, curve.backtestId);
       const rec = series.toRecord(raw, {
         sourceFile: row.sourceFile, title: row.title, window: WINDOW, epoch: Number(row.epoch),
         backtestId: curve.backtestId,
         backfilledFrom: curve.backtestId, backfilledAt: new Date().toISOString(),
+        matchBasis: matchBasis(row, relaxed),
       });
       series.save(series.seriesKey(row.sourceFile, WINDOW, row.epoch), rec);
       written++;
@@ -322,4 +387,5 @@ if (require.main === module) {
   })().catch(e => { console.error(`[backfill] ${e.message}`); process.exit(1); });
 }
 
-module.exports = { fingerprint, maxDrawdownPct, annualize, matches, reconcile, ledgerRows, TOL_PP };
+module.exports = { fingerprint, maxDrawdownPct, annualize, matches, reconcile, ledgerRows,
+                   matchBasis, TOL_PP, TOL_ANNUAL_RECONSTRUCTED };
