@@ -13,7 +13,7 @@ factors:
 ingestedAt: 2026-07-26
 codeLines: 3601
 stats: { 绩效未公开: true }
-normalized: { epoch: 2, window: "TRAIN 2022-2023", annualReturn: 0.2676, sharpe: 1.01, maxDrawdown: 0.1797, objective: DQ, gate: fail }
+normalized: { epoch: 2, window: "TRAIN 2022-2023", annualReturn: 0.2676, sharpe: 1.01, maxDrawdown: 0.1797, objective: 0.0879, gate: fail }
 autoStub: true
 ---
 

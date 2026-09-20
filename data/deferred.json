@@ -110,5 +110,29 @@
     "lastCapMin": 20,
     "maxCapTried": 20,
     "lastDeferredAt": "2026-09-20T11:56:57.523Z"
+  },
+  "strategies/2026-06-28_高质量稳定上涨策略-d02cde29.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-09-20T18:56:10.013Z",
+    "reason": "slow-skipped (epoch-6 re-measure)",
+    "lastCapMin": 30,
+    "maxCapTried": 30,
+    "lastDeferredAt": "2026-09-20T18:56:10.013Z"
+  },
+  "strategies/2026-07-02_首板放量次日高开买入_--_24年至今3088_53-7ddf9b79.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-09-20T18:56:10.014Z",
+    "reason": "slow-skipped (epoch-6 re-measure)",
+    "lastCapMin": 30,
+    "maxCapTried": 30,
+    "lastDeferredAt": "2026-09-20T18:56:10.014Z"
+  },
+  "strategies/2026-07-18_多策略-题材概念-35ce65d2.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-09-20T18:56:10.014Z",
+    "reason": "slow-skipped (epoch-6 re-measure)",
+    "lastCapMin": 30,
+    "maxCapTried": 30,
+    "lastDeferredAt": "2026-09-20T18:56:10.014Z"
   }
 }

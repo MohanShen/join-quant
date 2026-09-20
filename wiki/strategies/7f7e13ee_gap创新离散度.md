@@ -14,7 +14,7 @@ factors:
 ingestedAt: 2026-07-11
 codeLines: 1615
 stats: { 绩效未公开: true }
-normalized: { epoch: 2, window: "TRAIN 2022-2023", annualReturn: 0.2454, sharpe: 1.07, maxDrawdown: 0.1437, objective: DQ, gate: fail }
+normalized: { epoch: 2, window: "TRAIN 2022-2023", annualReturn: 0.2454, sharpe: 1.07, maxDrawdown: 0.1437, objective: 0.1017, gate: fail }
 ---
 
 # gap创新+离散度判断
