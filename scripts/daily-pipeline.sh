@@ -34,6 +34,25 @@ ts() { date '+%Y-%m-%d %H:%M:%S'; }
 log() { echo "[$(ts)] $*" | tee -a "$LOG_DIR/wrapper.log"; }
 cd "$REPO" || { log "FATAL: cannot cd to $REPO"; exit 1; }
 
+# ── Scheduled-hour gate (UTC) ───────────────────────────────────────────────
+# The job is meant to start at a fixed UTC hour, but launchd evaluates
+# StartCalendarInterval in the machine's LOCAL timezone — America/Los_Angeles here, which
+# observes DST. A fixed local hour would therefore drift by one hour twice a year. So the
+# plist fires at BOTH candidate local hours and this gate keeps only the one that is really
+# DAILY_RUN_HOUR_UTC; the other exits in milliseconds.
+#
+# The gate applies ONLY to scheduled fires (the plist sets DAILY_SCHEDULED=1). A human
+# running this script by hand is never blocked by the clock.
+RUN_HOUR_UTC="${DAILY_RUN_HOUR_UTC:-18}"
+if [ "${DAILY_SCHEDULED:-0}" = "1" ] && [ "${FORCE:-0}" != "1" ]; then
+  NOW_UTC_H="$(date -u +%H)"
+  if [ "$NOW_UTC_H" != "$(printf '%02d' "$RUN_HOUR_UTC")" ]; then
+    log "skip: scheduled fire at ${NOW_UTC_H}:00 UTC, want ${RUN_HOUR_UTC}:00 UTC (DST-safe gate)"
+    exit 0
+  fi
+  log "scheduled fire at ${NOW_UTC_H}:00 UTC — this is the ${RUN_HOUR_UTC}:00 UTC slot"
+fi
+
 # ── Lock: never overlap our own previous fire ───────────────────────────────
 if [ -e "$LOCK" ]; then
   lockpid="$(cat "$LOCK" 2>/dev/null)"

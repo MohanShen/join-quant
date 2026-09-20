@@ -4,11 +4,11 @@
     "stage": "enhance",
     "target": null,
     "budget": 56,
-    "at": "2026-09-20T14:59:03.077Z",
+    "at": "2026-09-20T15:15:50.217Z",
     "outcome": "budget-spent",
     "note": "used 56 >= 55; enhance not started",
     "minutesUsed": null,
-    "endedAt": "2026-09-20T14:59:03.078Z"
+    "endedAt": "2026-09-20T15:15:50.219Z"
   },
   "runs": [
     {
@@ -40,6 +40,16 @@
       "note": "used 56 >= 55; enhance not started",
       "minutesUsed": null,
       "endedAt": "2026-09-20T14:59:03.078Z"
+    },
+    {
+      "stage": "enhance",
+      "target": null,
+      "budget": 56,
+      "at": "2026-09-20T15:15:50.217Z",
+      "outcome": "budget-spent",
+      "note": "used 56 >= 55; enhance not started",
+      "minutesUsed": null,
+      "endedAt": "2026-09-20T15:15:50.219Z"
     }
   ]
 }
