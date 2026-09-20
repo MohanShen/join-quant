@@ -44,6 +44,29 @@ const fs = require('fs');
 /** Measured re-run noise in this repo: the same file shifted annual return by ~0.15pp. */
 const NOISE_PP = 1.0;
 
+/**
+ * Load each member's stored daily curve and decompose the blend, when the curves exist.
+ *
+ * A member points at its series with `sourceFile` (+ optional `epoch`), the same identity the
+ * ledger uses — never a backtestId, which JQ re-mints per request. Returns null when fewer
+ * than two members have a curve, which is the signal to fall back to the signature test.
+ */
+function decomposeMembers(members) {
+  try {
+    const series = require('./backtest-series');
+    const { diversification } = require('./component-scan');
+    const loaded = [];
+    for (const m of members) {
+      if (!m.sourceFile) continue;
+      const rec = series.load(m.seriesKey
+        || series.seriesKey(m.sourceFile, m.window || 'train', m.epoch || require('./harness-config').config().epoch));
+      if (rec) loaded.push(rec);
+    }
+    if (loaded.length < 2) return null;
+    return diversification(loaded, null);
+  } catch { return null; }
+}
+
 function check(c) {
   const members = c.members || [];
   if (members.length < 2) {
@@ -70,14 +93,39 @@ function check(c) {
                  `${bestMember.family} at ${bestMember.objective}`);
   }
 
-  // Rule 2 — diversification signature
+  // Rule 2 — diversification share.
+  //
+  // Two levels of evidence. When the members' daily curves are stored (utils/backtest-series.js)
+  // this is a real ATTRIBUTION: the decomposition says how much of the Sharpe is risk-side.
+  // Without curves it falls back to the SIGNATURE test it has always been — sharpe up, return
+  // not up — which detects the pattern but cannot quantify it.
+  const decomp = decomposeMembers(members);
   const sharpeUp = (num(cand.sharpe) ?? 0) > bestSharpe;
   const returnUp = (num(cand.annual) ?? 0) > maxAnnual;
-  if (sharpeUp && !returnUp) {
-    flags.push('diversification-explained');
+
+  if (decomp) {
+    flags.push(`meanCorr=${decomp.meanCorr}`, `diversificationRatio=${decomp.ratio}`);
+    const noDiv = decomp.sharpeNoDiversification;
+    reasons.push(`decomposition over ${decomp.overlapDays} shared days: mean member correlation ` +
+                 `${decomp.meanCorr}, diversification ratio ${decomp.ratio}; at ρ=1 the same ` +
+                 `returns would earn sharpe ${noDiv} against the candidate's ${cand.sharpe}`);
+    // ⚠ Only meaningful ABOVE the risk-free rate. A negative excess return divided by the
+    // LARGER rho=1 volatility moves toward zero, so stripping diversification would RAISE the
+    // reported Sharpe and the test below would read backwards.
+    const excessPositive = decomp.blend && (decomp.blend.annualPct / 100) > 0.04;
+    // If the candidate only clears the bar thanks to the risk side, say so — that is the
+    // manufactured pass this guard exists to catch (七星高照: blend 3.17 vs legs 2.85 / 1.60).
+    if (excessPositive && noDiv != null && num(cand.sharpe) != null && noDiv < bestSharpe) {
+      flags.push('diversification-explained');
+      reasons.push(`strip the diversification and sharpe (${noDiv}) falls below the best member's ` +
+                   `${bestSharpe} — the gain is risk-side, not edge`);
+      if (verdict === 'keep') verdict = 'keep-with-caveat';
+    }
+  } else if (sharpeUp && !returnUp) {
+    flags.push('diversification-explained', 'no-series');
     reasons.push(`sharpe rose (${cand.sharpe} > ${bestSharpe}) while annual did not ` +
                  `(${cand.annual} <= ${maxAnnual}) — that is the diversification signature, ` +
-                 'not evidence of edge; requires an explicit decomposition before it counts');
+                 'not evidence of edge; store the members\' series for a real decomposition');
     if (verdict === 'keep') verdict = 'keep-with-caveat';
   }
 

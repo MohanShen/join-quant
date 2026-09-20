@@ -37,3 +37,9 @@ data/*.pre-uniquekey.bak
 # Screening working state — candidates carry fetched post bodies; batches are per-run
 screen/candidates.json
 screen/batches/
+
+# Backtest-curve scan cache — a fingerprint index of every backtest the JQ account still
+# holds, rebuilt for free by `series-backfill.js --scan`. The CURVES themselves
+# (data/series/) stay tracked: gitignoring a ledger is what let normalize-*.tsv regress
+# from ~119 rows to 18 unnoticed.
+data/series-scan.json

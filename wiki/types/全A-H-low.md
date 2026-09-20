@@ -5,11 +5,11 @@ horizon: H-low
 families: [[[三进兵]], [[套利]], [[红利低频]], [[网格]]]
 familyCount: 4
 memberStrategies: 15
-bestFamily: —
-bestFamilyObjective: null
+bestFamily: [[网格]]
+bestFamilyObjective: 0.1411
 intradayDependent: true
 generatedBy: utils/wiki-type-build.js
-updatedAt: 2026-09-19
+updatedAt: 2026-09-20
 ---
 
 # 全A-H-low — strategy type
@@ -21,10 +21,10 @@ updatedAt: 2026-09-19
 
 | 家族 | 成员数 | bestObjective | 实测换手 | 盘中依赖 |
 |---|---|---|---|---|
-| [[三进兵]] | 4 | DQ | 0.007809 | 否 |
+| [[网格]] | 3 | 0.1411 | 0.010291 | 否 |
+| [[红利低频]] | 7 | 0.1348 | 0.016646 | ⚠ 是 |
+| [[三进兵]] | 4 | -0.09 | 0.007809 | 否 |
 | [[套利]] | 1 | DQ | 0.02044 | ⚠ 是 |
-| [[红利低频]] | 7 | DQ | 0.016646 | ⚠ 是 |
-| [[网格]] | 3 | DQ | 0.010291 | 否 |
 
 ## 整合回合（见 `docs/consolidation-plan.md` §4）
 

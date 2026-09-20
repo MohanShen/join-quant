@@ -9,7 +9,7 @@ bestFamily: [[小市值]]
 bestFamilyObjective: 1.3738
 intradayDependent: true
 generatedBy: utils/wiki-type-build.js
-updatedAt: 2026-09-19
+updatedAt: 2026-09-20
 ---
 
 # 小盘-H-unknown — strategy type

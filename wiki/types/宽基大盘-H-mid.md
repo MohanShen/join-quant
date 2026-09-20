@@ -5,11 +5,11 @@ horizon: H-mid
 families: [[[趋势技术]]]
 familyCount: 1
 memberStrategies: 16
-bestFamily: —
-bestFamilyObjective: null
+bestFamily: [[趋势技术]]
+bestFamilyObjective: 0.2936
 intradayDependent: false
 generatedBy: utils/wiki-type-build.js
-updatedAt: 2026-09-19
+updatedAt: 2026-09-20
 ---
 
 # 宽基大盘-H-mid — strategy type
@@ -21,7 +21,7 @@ updatedAt: 2026-09-19
 
 | 家族 | 成员数 | bestObjective | 实测换手 | 盘中依赖 |
 |---|---|---|---|---|
-| [[趋势技术]] | 16 | DQ | 0.09284 | 否 |
+| [[趋势技术]] | 16 | 0.2936 | 0.09284 | 否 |
 
 ## 整合回合（见 `docs/consolidation-plan.md` §4）
 

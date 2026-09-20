@@ -727,6 +727,55 @@ function reportResult(title, algorithmId, result, requestedWindow) {
   return status;
 }
 
+// ── Capture the daily equity curve ──────────────────────────────────────────
+// A scalar (annual / sharpe / maxdd) ranks a strategy STANDALONE. It cannot say whether the
+// strategy is a useful INGREDIENT, because that depends on its correlation with what we
+// already hold — which is not a function of any scalar. So once a run completes we pull its
+// daily curve and store it beside the ledger row. See utils/backtest-series.js.
+//
+// Strictly BEST-EFFORT: a capture failure must never change the outcome of a backtest that
+// already cost real minutes. Every path here swallows its error and returns null.
+//
+// backtestId is NOT on the editor DOM after a run and `statistics.done[]` empties quickly, so
+// we resolve it from the algorithm's own buildList HTML and confirm by asking for the series:
+// the id that returns a curve is the right one. (Ids are re-minted per request — CLAUDE.md —
+// so this is a lookup, never a stored key.)
+async function captureSeries(page, algorithmId, strategyPath, window) {
+  const series = require('./backtest-series');
+  try {
+    const found = await page.evaluate(async (alg) => {
+      const t = await (await fetch(`/algorithm/backtest/buildList?algorithmId=${alg}`,
+        { credentials: 'include' })).text();
+      const ids = [...new Set([...t.matchAll(/backtestId[=":\s]+([a-f0-9]{32})/g)].map(m => m[1]))];
+      for (const id of ids) {
+        try {
+          const j = await (await fetch(
+            `/algorithm/backtest/result?backtestId=${id}&offset=0&userRecordOffset=0&ajax=1`,
+            { credentials: 'include' })).json();
+          const o = j && j.data && j.data.result && j.data.result.overallReturn;
+          if (o && o.time && o.time.length) return id;
+        } catch {}
+      }
+      return null;
+    }, algorithmId);
+    if (!found) { console.log('[series] ⚠ no backtestId with a curve — series not captured'); return null; }
+
+    const raw = await series.fetchViaPage(page, found);
+    const epoch = harness.config().epoch;
+    const sourceFile = path.relative(path.resolve(__dirname, '..'), strategyPath);
+    const win = window ? window.name : 'adhoc';
+    const rec = series.toRecord(raw, { sourceFile, backtestId: found, window: win, epoch });
+    const key = series.seriesKey(sourceFile, win, epoch);
+    series.save(key, rec);
+    console.log(`[series] captured ${rec.points}d ${rec.start}..${rec.end} -> data/series/${key}.json`);
+    console.log(`SERIES\t${key}\t${rec.points}\t${rec.start}\t${rec.end}`);
+    return key;
+  } catch (e) {
+    console.log(`[series] ⚠ capture failed (backtest result is unaffected): ${String(e.message).slice(0, 90)}`);
+    return null;
+  }
+}
+
 // ── Main ─────────────────────────────────────────────────────────────────────
 async function main() {
   let parsed;
@@ -813,7 +862,8 @@ async function main() {
     const result = bt.error
       ? { success: false, error: bt.error, rateLimited: bt.rateLimited }
       : await pollUntilComplete(editorPage, algorithmId);
-    reportResult(title, algorithmId, result, window);
+    const st = reportResult(title, algorithmId, result, window);
+    if (st === 'completed') await captureSeries(editorPage, algorithmId, strategyPath, window);
     // Do NOT close editorPage — it IS the logged-in hub tab now (reused, not created).
     // Closing it would destroy the CDP session's cookie context. It's re-navigated next run.
 
@@ -878,7 +928,8 @@ async function main() {
     const result = bt.error
       ? { success: false, error: bt.error, rateLimited: bt.rateLimited }
       : await pollUntilComplete(editorPage2, algorithmId);
-    reportResult(title, algorithmId, result, window);
+    const st2 = reportResult(title, algorithmId, result, window);
+    if (st2 === 'completed') await captureSeries(editorPage2, algorithmId, strategyPath, window);
     try { await editorPage2.close(); } catch {}
   }
 

@@ -9,7 +9,7 @@ bestFamily: [[大小盘轮动]]
 bestFamilyObjective: 0.4564
 intradayDependent: false
 generatedBy: utils/wiki-type-build.js
-updatedAt: 2026-09-19
+updatedAt: 2026-09-20
 ---
 
 # 混合-H-mid — strategy type

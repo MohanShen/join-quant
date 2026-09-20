@@ -61,6 +61,17 @@ node utils/consumption-report.js --next       # what each loop should take next
 node utils/wiki-type-build.js --check         # family -> type assignment (universe x turnover)
 node utils/wiki-concept-lint.js               # concept strategyCount drift
 node utils/type-integrate-check.js <c.json>   # guard on a type-level integration candidate
+
+# Return series + component harvesting (inputs to type-level integration)
+node utils/series-backfill.js --scan          # index every backtest the JQ account still holds (free)
+node utils/series-backfill.js --dry           # match those curves to ledger rows, write nothing
+node utils/series-backfill.js                 # + save the matched curves to data/series/
+node utils/backtest-series.js --list          # stored curves
+node utils/backtest-series.js --corr <a> <b>  # correlation of two stored curves
+node utils/component-scan.js --validate       # series-derived metrics vs the ledger they belong to
+node utils/component-scan.js                  # rank ingredients per strategy type
+node utils/components.js                      # the component register
+node utils/components.js --add --source <f> --aspect <a> --kind exit --claim <c> --evidence <e>
 node utils/strategy-normalize.js --window train --files "$(node -e "console.log(require('fs').readFileSync('data/pending-normalize.json','utf8').match(/[^\"\[\],\s]+\.py/g).join(','))")" --usage-limit 55
 ```
 
@@ -257,6 +268,43 @@ Only the directories whose contents aren't self-evident:
   Sharpe mechanically whenever correlation < 1 and the gate IS a Sharpe threshold — 七星高照's
   blend scores sharpe 3.17 against legs of 2.85/1.60 and still loses to its own small-cap leg
   (0.4814 vs 0.5984). Beat the best MEMBER, not the gate.
+- **The ledger stores scalars, which cannot rank INGREDIENTS.** A sleeve scoring 0.1 that is
+  uncorrelated with a type's leader can beat one scoring 0.8 that moves with it — correlation is
+  not a function of annual/sharpe/maxdd, so filtering integration candidates by standalone score
+  discards exactly the diversifying material integration exists to exploit. `utils/backtest-series.js`
+  captures the DAILY CURVE of every completed run from the undocumented
+  `GET /algorithm/backtest/result?backtestId=&offset=&userRecordOffset=&ajax=1` (found by sniffing
+  the summary page; it pages 1000 points at a time, `data.result.overallReturn = {time,value}`).
+  This is the missing input `type-integrate-check.js` documented as uncomputable — rule 2 is now a
+  real decomposition when curves exist, and falls back to the old signature test when they do not.
+- ⚠ `overallReturn.value` is **cumulative percent, not a daily return and not a price**. Chain it
+  `(1+cₜ/100)/(1+cₜ₋₁/100)−1`; **differencing the percentages reports vol 1.3620 where JQ reports
+  0.2271** — a 6× error that looks plausible in isolation. Only `dailyReturns()` does this conversion.
+  Validated: a curve-derived max drawdown of 0.3302 against JQ's own 0.33022.
+- ⚠ **Annualize a curve over the ROW's day count, not the curve's own span.** The ledger annualizes
+  over the REQUESTED window (a uniform 729 days on every TRAIN row); a curve spans the trading days
+  that actually occurred (2022-01-04..2023-12-29, 724). Self-annualizing each side put the same run
+  at 34.06 against the row's 33.79 and matched **0 of 124 rows**. `total_pct` agrees exactly.
+- `utils/series-backfill.js` gives the EXISTING ledger curves at **zero backtest cost** — the account
+  retains 1,133 algorithms and each still serves its curve. Runs carry no name (`/algorithm/index/new`
+  sets none) and every id is re-minted, so rows are matched on (window + return + drawdown) recomputed
+  FROM the curve. A curve claimed by several rows is resolved by **body hash** (16% of fetches are
+  byte-identical duplicates, which legitimately share one curve); anything still ambiguous is
+  **skipped and reported**, never guessed — a wrong curve silently corrupts every correlation.
+- ⚠⚠ **`component-scan.js` blends are ex-post, cost-free and daily-rebalanced** — an upper bound and a
+  screening device, never a result. Nothing from it may be written to a family page or results ledger;
+  a survivor still has to be built as one strategy and run through the frozen harness. It ranks on
+  **score uplift over the type leader**, not Sharpe, because blending raises Sharpe mechanically.
+- **`data/components.tsv` registers harvested INGREDIENTS** (append-only, tracked, like
+  `consumption.tsv`): which aspect of a gate-failing strategy is worth keeping, and the measurement
+  that says so. `evidence` is required — the repo has already paid for a guess-based rule, one that
+  permanently discarded 287 of 549 strategies. This is **not** a second, more lenient bench:
+  everything stays measured under the one active epoch, and only the DECISION about the measurement
+  changes. Measuring ingredients under weaker costs would select for contributions that are artifacts
+  of unfillable fills, and a blend inherits those fills rather than laundering them.
+- ⚠ `sharpeNoDiversification` only reads correctly **above the risk-free rate**: a negative excess
+  return divided by the larger ρ=1 volatility moves toward zero, so stripping diversification would
+  *raise* the reported Sharpe. The guard checks the sign first.
 - Screening verdicts live in `screen/verdicts.json` and are applied INSIDE the queue builders,
   because every discovery run rebuilds the queues from scratch.
 - Blind-test result (104 posts, 22.1% base rate): judgement on post BODIES scored 0.90 AUC vs

@@ -9,7 +9,7 @@ bestFamily: [[ETF溢价]]
 bestFamilyObjective: 3.5961
 intradayDependent: true
 generatedBy: utils/wiki-type-build.js
-updatedAt: 2026-09-19
+updatedAt: 2026-09-20
 ---
 
 # ETF-H-unknown — strategy type

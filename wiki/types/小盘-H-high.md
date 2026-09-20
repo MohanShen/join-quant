@@ -5,11 +5,11 @@ horizon: H-high
 families: [[[ETF动量]], [[七星高照]]]
 familyCount: 2
 memberStrategies: 38
-bestFamily: [[七星高照]]
-bestFamilyObjective: 0.4814
+bestFamily: [[ETF动量]]
+bestFamilyObjective: 0.5267
 intradayDependent: true
 generatedBy: utils/wiki-type-build.js
-updatedAt: 2026-09-19
+updatedAt: 2026-09-20
 ---
 
 # 小盘-H-high — strategy type
@@ -21,8 +21,8 @@ updatedAt: 2026-09-19
 
 | 家族 | 成员数 | bestObjective | 实测换手 | 盘中依赖 |
 |---|---|---|---|---|
-| [[七星高照]] | 11 | 0.4814 | 0.133 | ⚠ 是 |
-| [[ETF动量]] | 27 | 0.383 | 0.16112 | ⚠ 是 |
+| [[ETF动量]] | 27 | 0.5267 | 0.16112 | ⚠ 是 |
+| [[七星高照]] | 11 | 0.1871 | 0.133 | ⚠ 是 |
 
 ## 整合回合（见 `docs/consolidation-plan.md` §4）
 

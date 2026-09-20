@@ -1,0 +1,2 @@
+source	scope	aspect	kind	claim	evidence	type	status	epoch	addedBy	at
+strategies/2026-07-05_低换手红利策略-93379f98.py	strategy	low-turnover dividend sleeve	factor	Diversifies the 网格 leader of 全A-H-low: an equal-weight pair clears sharpe 1.5, which neither leg does alone.	component-scan epoch5 TRAIN: corr 0.2614 over 484 shared days; leader score 0.1411 sharpe 1.19, candidate 0.1365 sharpe 1.46 (gate fail), 50/50 blend 0.1798 sharpe 1.56 (uplift +0.0359). Ex-post cost-free blend - needs a real harness run.	全A-H-low	candidate	5	component-scan	2026-09-20T03:25:04.568Z

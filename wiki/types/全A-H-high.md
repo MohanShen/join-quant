@@ -9,7 +9,7 @@ bestFamily: [[打板短线]]
 bestFamilyObjective: 0.9668
 intradayDependent: true
 generatedBy: utils/wiki-type-build.js
-updatedAt: 2026-09-19
+updatedAt: 2026-09-20
 ---
 
 # 全A-H-high — strategy type
