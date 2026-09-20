@@ -262,3 +262,60 @@ test('the daily commit scope cannot silently widen', async t => {
     assert.match(p, /the run itself is unaffected/);
   });
 });
+
+test('daily-pipeline exports survive the summary’s circular require', async t => {
+  await t.test('module.exports is assigned before the CLI block', () => {
+    // daily-summary requires daily-pipeline, and daily-pipeline requires it back at the end
+    // of a run. With module.exports after the CLI block, Node handed the summary a partially
+    // initialised module and it died with "daily.queues is not a function" — after a real
+    // run had already spent 10 backtest-minutes, which is the worst moment to lose the report.
+    const src = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
+    const exportsAt = src.indexOf('module.exports =');
+    const cliAt = src.indexOf('if (require.main === module)');
+    assert.ok(exportsAt > 0 && cliAt > 0);
+    assert.ok(exportsAt < cliAt, 'module.exports must come before the CLI block');
+  });
+
+  await t.test('the summary can reach the planner through the cycle', () => {
+    const d = require('../utils/daily-pipeline');
+    assert.strictEqual(typeof d.queues, 'function');
+    assert.strictEqual(typeof d.SLOW_SKIP_MIN, 'number');
+  });
+});
+
+test('the shared pipeline lock is not released by a process that never took it', async t => {
+  for (const f of ['scripts/autoenhance-loop.sh', 'scripts/autostudy-loop.sh']) {
+    await t.test(`${path.basename(f)} only removes PLOCK it acquired`, () => {
+      // The trap is installed long before the PLOCK acquisition, so an unconditional
+      // `rm -f "$PLOCK"` meant a fire that correctly skipped ("another JQ pipeline is
+      // running") deleted the HOLDER's lock on its way out — observed live, and it let a
+      // second dispatch start while the first was mid-backtest.
+      const src = fs.readFileSync(path.join(ROOT, f), 'utf8');
+      assert.ok(!/trap 'rm -f "\$LOCK" "\$PLOCK"' EXIT/.test(src), 'unconditional trap still present');
+      assert.match(src, /PLOCK_MINE=0/);
+      assert.match(src, /PLOCK_MINE=1/);
+      assert.match(src, /PLOCK_MINE" = "1"/);
+    });
+  }
+
+  await t.test('a nested dispatch does not deadlock on the caller’s lock', () => {
+    // daily-pipeline.sh holds the shared lock, then invokes children that want it. Without
+    // the handshake every nested dispatch skipped and exited 0, and the planner recorded
+    // "ran" for work that never started.
+    const w = fs.readFileSync(path.join(ROOT, 'scripts/daily-pipeline.sh'), 'utf8');
+    assert.match(w, /export JQ_PIPELINE_LOCK_HELD=1/);
+    for (const f of ['scripts/autoenhance-loop.sh', 'scripts/autostudy-loop.sh']) {
+      assert.match(fs.readFileSync(path.join(ROOT, f), 'utf8'), /JQ_PIPELINE_LOCK_HELD/);
+    }
+  });
+});
+
+test('the chain does not repeat a stage that made no progress', async t => {
+  await t.test('depth is compared before re-picking', () => {
+    // Observed live: enhance "ran", its queue stayed at 13, and the planner picked it again —
+    // each repeat resuming a Claude session to redo the same work.
+    const src = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
+    assert.match(src, /no-progress/);
+    assert.match(src, /not repeating it this chain/);
+  });
+});

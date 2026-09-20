@@ -318,8 +318,21 @@ function execute(p, { dry = false } = {}) {
 function runChain({ dry = false, maxStages = 6, stageOverride = null } = {}) {
   const log = [];
   let last = null;
+  // ⚠ A stage that ran without draining its queue must not be picked again in the same chain.
+  // Observed live: enhance "ran", its queue stayed at 13 (the agent recorded no consumption
+  // event), so the planner immediately picked enhance again — each repeat resuming a Claude
+  // session to redo the same thing. Depth is the honest completion signal here, because the
+  // stage's own exit code is not one.
+  const before = {};
   for (let i = 0; i < maxStages; i++) {
     const p = plan({ stageOverride: i === 0 ? stageOverride : null });
+
+    if (before[p.stage] != null && depth(p.stage, p.q) >= before[p.stage]) {
+      log.push({ stage: p.stage, outcome: 'no-progress',
+                 note: `queue still ${depth(p.stage, p.q)} after running — not repeating it this chain` });
+      break;
+    }
+    before[p.stage] = depth(p.stage, p.q);
 
     if (p.budget.ok && p.budget.used >= USAGE_LIMIT && p.stage !== 'discover') {
       log.push({ stage: p.stage, outcome: 'budget-spent',
@@ -410,6 +423,17 @@ function printPlan(p) {
   console.log(`[daily] -> ${p.stage.toUpperCase()}   (${p.why})`);
 }
 
+/**
+ * ⚠ Exported BEFORE the CLI block on purpose. `utils/daily-summary.js` requires this module,
+ * and this module requires it back at the end of a run. Node returns a partially-initialised
+ * module to the inner require, so with `module.exports` sitting after the CLI block the
+ * summary saw `{}` and died with "daily.queues is not a function" — after a real run, which
+ * is the worst time to lose the report.
+ */
+module.exports = { plan, queues, execute, budget, seedDeferred, staleFamilies,
+                   runChain, syncStudyManifest,
+                   SLOW_SKIP_MIN, USAGE_LIMIT, PRIORITY };
+
 if (require.main === module) {
   const argv = process.argv.slice(2);
   const arg = n => { const i = argv.indexOf(n); return i >= 0 ? argv[i + 1] : null; };
@@ -499,6 +523,3 @@ if (require.main === module) {
   process.exitCode = bad ? 1 : 0;
 }
 
-module.exports = { plan, queues, execute, budget, seedDeferred, staleFamilies,
-                   runChain, syncStudyManifest,
-                   SLOW_SKIP_MIN, USAGE_LIMIT, PRIORITY };

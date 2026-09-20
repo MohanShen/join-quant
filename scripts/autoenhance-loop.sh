@@ -54,7 +54,13 @@ if [ -e "$LOCK" ]; then
   log "stale lock (pid ${lockpid:-?}) — clearing"
 fi
 echo $$ > "$LOCK"
-trap 'rm -f "$LOCK" "$PLOCK"' EXIT
+# ⚠ Only remove the SHARED lock if we actually acquired it. This trap used to run
+# unconditionally, and it is installed long before the PLOCK acquisition below — so a fire
+# that correctly skipped ("another JQ pipeline is running") still deleted the *holder's*
+# lock on its way out, silently breaking mutual exclusion for whoever was mid-backtest.
+PLOCK_MINE=0
+cleanup() { rm -f "$LOCK"; [ "$PLOCK_MINE" = "1" ] && rm -f "$PLOCK"; }
+trap cleanup EXIT
 
 # ── Resolve enhance branch ─────────────────────────────────────────────────
 # Any branch is allowed, exactly as scripts/autostudy-loop.sh already does. The gate that
@@ -142,11 +148,17 @@ if [ -n "$USED" ] && [ "$USED" -ge "$USAGE_LIMIT" ] 2>/dev/null; then
   log "skip: JQ budget used=${USED}min >= limit=${USAGE_LIMIT}min — wait for daily reset"; exit 0
 fi
 # ── Shared lock: don't run backtests while the OTHER pipeline (study/enhance) runs ──
-if [ -e "$PLOCK" ]; then
+if [ "${JQ_PIPELINE_LOCK_HELD:-0}" = "1" ]; then
+  # Invoked by scripts/daily-pipeline.sh, which already holds the shared lock. Without this
+  # the parent's own lock made every nested dispatch skip and exit 0 — the planner then
+  # recorded "ran" for work that never started.
+  log "shared lock held by caller (JQ_PIPELINE_LOCK_HELD=1) — proceeding without re-taking it"
+elif [ -e "$PLOCK" ]; then
   pp="$(cat "$PLOCK" 2>/dev/null)"
   if [ -n "$pp" ] && kill -0 "$pp" 2>/dev/null; then log "skip: another JQ pipeline (pid $pp) is running — serialize"; exit 0; fi
 fi
 echo $$ > "$PLOCK"
+PLOCK_MINE=1
 log "budget ok (used=${USED:-unknown}min); resuming session $SID on $BRANCH"
 
 # ── Resume the interactive session headless ─────────────────────────────────

@@ -54,6 +54,10 @@ if [ -e "$PLOCK" ]; then
   log "stale shared lock (pid ${ppid:-?}) — clearing"
 fi
 echo $$ > "$PLOCK"
+# Children (autostudy-loop.sh / autoenhance-loop.sh) want the same shared lock. Tell them we
+# already hold it on their behalf, or each nested dispatch would see it held, skip, exit 0 —
+# and the planner would record "ran" for work that never started.
+export JQ_PIPELINE_LOCK_HELD=1
 
 # ── CDP: everything downstream needs the logged-in browser ──────────────────
 # In remote mode exec-config opens the SSH tunnel on demand; this only reports.
