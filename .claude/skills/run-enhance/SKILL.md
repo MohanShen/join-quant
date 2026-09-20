@@ -1,6 +1,6 @@
 ---
 name: run-enhance
-description: Run the join-quant autoenhance TEAM — a 4-agent loop (ideator → critic → engineer → recorder) that improves a strategy FAMILY: generates ideas (within-family / cross-family borrow / new-family combination), iterates mutations on the frozen TRAIN window, validates finalized strategies once on VAL, and writes results back to the family page as new variants. Never touches the reserved OOS window (epoch 5: 2026+). Use when asked to run/continue autoenhance, enhance a strategy family, or propose/improve a strategy.
+description: Run the join-quant autoenhance TEAM — a 4-agent loop (ideator → critic → engineer → recorder) that improves a strategy FAMILY: generates ideas (within-family / cross-family borrow / new-family combination / external factor from the JQ factor board), iterates mutations on the frozen TRAIN window, validates finalized strategies once on VAL, and writes results back to the family page as new variants. Never touches the reserved OOS window (epoch 5: 2026+). Use when asked to run/continue autoenhance, enhance a strategy family, or propose/improve a strategy.
 ---
 
 # Run the autoenhance team
@@ -13,20 +13,32 @@ description: Run the join-quant autoenhance TEAM — a 4-agent loop (ideator →
 2. `harness/harness.md` —— 冻结评测台：**TRAIN 选择 / VAL 定稿 / OOS 硬阻断**（边界随纪元变动，当前 epoch 5 为 2026-01-01；以 `node utils/harness-config.js` 为准）。只读。
 3. `docs/enhance-schema.md` —— 结构/账本/记账格式（权威）。
 4. `docs/wiki-schema.md` §2.1 —— 受控因子词表（变异空间边界）。
-5. `wiki/index.md` + 相关 `wiki/concepts/*.md` —— 想法来源。⚠ index 不完整（187 篇里只链 79 篇），
+5. `wiki/index.md` + 相关 `wiki/concepts/*.md` —— 想法来源。⚠ index 不完整（190 篇里只链 94 篇，2026-09-20 复测；数字会漂移，现场数），
    别把它当全集；概念页 `strategyCount` 已漂移，不可引用。
 6. **`screen/verdicts.json` —— 目前最富的想法来源（2026-09-19 新增）**。857 篇社区帖已按冻结
-   评测规则打分，`band=fetch-now/fetch` 的条目带 `mechanism`/`why`/`flags`，其中 **93 个
+   评测规则打分，`band=fetch-now/fetch` 的条目带 `mechanism`/`why`/`flags`，其中 **97 个
    `NEW:<机制>`** 是 14 个家族都没有的机制轴（全天候/风险平价、宏观择时、北上资金、异常财务因子、
    隔夜跳空、商品截面、国债）。**跨族借鉴与组合新族的想法优先从这里取**，并在想法里引用其 `key`。
    注意：高 `priority` ≠ 好回测对象——`S=0` 的条目是**读物**（写作/期货/缺数据），不可送去跑回测。
 
 ## 团队（**临时 subagent**，角色定义见 `.claude/agents/autoenhance-*.md`）
 每步用 `Agent` 工具**新生成**对应角色的一次性 subagent，干完一件事返回即终止；不常驻、不互相寻址，**全部路由经编排者居中**（详见 `program.md`「团队与共享状态」）。
-- **Agent 1 `autoenhance-ideator`** —— 读目标家族页 + KB 产出带推理的想法（**族内改进 / 跨族借鉴 / 组合新族**）；收 TRAIN 结果判「继续/定稿/放弃」。
-- **Agent 2 `autoenhance-critic`** —— 判想法成立（受控因子+家族词表、非族内重复、借鉴有据、新族非重复）、排名入 `ideas-queue.json`、出队交工程师。
+- **Agent 1 `autoenhance-ideator`** —— 读目标家族页 + KB 产出带推理的想法（**族内改进 / 跨族借鉴 / 组合新族 / 外部因子**）；收 TRAIN 结果判「继续/定稿/放弃」。
+- **Agent 2 `autoenhance-critic`** —— 判想法成立（受控因子+家族词表、非族内重复、借鉴有据、新族非重复、**外部因子四条**）、排名入 `ideas-queue.json`、出队交工程师。
 - **Agent 3 `autoenhance-engineer`** —— 封闭环境：写 `.py`、跑回测、调试；Type-1→train，Type-2→val。
 - **Agent 4 `autoenhance-recorder`** —— 仅 VAL 结果触发：**把结果写成目标家族页 §2 新变体**（`enhance-<expId>`）+ 记 `results.tsv` + 归档 `validated_strategies/` + 组合新族则登记 §2.2 建页 + 回填 KB，交回 Agent 1。
+
+## 外部因子（JQ 因子看板）—— 库存冗余时的正交来源
+
+本库**冗余而不广**：6 个策略类型里有 4 个已耗尽（没有成员能抬高本类型头名），最大的
+`小盘-H-unknown` 有 29 个成员、最好的候选仍把头名分数**拉低** 0.0301（相关性 0.77）。
+把冗余的东西再组合一遍不能解决冗余。此时用 `node utils/factorlib-query.js` 取正交材料
+（285 个因子，带公式 / IC / IR / 计成本收益）。
+
+⚠⚠ **它是假设来源，不是证据来源**：zz500 / 3y / JQ 自己的成本档，与 epoch 5 不同台。
+其数字**绝不**写进家族页、类型页、`results.tsv` 或 `candidate.json`；因子只有在**我们台上
+被建出来、测出来、拿到账本行**之后才算数。两条已实测的先验：**285 个里只有 6 个计成本后
+仍为正**（且全是低换手端）；**动量类因子在计成本后全线为负**（最大侵蚀 −15.25pp）。
 
 ## 前置检查
 - CDP Chrome 在跑；**登录/预算**：`curl -s localhost:9225/json/version` 通 + `node utils/jq-budget.js` 返回 `used/free`。

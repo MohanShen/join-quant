@@ -405,3 +405,64 @@ test('compile-error detection ignores the editor’s own source', async t => {
       'matching raw body text re-introduces the false positive');
   });
 });
+
+test('factorlib is wired as a hypothesis source, with the bench boundary enforced', async t => {
+  const fsx = require('fs');
+  const pathx = require('path');
+  const R = pathx.join(__dirname, '..');
+  const fl = require('../utils/factorlib-query');
+
+  await t.test('the snapshot loads and carries its own provenance', () => {
+    const rows = fl.load();
+    assert.ok(rows.length > 100, `expected the 285-factor snapshot, got ${rows.length}`);
+    const p = fl.provenance();
+    assert.ok(p.universe && p.universe !== '?', 'provenance must name the universe it was measured on');
+    assert.ok(p.range && p.range !== '?');
+  });
+
+  await t.test('every call prints the different-bench warning', () => {
+    // The boundary has to travel with the data. An agent that greps one row must still be
+    // told these numbers are from zz500/3y on JQ's cost model, not our epoch-5 bench.
+    const b = fl.banner();
+    assert.match(b, /DIFFERENT BENCH/);
+    assert.match(b, /never write them into/i);
+  });
+
+  await t.test('the survivor count is still the measured 6 of 285', () => {
+    // If a re-ingest changes this, the priors quoted to the ideator and critic are stale.
+    const rows = fl.load();
+    const surv = fl.query(rows, { survivors: true });
+    assert.strictEqual(rows.length, 285, 'snapshot size changed — re-check the quoted priors');
+    assert.strictEqual(surv.length, 6, 'survivor count changed — update the ideator/critic priors');
+  });
+
+  await t.test('survivors are the low-turnover end of the board', () => {
+    const rows = fl.load();
+    const surv = fl.query(rows, { survivors: true });
+    const med = a => a.slice().sort((x, y) => x - y)[Math.floor(a.length / 2)];
+    const tOf = r => parseFloat(r.turnover_top);
+    assert.ok(med(surv.map(tOf)) < med(rows.map(tOf).filter(Number.isFinite)),
+      'the claim "survivors are low-turnover" no longer holds');
+  });
+
+  await t.test('queries filter without reordering away the post-cost ranking', () => {
+    const rows = fl.load();
+    const hits = fl.query(rows, { category: '动量' });
+    assert.ok(hits.length > 0);
+    for (let i = 1; i < hits.length; i++) {
+      const a = parseFloat(hits[i - 1].top_ex_annual_cost);
+      const b = parseFloat(hits[i].top_ex_annual_cost);
+      if (Number.isFinite(a) && Number.isFinite(b)) assert.ok(a >= b, 'not ranked post-cost');
+    }
+  });
+
+  await t.test('the ideator and critic both carry the boundary, not just the tool', () => {
+    const ide = fsx.readFileSync(pathx.join(R, '.claude/agents/autoenhance-ideator.md'), 'utf8');
+    const cri = fsx.readFileSync(pathx.join(R, '.claude/agents/autoenhance-critic.md'), 'utf8');
+    assert.match(ide, /factorlib-query/);
+    assert.match(ide, /HYPOTHESIS source/);
+    assert.match(ide, /external-factor|external factor/);
+    assert.match(cri, /external-factor/);
+    assert.match(cri, /No borrowed numbers/);
+  });
+});

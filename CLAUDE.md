@@ -76,6 +76,8 @@ node utils/component-scan.js --validate       # series-derived metrics vs the le
 node utils/component-scan.js                  # rank ingredients per strategy type
 node utils/components.js                      # the component register
 node utils/components.js --add --source <f> --aspect <a> --kind exit --claim <c> --evidence <e>
+node utils/factorlib-query.js --survivors      # the 6 of 285 factors that beat costs
+node utils/factorlib-query.js --name <factor>  # formula + IC/IR, to actually build it
 node utils/strategy-normalize.js --window train --files "$(node -e "console.log(require('fs').readFileSync('data/pending-normalize.json','utf8').match(/[^\"\[\],\s]+\.py/g).join(','))")" --usage-limit 55
 ```
 
@@ -374,6 +376,29 @@ Only the directories whose contents aren't self-evident:
   `process.exit()` would take the parent down — the same trap that once made a bare require of
   `strategy-normalize.js` spend 42 backtest minutes. A non-zero exit means BLOCKED and is reported,
   never escalated, and `--force` is never passed.
+- **`research/factorlib/` is now wired in — as a HYPOTHESIS source for the ideator, not evidence.**
+  It sat unread for weeks (zero references outside its own ingester) while the integration round
+  ran out of material: **4 of 6 types are exhausted** (no member improves the type leader), and
+  the biggest, `小盘-H-unknown`, has 29 members whose best candidate still *lowers* the leader by
+  0.0301 at correlation 0.77. Recombining redundant things cannot fix redundancy, so the library
+  needs orthogonal material from outside. `utils/factorlib-query.js` is the reader; the ideator
+  gained an `external-factor` mode and the critic four rules for judging one.
+- ⚠⚠ **Factor-board numbers may never enter our tables.** zz500 / 3y / JQ's cost model is a
+  different bench, and a result belongs to the bench that produced it (that is what the ledger's
+  `epoch` column enforces). A factor earns a ledger row by being built and measured on OUR bench;
+  board figures are cited only as provenance. The query tool prints that warning on every call.
+- ⚠ **The two turnover columns are not the same quantity** — the board's runs 1.8–3.06, ours runs
+  0.0078–0.3061 and is JQ's per-day `turnover_rate` (verified: 0.0103 over 484 days). So the
+  tempting "filter factors to this type's turnover band" (the type axis IS turnover) needs a
+  conversion nobody has derived. Do not compare the two numbers.
+- ⚠ The snapshot is **zz500 (mid-cap)** while the exhausted types are 小盘/微盘, so its IC may not
+  transfer where it is needed most — re-ingest `--universe zz1000` first for small-cap targets.
+- Two measured priors worth carrying: only **6 of 285** factors keep a positive post-cost excess
+  return (all low-turnover), and **every 动量类因子 is deeply negative after costs** (worst erosion
+  −15.25pp). A high-turnover or momentum import needs a reason it differs from the ones that failed.
+- ⚠ 量化课堂 (`research/tutorials/`) is **methodology, not material** — it teaches how to do factor
+  research. It belongs to the study loop or a future research pipeline, NOT to type integration,
+  which combines already-measured artefacts.
 - Screening verdicts live in `screen/verdicts.json` and are applied INSIDE the queue builders,
   because every discovery run rebuilds the queues from scratch.
 - Blind-test result (104 posts, 22.1% base rate): judgement on post BODIES scored 0.90 AUC vs
