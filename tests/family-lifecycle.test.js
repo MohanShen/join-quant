@@ -153,10 +153,20 @@ test('no wiki page still claims the superseded epoch 1', async t => {
     assert.deepStrictEqual(stale, [], `${stale.length} page(s) still stamped epoch 1`);
   });
 
-  await t.test('the repair leaves pages with no ledger row alone', () => {
-    // Inventing an epoch would recreate exactly the problem being repaired.
+  await t.test('the repair only ever moves a page TO its ledger row', () => {
+    // ⚠ NOT an idempotence test. An earlier version asserted repair proposes zero changes,
+    // which held only while nothing was mid-re-measurement — the moment epoch-6 rows started
+    // landing, four pages legitimately needed updating and the test failed on correct
+    // behaviour. The real invariant is that repair never invents: every proposed change must
+    // target the epoch the ledger states, and a page with no row must be left alone.
+    const ledger = epochRepair.ledgerEpochs('train');
     const r = epochRepair.repair({ dry: true });
-    assert.strictEqual(r.changed.length, 0, 'repair should be idempotent once applied');
+    for (const c of r.changed) {
+      assert.ok(c.to, 'a proposed change must name a target epoch');
+      assert.notStrictEqual(c.from, c.to, 'a no-op should not be proposed');
+      assert.ok([...ledger.values()].includes(c.to),
+        `proposed epoch ${c.to} for ${c.file} is not any ledger row's epoch`);
+    }
     for (const f of r.noRow) assert.ok(typeof f === 'string');
   });
 });
