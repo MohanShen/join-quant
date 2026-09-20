@@ -30,6 +30,8 @@
  *   node utils/daily-pipeline.js                 # decide and run
  *   node utils/daily-pipeline.js --stage normalize
  *   node utils/daily-pipeline.js --seed-deferred # park existing slow-skipped rows in the pool
+ *   node utils/daily-pipeline.js --once          # one stage only, no chaining
+ *   node utils/daily-pipeline.js --sync-manifest # reconcile study/manifest.json with the ledger
  *   node utils/daily-pipeline.js --status        # queues, budget, deferred pool, last runs
  */
 
@@ -227,9 +229,20 @@ function runAgentLoop(stage, target, { dry }) {
   }
   const script = path.join(ROOT, `scripts/auto${stage}-loop.sh`);
   if (!fs.existsSync(script)) return { outcome: 'error', note: `missing ${path.relative(ROOT, script)}` };
-  if (dry) return { outcome: 'dry', note: `would resume session ${pin.detail} via ${path.relative(ROOT, script)} (target ${target || 'next in queue'})` };
+  // ⚠ `target` is the head of OUR queue, reported for the log only — it is not passed to the
+  // agent and does not steer it. The study nudge tells the agent to take "the next pending
+  // family (strongest bestObjective first)" from study/manifest.json, which is a different
+  // ordering over the same set. Claiming to have targeted a family would be a fiction; what
+  // the planner actually controls is WHICH STAGE runs, and (via syncStudyManifest) which
+  // families are eligible at all.
+  if (dry) {
+    return { outcome: 'dry',
+             note: `would resume session ${pin.detail} via ${path.relative(ROOT, script)}` +
+                   `; our queue head is ${target || 'n/a'} (agent picks its own order)` };
+  }
   const r = sh('bash', [script]);
-  return { outcome: r.ok ? 'ran' : 'error', note: `resumed ${stage} session ${pin.detail}`,
+  return { outcome: r.ok ? 'ran' : 'error',
+           note: `resumed ${stage} session ${pin.detail} (exit 0 is NOT proof work happened — check its ledger)`,
            tail: r.out.split('\n').filter(Boolean).slice(-6).join('\n') };
 }
 
@@ -285,6 +298,83 @@ function execute(p, { dry = false } = {}) {
            note: 'every stage from the planned one down is blocked or empty' };
 }
 
+/**
+ * Run stage after stage while the budget lasts, re-planning between each.
+ *
+ * One fire used to mean one stage: if enhance finished in ten minutes having spent eight of
+ * sixty, the other fifty-two sat idle until the next fire four hours later. Chaining re-reads
+ * the budget and the queues after every stage, so the day's minutes get used by whatever is
+ * next in priority order.
+ *
+ * Re-planning each time (rather than computing an order up front) is what makes it correct:
+ * a normalize pass changes the ledger, which changes family staleness, which can legitimately
+ * promote study above normalize mid-run.
+ *
+ * Stops on: budget spent, nothing runnable, an error, or `maxStages` — the last a guard
+ * against a stage that returns instantly and would otherwise spin.
+ */
+function runChain({ dry = false, maxStages = 6, stageOverride = null } = {}) {
+  const log = [];
+  let last = null;
+  for (let i = 0; i < maxStages; i++) {
+    const p = plan({ stageOverride: i === 0 ? stageOverride : null });
+
+    if (p.budget.ok && p.budget.used >= USAGE_LIMIT && p.stage !== 'discover') {
+      log.push({ stage: p.stage, outcome: 'budget-spent',
+                 note: `used ${p.budget.used} >= ${USAGE_LIMIT}` });
+      break;
+    }
+    const r = execute(p, { dry });
+    log.push({ stage: r.stage, outcome: r.outcome, note: r.note, cededFrom: r.cededFrom });
+    last = r;
+
+    // A stage that could not start, errored, or found nothing will not start next time
+    // either — the inputs have not changed. Stopping beats spinning.
+    if (['blocked', 'error', 'empty', 'held'].includes(r.outcome)) break;
+    // In dry mode nothing actually changed, so a second pass would replan identically.
+    if (dry) break;
+  }
+  return { log, last };
+}
+
+// ── keeping the planner and the agent looking at the same queue ─────────────
+
+/**
+ * Reconcile `study/manifest.json` with the consumption ledger.
+ *
+ * ⚠ The planner and the study agent read DIFFERENT queues, and they disagreed. The planner
+ * derives staleness from `consumption.tsv` (member-aware: a family reopens when its membership
+ * changes); the loop script's nudge tells the agent to "work study/manifest.json in order".
+ * The manifest said all 14 families were `done` while the planner said all 14 were stale — so
+ * the daily job would have dispatched study, the agent would have found nothing pending and
+ * exited 0, and the run would have been recorded as `ran`. A silent no-op reported as success
+ * is the exact failure the `blocked` path exists to prevent, and it slipped through because
+ * the script's exit code is clean.
+ *
+ * The ledger is the durable truth (tracked, append-only, member-aware), so it wins: a family
+ * the ledger calls stale is set back to `pending` in the manifest the agent actually reads.
+ * The agent marks it `done` again when it finishes, and records the event — which then makes
+ * it non-stale, so this converges rather than oscillating.
+ */
+function syncStudyManifest({ dry = false } = {}) {
+  const f = path.join(ROOT, 'study/manifest.json');
+  if (!fs.existsSync(f)) return { changed: [], reason: 'no manifest' };
+  const raw = readJson(f, null);
+  if (!Array.isArray(raw)) return { changed: [], reason: 'manifest is not an array' };
+
+  const changed = [];
+  for (const row of raw) {
+    if (!row || !row.family) continue;
+    const s = consumption.staleFor('study', row.family);
+    if (s.stale && row.status === 'done') {
+      changed.push({ family: row.family, from: 'done', to: 'pending', why: s.reason });
+      if (!dry) { row.status = 'pending'; row.reopenedBy = 'daily-pipeline'; row.reopenedWhy = s.reason; }
+    }
+  }
+  if (changed.length && !dry) fs.writeFileSync(f, JSON.stringify(raw, null, 2) + '\n');
+  return { changed, total: raw.length };
+}
+
 // ── seeding ─────────────────────────────────────────────────────────────────
 
 /** Park the slow-skipped rows already in the ledger, which are otherwise stranded forever. */
@@ -330,6 +420,14 @@ if (require.main === module) {
     process.exit(0);
   }
 
+  if (argv.includes('--sync-manifest')) {
+    const dry = argv.includes('--dry');
+    const r = syncStudyManifest({ dry });
+    console.log(`[daily] ${dry ? 'would reopen' : 'reopened'} ${r.changed.length} of ${r.total} study families`);
+    r.changed.forEach(c => console.log(`   ${c.family}  done -> pending   (${c.why})`));
+    process.exit(0);
+  }
+
   if (argv.includes('--status')) {
     const p = plan({});
     printPlan(p);
@@ -356,15 +454,31 @@ if (require.main === module) {
     process.exit(0);
   }
 
-  const r = execute(p, { dry: argv.includes('--dry') });
-  for (const c of (r.cededFrom || [])) {
-    console.log(`[daily] ⚠ ${c.stage.toUpperCase()} BLOCKED — budget ceded to the next stage`);
-    console.log(`         ${c.why}`);
+  // Keep the agent's own queue honest before dispatching — see syncStudyManifest.
+  const sync = syncStudyManifest({ dry: argv.includes('--dry') });
+  if (sync.changed.length) {
+    console.log(`[daily] study manifest: reopened ${sync.changed.length} family(ies) the ledger calls stale`);
+    sync.changed.slice(0, 4).forEach(c => console.log(`         ${c.family}  (${c.why})`));
   }
-  console.log(`[daily] ${r.stage} -> ${r.outcome.toUpperCase()}  ${r.note}`);
-  if (r.tail) r.tail.split('\n').forEach(l => console.log(`   ${l.slice(0, 110)}`));
-  process.exitCode = (r.outcome === 'error' || r.outcome === 'blocked') ? 1 : 0;
+
+  const dry = argv.includes('--dry');
+  const once = argv.includes('--once');
+  const { log, last } = once
+    ? (() => { const r = execute(p, { dry }); return { log: [r], last: r }; })()
+    : runChain({ dry, stageOverride: arg('--stage') });
+
+  for (const r of log) {
+    for (const c of (r.cededFrom || [])) {
+      console.log(`[daily] ⚠ ${String(c.stage).toUpperCase()} BLOCKED — budget ceded to the next stage`);
+      console.log(`         ${c.why}`);
+    }
+    console.log(`[daily] ${r.stage} -> ${String(r.outcome).toUpperCase()}  ${r.note || ''}`);
+  }
+  if (last && last.tail) last.tail.split('\n').forEach(l => console.log(`   ${l.slice(0, 110)}`));
+  const bad = log.some(r => r.outcome === 'error' || r.outcome === 'blocked');
+  process.exitCode = bad ? 1 : 0;
 }
 
 module.exports = { plan, queues, execute, budget, seedDeferred, staleFamilies,
+                   runChain, syncStudyManifest,
                    SLOW_SKIP_MIN, USAGE_LIMIT, PRIORITY };

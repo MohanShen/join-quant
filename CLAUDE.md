@@ -51,6 +51,8 @@ node utils/daily-pipeline.js --plan            # decide and explain, run nothing
 node utils/daily-pipeline.js --status          # queues, budget, deferred pool, last runs
 node utils/daily-pipeline.js                   # decide and run
 node utils/daily-pipeline.js --stage normalize # override the pick for one run
+node utils/daily-pipeline.js --once            # one stage only, no chaining
+node utils/daily-pipeline.js --sync-manifest   # reconcile study/manifest.json with the ledger
 node utils/daily-pipeline.js --seed-deferred   # park stranded slow-skipped rows in the pool
 DRY=1 bash scripts/daily-pipeline.sh           # the cron wrapper, plan only
 
@@ -408,6 +410,28 @@ Only the directories whose contents aren't self-evident:
 - ⚠ 量化课堂 (`research/tutorials/`) is **methodology, not material** — it teaches how to do factor
   research. It belongs to the study loop or a future research pipeline, NOT to type integration,
   which combines already-measured artefacts.
+- **Two of the four queues are FILES, two are DERIVED.** `data/pending-normalize.json` and
+  `data/copy-queue.json` are real files the normalize/fetch pipelines themselves read. The
+  enhance and study queues are **derived** from `wiki/families/*.md` + `data/consumption.tsv`
+  — no file, and **the agent loops do not read them**.
+- ⚠ **That asymmetry caused a silent no-op.** The planner derives study staleness from the
+  consumption ledger; the loop nudge tells the agent to work `study/manifest.json`. The manifest
+  said all 14 families were `done` while the ledger said all 14 were stale, so a dispatch would
+  have found nothing to do and still exited 0 — and been recorded as `ran`.
+  `node utils/daily-pipeline.js --sync-manifest` reconciles them; the ledger wins (tracked,
+  append-only, member-aware), and the agent marking a family done makes it non-stale again, so
+  it converges rather than oscillating.
+- The planner controls **which stage runs** and (via the sync) **which families are eligible** —
+  NOT which family the agent picks. The study nudge orders by `bestObjective`; the planner
+  reports its own queue head for the log only, and says so.
+- **Sessions are headless under cron, interactive for humans**: `auto*-loop.sh` runs
+  `claude -p --resume <uuid>`; `auto*-interactive.sh` runs `claude --resume` / `--session-id`
+  in a TUI. The cron **resumes** rather than cold-starting, so the agents keep context.
+- The daily run **chains** stages while budget remains, re-planning between each — a normalize
+  pass changes the ledger, which can legitimately promote study above normalize mid-run.
+  `--once` runs a single stage. **`/run-daily`** is the skill entry point; stage selection stays
+  in the deterministic planner because it is arithmetic with one right answer, and the skill
+  handles only what needs judgement (a blocked stage, a loop that exits 0 having done nothing).
 - **The daily cron picks ONE stage by queue priority — later stages outrank earlier ones**:
   `enhance > study > normalize > discover`. A pull system: finish what is in the pipe before
   admitting more, because the 60 backtest-min/day are the binding constraint and an idle
