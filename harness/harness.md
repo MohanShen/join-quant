@@ -18,13 +18,13 @@
 
 ## Epoch
 
-- **epoch**: 3
-- **setAt**: 2026-09-19
-- **note**: **VAL 延长为两年（2024–2025）**，OOS 起点后移至 2026-01-01。理由：原 VAL 只有 2024 一年，
-  而那一年被 2 月微盘踩踏单一事件主导（`validated_strategies/jul12-023` 正是死在这里）；两年跨两个
-  regime，过闸才有意义。**TRAIN 窗口与成本/门槛全部不变**，故 epoch 2 的 122 条 TRAIN 归一化结果
-  与 epoch 3 **仍可直接横比**；受影响的只有 2 条 VAL 结果（它们只测了 2024，标记为 epoch-2 结果）。
-  ⚠ 保留样本外因此从约 20 个月缩到约 9 个月 —— 预算相应收紧：**每纪元最多 2 次 OOS**（原 4 次）。
+- **epoch**: 4
+- **setAt**: 2026-09-20
+- **note**: **钉死三个此前交给策略自己设的执行项**——`order_volume_ratio=0.05`、基金费率
+  `set_order_cost(..., type='fund')`、`avoid_future_data=True`。它们改变**成交与费用**，因此
+  **TRAIN 结果与 epoch ≤3 不可横比**；账本新增 `epoch` 列记录每行由哪个台测得，既有 157 行标 `2`，
+  按筛选优先级逐步重测，不一次性作废。窗口/门槛/滑点沿用 epoch 3 不变。
+  （epoch 3 的改动：VAL 延长为 2024–2025、OOS 起点移至 2026-01-01、OOS 预算收紧为每纪元 2 次。）
   团队架构见 `enhance/program.md`。
 
 ---
@@ -55,6 +55,8 @@
 | 基础资金 | **￥1,000,000** |
 | 频率 | 每天（日线） |
 | 复权/真实价 | `use_real_price=True` |
+| **成交量占比上限** | **`order_volume_ratio=0.05`**（epoch 4 新增） |
+| **未来函数防护** | **`avoid_future_data=True`**（epoch 4 新增） |
 
 **代码级**（在策略 `initialize` 的「勿改区块」里设定，见 `strategy_template.py`；agent 不得改动这些行）：
 
@@ -63,7 +65,16 @@
 | 基准 | 沪深300 | `set_benchmark('000300.XSHG')` |
 | 手续费 | 买万3 / 卖万3+印花税千1 / 每笔最低5元 | `set_commission(PerTrade(buy_cost=0.0003, sell_cost=0.0013, min_cost=5))` |
 | **滑点** | **0（零滑点）** | `set_slippage(FixedSlippage(0))` |
+| **基金费率** | 买卖各万3 / 无印花税 / 每笔最低5元 | `set_order_cost(OrderCost(open_commission=0.0003, close_commission=0.0003, close_tax=0, min_commission=5), type='fund')`（epoch 4 新增） |
 
+> **为什么 epoch 4 要钉这三项**：
+> - `order_volume_ratio` 不设时，一笔单可以吃掉成交量中不合理的比例——这正是本库最高分两个策略的
+>   来源机制（[[ETF溢价]] study-q-1：抬高成交量下界后 sharpe 8.44→1.10，边缘**由最薄的标的构造**）。
+>   215 个策略里只有 **9 个**自己设过它。
+> - `set_commission` **管不到基金**：170 个策略自设 `set_order_cost(type='fund')`，所以此前每个 ETF
+>   策略跑的都是作者的费率而不是台子的。
+> - `avoid_future_data` 只有 **144/215** 个策略设了，等于 71 个在没有未来函数防护下跑。
+>
 > ⚠⚠ **零滑点的后果（务必知晓）**：这是本纪元刻意的选择——与聚宽社区策略、及 `wiki/` 已记录的绩效保持**可比**。
 > 代价：**换手成本被完全忽略**，高换手 / 微盘 / 打板类策略的 `objective` 会被**系统性高估**。
 > 因此本纪元里：

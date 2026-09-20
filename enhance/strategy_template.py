@@ -43,9 +43,12 @@ def set_variables():
 def _set_frozen_harness():
     # ============ FROZEN（勿改）：research/harness.md §2 ============
     set_option('use_real_price', True)
+    set_option('avoid_future_data', True)                          # epoch 4：未来函数防护，不再交给作者
+    set_option('order_volume_ratio', 0.05)                         # epoch 4：单笔最多吃掉 5% 成交量
     log.set_level('order', 'error')
     set_benchmark('000300.XSHG')                                   # 仅显示用，不影响 objective
     set_commission(PerTrade(buy_cost=0.0003, sell_cost=0.0013, min_cost=5))
+    set_order_cost(OrderCost(open_commission=0.0003, close_commission=0.0003, close_tax=0, min_commission=5), type='fund')   # epoch 4：基金费率（set_commission 管不到）
     set_slippage(FixedSlippage(0))                                 # 零滑点（见 harness.md §2 警示）
     # ===================================================================
 

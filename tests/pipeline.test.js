@@ -293,3 +293,45 @@ test('harness config', async t => {
     assert.ok(harness.config().oosPolicy.maxTestsPerEpoch < prev.oosPolicy.maxTestsPerEpoch);
   });
 });
+
+test('epoch 4 execution pins', async t => {
+  const lit = harness.pythonLiterals();
+
+  await t.test('the config declares all three pins', () => {
+    const c = harness.config().costs;
+    assert.strictEqual(c.orderVolumeRatio, 0.05);
+    assert.strictEqual(c.avoidFutureData, true);
+    assert.ok(c.fundOrderCost, 'fund order cost missing');
+  });
+
+  await t.test('literals are generated for each pin', () => {
+    assert.match(lit.orderVolumeRatio, /order_volume_ratio', 0\.05/);
+    assert.match(lit.avoidFutureData, /avoid_future_data', True/);
+    assert.match(lit.fundOrderCost, /type='fund'/);
+  });
+
+  await t.test('both frozen Python blocks carry them', () => {
+    assert.deepStrictEqual(harness.verify(), []);
+  });
+
+  await t.test('the fund-cost rebinding is guarded — unguarded it broke every strategy', () => {
+    // set_order_cost is not bound at module scope in every JQ runtime; rebinding it without a
+    // guard raised NameError at import and the strategy came back compile-error.
+    const src = fs.readFileSync(path.join(ROOT, 'utils/strategy-normalize.js'), 'utf8');
+    const i = src.indexOf('__jq_set_order_cost = set_order_cost');
+    assert.ok(i > 0, 'fund-cost rebinding not found');
+    assert.ok(src.lastIndexOf('try:', i) > src.lastIndexOf('def ', i) - 500,
+      'the rebinding must sit inside a try/except NameError');
+  });
+
+  await t.test('the ledger records which epoch measured each row', () => {
+    const head = fs.readFileSync(path.join(ROOT, 'harness/normalize-train.tsv'), 'utf8').split('\n')[0];
+    assert.ok(head.split('\t').includes('epoch'), 'ledger has no epoch column');
+  });
+
+  await t.test('epoch 3 is sealed and states it is not comparable', () => {
+    const e3 = JSON.parse(fs.readFileSync(path.join(ROOT, 'harness/config/epoch-3.json'), 'utf8'));
+    assert.strictEqual(e3.status, 'historical');
+    assert.match(harness.config().comparability.trainResultsFromEarlierEpochs, /NOT comparable/);
+  });
+});

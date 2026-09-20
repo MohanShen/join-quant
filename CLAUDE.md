@@ -276,11 +276,26 @@ Only the directories whose contents aren't self-evident:
   force; code reads them through `utils/harness-config.js`.** They used to be duplicated across
   seven files and had already drifted. Bump an epoch by writing a new JSON + updating
   `active.json`; old epoch files are kept so results stay attached to the rules that made them.
-- **Epoch 3 (2026-09-19)**: TRAIN 2022-01-01..2023-12-31 (unchanged), VAL **2024-01-01..2025-12-31**
-  (was 2024 only), OOS reserve starts **2026-01-01**. TRAIN and costs are unchanged, so the 122
-  epoch-2 TRAIN rows stay directly comparable; only the 2 VAL results are affected and are
-  annotated `harness_epoch: 2` in their file headers. The reserve is now ~9 months, so the OOS
-  budget tightened to **2 tests per epoch**.
+- **Epoch 3 (2026-09-19)**: VAL **2024-01-01..2025-12-31** (was 2024 only), OOS reserve starts
+  **2026-01-01**, OOS budget tightened to **2 tests per epoch** (the reserve is ~9 months).
+  TRAIN and costs unchanged, so epoch-2 TRAIN rows stayed comparable; the 2 VAL results are
+  annotated `harness_epoch: 2` in their file headers.
+- **Epoch 4 (2026-09-20)**: pins three execution settings the bench used to leave to each
+  strategy — `order_volume_ratio=0.05`, fund costs via `set_order_cost(..., type='fund')`, and
+  `avoid_future_data=True`. Only 9 of 215 strategies set the volume cap, `set_commission` never
+  governed funds (so 170 ETF strategies ran on their authors' fees), and 71 ran with no lookahead
+  guard. ⚠ These change **fills and fees**, so TRAIN results are **not comparable across epochs**.
+  The ledger gained an `epoch` column; existing rows are tagged `2` and get re-measured by
+  screening priority rather than invalidated in bulk.
+- ⚠ **`utils/strategy-normalize.js` had no `require.main === module` guard**, so a bare
+  `require()` of it started a full 214-strategy batch and spent 42 of the day's 60 backtest
+  minutes before it was killed. Guard added; every entry point in `utils/` needs one.
+- The normalizer's done-check is **epoch-aware**: an epoch-2 row is not a result for epoch 4,
+  since the pins change fills and fees. Without that it reported `todo=0` and silently refused
+  to re-measure anything after the bump.
+- ⚠ `set_order_cost` is **not bound at module scope** in every JQ runtime, unlike `set_slippage`
+  and `set_commission`. Rebinding it unguarded in the injected OVERRIDE raised NameError at import
+  and returned `compile-error` for the whole strategy. It is wrapped in try/except NameError.
 - `enhance/strategy_template.py` and the normalizer's injected OVERRIDE run on JoinQuant's
   servers and **cannot read the JSON** — they hold literal Python. `harness-config.js --verify`
   is what keeps them honest; run it after any cost change.

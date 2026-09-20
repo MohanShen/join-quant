@@ -48,21 +48,44 @@ function resolveMaxPollMin(opt) {
 const OVERRIDE = `
 
 # ===== AUTORESEARCH NORMALIZATION OVERRIDE (appended; strategies/ file untouched) =====
-# harness/harness.md §2 — force zero slippage + frozen commission regardless of
-# what the raw strategy sets, even if it re-sets costs every bar.
+# harness/harness.md §2 — force the frozen execution settings regardless of what the
+# raw strategy sets, even if it re-sets costs every bar. Values are pinned in
+# harness/config/epoch-<n>.json; utils/harness-config.js --verify checks this block
+# still matches, because Python running on JQ's servers cannot read that JSON.
 __jq_set_slippage = set_slippage
 def set_slippage(*a, **k):
     __jq_set_slippage(FixedSlippage(0))
 __jq_set_commission = set_commission
 def set_commission(*a, **k):
     __jq_set_commission(PerTrade(buy_cost=0.0003, sell_cost=0.0013, min_cost=5))
+# epoch 4: set_commission does NOT govern funds, so 170 held strategies were running
+# ETF trades on their own costs. Pin the fund table too, and neutralise re-sets.
+# Guarded: unlike set_slippage/set_commission, set_order_cost is NOT bound at module
+# scope in every JQ runtime — rebinding it unguarded raised NameError at import and
+# the whole strategy came back compile-error.
+try:
+    __jq_set_order_cost = set_order_cost
+    def set_order_cost(*a, **k):
+        if k.get('type') == 'fund' or (len(a) > 1 and a[1] == 'fund'):
+            __jq_set_order_cost(OrderCost(open_commission=0.0003, close_commission=0.0003, close_tax=0, min_commission=5), type='fund')
+        else:
+            __jq_set_order_cost(*a, **k)
+except NameError:
+    pass
 try:
     __jq_orig_initialize = initialize
     def initialize(context):
         __jq_orig_initialize(context)
         set_option('use_real_price', True)
+        # epoch 4 pins, applied AFTER the strategy's own initialize so they win
+        set_option('avoid_future_data', True)
+        set_option('order_volume_ratio', 0.05)
         set_slippage(FixedSlippage(0))
         set_commission(PerTrade(buy_cost=0.0003, sell_cost=0.0013, min_cost=5))
+        try:
+            set_order_cost(OrderCost(open_commission=0.0003, close_commission=0.0003, close_tax=0, min_commission=5), type='fund')
+        except Exception:
+            pass
 except NameError:
     pass
 # ===== END OVERRIDE =====
@@ -118,9 +141,14 @@ function incompatibility(src) {
   return null;
 }
 
+/**
+ * Gate threshold and score formula come from harness/config/epoch-<n>.json.
+ * Returns { obj, gate } — the caller destructures both, and a bare return value
+ * silently wrote empty objective/gate columns for a whole run.
+ */
 function objectiveOf(annual, maxdd, sharpe) {
-  // Gate threshold and score formula come from harness/config/epoch-<n>.json.
-  return require('./harness-config').objective(annual, maxdd, sharpe);
+  const h = require('./harness-config');
+  return { obj: h.objective(annual, maxdd, sharpe), gate: h.gate(sharpe) ? 'pass' : 'fail' };
 }
 
 function main() {
@@ -130,13 +158,17 @@ function main() {
 
   // Ledger (resumable). Terminal statuses are skipped on resume; failed/crash are
   // RETRIABLE (rate-limiting can cause spurious failures) until they hit failed-final.
-  const HEADER = ['sourceFile','postId','title','status','start','end','days','total_pct','annual_pct','sharpe','maxdd_pct','objective','gate'].join('\t');
+  // `epoch` records WHICH bench measured a row. Epoch 4 pins order_volume_ratio, fund costs
+  // and avoid_future_data, which change fills and fees — so a row is only comparable to rows
+  // from the same epoch. Appended last: wiki-family-build.js reads columns 0..12 and ignores it.
+  const HEADER = ['sourceFile','postId','title','status','start','end','days','total_pct','annual_pct','sharpe','maxdd_pct','objective','gate','epoch'].join('\t');
   // `no-trades` IS terminal. strategy-post-backtest.js calls it "an outcome to
   // investigate, not a transient failure to rerun" — but until it was listed here
   // it was in neither TERMINAL nor RETRIABLE, so it was never marked done AND never
   // incremented failCount, meaning finalize() could not escalate it either. Those
   // strategies were re-run and re-billed on every batch forever; two files already
   // appear twice in the ledger from exactly this.
+  const ACTIVE_EPOCH = require('./harness-config').config().epoch;
   const TERMINAL = new Set(['normalized', 'incompatible-futures', 'incompatible-notrunnable', 'failed-final', 'slow-skipped', 'compile-error', 'no-trades']);
   const RETRIABLE = new Set(['failed', 'crash', 'window-mismatch', 'rate-limited', 'budget-stopped']);
   const done = new Set();       // sourceFile with a terminal status
@@ -146,7 +178,12 @@ function main() {
       const c = line.split('\t');
       const f = c[0], st = c[3];
       if (!f || f === 'sourceFile') continue;
-      if (TERMINAL.has(st)) done.add(f);
+      // Epoch-aware: a row only counts as done if the CURRENT bench measured it. Epoch 4
+      // pins order_volume_ratio / fund costs / avoid_future_data, which change fills and fees,
+      // so an epoch-2 row is not a result for epoch 4 — without this the normalizer reported
+      // "todo=0" and silently refused to re-measure anything after an epoch bump.
+      const rowEpoch = c[13] ? parseInt(c[13], 10) : null;
+      if (TERMINAL.has(st) && (rowEpoch === ACTIVE_EPOCH)) done.add(f);
       if (RETRIABLE.has(st)) failCount[f] = (failCount[f] || 0) + 1;
     }
   } else {
@@ -186,7 +223,8 @@ function main() {
   const todo = files.filter(f => !done.has('strategies/' + f));
   const slice = opt.limit ? todo.slice(0, parseInt(opt.limit, 10)) : todo;
 
-  console.log(`[normalize] window=${opt.window} | total=${files.length} done=${done.size} todo=${todo.length} running=${slice.length}`);
+  console.log(`[normalize] window=${opt.window} | epoch=${ACTIVE_EPOCH} | total=${files.length} ` +
+              `done(this epoch)=${done.size} todo=${todo.length} running=${slice.length}`);
   if (opt.dryRun) { slice.forEach(f => console.log('  would run:', f)); return; }
 
   let n = 0;
@@ -300,7 +338,11 @@ function main() {
 }
 
 function appendRow(ledgerPath, cells) {
-  fs.appendFileSync(ledgerPath, cells.join('\t') + '\n');
+  const epoch = require('./harness-config').config().epoch;
+  fs.appendFileSync(ledgerPath, [...cells, epoch].join('\t') + '\n');
 }
 
-main();
+// Guard: without this, `require('./strategy-normalize')` RAN A FULL BATCH. It happened —
+// a require in a one-liner started a 214-strategy run and spent 42 of the day's 60
+// backtest minutes before it was killed. Every other entry point in utils/ has this guard.
+if (require.main === module) main();

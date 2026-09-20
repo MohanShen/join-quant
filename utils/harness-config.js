@@ -78,13 +78,28 @@ function objective(annualPct, maxddPct, sharpe) {
 /** The exact Python literals the frozen block must contain, generated from the config. */
 function pythonLiterals() {
   const c = config().costs;
-  return {
+  const lit = {
     slippage: `set_slippage(${c.slippage.kind}(${c.slippage.value}))`,
     commission: `set_commission(PerTrade(buy_cost=${c.commission.buy}, ` +
                 `sell_cost=${c.commission.sell}, min_cost=${c.commission.minCost}))`,
     benchmark: `set_benchmark('${c.benchmark}')`,
     useRealPrice: `set_option('use_real_price', ${c.useRealPrice ? 'True' : 'False'})`,
   };
+  // epoch 4 pins: only emitted when the active config actually declares them, so the
+  // verifier keeps working against an older epoch without demanding literals it never had.
+  if (c.avoidFutureData != null) {
+    lit.avoidFutureData = `set_option('avoid_future_data', ${c.avoidFutureData ? 'True' : 'False'})`;
+  }
+  if (c.orderVolumeRatio != null) {
+    lit.orderVolumeRatio = `set_option('order_volume_ratio', ${c.orderVolumeRatio})`;
+  }
+  if (c.fundOrderCost) {
+    const f = c.fundOrderCost;
+    lit.fundOrderCost = `set_order_cost(OrderCost(open_commission=${f.openCommission}, `
+      + `close_commission=${f.closeCommission}, close_tax=${f.closeTax}, `
+      + `min_commission=${f.minCommission}), type='fund')`;
+  }
+  return lit;
 }
 
 /**
@@ -94,9 +109,10 @@ function pythonLiterals() {
 function verify() {
   const lit = pythonLiterals();
   const problems = [];
+  const optional = ['avoidFutureData', 'orderVolumeRatio', 'fundOrderCost'].filter(k => lit[k]);
   const files = [
-    ['enhance/strategy_template.py', ['slippage', 'commission', 'benchmark', 'useRealPrice']],
-    ['utils/strategy-normalize.js', ['slippage', 'commission']],
+    ['enhance/strategy_template.py', ['slippage', 'commission', 'benchmark', 'useRealPrice', ...optional]],
+    ['utils/strategy-normalize.js', ['slippage', 'commission', ...optional]],
   ];
   for (const [rel, keys] of files) {
     const p = path.join(ROOT, rel);

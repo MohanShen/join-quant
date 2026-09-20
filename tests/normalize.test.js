@@ -116,17 +116,24 @@ test('the rebuilt ledger', async t => {
 
   await t.test('exists and carries the expected header', { skip: !fs.existsSync(ledger) }, () => {
     const head = fs.readFileSync(ledger, 'utf8').split('\n')[0].split('\t');
-    assert.deepStrictEqual(head, ['sourceFile', 'postId', 'title', 'status', 'start', 'end',
-      'days', 'total_pct', 'annual_pct', 'sharpe', 'maxdd_pct', 'objective', 'gate']);
+    // The first 13 columns are the original contract that wiki-family-build.js reads by index;
+    // `epoch` was appended in epoch 4 to record which bench measured each row, and readers that
+    // index 0..12 ignore it.
+    assert.deepStrictEqual(head.slice(0, 13), ['sourceFile', 'postId', 'title', 'status', 'start',
+      'end', 'days', 'total_pct', 'annual_pct', 'sharpe', 'maxdd_pct', 'objective', 'gate']);
+    assert.ok(head.length === 13 || head[13] === 'epoch', `unexpected 14th column: ${head[13]}`);
   });
 
-  await t.test('holds no duplicate sourceFile+status pair', { skip: !fs.existsSync(ledger) }, () => {
+  await t.test('holds no duplicate sourceFile+status pair WITHIN an epoch', { skip: !fs.existsSync(ledger) }, () => {
+    // Since epoch 4 the same file legitimately carries one row per epoch — that is the point
+    // of the column, because a result only means something next to the bench that produced it.
+    // A repeat within ONE epoch is still a bug (it is what the no-trades loop used to cause).
     const seen = new Set();
     const dupes = [];
     for (const l of fs.readFileSync(ledger, 'utf8').split('\n').slice(1)) {
       if (!l.trim()) continue;
       const c = l.split('\t');
-      const k = `${c[0]} ${c[3]}`;
+      const k = `${c[0]} ${c[3]} epoch=${c[13] || '?'}`;
       if (seen.has(k)) dupes.push(k); else seen.add(k);
     }
     assert.deepStrictEqual(dupes, [], `duplicate ledger rows: ${dupes.join(', ')}`);
