@@ -21,7 +21,8 @@
 #
 # Env overrides:
 #   REPO         repo root (default: parent of this script's dir)
-#   TAG          enhance epoch tag; branch enhance/$TAG (default: current enhance/* branch)
+#   TAG          optional: require branch enhance/$TAG. Default: whatever branch is checked
+#                out (parity with autostudy-loop.sh). This job never moves your tree.
 #   USAGE_LIMIT  JQ backtest-minute cap (default 55 = free tier only; >60 spends credits)
 #   HEARTBEAT_MIN session-active threshold in minutes (default 20)
 #   JQ_CDP_URL   CDP endpoint (default http://localhost:9225)
@@ -56,21 +57,31 @@ echo $$ > "$LOCK"
 trap 'rm -f "$LOCK" "$PLOCK"' EXIT
 
 # ── Resolve enhance branch ─────────────────────────────────────────────────
+# Any branch is allowed, exactly as scripts/autostudy-loop.sh already does. The gate that
+# matters is Precheck 0 below: we only resume a session pinned to the branch currently
+# checked out, so a stray fire on an unrelated branch still no-ops.
+#
+# ⚠ This used to hard-require an `enhance/*` branch and `git checkout` its way there. Both
+# were fossils of the pre-rename era (docs/pipeline-refactor-plan.md renamed research/ ->
+# enhance/), and both were actively harmful once the rest of the pipeline moved to main:
+#   - no `enhance/*` branch exists any more, so every fire logged "skip" and exit 0 — a cron
+#     that reports success daily while starting nothing;
+#   - the checkout silently switched the WORKING TREE out from under whatever else was
+#     running, which for a timer-driven job sharing a repo is not an acceptable side effect.
+# TAG still forces a specific branch when you genuinely want epoch branches back.
 CUR_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+if [ -z "$CUR_BRANCH" ]; then
+  log "skip: cannot resolve current branch (not a git repo / detached HEAD)"; exit 0
+fi
 TAG="${TAG:-}"
-if [ -z "$TAG" ]; then
-  case "$CUR_BRANCH" in
-    enhance/*) BRANCH="$CUR_BRANCH" ;;
-    *) log "skip: not on a enhance/* branch (on '$CUR_BRANCH') and TAG unset. Create/checkout an epoch first."; exit 0 ;;
-  esac
-else
+if [ -n "$TAG" ]; then
   BRANCH="enhance/$TAG"
-fi
-if ! git rev-parse --verify "$BRANCH" >/dev/null 2>&1; then
-  log "skip: branch '$BRANCH' does not exist — create the epoch first (see enhance/program.md Setup)"; exit 0
-fi
-if [ "$CUR_BRANCH" != "$BRANCH" ]; then
-  git checkout "$BRANCH" >/dev/null 2>&1 || { log "skip: cannot checkout $BRANCH (dirty tree?)"; exit 0; }
+  if [ "$CUR_BRANCH" != "$BRANCH" ]; then
+    log "skip: TAG=$TAG wants '$BRANCH' but HEAD is '$CUR_BRANCH' — check it out yourself; this job does not move your tree"
+    exit 0
+  fi
+else
+  BRANCH="$CUR_BRANCH"
 fi
 
 # ── Precheck 0: a pinned interactive session exists for THIS branch ──────────

@@ -5,7 +5,7 @@
 # can resume THIS SAME session headless when the Anthropic quota frees up.
 #
 # Flow:
-#   1. Run this on your enhance/<tag> branch:  ./scripts/autoenhance-interactive.sh
+#   1. Run this on whatever branch you work on:  ./scripts/autoenhance-interactive.sh
 #   2. Inside claude, type:  /run-enhance
 #   3. Watch it work. When quota stops it, just leave — the cron resumes this session.
 #   4. To come back and watch again, run this script again (it reopens the same session,
@@ -22,11 +22,14 @@ cd "$REPO" || { echo "cannot cd to $REPO"; exit 1; }
 SID_FILE="$REPO/data/autoenhance-session.txt"
 mkdir -p "$REPO/data"
 
+# Any branch, matching scripts/autostudy-interactive.sh. The `enhance/*` requirement was a
+# fossil of the pre-rename era and had become a hard blocker: with the pipeline on main it
+# refused to start at all (exit 1), so the cron had nothing to resume and the daily job
+# reported ENHANCE blocked every fire.
 BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
-case "$BRANCH" in
-  enhance/*) ;;
-  *) echo "Not on a enhance/* branch (on '$BRANCH'). Checkout or create your epoch branch first:"; echo "  git checkout -b enhance/<tag>"; exit 1 ;;
-esac
+if [ -z "$BRANCH" ]; then
+  echo "not a git repo (or detached HEAD with no branch name) — cannot pin a session"; exit 1
+fi
 
 NEW=0; [ "${1:-}" = "--new" ] && NEW=1
 
