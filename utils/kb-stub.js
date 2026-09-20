@@ -74,7 +74,35 @@ function createStub(srcFile, fullSrc, metrics) {
 
   const { concepts, factors } = classify(fullSrc);
   const a = metrics.annual / 100, m = metrics.maxdd / 100;
-  const gateTxt = metrics.gate === 'pass' ? '过门槛' : '未过门槛 夏普<2.5';
+  // ⚠ Both of these used to be hard-coded (`epoch: 1`, `夏普<2.5`) and had gone stale.
+  // The stamped epoch matters far more than it looks: CLAUDE.md designates this `normalized:`
+  // block the DURABLE BACKUP of harness/normalize-*.tsv (which is gitignored and has already
+  // regressed from ~119 rows to 18 once). Every one of the 120 existing pages claimed epoch 1
+  // while the ledger said 2 or 4, so a rebuild would have reconstructed a mislabelled ledger.
+  const harness = require('./harness-config');
+  const epoch = metrics.epoch != null ? metrics.epoch : harness.config().epoch;
+  const bar = harness.stageThreshold('normalize');
+  const gateTxt = metrics.gate === 'pass' ? '过门槛' : `未过门槛 夏普<${bar}`;
+
+  // Family PROPOSAL — deliberately not `family:`.
+  //
+  // A stub used to carry no family at all, and wiki-family-build skips pages without one
+  // (`if (!fm.family) continue`), so every newly fetched member of an existing family was
+  // invisible to that family's page. But auto-assigning is not safe either: measured against
+  // the 175 hand-labelled pages, code matching is right on only 87.1% of the calls it is
+  // willing to make. Writing `family:` at that rate would corrupt §3, memberCount and the type
+  // layer above it — silently, and in the direction of the biggest families.
+  //
+  // So the stub records a PROPOSAL that wiki-family-build ignores. The member stops being
+  // invisible (it shows up in `family-match --pending`) without anything being asserted.
+  // Promotion to `family:` is a human / `/ingest-strategy` decision.
+  let proposal = '';
+  try {
+    const fm = require('./family-match');
+    const r = fm.match(fullSrc, fm.familyBases().bases);
+    if (r.family) proposal = `familyProposal: ${r.family}\nfamilyProposalScore: ${r.score}\n`;
+    else if (r.ranked[0]) proposal = `familyProposal: ~\nfamilyProposalNote: ${r.reason}\n`;
+  } catch { /* matching is advisory; never block stub creation on it */ }
   const md = `---
 postId: ${postId}
 title: ${title}
@@ -82,10 +110,10 @@ sourceFile: ${srcFile}
 ${post ? 'joinquantPost: ' + (post.startsWith('http') ? post : 'https://www.joinquant.com/post/' + post) + '\n' : ''}concepts: [${concepts.join(', ')}]
 factors:
 ${factorsYaml(factors)}
-ingestedAt: ${new Date().toISOString().slice(0, 10)}
+${proposal}ingestedAt: ${new Date().toISOString().slice(0, 10)}
 codeLines: ${fullSrc.split('\n').length}
 stats: { 绩效未公开: true }
-normalized: { epoch: 1, window: "TRAIN 2022-2023", annualReturn: ${a.toFixed(4)}, sharpe: ${metrics.sharpe}, maxDrawdown: ${m.toFixed(4)}, objective: ${metrics.obj}, gate: ${metrics.gate} }
+normalized: { epoch: ${epoch}, window: "TRAIN 2022-2023", annualReturn: ${a.toFixed(4)}, sharpe: ${metrics.sharpe}, maxDrawdown: ${m.toFixed(4)}, objective: ${metrics.obj}, gate: ${metrics.gate} }
 autoStub: true
 ---
 

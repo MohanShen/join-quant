@@ -106,6 +106,48 @@ function stageThreshold(stage) {
   return t == null ? config().objective.gateMin : t;
 }
 
+/**
+ * Is a result MEASURED under `rowEpoch` still valid under the active one?
+ *
+ * Not every epoch bump invalidates a measurement. Epoch 5 changed only the SCORING rule — the
+ * bench (windows, costs, pins, slippage, capital, frequency) is byte-identical to epoch 4, and
+ * `epoch-5.json` says so in a machine-readable `comparability.unchangedFromEpoch4`. But the
+ * normalizer's done-check was a strict `rowEpoch === ACTIVE_EPOCH`, so it treated epoch-4 rows
+ * as unmeasured and would have re-run them for nothing. Left alone, EVERY future scoring-only
+ * bump would re-measure the whole library — at 60 backtest-minutes a day, that is the most
+ * expensive kind of silent bug this repo has.
+ *
+ * Conservative by construction: an epoch is comparable only if each bump between it and the
+ * active one explicitly declared itself measurement-preserving. Anything unstated is NOT
+ * comparable, so a real cost change can never be mistaken for a scoring tweak.
+ *
+ * ⚠ The flag is `comparability.measurementPreservedFromPrevious`, an explicit boolean — NOT
+ * the `unchangedFromEpoch<n>` list. That list enumerates what STAYED the same, which is a
+ * different question: epoch 4 lists seven unchanged items and its own prose still says "NOT
+ * comparable", because the two things it DID change (the participation cap and fund costs)
+ * alter fills and fees. Reading the list as an equivalence marked epoch 3 comparable and would
+ * have silently accepted pre-pin measurements as current.
+ */
+function comparableEpochs() {
+  const active = config().epoch;
+  const ok = new Set([active]);
+  // Walk back while each epoch declares that it preserved the previous one's measurements.
+  for (let e = active; e > 1; e--) {
+    let cfg;
+    try { cfg = JSON.parse(fs.readFileSync(path.join(DIR, `epoch-${e}.json`), 'utf8')); }
+    catch { break; }
+    if ((cfg.comparability || {}).measurementPreservedFromPrevious !== true) break;
+    ok.add(e - 1);
+  }
+  return ok;
+}
+
+/** Does a ledger row's `epoch` column still count as a result for the active epoch? */
+function measurementValid(rowEpoch) {
+  const n = typeof rowEpoch === 'string' ? parseInt(rowEpoch, 10) : rowEpoch;
+  return Number.isFinite(n) && comparableEpochs().has(n);
+}
+
 /** The exact Python literals the frozen block must contain, generated from the config. */
 function pythonLiterals() {
   const c = config().costs;
@@ -186,4 +228,5 @@ if (require.main === module) {
 }
 
 module.exports = { config, window, oosCutoff, gate, objective, score, stageGate, stageThreshold,
+                   comparableEpochs, measurementValid,
                    pythonLiterals, verify, todayISO };

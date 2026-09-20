@@ -61,6 +61,9 @@ node utils/consumption-report.js --next       # what each loop should take next
 node utils/wiki-type-build.js --check         # family -> type assignment (universe x turnover)
 node utils/wiki-concept-lint.js               # concept strategyCount drift
 node utils/type-integrate-check.js <c.json>   # guard on a type-level integration candidate
+node utils/family-match.js --pending          # pages with no family:, with a proposal each
+node utils/family-match.js --validate         # re-score the matcher before changing it
+node utils/wiki-epoch-repair.js --dry         # fix pages whose normalized epoch disagrees with the ledger
 
 # Return series + component harvesting (inputs to type-level integration)
 node utils/series-backfill.js --scan          # index every backtest the JQ account still holds (free)
@@ -319,6 +322,50 @@ Only the directories whose contents aren't self-evident:
 - ⚠ `sharpeNoDiversification` only reads correctly **above the risk-free rate**: a negative excess
   return divided by the larger ρ=1 volatility moves toward zero, so stripping diversification would
   *raise* the reported Sharpe. The guard checks the sign first.
+- **A newly fetched member of an EXISTING family used to vanish.** `kb-stub.createStub()` wrote no
+  `family:` and `wiki-family-build.js` skips pages without one (`if (!fm.family) continue`), so the
+  member was structurally invisible to its own family page. The pattern only ever worked for
+  strategies the pipeline GENERATED (`autoenhance-recorder` sets `family:` then runs the builder),
+  never for ones it INGESTED. Now: stubs carry a `familyProposal:` (+ score), `normalize-sync`
+  spawns `wiki-family-build`, and `consumption-report` reopens the family for study/enhance.
+- ⚠ **`family:` is never auto-assigned.** `utils/family-match.js` scores Jaccard overlap of
+  normalized code lines against each family's `base:` (a family is a LINEAGE, so code — not
+  concepts, which cut across lineages by design). Measured on the 175 hand-labelled pages it is
+  right on **87.1%** of the calls it will make, abstaining on 82%. That is not good enough to
+  write: a wrong assignment corrupts §3, `memberCount` and the whole type layer, silently and in
+  the direction of the biggest families. It writes a PROPOSAL that the builder ignores; promotion
+  is a human/`/ingest-strategy` decision. `node utils/family-match.js --pending` is the queue,
+  `--validate` re-scores before any change to the matcher.
+- ⚠ **Combination books defeat code matching.** 三马/七星/五福 embed other families verbatim, so
+  they score high against several bases at once — exactly where the matcher was most confident and
+  most wrong (0.98 against two bases). `match()` abstains when ≥2 bases clear `MIN_SCORE`. The 4
+  residual errors are all one confusion, ETF动量 → 五福闹新春, which is a genuine taxonomy question
+  (五福 is an ETF-rotation sub-lineage) rather than noise — worth resolving deliberately.
+- **`consumption.tsv` gained `members` + `memberHash`** (appended; readers indexing 0..6 ignore
+  them). `consumed(stage)` answered only "has this family EVER been studied", so once all 14
+  families were done the study queue read empty BY CONSTRUCTION no matter how many members
+  arrived. `consumption.staleFor(stage, family)` compares the stamped membership hash with the
+  current one and reports "N new member(s) since last study". A blank hash (rows predating the
+  column) counts as stale ONCE rather than being assumed current.
+- ⚠ **`kb-stub.js` hard-coded `epoch: 1` and `夏普<2.5`.** All 120 wiki pages claimed a bench
+  superseded four times while the ledger said epoch 2 (122 rows) / epoch 4 (2). That block is the
+  **durable backup** the ledger is rebuilt from, and `normalize-ledger-rebuild.js` emits only 13
+  columns (no epoch) — so a rebuild after a regression would have produced a mislabelled ledger.
+  Fixed to stamp the measuring epoch and the live stage threshold; `node utils/wiki-epoch-repair.js`
+  repaired all 120 from the ledger (authoritative), leaving pages with no row alone.
+- ⚠ **Epoch comparability is a declared boolean, not equality.** The normalizer's done-check was
+  `rowEpoch === ACTIVE_EPOCH`, which discarded epoch-4 rows under epoch 5 even though epoch 5
+  changed only SCORING — meaning every future scoring-only bump would re-measure the whole library
+  at 60 backtest-min/day. `harness.measurementValid(rowEpoch)` walks
+  `comparability.measurementPreservedFromPrevious`. **Do not** infer this from
+  `unchangedFromEpoch<n>`: epoch 4 lists seven unchanged items and its own prose still says "NOT
+  comparable", because the pins it added change fills and fees. Reading the list marked epoch 3
+  comparable and would have mixed pre-pin measurements into current tables.
+- `normalize-sync` **spawns** `wiki-family-build` rather than requiring it: that file is top-level
+  script code with no `require.main` guard, so a `require()` would execute it and its
+  `process.exit()` would take the parent down — the same trap that once made a bare require of
+  `strategy-normalize.js` spend 42 backtest minutes. A non-zero exit means BLOCKED and is reported,
+  never escalated, and `--force` is never passed.
 - Screening verdicts live in `screen/verdicts.json` and are applied INSIDE the queue builders,
   because every discovery run rebuilds the queues from scratch.
 - Blind-test result (104 posts, 22.1% base rate): judgement on post BODIES scored 0.90 AUC vs

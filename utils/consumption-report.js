@@ -65,8 +65,18 @@ function report() {
   const integrated = c.consumed('integrate', 'type');
 
   const unassigned = meas.filter(m => !m.family);
-  const noStudy = fams.filter(f => !studied.has(f.name));
-  const noEnhance = fams.filter(f => f.bestObjective != null && !enhanced.has(f.name));
+
+  // ⚠ "Has this family EVER been studied" is the wrong question, and was the reason a family
+  // that gained members after its study never came back: `consumed()` is a binary set, so once
+  // all 14 families were done the study queue read empty BY CONSTRUCTION no matter how many
+  // new members arrived. The right question is whether the family has changed since the last
+  // run, which `staleFor` answers from the membership hash stamped on each event.
+  const withStale = stage => fams
+    .map(f => ({ ...f, ...c.staleFor(stage, f.name) }))
+    .filter(f => f.stale);
+
+  const noStudy = withStale('study');
+  const noEnhance = withStale('enhance').filter(f => f.bestObjective != null);
 
   // types come from wiki/types/ once §3 of the plan is built; absent until then
   const typeDir = path.join(ROOT, 'wiki/types');
@@ -84,8 +94,9 @@ if (require.main === module) {
 
   if (nextOnly) {
     console.log(`ingest   : ${r.unassigned.length ? r.unassigned[0].file : '—'}  (${r.unassigned.length} unassigned)`);
-    console.log(`study    : ${r.noStudy.length ? r.noStudy[0].name : '—'}  (${r.noStudy.length} families with no study event)`);
-    console.log(`enhance  : ${r.noEnhance.length ? r.noEnhance[0].name : '—'}  (${r.noEnhance.length} families with a best variant, never enhanced)`);
+    const why = f => (f ? `  [${f.reason}]` : '');
+    console.log(`study    : ${r.noStudy.length ? r.noStudy[0].name : '—'}  (${r.noStudy.length} families never studied or changed since)${why(r.noStudy[0])}`);
+    console.log(`enhance  : ${r.noEnhance.length ? r.noEnhance[0].name : '—'}  (${r.noEnhance.length} families with a best variant, never enhanced or changed since)${why(r.noEnhance[0])}`);
     console.log(`integrate: ${r.noIntegrate.length ? r.noIntegrate[0] : '—'}  (${r.types.length} type page(s) exist)`);
     process.exit(0);
   }

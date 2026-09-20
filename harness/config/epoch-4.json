@@ -18,7 +18,9 @@
       "stock commission",
       "capital",
       "frequency"
-    ]
+    ],
+    "measurementPreservedFromPrevious": false,
+    "measurementPreservedNote": "order_volume_ratio, fund order costs and avoid_future_data change FILLS AND FEES. Rows measured under epoch<=3 are not comparable and must be re-measured."
   },
   "windows": {
     "train": {

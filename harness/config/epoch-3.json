@@ -47,5 +47,9 @@
     "maxTestsPerCandidate": 1,
     "maxTestsPerEpoch": 2
   },
-  "supersededAt": "2026-09-20"
+  "supersededAt": "2026-09-20",
+  "comparability": {
+    "measurementPreservedFromPrevious": true,
+    "measurementPreservedNote": "Windows moved (VAL extended, OOS pushed to 2026) but TRAIN and the cost model are untouched, so TRAIN rows measured under epoch 2 remain valid."
+  }
 }

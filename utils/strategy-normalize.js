@@ -168,7 +168,8 @@ function main() {
   // incremented failCount, meaning finalize() could not escalate it either. Those
   // strategies were re-run and re-billed on every batch forever; two files already
   // appear twice in the ledger from exactly this.
-  const ACTIVE_EPOCH = require('./harness-config').config().epoch;
+  const harness = require('./harness-config');
+  const ACTIVE_EPOCH = harness.config().epoch;
   const TERMINAL = new Set(['normalized', 'incompatible-futures', 'incompatible-notrunnable', 'failed-final', 'slow-skipped', 'compile-error', 'no-trades']);
   const RETRIABLE = new Set(['failed', 'crash', 'window-mismatch', 'rate-limited', 'budget-stopped']);
   const done = new Set();       // sourceFile with a terminal status
@@ -178,12 +179,18 @@ function main() {
       const c = line.split('\t');
       const f = c[0], st = c[3];
       if (!f || f === 'sourceFile') continue;
-      // Epoch-aware: a row only counts as done if the CURRENT bench measured it. Epoch 4
-      // pins order_volume_ratio / fund costs / avoid_future_data, which change fills and fees,
-      // so an epoch-2 row is not a result for epoch 4 — without this the normalizer reported
-      // "todo=0" and silently refused to re-measure anything after an epoch bump.
-      const rowEpoch = c[13] ? parseInt(c[13], 10) : null;
-      if (TERMINAL.has(st) && (rowEpoch === ACTIVE_EPOCH)) done.add(f);
+      // Epoch-aware: a row only counts as done if a bench EQUIVALENT to the current one
+      // measured it. Epoch 4 pins order_volume_ratio / fund costs / avoid_future_data, which
+      // change fills and fees, so an epoch-2 row is not a result for epoch 4 — without this
+      // the normalizer reported "todo=0" and silently refused to re-measure after a bump.
+      //
+      // ⚠ Equivalence, not equality. This was `rowEpoch === ACTIVE_EPOCH`, which also discarded
+      // epoch-4 rows under epoch 5 even though epoch 5 changed ONLY the scoring rule and says so
+      // in its config. Strict equality means every future scoring-only bump re-measures the
+      // whole library at 60 backtest-minutes a day. `measurementValid` walks the declared
+      // `measurementPreservedFromPrevious` chain and is conservative when it is unstated.
+      const rowEpoch = c[13] || null;
+      if (TERMINAL.has(st) && harness.measurementValid(rowEpoch)) done.add(f);
       if (RETRIABLE.has(st)) failCount[f] = (failCount[f] || 0) + 1;
     }
   } else {

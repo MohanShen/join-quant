@@ -17,7 +17,9 @@
       "slippage",
       "capital",
       "frequency"
-    ]
+    ],
+    "measurementPreservedFromPrevious": true,
+    "measurementPreservedNote": "Scoring-only change; the measurement bench is identical to epoch 4."
   },
   "windows": {
     "train": {
@@ -66,7 +68,7 @@
       "normalize": 1.5,
       "study": 1.5,
       "enhance": 1.5,
-      "integrate": 2.0,
+      "integrate": 2,
       "validate": 1.5
     }
   },

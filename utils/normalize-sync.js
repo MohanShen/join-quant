@@ -44,7 +44,7 @@ function ledgerRows(window = 'train') {
     const c = line.split('\t');
     if (!c[0]) continue;
     rows.set(c[0], { file: c[0], status: c[3], annual: c[8], sharpe: c[9], maxdd: c[10],
-                     objective: c[11], gate: c[12] });
+                     objective: c[11], gate: c[12], epoch: c[13] || null });
   }
   return rows;
 }
@@ -78,7 +78,7 @@ function sync({ window = 'train', dry = false } = {}) {
     if (!dry) {
       createStub(srcFile, fs.readFileSync(abs, 'utf8'), {
         annual: parseFloat(r.annual), sharpe: r.sharpe, maxdd: parseFloat(r.maxdd),
-        obj: r.objective, gate: r.gate,
+        obj: r.objective, gate: r.gate, epoch: r.epoch,
       });
     }
     stubbed.push(srcFile);
@@ -98,6 +98,32 @@ function sync({ window = 'train', dry = false } = {}) {
   return { stubbed, pruned, missingSource };
 }
 
+/**
+ * Refresh the family pages' generated half (§3 横评, memberCount, bestVariant) after new
+ * members have been stubbed.
+ *
+ * This was the third leak of the same shape as the two above: the bookkeeping existed but
+ * belonged to no step, so §3 only moved when a human happened to run the builder. A member
+ * could be measured, paged and still missing from its family's table indefinitely.
+ *
+ * ⚠ Spawned, not required. `wiki-family-build.js` is top-level script code with no
+ * `module.exports` and no `require.main` guard — requiring it would execute it as a side
+ * effect and let its `process.exit()` take this process down with it. That is the same trap
+ * that once made a bare `require()` of strategy-normalize.js spend 42 backtest minutes.
+ *
+ * A non-zero exit means BLOCKED (regenerating would delete metric rows the gitignored ledger
+ * no longer has) or stale — informational here, never a failure of the sync. It is reported
+ * and deliberately not escalated, and `--force` is never passed.
+ */
+function refreshFamilies({ dry = false } = {}) {
+  if (dry) return { ran: false, blocked: false, out: '(dry — family build not run)' };
+  const { spawnSync } = require('child_process');
+  const r = spawnSync(process.execPath, [path.join(__dirname, 'wiki-family-build.js')],
+                      { encoding: 'utf8', cwd: ROOT });
+  const out = `${r.stdout || ''}${r.stderr || ''}`.trim();
+  return { ran: true, blocked: r.status !== 0, out };
+}
+
 if (require.main === module) {
   const dry = process.argv.includes('--dry');
   const { stubbed, pruned, missingSource } = sync({ dry });
@@ -108,7 +134,19 @@ if (require.main === module) {
     console.log(`[sync] ⚠ ledger rows whose .py is gone            : ${missingSource.length}`);
     missingSource.slice(0, 5).forEach(f => console.log(`   ? ${f}`));
   }
+  // Only worth the spawn when something actually changed.
+  if (stubbed.length) {
+    const fb = refreshFamilies({ dry });
+    if (fb.ran) {
+      const tail = fb.out.split('\n').filter(l => /done:|BLOCKED|blocked/.test(l)).slice(-4);
+      console.log(`[sync] family pages refreshed${fb.blocked ? ' (some BLOCKED — see below)' : ''}`);
+      tail.forEach(l => console.log(`   ${l.trim().slice(0, 100)}`));
+      if (fb.blocked) {
+        console.log('   ⚠ BLOCKED means the ledger is incomplete, not the pages. Never --force.');
+      }
+    }
+  }
   if (dry) console.log('[sync] (dry run — nothing written)');
 }
 
-module.exports = { sync, ledgerRows, TERMINAL };
+module.exports = { sync, refreshFamilies, ledgerRows, TERMINAL };
