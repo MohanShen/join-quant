@@ -102,7 +102,7 @@
 
 ```bash
 node utils/strategy-post-backtest.js study/<family>/variants/<qId>.py "<family>-<qId>" --window <train|val> --usage-limit <cap>
-# 或分区间： --start 2022-01-01 --end 2022-12-31   （2025+ 会被 OOS-BLOCKED）
+# 或分区间： --start 2022-01-01 --end 2022-12-31   （2026+ 会被 OOS-BLOCKED）
 ```
 - **plain 形式**（无 `JQ_USAGE_LIMIT=` 前缀、无 `| tail`）以匹配允许清单、免逐条授权。
 - **前台阻塞跑**：发一条命令、等它返回再读 `SUMMARY`；**绝不**后台跑（`run_in_background`）+ 等完成通知——headless `claude -p` 无人值守跑中该通知不会重新唤起会话，循环会卡在半路。

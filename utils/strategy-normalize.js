@@ -118,11 +118,9 @@ function incompatibility(src) {
   return null;
 }
 
-function objectiveOf(annualPct, maxddPct, sharpe) {
-  if (sharpe == null || annualPct == null || maxddPct == null) return { obj: '', gate: '' };
-  const gate = sharpe >= SHARPE_GATE;
-  const obj = gate ? (annualPct / 100 - maxddPct / 100).toFixed(4) : 'DQ';
-  return { obj, gate: gate ? 'pass' : 'fail' };
+function objectiveOf(annual, maxdd, sharpe) {
+  // Gate threshold and score formula come from harness/config/epoch-<n>.json.
+  return require('./harness-config').objective(annual, maxdd, sharpe);
 }
 
 function main() {

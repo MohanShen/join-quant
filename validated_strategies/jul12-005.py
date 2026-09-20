@@ -8,6 +8,8 @@
 # gate_val:         pass     (sharpe 5.81 >= 2.5)
 # status:           recorded (confirmed: VAL 过门槛且与 TRAIN 同向)
 # flags:            ⚠零滑点高估 / 高换手不可实现净收益; TRAIN 边际薄(+0.016 over baseline)
+# harness_epoch:   2   (VAL was 2024 only; epoch 3 extends VAL to 2024-2025 — this
+#                       result is NOT comparable to an epoch-3 VAL number)
 # ranAt:            2026-07-12
 # ================================================================================
 

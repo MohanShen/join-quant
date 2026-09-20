@@ -50,8 +50,8 @@ join-quant/
 ## 3. 冻结评测台（复用，权威见 `harness/harness.md`）
 
 - **成本/滑点/真实性过滤**：与 auto-enhance **完全相同**（`harness.md` §2–§3）——解剖时给 `baseline.py` 与所有 variant 追加同一**冻结成本 override**（零滑点/PerTrade，见 `utils/strategy-normalize.js` 的 `OVERRIDE`），使基线与变体**可比**。
-- **窗口**：解剖是「刻画」不是「选择」，故可在 **2022-01-01 → 2024-12-31** 内跑**任意子窗**（`--window train|val` 或 `--start/--end`）做 regime 分析。
-- **2025+ OOS 仍禁用**：`strategy-post-backtest.js` 对任何 `>= 2025-01-01` 的窗口 `OOS-BLOCKED`（除用户私测 `JQ_ALLOW_OOS=1`）。解剖 agent **绝不设** `JQ_ALLOW_OOS`。
+- **窗口**：解剖是「刻画」不是「选择」，故可在 **2022-01-01 → 2025-12-31** 内跑**任意子窗**（`--window train|val` 或 `--start/--end`）做 regime 分析。
+- **2026+ OOS 仍禁用**：`strategy-post-backtest.js` 对任何 `>= 2026-01-01` 的窗口 `OOS-BLOCKED`（除用户私测 `JQ_ALLOW_OOS=1`）。解剖 agent **绝不设** `JQ_ALLOW_OOS`。
 - **指标**：与 §enhance-schema §3.3 同的 `objective / gate / sharpe / annualReturn / maxDrawdown`；解剖更关心**相对基线的 Δ**（归因）而非绝对值。
 
 ---

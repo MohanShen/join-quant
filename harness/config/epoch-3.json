@@ -1,0 +1,26 @@
+{
+  "epoch": 3,
+  "setAt": "2026-09-19",
+  "status": "active",
+  "note": "Validation extended to two years (2024-2025) so a pass spans two regimes rather than the single 2024 microcap-crash event; the reserved out-of-sample period moves to 2026-01-01. Everything else is carried over from epoch 2 unchanged, so TRAIN results remain directly comparable across the two epochs.",
+  "changedFromPreviousEpoch": [
+    "val.end 2024-12-31 -> 2025-12-31",
+    "holdout.start 2025-01-01 -> 2026-01-01",
+    "oosPolicy.maxTestsPerEpoch 4 -> 2 (the reserve is ~9 months, not ~20)"
+  ],
+  "windows": {
+    "train":   { "start": "2022-01-01", "end": "2023-12-31" },
+    "val":     { "start": "2024-01-01", "end": "2025-12-31" },
+    "holdout": { "start": "2026-01-01", "end": "today" }
+  },
+  "costs": {
+    "capital": 1000000,
+    "frequency": "daily",
+    "useRealPrice": true,
+    "benchmark": "000300.XSHG",
+    "slippage":   { "kind": "FixedSlippage", "value": 0 },
+    "commission": { "kind": "PerTrade", "buy": 0.0003, "sell": 0.0013, "minCost": 5 }
+  },
+  "objective": { "gateMetric": "sharpe", "gateMin": 2.5, "score": "annualReturn - maxDrawdown" },
+  "oosPolicy": { "maxTestsPerCandidate": 1, "maxTestsPerEpoch": 2 }
+}

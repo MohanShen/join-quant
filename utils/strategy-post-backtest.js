@@ -53,27 +53,31 @@ const DEFAULT_CAPITAL = parseInt(process.env.JQ_BASE_CAPITAL || '1000000', 10);
 // Frozen backtest windows — MUST match harness/harness.md (current epoch).
 // HOLDOUT end rolls forward to "today" (true out-of-sample).
 function todayISO() { return new Date().toISOString().slice(0, 10); }
-const WINDOWS = {
-  train:   { start: '2022-01-01', end: '2023-12-31' },
-  val:     { start: '2024-01-01', end: '2024-12-31' },
-  holdout: { start: '2025-01-01', end: todayISO() },
-};
+// Windows come from harness/config/epoch-<n>.json via utils/harness-config.js — never
+// hardcoded here. They used to live in seven files and had already drifted apart.
+const harness = require('./harness-config');
+const WINDOWS = Object.fromEntries(
+  Object.keys(harness.config().windows).map(n => [n, harness.window(n)])
+);
 
 // Enclosed-environment guard: the 2025-01-01→now window is a reserved OUT-OF-SAMPLE set
 // that the autoenhance pipeline must NEVER backtest (harness/harness.md). This hard-block
 // makes it a code guarantee, not an instruction — no agent can touch OOS even via custom
 // --start/--end that overlaps 2025+. Only the user, for a private final test, may override
 // with JQ_ALLOW_OOS=1.
-const OOS_CUTOFF = '2025-01-01';
+const OOS_CUTOFF = harness.oosCutoff();
 function assertNotOOS(window) {
   if (!window || process.env.JQ_ALLOW_OOS === '1') return;
   const touchesOOS = (window.start && window.start >= OOS_CUTOFF) ||
                      (window.end && window.end >= OOS_CUTOFF);   // ISO dates compare lexicographically
   if (touchesOOS) {
     throw new Error(
+      // Message built from the active config: it used to hardcode epoch-2 dates and went
+      // stale the moment the windows moved.
       `OOS-BLOCKED: window "${window.name}" (${window.start}→${window.end}) reaches into the reserved ` +
-      `out-of-sample period (>= ${OOS_CUTOFF}). The frozen harness forbids backtesting 2025-01-01→now — ` +
-      `the research loop may only use train (2022-2023) and val (2024). ` +
+      `out-of-sample period (>= ${OOS_CUTOFF}). Harness epoch ${harness.config().epoch} allows only ` +
+      `train (${harness.window('train').start}..${harness.window('train').end}) and ` +
+      `val (${harness.window('val').start}..${harness.window('val').end}). ` +
       `(User-only override for a private final test: JQ_ALLOW_OOS=1.)`
     );
   }

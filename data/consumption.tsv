@@ -164,3 +164,4 @@ ETF动量	family	study	seed-manifest	2026-09-19T16:22:43.612Z	exhausted	10 findi
 套利	family	study	seed-manifest	2026-09-19T16:22:43.613Z	exhausted	2 findings row(s); reconstructed from study/manifest.json status=done
 小市值	family	enhance	jul12-005	2026-09-19T16:23:39.036Z	val-pass	train=1.3898 val=1.3231 base=jul12-000
 UNRESOLVED:jul12-023	family	enhance	jul12-023	2026-09-19T16:23:39.037Z	val-dq	train=0.3202 val=-0.5260 base=jul12-022 ⚠ family unresolved from header
+harness	type	validate	epoch-3	2026-09-20T01:20:41.331Z	epoch-bump	VAL 2024-12-31 -> 2025-12-31; OOS start -> 2026-01-01; the 2 existing VAL results are epoch-2 measurements

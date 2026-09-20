@@ -1,0 +1,22 @@
+{
+  "epoch": 2,
+  "setAt": "2026-07-12",
+  "supersededAt": "2026-09-19",
+  "status": "historical",
+  "note": "Frozen bench in force 2026-07-12 .. 2026-09-19. Recorded so results produced under it stay attached to the rules that produced them. The 122 normalize-train.tsv rows and both validated_strategies/ VAL results were measured here.",
+  "windows": {
+    "train":   { "start": "2022-01-01", "end": "2023-12-31" },
+    "val":     { "start": "2024-01-01", "end": "2024-12-31" },
+    "holdout": { "start": "2025-01-01", "end": "today" }
+  },
+  "costs": {
+    "capital": 1000000,
+    "frequency": "daily",
+    "useRealPrice": true,
+    "benchmark": "000300.XSHG",
+    "slippage":   { "kind": "FixedSlippage", "value": 0 },
+    "commission": { "kind": "PerTrade", "buy": 0.0003, "sell": 0.0013, "minCost": 5 }
+  },
+  "objective": { "gateMetric": "sharpe", "gateMin": 2.5, "score": "annualReturn - maxDrawdown" },
+  "oosPolicy": { "maxTestsPerCandidate": 1, "maxTestsPerEpoch": 4 }
+}

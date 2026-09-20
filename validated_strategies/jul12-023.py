@@ -7,6 +7,8 @@
 # sharpe_val:       -0.39
 # gate_val:         fail     (sharpe -0.39 < 2.5; VAL 灾难性反转)
 # status:           val-dq   (完成VAL流程但未过门槛; confirmed=NO)
+# harness_epoch:   2   (VAL was 2024 only; epoch 3 extends VAL to 2024-2025 — this
+#                       result is NOT comparable to an epoch-3 VAL number)
 # ranAt:            2026-07-14
 # ---- HEADLINE FLAGS (故事在数字之上) ----
 # ⚠ BASIS RISK 主导失败(非成本): IC(中证500 中盘)对中证微盘多头是不充分对冲。2024-02 微盘专属崩盘

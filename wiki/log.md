@@ -287,3 +287,10 @@ status 仍 **in-progress**（8 行 findings）；§3 **未动**（**未运行** 
 
 ⚠ 平台限制：回测**日志不可经 API 取回**（`/algorithm/backtest/log` 返回空），探针须把结论编码成
 一笔标记交易，并**必须配对照**。
+
+## [2026-09-19] experiment | harness epoch 3 | VAL 延长至 2024–2025，OOS 起点移至 2026-01-01
+
+VAL 原为 2024 单年，被 2 月微盘踩踏单一事件主导（`jul12-023` 正死于此）；两年跨两个 regime，过闸才有意义。
+**TRAIN 与成本/门槛全部不变**，故 epoch 2 的 122 条 TRAIN 结果与 epoch 3 仍可直接横比；仅 2 条 VAL 结果
+受影响，已在文件头标注 `harness_epoch: 2`。保留样本外从约 20 个月缩到约 9 个月，预算相应收紧为
+**每纪元最多 2 次 OOS**。数值权威移入 `harness/config/epoch-3.json`，由 `utils/harness-config.js` 统一读取。

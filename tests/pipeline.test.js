@@ -227,3 +227,69 @@ test('generated type pages', async t => {
     assert.ok(biggest < famCount, 'one cell holds every family — the axes separate nothing');
   });
 });
+
+// ── versioned harness config (epoch 3) ───────────────────────────────────────
+// The windows used to live in seven files and the cost line in four, and they had already
+// drifted. These guard the single source of truth.
+
+const harness = require('../utils/harness-config');
+
+test('harness config', async t => {
+  await t.test('an epoch is active and self-consistent', () => {
+    const c = harness.config();
+    assert.strictEqual(c.status, 'active');
+    assert.ok(Number.isInteger(c.epoch) && c.epoch >= 3);
+  });
+
+  await t.test('windows do not overlap and run in order', () => {
+    const tr = harness.window('train'), va = harness.window('val'), ho = harness.window('holdout');
+    assert.ok(tr.end < va.start, 'train must end before val starts');
+    assert.ok(va.end < ho.start, 'val must end before the reserve starts');
+  });
+
+  await t.test('epoch 3 extends val to two years and moves the reserve', () => {
+    assert.strictEqual(harness.window('val').start, '2024-01-01');
+    assert.strictEqual(harness.window('val').end, '2025-12-31');
+    assert.strictEqual(harness.oosCutoff(), '2026-01-01');
+  });
+
+  await t.test('train is unchanged, so epoch-2 TRAIN results stay comparable', () => {
+    assert.strictEqual(harness.window('train').start, '2022-01-01');
+    assert.strictEqual(harness.window('train').end, '2023-12-31');
+  });
+
+  await t.test('the rolling end resolves to a real date, not the literal "today"', () => {
+    assert.match(harness.window('holdout').end, /^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  await t.test('unknown window names return null rather than a silent default', () => {
+    assert.strictEqual(harness.window('nope'), null);
+  });
+
+  await t.test('gate and objective reproduce rows already in the ledger', () => {
+    // 高质量稳定上涨策略: annual 56.98, maxdd 9.61, sharpe 3.21 -> 0.4737 pass
+    assert.strictEqual(harness.objective(56.98, 9.61, 3.21), 0.4737);
+    // 网格交易策略: sharpe 1.19 is below the gate -> DQ
+    assert.strictEqual(harness.objective(33.79, 19.68, 1.19), 'DQ');
+    assert.strictEqual(harness.gate(2.5), true);
+    assert.strictEqual(harness.gate(2.49), false);
+    assert.strictEqual(harness.gate('not a number'), false);
+  });
+
+  await t.test('the Python literals still match — they cannot read the JSON', () => {
+    // strategy_template.py and the injected OVERRIDE execute on JoinQuant's servers, so they
+    // must stay literal. This is the only thing keeping them honest.
+    assert.deepStrictEqual(harness.verify(), []);
+  });
+
+  await t.test('the previous epoch is kept, so old results stay attached to their rules', () => {
+    const prev = JSON.parse(fs.readFileSync(path.join(ROOT, 'harness/config/epoch-2.json'), 'utf8'));
+    assert.strictEqual(prev.status, 'historical');
+    assert.strictEqual(prev.windows.val.end, '2024-12-31');
+  });
+
+  await t.test('the OOS budget tightened with the shorter reserve', () => {
+    const prev = JSON.parse(fs.readFileSync(path.join(ROOT, 'harness/config/epoch-2.json'), 'utf8'));
+    assert.ok(harness.config().oosPolicy.maxTestsPerEpoch < prev.oosPolicy.maxTestsPerEpoch);
+  });
+});

@@ -55,6 +55,8 @@ node utils/screen-merge.js                    # validate batch verdicts -> scree
 node -e "console.log(require('./utils/post-cache').size())"   # cached post bodies
 node utils/normalize-backfill.js --dry        # queue held-but-unmeasured strategies by screening priority
 node utils/normalize-sync.js                  # reconcile wiki pages + pending queue against the ledger
+node utils/harness-config.js                  # print the active harness epoch
+node utils/harness-config.js --verify         # check the frozen Python literals match it
 node utils/consumption-report.js --next       # what each loop should take next
 node utils/wiki-type-build.js --check         # family -> type assignment (universe x turnover)
 node utils/wiki-concept-lint.js               # concept strategyCount drift
@@ -270,7 +272,19 @@ Only the directories whose contents aren't self-evident:
 - The backtest **log is not retrievable** via the API (`/algorithm/backtest/log` returns empty).
   A probe must encode its answer as a marker trade, and **always needs a control** — `no-trades`
   otherwise cannot be told apart from "the code path never ran". See `study/_probes/README.md`.
+- **Harness constants live in `harness/config/epoch-<n>.json`; `active.json` says which is in
+  force; code reads them through `utils/harness-config.js`.** They used to be duplicated across
+  seven files and had already drifted. Bump an epoch by writing a new JSON + updating
+  `active.json`; old epoch files are kept so results stay attached to the rules that made them.
+- **Epoch 3 (2026-09-19)**: TRAIN 2022-01-01..2023-12-31 (unchanged), VAL **2024-01-01..2025-12-31**
+  (was 2024 only), OOS reserve starts **2026-01-01**. TRAIN and costs are unchanged, so the 122
+  epoch-2 TRAIN rows stay directly comparable; only the 2 VAL results are affected and are
+  annotated `harness_epoch: 2` in their file headers. The reserve is now ~9 months, so the OOS
+  budget tightened to **2 tests per epoch**.
+- `enhance/strategy_template.py` and the normalizer's injected OVERRIDE run on JoinQuant's
+  servers and **cannot read the JSON** — they hold literal Python. `harness-config.js --verify`
+  is what keeps them honest; run it after any cost change.
 - Pipeline 2's backtest window is parameterized via `--window train|val` (or `--start/--end`),
-  set through the `newStrategy` URL params. The **2025+ OOS window is hard-blocked** (`OOS-BLOCKED`)
+  set through the `newStrategy` URL params. The **2026+ OOS window is hard-blocked** (`OOS-BLOCKED`)
   unless `JQ_ALLOW_OOS=1` — see `harness/harness.md`. No flag = JQ default range (ad-hoc).
 - Do not close the CDP Chrome process — it invalidates the JQ session and forces re-login.

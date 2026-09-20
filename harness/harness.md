@@ -10,15 +10,22 @@
 
 ---
 
+> ⚠ **数值的唯一权威是 `harness/config/epoch-<n>.json`**（当前生效者由 `harness/config/active.json`
+> 指定）。本文件解释**意图**，JSON 存**数值**，代码经 `utils/harness-config.js` 读取——不再有第二处硬编码。
+> 换纪元 = 新写一个 `epoch-<n+1>.json` + 改 `active.json`；旧纪元文件保留，使历史结果始终挂在产生它的规则上。
+> `node utils/harness-config.js` 打印当前生效配置；`--verify` 校验 Python 字面量（模板/OVERRIDE 在
+> 聚宽服务器上执行，无法读 JSON）仍与配置一致。
+
 ## Epoch
 
-- **epoch**: 2
-- **setAt**: 2026-07-12
-- **note**: 严格窗口协议 + 四智能体团队。相对 epoch 1 的**唯一实质改动**：选择指标由
-  `objective(VAL)` 改为 **`objective(TRAIN)`**；VAL 仅用于**已定稿策略**的泛化确认；
-  **2025→今 OOS 窗口被彻底禁用**（`strategy-post-backtest.js` 代码级硬阻断，除用户私测
-  `JQ_ALLOW_OOS=1`）。epoch 1（jul4）在旧协议下选择于 VAL、且已触碰 2025，结果就此封版，
-  不与本纪元横比。团队架构见 `enhance/program.md`。
+- **epoch**: 3
+- **setAt**: 2026-09-19
+- **note**: **VAL 延长为两年（2024–2025）**，OOS 起点后移至 2026-01-01。理由：原 VAL 只有 2024 一年，
+  而那一年被 2 月微盘踩踏单一事件主导（`validated_strategies/jul12-023` 正是死在这里）；两年跨两个
+  regime，过闸才有意义。**TRAIN 窗口与成本/门槛全部不变**，故 epoch 2 的 122 条 TRAIN 归一化结果
+  与 epoch 3 **仍可直接横比**；受影响的只有 2 条 VAL 结果（它们只测了 2024，标记为 epoch-2 结果）。
+  ⚠ 保留样本外因此从约 20 个月缩到约 9 个月 —— 预算相应收紧：**每纪元最多 2 次 OOS**（原 4 次）。
+  团队架构见 `enhance/program.md`。
 
 ---
 
@@ -29,13 +36,13 @@
 | 窗口 | 起 | 止 | 用途 | 谁能跑 / 何时跑 |
 |---|---|---|---|---|
 | **TRAIN** | 2022-01-01 | 2023-12-31 | **迭代与选择**：所有变异/调参在此搜索，选择指标 = `objective(TRAIN)` | Agent 3，迭代中（Type-1）可无限次 |
-| **VAL** | 2024-01-01 | 2024-12-31 | **定稿确认**：仅对 Agent 1 已**定稿**的策略跑一次做泛化检验 | Agent 3，仅 Type-2（定稿）时 |
-| ~~OOS~~ | 2025-01-01 | 今 | **保留样本外**——用户私有最终检验 | **任何 agent 禁用**（代码硬阻断） |
+| **VAL** | 2024-01-01 | **2025-12-31** | **定稿确认**：仅对 Agent 1 已**定稿**的策略跑一次做泛化检验 | Agent 3，仅 Type-2（定稿）时 |
+| ~~OOS~~ | **2026-01-01** | 今 | **保留样本外**——用户私有最终检验 | **任何 agent 禁用**（代码硬阻断） |
 
 - **迭代只看 TRAIN**：Agent 1 在 TRAIN 上搜索，追求 TRAIN 上的正向改进并自行判断定稿。**绝不**在迭代中看 VAL。
 - **VAL 仅定稿一次**：策略定稿后跑一次 VAL，结果由 Agent 4 记账，作泛化参考，**不回头驱动选择**（否则 VAL 泄漏）。
-- **2025→今 = 禁区**：`strategy-post-backtest.js` 对任何触及 `>= 2025-01-01` 的窗口**抛错拒跑**（`OOS-BLOCKED`）。这是代码级保证，不是口头约定。只有用户为私有最终检验可设 `JQ_ALLOW_OOS=1` 手动越过——agent 永远不设。
-- ⚠ **区间特性**（读结果时牢记）：TRAIN 覆盖 2022 熊 + 2023 震荡，**无明显牛市**；VAL 仅 2024 一年，样本短、夏普噪声大——故 VAL 只作定稿泛化参考，不作逐轮选择。
+- **2026→今 = 禁区**：`strategy-post-backtest.js` 对任何触及 `>= 2026-01-01` 的窗口**抛错拒跑**（`OOS-BLOCKED`）。这是代码级保证，不是口头约定。只有用户为私有最终检验可设 `JQ_ALLOW_OOS=1` 手动越过——agent 永远不设。
+- ⚠ **区间特性**（读结果时牢记）：TRAIN 覆盖 2022 熊 + 2023 震荡，**无明显牛市**；VAL 为 2024–2025 两年（2024 含 2 月微盘踩踏，2025 为另一 regime）——故 VAL 只作定稿泛化参考，不作逐轮选择。
 
 ---
 
@@ -112,7 +119,7 @@ SUMMARY\t<window>\t<start>\t<end>\t<days>\t<total%>\t<annual%>\t<sharpe>\t<maxdd
 
 - `annual%` 已按 §4 从 `total%` 与实际 `days` 年化；`sharpe`/`maxdd%` 取自 JQ。
 - `status`：`completed`（可记账）/ `window-mismatch`（实际区间≠请求，**不得记账**，修正重跑）/ `no-trades`（跑完但**零成交**：收益与回撤同为 0，通常是选股/数据链路断了，**不得记账**，查因而非重跑）/ `failed`（崩溃，记 crash）。
-- `--window` 只接受 `train` / `val`；`holdout` 或任何 `>= 2025-01-01` 的区间会被 `OOS-BLOCKED` 拒跑（除非用户 `JQ_ALLOW_OOS=1`）。
+- `--window` 只接受 `train` / `val`；`holdout` 或任何 `>= 2026-01-01` 的区间会被 `OOS-BLOCKED` 拒跑（除非用户 `JQ_ALLOW_OOS=1`）。
 - 迭代中（Type-1）算 `objective(TRAIN)`；定稿（Type-2）算 `objective(VAL)`。门槛 `sharpe ≥ 2.5`。
 
 ## 6. 变更协议（怎么开新纪元）
