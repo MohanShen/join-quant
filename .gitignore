@@ -14,19 +14,18 @@ harness/normalize-*.tsv
 harness/normalize-*.bak
 harness/normalize-*.rebuild.json
 
-# Auto-enhance team idea queue — transient working state, not tracked
-enhance/ideas-queue.json
-
-# Auto-enhance team loop checkpoint — transient resume state, not tracked
-enhance/loop-state.json
+# ⚠ enhance/ideas-queue.json, enhance/loop-state.json and enhance/results.tsv are TRACKED
+# as of 2026-09-20. They were ignored as "transient working state", but they are the only
+# durable record of where the enhance loop is: with them gone, a cold start has nothing to
+# reconcile against and falls through to a brand-new epoch per program.md Setup — which is
+# exactly what happened (all three were absent while 13 families waited to be enhanced).
+# Resume was therefore session-only, and a lost Claude session lost the queue with it.
+# Same lesson as harness/normalize-*.tsv, which regressed from ~119 rows to 18 while ignored.
 
 # Auto-study transient state (queue + findings ledger), not tracked
 study/*/findings.tsv
 study/*/questions.json
 study/manifest.json
-
-# Auto-enhance results ledger — transient, not tracked
-enhance/results.tsv
 
 # Execution-mode config — holds the remote server host, never track
 config/exec.env

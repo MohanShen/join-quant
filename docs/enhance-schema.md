@@ -28,7 +28,7 @@ wiki「待研究/空白/归一化横评」 → 想法+推理 → 变异 candidat
 | `prepare.py`（只读评测台） | **冻结评测台**（§3）：回测窗口 + 标的池 + 费率滑点 + 目标函数 | **绝不可被 agent 修改** |
 | `val_bpb`（单标量） | `objective`（§3.3），迭代在 **TRAIN** 上度量、定稿在 **VAL** 确认 | 越大越好 |
 | 固定 5 分钟预算 | 固定回测窗口（train/val，§3.1；保留 OOS 禁用） | 保证实验可比 |
-| `results.tsv` | `enhance/results.tsv`（§7） | 追加式账本，git 不跟踪 |
+| `results.tsv` | `enhance/results.tsv`（§7） | 追加式账本，**git 跟踪** |
 | `program.md` | `enhance/program.md`（**四智能体团队**编排） | 研究团队的 agent 指令 |
 | keep=advance / discard=git reset | 迭代在 TRAIN 推进/回退；**定稿**才跑一次 VAL（§8） | |
 | （无持久知识） | `wiki/experiments/`（§6）+ 回填契约（§9） | **本项目独有** |
@@ -43,9 +43,9 @@ join-quant/
 │   ├── program.md              # 四智能体团队编排指令（人类编辑，见姊妹文件）
 │   ├── strategy_template.py    # 策略脚手架（§5）：受控因子槽位
 │   ├── candidates/<expId>.py   # 每个实验的策略源码（变异产物，raw）
-│   ├── ideas-queue.json        # Agent 2 排名想法队列（git 不跟踪）
-│   ├── loop-state.json         # 断点检查点（git 不跟踪）
-│   └── results.tsv             # 追加式账本（§7，git 不跟踪）
+│   ├── ideas-queue.json        # Agent 2 排名想法队列（**git 跟踪**）
+│   ├── loop-state.json         # 断点检查点（**git 跟踪**）
+│   └── results.tsv             # 追加式账本（§7，**git 跟踪**）
 ├── validated_strategies/       # 定稿并跑过 VAL 的策略归档（Agent 4 写，git 跟踪 = 产物货架）
 │   └── <expId>.py              #   candidate 拷贝 + 指标头注（train/val objective, gate）
 └── wiki/
@@ -212,7 +212,7 @@ ranAt: <YYYY-MM-DD>
 
 ## 7. 结果账本 `enhance/results.tsv`
 
-追加式，制表符分隔（**非逗号**，描述里会有逗号）。**git 不跟踪**（同 autoenhance，`.gitignore` 加 `enhance/results.tsv`）。
+追加式，制表符分隔（**非逗号**，描述里会有逗号）。**git 跟踪**（2026-09-20 起）——它和 `ideas-queue.json`/`loop-state.json` 是 enhance 循环断点的**唯一持久记录**；不跟踪时三者全部缺失，冷启动无从对账，只能按 Setup 重开新纪元。
 账本是快速 `grep` 的一手记录；`wiki/experiments/` 是其结构化、带溯源的对应物。
 
 **每个定稿策略一行**（迭代中的 TRAIN 步不单独占行，浓缩进实验页 `iterations`）。10 列：
