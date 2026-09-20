@@ -53,3 +53,8 @@ data/series-scan.json
 # the pool would re-strand every slow-skipped strategy with no route back.
 data/daily-logs/
 data/*.lock
+
+# Cron wrapper logs — they churn on every fire and were tracked by accident (22 files,
+# dirtying `git status` after each run). Runtime output, not repository content.
+data/autoenhance-logs/
+data/autostudy-logs/
