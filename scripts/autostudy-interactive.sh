@@ -57,7 +57,7 @@ fi
 
 if [ -n "$SID" ] && ls "$HOME"/.claude/projects/*/"$SID".jsonl >/dev/null 2>&1; then
   echo "Reopening auto-study session $SID on $BRANCH (auto-continuing the batch)"
-  RESUME_MSG="Continue the auto-study batch (you're already running /run-study per study/program.md). Work study/manifest.json in order; disk is ground truth (manifest status + findings.tsv + git). Finish the in-progress strategy, then the next pending one; don't exit until all are done or I say stop. NEVER touch the 2025+ OOS window."
+  RESUME_MSG="Continue the auto-study batch (you're already running /run-study per study/program.md). Work study/manifest.json in order; disk is ground truth (manifest status + findings.tsv + git). Finish the in-progress strategy, then the next pending one; don't exit until all are done or I say stop. NEVER touch the reserved OOS window (epoch 5: 2026-01-01+; confirm with `node utils/harness-config.js` — the boundary moves with the epoch, and 2025 is now VAL)."
   exec claude --resume "$SID" "$RESUME_MSG"
 else
   SID="$(uuidgen | tr 'A-Z' 'a-z')"

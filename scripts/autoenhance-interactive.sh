@@ -61,7 +61,7 @@ if [ -n "$SID" ] && ls "$HOME"/.claude/projects/*/"$SID".jsonl >/dev/null 2>&1; 
   echo "(includes any work the cron did while you were away; auto-continuing the loop)"
   # Auto-submit a resume nudge so you don't have to type "continue" — and tell it to rebuild
   # the team, since teammates die with the prior session (they must be re-spawned on resume).
-  RESUME_MSG="Continue the autoenhance loop (you're already running /run-enhance). Your teammates from the prior session are gone — re-spawn the four named teammates, reconcile against git + enhance/results.tsv + enhance/ideas-queue.json (disk is ground truth, the transcript may be stale), then continue from the real breakpoint. NEVER touch the 2025+ OOS window. Keep going until I say stop or a budget/quota limit hits."
+  RESUME_MSG="Continue the autoenhance loop (you're already running /run-enhance). Your teammates from the prior session are gone — re-spawn the four named teammates, reconcile against git + enhance/results.tsv + enhance/ideas-queue.json (disk is ground truth, the transcript may be stale), then continue from the real breakpoint. NEVER touch the reserved OOS window (epoch 5: 2026-01-01+; confirm with `node utils/harness-config.js` — the boundary moves with the epoch, and 2025 is now VAL). Keep going until I say stop or a budget/quota limit hits."
   exec claude --resume "$SID" "$RESUME_MSG"
 else
   SID="$(uuidgen | tr 'A-Z' 'a-z')"

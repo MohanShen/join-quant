@@ -33,6 +33,6 @@ Then:
 - Keep the queue file valid JSON; never lose queued questions.
 - Rank by **understanding value**, not by "which will improve the strategy" — there is no optimization here.
 - You judge and route — you don't run experiments or write the report.
-- Never edit the harness or the frozen `baseline.py`; never touch 2025 OOS.
+- Never edit the harness or the frozen `baseline.py`; never touch the reserved OOS window (epoch 5: 2026+).
 - Loop stops only when questions are exhausted or the user says stop.
 - **Tooling hygiene**: update `questions.json` and read any file with the **Read/Write/Edit tools** (auto-accepted). **Never** use `node -e`/inline scripts or shell redirection (`>`, `>>`): they can't be allowlisted (arbitrary code) and force approval prompts. For inspection use Read/Grep/Glob or a single simple Bash command; avoid compound Bash (`for`, `cd &&`, `$var`).

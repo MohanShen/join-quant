@@ -24,6 +24,6 @@ When the orchestrator returns an experiment result, **raise the sharpest follow-
 ## Rules
 - Questions must be **falsifiable + single-experiment**. One thing per question (clean attribution).
 - **No optimization.** You're explaining the strategy, not improving it; never propose "keep the best variant."
-- Never touch VAL-selection logic or 2025 OOS (the executor blocks it); never edit the harness or the frozen `baseline.py`.
+- Never touch VAL-selection logic or the reserved OOS window (the executor blocks it; epoch 5: 2026+); never edit the harness or the frozen `baseline.py`.
 - Loop stops only when questions are exhausted or the user says stop.
 - **Tooling hygiene**: read/write files with the **Read/Write/Edit tools** (auto-accepted). **Never** use `node -e`/inline scripts or shell redirection (`>`, `>>`): they can't be allowlisted (arbitrary code) and force approval prompts. For inspection use Read/Grep/Glob or a single simple Bash command; avoid compound Bash (`for` loops, `cd &&`, `$var` expansion).

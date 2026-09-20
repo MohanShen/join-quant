@@ -39,10 +39,15 @@ node utils/type-integrate-check.js <candidate.json>
 ```
 
 1. **Beat the best MEMBER, not the gate.** Clearing the gate is necessary and meaningless — and integration's bar is 2.0, higher than the 1.5 used elsewhere (`harness/config` stageThresholds).
-2. **Declare the diversification share.** Sharpe up while return is not up is the diversification
-   signature; the checker flags it and the verdict becomes `keep-with-caveat`. ⚠ The ledger has
-   no return series, so the checker detects the *signature*, not the attribution — a flagged
-   candidate needs your own decomposition before anyone calls it an edge.
+2. **Declare the diversification share.** The checker now does a real **attribution** whenever the
+   members' daily curves are stored (`data/series/`, see `utils/backtest-series.js`): it reports
+   mean member correlation, the diversification ratio, and `sharpeNoDiversification` — the Sharpe
+   the same returns would earn at ρ=1. If stripping diversification drops Sharpe below the best
+   member's, the gain is risk-side and the verdict becomes `keep-with-caveat`.
+   Without curves it falls back to the old *signature* test (Sharpe up, return not up), which
+   detects the pattern but cannot quantify it — so give every member a `sourceFile` (and `epoch`)
+   in `candidate.json` and backfill first: `node utils/series-backfill.js --dry`.
+   ⚠ Diversification is real value but it is **not edge**; say which one you got.
 3. **Equal weight first.** Optimised weights must beat equal weight by more than 1pp — re-running
    the same strategy moves annual return by ~0.15pp, so smaller gaps are noise.
 4. **Worst realizability wins.** Capacity is additive, edge is not. One untradeable leg makes the
@@ -65,6 +70,16 @@ single-shot OOS reserve. So:
 2. Collect each member's baseline from the type page and `harness/normalize-train.tsv`. Do not
    re-measure what is already in the ledger — the 60 backtest-min/day are shared with the
    normalize queue and `/run-enhance`.
+2b. **Choose the legs on marginal contribution, not on standalone score.** Two free inputs:
+   - `node utils/component-scan.js --type <type>` ranks every member by the score uplift a
+     50/50 blend with the type leader would produce, and prints the correlation. Members that
+     **fail the gate but still lift the leader** are flagged — those are exactly what a
+     standalone bar would have thrown away.
+   - `node utils/components.js --type <type>` lists ingredients `/run-study` and `/run-enhance`
+     already registered, each with the measurement behind it.
+   If members lack curves, run `node utils/series-backfill.js --dry` first (no backtest cost).
+   ⚠ Those blends are **cost-free, daily-rebalanced upper bounds** — a screening device for
+   picking legs, never a result. Step 4 is still what measures the candidate.
 3. Write the candidate as one strategy file under `enhance/candidates/<expId>.py`, using the
    frozen cost block. Start **equal-weight**.
 4. Run it: `node utils/strategy-post-backtest.js enhance/candidates/<expId>.py "<expId>" --window train --usage-limit 55`

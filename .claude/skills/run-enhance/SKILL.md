@@ -1,6 +1,6 @@
 ---
 name: run-enhance
-description: Run the join-quant autoenhance TEAM — a 4-agent loop (ideator → critic → engineer → recorder) that improves a strategy FAMILY: generates ideas (within-family / cross-family borrow / new-family combination), iterates mutations on the frozen TRAIN window, validates finalized strategies once on VAL, and writes results back to the family page as new variants. Never touches the 2025+ OOS window. Use when asked to run/continue autoenhance, enhance a strategy family, or propose/improve a strategy.
+description: Run the join-quant autoenhance TEAM — a 4-agent loop (ideator → critic → engineer → recorder) that improves a strategy FAMILY: generates ideas (within-family / cross-family borrow / new-family combination), iterates mutations on the frozen TRAIN window, validates finalized strategies once on VAL, and writes results back to the family page as new variants. Never touches the reserved OOS window (epoch 5: 2026+). Use when asked to run/continue autoenhance, enhance a strategy family, or propose/improve a strategy.
 ---
 
 # Run the autoenhance team
@@ -10,7 +10,7 @@ description: Run the join-quant autoenhance TEAM — a 4-agent loop (ideator →
 
 ## 必读（每次开始前）
 1. `enhance/program.md` —— **团队编排主流程 + 状态机**。
-2. `harness/harness.md` —— 冻结评测台：**TRAIN 选择 / VAL 定稿 / 2025+ OOS 硬阻断**。只读。
+2. `harness/harness.md` —— 冻结评测台：**TRAIN 选择 / VAL 定稿 / OOS 硬阻断**（边界随纪元变动，当前 epoch 5 为 2026-01-01；以 `node utils/harness-config.js` 为准）。只读。
 3. `docs/enhance-schema.md` —— 结构/账本/记账格式（权威）。
 4. `docs/wiki-schema.md` §2.1 —— 受控因子词表（变异空间边界）。
 5. `wiki/index.md` + 相关 `wiki/concepts/*.md` —— 想法来源。⚠ index 不完整（187 篇里只链 79 篇），
@@ -51,7 +51,7 @@ node utils/strategy-post-backtest.js enhance/candidates/<expId>.py "<expId>" --w
 - **前台阻塞跑**——发一条命令等它返回再读 `SUMMARY`；**绝不**后台跑（`run_in_background`）+ 等完成通知：headless `claude -p` 无人值守跑中该通知不会重新唤起会话，循环会卡在半路。
 - `<cap>` = 每日 JQ 回测分钟上限（默认 **55**=免费额度；cron 续跑用 **240**）。
 - 迭代（Type-1）用 `--window train` 算 `objective(TRAIN)`；定稿（Type-2）用 `--window val` 算 `objective(VAL)`。
-- **`holdout` / 任何 2025+ 区间被 `OOS-BLOCKED` 拒跑**（除非用户私测 `JQ_ALLOW_OOS=1`——agent 绝不设）。
+- **`holdout` / 任何落入保留 OOS 的区间被 `OOS-BLOCKED` 拒跑**（epoch 5 为 2026-01-01 起；边界随纪元变动，查 `node utils/harness-config.js`）（除非用户私测 `JQ_ALLOW_OOS=1`——agent 绝不设）。
 - 读末尾 10 列 `SUMMARY`（`harness.md` §5）；`annual%` 已年化，直接算 objective。
 
 ## 既有战绩（冷启动时先读，别重走弯路）
@@ -61,11 +61,28 @@ node utils/strategy-post-backtest.js enhance/candidates/<expId>.py "<expId>" --w
 - `jul12-023`（微盘多头 − IC 空头 1.2× 对冲）：TRAIN 0.3202 过闸 → **VAL −0.5260，maxDD 41.6%，惨败**。
   归因是 **basis risk 而非成本**：IC（中证500 中盘）对中证微盘是不充分对冲，2024-02 微盘专属崩盘时
   空头腿没保护。TRAIN 过闸只是 2022–23 两者同跌的 regime 产物。
-  ⇒ **教训**：对冲腿与多头腿标的不匹配时，TRAIN 的「市场中性」可能是假象；薄闸门边际（2.64 vs 2.5）
+  ⇒ **教训**：对冲腿与多头腿标的不匹配时，TRAIN 的「市场中性」可能是假象；薄闸门边际（当时 2.64 vs 当时的闸门 2.5——**epoch 2 的旧值**，epoch 5 已降为 1.5；教训在「边际薄」本身，不在这两个数）
   在窗口外最先反转。
 
 ## 完成后简报
 本纪元处理了多少想法、定稿几个、当前最优 `objective(TRAIN)` 及其 `objective(VAL)`、发现的规律与回填落点、多少放弃/crash、队列剩余。不 `git commit` wiki 或 `results.tsv`，除非人类明确要求。
 
+## 未过闸 ≠ 无价值：登记可用部件
+
+epoch 5 起**未过闸仍保留分数**，`gate` 只是标签。一个整体过不了闸的变异，里面的**某个部件**
+仍可能是 type 级整合的好配料——尤其是与本 type 头名**相关性低**的那种（按标准分挑配料，
+恰好会丢掉最能分散风险的腿）。
+
+所以：某次迭代若测到「这一处改动确实有用，但整体仍不过闸」，别只把它记成失败——登记为部件：
+
+```
+node utils/components.js --add --source <candidates/或 strategies/ 路径> --aspect "<部件>" \
+  --kind factor|filter|universe|entry|exit|sizing|timing|risk|data --type <type> \
+  --claim "<做到了什么>" --evidence "<expId + Δobjective/Δsharpe>" --by run-enhance
+```
+
+`--evidence` 必填。这些部件由 `/run-integrate` 在 type 级消费；`node utils/component-scan.js`
+会按「对本 type 头名的增量」排序，并打印相关性——**它的混合是零成本日频再平衡的上界，不是结果**。
+
 ## 红线
-严格窗口（迭代 TRAIN / 定稿 VAL / 2025+ 永不碰）、评测台冻结、封闭环境（Agent 3 只能经执行器）、HOLDOUT 禁用、真实性红线（零滑点高估必标 ⚠）、raw 不可变、受控命名、概念页只追加不覆盖。
+严格窗口（迭代 TRAIN / 定稿 VAL / 保留 OOS 永不碰）、评测台冻结、封闭环境（Agent 3 只能经执行器）、HOLDOUT 禁用、真实性红线（零滑点高估必标 ⚠）、raw 不可变、受控命名、概念页只追加不覆盖。

@@ -194,7 +194,7 @@ add no edge.
 ### 4.2 The guard
 
 1. **Beat the best member, not the gate.** A merged candidate is kept only if
-   `objective(TRAIN) > max(objective(TRAIN))` over its type's members. Clearing 2.5 Sharpe is
+   `objective(TRAIN) > max(objective(TRAIN))` over its type's members. Clearing the stage Sharpe bar (2.0 for integrate, see `harness.stageThreshold`) is
    necessary and means nothing on its own.
 2. **Declare the diversification share.** Report the merged Sharpe against the volatility-weighted
    blend of its members. If the entire improvement is explained by correlation, say so and do not

@@ -27,7 +27,7 @@ wiki「待研究/空白/归一化横评」 → 想法+推理 → 变异 candidat
 | `train.py`（被编辑的产物） | `enhance/candidates/<expId>.py`（策略源码） | 唯一被变异的对象 |
 | `prepare.py`（只读评测台） | **冻结评测台**（§3）：回测窗口 + 标的池 + 费率滑点 + 目标函数 | **绝不可被 agent 修改** |
 | `val_bpb`（单标量） | `objective`（§3.3），迭代在 **TRAIN** 上度量、定稿在 **VAL** 确认 | 越大越好 |
-| 固定 5 分钟预算 | 固定回测窗口（train/val，§3.1；2025+ OOS 禁用） | 保证实验可比 |
+| 固定 5 分钟预算 | 固定回测窗口（train/val，§3.1；保留 OOS 禁用） | 保证实验可比 |
 | `results.tsv` | `enhance/results.tsv`（§7） | 追加式账本，git 不跟踪 |
 | `program.md` | `enhance/program.md`（**四智能体团队**编排） | 研究团队的 agent 指令 |
 | keep=advance / discard=git reset | 迭代在 TRAIN 推进/回退；**定稿**才跑一次 VAL（§8） | |
@@ -66,7 +66,7 @@ join-quant/
 
 ### 3.1 三个回测窗口（period split）
 
-用 JoinQuant Pipeline 2（`utils/strategy-post-backtest.js`）的回测区间参数实现。当前 epoch 2（权威见 `harness/harness.md` §1）——**严格窗口协议**：
+用 JoinQuant Pipeline 2（`utils/strategy-post-backtest.js`）的回测区间参数实现。当前 **epoch 5**（权威见 `harness/config/epoch-5.json` + `harness/harness.md` §1；用 `node utils/harness-config.js` 查实）——**严格窗口协议**：
 
 | 窗口 | 区间 | 用途 | 谁能跑 / 何时 |
 |---|---|---|---|
@@ -74,7 +74,7 @@ join-quant/
 | **VAL** | 2024-01-01 → 2025-12-31 | **定稿确认**：仅对已定稿策略跑一次做泛化检验 | Agent 3，仅 Type-2（定稿）时 |
 | ~~OOS~~ | 2026-01-01 → 今 | **保留样本外**——用户私有最终检验 | **任何 agent 禁用**（代码硬阻断 `OOS-BLOCKED`） |
 
-> **迭代只看 TRAIN，定稿才碰 VAL，2025+ 永不触碰**。`strategy-post-backtest.js` 对任何 `>= 2026-01-01`
+> **迭代只看 TRAIN，定稿才碰 VAL，保留 OOS 永不触碰**。`strategy-post-backtest.js` 对任何 `>= 2026-01-01`
 > 的窗口抛 `OOS-BLOCKED` 拒跑（除用户私测 `JQ_ALLOW_OOS=1`）——代码级保证，不是口头约定。
 > ⚠ 区间特性：TRAIN 无明显牛市、VAL 仅一年、夏普噪声大——故 VAL 只作定稿泛化参考，不作逐轮选择（`harness.md` §1）。
 
@@ -91,16 +91,26 @@ join-quant/
 单标量，越大越好。在指定窗口 `w` 上：
 
 ```
-gate(w)   = ( sharpe(w) >= 2.5 )                       # 硬门槛：夏普 < 2.5 直接淘汰
 score(w)  = annualReturn(w) - maxDrawdown(w)           # 均为小数（0.35 = 35%）
-objective(w) = score(w)        若 gate(w) 为真
-             = DQ (disqualified，记为 -inf)   否则
+gate(w, stage) = ( sharpe(w) >= stageThreshold(stage) )   # 标签，不再是橡皮擦
+objective(w)   = score(w)                              # epoch 5：未过闸也保留分数
 ```
 
-- **选择指标** = `objective(TRAIN)`：Agent 1 迭代中的 keep/继续/定稿全看它（§8）。`objective(VAL)` 仅在**定稿后**算一次做泛化确认，由 Agent 4 记账，**不参与迭代选择**（否则 VAL 泄漏）。2025/OOS 永不计算。
-- `gate` 未过（夏普 < 2.5）即 `DQ`，等价于淘汰该变异，无论收益多高。
+⚠ **epoch 5 起（2026-09-20）本节有两处实质变化**，旧文写的「夏普 < 2.5 直接淘汰」已失效：
+
+1. **门槛 2.5 → 分级门槛**。normalize / study / enhance / validate 为 **1.5**，
+   **type 级整合为 2.0**（`harness.stageGate(stage, sharpe)` / `stageThreshold(stage)`）。
+   同一套测量，不同判定标准——是决策规则，不是另一个评测台。
+2. **未过闸保留分数**（`keepScoreOnGateFail`）。过去 `DQ = -inf` 把「夏普 2.4」和「夏普 −1.8」
+   抹成同一个值，124 个实测策略中位夏普只有 1.02，2.5 约在 88 分位，导致 **14 个家族里有 5 个
+   全员 -inf**，彼此无法比较。现在 `gate` 是随分数并列记录的**标签**。
+
+- **选择指标** = `objective(TRAIN)`：Agent 1 迭代中的 keep/继续/定稿全看它（§8）。`objective(VAL)` 仅在**定稿后**算一次做泛化确认，由 Agent 4 记账，**不参与迭代选择**（否则 VAL 泄漏）。保留 OOS 永不计算。
 - `score` 用「年化 − 最大回撤」而非夏普/卡玛：奖励高收益、惩罚深回撤，夏普退化为门槛而非连续目标。
-- 门槛值 2.5、公式形式均属**冻结常量**，改动即新纪元。
+- ⚠ **不要把常量抄进本文或 prompt**。门槛、窗口、成本全部存在
+  `harness/config/epoch-<n>.json`，由 `utils/harness-config.js` 统一读取；改动即新纪元
+  （bump `active.json`）。本节的 1.5 / 2.0 只是 epoch 5 的**当前取值**，查实以
+  `node utils/harness-config.js` 为准。此前正是散落各处的手抄常量导致七个文件互相矛盾。
 
 ---
 
@@ -185,7 +195,7 @@ ranAt: <YYYY-MM-DD>
 |------|------|------|----------|-----------|
 | TRAIN（迭代终版） | … | … | … | … |
 | VAL（定稿确认） | … | … | … | … |
-（无 HOLDOUT——2025+ OOS 禁用）
+（无 HOLDOUT——保留 OOS 禁用）
 
 ## 迭代轨迹
 <Agent 1 在 TRAIN 上试了哪几步、各步 objective(TRAIN)、为何这样收敛、何时判定定稿>
@@ -218,7 +228,7 @@ expId	commit	ideaId	baseExpId	train_objective	val_objective	sharpe_val	gate_val	
 5. `train_objective`（迭代终版 TRAIN 目标值；DQ 记 `DQ`）
 6. `val_objective`（定稿 VAL 目标值；DQ 记 `DQ`）
 7. `sharpe_val`（定稿 VAL 夏普）
-8. `gate_val`（`pass`/`fail`，VAL 是否过 2.5 门槛）
+8. `gate_val`（`pass`/`fail`，VAL 是否过该阶段门槛；epoch 5 为 1.5，见 §3.3）
 9. `status`：`recorded` / `val-dq` / `crash`
 10. 简短描述（想法 + 迭代收敛到什么）
 
@@ -250,7 +260,7 @@ jul3-002	c3d4e5f	idea-7	jul3-001	1.52	0.88	1.9	fail	val-dq	国九过滤：TRAIN 
 
 - **首个** `<tag>-000` = **baseline**：某个已归一化的过门槛策略 + 冻结成本 override，在 TRAIN 上确立基准线（§11.5）。
 - **VAL 绝不驱动迭代选择**——只对定稿版跑一次确认。任何用 VAL 逐轮调参 = 泄漏。
-- **2025+ OOS 绝不触碰**——代码 `OOS-BLOCKED` 硬阻断。
+- **保留 OOS 绝不触碰**——代码 `OOS-BLOCKED` 硬阻断。
 - **崩溃**：回测跑不动/CDP 掉线/策略报错，判断是否手误可修；否则记 `crash`，跳过。
 - **超时/限流**：JoinQuant Pipeline 2 是唯一执行器，受 CDP 会话与 VIP 限额约束；throughput 远低于 autoenhance 的 100/夜。可按批次人机协作推进，但**单批次内**遵循上述自主循环。
 
@@ -277,8 +287,8 @@ jul3-002	c3d4e5f	idea-7	jul3-001	1.52	0.88	1.9	fail	val-dq	国九过滤：TRAIN 
 
 ## 10. 不可违反的原则
 
-- **评测台冻结**：`objective`、门槛 2.5、窗口区间、费率滑点一经设定即不可改；改动即新纪元，旧结果封版。
-- **严格窗口**：迭代只 TRAIN、定稿才 VAL、**2025+ OOS 绝不触碰**（代码 `OOS-BLOCKED` 硬阻断，agent 绝不设 `JQ_ALLOW_OOS`）。任何用 VAL 逐轮调参或触碰 OOS 都使纪元作废。
+- **评测台冻结**：`objective`、阶段门槛、窗口区间、费率滑点一经设定即不可改；改动即新纪元（新建 `harness/config/epoch-<n>.json` 并 bump `active.json`），旧结果按 `epoch` 列封版。
+- **严格窗口**：迭代只 TRAIN、定稿才 VAL、**保留 OOS 绝不触碰**（代码 `OOS-BLOCKED` 硬阻断，agent 绝不设 `JQ_ALLOW_OOS`）。任何用 VAL 逐轮调参或触碰 OOS 都使纪元作废。
 - **raw 不可变**：`strategies/` 与已回测的 `enhance/candidates/` 均不改。
 - **真实性红线**：继承 wiki 的 ⚠ 约定；不真实成交的范式不得宣称「有效」。
 - **可溯源**：账本、实验页、概念页结论均可回溯到 commit 与源码。
@@ -306,7 +316,7 @@ jul3-002	c3d4e5f	idea-7	jul3-001	1.52	0.88	1.9	fail	val-dq	国九过滤：TRAIN 
 - **可续跑**账本 `harness/normalize-<window>.tsv`（git 不跟踪），已有终态的策略跳过。列：
   `sourceFile  postId  title  status  start  end  days  total_pct  annual_pct  sharpe  maxdd_pct  objective  gate`
 - `status`：`normalized`（完成，可入 KB）/ `incompatible-futures`（期货，stock 回测跑不了）/ `incompatible-notrunnable`（无 `initialize` 的工具/研究页）/ `crash`（回测报错）/ `window-mismatch`。
-- `objective` / `gate` 同 §3.3（`annual−maxdd`，门槛 `sharpe≥2.5`；不过门槛记 `DQ`/`fail`）。
+- `objective` / `gate` 同 §3.3（`annual−maxdd`；epoch 5 起门槛为分级值且**未过闸仍保留分数**，`gate` 记 `pass`/`fail`）。账本第 14 列 `epoch` 记录产出该行的纪元。
 
 ### 11.3 KB 更新契约
 账本产出后，按下列方式更新 wiki（可分批，像 ingest 一样）：
@@ -355,6 +365,6 @@ node utils/strategy-normalize.js --window train --concept 小市值因子 --usag
   取该策略 `strategies/<file>.py` 源码 + `strategy-normalize.js` 的冻结成本 `OVERRIDE`（零滑点/PerTrade），
   存为 `enhance/candidates/<tag>-000.py`；其 TRAIN objective 应≈ 该策略页 `normalized:` 值。此后小步变异，朝赢家配方靠拢。
 - 归一化用 **TRAIN**（与迭代区间一致），故它是**先验/特征**：迭代在 TRAIN 上进行本就用它，
-  不构成对 VAL 的泄漏——VAL 仍只对定稿版跑一次（§8），2025+ OOS 永不触碰。
+  不构成对 VAL 的泄漏——VAL 仍只对定稿版跑一次（§8），保留 OOS 永不触碰。
 - **预算一致**：autoenhance 与归一化共用同一 JQ 计费现实（§11.4）——循环受 `--usage-limit` 约束，
   `used ≥ limit` 即停、等次日重置，不为「跑满循环」烧积分。

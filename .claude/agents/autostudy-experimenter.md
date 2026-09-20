@@ -16,13 +16,20 @@ Given a dispatched question (with `type` + `design`), run the ONE experiment tha
 - **ablation / sweep / isolate** → copy `study/<family>/baseline.py` to `study/<family>/variants/<qId>.py`, change exactly the **one** component/parameter the design names (keep the frozen 「勿改区块」 + cost override intact), `git commit` the variant, then:
   `node utils/strategy-post-backtest.js study/<family>/variants/<qId>.py "<family>-<qId>" --window <train|val> --usage-limit <cap>`
   (a sweep = the same, once per grid point).
-- **regime** → run the target (or the relevant variant) on sub-windows via `--start/--end` within **2022-01-01…2024-12-31** (e.g. `--start 2022-01-01 --end 2022-12-31`).
+- **regime** → run the target (or the relevant variant) on sub-windows via `--start/--end` inside
+  **TRAIN ∪ VAL** (e.g. `--start 2022-01-01 --end 2022-12-31`). Dissection is *characterisation*,
+  not selection, so the whole measured span is available — `docs/study-schema.md` §窗口.
+  ⚠ That span **moves with the harness epoch**: under epoch 5 it runs to **2025-12-31**, not
+  `2024-12-31`. Read the live values with `node utils/harness-config.js` rather than trusting a
+  date copied into a prompt.
 - **probe** → inspect the backtest's holdings / turnover / fill-timing output to characterize mechanics.
 
 Then compute the result **relative to the family base baseline** (Δobjective, Δsharpe, Δmaxdd, Δturnover as relevant), and **return it to Agent 4 (analyst)**.
 
 ## Hard rules (enclosed environment)
-- **NEVER** run `--window holdout` or any `--start/--end` reaching `>= 2025-01-01`; the executor `OOS-BLOCKED`s it. **Never** set `JQ_ALLOW_OOS`.
+- **NEVER** run `--window holdout`, or any `--start/--end` reaching into the reserved OOS window;
+  the executor `OOS-BLOCKED`s it. **Never** set `JQ_ALLOW_OOS`. The boundary moves with the epoch
+  (epoch 5: `2026-01-01`) — check `node utils/harness-config.js`, never a date copied from a prompt.
 - **NEVER** modify `harness/harness.md`, the executor's window params, the objective/gate, the frozen cost/slippage/filter block, or the immutable `baseline.py` snapshot.
 - **One thing per experiment** — clean attribution; if a question needs two changes, it was mis-scoped (report back).
 - Run the backtest **plain** — no `JQ_USAGE_LIMIT=` prefix, no `| tail`; pass `--usage-limit <cap>`. If it prints `USAGE-STOP` or `window-mismatch`, stop cleanly and report.

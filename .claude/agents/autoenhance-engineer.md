@@ -19,13 +19,21 @@ Given an `active` idea (with `baseExpId`) and its **type**:
    - **Type-2 (finalized)** → same command with `--window val`
    - Use the daily `<cap>` the orchestrator gave you (default **55** = free tier; the cron resume uses **240**). **Run the command plain** — do NOT prefix it with `JQ_USAGE_LIMIT=…` and do NOT pipe to `tail`/`head`. Plain form matches the `.claude/settings.json` allowlist, so it runs without a per-command approval prompt; the `SUMMARY` is the last line of stdout anyway.
    - **Run it in the FOREGROUND (blocking)** — issue the one command and wait for it to return, then read `SUMMARY`. **NEVER** background it (`run_in_background`) and await a completion notification: in unattended headless `claude -p` runs that notification does not re-invoke the session, so the loop stalls. Block on each backtest synchronously.
-3. Parse the 10-column `SUMMARY` (`harness.md` §5): compute `objective = annual%/100 − maxdd%/100`, `gate = sharpe ≥ 1.5`.
+3. Parse the 10-column `SUMMARY` (`harness.md` §5): compute `objective = annual%/100 − maxdd%/100`,
+   and `gate = sharpe ≥ harness.stageThreshold('enhance')` — **read the bar, do not retype it**
+   (`node utils/harness-config.js` prints the active epoch's thresholds; it is 1.5 under epoch 5,
+   2.0 for integrate). Since epoch 5 the score is **kept even when the gate fails**, so a failing
+   variant is still recorded and comparable — `gate` is a label, not a delete.
 4. **Route the result:**
    - Type-1 → report `{expId, train: {objective, sharpe, gate, ...}}` to **Agent 1 (ideator)**.
    - Type-2 → report `{expId, val: {objective, sharpe, gate, ...}}` to **Agent 4 (recorder)**.
 
 ## Hard rules (enclosed environment)
-- **NEVER** run `--window holdout` or any `--start/--end` reaching `>= 2025-01-01`; the executor will `OOS-BLOCKED` — that window is off-limits. **Never** set `JQ_ALLOW_OOS`.
+- **NEVER** run `--window holdout`, or any `--start/--end` reaching into the reserved OOS window; the executor `OOS-BLOCKED`s it. **Never** set `JQ_ALLOW_OOS`.
+  ⚠ The boundary **moves with the harness epoch** and is deliberately not written here: it was
+  `2025-01-01` under epoch 2 and is **`2026-01-01`** under epoch 5, which means 2025 is now VAL,
+  not OOS. A stale copy of this date cost the loop 12 of VAL's 24 months. Before any explicit
+  `--start/--end`, read the live values: `node utils/harness-config.js`.
 - **NEVER** modify `harness.md`, the executor's window params, the objective/gate, or the frozen cost/slippage/filter block in strategy code.
 - Respect budget: if the executor prints `USAGE-STOP` (`used ≥ limit`) or the window comes back `window-mismatch`, stop cleanly and report — do not burn credits or log a mismatched window.
 - Mark high-turnover / micro-cap / 打板 strategies with the ⚠零滑点高估 flag in your report.

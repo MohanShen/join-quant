@@ -146,7 +146,7 @@ PERM_FLAG="--permission-mode acceptEdits"
 [ "${USE_BYPASS:-0}" = "1" ] && PERM_FLAG="--dangerously-skip-permissions"
 
 RUN_LOG="$LOG_DIR/run-$(date '+%Y%m%d-%H%M%S').log"
-NUDGE="Quota is available again — continue the autoenhance loop exactly where you left off (you are already running /run-enhance per enhance/program.md). Backtest cap: have the engineer pass --usage-limit $USAGE_LIMIT to the backtester (plain command: no JQ_USAGE_LIMIT= prefix, no | tail). NEVER touch the 2025+ OOS window. Keep iterating until the JQ budget (used>=$USAGE_LIMIT) or the Anthropic quota is hit again, then STOP at a clean git state with a one-line status. Do NOT git commit wiki/results unless asked."
+NUDGE="Quota is available again — continue the autoenhance loop exactly where you left off (you are already running /run-enhance per enhance/program.md). Backtest cap: have the engineer pass --usage-limit $USAGE_LIMIT to the backtester (plain command: no JQ_USAGE_LIMIT= prefix, no | tail). NEVER touch the reserved OOS window (epoch 5: 2026-01-01+; confirm with `node utils/harness-config.js` — the boundary moves with the epoch, and 2025 is now VAL). Keep iterating until the JQ budget (used>=$USAGE_LIMIT) or the Anthropic quota is hit again, then STOP at a clean git state with a one-line status. Do NOT git commit wiki/results unless asked."
 
 log "resuming claude session $SID ($PERM_FLAG) → $RUN_LOG"
 JQ_USAGE_LIMIT="$USAGE_LIMIT" claude -p --resume "$SID" "$NUDGE" $PERM_FLAG >"$RUN_LOG" 2>&1
