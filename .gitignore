@@ -48,3 +48,9 @@ data/series-scan.json
 # of this repo. `git add -A .claude` once staged rq-executor as a gitlink, which would make
 # clones reference a submodule that does not exist.
 .claude/worktrees/
+
+# Daily pipeline transients. `data/daily-state.json` and `data/deferred.json` are TRACKED on
+# purpose — the run log and the deferred work queue are what let tomorrow resume, and losing
+# the pool would re-strand every slow-skipped strategy with no route back.
+data/daily-logs/
+data/*.lock

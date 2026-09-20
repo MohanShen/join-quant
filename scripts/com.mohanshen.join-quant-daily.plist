@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  launchd agent: the one-a-day pipeline.
+
+  Fires scripts/daily-pipeline.sh, which picks ONE stage by queue priority
+  (enhance > study > normalize > discover), spends the day's backtest budget on it, and
+  records enough state to resume tomorrow.
+
+  StartInterval is 4h rather than 24h on purpose: JoinQuant's free minutes reset on their own
+  clock, the CDP browser is not always up, and a fire that finds no budget or no browser exits
+  0 in seconds. Firing a few times a day means the pipeline catches the first window it can
+  actually use, instead of missing the day because 03:00 happened to be a bad moment. The
+  shared jq-pipeline lock keeps overlapping fires from double-spending.
+
+  USAGE_LIMIT = 55 keeps this inside the free 60 minutes. Raise it only if you mean to spend
+  credits; the existing autostudy/autoenhance plists use 240 and will compete for the same
+  budget through the same shared lock.
+
+  ⚠ This agent can RESUME the study/enhance loops but cannot cold-start them — they need a
+  session pinned interactively once (scripts/auto{study,enhance}-interactive.sh). When the pin
+  is missing or on another branch, the run reports BLOCKED and exits non-zero, which is why
+  the error log is worth watching rather than assuming green.
+
+  Install:  cp scripts/com.mohanshen.join-quant-daily.plist ~/Library/LaunchAgents/
+            launchctl load ~/Library/LaunchAgents/com.mohanshen.join-quant-daily.plist
+  Stop:     launchctl unload ~/Library/LaunchAgents/com.mohanshen.join-quant-daily.plist
+  Try once: DRY=1 bash scripts/daily-pipeline.sh
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.mohanshen.join-quant-daily</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/mshen/join-quant/scripts/daily-pipeline.sh</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/mshen/join-quant</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/Users/mshen/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <key>USAGE_LIMIT</key>
+    <string>55</string>
+    <key>JQ_CDP_URL</key>
+    <string>http://localhost:9225</string>
+  </dict>
+  <key>StartInterval</key>
+  <integer>14400</integer>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/Users/mshen/join-quant/data/daily-logs/launchd.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/mshen/join-quant/data/daily-logs/launchd.err.log</string>
+</dict>
+</plist>

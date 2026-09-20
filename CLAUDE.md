@@ -46,6 +46,14 @@ node utils/tutorial-ingest.js --catalog               # catalog only
 # One-off: re-key the stores from postId to uniqueKey (idempotent, backs up)
 node utils/migrate-unique-key.js --dry
 
+# Daily cron pipeline — one stage per fire, by queue priority (enhance > study > norm > discover)
+node utils/daily-pipeline.js --plan            # decide and explain, run nothing
+node utils/daily-pipeline.js --status          # queues, budget, deferred pool, last runs
+node utils/daily-pipeline.js                   # decide and run
+node utils/daily-pipeline.js --stage normalize # override the pick for one run
+node utils/daily-pipeline.js --seed-deferred   # park stranded slow-skipped rows in the pool
+DRY=1 bash scripts/daily-pipeline.sh           # the cron wrapper, plan only
+
 # Screening — decide what deserves the 60 backtest-min/day (see screen/screen.md)
 node utils/screen-prefilter.js --stats        # deterministic hard rejects, no tokens
 node utils/screen-prefilter.js --limit 200    # + fetch bodies -> screen/candidates.json
@@ -400,6 +408,33 @@ Only the directories whose contents aren't self-evident:
 - ⚠ 量化课堂 (`research/tutorials/`) is **methodology, not material** — it teaches how to do factor
   research. It belongs to the study loop or a future research pipeline, NOT to type integration,
   which combines already-measured artefacts.
+- **The daily cron picks ONE stage by queue priority — later stages outrank earlier ones**:
+  `enhance > study > normalize > discover`. A pull system: finish what is in the pipe before
+  admitting more, because the 60 backtest-min/day are the binding constraint and an idle
+  enhance-ready family is a worse use of them than a raw strategy nothing can act on yet.
+  ⚠ **Consequence, by design**: while any family is enhance-ready, normalization never runs —
+  13 families and 53 pending strategies mean normalize starves indefinitely. `--plan` prints
+  every queue's depth so it is visible; `--stage <name>` overrides for one run.
+- ⚠ **The cron can RESUME study/enhance but never cold-start them.** They are Claude agent
+  loops; their wrappers resume a session pinned by a human
+  (`data/auto{study,enhance}-session.txt`, format `<branch>\t<uuid>`). The loop script refuses
+  a pin from another branch and **exits 0** — so checking only that the file exists reports
+  success every day while starting nothing. `daily-pipeline.js` checks the branch too, reports
+  `blocked`, **cedes the budget to the next stage**, and exits non-zero so a dead cron is
+  visible. The enhance pin is currently on `research/jul12` while HEAD is `main`.
+- **`slow-skipped` stays TERMINAL in the normalizer** (making it retriable re-bills it every
+  batch — the `no-trades` bug). The retry path is a separate **deferred pool**,
+  `data/deferred.json`, drained only by the daily pipeline and only at a **higher cap than the
+  one that already failed** — re-running at the same cap spends the same minutes to learn the
+  same thing. 14 previously-stranded rows were seeded into it; ceiling is 3 attempts, after
+  which they stay listed under `exhausted` rather than vanishing.
+- This pipeline runs a **30-min slow-skip cap** (`--max-poll-min 30`), above the 20-min default,
+  and a 55-min daily usage limit to stay inside the free tier.
+- `data/daily-state.json` + `data/deferred.json` are **tracked**: the run log and the work queue
+  are what let tomorrow resume. `JQ_DAILY_STATE_DIR` redirects both — tests set it to a temp dir,
+  because a test run that appends probe rows writes fiction into the record the next run reads.
+- An in-flight claim older than 6h is treated as abandoned and **taken over** (recorded as
+  `abandoned`, not silently dropped), so a cron killed mid-run cannot deadlock the next one.
 - Screening verdicts live in `screen/verdicts.json` and are applied INSIDE the queue builders,
   because every discovery run rebuilds the queues from scratch.
 - Blind-test result (104 posts, 22.1% base rate): judgement on post BODIES scored 0.90 AUC vs
