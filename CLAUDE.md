@@ -57,6 +57,7 @@ node utils/daily-pipeline.js --seed-deferred   # park stranded slow-skipped rows
 node utils/daily-summary.js --dry              # preview today's summary markdown
 node utils/daily-summary.js --commit           # write docs/daily/<date>.md, commit, push
 DRY=1 bash scripts/daily-pipeline.sh           # the cron wrapper, plan only
+FORCE=1 bash scripts/daily-pipeline.sh         # bypass the scheduled-hour gate
 
 # Screening — decide what deserves the 60 backtest-min/day (see screen/screen.md)
 node utils/screen-prefilter.js --stats        # deterministic hard rejects, no tokens
@@ -412,6 +413,19 @@ Only the directories whose contents aren't self-evident:
 - ⚠ 量化课堂 (`research/tutorials/`) is **methodology, not material** — it teaches how to do factor
   research. It belongs to the study loop or a future research pipeline, NOT to type integration,
   which combines already-measured artefacts.
+- **The daily cron fires once a day at 18:00 UTC** (`com.mohanshen.join-quant-daily`).
+  ⚠ launchd evaluates `StartCalendarInterval` in the machine's **local** timezone, and this
+  machine is `America/Los_Angeles` with DST — 18:00 UTC is 11:00 PDT in summer, 10:00 PST in
+  winter. A single fixed local hour would drift an hour twice a year, so the plist fires at
+  **both** and `daily-pipeline.sh` keeps only the fire where `date -u +%H` really is
+  `DAILY_RUN_HOUR_UTC`. Change the hour in that one variable and re-bracket the two local hours.
+  The gate applies only to scheduled fires (`DAILY_SCHEDULED=1`); a manual run is never blocked,
+  and `FORCE=1` bypasses it.
+- ⚠ **A single daily slot means a missed slot is a missed day** — if CDP is down or the budget
+  is already spent at 18:00 UTC, the wrapper exits 0 and does not retry. The earlier 4-hourly
+  schedule caught the first usable window instead. If that bites, add hours to the array and
+  gate on "no successful run today" (`data/daily-state.json` already records it) rather than
+  widening the UTC gate.
 - **Two of the four queues are FILES, two are DERIVED.** `data/pending-normalize.json` and
   `data/copy-queue.json` are real files the normalize/fetch pipelines themselves read. The
   enhance and study queues are **derived** from `wiki/families/*.md` + `data/consumption.tsv`

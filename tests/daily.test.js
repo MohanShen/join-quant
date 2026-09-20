@@ -354,3 +354,38 @@ test('a failed stage reports its cause', async t => {
     assert.match(src, /exit 0 is NOT proof work happened/);
   });
 });
+
+test('the daily schedule is a fixed UTC hour, DST-safe', async t => {
+  const plist = fs.readFileSync(
+    path.join(ROOT, 'scripts/com.mohanshen.join-quant-daily.plist'), 'utf8');
+  const wrapper = fs.readFileSync(path.join(ROOT, 'scripts/daily-pipeline.sh'), 'utf8');
+
+  await t.test('the target hour is declared once, in UTC', () => {
+    assert.match(plist, /<key>DAILY_RUN_HOUR_UTC<\/key>\s*<string>18<\/string>/);
+    assert.match(wrapper, /RUN_HOUR_UTC="\$\{DAILY_RUN_HOUR_UTC:-18\}"/);
+  });
+
+  await t.test('two local hours fire, because launchd uses LOCAL time', () => {
+    // launchd evaluates StartCalendarInterval in the machine's timezone, which observes DST,
+    // so a single fixed local hour drifts by an hour twice a year. Both candidates fire and
+    // the wrapper keeps the one that is really 18:00 UTC.
+    const hours = [...plist.matchAll(/<key>Hour<\/key><integer>(\d+)<\/integer>/g)].map(m => +m[1]);
+    assert.strictEqual(hours.length, 2, 'expected exactly two candidate local hours');
+    assert.strictEqual(Math.abs(hours[0] - hours[1]), 1, 'they must be adjacent hours');
+  });
+
+  await t.test('the gate compares against UTC, not local', () => {
+    assert.match(wrapper, /date -u \+%H/);
+  });
+
+  await t.test('a manual run is never blocked by the clock', () => {
+    // The gate keys on DAILY_SCHEDULED, which only the plist sets.
+    assert.match(wrapper, /DAILY_SCHEDULED:-0.*=.*"1"/);
+    assert.match(wrapper, /FORCE:-0/);
+    assert.match(plist, /<key>DAILY_SCHEDULED<\/key>\s*<string>1<\/string>/);
+  });
+
+  await t.test('RunAtLoad is off, so loading does not fire at an arbitrary time', () => {
+    assert.match(plist, /<key>RunAtLoad<\/key>\s*<false\/>/);
+  });
+});

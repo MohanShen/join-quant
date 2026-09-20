@@ -7,11 +7,25 @@
   (enhance > study > normalize > discover), spends the day's backtest budget on it, and
   records enough state to resume tomorrow.
 
-  StartInterval is 4h rather than 24h on purpose: JoinQuant's free minutes reset on their own
-  clock, the CDP browser is not always up, and a fire that finds no budget or no browser exits
-  0 in seconds. Firing a few times a day means the pipeline catches the first window it can
-  actually use, instead of missing the day because 03:00 happened to be a bad moment. The
-  shared jq-pipeline lock keeps overlapping fires from double-spending.
+  Starts once a day at 18:00 UTC.
+
+  ⚠ Why two StartCalendarInterval entries for one daily run. launchd evaluates calendar
+  intervals in the machine's LOCAL timezone, and this machine is America/Los_Angeles, which
+  observes DST — so 18:00 UTC is 11:00 PDT in summer and 10:00 PST in winter. A single fixed
+  local hour would silently drift by an hour twice a year. Both hours therefore fire, and
+  scripts/daily-pipeline.sh keeps only the one where `date -u +%H` really is
+  DAILY_RUN_HOUR_UTC; the other exits in milliseconds. Change the hour in ONE place
+  (DAILY_RUN_HOUR_UTC) and adjust the two local hours to bracket it.
+
+  RunAtLoad is false: with a fixed daily slot, firing on load would run at an arbitrary time.
+  To run immediately by hand: `bash scripts/daily-pipeline.sh` (a manual run is never gated by
+  the clock), or `FORCE=1 ...` to bypass the gate in a scheduled context.
+
+  ⚠ Tradeoff of a single daily slot: if the CDP browser is down or the budget is already
+  spent at 18:00 UTC, that day is simply missed — the wrapper exits 0 and does not retry.
+  The previous 4-hourly schedule caught the first usable window instead. If missed days become
+  a problem, add more hours to the array and gate on "no successful run recorded today"
+  (data/daily-state.json already carries that) rather than widening the UTC gate.
 
   USAGE_LIMIT = 55 keeps this inside the free 60 minutes. Raise it only if you mean to spend
   credits; the existing autostudy/autoenhance plists use 240 and will compete for the same
@@ -46,11 +60,18 @@
     <string>55</string>
     <key>JQ_CDP_URL</key>
     <string>http://localhost:9225</string>
+    <key>DAILY_SCHEDULED</key>
+    <string>1</string>
+    <key>DAILY_RUN_HOUR_UTC</key>
+    <string>18</string>
   </dict>
-  <key>StartInterval</key>
-  <integer>14400</integer>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Hour</key><integer>10</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Hour</key><integer>11</integer><key>Minute</key><integer>0</integer></dict>
+  </array>
   <key>RunAtLoad</key>
-  <true/>
+  <false/>
   <key>StandardOutPath</key>
   <string>/Users/mshen/join-quant/data/daily-logs/launchd.out.log</string>
   <key>StandardErrorPath</key>
