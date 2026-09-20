@@ -43,3 +43,8 @@ screen/batches/
 # (data/series/) stay tracked: gitignoring a ledger is what let normalize-*.tsv regress
 # from ~119 rows to 18 unnoticed.
 data/series-scan.json
+
+# Local git worktrees created under .claude/ — they are separate checkouts, never content
+# of this repo. `git add -A .claude` once staged rq-executor as a gitlink, which would make
+# clones reference a submodule that does not exist.
+.claude/worktrees/
