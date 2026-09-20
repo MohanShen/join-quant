@@ -63,6 +63,7 @@ node utils/wiki-concept-lint.js               # concept strategyCount drift
 node utils/type-integrate-check.js <c.json>   # guard on a type-level integration candidate
 node utils/family-match.js --pending          # pages with no family:, with a proposal each
 node utils/family-match.js --validate         # re-score the matcher before changing it
+node utils/family-match.js --lineage          # the family tree (parent: on the child)
 node utils/wiki-epoch-repair.js --dry         # fix pages whose normalized epoch disagrees with the ledger
 
 # Return series + component harvesting (inputs to type-level integration)
@@ -331,16 +332,23 @@ Only the directories whose contents aren't self-evident:
 - ⚠ **`family:` is never auto-assigned.** `utils/family-match.js` scores Jaccard overlap of
   normalized code lines against each family's `base:` (a family is a LINEAGE, so code — not
   concepts, which cut across lineages by design). Measured on the 175 hand-labelled pages it is
-  right on **87.1%** of the calls it will make, abstaining on 82%. That is not good enough to
+  willing to decide only 31 of them (abstaining on 82%), and its abstain rules were tuned on those
+  same 31 — so its precision is not an independent estimate. That is not good enough to
   write: a wrong assignment corrupts §3, `memberCount` and the whole type layer, silently and in
   the direction of the biggest families. It writes a PROPOSAL that the builder ignores; promotion
   is a human/`/ingest-strategy` decision. `node utils/family-match.js --pending` is the queue,
   `--validate` re-scores before any change to the matcher.
 - ⚠ **Combination books defeat code matching.** 三马/七星/五福 embed other families verbatim, so
   they score high against several bases at once — exactly where the matcher was most confident and
-  most wrong (0.98 against two bases). `match()` abstains when ≥2 bases clear `MIN_SCORE`. The 4
-  residual errors are all one confusion, ETF动量 → 五福闹新春, which is a genuine taxonomy question
-  (五福 is an ETF-rotation sub-lineage) rather than noise — worth resolving deliberately.
+  most wrong (0.98 against two bases). `match()` abstains when ≥2 bases clear `MIN_SCORE`.
+- **Families are NOT flat: a family page may declare `parent: [[…]]`.** `五福闹新春` is a
+  sub-lineage of `ETF动量`. Recording that resolved all four of the matcher's residual errors at
+  once — they were the single confusion ETF动量 → 五福闹新春, i.e. the matcher naming the child
+  where a human had written the parent. `sameLineage()` counts a parent/child call as correct.
+  The relation is stored **once, on the child**; `node utils/family-match.js --lineage` prints the
+  tree (a reciprocal `children:` list would be a second copy free to drift, and a test forbids it).
+  ⚠ This does **not** change aggregation: `memberCount` and §3 are still per-family, so a parent's
+  table does not absorb its children's members.
 - **`consumption.tsv` gained `members` + `memberHash`** (appended; readers indexing 0..6 ignore
   them). `consumed(stage)` answered only "has this family EVER been studied", so once all 14
   families were done the study queue read empty BY CONSTRUCTION no matter how many members

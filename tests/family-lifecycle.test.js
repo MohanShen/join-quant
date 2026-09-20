@@ -9,8 +9,9 @@
  *     bump would have re-measured the whole library at 60 backtest-minutes a day;
  *   - consumption answered only "has this family EVER been studied", so a family that gained
  *     members after its study never reappeared in the queue;
- *   - code matching is right on 87.1% of the calls it will make, which is NOT good enough to
- *     write `family:` automatically.
+ *   - code matching decides only 31 of 175 labelled pages, and its abstain rules were tuned
+ *     on those same 31, so its precision is not an independent estimate — it proposes a
+ *     family, it never writes one.
  */
 
 const test = require('node:test');
@@ -108,7 +109,7 @@ test('kb-stub stamps live values, not literals', async t => {
   });
 
   await t.test('it records a PROPOSAL, never an assignment', () => {
-    // 87.1% precision would corrupt §3, memberCount and the type layer above it.
+    // Precision is measured on the same set the rules were tuned on — propose, never assert.
     assert.match(src, /familyProposal:/);
     assert.ok(!/^family: \$\{/m.test(src), 'must not write `family:` automatically');
   });
@@ -224,6 +225,46 @@ test('family matching proposes and abstains', async t => {
     const precision = v.correct / decided;
     assert.ok(precision >= 0.85,
       `precision fell to ${(100 * precision).toFixed(1)}% — do not auto-assign on this`);
+  });
+});
+
+test('family lineage', async t => {
+  const par = familyMatch.parents();
+
+  await t.test('五福闹新春 is recorded as a sub-lineage of ETF动量', () => {
+    // Before this was written down, all four residual matcher errors were this one confusion.
+    // The matcher was not wrong; the taxonomy only existed in prose.
+    assert.strictEqual(par.get('五福闹新春'), 'ETF动量');
+  });
+
+  await t.test('a parent and child count as the same lineage, in both directions', () => {
+    assert.ok(familyMatch.sameLineage('五福闹新春', 'ETF动量', par));
+    assert.ok(familyMatch.sameLineage('ETF动量', '五福闹新春', par));
+  });
+
+  await t.test('unrelated families do not', () => {
+    assert.ok(!familyMatch.sameLineage('小市值', 'ETF动量', par));
+  });
+
+  await t.test('every declared parent names a real family page', () => {
+    const { bases } = familyMatch.familyBases();
+    for (const [child, parent] of par) {
+      assert.ok(bases.has(parent), `${child} declares parent "${parent}", which has no page`);
+    }
+  });
+
+  await t.test('a cycle terminates instead of hanging', () => {
+    const cyclic = new Map([['a', 'b'], ['b', 'a']]);
+    assert.deepStrictEqual(familyMatch.lineage('a', cyclic), ['a', 'b']);
+  });
+
+  await t.test('the relation is stored once, on the child', () => {
+    // A reciprocal `children:` list would be a second copy free to drift.
+    const famDir = path.join(ROOT, 'wiki/families');
+    for (const f of fs.readdirSync(famDir).filter(x => x.endsWith('.md'))) {
+      assert.ok(!/^children:/m.test(fs.readFileSync(path.join(famDir, f), 'utf8')),
+        `${f} declares children; the parent field on the child is the single source`);
+    }
   });
 });
 

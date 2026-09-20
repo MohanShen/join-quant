@@ -89,9 +89,10 @@ function createStub(srcFile, fullSrc, metrics) {
   // A stub used to carry no family at all, and wiki-family-build skips pages without one
   // (`if (!fm.family) continue`), so every newly fetched member of an existing family was
   // invisible to that family's page. But auto-assigning is not safe either: measured against
-  // the 175 hand-labelled pages, code matching is right on only 87.1% of the calls it is
-  // willing to make. Writing `family:` at that rate would corrupt §3, memberCount and the type
-  // layer above it — silently, and in the direction of the biggest families.
+  // the 175 hand-labelled pages, code matching decides only 31 of them, and that 31 is the very
+  // set its abstain rules were tuned against — so its precision is not an independent estimate.
+  // A wrong assignment corrupts §3, memberCount and the type layer above it, silently and in
+  // the direction of the biggest families.
   //
   // So the stub records a PROPOSAL that wiki-family-build ignores. The member stops being
   // invisible (it shows up in `family-match --pending`) without anything being asserted.
