@@ -193,6 +193,7 @@ Only the directories whose contents aren't self-evident:
 | `research/factorlib/` | JQ **因子看板** ingested by `utils/factorlib-ingest.js`: 285 factors with formulas, IC/IR, quintile returns and turnover, pulled at **both** cost levels. `factors.tsv` + generated `README.md` (tracked); raw payloads in `data/factorlib/`. |
 | `research/tutorials/` | **量化课堂**, 137 lessons in 5 categories, ingested by `utils/tutorial-ingest.js` via `detailV2` (free). Category 新手专区 is a full factor-research methodology chain. |
 | `resources/` | **Raw layer #2** (alongside `strategies/`): community RESEARCH write-ups as `.md`, fetched by `utils/resource-fetch.js`. One file per post, frontmatter + full body. Notebook/attachment availability is recorded but the notebook itself is **not** downloadable (see Notes). |
+| `docs/pipeline-map.html` + `docs/assets/pipeline-map.png` | **Pipeline & skill coverage map** — the 17 stages, which skill drives each, and the open gaps. ⚠ It shows LIVE FIGURES (ledger/family/queue counts) so it goes stale silently; regenerate with `node scripts/render-doc.js docs/pipeline-map.html docs/assets/pipeline-map.png` after editing the HTML, which is the thing under review. |
 | `validated_strategies/` | Finalized strategies that completed VAL (Agent 4 archives here; **tracked** = product shelf) |
 | `data/` | **Tracked** (private backup) — discovery + resource state, `factorlib/` raw payloads. Only `data/cookies.json` is gitignored. |
 | `auth/` | Session cookies; `auth/cookies.json` itself is **gitignored** (default cookie path). |

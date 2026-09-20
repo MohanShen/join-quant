@@ -1,0 +1,443 @@
+<title>join-quant Pipeline Map</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@600;700&display=swap">
+<style>
+  :root{
+    --ground:#F4F6F6;
+    --panel:#FFFFFF;
+    --panel-2:#EDF1F1;
+    --ink:#161C1D;
+    --ink-2:#3E4B4D;
+    --ink-3:#6E7E80;
+    --rule:#D3DCDC;
+    --accent:#0E6E6B;
+    --accent-soft:#D8EAE8;
+    --ok:#2C6E49;
+    --ok-soft:#DCEBE1;
+    --warn:#96631A;
+    --warn-soft:#F3E7D2;
+    --gap:#9E3A32;
+    --gap-soft:#F3DEDC;
+    --shadow:0 1px 2px rgba(20,35,35,.06), 0 6px 18px rgba(20,35,35,.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0F1416;
+      --panel:#161D1F;
+      --panel-2:#1D2628;
+      --ink:#E8EEEE;
+      --ink-2:#AFC0C1;
+      --ink-3:#7E9092;
+      --rule:#2A3639;
+      --accent:#4FC2BB;
+      --accent-soft:#12312F;
+      --ok:#6FC08C;
+      --ok-soft:#142D1F;
+      --warn:#D9A34E;
+      --warn-soft:#332616;
+      --gap:#E08278;
+      --gap-soft:#331B18;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0F1416; --panel:#161D1F; --panel-2:#1D2628;
+    --ink:#E8EEEE; --ink-2:#AFC0C1; --ink-3:#7E9092; --rule:#2A3639;
+    --accent:#4FC2BB; --accent-soft:#12312F;
+    --ok:#6FC08C; --ok-soft:#142D1F;
+    --warn:#D9A34E; --warn-soft:#332616;
+    --gap:#E08278; --gap-soft:#331B18;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--ground); color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+    font-size:15px; line-height:1.6; margin:0;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding-inline:20px; padding-block:48px 72px;}
+  h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif; text-wrap:balance; margin:0;}
+  h1{font-size:2.3rem; line-height:1.15; font-weight:700; letter-spacing:-.015em;}
+  h2{font-size:1.32rem; font-weight:600; margin-top:0;}
+  h3{font-size:1rem; font-weight:600;}
+  p{margin:0;}
+  code,.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;}
+  code{font-size:.86em; background:var(--panel-2); padding:.1em .34em; border-radius:3px;}
+  .eyebrow{
+    font-family:"IBM Plex Mono",monospace; font-size:.7rem; font-weight:500;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--accent);
+  }
+  header{display:flex; flex-direction:column; gap:10px; margin-bottom:8px;}
+  .sub{color:var(--ink-2); max-width:65ch; font-size:1.02rem;}
+  .stamp{
+    font-family:"IBM Plex Mono",monospace; font-size:.74rem; color:var(--ink-3);
+    border-top:1px solid var(--rule); padding-top:10px; margin-top:6px;
+  }
+  section{margin-top:46px; display:flex; flex-direction:column; gap:16px;}
+  .lede{color:var(--ink-2); max-width:65ch;}
+
+  /* ---- counters ---- */
+  .counts{display:grid; grid-template-columns:repeat(auto-fit,minmax(128px,1fr)); gap:1px;
+    background:var(--rule); border:1px solid var(--rule); border-radius:7px; overflow:hidden;}
+  .counts div{background:var(--panel); padding:13px 14px; display:flex; flex-direction:column; gap:3px;}
+  .counts b{font-family:"IBM Plex Mono",monospace; font-size:1.3rem; font-weight:600;
+    font-variant-numeric:tabular-nums; letter-spacing:-.02em;}
+  .counts span{font-size:.75rem; color:var(--ink-3); line-height:1.35;}
+
+  /* ---- flow ---- */
+  .flow{display:flex; flex-direction:column; gap:0;}
+  .stage{
+    display:grid; grid-template-columns:132px 1fr; gap:18px; align-items:start;
+    padding:15px 0; border-top:1px solid var(--rule);
+  }
+  .stage:first-child{border-top:none;}
+  .stage-key{display:flex; flex-direction:column; gap:5px; padding-top:2px;}
+  .stage-key .n{
+    font-family:"IBM Plex Mono",monospace; font-size:.7rem; color:var(--ink-3);
+    letter-spacing:.1em;
+  }
+  .stage-key .nm{font-weight:600; font-size:.95rem; line-height:1.25;}
+  .stage-body{display:flex; flex-direction:column; gap:9px;}
+  .nodes{display:flex; flex-wrap:wrap; align-items:center; gap:7px;}
+  .node{
+    background:var(--panel); border:1px solid var(--rule); border-radius:5px;
+    padding:5px 10px; font-family:"IBM Plex Mono",monospace; font-size:.79rem;
+    box-shadow:var(--shadow); white-space:nowrap;
+  }
+  .node.store{background:var(--panel-2); box-shadow:none; border-style:dashed;}
+  .arrow{color:var(--ink-3); font-size:.85rem; user-select:none;}
+  .skill{
+    display:inline-flex; align-items:center; gap:6px; font-family:"IBM Plex Mono",monospace;
+    font-size:.76rem; padding:3px 9px; border-radius:99px; white-space:nowrap;
+  }
+  .skill.has{background:var(--ok-soft); color:var(--ok); border:1px solid transparent;}
+  .skill.none{background:var(--gap-soft); color:var(--gap);}
+  .skill.part{background:var(--warn-soft); color:var(--warn);}
+  .note{font-size:.84rem; color:var(--ink-2); max-width:62ch;}
+
+  /* feeds rail */
+  .feeds{
+    border:1px solid var(--rule); border-left:3px solid var(--accent);
+    background:var(--panel); border-radius:0 7px 7px 0; padding:14px 16px;
+    display:flex; flex-direction:column; gap:9px; margin:4px 0;
+  }
+  .feeds h3{font-family:"IBM Plex Sans",sans-serif; font-size:.82rem; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--accent); font-weight:600;}
+
+  /* ---- table ---- */
+  .tablewrap{overflow-x:auto; border:1px solid var(--rule); border-radius:7px; background:var(--panel);}
+  table{border-collapse:collapse; width:100%; min-width:720px; font-size:.87rem;}
+  th,td{text-align:left; padding:10px 13px; border-bottom:1px solid var(--rule); vertical-align:top;}
+  th{
+    font-family:"IBM Plex Mono",monospace; font-size:.71rem; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--ink-3); font-weight:500;
+    background:var(--panel-2); position:sticky; top:0;
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  td.driver{font-family:"IBM Plex Mono",monospace; font-size:.79rem; color:var(--ink-2);}
+  .dot{display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:7px; vertical-align:middle;}
+  .dot.ok{background:var(--ok)} .dot.part{background:var(--warn)} .dot.gap{background:var(--gap)}
+
+  /* ---- gaps ---- */
+  .gaps{display:flex; flex-direction:column; gap:1px; background:var(--rule);
+    border:1px solid var(--rule); border-radius:7px; overflow:hidden;}
+  .gaps article{background:var(--panel); padding:15px 17px; display:flex; flex-direction:column; gap:6px;}
+  .gaps h3{display:flex; align-items:baseline; gap:9px;}
+  .gaps .sev{
+    font-family:"IBM Plex Mono",monospace; font-size:.67rem; letter-spacing:.1em;
+    text-transform:uppercase; padding:2px 7px; border-radius:3px; font-weight:500;
+  }
+  .sev.block{background:var(--gap-soft); color:var(--gap);}
+  .sev.soft{background:var(--warn-soft); color:var(--warn);}
+  .sev.byd{background:var(--accent-soft); color:var(--accent);}
+  .gaps p{font-size:.88rem; color:var(--ink-2); max-width:70ch;}
+
+  .legend{display:flex; flex-wrap:wrap; gap:16px; font-size:.79rem; color:var(--ink-2);}
+  footer{margin-top:52px; border-top:1px solid var(--rule); padding-top:16px;
+    font-size:.8rem; color:var(--ink-3); font-family:"IBM Plex Mono",monospace;}
+
+  @media (max-width:620px){
+    .wrap{padding-block:34px 56px;}
+    h1{font-size:1.8rem;}
+    .stage{grid-template-columns:1fr; gap:9px;}
+    .stage-key{flex-direction:row; align-items:baseline; gap:9px;}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important;}}
+</style>
+
+<div class="wrap">
+
+  <header>
+    <span class="eyebrow">join-quant · repo map</span>
+    <h1>Pipeline &amp; Skill Coverage</h1>
+    <p class="sub">Fifteen stages from community crawl to out-of-sample reserve, which skill drives each one,
+      and where the chain still breaks. Derived from the repo, not from memory.</p>
+    <p class="stamp">harness epoch 5 &nbsp;·&nbsp; TRAIN 2022-01-01 → 2023-12-31 &nbsp;·&nbsp; VAL 2024-01-01 → 2025-12-31
+      &nbsp;·&nbsp; OOS reserve 2026-01-01+ (hard-blocked) &nbsp;·&nbsp; 60 backtest-min/day</p>
+  </header>
+
+  <section>
+    <h2>Where the library stands</h2>
+    <div class="counts">
+      <div><b>215</b><span>raw strategies</span></div>
+      <div><b>124</b><span>normalized rows</span></div>
+      <div><b>190</b><span>wiki pages</span></div>
+      <div><b>14</b><span>families</span></div>
+      <div><b>7</b><span>types</span></div>
+      <div><b>89</b><span>return series</span></div>
+      <div><b>53</b><span>pending normalize</span></div>
+      <div><b>90<span style="font-size:.75rem;font-weight:400;color:var(--ink-3)">/1408</span></b><span>resources fetched</span></div>
+    </div>
+    <p class="note">Ledger tail beyond the 124: 18 compile-error, 14 slow-skipped, 5 incompatible-futures,
+      2 no-trades. Next up per <code>consumption-report --next</code> — study <strong>ETF动量</strong>,
+      enhance <strong>ETF动量</strong>, integrate <strong>ETF-H-unknown</strong>.</p>
+  </section>
+
+  <section>
+    <h2>The flow</h2>
+    <p class="lede">Solid boxes are executables; dashed boxes are durable stores. The badge on each stage is
+      its skill entry point.</p>
+
+    <div class="flow">
+
+      <div class="stage">
+        <div class="stage-key"><span class="n">01</span><span class="nm">Discover</span></div>
+        <div class="stage-body">
+          <div class="nodes">
+            <span class="node">listV2 crawl</span><span class="arrow">→</span>
+            <span class="node">strategy-discover</span><span class="arrow">→</span>
+            <span class="node store">discovered.json</span>
+            <span class="node store">resources.json</span>
+            <span class="skill none">no skill · cron only</span>
+          </div>
+          <p class="note">Splits posts into strategies (32-char backtestId) and research write-ups.
+            Nothing triggers screening afterwards — a human runs it.</p>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-key"><span class="n">02</span><span class="nm">Screen</span></div>
+        <div class="stage-body">
+          <div class="nodes">
+            <span class="node">screen-prefilter</span><span class="arrow">→</span>
+            <span class="node">post-screener ×N</span><span class="arrow">→</span>
+            <span class="node">screen-merge</span><span class="arrow">→</span>
+            <span class="node store">verdicts.json</span>
+            <span class="skill has">/run-screen</span>
+          </div>
+          <p class="note">Ranks on <em>marginal information</em>, not pass-likelihood. Blind-tested at 0.90 AUC
+            against 0.66 for popularity.</p>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-key"><span class="n">03</span><span class="nm">Normalize</span></div>
+        <div class="stage-body">
+          <div class="nodes">
+            <span class="node store">pending-normalize</span><span class="arrow">→</span>
+            <span class="node">strategy-normalize</span><span class="arrow">→</span>
+            <span class="node store">normalize-train.tsv</span><span class="arrow">→</span>
+            <span class="node">normalize-sync</span>
+            <span class="skill none">no skill · cron only</span>
+          </div>
+          <p class="note">The only stage that spends backtest minutes at scale. <code>normalize-sync</code> now
+            also stubs wiki pages, prunes the queue, and refreshes family pages.</p>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-key"><span class="n">04</span><span class="nm">Knowledge base</span></div>
+        <div class="stage-body">
+          <div class="nodes">
+            <span class="node">kb-stub</span><span class="arrow">→</span>
+            <span class="node store">wiki/strategies</span><span class="arrow">→</span>
+            <span class="node">wiki-family-build</span><span class="arrow">→</span>
+            <span class="node store">wiki/families</span><span class="arrow">→</span>
+            <span class="node">wiki-type-build</span><span class="arrow">→</span>
+            <span class="node store">wiki/types</span>
+            <span class="skill part">/ingest-strategy · pages only</span>
+          </div>
+          <p class="note">Family and type builders have no skill of their own. <code>family-match</code> proposes
+            a family for each new member but never writes one — 4 pages await confirmation.</p>
+        </div>
+      </div>
+
+      <div class="feeds">
+        <h3>Research inputs — feed ideation, never the ledger</h3>
+        <div class="nodes">
+          <span class="node">factorlib-query</span>
+          <span class="node store">285 factors · zz500/3y</span>
+          <span class="skill has">→ ideator · external-factor</span>
+        </div>
+        <div class="nodes">
+          <span class="node">resource-fetch</span>
+          <span class="node store">90 / 1408 write-ups</span>
+          <span class="skill part">referenced by /ingest-strategy</span>
+        </div>
+        <div class="nodes">
+          <span class="node">tutorial-ingest</span>
+          <span class="node store">137 lessons</span>
+          <span class="skill part">unwired — by decision</span>
+        </div>
+        <p class="note">Factor-board numbers are a hypothesis source: a different bench (zz500 / 3y / JQ's cost
+          model), so they may never enter a family page, type page or candidate. A factor earns a ledger row only
+          by being built and measured here. 量化课堂 is methodology, not material — it belongs upstream in study.</p>
+      </div>
+
+      <div class="stage">
+        <div class="stage-key"><span class="n">05</span><span class="nm">Study</span></div>
+        <div class="stage-body">
+          <div class="nodes">
+            <span class="node store">consumption.tsv</span><span class="arrow">→</span>
+            <span class="node">4 agents</span><span class="arrow">→</span>
+            <span class="node store">family §2 / §6</span>
+            <span class="skill has">/run-study</span>
+          </div>
+          <p class="note">Understand one lineage. Now reopens a family when its membership changes, not just when
+            it has never been studied.</p>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-key"><span class="n">06</span><span class="nm">Enhance</span></div>
+        <div class="stage-body">
+          <div class="nodes">
+            <span class="node">ideator</span><span class="arrow">→</span>
+            <span class="node">critic</span><span class="arrow">→</span>
+            <span class="node">engineer</span><span class="arrow">→</span>
+            <span class="node">recorder</span><span class="arrow">→</span>
+            <span class="node store">validated_strategies</span>
+            <span class="skill has">/run-enhance</span>
+          </div>
+          <p class="note">Optimise one lineage on TRAIN; VAL confirms a finalised variant once. Gate-failing work
+            can still be banked as a component.</p>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-key"><span class="n">07</span><span class="nm">Components</span></div>
+        <div class="stage-body">
+          <div class="nodes">
+            <span class="node">backtest-series</span><span class="arrow">→</span>
+            <span class="node store">data/series · 89</span><span class="arrow">→</span>
+            <span class="node">component-scan</span><span class="arrow">→</span>
+            <span class="node store">components.tsv</span>
+            <span class="skill has">study · enhance · integrate</span>
+          </div>
+          <p class="note">Ranks members by what they add to the type leader, not by standalone score — the only
+            layer that can see correlation.</p>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-key"><span class="n">08</span><span class="nm">Integrate</span></div>
+        <div class="stage-body">
+          <div class="nodes">
+            <span class="node store">wiki/types</span><span class="arrow">→</span>
+            <span class="node">candidate.py</span><span class="arrow">→</span>
+            <span class="node">type-integrate-check</span><span class="arrow">→</span>
+            <span class="node store">整合回合</span>
+            <span class="skill has">/run-integrate</span>
+          </div>
+          <p class="note">Bar is sharpe 2.0, above the 1.5 used elsewhere. Beat the best <em>member</em>, not the
+            gate. 全A-H-low ran at 0.1731 (keep-with-caveat); 全A-H-high was vetoed before spending a minute.</p>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-key"><span class="n">09</span><span class="nm">Out-of-sample</span></div>
+        <div class="stage-body">
+          <div class="nodes">
+            <span class="node store" style="border-color:var(--gap); color:var(--gap)">2026-01-01+ reserve</span>
+            <span class="arrow">→</span>
+            <span class="node store" style="border-color:var(--gap); color:var(--gap)">nothing built</span>
+            <span class="skill none">missing entirely</span>
+          </div>
+          <p class="note">The chain's terminal hole. Integration produces a candidate and there is nowhere for it
+            to go. Code hard-blocks the window; <code>JQ_ALLOW_OOS</code> is user-only.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="legend">
+      <span><span class="dot ok"></span>skill entry point exists</span>
+      <span><span class="dot part"></span>partial — CLI or referenced only</span>
+      <span><span class="dot gap"></span>no skill</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Coverage by stage</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Pipeline</th><th>Driver</th><th>Skill</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Discovery &amp; clone</td><td class="driver">strategy-discover → strategy-fetch</td><td class="driver">—</td><td><span class="dot gap"></span>cron / CLI only</td></tr>
+          <tr><td>2</td><td>Research resources</td><td class="driver">resource-fetch</td><td class="driver">ingest-strategy</td><td><span class="dot part"></span>90 of 1408 drained</td></tr>
+          <tr><td>3</td><td>Factor library</td><td class="driver">factorlib-ingest · factorlib-query</td><td class="driver">run-enhance · ideator</td><td><span class="dot ok"></span>wired as hypothesis source</td></tr>
+          <tr><td>4</td><td>量化课堂 tutorials</td><td class="driver">tutorial-ingest</td><td class="driver">—</td><td><span class="dot part"></span>unwired by decision</td></tr>
+          <tr><td>5</td><td>Screening</td><td class="driver">screen-prefilter → post-screener → screen-merge</td><td class="driver">/run-screen</td><td><span class="dot ok"></span>covered</td></tr>
+          <tr><td>6</td><td>Normalization</td><td class="driver">strategy-normalize → normalize-sync</td><td class="driver">—</td><td><span class="dot gap"></span>cron only</td></tr>
+          <tr><td>7</td><td>KB · strategy pages</td><td class="driver">kb-stub · ingest</td><td class="driver">/ingest-strategy</td><td><span class="dot ok"></span>covered</td></tr>
+          <tr><td>8</td><td>KB · families</td><td class="driver">wiki-family-build</td><td class="driver">run-study + 2 agents</td><td><span class="dot part"></span>4 families BLOCKED</td></tr>
+          <tr><td>9</td><td>KB · types</td><td class="driver">wiki-type-build</td><td class="driver">—</td><td><span class="dot gap"></span>no skill</td></tr>
+          <tr><td>10</td><td>KB · concepts</td><td class="driver">wiki-concept-lint</td><td class="driver">query-wiki</td><td><span class="dot part"></span>lints, never rewrites prose</td></tr>
+          <tr><td>11</td><td>Family assignment</td><td class="driver">family-match</td><td class="driver">—</td><td><span class="dot part"></span>proposes only · 4 pending</td></tr>
+          <tr><td>12</td><td>Study (one family)</td><td class="driver">4 agents</td><td class="driver">/run-study</td><td><span class="dot ok"></span>covered · member-aware</td></tr>
+          <tr><td>13</td><td>Enhance (one family)</td><td class="driver">4 agents</td><td class="driver">/run-enhance</td><td><span class="dot ok"></span>covered · external-factor mode</td></tr>
+          <tr><td>14</td><td>Series &amp; components</td><td class="driver">backtest-series · series-backfill · component-scan</td><td class="driver">study · enhance · integrate</td><td><span class="dot ok"></span>89 series stored</td></tr>
+          <tr><td>15</td><td>Integrate (one type)</td><td class="driver">type-integrate-check</td><td class="driver">/run-integrate</td><td><span class="dot ok"></span>1 round run, 1 vetoed</td></tr>
+          <tr><td>16</td><td>OOS / final validation</td><td class="driver">—</td><td class="driver">—</td><td><span class="dot gap"></span>not built</td></tr>
+          <tr><td>17</td><td>Query</td><td class="driver">wiki read path</td><td class="driver">/query-wiki</td><td><span class="dot ok"></span>covered</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>What still breaks</h2>
+    <div class="gaps">
+      <article>
+        <h3>Out-of-sample is the terminal hole <span class="sev block">blocking</span></h3>
+        <p>Everything upstream now connects. <code>/run-integrate</code> produces a candidate and there is no
+          protocol, runner or ledger to receive it — so nothing can ever be declared production-ready. This is the
+          one gap that caps the whole pipeline's output at "interesting".</p>
+      </article>
+      <article>
+        <h3>Discovery never triggers screening <span class="sev soft">manual seam</span></h3>
+        <p><code>strategy-daily</code> and <code>/run-screen</code> share <code>copy-queue.json</code>, but nothing
+          hands over. A human decides when to screen, and 53 strategies sit pending normalization behind that.</p>
+      </article>
+      <article>
+        <h3>Four family pages refuse to regenerate <span class="sev soft">data guard</span></h3>
+        <p>打板短线 / 小市值 / 五福闹新春 / ETF溢价 would drop 32 metric values, because the gitignored ledger no
+          longer holds rows the pages do. The guard is correct — the ledger is incomplete, not the pages. Never
+          <code>--force</code>.</p>
+      </article>
+      <article>
+        <h3>Family assignment stays human <span class="sev soft">precision floor</span></h3>
+        <p>Code matching decides only 31 of 175 labelled pages, and its abstain rules were tuned on those same 31 —
+          so its precision is not an independent estimate. It proposes; a person promotes.</p>
+      </article>
+      <article>
+        <h3>Tutorials left unwired <span class="sev byd">by decision</span></h3>
+        <p>量化课堂 teaches how to <em>do</em> factor research. Integration combines already-measured artefacts, so
+          the fit is upstream — the study loop or a future research pipeline — not here.</p>
+      </article>
+      <article>
+        <h3>Factor board is mid-cap, the exhausted types are small-cap <span class="sev soft">transfer risk</span></h3>
+        <p>The snapshot is zz500 while 小盘-H-unknown and 小盘-H-high are where new material is needed. IC may not
+          transfer. Re-ingest <code>--universe zz1000</code> before trusting it there.</p>
+      </article>
+    </div>
+  </section>
+
+  <footer>
+    Derived from the working tree at commit 416feec · 279 tests passing · figures read from
+    normalize-train.tsv, consumption.tsv, data/series and wiki/ at time of writing.
+  </footer>
+
+</div>
