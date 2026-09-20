@@ -243,9 +243,24 @@ function runAgentLoop(stage, target, { dry }) {
                    `; our queue head is ${target || 'n/a'} (agent picks its own order)` };
   }
   const r = sh('bash', [script]);
-  return { outcome: r.ok ? 'ran' : 'error',
-           note: `resumed ${stage} session ${pin.detail} (exit 0 is NOT proof work happened — check its ledger)`,
-           tail: r.out.split('\n').filter(Boolean).slice(-6).join('\n') };
+  const lines = r.out.split('\n').filter(Boolean);
+
+  // ⚠ On failure the note must carry the CAUSE, not the dispatch boilerplate. The first
+  // failing run wrote "exit 0 is NOT proof work happened" into an `error` row — true, but it
+  // tells a human reading the daily summary nothing about what broke (a bash syntax error,
+  // as it happened). The "Needs a human" section is only useful if it names the problem.
+  const cause = lines
+    .filter(l => /error|Error|failed|not found|No such|syntax|denied|refus/.test(l))
+    .slice(-2).join(' | ')
+    || lines.slice(-1).join('') || 'no output';
+
+  return {
+    outcome: r.ok ? 'ran' : 'error',
+    note: r.ok
+      ? `resumed ${stage} session ${pin.detail} (exit 0 is NOT proof work happened — check its ledger)`
+      : `${stage} loop FAILED: ${cause.slice(0, 200)}`,
+    tail: lines.slice(-6).join('\n'),
+  };
 }
 
 function runDiscover({ dry }) {

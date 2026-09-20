@@ -319,3 +319,38 @@ test('the chain does not repeat a stage that made no progress', async t => {
     assert.match(src, /not repeating it this chain/);
   });
 });
+
+test('a budget-spent day is still recorded', async t => {
+  const src = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
+
+  await t.test('it does not exit before writing a row and a summary', () => {
+    // This used to `process.exit(0)` at the budget check, skipping both — so a day the
+    // pipeline fired and correctly stood down left no trace, indistinguishable from a day
+    // the cron never fired. On a 60-minute budget that is the most common outcome.
+    assert.match(src, /budgetSpent/);
+    assert.match(src, /outcome: 'budget-spent'/);
+    const gate = src.slice(src.indexOf('const budgetSpent'), src.indexOf('const bad = log.some'));
+    assert.ok(!/process\.exit\(0\)/.test(gate), 'the budget path must fall through to the summary');
+  });
+
+  await t.test('budget-spent is not an error', () => {
+    // Standing down when the budget is gone is correct behaviour; exiting non-zero would
+    // train whoever watches the cron to ignore red.
+    assert.match(src, /const bad = log\.some\(r => r\.outcome === 'error' \|\| r\.outcome === 'blocked'\)/);
+  });
+});
+
+test('a failed stage reports its cause', async t => {
+  const src = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
+
+  await t.test('the note carries the failure, not the dispatch boilerplate', () => {
+    // The first real failure wrote "exit 0 is NOT proof work happened" into an `error` row,
+    // which tells a human nothing about what broke.
+    assert.match(src, /loop FAILED:/);
+    assert.match(src, /const cause = lines/);
+  });
+
+  await t.test('the success note still warns that exit 0 proves nothing', () => {
+    assert.match(src, /exit 0 is NOT proof work happened/);
+  });
+});
