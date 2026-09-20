@@ -1,6 +1,6 @@
 ---
 name: run-daily
-description: Run one day of the join-quant pipeline — pick the stage by queue priority (enhance > study > normalize > discover), spend the backtest budget on it, chain to the next stage while minutes remain, and leave resumable state behind. Use when asked to run the daily pipeline, move strategies forward, drain the queues, or decide what today's backtest budget should be spent on.
+description: Run one day of the join-quant pipeline — pick the stage by queue priority (enhance > study > normalize > discover), spend the backtest budget on it, chain to the next stage while minutes remain, write a dated markdown summary to docs/daily/, and commit and push it. Use when asked to run the daily pipeline, move strategies forward, drain the queues, or decide what today's backtest budget should be spent on.
 ---
 
 # Run one day of the pipeline
@@ -47,7 +47,29 @@ budget spent on the wrong stage. Your job starts where the arithmetic runs out.
 4. **Read what came back.** Every stage records to `data/daily-state.json`. For an agent loop,
    do not take exit 0 as proof of work — check that its ledger moved (`enhance/results.tsv`,
    the family page's §2/§6, or a new `consumption.tsv` event).
-5. **Report**: stage(s) run, minutes spent, what moved, what is blocked and who must unblock it.
+5. **Close the day: write the summary, commit, push.**
+
+   ```bash
+   node utils/daily-summary.js --commit       # write docs/daily/<YYYY-MM-DD>.md, commit, push
+   node utils/daily-summary.js --dry          # preview it, write nothing
+   ```
+
+   `node utils/daily-pipeline.js` already does this at the end of a run (`--no-commit` writes
+   without pushing, `--no-summary` skips it). Run it by hand when you drove the stages yourself.
+
+   The summary leads with **what moved**, not what ran — artefact delta first, stage table
+   second. That ordering is deliberate: "enhance → ran" is the exact line all three of this
+   repo's silent-no-op failures produced. If it says **NO-OP**, say so in your report rather
+   than describing the run as fine because the command succeeded.
+
+   ⚠ The commit stages `git add -u` plus an enumerated allowlist of paths a run legitimately
+   creates (`SAFE_ADD` in `daily-summary.js`). Never `git add -A` — that once committed a git
+   worktree as a gitlink. Anything untracked outside the allowlist is listed in the summary
+   under "Untracked and NOT committed" and left for a human; if you see entries there, decide
+   whether they belong in the allowlist rather than adding them ad hoc.
+
+6. **Report**: stage(s) run, minutes spent, what moved, what is blocked and who must unblock it,
+   and the path of the summary you wrote.
 
 ## The failure mode this exists to catch
 
@@ -83,4 +105,4 @@ retriable re-bills it every batch.
   (`scripts/auto{study,enhance}-interactive.sh`) so the agents keep context; a fresh session
   per stage loses it and re-reads the KB.
 - Touch the OOS window, or `--force` any wiki builder.
-- Commit the wiki or the ledgers unless the human asks.
+- Sweep untracked files in with `git add -A` — the commit allowlist is enumerated on purpose.

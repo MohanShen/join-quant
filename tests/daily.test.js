@@ -193,3 +193,72 @@ test('state files are durable and gitignored appropriately', async t => {
     assert.match(ignore, /\.lock/);
   });
 });
+
+test('the daily summary', async t => {
+  const summary = require('../utils/daily-summary');
+
+  await t.test('builds a dated markdown report', () => {
+    const b = summary.build();
+    assert.match(b.day, /^\d{4}-\d{2}-\d{2}$/);
+    assert.match(b.markdown, /^# Daily pipeline — \d{4}-\d{2}-\d{2}/);
+    for (const section of ['## Stages', '## Queues after the run', '## Deferred pool']) {
+      assert.ok(b.markdown.includes(section), `missing ${section}`);
+    }
+  });
+
+  await t.test('leads with what MOVED, not with what ran', () => {
+    // "enhance -> ran" is the exact line all three of this repo's silent no-ops produced,
+    // so the artefact delta has to come first or the report reassures rather than informs.
+    const md = summary.build().markdown;
+    const firstClaim = md.split('\n').find(l => l.startsWith('**'));
+    assert.match(firstClaim, /\*\*(Moved|Nothing moved)\.\*\*/);
+    assert.ok(md.indexOf(firstClaim) < md.indexOf('## Stages'));
+  });
+
+  await t.test('a no-op says so in words, not just by omission', () => {
+    const src = fs.readFileSync(path.join(ROOT, 'utils/daily-summary.js'), 'utf8');
+    assert.match(src, /Nothing moved/);
+    assert.match(src, /no-op, not as success/);
+  });
+});
+
+test('the daily commit scope cannot silently widen', async t => {
+  const src = fs.readFileSync(path.join(ROOT, 'utils/daily-summary.js'), 'utf8');
+
+  await t.test('never uses git add -A or -all', () => {
+    // A blanket add in this repo once staged a git worktree as a gitlink, which a clone
+    // cannot resolve. An unattended committer must not be able to repeat that.
+    const addCalls = [...src.matchAll(/'git',\s*\[\s*'add'[^\]]*\]/g)].map(m => m[0]);
+    assert.ok(addCalls.length > 0, 'expected git add calls to inspect');
+    for (const c of addCalls) {
+      assert.ok(!/'-A'|'--all'/.test(c), `blanket add found: ${c}`);
+    }
+  });
+
+  await t.test('stages an enumerated allowlist, not a glob', () => {
+    assert.match(src, /const SAFE_ADD = \[/);
+    const list = src.slice(src.indexOf('const SAFE_ADD'), src.indexOf('];', src.indexOf('const SAFE_ADD')));
+    assert.ok(!/\*/.test(list), 'SAFE_ADD must not contain globs');
+    assert.ok(!/worktree/.test(list), '.claude/worktrees must never be in the allowlist');
+    assert.ok(!/'\.claude/.test(list), 'settings/agents are not daily output');
+  });
+
+  await t.test('untracked files outside the allowlist are reported, not swept in', () => {
+    assert.match(src, /Untracked and NOT committed/);
+  });
+
+  await t.test('a push failure is surfaced rather than swallowed', () => {
+    assert.match(src, /committed but push failed/);
+  });
+
+  await t.test('the pipeline can opt out of committing', () => {
+    const p = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
+    assert.match(p, /--no-commit/);
+    assert.match(p, /--no-summary/);
+  });
+
+  await t.test('a summary failure never fails the run that produced it', () => {
+    const p = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
+    assert.match(p, /the run itself is unaffected/);
+  });
+});

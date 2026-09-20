@@ -54,6 +54,8 @@ node utils/daily-pipeline.js --stage normalize # override the pick for one run
 node utils/daily-pipeline.js --once            # one stage only, no chaining
 node utils/daily-pipeline.js --sync-manifest   # reconcile study/manifest.json with the ledger
 node utils/daily-pipeline.js --seed-deferred   # park stranded slow-skipped rows in the pool
+node utils/daily-summary.js --dry              # preview today's summary markdown
+node utils/daily-summary.js --commit           # write docs/daily/<date>.md, commit, push
 DRY=1 bash scripts/daily-pipeline.sh           # the cron wrapper, plan only
 
 # Screening — decide what deserves the 60 backtest-min/day (see screen/screen.md)

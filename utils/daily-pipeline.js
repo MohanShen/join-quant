@@ -32,6 +32,8 @@
  *   node utils/daily-pipeline.js --seed-deferred # park existing slow-skipped rows in the pool
  *   node utils/daily-pipeline.js --once          # one stage only, no chaining
  *   node utils/daily-pipeline.js --sync-manifest # reconcile study/manifest.json with the ledger
+ *   node utils/daily-pipeline.js --no-commit     # run + write the summary, but do not push
+ *   node utils/daily-pipeline.js --no-summary    # run only
  *   node utils/daily-pipeline.js --status        # queues, budget, deferred pool, last runs
  */
 
@@ -475,6 +477,24 @@ if (require.main === module) {
     console.log(`[daily] ${r.stage} -> ${String(r.outcome).toUpperCase()}  ${r.note || ''}`);
   }
   if (last && last.tail) last.tail.split('\n').forEach(l => console.log(`   ${l.slice(0, 110)}`));
+
+  // Close the day with a readable record, and commit it. `--no-summary` opts out; `--dry`
+  // never writes. The summary leads with what MOVED rather than what ran, because a clean
+  // exit is exactly what this repo's three silent-no-op failures produced.
+  if (!dry && !argv.includes('--no-summary')) {
+    try {
+      const summary = require('./daily-summary');
+      const r = summary.write({ commit: !argv.includes('--no-commit') });
+      console.log(`[daily] summary -> ${path.relative(ROOT, r.file)}  (${r.moved ? 'work moved' : 'NO-OP'})`);
+      if (r.commit && !r.commit.ok) console.error(`[daily] ⚠ summary commit: ${r.commit.why}`);
+      else if (r.commit && r.commit.skipped) console.log('[daily] summary: nothing to commit');
+      else if (r.commit) console.log(`[daily] summary: committed ${r.commit.staged} file(s)` +
+        (r.commit.pushed ? ' and pushed' : ` — ${r.commit.why}`));
+    } catch (e) {
+      console.error(`[daily] ⚠ summary failed (the run itself is unaffected): ${String(e.message).slice(0, 120)}`);
+    }
+  }
+
   const bad = log.some(r => r.outcome === 'error' || r.outcome === 'blocked');
   process.exitCode = bad ? 1 : 0;
 }
