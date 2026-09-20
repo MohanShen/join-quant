@@ -475,23 +475,37 @@ if (require.main === module) {
 
   if (argv.includes('--plan')) { console.log('[daily] (--plan — nothing run)'); process.exit(0); }
 
-  if (p.budget.ok && p.budget.used >= USAGE_LIMIT && p.stage !== 'discover') {
-    console.log(`[daily] budget spent (${p.budget.used} >= ${USAGE_LIMIT}) — clean stop, nothing started`);
-    process.exit(0);
-  }
-
-  // Keep the agent's own queue honest before dispatching — see syncStudyManifest.
-  const sync = syncStudyManifest({ dry: argv.includes('--dry') });
-  if (sync.changed.length) {
-    console.log(`[daily] study manifest: reopened ${sync.changed.length} family(ies) the ledger calls stale`);
-    sync.changed.slice(0, 4).forEach(c => console.log(`         ${c.family}  (${c.why})`));
-  }
-
   const dry = argv.includes('--dry');
-  const once = argv.includes('--once');
-  const { log, last } = once
-    ? (() => { const r = execute(p, { dry }); return { log: [r], last: r }; })()
-    : runChain({ dry, stageOverride: arg('--stage') });
+
+  // ⚠ A budget-spent day still gets a run row and a summary.
+  //
+  // This used to `process.exit(0)` here, which skipped both — so a day the pipeline fired and
+  // correctly stood down left NO trace at all, indistinguishable from a day the cron never
+  // fired. "Correctly did nothing" is a result, and on a 60-minute budget it will be the most
+  // common one; it has to be visible or the record only covers the days work happened.
+  const budgetSpent = p.budget.ok && p.budget.used >= USAGE_LIMIT && p.stage !== 'discover';
+  let log = [], last = null;
+
+  if (budgetSpent) {
+    const note = `used ${p.budget.used} >= ${USAGE_LIMIT}; ${p.stage} not started`;
+    console.log(`[daily] budget spent (${p.budget.used} >= ${USAGE_LIMIT}) — clean stop, nothing started`);
+    if (!dry) {
+      state.beginRun({ stage: p.stage, target: null, budget: p.budget.used, force: true });
+      state.endRun({ outcome: 'budget-spent', note });
+    }
+    log = [{ stage: p.stage, outcome: 'budget-spent', note }];
+  } else {
+    // Keep the agent's own queue honest before dispatching — see syncStudyManifest.
+    const sync = syncStudyManifest({ dry });
+    if (sync.changed.length) {
+      console.log(`[daily] study manifest: reopened ${sync.changed.length} family(ies) the ledger calls stale`);
+      sync.changed.slice(0, 4).forEach(c => console.log(`         ${c.family}  (${c.why})`));
+    }
+    const once = argv.includes('--once');
+    ({ log, last } = once
+      ? (() => { const r = execute(p, { dry }); return { log: [r], last: r }; })()
+      : runChain({ dry, stageOverride: arg('--stage') }));
+  }
 
   for (const r of log) {
     for (const c of (r.cededFrom || [])) {
