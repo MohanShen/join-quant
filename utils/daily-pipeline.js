@@ -47,8 +47,18 @@ const consumption = require('./consumption');
 
 /** This pipeline's per-backtest cap, in minutes. */
 const SLOW_SKIP_MIN = 30;
-/** Daily backtest ceiling handed to every child. */
-const USAGE_LIMIT = 55;
+/**
+ * Daily backtest ceiling handed to every child.
+ *
+ * ⚠ Read from the environment. This was a hard-coded 55, which silently ignored the
+ * USAGE_LIMIT the cron wrapper and the plist both export — so the one knob meant to control
+ * spend did nothing, and a VIP account with 180 free minutes would still have stopped at 55.
+ * 55 remains the default because it is the free-tier figure for a non-VIP account.
+ */
+const USAGE_LIMIT = (() => {
+  const n = parseInt(process.env.USAGE_LIMIT || '', 10);
+  return Number.isFinite(n) && n > 0 ? n : 55;
+})();
 /** Stage order: later stages first. Index 0 wins. */
 const PRIORITY = ['enhance', 'study', 'normalize', 'discover'];
 
