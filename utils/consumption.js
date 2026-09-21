@@ -27,15 +27,27 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const FILE = path.join(ROOT, 'data/consumption.tsv');
+// ⚠ Redirectable, for the same reason `daily-state.js` takes JQ_DAILY_STATE_DIR: this file is
+// TRACKED, and a test that appends probe rows writes fiction into the record every loop reads —
+// including the VAL budget, where a stray row silently costs a family its one validation.
+const FILE = process.env.JQ_CONSUMPTION_FILE
+  || path.join(process.env.JQ_DAILY_STATE_DIR || path.join(ROOT, 'data'), 'consumption.tsv');
 
 /**
  * `members` / `memberHash` were appended in 2026-09 (see `memberState`). Readers that index
  * 0..6 ignore them, the same way ledger readers ignore the normalize ledger's 14th `epoch`
  * column. Rows written before the change simply have them empty, which reads as "unknown
  * membership at the time" — and unknown is treated as stale, so those families resurface once.
+ *
+ * `epoch` was appended the same way, and for a harder reason: the VAL budget is one validation
+ * per (family, epoch) (`utils/val-budget.js`), and without the epoch on the row the ledger
+ * cannot say which bench a validation belongs to. An event recorded before this column exists
+ * reads as UNKNOWN, and for the VAL rule unknown BLOCKS rather than permits — the direction
+ * matters because VAL exposure cannot be undone. Blocking is visible and recoverable with the
+ * human override; permitting silently re-spends the thing the rule exists to protect.
  */
-const COLUMNS = ['key', 'kind', 'stage', 'runId', 'at', 'outcome', 'note', 'members', 'memberHash'];
+const COLUMNS = ['key', 'kind', 'stage', 'runId', 'at', 'outcome', 'note', 'members', 'memberHash',
+                 'epoch'];
 const KINDS = new Set(['strategy', 'family', 'concept', 'type']);
 const STAGES = new Set(['normalize', 'ingest', 'study', 'enhance', 'integrate',
                         'concept-backfill', 'validate', 'oos']);
@@ -85,8 +97,12 @@ function record({ key, kind, stage, runId = '', outcome = '', note = '', at = nu
     const st = memberState(key);
     m = st.count; h = st.hash;
   }
+  // Stamped from the live config, never passed in: a caller that could choose its own epoch
+  // could validate the same family twice by mislabelling the second run.
+  let epoch = '';
+  try { epoch = String(require('./harness-config').config().epoch); } catch { /* leave unknown */ }
   const row = [key, kind, stage, runId, at || new Date().toISOString(), outcome, note,
-               m == null ? '' : m, h || ''].map(clean).join('\t');
+               m == null ? '' : m, h || '', epoch].map(clean).join('\t');
   fs.appendFileSync(FILE, row + '\n');
   return true;
 }

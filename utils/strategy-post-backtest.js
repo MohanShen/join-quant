@@ -117,7 +117,30 @@ function parseArgs(argv) {
     window = { name: opt.window, start: w.start, end: w.end };
   }
   assertNotOOS(window);   // hard-block 2025+ OOS unless JQ_ALLOW_OOS=1
-  return { strategyPath: positional[0], title: positional[1] || null, window, baseCapital };
+  assertValWindowNamesFamily(window, opt.family);
+  return { strategyPath: positional[0], title: positional[1] || null, window, baseCapital,
+           family: opt.family || null };
+}
+
+/**
+ * A VAL run must say which FAMILY it belongs to.
+ *
+ * The budget is one validation per (family, epoch) — `utils/val-budget.js` has the reasoning.
+ * A run that does not name its family cannot be counted against that budget, so it cannot be
+ * allowed: an unnamed VAL is an untracked VAL, and the whole point is that VAL exposure is
+ * countable. Refusing at parse time also means the browser is never opened and no minutes are
+ * spent discovering this.
+ *
+ * TRAIN is unaffected. Selection happens there and may be re-run freely.
+ */
+function assertValWindowNamesFamily(window, family) {
+  if (!window || window.name !== 'val') return;
+  if (family) return;
+  throw new Error(
+    'VAL-BLOCKED: --window val requires --family <name>. The VAL budget is one validation per ' +
+    '(family, epoch) and a run that does not name its family cannot be counted against it. ' +
+    'See utils/val-budget.js.'
+  );
 }
 
 // Parse JQ result-row "时间范围" like "2022-01-01 - 2023-12-31" or "2022-01-01 至 2024-01-01".
@@ -836,6 +859,36 @@ async function captureSeries(page, algorithmId, strategyPath, window) {
   }
 }
 
+/**
+ * Spend the family's VAL for this epoch — but only once a run actually COMPLETED.
+ *
+ * Deliberately not charged on a compile-error, a slow-skip or a cancelled run: those produce no
+ * number, so nothing was learned about the held-out window and the budget should not be consumed.
+ * The check in main() is what stops a second attempt after a real one; this is what makes that
+ * check have something to see.
+ *
+ * Best-effort in the same sense as captureSeries — a bookkeeping failure must not change the
+ * outcome of a backtest that already cost real minutes. But unlike captureSeries it SHOUTS,
+ * because a missing row here means the next VAL for this family will be wrongly allowed.
+ */
+function recordValIfCompleted(status, family, runId, window, result) {
+  if (!window || window.name !== 'val' || status !== 'completed' || !family) return;
+  try {
+    const r = (result && result.row) || {};
+    const wrote = require('./val-budget').record(family, runId, {
+      outcome: r.sharpe ? `sharpe ${r.sharpe}` : 'completed',
+      note: `return ${r.return_ || '?'} maxdd ${r.maxdd || '?'} window ${window.start}..${window.end}`,
+    });
+    console.log(wrote
+      ? `VAL-SPENT\tfamily=${family}\trunId=${runId}`
+      : `[post] ⚠ VAL row for ${family}/${runId} already existed — not double-counted`);
+  } catch (e) {
+    console.log(`[post] ⚠⚠ FAILED to record the VAL spend for ${family}: ${String(e.message).slice(0, 120)}`);
+    console.log('[post]    Record it by hand, or the next VAL for this family will be wrongly allowed:');
+    console.log(`[post]    node -e "require('./utils/val-budget').record('${family}','${runId}',{outcome:'completed'})"`);
+  }
+}
+
 // ── Main ─────────────────────────────────────────────────────────────────────
 async function main() {
   let parsed;
@@ -851,7 +904,25 @@ async function main() {
   }
 
   const strategyPath  = path.resolve(parsed.strategyPath);
-  const { window, baseCapital } = parsed;
+  const { window, baseCapital, family } = parsed;
+
+  // ── VAL budget ────────────────────────────────────────────────────────────
+  // Checked BEFORE the browser, before the usage gate, before anything costs a minute. VAL is
+  // the one surface whose over-use cannot be undone: validate two candidates and keep the better
+  // number and VAL has silently become a second training set. One per (family, epoch); see
+  // utils/val-budget.js for why the "unless the candidate changed" escape is not implemented.
+  if (window && window.name === 'val') {
+    const valBudget = require('./val-budget');
+    const v = valBudget.check(family);
+    console.log(`VAL-BUDGET\tfamily=${family}\tepoch=${valBudget.activeEpoch()}\t` +
+                `${v.allowed ? 'allowed' : 'blocked'}\t${v.reason}`);
+    if (!v.allowed) {
+      // Reported, never silently skipped — same discipline as OOS-BLOCKED.
+      console.error(`[post] ${v.why}`);
+      process.exit(3);
+    }
+    if (v.reason === 'human-override') console.log(`[post] ⚠ ${v.why}`);
+  }
 
   const loader = new StrategyLoader();
   let strategy;
@@ -925,6 +996,7 @@ async function main() {
       : await pollUntilComplete(editorPage, algorithmId);
     const st = reportResult(title, algorithmId, result, window);
     if (st === 'completed') await captureSeries(editorPage, algorithmId, strategyPath, window);
+    recordValIfCompleted(st, family, title, window, result);
     // Do NOT close editorPage — it IS the logged-in hub tab now (reused, not created).
     // Closing it would destroy the CDP session's cookie context. It's re-navigated next run.
 
@@ -992,6 +1064,7 @@ async function main() {
       : await pollUntilComplete(editorPage2, algorithmId);
     const st2 = reportResult(title, algorithmId, result, window);
     if (st2 === 'completed') await captureSeries(editorPage2, algorithmId, strategyPath, window);
+    recordValIfCompleted(st2, family, title, window, result);
     try { await editorPage2.close(); } catch {}
   }
 

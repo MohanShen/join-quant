@@ -219,6 +219,14 @@ ETF动量's idea-1 was flagged in its own reasoning as "新颖度为零 — a ca
 
 ## 6. Change E — VAL becomes a terminal stage, with a budget
 
+> **STATUS: the budget half is IMPLEMENTED** (2026-09-21) — `utils/val-budget.js`, enforced in
+> `strategy-post-backtest.js`, `consumption.tsv` epoch column, 16 tests. The rule landed in its
+> STRICT form: the "unless the finalized candidate itself changed" clause below was dropped,
+> because an agent that produces a new candidate whenever the last VAL disappoints satisfies that
+> clause on every run — which is selection on VAL, one run at a time. A legitimate second
+> validation is a human decision (`JQ_ALLOW_REVAL=1`), recorded when used.
+> The *terminal-stage* half still depends on the rest of this proposal.
+
 Per the merged loop: when both `understand` and `improve` queues are depleted for a family, the
 round moves to VAL finalization. This is cleaner than today's parallel tracks and resolves the
 window mismatch outright.

@@ -109,7 +109,11 @@
    - 想法**不成立且队列空** → 退回 Agent 1，说明「不成立」，Agent 1 重新产想法。
 3. **Agent 3 实现+回测（封闭环境）**：把 `active` 想法写成 `enhance/candidates/<expId>.py`（从 `baseExpId` 或 baseline 小步变异，只用受控词表内因子），跑回测、调试到有效 `SUMMARY`：
    - **Type-1（迭代中，未定稿）** → `--window train` → 把 TRAIN `objective/sharpe/gate` 报回 **Agent 1**。
-   - **Type-2（Agent 1 已定稿）** → `--window val` → 把 VAL 结果报给 **Agent 4**。
+   - **Type-2（Agent 1 已定稿）** → `--window val --family <家族名>` → 把 VAL 结果报给 **Agent 4**。
+     ⚠ **VAL 预算：每个家族每个纪元只有一次**（`utils/val-budget.js`）。`--family` 是必填，缺了直接
+     `VAL-BLOCKED` 拒跑；已用掉则本纪元不再有第二次——**换一个候选不算新配额**，因为「上一次 VAL 不理想
+     就再造一个候选」正是在 VAL 上做选择。定稿前先 `node utils/val-budget.js <家族名>` 查（零成本）。
+     agent **绝不**设 `JQ_ALLOW_REVAL`。
    - **绝不** `--window holdout` 或任何 2025+ 区间（执行器会 `OOS-BLOCKED` 抛错）。
    - **前台阻塞跑回测**：发一条命令等它返回再读 `SUMMARY`，**绝不**后台跑（`run_in_background`）+ 等完成通知——headless `claude -p` 无人值守跑中该通知不会重新唤起会话，循环会卡住。
 4. **Agent 1 判 TRAIN 结果**（Type-1 回来后）：

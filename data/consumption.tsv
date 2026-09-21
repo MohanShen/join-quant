@@ -1,4 +1,4 @@
-key	kind	stage	runId	at	outcome	note	members	memberHash
+key	kind	stage	runId	at	outcome	note	members	memberHash	epoch
 5a5ba567903e1b326697d71ecb7bbc6e	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.592Z	compile-error	objective=- gate=- file=2026-05-13_价值选股与RSRS择时-5a5ba567.py
 lk_88dd119f7b76d36199d76e78e35a9b	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.592Z	compile-error	objective=- gate=- file=2026-05-15_价值投资--低估价值选股策略-c748b9d5.py
 796c6f98179db57b54f7b51d76e52b0e	strategy	normalize	seed-ledger-train	2026-09-19T16:22:43.592Z	compile-error	objective=- gate=- file=2026-05-15_回馈社区_分享市盈率股息率选股_均线止盈交易策略-796c6f98.py

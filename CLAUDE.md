@@ -536,6 +536,24 @@ Only the directories whose contents aren't self-evident:
 - **Stage thresholds**: normalize/study/enhance/validate require sharpe 1.5, **type integration
   requires 2.0** (`harness.stageGate(stage, sharpe)`). Same measurement, different standard —
   a decision rule, not a different bench.
+- ⚠⚠ **VAL is budgeted: ONE validation per (family, epoch)** — `utils/val-budget.js`, enforced in
+  `strategy-post-backtest.js` before the browser opens. `--window val` now **requires `--family`**
+  (an unnamed VAL is an untracked VAL) and a second run for the same family at the same epoch exits
+  3 with `VAL-BLOCKED`. TRAIN is unaffected — selection lives there and may be re-run freely.
+  **A different candidate does NOT buy a second validation**: "the last VAL disappointed, so make a
+  new candidate" is selection on VAL one run at a time, which turns the held-out window into a
+  second training set silently and irreversibly — after that the only clean surface is the 2026 OOS
+  reserve (~9 months, 2 tests/epoch). Budget is spent only by a **completed** run (a compile-error
+  or slow-skip produces no number, so it costs nothing), and a failure to record it shouts, because
+  a missing row would wrongly grant the next VAL. Human-only override `JQ_ALLOW_REVAL=1`, recorded
+  in the note when used; agents never set it, exactly like `JQ_ALLOW_OOS`.
+- `data/consumption.tsv` gained a 10th **`epoch`** column, stamped from the live config by
+  `record()` and never passed in — a caller that could choose its own epoch could validate a family
+  twice by mislabelling the second run. Rows predating it read as UNKNOWN, and for the VAL rule
+  **unknown blocks** rather than permits: blocking is visible and a human clears it in one command,
+  permitting silently re-spends the protected resource. `JQ_CONSUMPTION_FILE` /
+  `JQ_DAILY_STATE_DIR` redirect the file — it is TRACKED, and a test appending probe rows would
+  silently cost a real family its one validation.
 - ⚠ **`utils/strategy-normalize.js` had no `require.main === module` guard**, so a bare
   `require()` of it started a full 214-strategy batch and spent 42 of the day's 60 backtest
   minutes before it was killed. Guard added; every entry point in `utils/` needs one.
