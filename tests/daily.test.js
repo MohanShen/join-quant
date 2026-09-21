@@ -440,6 +440,38 @@ test('stage timeout: bounded by the budget, and kills the whole process group', 
     assert.match(src, /CUT OFF/);
   });
 
+  await t.test('the watchdog never holds the caller\'s pipe, and leaves no orphan', () => {
+    // execFileSync returns when the stdout PIPE closes, not when the child exits. The watchdog
+    // inherits that pipe, so a watchdog (or the `sleep` it is blocked on) outliving the child
+    // hangs the caller silently: daily-pipeline.js sat blocked 24 min after its stage finished
+    // cleanly, held open by an orphaned `sleep 14700` with ppid 1.
+    const w = fs.readFileSync(path.join(__dirname, '../scripts/with-timeout.sh'), 'utf8');
+    assert.match(w, /\)\s*>\/dev\/null 2>&1 <\/dev\/null &/,
+      'the watchdog subshell must have its stdio detached');
+    assert.match(w, /kill -TERM -"\$watchdog"/,
+      'the watchdog must be killed by GROUP, or its `sleep` is orphaned and keeps the pipe open');
+  });
+
+  await t.test('a fast command returns as soon as it exits', () => {
+    // This IS the hang regression. execFileSync returns when the child's stdout pipe reaches
+    // EOF, and EOF needs EVERY holder to let go. While the watchdog inherited that pipe, this
+    // call blocked for the full bound even though the command had already finished —
+    // daily-pipeline.js sat there 24 minutes after a clean stage, held open by an orphaned
+    // `sleep 14700` (ppid 1). A 240-minute bound on a command that exits instantly is the
+    // sharpest form of the question: if the watchdog still holds anything, this never returns.
+    //
+    // Deliberately NOT asserted by scanning the process table for a surviving `sleep`: that
+    // reads the whole machine, so a concurrently running pipeline makes it flaky, and a flaky
+    // guard is worse than none. The pipe is the thing that hung; the pipe is what is measured.
+    const t0 = Date.now();
+    const out = require('child_process').execFileSync('bash',
+      [path.join(__dirname, '../scripts/with-timeout.sh'), '240', 'bash', '-c', 'echo ok'],
+      { encoding: 'utf8', timeout: 20000 });
+    assert.strictEqual(out.trim(), 'ok', 'stdout must still reach the caller');
+    assert.ok(Date.now() - t0 < 10000,
+      `the call took ${Date.now() - t0}ms — something is still holding the caller's stdout pipe`);
+  });
+
   await t.test('the wrapper passes a clean exit code through, and reports 124 on timeout', () => {
     const run = (args) => {
       try {
