@@ -41,6 +41,37 @@ flagged *itself* as 新颖度为零, a re-measurement of a config the family alr
 
 Also read the family page: §1 (base), `edge:` (why it earns), §2 (variants), §4 (gaps), §6 (log).
 
+## Scope: ONE family, then stop
+
+`/run-family <family>` works a **single** family and **ends when that family is done**. It does
+not walk a queue — the daily pipeline picks the next one and invokes again. One family per
+invocation is what makes the run resumable and the budget attributable.
+
+Pick the family from `node utils/family-queue.js` (highest score first) unless the human named one.
+
+### Step 0 — the early exit, before anything else
+
+`family-queue` reports a `reason`. **If it is `new-members`, do this first:**
+
+1. Read the new members' normalized results and `node utils/research-queue.js <family>`.
+2. Ask one question: **do the new variants raise an idea that has not already been explored?**
+   Compare against prior findings' implications, `closedDirections`, and §2 rows already
+   `rejected`.
+3. **If not — log the new members' normalized results as §2 rows (`类型: raw`, `判定: —`), record
+   a `research` consumption event with outcome `logged-only`, and EXIT.** Do not open the loop.
+   A new member of a family you have already dissected is usually one more variant of a settled
+   mechanism; spending a day's budget to rediscover that is the single easiest way to waste it.
+4. If yes — say which idea and why it is new, then enter the loop with that idea already queued.
+
+`reason: never-researched` skips step 0 and goes straight to the loop.
+
+### Stopping and resuming
+
+The run stops when the family is done **or** the budget runs out. Either way the state is on disk
+and the next invocation continues: `study/<family>/queue.json` (ideas with their status),
+`findings.tsv` (what has been answered), and the family page §2/§6. Nothing needed for resumption
+lives only in the session — report where you stopped and what is still `queued`.
+
 ## The loop
 
 ```
@@ -83,15 +114,27 @@ Then the §2 row on the family page: `类型` (understand|improve|raw) and `判�
 (adopted|rejected|informative). A `rejected` row gets **one line** — ETF动量's §2 averages 3.6KB
 per row, which is why failures need a short form, not exclusion.
 
-## `edge:` — what makes this family earn
+## `edge:` — drafted early, settled late
 
-Every family should answer: **what is intrinsically predictive here?** 小市值 → the size factor.
-Some → an arbitrage. Some → one genuinely predictive feature. One or more, each fundamental.
+The edge is **not** a one-off pass. It is a stage of this loop, at both ends:
 
-- Vocabulary and the block's shape: `wiki-schema.md` §2.3. `test:` is **mandatory** — a claim with
-  no stated refutation is not a claim.
-- `status: proposed` carries **no authority** and may not be cited as fact. Promoting to `measured`
-  costs one experiment: run the `test:`.
+- **Draft it first.** Before the first experiment, write the family's `edge:` block from what is
+  already on the page (§1 mechanism, §6 log) at `status: proposed`, with its `test:`. This is
+  cheap, costs no backtest, and it is what gives the improve generator a prior to steer by from
+  the very first idea.
+- **Revise it last.** When the loop is done, come back to the block with everything the round
+  measured. A result that ran the `test:` promotes it to `measured`; a result that contradicts it
+  flips it to `refuted` — **in the same write as the finding**. A refuted claim left reading
+  `proposed` will be cited by the next round as a prior it no longer deserves.
+- In between, any finding that bears on it sets `edgeRef` so the link is traceable.
+
+The draft is a hypothesis, not a conclusion: `proposed` carries no authority, may not be cited as
+fact, and is excluded from `utils/edge-redundancy.js`. Promoting it is what costs an experiment.
+
+The question it answers: **what is intrinsically predictive here?** 小市值 → the size factor.
+Some families → an arbitrage. Some → one genuinely predictive feature. One or more, each
+fundamental — "uses a 5-day moving average" is a technique, not an edge. Vocabulary and block
+shape: `wiki-schema.md` §2.3; `test:` is mandatory.
 - `kind: none-found` is legal and valuable — a family nobody can name an edge for is a fitting
   artifact until shown otherwise. It is **flagged, not deprecated**.
 - A measured edge becomes the improve-generator's **prior**: if the edge is size, tightening the

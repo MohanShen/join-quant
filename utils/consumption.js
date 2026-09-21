@@ -49,8 +49,12 @@ const FILE = process.env.JQ_CONSUMPTION_FILE
 const COLUMNS = ['key', 'kind', 'stage', 'runId', 'at', 'outcome', 'note', 'members', 'memberHash',
                  'epoch'];
 const KINDS = new Set(['strategy', 'family', 'concept', 'type']);
-const STAGES = new Set(['normalize', 'ingest', 'study', 'enhance', 'integrate',
+// `research` is the merged loop (/run-family). `study` and `enhance` are its predecessors and
+// stay valid: they are what consumed a family before the merge, so staleness has to consider all
+// three or every already-researched family reads as untouched. See `lastConsumption`.
+const STAGES = new Set(['normalize', 'ingest', 'study', 'enhance', 'research', 'integrate',
                         'concept-backfill', 'validate', 'oos']);
+const RESEARCH_STAGES = ['research', 'study', 'enhance'];
 
 const clean = v => String(v == null ? '' : v).replace(/[\t\r\n]/g, ' ').trim();
 
@@ -152,10 +156,40 @@ function staleFor(stage, family) {
   return { stale: false, reason: 'up to date', last, now };
 }
 
+/**
+ * The most recent event that consumed this family for RESEARCH, whichever stage did it.
+ *
+ * ⚠ Without this, adding the merged `research` stage makes every family look untouched: all the
+ * history is under `study`/`enhance`, and `staleFor('research', f)` correctly reports
+ * "never consumed" for each one. Reading that as work-to-do would re-research the whole library.
+ */
+function lastConsumption(family) {
+  const all = RESEARCH_STAGES.flatMap(st => events({ stage: st, kind: 'family', key: family }));
+  if (!all.length) return null;
+  all.sort((a, b) => String(a.at).localeCompare(String(b.at)));
+  return all[all.length - 1];
+}
+
+/** Staleness against whichever research stage last touched the family. */
+function staleForResearch(family) {
+  const last = lastConsumption(family);
+  const now = memberState(family);
+  if (!last) return { stale: true, reason: 'never researched', last: null, now };
+  if (!last.memberHash) return { stale: true, reason: 'last run predates membership tracking', last, now };
+  if (last.memberHash !== now.hash) {
+    const delta = now.count - (parseInt(last.members, 10) || 0);
+    return { stale: true, last, now,
+             reason: delta > 0 ? `${delta} new member(s) since last ${last.stage}`
+                               : `membership changed since last ${last.stage}` };
+  }
+  return { stale: false, reason: `up to date (last ${last.stage})`, last, now };
+}
+
 /** Set of keys that have any event for a stage — the "already consumed" test. */
 function consumed(stage, kind = null) {
   return new Set(events({ stage, kind }).map(e => e.key));
 }
 
 module.exports = { record, events, consumed, memberState, staleFor,
+                   lastConsumption, staleForResearch, RESEARCH_STAGES,
                    FILE, COLUMNS, KINDS, STAGES };

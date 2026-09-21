@@ -2,7 +2,7 @@
  * Tests for the daily pipeline: queue priority, the in-flight claim, and the deferred pool.
  *
  * The three things that decide whether an unattended daily job is trustworthy:
- *   - it spends the budget on the RIGHT stage (later stages outrank earlier ones);
+ *   - it spends the budget on the RIGHT stage (the funnel drains its end first);
  *   - a run that dies does not deadlock tomorrow's run;
  *   - a strategy that blew the cap is parked, not stranded — `slow-skipped` is terminal in
  *     the normalizer on purpose (so it is not re-billed every batch), which left 14 rows with
@@ -29,22 +29,44 @@ const state = require('../utils/daily-state');
 const ROOT = path.join(__dirname, '..');
 
 test('queue priority', async t => {
-  await t.test('later stages outrank earlier ones', () => {
-    assert.deepStrictEqual(daily.PRIORITY, ['enhance', 'study', 'normalize', 'discover']);
+  await t.test('the funnel drains its end before widening its mouth', () => {
+    // The unit of work is a FAMILY. `enhance` and `study` were two queues over the same 14
+    // families, competing for the same minutes and each able to starve the other, with no route
+    // from a newly normalized strategy into research except a human noticing.
+    assert.deepStrictEqual(daily.PRIORITY, ['research', 'normalize', 'discover']);
   });
 
-  await t.test('the planner picks the highest-priority non-empty queue', () => {
-    const q = {
-      enhance: [], study: [{ family: 'X' }],
-      normalize: { pending: ['a.py'], retry: [], total: 1 },
-      discover: { uncopied: 99, total: 99 },
-    };
-    // study is non-empty and outranks normalize/discover, so it wins despite being smaller.
-    const first = daily.PRIORITY.find(s =>
+  await t.test('normalize only runs when no family is due; discover only when nothing is pending', () => {
+    const pick = q => daily.PRIORITY.find(s =>
       s === 'discover' ? true
       : s === 'normalize' ? q.normalize.total > 0
-      : q[s].length > 0);
-    assert.strictEqual(first, 'study');
+      : (q[s] || []).length > 0);
+
+    assert.strictEqual(pick({
+      research: [{ family: 'X' }],
+      normalize: { pending: ['a.py'], retry: [], total: 1 },
+      discover: { uncopied: 99, total: 99 },
+    }), 'research', 'a due family outranks a deep normalize queue');
+
+    assert.strictEqual(pick({
+      research: [],
+      normalize: { pending: ['a.py'], retry: [], total: 1 },
+      discover: { uncopied: 99, total: 99 },
+    }), 'normalize', 'with no family due, refill the family queue');
+
+    assert.strictEqual(pick({
+      research: [], normalize: { pending: [], retry: [], total: 0 },
+      discover: { uncopied: 99, total: 99 },
+    }), 'discover', 'with nothing to normalize, refill THAT');
+  });
+
+  await t.test('the legacy stages are out of the automatic order but still dispatchable', () => {
+    // Their pinned sessions still exist; retiring a working path before its replacement has run
+    // is how a cron starts reporting success while doing nothing.
+    assert.ok(!daily.PRIORITY.includes('enhance'));
+    assert.ok(!daily.PRIORITY.includes('study'));
+    const p = daily.plan({ stageOverride: 'enhance' });
+    assert.strictEqual(p.stage, 'enhance');
   });
 
   await t.test('discover is the only stage allowed to run on an empty board', () => {

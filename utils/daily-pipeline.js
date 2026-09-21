@@ -2,19 +2,23 @@
  * daily-pipeline.js — one day's worth of pipeline, chosen by queue priority under a fixed
  * backtest budget.
  *
- * The rule (user's, 2026-09-20): **later stages outrank earlier ones** —
+ * The rule (user's, 2026-09-21): the unit of work is a **FAMILY**, and the pipeline is a funnel —
  *
- *     enhance  >  study  >  normalize  >  discover+fetch
+ *     research (/run-family)  >  normalize  >  discover+fetch
  *
- * This is a pull system: finish what is already in the pipe before admitting more. The 60
- * backtest-minutes a day are the binding constraint, so an idle enhance-ready family is a
- * worse use of them than a raw strategy that cannot be acted on yet.
+ * Drain the family queue; when no family is due, normalize to refill it; when nothing is left to
+ * normalize, fetch a new batch. Run until the budget is gone. A pull system: finish what is in
+ * the pipe before widening its mouth.
  *
- * ⚠ A consequence worth stating rather than discovering: while ANY family is enhance-ready,
- * normalization never runs. With 13 families never enhanced and 53 strategies pending, the
- * normalize queue starves indefinitely — by design, but only correct if you agree that
- * draining the end of the pipe beats widening its mouth. `--plan` shows every queue's depth so
- * the starvation is visible, and `--stage <name>` overrides the pick for a day.
+ * ⚠ This REPLACED `enhance > study > normalize > discover`. Those were two queues over the same
+ * 14 families, competing for the same minutes and each able to starve the other, with no route
+ * from a newly normalized strategy into research except a human noticing. `research` is the
+ * merged loop over one family queue ordered by max post-screen priority
+ * (`utils/family-queue.js`). enhance/study stay reachable via `--stage` while their pinned
+ * sessions exist, but they are out of the automatic order.
+ *
+ * ⚠ The starvation consequence is unchanged and still by design: while any family is due,
+ * normalize does not run. `--plan` prints every depth so it stays visible.
  *
  * ⚠ What this CANNOT do: start study or enhance from cold. Those are Claude agent loops, not
  * scripts. Their cron wrappers resume a session a human pinned
@@ -87,8 +91,20 @@ const STAGE_TIMEOUT_MIN = (() => {
   const n = parseInt(process.env.STAGE_TIMEOUT_MIN || '', 10);
   return Number.isFinite(n) && n > 0 ? n : USAGE_LIMIT + SLOW_SKIP_MIN + 30;
 })();
-/** Stage order: later stages first. Index 0 wins. */
-const PRIORITY = ['enhance', 'study', 'normalize', 'discover'];
+/**
+ * Stage order. Later stages first: finish what is in the pipe before admitting more.
+ *
+ * ⚠ The unit of work is now a FAMILY, not a stage of a strategy. `enhance` and `study` were two
+ * queues over the same 14 families, competing for the same minutes and each able to starve the
+ * other; `research` is the merged loop (/run-family) over one family queue. The funnel is
+ *
+ *     research (drain the family queue) -> normalize (refill it) -> discover (refill THAT)
+ *
+ * so normalize only runs when no family is due, and discover only when nothing is left to
+ * normalize. `enhance`/`study` remain dispatchable via --stage for fallback while their pinned
+ * sessions still exist, but they are out of the automatic order.
+ */
+const PRIORITY = ['research', 'normalize', 'discover'];
 
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
 
@@ -145,7 +161,11 @@ function discoverQueue() {
 }
 
 function queues() {
+  let research = [];
+  try { research = require('./family-queue').build().due; }
+  catch (e) { research = []; }
   return {
+    research,
     enhance: staleFamilies('enhance', { requireBest: true }),
     study: staleFamilies('study'),
     normalize: normalizeQueue(),
@@ -156,7 +176,7 @@ function queues() {
 const depth = (stage, q) =>
   stage === 'normalize' ? q.normalize.total
   : stage === 'discover' ? q.discover.uncopied
-  : q[stage].length;
+  : (q[stage] || []).length;
 
 // ── planning ────────────────────────────────────────────────────────────────
 
@@ -293,7 +313,12 @@ function runAgentLoop(stage, target, { dry }) {
             `the cron can only RESUME, never cold-start an agent loop.`,
     };
   }
-  const script = path.join(ROOT, `scripts/auto${stage}-loop.sh`);
+  // `research` runs the parameterized scripts/agent-loop.sh; the two legacy stages keep their
+  // own scripts until their pinned sessions are retired.
+  const parameterized = path.join(ROOT, 'scripts/agent-loop.sh');
+  const legacy = path.join(ROOT, `scripts/auto${stage}-loop.sh`);
+  const script = stage === 'research' ? parameterized : legacy;
+  const args = stage === 'research' ? [script, 'research'] : [script];
   if (!fs.existsSync(script)) return { outcome: 'error', note: `missing ${path.relative(ROOT, script)}` };
   // ⚠ `target` is the head of OUR queue, reported for the log only — it is not passed to the
   // agent and does not steer it. The study nudge tells the agent to take "the next pending
@@ -306,7 +331,7 @@ function runAgentLoop(stage, target, { dry }) {
              note: `would resume session ${pin.detail} via ${path.relative(ROOT, script)}` +
                    `; our queue head is ${target || 'n/a'} (agent picks its own order)` };
   }
-  const r = sh('bash', [script]);
+  const r = sh('bash', args);
   const lines = r.out.split('\n').filter(Boolean);
 
   // ⚠ On failure the note must carry the CAUSE, not the dispatch boilerplate. The first
@@ -340,12 +365,17 @@ function runDiscover({ dry }) {
 }
 
 function runStage(stage, q, dry) {
-  const target = stage === 'enhance' ? (q.enhance[0] || {}).family
+  // For `research` the target is REAL, not decorative: the queue is ordered by max post-screen
+  // priority and the loop is told to take the head. For the legacy stages the agent still picks
+  // its own order, which is why those targets are reported and not passed.
+  const target = stage === 'research' ? (q.research[0] || {}).family
+    : stage === 'enhance' ? (q.enhance[0] || {}).family
     : stage === 'study' ? (q.study[0] || {}).family : null;
   let r;
   if (stage === 'normalize') r = runNormalize(q, { dry });
-  else if (stage === 'enhance' || stage === 'study') r = runAgentLoop(stage, target, { dry });
-  else r = runDiscover({ dry });
+  else if (stage === 'research' || stage === 'enhance' || stage === 'study') {
+    r = runAgentLoop(stage, target, { dry });
+  } else r = runDiscover({ dry });
   return { ...r, stage, target };
 }
 
@@ -499,11 +529,13 @@ function printPlan(p) {
   const q = p.q;
   console.log(`[daily] budget: ${p.budget.ok ? `used ${p.budget.used} / free ${p.budget.free}` : `UNAVAILABLE (${p.budget.raw})`}`);
   console.log(`[daily] slow-skip cap ${SLOW_SKIP_MIN} min/backtest, usage limit ${USAGE_LIMIT} min/day`);
-  console.log('[daily] queues (priority order — later stages first):');
-  console.log(`   enhance   ${String(q.enhance.length).padStart(4)}   ${q.enhance.slice(0, 3).map(x => x.family).join(', ') || '—'}`);
-  console.log(`   study     ${String(q.study.length).padStart(4)}   ${q.study.slice(0, 3).map(x => x.family).join(', ') || '—'}`);
+  console.log('[daily] queues (funnel order — drain the end before widening the mouth):');
+  const head = q.research.slice(0, 3)
+    .map(x => `${x.family}(${x.score ?? '—'}/${x.reason})`).join(', ') || '—';
+  console.log(`   research  ${String(q.research.length).padStart(4)}   ${head}`);
   console.log(`   normalize ${String(q.normalize.total).padStart(4)}   ${q.normalize.pending.length} pending + ${q.normalize.retry.length} deferred-retry`);
   console.log(`   discover  ${String(q.discover.uncopied).padStart(4)}   uncopied of ${q.discover.total} in queue`);
+  console.log(`   (legacy: enhance ${q.enhance.length}, study ${q.study.length} — --stage only)`);
   console.log(`[daily] -> ${p.stage.toUpperCase()}   (${p.why})`);
 }
 
