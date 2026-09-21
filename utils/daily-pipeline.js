@@ -45,8 +45,21 @@ const ROOT = path.resolve(__dirname, '..');
 const state = require('./daily-state');
 const consumption = require('./consumption');
 
-/** This pipeline's per-backtest cap, in minutes. */
-const SLOW_SKIP_MIN = 30;
+/**
+ * This pipeline's per-backtest cap, in minutes.
+ *
+ * Env-configurable for the same reason as USAGE_LIMIT: it is a budget knob, and the budget
+ * changed. It also gates the deferred pool — a parked strategy is only re-offered at a cap
+ * HIGHER than the one that already failed it, so raising this is what makes the 17 currently
+ * parked strategies reachable at all.
+ *
+ * ⚠ A higher cap is not free: at 45 minutes one pathological strategy can eat a quarter of a
+ * 180-minute day. That is affordable on VIP and was not on the free tier.
+ */
+const SLOW_SKIP_MIN = (() => {
+  const n = parseInt(process.env.SLOW_SKIP_MIN || '', 10);
+  return Number.isFinite(n) && n > 0 ? n : 30;
+})();
 /**
  * Daily backtest ceiling handed to every child.
  *

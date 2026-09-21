@@ -27,9 +27,19 @@
   a problem, add more hours to the array and gate on "no successful run recorded today"
   (data/daily-state.json already carries that) rather than widening the UTC gate.
 
-  USAGE_LIMIT = 55 keeps this inside the free 60 minutes. Raise it only if you mean to spend
-  credits; the existing autostudy/autoenhance plists use 240 and will compete for the same
-  budget through the same shared lock.
+  USAGE_LIMIT = 170 against the VIP allowance of 180 free minutes (it was 55, the non-VIP
+  figure, which left ~125 minutes a day unused once VIP was bought). The 10-minute headroom is
+  deliberate: the limit gates the START of a backtest, so a run that begins just under the
+  line can still overshoot it.
+
+  SLOW_SKIP_MIN = 45 raises the per-backtest cap from 30. It also governs the deferred pool —
+  a parked strategy is only re-offered at a cap HIGHER than the one that already failed it, so
+  45 is what makes the 17 currently parked strategies reachable (14 died at 20, 3 at 30).
+  ⚠ Not free: one pathological strategy can now eat a quarter of the day. Affordable on VIP,
+  and it was not on the free tier.
+
+  ⚠ The autostudy/autoenhance plists use USAGE_LIMIT=240 and compete for the same budget
+  through the same shared lock.
 
   ⚠ This agent can RESUME the study/enhance loops but cannot cold-start them — they need a
   session pinned interactively once (scripts/auto{study,enhance}-interactive.sh). When the pin
@@ -57,7 +67,9 @@
     <key>PATH</key>
     <string>/Users/mshen/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
     <key>USAGE_LIMIT</key>
-    <string>55</string>
+    <string>170</string>
+    <key>SLOW_SKIP_MIN</key>
+    <string>45</string>
     <key>JQ_CDP_URL</key>
     <string>http://localhost:9225</string>
     <key>DAILY_SCHEDULED</key>
