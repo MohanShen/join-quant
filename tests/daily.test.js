@@ -530,3 +530,40 @@ test('summary: git status is parsed by shape, not by column offset', async (t) =
     for (const l of ['', '   ', null]) assert.strictEqual(parseStatusLine(l), null);
   });
 });
+
+/**
+ * The resume nudge is the only instruction a headless loop gets.
+ *
+ * It used to say "continue exactly where you left off" and nothing else about state, so a
+ * resumed session carried on with the family it remembered even after a human had confirmed the
+ * next one and `enhance/ideas-queue.json` had been rewritten for it. It also NAMED an epoch
+ * while stating the OOS rule ("epoch 5: 2026-01-01+") — a literal that goes stale next to the
+ * one rule the agents must never get wrong.
+ */
+test('resume nudges send the agent to the queue, not to its own memory', async (t) => {
+  const enh = fs.readFileSync(path.join(__dirname, '../scripts/autoenhance-loop.sh'), 'utf8');
+  const nudge = (enh.match(/^NUDGE="([\s\S]*?)"$/m) || [])[1] || '';
+
+  await t.test('a nudge exists and is not empty', () => {
+    assert.ok(nudge.length > 100, 'could not find the NUDGE string');
+  });
+
+  await t.test('it points at the queue as the source of truth', () => {
+    assert.match(nudge, /ideas-queue\.json/);
+    assert.match(nudge, /trust the queue over your own memory/);
+  });
+
+  await t.test('the OOS boundary is derived, never named', () => {
+    assert.match(nudge, /harness-config\.js/, 'the nudge must tell the agent to read the boundary');
+    assert.doesNotMatch(nudge, /epoch \d/,
+      'naming an epoch in the OOS rule is exactly the literal that went stale');
+    assert.doesNotMatch(nudge, /20\d\d-\d\d-\d\d/,
+      'a hardcoded OOS date in the nudge will outlive the epoch that made it true');
+  });
+
+  await t.test('it forbids the concurrency it cannot detect', () => {
+    assert.match(nudge, /ONE backtest at a time/);
+    assert.match(nudge, /JQ_ALLOW_CONCURRENT/,
+      'the override exists, so the nudge has to say not to reach for it');
+  });
+});

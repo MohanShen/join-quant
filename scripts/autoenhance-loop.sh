@@ -169,7 +169,17 @@ PERM_FLAG="--permission-mode acceptEdits"
 [ "${USE_BYPASS:-0}" = "1" ] && PERM_FLAG="--dangerously-skip-permissions"
 
 RUN_LOG="$LOG_DIR/run-$(date '+%Y%m%d-%H%M%S').log"
-NUDGE="Quota is available again — continue the autoenhance loop exactly where you left off (you are already running /run-enhance per enhance/program.md). Backtest cap: have the engineer pass --usage-limit $USAGE_LIMIT to the backtester (plain command: no JQ_USAGE_LIMIT= prefix, no | tail). NEVER touch the reserved OOS window (epoch 5: 2026-01-01+; confirm with `node utils/harness-config.js` — the boundary moves with the epoch, and 2025 is now VAL). Keep iterating until the JQ budget (used>=$USAGE_LIMIT) or the Anthropic quota is hit again, then STOP at a clean git state with a one-line status. Do NOT git commit wiki/results unless asked."
+# ⚠ The nudge must send the agent to the QUEUE, not to its own memory of the round.
+# "continue exactly where you left off" was the whole message, so a resumed session carried on
+# with the family it had been working — even after a human had confirmed the next one and
+# enhance/ideas-queue.json had been rewritten for it. The queue is where the round's state
+# actually lives, and its head may be a blocked/informational entry that changes what to do
+# (e.g. "the baseline slow-skipped; retry at a higher cap before dispatching any idea").
+#
+# ⚠ The OOS boundary is DERIVED, never named. This string used to say "epoch 5: 2026-01-01+";
+# the epoch has moved since and the boundary moves with it, so a literal here is a
+# hard-to-notice lie sitting next to the one rule the agents must never get wrong.
+NUDGE="Quota is available again — continue the autoenhance loop (you are already running /run-enhance per enhance/program.md). FIRST re-read enhance/ideas-queue.json and the target family page: the queue may have been re-pointed at a different family, or its head may be a blocked/informational entry that changes what to do before any idea is dispatched — trust the queue over your own memory of the last round. Backtest cap: have the engineer pass --usage-limit $USAGE_LIMIT to the backtester (plain command: no JQ_USAGE_LIMIT= prefix, no | tail). Run ONE backtest at a time — the completion signal is the account-wide running count, and concurrent runs have returned identical metrics for different strategies; the backtester now refuses with CONCURRENT-STOP and you must not set JQ_ALLOW_CONCURRENT. NEVER touch the reserved OOS window — run \`node utils/harness-config.js\` and read the boundary from it rather than assuming one. Keep iterating until the JQ budget (used>=$USAGE_LIMIT) or the Anthropic quota is hit again, then STOP at a clean git state with a one-line status. Do NOT git commit wiki/results unless asked."
 
 log "resuming claude session $SID ($PERM_FLAG) → $RUN_LOG"
 JQ_USAGE_LIMIT="$USAGE_LIMIT" claude -p --resume "$SID" "$NUDGE" $PERM_FLAG >"$RUN_LOG" 2>&1
