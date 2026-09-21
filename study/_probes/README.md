@@ -34,6 +34,22 @@ paired with a control that fires unconditionally at the same point.
   on a longer lag, and `15c36e0c` includes `lof` in its universe. A probe would need a fund
   whose publication lag is known independently.
 
+## ⚠ Trap: the cost OVERRIDE shadows the function your probe calls
+
+The frozen harness appends an OVERRIDE block that **rebinds** `set_slippage` / `set_commission`
+and (since epoch 6) `set_order_cost` to shadows which **discard the caller's arguments** and
+re-apply the bench values — that is the whole point, so a strategy cannot reset costs per bar.
+
+**Consequence**: a probe that varies costs by calling `set_order_cost(...)` **changes nothing**.
+It measures the bench against itself and reports the pinned setting as *inert*. This produced a
+false alarm — "the epoch-6 stock-cost pin does not bind" — that was purely probe-design error.
+
+**Rule**: inside OVERRIDE-wrapped code, a probe must call the **captured original**,
+`__jq_set_order_cost`, not the shadow. Re-measured that way (`etfmom-probe-*`, 2026-09-20), the
+stock-cost pin demonstrably binds: the same arm (ETF动量 full-weight micro-cap leg) scores
+`total` **223.64%** at the author's own declared stock costs, **215.05%** at the epoch-6 pin, and
+**71.47%** at a 1%/side commission. See [[etfmom-005]] / `wiki/families/ETF动量.md` §4.
+
 ## Running one
 
 ```bash

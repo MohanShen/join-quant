@@ -14,7 +14,7 @@
     "baseExpId": null,
     "rank": 90,
     "status": "done",
-    "result": "etfmom-001 (TRAIN, epoch 5): total 215.05 / annual 77.64 / sharpe 3.10 / maxDD 13.05 / objective 0.6459 / gate PASS. 高于本纪元基线 etfmom-000 的 0.2944（+0.3515），落在预注册带 0.50-0.84 内。⚠ 按 critic 限定：新颖度为零，是 study-q-8 配置在 epoch 5 上的重测，不是 enhance 发现；与 etfmom-000 之差是跨成员比较而非 ablation Δ；满仓微盘 × 零滑点台，LEVEL 不可读作可实现，只有同腿臂间 Δ 可信。未定稿、未跑 VAL。"
+    "result": "【epoch 6 重测 + 定稿】epoch 5 的结果已因 measurementValid(5)=false 全部作废。epoch 6 重测: etfmom-004 (=idea-1 配置) obj 0.6459 sharpe 3.10; 叠加 enable_dynamic_position 得 etfmom-005 obj 0.6516 sharpe 3.20 = 本家族 epoch 6 最优。基线 etfmom-003 (bestVariant, 跨成员) 0.2944。**etfmom-005 已定稿并跑 VAL: obj 1.3973 sharpe 5.27 PASS**，已由 Agent 4 记账 (§2 变体行 / results.tsv / validated_strategies/ / wiki/experiments/)。⚠ 新颖度仍为零 (= study q-10 配置)；⚠ 水平为满仓微盘×零滑点，不可读作可实现；⚠ VAL 非 TRAIN 的干净孪生 (apply_nine_point_audit 以 >2025-01-01 为闸，VAL 后半年是 TRAIN 从未覆盖的代码路径)。"
   },
   {
     "id": "idea-2",
@@ -29,7 +29,7 @@
     "baseExpId": "etfmom-001",
     "rank": 60,
     "status": "dropped",
-    "result": "etfmom-002 (TRAIN, epoch 5, 相对 etfmom-001 只差第 230 行一行): total 154.10 / annual 59.51 / sharpe 2.51 / maxDD 10.59 / objective 0.4892 / gate PASS。**假设被证伪，且不止量级**：objective 由 0.6459 跌到 0.4892（-0.1567）；annual -18.13pp，而 maxDD -2.46pp —— 远超预注册的 ±0.2pp 带，即证伪项「增益必须只出现在 annual 轴」直接触发。⇒ 冷却期 2→5 不是 q-11 那条「阻断的全是亏损单」的线性外推：5 天会连赢家的再入场一起挡掉。未测中间值（3/4 天），q-11 的注释写的是「3个交易日」—— 若要重开，应从 3 试起而不是再加长。"
+    "result": "【epoch 6 复测，结论不变且更强】etfmom-006 (no_buy_after_day 2→3) obj 0.5334 vs 底座 etfmom-004 的 0.6459 —— 回撤确实降 (13.05→10.64) 但年化塌了 (77.64→63.98)。连同 epoch-5 上 2→5 的更大退步，冷却期长度在已测的两个方向上**自 2 起单调变差 (2 > 3 > 5)**。⇒ 该旋钮就地封闭，不要再提。"
   },
   {
     "id": "idea-3",
@@ -42,8 +42,10 @@
       "[[research/factorlib]] factors.tsv（缺席证据：无 股东户数）",
       "[[docs/wiki-schema.md]] §2.1 选股子类 情绪事件"
     ],
-    "baseExpId": "etfmom-001",
+    "baseExpId": "etfmom-005",
     "rank": 40,
-    "status": "queued"
+    "status": "dropped",
+    "note": "2026-09-21 点子官裁定：**留在队列，今天不花一分钟回测**。它是一条新血统而非本臂的变异，且大概率多轮；在已提交 VAL、只剩约 40 分钟时开这条线，会得到一个无法解释的半测臂。下一轮用完整预算开。三条放行前置条件不变，其中数据覆盖度检查是零回测的，可先做。",
+    "result": "【2026-09-21 epoch 6，一个变体后放弃】etfmom-007 = etfmom-005 + 排除型过滤：在 ~25 个按市值排序的候选中剔除「最近一期披露的 股东户数 较上一期上升 >10%」者（严格 pub_date <= previous_date；不足两期披露的保留；下一市值名次回填）。TRAIN: total 176.37 / annual 66.36 / sharpe 2.69 / maxDD 15.24 / obj **0.5112**，对照 etfmom-005 的 0.6516 为 **-0.1404，两轴同时变差**（annual -10.11pp，maxDD +3.93pp）。过滤确实生效（非逐位相同 ⇒ 数据覆盖存在，前置条件 3 实质通过）；换手 0.0759→0.0692（-8.8%，未触发前置条件 2 的 ±10% 证伪项 —— 它不是靠换手买收益，而是丢了收益）；成交 142→133，单笔平均收益反而 3.88%→4.06% ⇒ 损失来自被换进来的名字，不是交易质量。⚠ maxDD 窗口从本家族五臂共享的 2022-06-28→07-06 地板**移到了更深的 2022-08-12→08-31** ⇒ 小市值腿的成分能挪动回撤路径，只是这次方向不利。record() 序列不在 result 端点返回里，逐日剔除率未知。点子官裁定放弃：不翻符号（事后故事）、不扫阈值（TRAIN 上多重检验），不登记部件（全轴退步，不是配料）。数字来源只有我方台；screen verdict 只作 provenance。"
   }
 ]

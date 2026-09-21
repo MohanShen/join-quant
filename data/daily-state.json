@@ -2,13 +2,13 @@
   "inFlight": null,
   "lastRun": {
     "stage": "enhance",
-    "target": "ETF动量",
-    "budget": 80,
-    "at": "2026-09-21T00:44:55.283Z",
-    "outcome": "error",
-    "note": "enhance loop FAILED: spawnSync bash ETIMEDOUT",
+    "target": "ETF溢价",
+    "budget": 129,
+    "at": "2026-09-21T03:02:00.660Z",
+    "outcome": "ran",
+    "note": "resumed enhance session 1de3cdea (exit 0 is NOT proof work happened — check its ledger)",
     "minutesUsed": null,
-    "endedAt": "2026-09-21T01:44:55.399Z"
+    "endedAt": "2026-09-21T03:10:53.538Z"
   },
   "runs": [
     {
@@ -70,6 +70,26 @@
       "note": "enhance loop FAILED: spawnSync bash ETIMEDOUT",
       "minutesUsed": null,
       "endedAt": "2026-09-21T01:44:55.399Z"
+    },
+    {
+      "stage": "enhance",
+      "target": "ETF动量",
+      "budget": 111,
+      "at": "2026-09-21T02:00:05.224Z",
+      "outcome": "ran",
+      "note": "resumed enhance session 1de3cdea (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-09-21T03:01:58.106Z"
+    },
+    {
+      "stage": "enhance",
+      "target": "ETF溢价",
+      "budget": 129,
+      "at": "2026-09-21T03:02:00.660Z",
+      "outcome": "ran",
+      "note": "resumed enhance session 1de3cdea (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-09-21T03:10:53.538Z"
     }
   ]
 }

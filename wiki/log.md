@@ -316,3 +316,23 @@ VAL 原为 2024 单年，被 2 月微盘踩踏单一事件主导（`jul12-023` �
 因 score = 年化 − 最大回撤 是账本已存列的纯函数，**103 行就地重算、零回测**，16 行 fail→pass。
 此前无分可比的五族现在能排序：趋势技术 0.2936 / 网格 0.1411 / 红利低频 0.1348 / 三进兵 −0.0900。
 **分阶段门槛**：normalize/study/enhance 1.5，类型级整合 2.0。
+
+## [2026-09-20] experiment | etfmom-005 (ETF动量 满仓小市值腿 + 1/4月日历规则 + 动态仓位, epoch 6) train=0.6516 val=1.3973 recorded → 回填 [[ETF动量]] §2/§4、[[仓位管理]]、[[止损模块]]、[[小市值因子]]、[[etfmom-005]]
+
+家族 `base` [[22152780_七星ETF轮动V1.7.2]] 三行配置（L138 `[1,0,0,0]` / L169 `avoid_trade_april` / L186
+`enable_dynamic_position`）。TRAIN `annual 76.47 / sharpe 3.20 / maxDD 11.31`；VAL(2024–2025)
+`annual 153.80 / sharpe 5.27 / maxDD 14.07`，gate pass、`confirmed`。归档
+`validated_strategies/etfmom-005.py`。**五条限定必须随行**：
+**(1) 新颖度为零** —— 与 study **q-10** 配置等价，记作「q-10 在 epoch 6 上的首个有效测量 +
+本家族第一个 VAL」，不是 enhance 发现；
+**(2) ⚠⚠ 零滑点高估** —— 满仓微盘 × 零滑点台，`VAL total 544.14% / annual 153.80%` 是本项目
+产出过的最被夸大的一组数字，**绝不可读作可实现**，只有同腿同纪元臂间 Δ 可信；
+**(3) ⚠⚠ VAL 不是 TRAIN 的干净孪生** —— `apply_nine_point_audit` 门控 `> 2025-01-01`，VAL 的
+2025 半窗跑的是 TRAIN 零覆盖的代码路径；
+**(4) ⚠ VAL 高夏普待审查** —— `avoid_trade_april` 在 VAL 窗新增 4 次触发、其中 2024-01 正落在
+微盘踩踏上，而其 TRAIN 证据仅 n=4（overfit-suspect）；
+**(5) ⚠ Δ 口径** —— vs 基线 etfmom-003 的 +0.3572 是**跨成员比较**，vs etfmom-004 的 **+0.0057** 才是
+一行 diff。同轮另两项收口：`no_buy_after_day` **自 2 起向上单调变差**（2→3 0.6459→0.5334；
+2→5 0.6459→0.4892）⇒ 旋钮关闭；**epoch 6 股票成本钉死确实咬合**（同臂 total 223.64 / 215.05 /
+71.47 三档），此前「钉死惰性」的误报系**探针被 OVERRIDE 影子函数拦截**所致（须改调
+`__jq_set_order_cost`），已记入 `study/_probes/README.md`。
