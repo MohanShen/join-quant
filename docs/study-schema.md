@@ -121,7 +121,12 @@ qId	type	component_or_param	metric_delta	window	finding	confidence	flags	descrip
 study **不再产出独立报告页**，而是把理解**写回家族页**（结构见 `wiki-schema.md` §3.3），由分析 agent 逐步充实（不是一次写完）：
 
 - **§1 基类「为什么有效」**：基类归因结论（核心 alpha / 控回撤机器 / 脆弱点），随实验刷新。
-- **§2 变体表**：每个被解释的变体一行——`改动 / 来源 study-<qId> / Δobjective / Δsharpe / ΔmaxDD / 结论`。**追加不覆盖**。
+- **§2 变体表**：每个被解释的变体一行——`类型 / 改动 / 来源 study-<qId> / Δobjective / Δsharpe / ΔmaxDD / 判定 / 结论`。**追加不覆盖**。
+  - `类型` = `understand` | `improve`（哪个生成器产出的）。
+  - `判定` = `adopted` | `rejected` | `informative`。study 行通常是 `informative`；`rejected` 专指
+    **测过但未采纳的 `improve` 变体**——它是一等结果，不是省略。
+  - ⚠ **行密度是约束，行数不是**：ETF动量 §2 只有 10 行却占 186KB 页面里的 36KB（均 ~3.6KB/行）。
+    `rejected` 行给**一行**：改了什么、Δ 多少、为什么没采纳。长篇留给改变了认识的变体。
 - **§6 研究问答（study-log）**：问题 → 结论，逐条追加：
   ```
   - **[Q <qId>]** <问题>（type: ablation|sweep|regime|isolate|probe）
@@ -150,5 +155,13 @@ study **不再产出独立报告页**，而是把理解**写回家族页**（结
 - **target 不可变**：被解剖策略源码快照 `baseline.py` 一经确定即冻结；实验只在 `variants/` 造变体。
 - **一次一处**：一个实验只改/看一处，保证归因干净。
 - **真实性红线**：零滑点高估 / 不真实成交必标 ⚠，Δ 不当作可实现结论。
-- **无选择压力**：不 keep/discard、不挑「最优变体」当产物——产物是**理解**，不是新策略。（若解剖启发了值得优化的新策略，那是 auto-enhance 的活，另起。）
+- **无选择压力（按想法类型，非按流水线）**：`understand` 型实验**不**做 keep/discard、不挑「最优变体」
+  当产物——它的产物是**理解**，负结果与正结果同等入账。`improve` 型实验**做**选择，但**被否决的变体
+  同样入账**（家族页 §2，`判定: rejected`）。
+  ⚠ 本条原文把「若解剖启发了值得优化的新策略，那是 auto-enhance 的活，另起」写进了原则，即把选择压力
+  绑在**流水线**上。这是两条流水线分立的根因，也是它唯一的实质分歧；2026-09-21 改为绑在**想法类型**上
+  （`docs/proposals/merged-research-loop.md` §1，人类已确认）。
+  **为什么这是安全的**：`understand` 的价值恰恰集中在负结果上——ETF溢价 的整轮 enhance 就建立在 q-1
+  （成交量下界抬高则 alpha 消失）与 q-2（集中度只解释 ~17% 的 gap）两个**否定性**发现之上。把「改进了吗」
+  这道闸门套到 understand 型实验上，就会把它们全部丢掉。所以闸门跟着想法走，不跟着流水线走。
 - **预算**：同 auto-enhance 的 JQ 计费现实（每日免费 60 分钟、`--usage-limit` 上限、并发 2）。

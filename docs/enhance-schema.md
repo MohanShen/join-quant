@@ -1,7 +1,7 @@
 # join-quant 自主研究（autoenhance）Schema
 
 本文件定义 `enhance/` 自主策略**增强**循环的结构与规则（**家族级**：提升一个策略家族 `wiki/families/<family>.md`），是 `docs/wiki-schema.md`（知识库 Schema）与 `docs/study-schema.md`（解剖）的姊妹篇。
-点子官有三种取法：**族内改进 / 跨族借鉴 / 组合新族**（见 `enhance/program.md`）；定稿结果写回**家族页 §2 变体**（主记录），新族则登记 `wiki-schema.md` §2.2 并建家族页。
+点子官有三种取法：**族内改进 / 跨族借鉴 / 组合新族**（见 `enhance/program.md`）；结果写回**家族页 §2 变体**（主记录）——**定稿与被否决的变体都写**（`判定: adopted|rejected`，见下方 ⚠），新族则登记 `wiki-schema.md` §2.2 并建家族页。
 灵感来自 Andrej Karpathy 的 [`autoenhance`](https://github.com/karpathy/autoenhance)：
 **「人类只编辑 `program.md`/`harness.md`，AI 在冻结的评测台上自主迭代策略；迭代/选择全凭 `objective(TRAIN)`，定稿才验 VAL。」**
 本项目把「AI」实现为一个**四智能体团队**（点子/筛选/工程/记账，见 `enhance/program.md`）。
@@ -30,7 +30,7 @@ wiki「待研究/空白/归一化横评」 → 想法+推理 → 变异 candidat
 | 固定 5 分钟预算 | 固定回测窗口（train/val，§3.1；保留 OOS 禁用） | 保证实验可比 |
 | `results.tsv` | `enhance/results.tsv`（§7） | 追加式账本，**git 跟踪** |
 | `program.md` | `enhance/program.md`（**四智能体团队**编排） | 研究团队的 agent 指令 |
-| keep=advance / discard=git reset | 迭代在 TRAIN 推进/回退；**定稿**才跑一次 VAL（§8） | |
+| keep=advance / discard=**记一行再** git reset | 迭代在 TRAIN 推进/回退；**定稿**才跑一次 VAL（§8）。⚠ 回退前先在家族页 §2 补一行 `判定: rejected`——代码回退，**认识不回退** | |
 | （无持久知识） | `wiki/experiments/`（§6）+ 回填契约（§9） | **本项目独有** |
 
 ---
@@ -294,6 +294,11 @@ jul3-002	c3d4e5f	idea-7	jul3-001	1.52	0.88	1.9	fail	val-dq	国九过滤：TRAIN 
 - **可溯源**：账本、实验页、概念页结论均可回溯到 commit 与源码。
 - **受控命名**：因子/概念一律走 `wiki-schema.md` §2 词表，先登记后使用。
 - **追加与人裁**：概念页只追加；冲突只标记、不自行裁决。
+- **否定结果同样入账**（2026-09-21）：`improve` 变体测过而未采纳的，**必须**在家族页 §2 留一行
+  `判定: rejected`（一行即可：改了什么 / Δ / 为什么没采纳），然后才 `git reset` 代码。
+  选择压力属于**想法类型**而非流水线（`study-schema.md` §10 无选择压力 已同步改写）。
+  ⚠ 没有这张账，「这个方向试过、不行」不留痕迹，下一轮可以原样再提——这不是假设，ETF动量 的 idea-1
+  在自己的 reasoning 里已经把自己标成「新颖度为零 = 已有配置的重测」。
 
 ---
 

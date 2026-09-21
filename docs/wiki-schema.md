@@ -254,6 +254,14 @@ updatedAt: <YYYY-MM-DD>
 家族页纵向聚合**同一基类的所有变体**，是 auto-enhance 的取种入口。
 拆分：`§3 横评` 由 `wiki-family-build.js` 从策略页 `family:` + `harness/normalize-train.tsv` **自动生成**（勿手写，lint 校验漂移，同 `wiki-factor-signature.js` 模式）；`§2 变体` 由 normalize 播种、**study / auto-enhance 追加**（Δ 列 lint 校验）；`§1 基类机理`、`为什么有效`、`§4 待研究`、`§5 沿革` 为**人写**；`§6 研究问答` 由 **auto-study 追加**。
 
+> **§2 收录失败的变体**（2026-09-21，`docs/proposals/merged-research-loop.md` §3）。`判定` 列把
+> `adopted` / `rejected` / `informative` 分开，`类型` 列记是哪个生成器产出的。
+> 此前只有**定稿**结果写回 §2，被否决的迭代由 `git reset` 抹掉（`enhance-schema.md` §2）——于是
+> 「这个方向试过、不行」这件事不留痕迹，下一轮可以原样再提一次。ETF动量 的 idea-1 在自己的 reasoning
+> 里就标了「新颖度为零 = 已有配置的重测」，那是没有这张账的代价。
+> ⚠ **既有页面不回填**：老表是 7 列，没有任何代码按列号解析 §2（`wiki-family-build.js` 的
+> `split('|')` 解析的是它自己生成的 §3），所以新旧可以共存；页面被触碰时再补列。
+
 ```markdown
 ---
 family: 五福闹新春
@@ -288,9 +296,9 @@ updatedAt: <YYYY-MM-DD>
 - **⚠ 现实性 / 容量**：<零滑点高估 / 容量上限 / 尾风险>
 
 ## 2. 变体 (variants)                   ← 人写/study/enhance 追加；Δ 列由 lint 校验
-| 变体 | 相对基类的改动 | 来源 | Δobjective | Δsharpe | ΔmaxDD | 结论 |
-|---|---|---|---|---|---|---|
-| [[…]] | … | normalized-raw / study-<qId> / enhance-<expId> | … | … | … | … |
+| 变体 | 类型 | 相对基类的改动 | 来源 | Δobjective | Δsharpe | ΔmaxDD | 判定 | 结论 |
+|---|---|---|---|---|---|---|---|---|
+| [[…]] | understand / improve | … | normalized-raw / study-<qId> / enhance-<expId> | … | … | … | adopted / rejected / informative | … |
 
 ## 3. 家族内绩效横评 (auto)             ← 按 objective 排名，最优高亮
 

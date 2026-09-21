@@ -332,3 +332,79 @@ test('normalize-sync refreshes family pages', async t => {
     assert.strictEqual(r.ran, false, 'a dry run must not spawn anything');
   });
 });
+
+/**
+ * 无选择压力 is scoped to the IDEA TYPE, not to the pipeline.
+ *
+ * study-schema.md §10 used to end with "if the dissection inspires a strategy worth optimizing,
+ * that is auto-enhance's job, start separately" — which bound the keep/discard rule to the
+ * PIPELINE. That was the root of the two-pipeline split and its only substantive disagreement.
+ *
+ * The danger of getting it backwards is asymmetric. `understand` experiments carry most of their
+ * value in NEGATIVE results: ETF溢价's entire enhance round rests on q-1 (the alpha dies as the
+ * volume floor rises) and q-2 (concentration explains only ~17% of the gap). Put an "did it
+ * improve?" gate in front of those and both are discarded. So the gate follows the idea, not the
+ * pipeline — and `improve` variants that were measured and rejected get recorded too, because
+ * otherwise "we tried that, it doesn't work" leaves no trace and the next round re-proposes it.
+ */
+const st = require('node:test');
+const as = require('node:assert');
+const fsx = require('fs');
+const pathx = require('path');
+
+const doc = f => fsx.readFileSync(pathx.join(__dirname, '..', f), 'utf8');
+
+st('无选择压力 is scoped to the idea type', async (t) => {
+  const study = doc('docs/study-schema.md');
+  const enhance = doc('docs/enhance-schema.md');
+  const wiki = doc('docs/wiki-schema.md');
+
+  await t.test('the pipeline-scoped wording is gone from the principle', () => {
+    // The phrase survives ON PURPOSE, inside the ⚠ note recording what the original said —
+    // the same convention used elsewhere ("本条原文写「每日免费 60 分钟」"). What must not come
+    // back is the phrase as an OPERATIVE clause, so every occurrence has to be a quotation
+    // introduced by 本条原文.
+    for (const m of [...study.matchAll(/那是 auto-enhance 的活，另起/g)]) {
+      const before = study.slice(Math.max(0, m.index - 80), m.index);
+      as.match(before, /本条原文/,
+        'the parenthetical is back as a rule, not as a record of what it used to say');
+    }
+    as.match(study, /无选择压力（按想法类型，非按流水线）/);
+  });
+
+  await t.test('both idea types are named, with opposite recording rules', () => {
+    const s = study.slice(study.indexOf('无选择压力（按想法类型'));
+    as.match(s, /`understand`[\s\S]{0,200}负结果与正结果同等入账/);
+    as.match(s, /`improve`[\s\S]{0,120}被否决的变体[\s\S]{0,40}同样入账/);
+  });
+
+  await t.test('the family page has somewhere to PUT a rejected variant', () => {
+    // A principle promising a record, with no column to hold it, is decoration.
+    as.match(wiki, /\|\s*变体\s*\|\s*类型\s*\|[\s\S]{0,120}\|\s*判定\s*\|\s*结论\s*\|/,
+      'wiki-schema §3.3 §2 must carry 类型 and 判定 columns');
+    as.match(study, /`判定` = `adopted` \| `rejected` \| `informative`/);
+  });
+
+  await t.test('enhance-schema no longer says only the finalized result is written back', () => {
+    as.match(enhance, /定稿与被否决的变体都写/);
+    as.doesNotMatch(enhance, /\| keep=advance \/ discard=git reset \|/,
+      'the row that made a rejected iteration vanish via git reset is back');
+    as.match(enhance, /代码回退，\*\*认识不回退\*\*/);
+  });
+
+  await t.test('a newly seeded family page gets the new columns', () => {
+    const build = doc('utils/wiki-family-build.js');
+    as.match(build, /\|\s*变体\s*\|\s*类型\s*\|[\s\S]{0,140}\|\s*判定\s*\|\s*结论\s*\|/,
+      'wiki-family-build.js seeds §2 for new pages — its template must match the schema');
+  });
+
+  await t.test('no code parses §2 by column index, so old 7-column tables still read', () => {
+    // wiki-family-build.js does split('|'), but on §3 — the table it generates itself. If a
+    // parser ever indexes §2's columns, adding columns silently shifts every field it reads.
+    const build = doc('utils/wiki-family-build.js');
+    const i = build.indexOf("split('|')");
+    as.ok(i > 0, 'expected the §3 parser to still exist');
+    as.match(build.slice(Math.max(0, i - 600), i), /countMetricCells|section3/,
+      'the only column-indexed parser must remain scoped to §3');
+  });
+});

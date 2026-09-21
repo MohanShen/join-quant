@@ -25,6 +25,10 @@ enhance has no principled prior about which changes are on-mechanism. Merging cl
 
 ## 1. The principle being rewritten — read this first
 
+> **STATUS: IMPLEMENTED** (2026-09-21, human-confirmed) — `docs/study-schema.md` §10 rewritten,
+> with the original wording preserved inside a ⚠ note rather than deleted. Tested: the phrase may
+> only appear as a quotation introduced by 本条原文, never as an operative clause.
+
 `docs/study-schema.md` §10 currently states:
 
 > **无选择压力**：不 keep/discard、不挑「最优变体」当产物——产物是**理解**，不是新策略。
@@ -125,6 +129,14 @@ gap is visible rather than silent.
 ---
 
 ## 3. Change B — §2 变体 takes failures
+
+> **STATUS: IMPLEMENTED** (2026-09-21) — it ships WITH §1, because a principle that promises a
+> record with no column to hold it is decoration. `wiki-schema.md` §3.3 table, `study-schema.md`
+> §8 write-back, `enhance-schema.md` (both the "only the finalized result is written back" line
+> and the `discard=git reset` row), and `wiki-family-build.js`'s seeded template.
+> Existing pages are NOT backfilled: their tables are 7 columns, nothing parses §2 by index
+> (`wiki-family-build.js`'s `split('|')` reads the §3 it generates itself), so old and new
+> coexist and a page gains the columns when it is next touched.
 
 `wiki-schema.md` §3.3 §2 table gains two columns:
 
