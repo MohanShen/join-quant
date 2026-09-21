@@ -26,10 +26,10 @@ updatedAt: 2026-07-26
 - **⚠ 现实性 / 容量**：见 frontmatter realism。折价 alpha 与「不可真实成交」是同一枚硬币——制造 edge 的成交量下界过滤器，也正是让零滑点成交不真实的过滤器。base 的 2e6 floor 甚至**过松**（study-q-1）。
 
 ## 2. 变体 (variants)   ← 待人工/study/research 填写
-| 变体 | 相对基类的改动 | 来源 | Δobjective | Δsharpe | ΔmaxDD | 结论 |
-|---|---|---|---|---|---|---|
-| 成交量下界扫描 (line36 floor) | 把昨日 share-volume 下界从 2e6 抬到 1e7 / 3e7 / 1e8 | study-q-1 | +0.47(1e7) / −0.84(3e7) / −1.45(1e8 DQ) | −0.43 / −5.71 / −7.77 | −10.97(1e7) / −3.69(3e7) / +3.18(1e8) | 单峰后单调衰减（非平台）：edge 集中在薄基金，抬流动性即流失（1e8 DQ）；但 base 的 2e6 floor 过松，收紧到 1e7 反而 obj +0.47 且 maxDD 减半 → 1e7≈流动性甜点。⚠零滑点高估 |
-| 持仓集中度扫描 (df[:5] 切片) | 把等权持仓数 top-5 收窄到 top-1 / 2 / 3（2e6 floor 不动） | study-q-2 | −0.06(N=1) / +0.35(N=2) / +0.15(N=3) | −2.11 / −0.44 / −0.07 | +9.31(N=1) / +2.87(N=2) / +3.99(N=3) | obj 单峰、峰在 **N=2**（obj 1.914，+0.35）；N=1 崩塌（obj 1.503 跌破 base、maxDD 30.77、sharpe 6.76、annual 反低于 N=2）=分散度损失悬崖 → edge 有广度（top-2/3）非单名。maxDD 随集中度单调抬、sharpe 单调降，base N=5 仍是最低回撤/最高 sharpe 点。集中度单独只占 base→edd94ebc ~2.0 gap 的 ~17%，bulk 来自 edd94ebc 的入场滤波器。⚠零滑点高估（换手未测，N=2 annual 尤其乐观） |
+| 变体 | 类型 | 相对基类的改动 | 来源 | Δobjective | Δsharpe | ΔmaxDD | 判定 | 结论 |
+|---|---|---|---|---|---|---|---|---|
+| 成交量下界扫描 (line36 floor) | understand | 把昨日 share-volume 下界从 2e6 抬到 1e7 / 3e7 / 1e8 | study-q-1 | +0.47(1e7) / −0.84(3e7) / −1.45(1e8 DQ) | −0.43 / −5.71 / −7.77 | −10.97(1e7) / −3.69(3e7) / +3.18(1e8) | informative | 单峰后单调衰减（非平台）：edge 集中在薄基金，抬流动性即流失（1e8 DQ）；但 base 的 2e6 floor 过松，收紧到 1e7 反而 obj +0.47 且 maxDD 减半 → 1e7≈流动性甜点。⚠零滑点高估 |
+| 持仓集中度扫描 (df[:5] 切片) | understand | 把等权持仓数 top-5 收窄到 top-1 / 2 / 3（2e6 floor 不动） | study-q-2 | −0.06(N=1) / +0.35(N=2) / +0.15(N=3) | −2.11 / −0.44 / −0.07 | +9.31(N=1) / +2.87(N=2) / +3.99(N=3) | informative | obj 单峰、峰在 **N=2**（obj 1.914，+0.35）；N=1 崩塌（obj 1.503 跌破 base、maxDD 30.77、sharpe 6.76、annual 反低于 N=2）=分散度损失悬崖 → edge 有广度（top-2/3）非单名。maxDD 随集中度单调抬、sharpe 单调降，base N=5 仍是最低回撤/最高 sharpe 点。集中度单独只占 base→edd94ebc ~2.0 gap 的 ~17%，bulk 来自 edd94ebc 的入场滤波器。⚠零滑点高估（换手未测，N=2 annual 尤其乐观） |
 
 ## 3. 家族内绩效横评 (auto)
 

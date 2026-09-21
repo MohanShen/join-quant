@@ -157,6 +157,63 @@ factors:
 
 ---
 
+### 2.3 受控 edge 词表（canonical edges）—— 「这一族凭什么赚钱」
+
+`concepts` 回答**由什么构成**，`factors` 回答**用了哪些信号**，`edge` 回答**预测能力的来源**。
+三者不可互相替代：`ETF轮动` 是范式，`动量` 是信号，而「动量为什么有超额」是 edge。
+
+**为什么单开一轴**（实测，2026-09-21）：16 个概念页里 **9 个是 `结构`**（范式）、**4 个是 `机制`**
+（组件）、只有 **3 个是 `因子族`**（收益来源）；并且 **14 个家族里 9 个一个概念都没标**——包括被
+study 做到穷尽、又跑过 enhance 的 ETF动量。知识库一直记着「它由什么拼成」，从未记过「它为什么赚钱」。
+
+**这一轴能买到什么**：epoch-6 的 `component-scan` 显示**每个 type 的每个候选 uplift 都为负**，
+而 `CLAUDE.md` 另记着 57% 的 gate-pass 是小市值变体、6 个 type 里 4 个已枯竭。这是**同一件事**：
+库存饱和在同一个因子上。收益相关性是很弱的冗余代理（两个小市值书靠噪声就能去相关，看起来像分散）；
+**共享 edge 才是强代理**。如果家族早就标了 edge，那次枯竭不必花回测分钟去实测。
+
+| 规范名 | kind | 来源 | 同义/别名 |
+|--------|------|------|-----------|
+| 规模因子 | risk-premium | 升自 `小市值因子`（因子族） | 小市值、微盘、size |
+| 动量 | anomaly | 升自 `动量与趋势`（因子族） | 趋势跟随、momentum |
+| 均值回归 | anomaly | 升自 `均值回归`（因子族） | 反转、超跌反弹 |
+
+- **起点是把 3 个 `因子族` concept 升上来**，其余随 study 回答逐条登记。`结构`/`机制` 概念**不得**
+  直接升为 edge——它们是做法，不是来源。
+- `kind` ∈ `risk-premium` | `anomaly` | `arbitrage` | `microstructure` | `information` | `none-found`。
+- **未登记的名字只允许出现在 `status: proposed`**。升到 `measured` 前必须先在本表登记。
+
+#### 家族 frontmatter 的 `edge:` 块
+
+```yaml
+edge:
+  - name: 规模因子
+    kind: risk-premium
+    claim: "超额来自持有市值最小的一端，而非选股规则本身"
+    test: "把 universe 按市值分五档、只在最大档内跑同一规则；若 edge 成立，超额应基本消失"
+    status: proposed          # proposed | measured | refuted
+    evidence: [[study-q-7]]   # status != proposed 时必填
+    factorlib: SIZE           # 可选：research/factorlib/ 里对应的因子
+```
+
+1. **`status: proposed` 不具权威**，默认值，不得当作事实引用，整合层按「未知」处理。
+   这条repo 已经付过一次学费：一条猜出来的硬拒规则永久丢掉了 549 个策略里的 287 个。
+2. **`test:` 在任何 status 下都是必填**。说不出怎么证伪的，不算一个 claim——与 `questions.json`
+   要求「可证伪」是同一条纪律。
+3. **`kind: none-found` 合法且有价值**，而且要**响**：一个谁也说不出 edge 的家族，在被证明之前就是
+   一个拟合产物。**它只标记、不停用**（人类 2026-09-21 决定）——`none-found` 不退出 enhance/整合队列，
+   只在 lint 与整合报告里点名。
+4. **一个或多个**。多 edge 是常态（小市值 + 日历效应）。每条都要能独立成立为「基本面的东西」；
+   「用了 5 日均线」是做法，不是 edge。
+5. **散文保留**：§1 的 `为什么有效` 仍是人读版本，**不得与本块矛盾**；lint 只标记分歧，人来裁决。
+
+#### `utils/edge-redundancy.js`
+
+两个家族若共享同一个 `status: measured` 的 `edge.name`，则**无论收益相关性如何**都属整合冗余；
+`type-integrate-check.js` 把它作为第五条规则（与「要赢过最好的成员」并列）。同时点名 `none-found`
+的家族、以及**完全没有 `edge:`** 的家族，让缺口可见而非沉默。
+
+---
+
 ## 3. 页面模板
 
 ### 3.1 策略页 `wiki/strategies/<postId8>_<标题>.md`
@@ -266,7 +323,13 @@ updatedAt: <YYYY-MM-DD>
 ---
 family: 五福闹新春
 aliases: [五福, 五福V5, 五福闹春]
-concepts: [[ETF轮动]], [[择时-均线]], [[仓位管理]]   # 交叉链接概念轴
+concepts: [[ETF轮动]], [[择时-均线]], [[仓位管理]]   # 交叉链接概念轴（由什么构成）
+edge:                                             # 凭什么赚钱（§2.3）；缺失=未回答，不是「没有」
+  - name: 规模因子
+    kind: risk-premium
+    claim: "<一句：预测能力从哪来>"
+    test: "<一句：什么测量会证伪它>"              # 必填
+    status: proposed
 base: [[<postId8>_<代表基类>]]
 bestVariant: [[<postId8>_<最优变体>]]
 bestObjective: <n>
@@ -292,13 +355,13 @@ updatedAt: <YYYY-MM-DD>
   | objective | sharpe | annual% | maxDD% | window |
   |---|---|---|---|---|
   | … | … | … | … | train |
-- **为什么有效**（essential driver, 溯源 [[studyId]]）：<本质驱动因子>
+- **为什么有效**（essential driver, 溯源 [[studyId]]）：<本质驱动因子>——**人读版**，机器读的是 frontmatter `edge:`（§2.3）；两者不得矛盾
 - **⚠ 现实性 / 容量**：<零滑点高估 / 容量上限 / 尾风险>
 
 ## 2. 变体 (variants)                   ← 人写/study/enhance 追加；Δ 列由 lint 校验
 | 变体 | 类型 | 相对基类的改动 | 来源 | Δobjective | Δsharpe | ΔmaxDD | 判定 | 结论 |
 |---|---|---|---|---|---|---|---|---|
-| [[…]] | understand / improve | … | normalized-raw / study-<qId> / enhance-<expId> | … | … | … | adopted / rejected / informative | … |
+| [[…]] | raw / understand / improve | … | normalized-raw / study-<qId> / enhance-<expId> | … | … | … | — / adopted / rejected / informative | … |
 
 ## 3. 家族内绩效横评 (auto)             ← 按 objective 排名，最优高亮
 

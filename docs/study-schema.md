@@ -122,7 +122,8 @@ study **不再产出独立报告页**，而是把理解**写回家族页**（结
 
 - **§1 基类「为什么有效」**：基类归因结论（核心 alpha / 控回撤机器 / 脆弱点），随实验刷新。
 - **§2 变体表**：每个被解释的变体一行——`类型 / 改动 / 来源 study-<qId> / Δobjective / Δsharpe / ΔmaxDD / 判定 / 结论`。**追加不覆盖**。
-  - `类型` = `understand` | `improve`（哪个生成器产出的）。
+  - `类型` = `raw` | `understand` | `improve`。`raw` 是 normalize 播种进来的族内成员（`来源: normalized-raw`），
+    不出自任何生成器，故 `判定` 记 `—`；实测语料里现存 6 行是这一类。
   - `判定` = `adopted` | `rejected` | `informative`。study 行通常是 `informative`；`rejected` 专指
     **测过但未采纳的 `improve` 变体**——它是一等结果，不是省略。
   - ⚠ **行密度是约束，行数不是**：ETF动量 §2 只有 10 行却占 186KB 页面里的 36KB（均 ~3.6KB/行）。
