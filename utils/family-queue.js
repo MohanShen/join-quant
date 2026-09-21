@@ -146,6 +146,10 @@ function build() {
     out.push({
       family,
       score: scores.has(family) ? scores.get(family) : null,
+      memberList: mem.map(m => ({
+        sourceFile: m.sourceFile, title: m.title, epoch: m.epoch,
+        objective: m.objective, gate: m.gate, valid: m.valid,
+      })).sort((a, b) => (b.objective ?? -99) - (a.objective ?? -99)),
       members: mem.length,
       validMembers: mem.filter(m => m.valid).length,
       bestObjective: mem.reduce((a, m) => (m.objective != null && (a == null || m.objective > a) ? m.objective : a), null),
@@ -175,6 +179,18 @@ if (require.main === module) {
     if (unscored.length) {
       console.log(`\n[fq] ${unscored.length} family(ies) with NO screen score: ${unscored.map(f => f.family).join(', ')}`);
     }
+    process.exit(0);
+  }
+
+  if (process.argv.includes('--members')) {
+    for (const f of q.due) {
+      console.log(`\n── ${f.family}  score ${f.score ?? '—'}  ${f.members} member(s)  [${f.reason}]`);
+      for (const m of f.memberList) {
+        console.log(`   e${m.epoch}${m.valid ? ' ' : '*'} ${String(m.objective == null ? 'DQ' : m.objective.toFixed(4)).padStart(8)}  ${m.gate.padEnd(4)}  ${require('path').basename(m.sourceFile).slice(0, 62)}`);
+      }
+      if (!f.members) console.log('   (no normalized members)');
+    }
+    console.log('\n  * = measured on a superseded epoch, not valid for the active bench');
     process.exit(0);
   }
 

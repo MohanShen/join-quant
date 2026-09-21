@@ -1,0 +1,832 @@
+{
+  "builtAt": "2026-09-21T15:36:19.837Z",
+  "orderedBy": "assistant preference (edge distinctness > actionability > cost)",
+  "queue": [
+    {
+      "rank": 1,
+      "tier": "A",
+      "family": "红利低频",
+      "score": 32,
+      "reason": "new-members",
+      "members": 5,
+      "validMembers": 1,
+      "bestObjective": 0.1348,
+      "why": "距离最近的一次干净实验：edge 股息率 仍是 proposed，而它的 test 可以用一次实验回答（拆开股息率腿与换手率倒数腿）。低频约 25 日换手一次 ⇒ 回测便宜。唯一一个能在今天剩下的 29 分钟里跑完整圈并settle一个 edge 的家族。",
+      "memberList": [
+        {
+          "file": "2026-07-05_低换手红利策略-93379f98.py",
+          "epoch": "6",
+          "objective": 0.1348,
+          "gate": "fail",
+          "valid": true
+        },
+        {
+          "file": "2026-06-11_慢就是快_低频交易也能博得高收益-2596a8ab.py",
+          "epoch": "2",
+          "objective": 0.0415,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-07-10_红利价值策略_年化稳赚37_的低频高股息策略-1a8a41cf.py",
+          "epoch": "2",
+          "objective": 0.0286,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-07-17_屡创新高_超稳的固收_策略_年化9_回撤小于2-fda1d813.py",
+          "epoch": "2",
+          "objective": 0.0107,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-05-27_量化课堂_高息股策略-aa9678cd.py",
+          "epoch": "2",
+          "objective": -0.2039,
+          "gate": "fail",
+          "valid": false
+        }
+      ]
+    },
+    {
+      "rank": 2,
+      "tier": "A",
+      "family": "大小盘轮动",
+      "score": 31,
+      "reason": "new-members",
+      "members": 2,
+      "validMembers": 1,
+      "bestObjective": 0.4564,
+      "why": "信息密度最高：只有 2 个成员（便宜），且已有一条 refuted 的 claim + 一条 proposed 的 规模因子。回答后者直接决定它是否并入那个已经饱和的 规模因子 簇——这一个答案会改变另外 4 个家族的排序。",
+      "memberList": [
+        {
+          "file": "2026-05-20_四择时高息低价小市值和白马大市值轮动-2f5bc859.py",
+          "epoch": "2",
+          "objective": 0.4564,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-07-02_左手芯片右手光-2026年5月必胜-d7987a31.py",
+          "epoch": "6",
+          "objective": -0.6076,
+          "gate": "fail",
+          "valid": true
+        }
+      ]
+    },
+    {
+      "rank": 3,
+      "tier": "A",
+      "family": "打板短线",
+      "score": 30,
+      "reason": "new-members",
+      "members": 9,
+      "validMembers": 5,
+      "bestObjective": 3.9626,
+      "why": "edge 涨停动量延续 已 measured，bestObjective 3.9626 是全库最高。⚠ 但 q-1 已证成交价不由策略决定（bar 级成交），所以 improve 侧被可实现性封顶；understand 侧仍然很富。",
+      "memberList": [
+        {
+          "file": "2026-06-05_低位3连阳首板接力-年化1602_-第1版-4cce4058.py",
+          "epoch": "6",
+          "objective": 3.9626,
+          "gate": "fail",
+          "valid": true
+        },
+        {
+          "file": "2026-06-06_低位3连阳首板接力-年收益1856_-第3版-51f7b3ab.py",
+          "epoch": "6",
+          "objective": 3.2999,
+          "gate": "fail",
+          "valid": true
+        },
+        {
+          "file": "2026-06-15_低位三阳_竞价擒龙-a7f60565.py",
+          "epoch": "6",
+          "objective": 2.7094,
+          "gate": "fail",
+          "valid": true
+        },
+        {
+          "file": "2026-07-15_一年16倍_从涨停板里淘金-夏普15_高盈亏比低回撤-5175b18b.py",
+          "epoch": "6",
+          "objective": -0.1472,
+          "gate": "fail",
+          "valid": true
+        },
+        {
+          "file": "2026-06-26_从涨停板里淘金_首板次日竞价买入策略-69ca427f.py",
+          "epoch": "6",
+          "objective": -0.1472,
+          "gate": "fail",
+          "valid": true
+        },
+        {
+          "file": "2026-06-14_日内单票做T策略-ecba365f.py",
+          "epoch": "2",
+          "objective": -0.1545,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-07-02_首板放量次日高开买入_--_24年至今3088_53-7ddf9b79.py",
+          "epoch": "2",
+          "objective": -0.2116,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-10_连阳倍量首板高开_1进2_收益823_回撤13-25898ae1.py",
+          "epoch": "2",
+          "objective": -0.2981,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-05-15_连板龙头策略-b518f737.py",
+          "epoch": "2",
+          "objective": -0.3546,
+          "gate": "fail",
+          "valid": false
+        }
+      ]
+    },
+    {
+      "rank": 4,
+      "tier": "B",
+      "family": "ETF溢价",
+      "score": 26,
+      "reason": "new-members",
+      "members": 1,
+      "validMembers": 0,
+      "bestObjective": 1.5642,
+      "why": "edge 流动性溢价 已 measured 且与主簇正交——价值高。⚠ 但 etfprem-000 实测 45 分钟 slow-skip、多小时级回测，单次实验就可能吃掉一整天预算。等预算重置后再做。",
+      "memberList": [
+        {
+          "file": "2026-06-01_etf基金溢价-改进版-高收益低回撤-速度已最优-15c36e0c.py",
+          "epoch": "2",
+          "objective": 1.5642,
+          "gate": "pass",
+          "valid": false
+        }
+      ]
+    },
+    {
+      "rank": 5,
+      "tier": "B",
+      "family": "PT多策略",
+      "score": 27,
+      "reason": "new-members",
+      "members": 2,
+      "validMembers": 1,
+      "bestObjective": 1.8592,
+      "why": "与 ETF溢价 同一个 edge（流动性溢价）。排在它后面：先让 ETF溢价 给出结论，再看这一族是否只是同一 edge 的极端形态（§1 已如此描述）。",
+      "memberList": [
+        {
+          "file": "2026-06-23_P-T多策略并行实战_用_quot_自有账本_quot_实现四大策略各安其位-fa0d3bd9.py",
+          "epoch": "4",
+          "objective": 1.8592,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-07-18_PT多策略分仓隔离插件V1_3-c70281d3.py",
+          "epoch": "6",
+          "objective": 1.8448,
+          "gate": "pass",
+          "valid": true
+        }
+      ]
+    },
+    {
+      "rank": 6,
+      "tier": "C",
+      "family": "网格",
+      "score": 31,
+      "reason": "new-members",
+      "members": 3,
+      "validMembers": 0,
+      "bestObjective": 0.1411,
+      "why": "none-found。一次 understand 实验确认「收益是 2023-H1 的一段板块行情、不是网格收割」即可收口。便宜、结论性强，但不会产出候选。",
+      "memberList": [
+        {
+          "file": "2026-05-12_网格交易策略-年化30_-网格大法好_熊市不用跑-598050b9.py",
+          "epoch": "4",
+          "objective": 0.1411,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-07-07_网格交易策略-年化30_-网格大法好_熊市不用跑-32021d45.py",
+          "epoch": "2",
+          "objective": 0.1411,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-07-01_多ETF网格交易策略-年化10_61-9498d93f.py",
+          "epoch": "2",
+          "objective": -0.3208,
+          "gate": "fail",
+          "valid": false
+        }
+      ]
+    },
+    {
+      "rank": 7,
+      "tier": "C",
+      "family": "三进兵",
+      "score": 24,
+      "reason": "new-members",
+      "members": 2,
+      "validMembers": 0,
+      "bestObjective": -0.09,
+      "why": "edge 趋势择时 已 measured 且信号确有信息（+0.56 sharpe），但家族失败在暴露量级（常年 11–26% 仓位、年化 +0.07%）。除非换标的篮子，否则上限很低。",
+      "memberList": [
+        {
+          "file": "2026-06-03_策略研发_三进兵策略与研究报告-7d1012a5.py",
+          "epoch": "2",
+          "objective": -0.09,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-06_策略研发_三进兵策略-e4eb8dca.py",
+          "epoch": "2",
+          "objective": -0.09,
+          "gate": "fail",
+          "valid": false
+        }
+      ]
+    },
+    {
+      "rank": 8,
+      "tier": "D",
+      "family": "小市值",
+      "score": 31,
+      "reason": "new-members",
+      "members": 25,
+      "validMembers": 6,
+      "bestObjective": 1.3738,
+      "why": "规模因子 簇的主族（25 成员、4 个 epoch-6 有效）。⚠ 整簇已饱和：epoch-6 component-scan 显示每个候选 uplift 都为负。做它之前，先让 大小盘轮动 回答「还有几个家族属于这个簇」。",
+      "memberList": [
+        {
+          "file": "2026-06-21_小市值低开优化-10年年化近100_回撤15-7a1c225f.py",
+          "epoch": "2",
+          "objective": 1.3738,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-06-04_一个年化180_逻辑奇怪但是却有效的小市值-8dbd994c.py",
+          "epoch": "2",
+          "objective": 1.281,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-06-21_中小板微盘优化稳定-实盘1年持续中-76593fb6.py",
+          "epoch": "6",
+          "objective": 0.981,
+          "gate": "pass",
+          "valid": true
+        },
+        {
+          "file": "2026-06-21_低开小市值_年化105_最大回撤20-5e874b5b.py",
+          "epoch": "2",
+          "objective": 0.9411,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-05-22_关于小市值的不同筛选条件的差异研究-5a70adc1.py",
+          "epoch": "2",
+          "objective": 0.9025,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-05-20_小市值微调_年化109_回撤15_胜率75-17c95d16.py",
+          "epoch": "6",
+          "objective": 0.8922,
+          "gate": "pass",
+          "valid": true
+        },
+        {
+          "file": "2026-05-17_小市值排除3个bug版_22年至今收益506_回撤11-aaba7575.py",
+          "epoch": "6",
+          "objective": 0.8866,
+          "gate": "pass",
+          "valid": true
+        },
+        {
+          "file": "2026-06-12_动态仓位超高收益低回撤小市值策略_五年20倍-2a4882de.py",
+          "epoch": "6",
+          "objective": 0.7103,
+          "gate": "pass",
+          "valid": true
+        },
+        {
+          "file": "2026-06-18_年化52_-回撤17_-大小盘多策略-9f6f8188.py",
+          "epoch": "2",
+          "objective": 0.4771,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-05-21_大小外择时小市值-1c80dd9a.py",
+          "epoch": "2",
+          "objective": 0.4674,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-05-21_行业热点资金流入小市值策略2_0-9cba5a29.py",
+          "epoch": "6",
+          "objective": 0.4094,
+          "gate": "pass",
+          "valid": true
+        },
+        {
+          "file": "2026-05-23_三马七星172-大池子-11年收益346倍回撤15_68-3c462ece.py",
+          "epoch": "2",
+          "objective": 0.3837,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-06-01_策略组合_优质小市值周换手与ETF轮动策略组合-3a5ab0c1.py",
+          "epoch": "2",
+          "objective": 0.3696,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-07-04_小盘风帆30_从零做一个小市值基础策略研究-e49b2079.py",
+          "epoch": "2",
+          "objective": 0.326,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-07-13_从克隆别人策略到自己造模型_一个老股民的量化探索手记-4bc24480.py",
+          "epoch": "2",
+          "objective": 0.2403,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-07-07_收益狂飙_年化收益100_11年1700倍_绝无未来函数-94d9f1ce.py",
+          "epoch": "2",
+          "objective": 0.1847,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-07-01_小市值多体系融合版本_不择时不风控也能60-1d995d0b.py",
+          "epoch": "2",
+          "objective": 0.1697,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-06-19_20260202万得微盘股指数868008-8bafb765.py",
+          "epoch": "2",
+          "objective": 0.0602,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-16_小市值_动量止损_没有1和4空仓_回撤15_64-7fc942bf.py",
+          "epoch": "2",
+          "objective": 0.0014,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-29_一个不太理想的机器学习模型-e0cbb752.py",
+          "epoch": "2",
+          "objective": 0,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-05-16_面向对象重构-28择时小市值V2_0_8_实盘_个人接口_东方财富证券-f3ca90a7.py",
+          "epoch": "2",
+          "objective": 0,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-17_最小市值轮动_不择时-cad4cc5d.py",
+          "epoch": "2",
+          "objective": -0.0913,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-30_继上一篇文章按分钟回测版-2026年153-36eeb73f.py",
+          "epoch": "6",
+          "objective": -0.1114,
+          "gate": "fail",
+          "valid": true
+        },
+        {
+          "file": "2026-06-20_中证1000交易策略_低风偏爱好者食用-8101e57b.py",
+          "epoch": "2",
+          "objective": -0.1552,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-05-14_年化42_的市值选股与阶梯调仓策略-052da9b4.py",
+          "epoch": "2",
+          "objective": -1.4008,
+          "gate": "fail",
+          "valid": false
+        }
+      ]
+    },
+    {
+      "rank": 9,
+      "tier": "D",
+      "family": "七星高照",
+      "score": 32,
+      "reason": "new-members",
+      "members": 9,
+      "validMembers": 1,
+      "bestObjective": 0.1871,
+      "why": "规模因子 簇。过闸能力来自小市值腿，同名腿单跑不过闸、招牌滤波器实测惰性 ⇒ 与 小市值 高度冗余。",
+      "memberList": [
+        {
+          "file": "2026-07-04_七星1_7_5_0_vs_五福5_0_5_1从时间论证有效性-0575c4a7.py",
+          "epoch": "2",
+          "objective": 0.1871,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-07-18_更新V2_52_5_年化_回撤17_--七星_红利_宽基-58ec97d9.py",
+          "epoch": "6",
+          "objective": 0.1465,
+          "gate": "fail",
+          "valid": true
+        },
+        {
+          "file": "2026-05-23_策略变身_七星高照ETF轮动策略V1_7成功变身-19ca0e69.py",
+          "epoch": "2",
+          "objective": 0.1412,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-16_七星高照5_1_五福闹春5_0_三马七星1_7实测收益对比-4c494c9c.py",
+          "epoch": "2",
+          "objective": 0.0889,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-22_60倍七星高照_高斯_拉普拉斯-965618d9.py",
+          "epoch": "2",
+          "objective": 0.0297,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-22_聚宽对接Q_T自动下单全通链路零成本SP验证60倍七星高照-0b192155.py",
+          "epoch": "2",
+          "objective": 0.0217,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-07-16_聚宽三马框架整合七星_五福策略-46158d11.py",
+          "epoch": "2",
+          "objective": 0.0204,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-09_七星高照V5_0_动量策略_五福V4_3和七星V5_0对比-897d12a4.py",
+          "epoch": "2",
+          "objective": -0.2195,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-07-11_五穷六绝七翻身_下半年翻倍就靠年9倍的七星1_72了-fb96f57a.py",
+          "epoch": "2",
+          "objective": -0.3033,
+          "gate": "fail",
+          "valid": false
+        }
+      ]
+    },
+    {
+      "rank": 10,
+      "tier": "D",
+      "family": "多因子ML",
+      "score": 34,
+      "reason": "new-members",
+      "members": 10,
+      "validMembers": 2,
+      "bestObjective": 0.4737,
+      "why": "⚠ 筛选分最高（34）却排第 10——这正是 edge 轴的用处。它的 base 既不是多因子也不是 ML，收益由微盘腿供给 ⇒ 与 小市值 冗余。按分数排会让它排第一，那是错的。",
+      "memberList": [
+        {
+          "file": "2026-06-28_高质量稳定上涨策略-d02cde29.py",
+          "epoch": "2",
+          "objective": 0.4737,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-06-09_回测十二年10个点超级低回撤加了自动_交易代码-ef10ee67.py",
+          "epoch": "6",
+          "objective": 0.2139,
+          "gate": "pass",
+          "valid": true
+        },
+        {
+          "file": "2026-06-19_10万本金_我用这个量化策略三年赚了68万-f1253042.py",
+          "epoch": "2",
+          "objective": 0.0449,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-22_巴菲特量化交易策略_V1_1-6ad90252.py",
+          "epoch": "2",
+          "objective": 0,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-13_以混沌之火_点亮投资之路_信息熵策略-775faa4e.py",
+          "epoch": "2",
+          "objective": -0.0011,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-05-14_量化课堂_机器学习多因子策略-f9ca1d2e.py",
+          "epoch": "2",
+          "objective": -0.0723,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-25_投资学作业-f8d8348c.py",
+          "epoch": "2",
+          "objective": -0.4353,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-05-11_量化课堂_多因子策略入门-5b915770.py",
+          "epoch": "2",
+          "objective": -0.7465,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-05-13_量化课堂_多因子策略入门-49efd264.py",
+          "epoch": "2",
+          "objective": -0.7465,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-27_创业板指长中短动量选股-91e4a8e4.py",
+          "epoch": "6",
+          "objective": -1.0222,
+          "gate": "fail",
+          "valid": true
+        }
+      ]
+    },
+    {
+      "rank": 11,
+      "tier": "D",
+      "family": "五福闹新春",
+      "score": 32,
+      "reason": "new-members",
+      "members": 16,
+      "validMembers": 0,
+      "bestObjective": 0.6855,
+      "why": "edge 动量 仍 proposed，且它是 ETF动量 的子血统（parent:）。16 个成员全是 epoch-2，重测成本高而边际信息低。",
+      "memberList": [
+        {
+          "file": "2026-07-08_五福闹新春_v5_2-已解密_别再被13_10狙击了_快跑-17b3b439.py",
+          "epoch": "2",
+          "objective": 0.6855,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-07-20_五福V5_2转pt跑通啦-4660b6d0.py",
+          "epoch": "2",
+          "objective": 0.6855,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-06-20_五福v5-差异化滤波方案-11年538倍-深度研报-4fa17009.py",
+          "epoch": "2",
+          "objective": 0.6053,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-07-13_自用备忘-v4c_五福v5_取消拉普拉斯-11年400-d0245db8.py",
+          "epoch": "2",
+          "objective": 0.5986,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-05-23_三马105-五福35-修复版-11年收益677倍回撤14-bf30eb36.py",
+          "epoch": "2",
+          "objective": 0.467,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-05-23_五福闹新春_v5_0-动态池的水太深你把不住-4d4705e1.py",
+          "epoch": "2",
+          "objective": 0.447,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-07-18_五福V5_0_调优记录思考-趋势狙击手_死于装备过载-872daacb.py",
+          "epoch": "2",
+          "objective": 0.4087,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-06-24_开源_五福v5_1Q_M_T版-三状态V3-分母2万-d93fc998.py",
+          "epoch": "2",
+          "objective": 0.2595,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-05-22_五福闹新春_v5_1-拟合ETF池最严厉的父亲-fd5d388d.py",
+          "epoch": "2",
+          "objective": 0.2506,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-05-23_五福51-三状态V2版-11年484倍回撤20_5-a722ab8a.py",
+          "epoch": "2",
+          "objective": 0.1891,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-07_拒绝过拟合_量化策略参数分层检验_五福v3_5L1层参数检验-b23a4a10.py",
+          "epoch": "2",
+          "objective": 0.172,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-28_五福闹新春V3_5_全网还原度最高的PT迁移版v1附回测截图-0d5f2d8b.py",
+          "epoch": "2",
+          "objective": 0.1553,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-07-13_五福51-三状态V5-分母2万-11年219倍回撤17-1c4d2393.py",
+          "epoch": "2",
+          "objective": 0.1175,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-07-11_五福闹新春_v4_3-完全体动态池的实现-917985c4.py",
+          "epoch": "2",
+          "objective": 0.1157,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-07-05_五福51_三状态V2_正常震荡三ETF分仓_走弱一ETF-fbe8656d.py",
+          "epoch": "2",
+          "objective": 0.0879,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-14_告别过拟合_凸显真逻辑_五福闹新春5_1简化版-cd86d926.py",
+          "epoch": "2",
+          "objective": 0.0564,
+          "gate": "fail",
+          "valid": false
+        }
+      ]
+    },
+    {
+      "rank": 12,
+      "tier": "E",
+      "family": "趋势技术",
+      "score": 31,
+      "reason": "new-members",
+      "members": 10,
+      "validMembers": 1,
+      "bestObjective": 0.2936,
+      "why": "研究问题本身 ill-posed：这不是一条血统而是一个 catch-all 桶（期货择时/商品动量/布林/均线/反转混装）。正确的下一步是拆族，那是一个 understand idea，不是一轮 run-family。",
+      "memberList": [
+        {
+          "file": "2026-06-29_开盘前输出当日交易计划的趋势跟踪策略-33b1b1e3.py",
+          "epoch": "2",
+          "objective": 0.2936,
+          "gate": "pass",
+          "valid": false
+        },
+        {
+          "file": "2026-05-15_海龟交易体系_股票版-11406b82.py",
+          "epoch": "2",
+          "objective": 0,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-17_周期共振进化版-e3914be0.py",
+          "epoch": "2",
+          "objective": -0.1463,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-05-20_双均线择时优化_考虑均线低于一定比例进行卖出判断-a67b6f26.py",
+          "epoch": "2",
+          "objective": -0.1995,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-05-18_也谈技术指标布林通道的策略-3c269466.py",
+          "epoch": "2",
+          "objective": -0.2065,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-07-10_趋势永存_持续16年跑赢大盘的真正靠谱策略-7c3906c3.py",
+          "epoch": "2",
+          "objective": -0.2123,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-05-17_年化15_84_的单均线策略-57abbac2.py",
+          "epoch": "2",
+          "objective": -0.2736,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-06-08_十日均线策略-9befa9b8.py",
+          "epoch": "2",
+          "objective": -0.3254,
+          "gate": "fail",
+          "valid": false
+        },
+        {
+          "file": "2026-07-12_凯利公式_均值回归_只做牛市下的反弹_效果看起来还是可以的-332d3a33.py",
+          "epoch": "6",
+          "objective": -0.4448,
+          "gate": "fail",
+          "valid": true
+        },
+        {
+          "file": "2026-07-03_上升趋势策略_少交易_试仓确认_盈利后加仓_趋势破坏退出-1a3789bf.py",
+          "epoch": "2",
+          "objective": -0.4654,
+          "gate": "fail",
+          "valid": false
+        }
+      ]
+    },
+    {
+      "rank": 13,
+      "tier": "E",
+      "family": "套利",
+      "score": 27,
+      "reason": "new-members",
+      "members": 0,
+      "validMembers": 0,
+      "bestObjective": null,
+      "why": "BLOCKED，不是排序问题：0 个归一化成员，且全部交易由一份不在本仓库的离线生成载荷决定。在拿到那个生成器之前没有可研究的对象。",
+      "memberList": []
+    }
+  ]
+}

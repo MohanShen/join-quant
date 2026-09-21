@@ -423,17 +423,50 @@ async function readQuota(page) {
  */
 const ALLOW_CONCURRENT = process.env.JQ_ALLOW_CONCURRENT === '1';
 
+/**
+ * How old a `running[]` entry may be before it is treated as a PHANTOM rather than a live run.
+ *
+ * ⚠ Without this the gate deadlocks. JQ leaves entries in `running[]` that will never complete and
+ * cannot be cancelled — `/algorithm/index/cancel` answers 「在此状态不能取消」 for every id, and the
+ * id is re-minted on each request so there is nothing stable to target. One such entry reached
+ * **701 minutes** while the account's billed `used` stayed frozen at 151 for eleven hours: not
+ * running, not billing, not removable, and blocking every subsequent backtest.
+ *
+ * The bound is safe because THIS pipeline bounds its own runs: every call passes `--max-poll-min`
+ * (30 default, 45 on VIP) and cancels at that cap. So no run we started can legitimately still be
+ * in flight two hours later — an entry that old was not started by us in a state we are waiting on.
+ * A human running something in the JQ web UI for longer is the case `JQ_ALLOW_CONCURRENT` exists
+ * for, and this still warns loudly.
+ */
+const CONCURRENT_STALE_MIN = (() => {
+  const n = parseInt(process.env.JQ_CONCURRENT_STALE_MIN || '', 10);
+  return Number.isFinite(n) && n > 0 ? n : 120;
+})();
+
 async function concurrencyGate(page) {
-  const running = await page.evaluate(async () => {
+  const rows = await page.evaluate(async () => {
     try {
       const j = await (await fetch('/algorithm/index/statistics', { credentials: 'include' })).json();
-      return ((j && j.data && j.data.running) || []).length;
+      return ((j && j.data && j.data.running) || []).map(r => ({ usedSec: r.usedSec, time: r.time }));
     } catch { return null; }
   });
-  if (running == null) {
+  if (rows == null) {
     console.log('[post] ⚠ could not read running[] — proceeding, completion signal unverified');
     return true;
   }
+
+  // Split live from phantom on the entry's OWN reported age.
+  const live = [], stale = [];
+  for (const r of rows) {
+    (parseCnDuration(r.usedSec) > CONCURRENT_STALE_MIN ? stale : live).push(r);
+  }
+  for (const r of stale) {
+    console.log(`[post] ⚠ ignoring a stale running[] entry: ${r.usedSec} old (> ${CONCURRENT_STALE_MIN}min), ` +
+                'started ' + r.time + '. JQ cannot cancel these and they never complete; ' +
+                'this pipeline caps its own runs well below that, so it is not one of ours.');
+  }
+  const running = live.length;
+
   if (running > 0 && !ALLOW_CONCURRENT) {
     console.log(`CONCURRENT-STOP\trunning=${running}`);
     console.log(`[post] ✋ ${running} backtest(s) already running on this account. Refusing to start:`);
