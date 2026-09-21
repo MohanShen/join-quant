@@ -377,6 +377,54 @@ async function readQuota(page) {
   } catch { console.log('QUOTA\tunknown'); }
 }
 
+/**
+ * Pre-start CONCURRENCY gate.
+ *
+ * `pollUntilComplete` decides a run is done by watching the account's GLOBAL running count go
+ * 0 → ≥1 → 0. That is only a valid signal while exactly one backtest exists on the account.
+ * The file already said as much ("If a concurrent backtest is ever run outside this batch,
+ * this over-waits, never under-waits") — but over-waiting is not the failure that occurred.
+ *
+ * Measured 2026-09-20: two enhance engineers ran against one CDP Chrome and returned
+ * BYTE-IDENTICAL metrics for different strategies. The window check at reportResult cannot see
+ * it, because both runs requested the same `--window train`; the scrape reads whichever result
+ * panel the shared editor context is showing. Nothing failed — the numbers were simply another
+ * run's, and two experiments entered the record as the same measurement.
+ *
+ * So this refuses to start rather than trying to disentangle it afterwards. A backtest costs
+ * real minutes and a wrong number is worse than a missing one: a refusal is visible, a
+ * mis-attributed result is not.
+ *
+ * `JQ_ALLOW_CONCURRENT=1` overrides, for the one legitimate case — a human deliberately
+ * running something in the JQ web UI who accepts that the completion signal is degraded.
+ */
+const ALLOW_CONCURRENT = process.env.JQ_ALLOW_CONCURRENT === '1';
+
+async function concurrencyGate(page) {
+  const running = await page.evaluate(async () => {
+    try {
+      const j = await (await fetch('/algorithm/index/statistics', { credentials: 'include' })).json();
+      return ((j && j.data && j.data.running) || []).length;
+    } catch { return null; }
+  });
+  if (running == null) {
+    console.log('[post] ⚠ could not read running[] — proceeding, completion signal unverified');
+    return true;
+  }
+  if (running > 0 && !ALLOW_CONCURRENT) {
+    console.log(`CONCURRENT-STOP\trunning=${running}`);
+    console.log(`[post] ✋ ${running} backtest(s) already running on this account. Refusing to start:`);
+    console.log('[post]    completion is detected from the GLOBAL running count, so a second run');
+    console.log('[post]    makes that signal ambiguous and the scraped panel may be the other run\'s.');
+    console.log('[post]    Wait for it to finish, or set JQ_ALLOW_CONCURRENT=1 to accept the risk.');
+    return false;
+  }
+  if (running > 0) {
+    console.log(`[post] ⚠ JQ_ALLOW_CONCURRENT=1 with ${running} run(s) in flight — metrics may be MIS-ATTRIBUTED.`);
+  }
+  return true;
+}
+
 // Pre-start usage gate: if today's used-minutes already meets/exceeds USAGE_LIMIT, do NOT
 // start a new backtest. Emits USAGE-STOP (the batch runner reads it and halts). Returns
 // true if ok to proceed.
@@ -855,6 +903,7 @@ async function main() {
 
     // Pre-start usage gate — don't create/run a backtest if we're over the daily limit.
     if (!(await usageGate(hubPage))) { if (browser) { try { await browser.close(); } catch {} } return { status: 'usage-stop' }; }
+    if (!(await concurrencyGate(hubPage))) { if (browser) { try { await browser.close(); } catch {} } return { status: 'concurrent-stop' }; }
 
     // ── Full workflow ────────────────────────────────────────────────
     // REUSE the existing logged-in tab (do NOT ctx.newPage()): opening a new tab
@@ -927,6 +976,7 @@ async function main() {
     console.log('[auth] ✅ Persistent profile ready');
 
     if (!(await usageGate(page))) { if (browser) { try { await browser.close(); } catch {} } return { status: 'usage-stop' }; }
+    if (!(await concurrencyGate(page))) { if (browser) { try { await browser.close(); } catch {} } return { status: 'concurrent-stop' }; }
 
     const editorPage2 = await ctx.newPage();
     const algorithmId = await createNewStrategy(editorPage2, baseCapital, window);

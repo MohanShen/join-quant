@@ -397,3 +397,56 @@ test('stored series on disk', async t => {
       for (const k of keys) assert.ok(!/^[a-f0-9]{32}$/.test(k), `${k} looks like a raw id`);
     });
 });
+
+/**
+ * `members()` must never mix benches.
+ *
+ * It used to read every `normalized` ledger row regardless of epoch. Two defects rode on that:
+ * the ranking was built on superseded measurements (86 of 88 emitted members were epoch-2 rows,
+ * so its 小盘-H-high leader read 0.5267 where epoch 6 measures 0.2944), and because the ledger
+ * is append-only, a re-measured strategy appeared once PER EPOCH — the stale copy could take
+ * the leader slot from its own newer row. Uplift is a difference between two members, so this
+ * is not staleness; it is arithmetic across incommensurable benches, and the sign can flip.
+ */
+test('component members are epoch-filtered and de-duplicated', async t => {
+  const harness = require('../utils/harness-config');
+  const src = fs.readFileSync(path.join(__dirname, '../utils/component-scan.js'), 'utf8');
+
+  await t.test('the same rule the bench uses decides what counts as measured', () => {
+    assert.match(src, /harness\.measurementValid\(epoch\)/,
+      'members() must gate on measurementValid, not on its own notion of recency');
+  });
+
+  await t.test('no emitted member belongs to a superseded bench', () => {
+    for (const m of scan.members()) {
+      assert.ok(harness.measurementValid(m.epoch),
+        `${m.sourceFile} was emitted at epoch ${m.epoch}, which is not valid under the active epoch`);
+    }
+  });
+
+  await t.test('one row per strategy, newest epoch winning', () => {
+    const seen = new Map();
+    for (const m of scan.members()) {
+      assert.ok(!seen.has(m.sourceFile),
+        `${m.sourceFile} emitted twice (epochs ${seen.get(m.sourceFile)} and ${m.epoch})`);
+      seen.set(m.sourceFile, m.epoch);
+    }
+  });
+
+  await t.test('what was dropped is reported, not swallowed', () => {
+    // An empty ranking and a ranking built on a dead bench look identical from outside; the
+    // counts are what let a caller tell them apart.
+    const ms = scan.members();
+    assert.ok(ms.skipped && typeof ms.skipped.staleEpoch === 'number',
+      'members() must report how many rows it dropped as superseded');
+    assert.ok(typeof ms.skipped.noSeries === 'number',
+      'members() must report how many valid rows have no stored curve');
+  });
+
+  await t.test('the mixed-bench view still exists, but only behind an explicit flag', () => {
+    const all = scan.members({ allEpochs: true });
+    assert.ok(all.length >= scan.members().length,
+      'allEpochs must be a superset — it is the inspection escape hatch');
+    assert.match(src, /--all-epochs/, 'the CLI must label the mixed view, not hide it');
+  });
+});

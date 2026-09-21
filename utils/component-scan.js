@@ -206,28 +206,57 @@ function familyToType() {
   return out;
 }
 
-/** Normalized ledger rows that have a stored series, decorated with family + type. */
-function members() {
+/**
+ * Normalized ledger rows that have a stored series, decorated with family + type.
+ *
+ * ⚠⚠ EPOCH-FILTERED, and that is not a detail. This used to read every `normalized` row
+ * regardless of epoch, which put two separate defects into every ranking it printed:
+ *
+ *   - **Mixed benches.** 86 of the 88 members it emitted were epoch-2 rows, measured before
+ *     the execution pins and before stock costs were governed at all. Its `小盘-H-high` leader
+ *     showed 0.5267 where epoch 6 measures the same strategy at 0.2944. Uplift is a DIFFERENCE
+ *     between two members, so comparing across benches is not "slightly stale" — it is
+ *     arithmetic on incommensurable numbers, and the sign can flip.
+ *   - **Duplicates.** The ledger is append-only, so a re-measured strategy has a row per epoch
+ *     (21 files currently carry both an epoch-2 and an epoch-6 row). Both were emitted, so one
+ *     strategy could appear twice in its own type and the stale copy could win the leader slot.
+ *
+ * `harness.measurementValid()` is the same rule the normalizer's done-check uses, so this tool
+ * and the bench agree on what counts as a current measurement. Newest valid epoch wins.
+ *
+ * `{ allEpochs: true }` restores the old behaviour for INSPECTION only (the CLI's
+ * `--all-epochs`, which prints the warning). Never use it to pick legs.
+ */
+function members({ allEpochs = false } = {}) {
   const idx = pageIndex(), f2t = familyToType();
-  const out = [];
-  if (!fs.existsSync(LEDGER)) return out;
+  const best = new Map();       // sourceFile -> row, newest valid epoch wins
+  const skipped = { staleEpoch: 0, noSeries: 0, superseded: 0 };
+  if (!fs.existsSync(LEDGER)) return Object.assign([], { skipped });
+
   for (const line of fs.readFileSync(LEDGER, 'utf8').split('\n').slice(1)) {
     if (!line.trim()) continue;
     const c = line.split('\t');
     if (c[3] !== 'normalized') continue;
     const epoch = c[13] || '2';
+    if (!allEpochs && !harness.measurementValid(epoch)) { skipped.staleEpoch++; continue; }
     const key = series.seriesKey(c[0], 'train', epoch);
     const rec = series.load(key);
-    if (!rec) continue;
+    if (!rec) { skipped.noSeries++; continue; }
     const family = (idx[c[0]] || {}).family || '';
-    out.push({
+    const row = {
       sourceFile: c[0], title: c[2], family, type: f2t[family] || '(untyped)',
       days: parseInt(c[6], 10) || null,
       annual: parseFloat(c[8]), sharpe: parseFloat(c[9]), maxdd: parseFloat(c[10]),
       objective: c[11] === 'DQ' ? null : parseFloat(c[11]), gate: c[12], epoch,
       seriesKey: key, rec,
-    });
+    };
+    const prev = best.get(c[0]);
+    if (prev) { skipped.superseded++; if (Number(epoch) < Number(prev.epoch)) continue; }
+    best.set(c[0], row);
   }
+  const out = [...best.values()];
+  out.skipped = skipped;
+  out.activeEpoch = harness.config().epoch;
   return out;
 }
 
@@ -289,11 +318,32 @@ function rankType(list) {
 if (require.main === module) {
   const argv = process.argv.slice(2);
   const arg = n => { const i = argv.indexOf(n); return i >= 0 ? argv[i + 1] : null; };
-  const ms = members();
+  const allEpochs = argv.includes('--all-epochs');
+  const ms = members({ allEpochs });
+  const sk = ms.skipped || {};
+
+  if (allEpochs) {
+    console.log('[component] ⚠⚠ --all-epochs: rankings below MIX BENCHES and may be duplicated per');
+    console.log('[component]    strategy. For inspection only — never pick integration legs from this.\n');
+  }
+
+  // The shortfall has to be LOUD. A silently-empty ranking and a ranking built on a superseded
+  // bench look identical from the outside, and the second one is what this tool used to print.
+  if (sk.staleEpoch || sk.noSeries) {
+    console.log(`[component] active epoch ${ms.activeEpoch}: ` +
+      `${sk.staleEpoch || 0} row(s) dropped as superseded measurements, ` +
+      `${sk.noSeries || 0} valid row(s) have no stored curve.`);
+  }
 
   if (!ms.length) {
-    console.log('[component] no strategies have a stored series yet.');
-    console.log('[component] run: node utils/series-backfill.js --scan  then  node utils/series-backfill.js');
+    console.log('[component] NOTHING IS RANKABLE under the active epoch.');
+    console.log('[component] This is a real state, not an error: every stored curve belongs to a');
+    console.log('[component] bench that has been superseded, so no uplift can be computed.');
+    console.log('[component] Recover curves at ZERO backtest cost (the account retains its algorithms):');
+    console.log('[component]   node utils/series-backfill.js --scan');
+    console.log('[component]   node utils/series-backfill.js');
+    console.log('[component] Then re-measure what is still missing by screening priority.');
+    console.log('[component] (node utils/component-scan.js --all-epochs shows the old mixed-bench view.)');
     process.exit(0);
   }
 

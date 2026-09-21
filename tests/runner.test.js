@@ -139,3 +139,53 @@ describe('BacktestRunner._parseResults', () => {
     assert.strictEqual(parsed.winRatio, 0.6);
   });
 });
+/**
+ * Concurrency gate.
+ *
+ * `pollUntilComplete` decides a run is finished by watching the account's GLOBAL running count
+ * go 0 -> >=1 -> 0. That is a valid signal only while exactly one backtest exists on the
+ * account. Measured 2026-09-20: two enhance engineers ran against one CDP Chrome and returned
+ * BYTE-IDENTICAL metrics for different strategies. The window check cannot catch it — both
+ * requested `--window train` — so two experiments entered the record as one measurement.
+ *
+ * A refusal is visible; a mis-attributed result is not. Hence: refuse to start.
+ */
+const test2 = require('node:test');
+const assert2 = require('node:assert');
+const fs2 = require('fs');
+const path2 = require('path');
+
+test2('backtest runner refuses to start alongside another run', async t => {
+  const src = fs2.readFileSync(path2.join(__dirname, '../utils/strategy-post-backtest.js'), 'utf8');
+
+  await t.test('the gate exists and reads the account-wide running list', () => {
+    assert2.match(src, /async function concurrencyGate\(page\)/);
+    assert2.match(src, /concurrencyGate[\s\S]{0,700}data\.running/,
+      'the gate must read running[] from the statistics API');
+  });
+
+  await t.test('it guards BOTH entry paths, not just the one that broke', () => {
+    const calls = src.match(/await concurrencyGate\(/g) || [];
+    assert2.strictEqual(calls.length, 2,
+      `expected the gate on both backtest entry paths, found ${calls.length}`);
+  });
+
+  await t.test('it refuses rather than warning, and says so machine-readably', () => {
+    assert2.match(src, /CONCURRENT-STOP\\trunning=/,
+      'a batch runner needs a parseable marker, like USAGE-STOP');
+    assert2.match(src, /status: 'concurrent-stop'/,
+      'the refusal must reach the caller as a distinct status, not as a generic failure');
+  });
+
+  await t.test('the override is explicit, opt-in, and warns when used', () => {
+    assert2.match(src, /JQ_ALLOW_CONCURRENT === '1'/);
+    assert2.match(src, /MIS-ATTRIBUTED/,
+      'running with the override on must say what it is risking');
+  });
+
+  await t.test('an unreadable running[] does not silently block every run', () => {
+    // Failing closed here would make a transient API hiccup look like a permanent refusal,
+    // and this gate sits in front of the daily budget. Proceed, but say the signal is unverified.
+    assert2.match(src, /could not read running\[\] — proceeding/);
+  });
+});
