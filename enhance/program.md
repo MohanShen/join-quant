@@ -60,12 +60,20 @@
 
 与人类确认后：
 
-1. **选目标家族** `<family>`（用户指定，如 `五福闹新春`）+ 定 run tag、建分支 `enhance/<tag>`（从 master，必须不存在=全新纪元）。
+1. **选目标家族** `<family>`（用户指定，如 `五福闹新春`）+ 定 run tag。
+   ⚠ **分支**：本条原文要求新建 `enhance/<tag>` 分支。现已改为**任意分支**（`auto*-loop.sh` 的分支门只要求
+   `data/auto<stage>-session.txt` 的 pin 分支 == 当前 HEAD）。日常 cron 的 pin 在 `main` 上，另开分支会让
+   每日流水线找不到会话而空转——**除非人类明确要求，否则留在当前分支**。
 2. **确认评测台 + 登录 + 预算**：
-   - `harness.md` epoch 2 协议已冻结（TRAIN 选择 / VAL 定稿 / OOS 禁用）；只读。
+   - `harness.md` 协议已冻结（TRAIN 选择 / VAL 定稿 / OOS 禁用）；只读。
+     ⚠ **纪元号不要写死在文档里**——查 `node utils/harness-config.js`（本条原文写「epoch 2」，写下时是对的，
+     此后已被取代四次）。结果永远归属于产生它的纪元；跨纪元的数字不可比。
    - CDP Chrome 在跑；**登录/预算用 statistics API 查**：`curl -s localhost:9225/json/version` 通 + `node utils/jq-budget.js` 返回 `used/free`。
-   - **预算**：JQ 每日免费 60 分钟、超出烧积分。定 `JQ_USAGE_LIMIT`（默认 55）。
-3. **初始化**：`enhance/results.tsv` 写表头（§记账）；`enhance/ideas-queue.json`=`[]`（可选，供 Agent 2 排队）。续跑不靠这些文件而靠**会话恢复**（见「断点续跑」）。
+   - **预算**：`node utils/jq-budget.js` 报当日 `used/free`——**以它为准，不要用文档里的数字**
+     （本条原文写「每日免费 60 分钟」，账号开了 VIP 后是 180）。`--usage-limit` 由调用方传入。
+3. **初始化**：`enhance/ideas-queue.json` 置为本轮想法队列。
+   ⚠ `enhance/results.tsv` **不再重写表头**：它已是 tracked 的跨家族账本，清空会抹掉前几轮的定稿记录
+   （本条原文写于该文件还是 gitignore 的临时件时）。只追加。续跑不靠这些文件而靠**会话恢复**（见「断点续跑」）。
 4. **定 baseline**：目标家族页的 `bestVariant`（族内改进时）或拟组合的各家族最优（组合新族时）做 `<tag>-000`
    （源码 + `utils/strategy-normalize.js` 的冻结成本 `OVERRIDE`），Agent 3 在 **TRAIN** 上跑一次确立基准线——**增强要超过它**。
 5. **确认即开跑**。
@@ -114,9 +122,13 @@
 ## 红线与约束（`enhance-schema.md` §10 / `harness.md`）
 
 - **严格窗口**：迭代只 TRAIN、定稿才 VAL、**2025+ 永不碰**（代码硬阻断，agent 绝不设 `JQ_ALLOW_OOS`）。
-- **评测台冻结**：objective、门槛 2.5、窗口区间、费率滑点、执行器窗口参数——全部只读，改动即新纪元。
+- **评测台冻结**：objective、门槛、窗口区间、费率滑点、执行器窗口参数——全部只读，改动即新纪元。
+  ⚠ **门槛查 `harness.stageGate(stage, sharpe)`，不要写死**（本条原文写「2.5」；epoch 5 起 normalize/study/
+  enhance/validate 是 1.5，type 整合是 2.0）。
 - **封闭环境**：Agent 3 只能通过 `node utils/strategy-post-backtest.js ... --window <train|val>` 回测，不得改 harness、不得引入受控词表外的新因子/概念。
-- **预算例外**（现实约束）：JQ 每日免费 60 分钟、超出烧积分、并发上限 2、CDP 会话可能失效。当 `used ≥ JQ_USAGE_LIMIT`、积分不足、或会话失效时——**停在干净 git 状态**，简报当前状态 + 队列剩余，告知人类「等次日重置/续额度/续 session」。这是**暂停按天分批**，不是「停止」——恢复后从队列与当前定稿中最优继续。
+- **预算例外**（现实约束）：每日额度见 `jq-budget.js`、超出烧积分、并发上限 2、CDP 会话可能失效。
+  ⚠ **并发回测会让结果张冠李戴**：完成信号读的是账号级 running 计数，两个 engineer 同时跑曾对不同策略
+  返回逐字节相同的指标。`strategy-post-backtest.js` 现在会直接拒跑（`CONCURRENT-STOP`）——**一次只跑一个**。当 `used ≥ JQ_USAGE_LIMIT`、积分不足、或会话失效时——**停在干净 git 状态**，简报当前状态 + 队列剩余，告知人类「等次日重置/续额度/续 session」。这是**暂停按天分批**，不是「停止」——恢复后从队列与当前定稿中最优继续。
 - **停止条件**：**只有用户明确说「停」**，团队才结束。否则持续跑：没想法了就想得更深（重读概念页「待研究」/「归一化横评」强弱对照、跨概念拼装）。
 - **真实性红线**：零滑点高估必标 ⚠；raw 不可变；受控命名；概念页只追加不覆盖、冲突只标记。
 

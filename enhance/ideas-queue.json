@@ -1,51 +1,48 @@
 [
   {
     "id": "idea-1",
-    "title": "满仓小市值腿 + 1/4月日历规则（[1,0,0,0] + avoid_trade_april=True），在 epoch 5 台上重测",
-    "hypothesis": "把家族 base 文件 22152780 的第 138 行 g.portfolio_value_proportion 由 [0.5,0,0.5,0] 改为 [1,0,0,0]、第 169 行 g.avoid_trade_april 由 False 改为 True，在 epoch 5 冻结台的 TRAIN(2022-01-01..2023-12-31) 上取得 objective 高于本纪元基线 etfmom-000 的 0.2944，且 gate(sharpe>=1.5) PASS。预注册带 0.50-0.84（⚠ 见 reasoning：该带由 epoch-2 数字外推，只作事前记录，不得作为事后比较基准）。",
-    "reasoning": "VALID，但有四条必须随行的限定。(1) 证据链在本家族自己的台账上：study q-2（小市值腿满仓自己就过闸）、q-8（叠加日历规则 annual +7.56pp / maxDD -1.89pp、删掉的 10 笔全是亏损单、盈利单 90→90 不动、turnover 持平 ⇒ 成分变化而非降杠杆）、q-1（同名 ETF 腿满仓 DQ）。(2) ⚠ 这不是一个新变体：该配置与 §2 已有的 study-q-8 行**配置相同**。它之所以可入队，只因为 q-8 是 epoch 2 而 harness.measurementValid(2)=false ⇒ 当前台上不存在该配置的有效测量。故它的**新颖度为零**，是一次 carry-over 重测，不是发现；记账时必须写成「study-q-8 配置在 epoch 5 上的重测」并引用 study-q-8，**不得**在 §2 新开一行当作 enhance 发现。(3) ⚠ 口径：etfmom-001 改的是家族 base 文件 22152780（3234 行），而 etfmom-000 是另一个成员 23584678（1727 行，代码里自称【五福闹新春】v5.0.1）⇒ 两者之差是**跨成员比较**，不是 ablation Δ；baseExpId 记 null。家族级目标（抬高本家族在当前台上的最优 objective）仍然成立。(4) ⚠ 现实性分级不同：本臂是满仓微盘个股 × 零滑点台，家族页已点名这是全族最被夸大的一档（且作者自己第 405 行设的是 FixedSlippage(0.002)，冻结台把它压成 0 ⇒ 台子比作者本人的假设更宽松）；基线 etfmom-000 是纯 ETF 书。任何「本族 objective 由 0.2944 提到 0.6x」的表述都必须同时标注两臂现实性等级不同。(5) 标签矛盾：本臂实质是一本 小市值 书挂着 ETF动量 的名字 —— 家族页已记录该矛盾并裁定 **挂旗不裁**（人工裁定，精度 c374bf5）⇒ 本轮只挂旗，不重新归档、不改 family。",
+    "title": "把成交额下界从 base 的 2e6 收紧到 1e7（study q-1 的流动性甜点），在 epoch 6 台上作用于 bestVariant edd94ebc",
+    "hypothesis": "etfprem-000（=edd94ebc + 冻结 OVERRIDE）的入场滤波器中，把「昨日成交额 > 80 万」这一支替换为 study q-1 测出的 1e7 share-volume 下界，在 epoch 6 冻结台 TRAIN(2022-01-01..2023-12-31) 上取得 objective 高于 etfprem-000，且 gate(harness.stageGate(\"enhance\", sharpe)) PASS。",
+    "reasoning": "VALID，且这是本家族少见的「realizability 修复即改进」。证据在自家台账上：study q-1 在 base 15c36e0c 上把成交量下界从 2e6 抬到 1e7，obj **+0.47**、maxDD **21.46→10.49（腰斩）**、sharpe 持平；抬到 1e8 才 DQ。结论原文是「base 的 2e6 floor 过松、纳入超薄高回撤尾部」。\n⚠ 三条限定。(1) **口径不同**：q-1 测的是 base 的 share-volume 门（股数），edd94ebc 用的是成交额>80万（金额），两者不是同一个量，所以 q-1 的 +0.47 **不能**当作本次的预期值——它只说明「这一族的下界定得太松」这个方向成立。(2) **不是新配置的重测**：q-1 作用在 base 上，本次作用在 bestVariant 上，edd94ebc 还叠了 MA5 与价格波动两个滤波器，交互未测。(3) 若 obj 下降而 maxDD 同时下降，**不算失败**——记账要分开写收益侧与风险侧，因为本家族的 headline 正是靠不可成交的薄尾撑起来的。",
     "sourceRefs": [
-      "[[wiki/families/ETF动量]] §1 第 6/8 条, §2 study-q-2 / q-3 / q-8 行, §4",
-      "[[study-q-8]]",
-      "[[study-q-2]]",
+      "[[wiki/families/ETF溢价]] §1 realism / §4 第 3 条 / §6 q-1",
       "[[study-q-1]]",
-      "[[harness/harness.md]] §2 epoch 4 钉死项 / §4"
+      "[[harness/harness.md]] §2"
     ],
-    "baseExpId": null,
-    "rank": 90,
-    "status": "done",
-    "result": "【epoch 6 重测 + 定稿】epoch 5 的结果已因 measurementValid(5)=false 全部作废。epoch 6 重测: etfmom-004 (=idea-1 配置) obj 0.6459 sharpe 3.10; 叠加 enable_dynamic_position 得 etfmom-005 obj 0.6516 sharpe 3.20 = 本家族 epoch 6 最优。基线 etfmom-003 (bestVariant, 跨成员) 0.2944。**etfmom-005 已定稿并跑 VAL: obj 1.3973 sharpe 5.27 PASS**，已由 Agent 4 记账 (§2 变体行 / results.tsv / validated_strategies/ / wiki/experiments/)。⚠ 新颖度仍为零 (= study q-10 配置)；⚠ 水平为满仓微盘×零滑点，不可读作可实现；⚠ VAL 非 TRAIN 的干净孪生 (apply_nine_point_audit 以 >2025-01-01 为闸，VAL 后半年是 TRAIN 从未覆盖的代码路径)。"
+    "baseExpId": "etfprem-000",
+    "rank": 95,
+    "status": "queued",
+    "result": null
   },
   {
     "id": "idea-2",
-    "title": "止损冷却期长度 g.no_buy_after_day 2 → 5（叠在 idea-1 臂上）",
-    "hypothesis": "在 idea-1 的臂上把第 230 行 g.no_buy_after_day 由 2 改为 5，延长止损后再入场冷却，objective(TRAIN) 高于 idea-1 臂且 gate PASS。",
-    "reasoning": "VALID（族内改进，受控词表内：不引入新因子，只是对 base 代码里已存在的 风控/止损冷却 部件做一次参数变动；第 2468 行 `passed_days < g.no_buy_after_day` 是唯一消费点，第 2455 行 guard 已由 q-11 核过）。非族内重复：§2 现有的 q-11 行是把该部件**整体关掉**（check_after_no_buy=False），没有任何一行动过冷却**长度**。证据强度中等偏上：q-11 反向测得「开着」值 +2.68pp annual / +0.31 sharpe 而 maxDD 逐位不动，机理是「阻断 → 回填 → 替代者自带一个回合」，被挡掉的 7 个回合全是亏损单、盈利单不动；作者自己的注释写「3个交易日」而字面量是 2 ⇒ 该值从未被考虑过。⚠ 三条必须随行的限定：(a) q-11 是 ON/OFF 二值测量，它**界定了该部件的总价值，没有测过参数方向的符号** —— 2→5 的外推是机理假设不是证据，且 q-11 自己的方向预测（笔数↑）已经被实测证伪过一次，故不得预设单调；(b) 预注册的证伪项里「回撤窗保持 2022-06-28→07-06」是 **epoch-2 臂上的窗口**，必须改为锚在 etfmom-001 在 epoch 5 上实测到的窗口，否则是拿旧台数字当判据；(c) 依赖：baseExpId = etfmom-001。若 etfmom-001 未过闸或未超过 0.2944，本想法必须先改挂到当时的最优臂上再跑，不得盲目叠在一个没站住的底座上。",
+    "title": "edd94ebc 三个入场滤波器的逐个消融（MA5 站上 / 成交额>80万 / 价格波动<0.1）",
+    "hypothesis": "从 etfprem-000 出发，各做一版只删掉其中一个滤波器的变体，在 epoch 6 TRAIN 上测出每个滤波器的边际 Δobjective/ΔmaxDD，定位 base→edd94ebc 约 2.0 的 obj gap 中 study q-2 未解释的那 ~83% 落在哪一支上。",
+    "reasoning": "VALID。这是家族页 §4 自己标记的「**顶级开放归因**」：q-2 已证持仓集中度（5→2）只解释 ~17% 的 gap，其余来自这三个滤波器，而没人知道是哪一个。\n⚠ 这条的价值一半在**证伪**：家族页明确怀疑残差只是「把 universe 推向更薄尾部的零滑点假象」（edd94ebc 短窗 sharpe 51 已使其可信度存疑）。所以每一版都要连同**持仓标的的成交额分布**一起报——若某滤波器的贡献伴随持仓中位成交额下降，那它买到的是 illiquidity 溢价而不是 edge，即便 obj 上升也不得定稿。\n⚠ 成本：三次 TRAIN。排在 idea-1 之后，因为 idea-1 一次就能同时动收益与风险，而这条是纯归因、不保证产出可定稿的变体。",
     "sourceRefs": [
-      "[[wiki/families/ETF动量]] §2 study-q-11 行, §1 q-analytic 条",
-      "[[study-q-11]]",
-      "[[docs/wiki-schema.md]] §2.1 风控因子"
+      "[[wiki/families/ETF溢价]] §4 第 2 条（顶级开放归因）",
+      "[[study-q-2]]",
+      "[[wiki/strategies/edd94ebc_ETF溢价回撤]]"
     ],
-    "baseExpId": "etfmom-001",
-    "rank": 60,
-    "status": "dropped",
-    "result": "【epoch 6 复测，结论不变且更强】etfmom-006 (no_buy_after_day 2→3) obj 0.5334 vs 底座 etfmom-004 的 0.6459 —— 回撤确实降 (13.05→10.64) 但年化塌了 (77.64→63.98)。连同 epoch-5 上 2→5 的更大退步，冷却期长度在已测的两个方向上**自 2 起单调变差 (2 > 3 > 5)**。⇒ 该旋钮就地封闭，不要再提。"
+    "baseExpId": "etfprem-000",
+    "rank": 80,
+    "status": "queued",
+    "result": null
   },
   {
     "id": "idea-3",
-    "title": "外部因子：股东户数（筹码集中度）作为小市值候选名单的二次排序键，不替换市值主序",
-    "hypothesis": "在小市值腿已筛出的候选名单上，用 股东户数 的收缩（筹码集中）做一次 re-rank（市值仍为主序），严格按 pub_date <= context.previous_date 连接，objective(TRAIN) 高于其底座臂且 gate PASS。",
-    "reasoning": "VALID 但**排在两个族内想法之后**，并附三条放行前置条件。逐条过外部因子四规则：【规则1 无借来的数字】想法本身不预测我方结果，合格；但提出时携带了反面例证（把基本面过滤栓到小市值书上的那次失败）的 IR / sharpe 两个数字 —— 这两个数字来自别人的台子，**已在本条目中删除**，只保留定性表述「一个有据可查的反面先例」。该先例的任何数字**不得**进入本 idea、家族页、results.tsv 或 candidate.json，只能作 provenance 引用 verdict key。【规则2 正交性须论证】部分合格：已给出缺席证据（factors.tsv 里只有 股东权益、无 股东户数 ⇒ 不在 285 因子快照内），且机理上是**持股人结构/筹码**信号，与本库通用的 价格/市值/技术量价 不同源。⚠ 缺席 ≠ 不相关：**放行前置条件 1** —— 跑之前先对目标 type 跑一次 `node utils/component-scan.js --type <type>`，确认它相对该 type 现有材料不是又一次市值切分的换皮。【规则3 成本存活须交代】**未交代，这是本想法最大的缺口**。本库两条实测先验：285 个因子里只有 6 个在成本后仍为正、且全部低换手；动量类因子在成本后全线深度为负。本想法的结构性辩护（是对既有名单的 re-rank、不是新的交易触发；股东户数是低频披露量）**是我补的、不是原想法给的**，故必须当作**待证而非已证**：**放行前置条件 2** —— 预注册一条换手证伪项，re-rank 臂相对底座臂 turnover 变动超过 ±10% 即判为「它靠提高换手买收益」，该结果不得记为改进。【规则4 宇宙迁移须交代】本想法**不是**因子看板导入（看板上零命中），因此没有 zz500 的 IC 要迁移 —— 规则 4 在此塌缩为**数据可得性**：**放行前置条件 3** —— 先零回测确认 JQ 上 股东户数 表在 TRAIN 窗对**微盘**标的的覆盖度与披露节奏，以及 run_query 的行数上限是否撑得住该宇宙；覆盖不足则想法自动作废，一分钟回测都不花。词表归位：按 §2.1 归入 选股因子 / 情绪事件（筹码资金类），子类受控、信号名为描述性文字，无需新登记子类。排序理由：按我方定义，外部导入的想法排在同等可信度的族内/跨族想法之下 —— 后者建立在我们自己台子上的测量，本条目只是别人台子上的一个假设。",
+    "title": "把 q-2 的集中度峰值 N=2 与 q-1 的 1e7 下界合起来（交互未测）",
+    "hypothesis": "在 idea-1 已确立 1e7 下界之后，把等权持仓数收到 study q-2 测出的单峰位置 N=2，在 epoch 6 TRAIN 上取得高于 idea-1 定稿版的 objective，且 maxDD 不超过 etfprem-000。",
+    "reasoning": "CONDITIONALLY VALID——**必须排在 idea-1 之后**，因为两者的交互正是问题本身。q-1 与 q-2 都是在 base 上单独测的：q-2 说集中度单峰于 N=2（obj +0.35），q-1 说下界太松、收紧后 maxDD 腰斩。但集中度**抬高换手**，而换手正是薄标的最吃不消的东西——家族页 §4 明说「集中度越高换手越大，故 N=2 的 annual 尤其乐观」，且两问都**没测过换手**。两个各自成立的改动叠起来可能互相抵消（更紧的下界限制了 N=2 能买到的标的），也可能互相放大（更干净的池子让集中度更安全）。这是真正未知的一格。\n⚠ 出场条件：若 N=2 版的换手率显著高于 idea-1 版而 obj 仅小幅上升，判为**不可定稿**——本家族的零滑点高估是已确证的失效模式，不是理论风险。",
     "sourceRefs": [
-      "screen verdict a49850fa3712807cd68e76b52239988a（provenance only，无数字）",
-      "screen verdict lk_4607201ce11d97c7e75c44559129b3（反面先例，provenance only，数字已剥离）",
-      "[[research/factorlib]] factors.tsv（缺席证据：无 股东户数）",
-      "[[docs/wiki-schema.md]] §2.1 选股子类 情绪事件"
+      "[[study-q-1]]",
+      "[[study-q-2]]",
+      "[[wiki/families/ETF溢价]] §4 第 3 条（换手/成交真实性探针）"
     ],
-    "baseExpId": "etfmom-005",
-    "rank": 40,
-    "status": "dropped",
-    "note": "2026-09-21 点子官裁定：**留在队列，今天不花一分钟回测**。它是一条新血统而非本臂的变异，且大概率多轮；在已提交 VAL、只剩约 40 分钟时开这条线，会得到一个无法解释的半测臂。下一轮用完整预算开。三条放行前置条件不变，其中数据覆盖度检查是零回测的，可先做。",
-    "result": "【2026-09-21 epoch 6，一个变体后放弃】etfmom-007 = etfmom-005 + 排除型过滤：在 ~25 个按市值排序的候选中剔除「最近一期披露的 股东户数 较上一期上升 >10%」者（严格 pub_date <= previous_date；不足两期披露的保留；下一市值名次回填）。TRAIN: total 176.37 / annual 66.36 / sharpe 2.69 / maxDD 15.24 / obj **0.5112**，对照 etfmom-005 的 0.6516 为 **-0.1404，两轴同时变差**（annual -10.11pp，maxDD +3.93pp）。过滤确实生效（非逐位相同 ⇒ 数据覆盖存在，前置条件 3 实质通过）；换手 0.0759→0.0692（-8.8%，未触发前置条件 2 的 ±10% 证伪项 —— 它不是靠换手买收益，而是丢了收益）；成交 142→133，单笔平均收益反而 3.88%→4.06% ⇒ 损失来自被换进来的名字，不是交易质量。⚠ maxDD 窗口从本家族五臂共享的 2022-06-28→07-06 地板**移到了更深的 2022-08-12→08-31** ⇒ 小市值腿的成分能挪动回撤路径，只是这次方向不利。record() 序列不在 result 端点返回里，逐日剔除率未知。点子官裁定放弃：不翻符号（事后故事）、不扫阈值（TRAIN 上多重检验），不登记部件（全轴退步，不是配料）。数字来源只有我方台；screen verdict 只作 provenance。"
+    "baseExpId": null,
+    "rank": 65,
+    "status": "blocked",
+    "note": "blocked until idea-1 has a TRAIN result — its baseExpId is idea-1 的定稿版，不是 etfprem-000。",
+    "result": null
   }
 ]

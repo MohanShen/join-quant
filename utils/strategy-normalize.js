@@ -373,3 +373,10 @@ function appendRow(ledgerPath, cells) {
 // a require in a one-liner started a 214-strategy run and spent 42 of the day's 60
 // backtest minutes before it was killed. Every other entry point in utils/ has this guard.
 if (require.main === module) main();
+
+// The frozen cost block is the ONE literal every candidate has to carry, and it runs on JQ's
+// servers where it cannot read harness/config/epoch-<n>.json. Exporting it is what keeps
+// `enhance/candidates/*.py` from being built by hand-copying it — a hand copy is a second
+// source of truth that `harness-config.js --verify` does not police, free to drift the moment
+// an epoch changes costs. Exports sit AFTER the guard above and export no side effects.
+module.exports = { OVERRIDE, py2to3 };
