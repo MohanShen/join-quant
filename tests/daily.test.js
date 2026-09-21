@@ -389,3 +389,112 @@ test('the daily schedule is a fixed UTC hour, DST-safe', async t => {
     assert.match(plist, /<key>RunAtLoad<\/key>\s*<false\/>/);
   });
 });
+
+/**
+ * The stage bound, and what it must kill.
+ *
+ * Both halves of a real failure: the bound was hard-coded at 60 minutes while the day's budget
+ * was raised to 170, so a healthy enhance loop was cut off at exactly 60:00 and filed as an
+ * `error`; and the kill reached only the wrapper, leaving `claude -p --resume` running an hour
+ * later — spending backtest minutes with nothing accounting for them.
+ */
+test('stage timeout: bounded by the budget, and kills the whole process group', async (t) => {
+  const src = fs.readFileSync(path.join(__dirname, '../utils/daily-pipeline.js'), 'utf8');
+
+  await t.test('the bound is DERIVED from the budget, never a literal', () => {
+    assert.match(src, /STAGE_TIMEOUT_MIN[\s\S]{0,400}USAGE_LIMIT \+ SLOW_SKIP_MIN/,
+      'STAGE_TIMEOUT_MIN must follow USAGE_LIMIT so the two cannot drift');
+    assert.doesNotMatch(src, /timeout = 3\.6e6/, 'the hard-coded 60-minute ceiling is back');
+  });
+
+  await t.test('the bound exceeds the budget it guards', () => {
+    for (const limit of ['55', '170', '300']) {
+      const out = require('child_process').execFileSync(process.execPath, ['-e', `
+        process.env.USAGE_LIMIT='${limit}';
+        process.stdout.write(String(require('./utils/daily-pipeline.js').stageTimeoutMin()));
+      `], { cwd: path.join(__dirname, '..'), encoding: 'utf8' }).trim();
+      assert.ok(Number(out) > Number(limit),
+        `at USAGE_LIMIT=${limit} the stage bound was ${out} — a stage would be cut off mid-budget`);
+    }
+  });
+
+  await t.test('an explicit STAGE_TIMEOUT_MIN wins', () => {
+    const out = require('child_process').execFileSync(process.execPath, ['-e', `
+      process.env.USAGE_LIMIT='170'; process.env.STAGE_TIMEOUT_MIN='42';
+      process.stdout.write(String(require('./utils/daily-pipeline.js').stageTimeoutMin()));
+    `], { cwd: path.join(__dirname, '..'), encoding: 'utf8' }).trim();
+    assert.strictEqual(out, '42');
+  });
+
+  await t.test('dispatch goes through the group-killing wrapper', () => {
+    const w = path.join(__dirname, '../scripts/with-timeout.sh');
+    assert.ok(fs.existsSync(w), 'scripts/with-timeout.sh is missing — sh() falls back to an orphan-leaking kill');
+    assert.match(src, /TIMEOUT_WRAPPER/, 'sh() must dispatch through the wrapper');
+    // The negative pid is the entire point: it addresses the process GROUP, not the child.
+    assert.match(fs.readFileSync(w, 'utf8'), /kill -TERM -"\$child"/);
+    assert.match(fs.readFileSync(w, 'utf8'), /kill -KILL -"\$child"/);
+  });
+
+  await t.test('a timeout is reported as a cutoff, not as a crash', () => {
+    assert.match(src, /outcome: r\.ok \? 'ran' : r\.timedOut \? 'timeout'/);
+    assert.match(src, /CUT OFF/);
+  });
+
+  await t.test('the wrapper passes a clean exit code through, and reports 124 on timeout', () => {
+    const run = (args) => {
+      try {
+        return { rc: 0, out: require('child_process').execFileSync('bash',
+          [path.join(__dirname, '../scripts/with-timeout.sh'), ...args],
+          { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }) };
+      } catch (e) { return { rc: e.status, out: e.stdout || '' }; }
+    };
+    assert.strictEqual(run(['5', 'bash', '-c', 'exit 7']).rc, 7, 'exit status must pass through');
+    assert.strictEqual(run(['5', 'bash', '-c', 'true']).rc, 0);
+  });
+});
+
+/**
+ * The daily summary is the RECORD. A wrong path in it reads as a real file.
+ *
+ * `git status --short` uses two fixed status columns, so the old parser took `slice(3)` as the
+ * path. `sh()` trims the whole output, which eats the leading space of an unstaged ` M` on the
+ * FIRST line only — so exactly one path per summary lost its first character and nothing looked
+ * broken. The 2026-09-21 summary published `ata/daily-state.json`.
+ */
+test('summary: git status is parsed by shape, not by column offset', async (t) => {
+  const { parseStatusLine } = require('../utils/daily-summary.js');
+
+  await t.test('an unstaged line survives losing its leading space', () => {
+    assert.deepStrictEqual(parseStatusLine(' M data/daily-state.json'),
+      { status: 'M', file: 'data/daily-state.json' });
+    assert.deepStrictEqual(parseStatusLine('M data/daily-state.json'),
+      { status: 'M', file: 'data/daily-state.json' },
+      'the trimmed first line must parse to the SAME path');
+  });
+
+  await t.test('every porcelain status shape', () => {
+    const cases = [
+      ['?? scripts/with-timeout.sh',      '??', 'scripts/with-timeout.sh'],
+      ['M  utils/daily-pipeline.js',      'M',  'utils/daily-pipeline.js'],
+      ['MM harness/normalize-train.tsv',  'MM', 'harness/normalize-train.tsv'],
+      ['A  wiki/types/全A-H-low.md',       'A',  'wiki/types/全A-H-low.md'],
+      ['D  enhance/candidates/old.py',    'D',  'enhance/candidates/old.py'],
+    ];
+    for (const [line, status, file] of cases) {
+      assert.deepStrictEqual(parseStatusLine(line), { status, file }, line);
+    }
+  });
+
+  await t.test('a rename reports the name that exists now', () => {
+    assert.deepStrictEqual(parseStatusLine('R  study/old.md -> study/new.md'),
+      { status: 'R', file: 'study/new.md' });
+  });
+
+  await t.test('a quoted path (non-ASCII, which most of this repo is) is unquoted', () => {
+    assert.strictEqual(parseStatusLine('?? "wiki/families/小市值.md"').file, 'wiki/families/小市值.md');
+  });
+
+  await t.test('blank and malformed lines are dropped, never emitted as a file', () => {
+    for (const l of ['', '   ', null]) assert.strictEqual(parseStatusLine(l), null);
+  });
+});

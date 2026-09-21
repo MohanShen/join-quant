@@ -62,14 +62,26 @@ function eventsToday() {
   } catch { return []; }
 }
 
+function parseStatusLine(l) {
+  if (!l || !l.trim()) return null;
+  const m = l.match(/^\s*(\S{1,2})\s+(.*)$/);
+  if (!m) return null;
+  // A rename is reported as `old -> new`; the new name is what exists now.
+  const file = m[2].split(' -> ').pop().replace(/^"(.*)"$/, '$1');
+  return file ? { status: m[1], file } : null;
+}
+
 /** Working-tree changes = what this run actually produced since the last commit. */
 function changedFiles() {
   const s = sh('git', ['status', '--short']);
   if (!ok(s) || !s) return [];
-  return s.split('\n').filter(Boolean).map(l => ({
-    status: l.slice(0, 2).trim(),
-    file: l.slice(3).replace(/^"(.*)"$/, '$1'),
-  }));
+  // ⚠ Parse by SHAPE, not by column offset. `git status --short` puts the status in two fixed
+  // columns, so `slice(3)` is the path — but only if the line still has both. `sh()` trims the
+  // whole output, which eats the leading space of an unstaged ` M`, and every fixed offset on
+  // that one line then slips by a character: the 2026-09-21 summary published the change as
+  // `ata/daily-state.json`. A wrong path in the day's record is worse than a missing one,
+  // because it reads as a real file.
+  return s.split('\n').map(parseStatusLine).filter(Boolean);
 }
 
 function build() {
@@ -151,7 +163,9 @@ function build() {
     L.push('');
   }
 
-  const blocked = runs.filter(r => r.outcome === 'blocked' || r.outcome === 'error');
+  // `timeout` belongs here too: the stage had work in hand and was cut off, so tomorrow's run
+  // inherits it. Leaving it out of this section is how a cutoff reads as a normal day.
+  const blocked = runs.filter(r => ['blocked', 'error', 'timeout'].includes(r.outcome));
   if (blocked.length) {
     L.push('## ⚠ Needs a human', '');
     for (const b of blocked) L.push(`- **${b.stage}** (\`${b.outcome}\`): ${b.note}`);
@@ -243,4 +257,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { build, write, commitAndPush, ledgerCounts, changedFiles };
+module.exports = { build, write, commitAndPush, ledgerCounts, changedFiles, parseStatusLine };

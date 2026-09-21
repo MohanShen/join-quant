@@ -72,6 +72,21 @@ const USAGE_LIMIT = (() => {
   const n = parseInt(process.env.USAGE_LIMIT || '', 10);
   return Number.isFinite(n) && n > 0 ? n : 55;
 })();
+/**
+ * Outer wall-clock bound on one stage, in minutes. A HANG GUARD, not a budget — the budget is
+ * USAGE_LIMIT and every child already enforces it.
+ *
+ * ⚠ This was a hard-coded 60 minutes inside `sh()`, which was a plausible bound only while the
+ * daily budget was 55. VIP raised it to 170 and the first run past the old ceiling was killed at
+ * exactly 60:00 mid-backtest and recorded as `error` — the loop was healthy and had spent 27 of
+ * its 170 minutes. Derive it from the budget so the two can never drift apart again: a stage
+ * cannot outlive the minutes it is allowed to spend, plus slack for agent turns and one
+ * slow-skip that runs to the cap.
+ */
+const STAGE_TIMEOUT_MIN = (() => {
+  const n = parseInt(process.env.STAGE_TIMEOUT_MIN || '', 10);
+  return Number.isFinite(n) && n > 0 ? n : USAGE_LIMIT + SLOW_SKIP_MIN + 30;
+})();
 /** Stage order: later stages first. Index 0 wins. */
 const PRIORITY = ['enhance', 'study', 'normalize', 'discover'];
 
@@ -175,12 +190,38 @@ function plan({ stageOverride = null } = {}) {
 
 // ── dispatch ────────────────────────────────────────────────────────────────
 
-function sh(cmd, args, { timeout = 3.6e6 } = {}) {
+/**
+ * Run a stage, bounded.
+ *
+ * The bound is enforced by `scripts/with-timeout.sh`, not by node's own `timeout` option, because
+ * node signals the DIRECT CHILD only. Every stage here is a wrapper that spawns the real worker,
+ * so a node-side kill leaves an orphan still spending backtest minutes and still holding the JQ
+ * session — see that script's header for the run where it happened. `with-timeout.sh` kills the
+ * process GROUP and exits 124.
+ *
+ * Node's timeout is kept as a backstop, set deliberately LONGER (the watchdog's own TERM->KILL
+ * grace plus a minute) so the group-kill always fires first and the two causes stay
+ * distinguishable in the log.
+ */
+const TIMEOUT_WRAPPER = path.join(ROOT, 'scripts/with-timeout.sh');
+
+function sh(cmd, args, { timeout = STAGE_TIMEOUT_MIN * 60000 } = {}) {
+  const mins = Math.max(1, Math.ceil(timeout / 60000));
+  const wrapped = fs.existsSync(TIMEOUT_WRAPPER);
+  const c = wrapped ? 'bash' : cmd;
+  const a = wrapped ? [TIMEOUT_WRAPPER, String(mins), cmd, ...args] : args;
   try {
-    const out = execFileSync(cmd, args, { encoding: 'utf8', cwd: ROOT, timeout });
+    const out = execFileSync(c, a, { encoding: 'utf8', cwd: ROOT, timeout: timeout + 90000 });
     return { ok: true, out };
   } catch (e) {
-    return { ok: false, out: `${e.stdout || ''}${e.stderr || ''}${e.message}`.slice(0, 4000) };
+    const timedOut = e.status === 124 || e.code === 'ETIMEDOUT' || e.signal === 'SIGTERM';
+    const out = `${e.stdout || ''}${e.stderr || ''}${e.message}`.slice(0, 4000);
+    // ⚠ Name the timeout explicitly. `spawnSync bash ETIMEDOUT` is what the first VIP run wrote
+    // into the daily summary, and it reads like the loop script crashed. It did not — we killed
+    // it. The note a human reads has to say which.
+    return { ok: false, timedOut, out: timedOut
+      ? `${out}\n[daily] stage exceeded STAGE_TIMEOUT_MIN=${STAGE_TIMEOUT_MIN} min; process group terminated`
+      : out };
   }
 }
 
@@ -277,11 +318,16 @@ function runAgentLoop(stage, target, { dry }) {
     .slice(-2).join(' | ')
     || lines.slice(-1).join('') || 'no output';
 
+  // A stage we cut off is not a stage that broke. It had work in hand and ran out of wall clock,
+  // so the human action is "raise the bound or split the work", not "debug the loop script".
   return {
-    outcome: r.ok ? 'ran' : 'error',
+    outcome: r.ok ? 'ran' : r.timedOut ? 'timeout' : 'error',
     note: r.ok
       ? `resumed ${stage} session ${pin.detail} (exit 0 is NOT proof work happened — check its ledger)`
-      : `${stage} loop FAILED: ${cause.slice(0, 200)}`,
+      : r.timedOut
+        ? `${stage} was CUT OFF at STAGE_TIMEOUT_MIN=${STAGE_TIMEOUT_MIN} min (not a crash); ` +
+          `its process group was terminated — resume it tomorrow or raise the bound`
+        : `${stage} loop FAILED: ${cause.slice(0, 200)}`,
     tail: lines.slice(-6).join('\n'),
   };
 }
@@ -470,7 +516,11 @@ function printPlan(p) {
  */
 module.exports = { plan, queues, execute, budget, seedDeferred, staleFamilies,
                    runChain, syncStudyManifest,
-                   SLOW_SKIP_MIN, USAGE_LIMIT, PRIORITY };
+                   SLOW_SKIP_MIN, USAGE_LIMIT, PRIORITY,
+                   // A function, not the constant: the caps are read from the environment at
+                   // require time, so a test that wants to vary them has to re-require anyway —
+                   // exposing it as a getter keeps that honest instead of freezing one value.
+                   stageTimeoutMin: () => STAGE_TIMEOUT_MIN };
 
 if (require.main === module) {
   const argv = process.argv.slice(2);
