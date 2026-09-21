@@ -2,6 +2,13 @@
 family: ETF溢价
 aliases: []
 concepts: [[[ETF轮动]]]
+edge:
+  - name: 流动性溢价
+    kind: risk-premium
+    claim: "超额来自承担流动性风险，而非折价均值回归本身——折价信号在真正流动的 ETF 上几乎没有风险调整后 edge"
+    test: "抬高成交量下界、把 universe 限制到更流动的 ETF；若 edge 不是流动性溢价，超额应基本不变。q-1 实测：sharpe 8.44→3.16→1.10，1e8 时 DQ ⇒ 单调衰减，claim 成立"
+    status: measured
+    evidence: [[study-q-1]]（epoch 2）
 base: [[15c36e0c_ETF溢价改进版]]
 bestVariant: [[edd94ebc_ETF溢价回撤]]
 bestObjective: 3.5961

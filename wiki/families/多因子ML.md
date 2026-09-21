@@ -2,6 +2,13 @@
 family: 多因子ML
 aliases: []
 concepts: []
+edge:
+  - name: 规模因子
+    kind: risk-premium
+    claim: "⚠ 家族名与机制不符：base 不是多因子/ML，而是 etf .40 / small_cap .35 / white_horse .25 的三分仓恒定混合，收益由微盘腿供给（贡献 64.62 total%，并独力守住 sharpe 闸）"
+    test: "逐腿 isolate 并做时间分解；若 edge 是多因子合成，收益应分散在三腿。六次实验实测：收益侧钉死在 small_cap 腿 ⇒ claim 成立"
+    status: measured
+    evidence: [[study-q-1]]~[[study-q-6]] + [[study-q-audit]]（epoch 2）
 base: [[d02cde29_高质量稳定上涨]]
 bestVariant: [[d02cde29_高质量稳定上涨]]
 bestObjective: 0.4737

@@ -2,6 +2,13 @@
 family: PT多策略
 aliases: []
 concepts: [[ETF轮动]], [[多策略组合]]
+edge:
+  - name: 流动性溢价
+    kind: risk-premium
+    claim: "与 [[ETF溢价]] 是同一个 edge 的极端形态：把 universe 锁死在 5M–20M CNY/日的微流动 ETF，band 越贴薄基金头条越高"
+    test: "把成交额 band 移到真流动区间（50M–100M）；若 edge 不专属薄尾，头条应只软化不崩塌。实测：崩塌到 DQ（sharpe 1.09 / obj 0.05）⇒ claim 成立"
+    status: measured
+    evidence: [[study-q-1]]（epoch 2）
 base: [[fa0d3bd9_PT多策略并行]]
 bestVariant: [[fa0d3bd9_PT多策略并行]]
 bestObjective: 3.5952

@@ -77,20 +77,29 @@ test('family pages carry the post-merge §2 schema', async (t) => {
     }
   });
 
-  await t.test('no family has an edge block that nothing derives', () => {
-    // Absent means UNANSWERED (§2.3), so a missing block is fine. What is not fine is a block
-    // appearing without a derivation or an experiment behind it.
-    const migrate = require('../utils/edge-migrate.js');
-    let seeded = 0;
+  await t.test('an edge block says something, and `proposed` needs no evidence', () => {
+    // ⚠ An earlier version of this test demanded that every block be derivable from a 因子族
+    // concept OR cite evidence. That was wrong, and 红利低频 caught it: a reasoned hypothesis with
+    // a mandatory falsification test and no measurement yet is EXACTLY what `proposed` means.
+    // Requiring evidence for it would collapse the three statuses into one.
+    //
+    // What actually protects against a fabricated block is elsewhere and already tested: every
+    // entry must carry a `test:`, every non-proposed entry must cite `evidence:`, and
+    // edge-redundancy excludes `proposed` from the map so a guess cannot retire a family.
+    let blocks = 0;
     for (const f of files) {
       const body = fs.readFileSync(path.join(DIR, f), 'utf8');
-      if (!/^edge:/m.test(body)) continue;
-      seeded++;
-      const measured = /status: measured/.test(body);
-      assert.ok(migrate.derivedEdge(body) || measured,
-        `${f}: carries edge: but neither a 因子族 concept nor a measurement supports it`);
+      const block = (body.match(/^edge:\n(?:[ ]+.*\n)+/m) || [])[0];
+      if (!block) continue;
+      blocks++;
+      assert.match(block, /^\s+- name:\s*\S/m, `${f}: edge: block has no entry`);
+      // Length of the claim, not a run of non-space characters — several claims open with "⚠ "
+      // and a regex like /\S{10,}/ stops at that first space.
+      for (const m of block.matchAll(/^\s+claim:\s*"?(.*?)"?\s*$/gm)) {
+        assert.ok(m[1].trim().length >= 10, `${f}: a claim too short to mean anything: "${m[1]}"`);
+      }
     }
-    assert.ok(seeded >= 2, `expected the 因子族-declaring families to be seeded, got ${seeded}`);
+    assert.ok(blocks >= 12, `expected the edge pass to have covered the library, got ${blocks}`);
   });
 
   await t.test('the study log was not touched by the migration', () => {
@@ -112,6 +121,62 @@ test('family pages carry the post-merge §2 schema', async (t) => {
       }, { on: false, out: [] }).out.join('\n'));
       assert.strictEqual(sec6(fs.readFileSync(path.join(DIR, f), 'utf8')), sec6(head),
         `${rel}: §6 study-log differs from HEAD — findings.tsv is gitignored, so this is the only copy`);
+    }
+  });
+});
+
+/**
+ * The edge pass, 2026-09-21. Zero backtests: every claim below was written from evidence already
+ * on the pages (§1 mechanism + §6 study log), and the vocabulary is wiki-schema §2.3.
+ *
+ * What it bought, and why it is worth a test: under epoch 6 `component-scan` reports every
+ * candidate in every type with NEGATIVE uplift, and CLAUDE.md separately records that 57% of
+ * gate-passes are 小市值 variants. Those are the same fact. Naming the edge makes it legible —
+ * and three of the redundant families carry names that say nothing about size.
+ */
+test('the edge pass holds its invariants', async (t) => {
+  const redundancy = require('../utils/edge-redundancy.js');
+
+  await t.test('only `measured` claims enter the redundancy map', () => {
+    // A proposed claim carries no authority (§2.3). Letting one count would allow a guess to
+    // retire a family — the failure mode that cost this repo 287 of 549 strategies once.
+    const r = redundancy.report();
+    const clustered = new Set(r.clusters.flatMap(c => c.families));
+    for (const p of r.proposed) {
+      const alsoMeasured = r.clusters.some(c => c.families.includes(p.family)
+        && c.name === p.name);
+      assert.ok(!alsoMeasured, `${p.family}: a proposed "${p.name}" leaked into the redundancy map`);
+    }
+    assert.ok(clustered.size > 0, 'expected at least one measured edge');
+  });
+
+  await t.test('none-found is flagged, never excluded', () => {
+    // Human decision 2026-09-21. A family nobody can name an edge for is a reason to look harder.
+    const r = redundancy.report();
+    assert.ok(r.noneFound.length >= 1);
+    for (const x of r.noneFound) {
+      assert.ok(x.claim && x.claim.length > 20,
+        `${x.family}: none-found must SAY why, not just assert absence`);
+    }
+  });
+
+  await t.test('redundant() needs a shared MEASURED edge, not a shared name', () => {
+    const same = redundancy.redundant('ETF动量', '多因子ML');
+    assert.strictEqual(same.redundant, true, 'both are supplied by 规模因子');
+    assert.ok(same.shared.includes('规模因子'));
+    const diff = redundancy.redundant('ETF动量', '打板短线');
+    assert.strictEqual(diff.redundant, false);
+  });
+
+  await t.test('every claim carries a falsification test, refuted ones included', () => {
+    for (const f of redundancy.families()) {
+      for (const e of f.edges) {
+        assert.ok(e.test && e.test.length > 10,
+          `${f.family}/${e.name}: a claim with no stated refutation is not a claim (§2.3)`);
+        if (e.status !== 'proposed') {
+          assert.ok(e.evidence, `${f.family}/${e.name}: status ${e.status} must cite evidence`);
+        }
+      }
     }
   });
 });

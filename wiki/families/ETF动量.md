@@ -2,6 +2,13 @@
 family: ETF动量
 aliases: []
 concepts: []
+edge:
+  - name: 规模因子
+    kind: risk-premium
+    claim: "⚠ 家族名具误导性：唯一过闸成员是 50% 小市值 + 50% ETF轮动 的两腿混合，收益由小市值腿供给；同名的 ETF轮动腿不是 edge 的来源"
+    test: "把同名 ETF轮动腿满仓单跑；若 edge 真在 ETF 动量上，它应独立过闸。q-1 实测：DQ（sharpe 1.2852），年化只剩 33.31% ⇒ 收益不在这条腿上"
+    status: measured
+    evidence: [[study-q-1]]（epoch 2）
 base: [[22152780_七星ETF轮动V1.7.2]]
 bestVariant: [[23584678_从想法到策略，我如何让AI帮我评审量化回测？]]
 bestObjective: 0.5267
