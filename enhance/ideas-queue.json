@@ -1,5 +1,20 @@
 [
   {
+    "id": "baseline-status",
+    "title": "⚠ 先读这条：etfprem-000 基线在 45 分钟上限上 slow-skip，本轮尚无 epoch 6 基准线",
+    "hypothesis": null,
+    "reasoning": "2026-09-20 首次尝试：`node utils/strategy-post-backtest.js enhance/candidates/etfprem-000.py etfprem-000 --window train --usage-limit 170 --max-poll-min 45` 跑满 44m58s 未完成，safety-cap 取消，JQ 回「在此状态不能取消」——**回测仍在服务端继续计费**（cancel 用的 backtestId e8af5537 与其后 running[] 里的 f97a3964 不同，符合 CLAUDE.md「id 每次请求重铸」）。本次花掉 19 分钟额度（132→151）且没有得到数字。\n\n**这本身是本家族的一条信息，不只是一次失败**：edd94ebc 每天要对全市场 ETF+LOF 取净值再算折价率，所以 TRAIN 两年在本台上是**多小时级**的。家族页 §4 早已把「换手/成交真实性」列为未测项——一个跑不完的回测和一个买最薄标的的策略，指向同一件事：这一族的成本不在信号上，在它扫的那个池子上。\n\n**下一步（按顺序）**：\n1. 等当前服务端回测跑完再动任何东西——`concurrencyGate` 现在会直接拒跑（CONCURRENT-STOP），这是对的，不要用 JQ_ALLOW_CONCURRENT 绕过。\n2. 次日额度重置后，以 **--max-poll-min 120** 重跑 etfprem-000。\n3. 若仍跑不完：**改用 base `15c36e0c` 作为本轮基线**（族页称其「速度已最优」，且 ledger 里有 epoch 2 的 obj 1.5642 可作 sanity check）。基线的作用是给 idea 一个可比的参照，一个测不出来的 bestVariant 不能当基线。改用 base 时，§2 记账要写明基线换了对象。",
+    "sourceRefs": [
+      "[[wiki/families/ETF溢价]] §4",
+      "[[harness/harness.md]] §2"
+    ],
+    "baseExpId": null,
+    "rank": 100,
+    "status": "blocked",
+    "note": "informational — not an idea; do not dispatch to the engineer.",
+    "result": null
+  },
+  {
     "id": "idea-1",
     "title": "把成交额下界从 base 的 2e6 收紧到 1e7（study q-1 的流动性甜点），在 epoch 6 台上作用于 bestVariant edd94ebc",
     "hypothesis": "etfprem-000（=edd94ebc + 冻结 OVERRIDE）的入场滤波器中，把「昨日成交额 > 80 万」这一支替换为 study q-1 测出的 1e7 share-volume 下界，在 epoch 6 冻结台 TRAIN(2022-01-01..2023-12-31) 上取得 objective 高于 etfprem-000，且 gate(harness.stageGate(\"enhance\", sharpe)) PASS。",
