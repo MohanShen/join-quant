@@ -2,13 +2,13 @@
   "inFlight": null,
   "lastRun": {
     "stage": "enhance",
-    "target": null,
-    "budget": 63,
-    "at": "2026-09-20T18:00:07.618Z",
-    "outcome": "budget-spent",
-    "note": "used 63 >= 55; enhance not started",
+    "target": "ETF动量",
+    "budget": 80,
+    "at": "2026-09-21T00:44:55.283Z",
+    "outcome": "error",
+    "note": "enhance loop FAILED: spawnSync bash ETIMEDOUT",
     "minutesUsed": null,
-    "endedAt": "2026-09-20T18:00:07.620Z"
+    "endedAt": "2026-09-21T01:44:55.399Z"
   },
   "runs": [
     {
@@ -60,6 +60,16 @@
       "note": "used 63 >= 55; enhance not started",
       "minutesUsed": null,
       "endedAt": "2026-09-20T18:00:07.620Z"
+    },
+    {
+      "stage": "enhance",
+      "target": "ETF动量",
+      "budget": 80,
+      "at": "2026-09-21T00:44:55.283Z",
+      "outcome": "error",
+      "note": "enhance loop FAILED: spawnSync bash ETIMEDOUT",
+      "minutesUsed": null,
+      "endedAt": "2026-09-21T01:44:55.399Z"
     }
   ]
 }
