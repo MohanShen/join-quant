@@ -638,3 +638,38 @@ test('utils entry points are inert on require', async (t) => {
     assert.doesNotMatch(out, /Backtest|回测|algorithmId/);
   });
 });
+
+/**
+ * The research stage must dispatch the PER-FAMILY runner.
+ *
+ * agent-loop.sh and run-family.sh pin differently, and only one is right for a loop whose unit of
+ * work is a family. agent-loop.sh pins one session per STAGE, so every family would inherit the
+ * previous family's context — the failure that made a resumed enhance session keep working ETF动量
+ * after its queue had been re-pointed at ETF溢价, and that produced an idea flagging ITSELF as
+ * 新颖度为零.
+ */
+test('research dispatches per family, not per stage', async (t) => {
+  const src = fs.readFileSync(path.join(__dirname, '../utils/daily-pipeline.js'), 'utf8');
+
+  await t.test('the stage runs run-family.sh', () => {
+    assert.match(src, /stage === 'research'\s*\n?\s*\?\s*path\.join\(ROOT, 'scripts\/run-family\.sh'\)/);
+  });
+
+  await t.test('and passes the planned family, so dispatch and log agree', () => {
+    assert.match(src, /stage === 'research' \? \[script, target\]/);
+  });
+
+  await t.test('run-family pins per family; agent-loop pins per stage', () => {
+    const rf = fs.readFileSync(path.join(__dirname, '../scripts/run-family.sh'), 'utf8');
+    const al = fs.readFileSync(path.join(__dirname, '../scripts/agent-loop.sh'), 'utf8');
+    assert.match(rf, /PIN="\$PIN_DIR\/\$FAMILY\.txt"/, 'run-family must pin per family');
+    assert.match(al, /SID_FILE="\$REPO\/data\/auto\$\{STAGE\}-session\.txt"/, 'agent-loop pins per stage');
+  });
+
+  await t.test('a never-studied family gets a clean session, a resumed one does not', () => {
+    const rf = fs.readFileSync(path.join(__dirname, '../scripts/run-family.sh'), 'utf8');
+    assert.match(rf, /--session-id "\$SID"/, 'new families need a fresh session id');
+    assert.match(rf, /--resume "\$SID"/, 'an in-progress family resumes its own session');
+    assert.match(rf, /DRY:-0.*=.*"1".*\|\|.*printf/s, 'a dry run must not pin');
+  });
+});

@@ -317,12 +317,21 @@ function runAgentLoop(stage, target, { dry }) {
             `the cron can only RESUME, never cold-start an agent loop.`,
     };
   }
-  // `research` runs the parameterized scripts/agent-loop.sh; the two legacy stages keep their
-  // own scripts until their pinned sessions are retired.
-  const parameterized = path.join(ROOT, 'scripts/agent-loop.sh');
-  const legacy = path.join(ROOT, `scripts/auto${stage}-loop.sh`);
-  const script = stage === 'research' ? parameterized : legacy;
-  const args = stage === 'research' ? [script, 'research'] : [script];
+  // ⚠ `research` dispatches run-family.sh, NOT agent-loop.sh.
+  //
+  // They pin differently and only one of them is right for this loop. agent-loop.sh pins ONE
+  // session per STAGE (data/autoresearch-session.txt), so every family would inherit the previous
+  // family's context — the exact failure that made a resumed enhance session keep working ETF动量
+  // after its queue had been re-pointed at ETF溢价. run-family.sh pins per FAMILY
+  // (data/research-sessions/<family>.txt): a family in progress resumes its own session, a family
+  // never studied gets a clean one.
+  //
+  // agent-loop.sh remains for the two legacy stages, whose pins are per-stage by design.
+  const script = stage === 'research'
+    ? path.join(ROOT, 'scripts/run-family.sh')
+    : path.join(ROOT, `scripts/auto${stage}-loop.sh`);
+  // The planner picked the family; pass it so the dispatch and the log agree on which one ran.
+  const args = stage === 'research' ? [script, target].filter(Boolean) : [script];
   if (!fs.existsSync(script)) return { outcome: 'error', note: `missing ${path.relative(ROOT, script)}` };
   // ⚠ `target` is the head of OUR queue, reported for the log only — it is not passed to the
   // agent and does not steer it. The study nudge tells the agent to take "the next pending
