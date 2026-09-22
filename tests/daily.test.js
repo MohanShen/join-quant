@@ -33,7 +33,7 @@ test('queue priority', async t => {
     // The unit of work is a FAMILY. `enhance` and `study` were two queues over the same 14
     // families, competing for the same minutes and each able to starve the other, with no route
     // from a newly normalized strategy into research except a human noticing.
-    assert.deepStrictEqual(daily.PRIORITY, ['research', 'normalize', 'discover']);
+    assert.deepStrictEqual(daily.PRIORITY, ['research', 'assign', 'normalize', 'discover']);
   });
 
   await t.test('normalize only runs when no family is due; discover only when nothing is pending', () => {
@@ -43,19 +43,25 @@ test('queue priority', async t => {
       : (q[s] || []).length > 0);
 
     assert.strictEqual(pick({
-      research: [{ family: 'X' }],
+      research: [{ family: 'X' }], assign: [{ sourceFile: 'x.py' }],
       normalize: { pending: ['a.py'], retry: [], total: 1 },
       discover: { uncopied: 99, total: 99 },
-    }), 'research', 'a due family outranks a deep normalize queue');
+    }), 'research', 'a due family outranks everything upstream of it');
 
     assert.strictEqual(pick({
-      research: [],
+      research: [], assign: [{ sourceFile: 'x.py' }],
       normalize: { pending: ['a.py'], retry: [], total: 1 },
       discover: { uncopied: 99, total: 99 },
-    }), 'normalize', 'with no family due, refill the family queue');
+    }), 'assign', 'assigning costs no backtest minutes and makes measured work visible');
 
     assert.strictEqual(pick({
-      research: [], normalize: { pending: [], retry: [], total: 0 },
+      research: [], assign: [],
+      normalize: { pending: ['a.py'], retry: [], total: 1 },
+      discover: { uncopied: 99, total: 99 },
+    }), 'normalize', 'with nothing to assign, refill the family queue');
+
+    assert.strictEqual(pick({
+      research: [], assign: [], normalize: { pending: [], retry: [], total: 0 },
       discover: { uncopied: 99, total: 99 },
     }), 'discover', 'with nothing to normalize, refill THAT');
   });
