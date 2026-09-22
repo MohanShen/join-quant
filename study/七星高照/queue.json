@@ -1,0 +1,191 @@
+[
+  {
+    "id": "q-e6-0",
+    "kind": "understand",
+    "title": "base 19ca0e69（七星 V1.7，纯 7-ETF 轮动）在 epoch-6 台上的真实水平",
+    "hypothesis": "日频单持仓 ETF 轮动在 pin（基金佣金 2bp→3bp、滑点 1bp→0、5% 成交量上限）下收益明显缩水；证伪：objective < 0.05 或 sharpe < 1.0（家族连一个可研究的正基线都没有）",
+    "why": "家族 §3 全部是 epoch 2；旧 study（q-1..q-5）跑在 406a1e4d 的 50/50 小市值+七星混合上，其头条 0.4814 主要由小市值腿承载（旧 q-2），不描述本家族同名腿。没有 epoch-6 的纯七星基线，任何 Δ 都不可比",
+    "design": "py2to3(19ca0e69)+当前 OVERRIDE → study/七星高照/baseline-e6.py（build-e6.js），--window train；年度拆分用 yearsplit.js",
+    "from": [
+      "ledger:19ca0e69@epoch2 obj 0.1412",
+      "baseline",
+      "q-1",
+      "q-2"
+    ],
+    "edgeRef": "动量",
+    "rank": 1,
+    "status": "answered",
+    "result": "纯七星 V1.7 在 epoch-6 台上几乎没被 pin 伤到（年化只少 3.9pp，回撤还小了 2.3pp），objective 0.1252、sharpe 1.21，不过 1.5 闸。预注册证伪项（obj < 0.05 或 sharpe < 1.0）未触发。但两年极不均衡：2022 赚 51%，2023 只赚 9.75%（sharpe~0.39），全窗最深回撤落在 2023"
+  },
+  {
+    "id": "q-e6-1",
+    "kind": "understand",
+    "title": "edge test 动量：排序方向反转（持通过全部滤波的得分最低者）",
+    "hypothesis": "若截面动量有预测力，反排年化损失过半；证伪：反排年化 ≥ base-e6 年化的 75%",
+    "why": "edge 草稿的 test:。姊妹 [[五福闹新春]] 用同一套斜率×R² 打分，反排保留 78% 年化（动量 refuted）；七星池只有 7 只、且资产类别彼此差异大，截面排序在这里可能更有意义——这是一次跨家族复制，不是重复",
+    "design": "study/七星高照/variants/q-1_invert-rank.py：get_ranked_etfs 的 sort reverse=True→False，单行 diff",
+    "from": [
+      "q-e6-0",
+      "五福闹新春:q-e6-1"
+    ],
+    "edgeRef": "动量",
+    "rank": 2,
+    "status": "answered",
+    "result": "反排后年化只剩 base 的 22%，objective 变负，预注册证伪项（反排年化 ≥ 75%）远未触发——与 [[五福闹新春]]（反排保留 78%）相反，七星的 7 只池里选第一名是有信息的。但这份信息全部在 2022：2022 base 赚 51%、反排赚 2.8%；2023 反排 10.18% 反而略好于 base 9.75%，且回撤只有 7%"
+  },
+  {
+    "id": "q-e6-2",
+    "kind": "understand",
+    "title": "edge test 趋势择时：关掉正趋势闸门（总持有池内得分第一者，除非被跌幅/盈利保护滤掉）",
+    "hypothesis": "若绝对动量闸门是独立来源，Δobj ≤ −0.15；证伪：Δobj > −0.05",
+    "why": "edge 草稿第二条的 test:。无合格 ETF 时退 511880，是本族唯一的择时部件；[[五福闹新春]] 的 edge 正是择时躲避而非选强",
+    "design": "study/七星高照/variants/q-2_no-trend-gate.py：min_score_threshold 0→−1e9 且 use_short_momentum_filter True→False（同一概念的两行）；3 日跌幅与盈利保护照旧",
+    "from": [
+      "q-e6-0",
+      "五福闹新春:q-e6-2"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 3,
+    "status": "answered",
+    "result": "关掉正趋势闸门后 objective 不降反升 +0.064、sharpe 升到 1.70 过闸。预注册证伪项（Δobj > −0.05）触发，趋势择时 edge 证伪。闸门在 2022 买到了回撤（maxDD 20.4→14.7，收益几乎不变），但在 2023 把收益从 31% 砍到 9.75%：2023 里它反复把本该持有的第一名踢进货币 ETF。两本书相关 0.91，差别集中在闸门触发的那些日子"
+  },
+  {
+    "id": "q-e6-3",
+    "kind": "understand",
+    "title": "集中度：持全部通过滤波的 ETF 等权（holdings_num 1→7），而不是第一名",
+    "hypothesis": "若集中于第一名是来源，等权持全部合格者年化显著下降、回撤下降；证伪：年化 ≥ base 的 90%",
+    "why": "与 q-e6-1 配对：反排检验「第一名 vs 最后一名」，本题检验「第一名 vs 全部合格者的平均」，两者合起来才能说排序有没有信息",
+    "design": "study/七星高照/variants/q-3_hold-all.py：holdings_num 1→7，单行 diff",
+    "from": [
+      "q-e6-0"
+    ],
+    "edgeRef": "动量",
+    "rank": 4,
+    "status": "answered",
+    "result": "把钱摊到全部合格 ETF 上，年化少三分之一多、回撤少 5.5pp，objective 降 0.048。预注册证伪项（年化 ≥ base 的 90%）未触发：集中持第一名确实是收益来源。损失全在 2022（51→22），2023 等权反而多赚（9.75→14.93）"
+  },
+  {
+    "id": "q-e6-4",
+    "kind": "understand",
+    "title": "部件：关掉盈利保护（持仓较昨日最高价回撤 5% 即卖、并从排名剔除）",
+    "hypothesis": "盈利保护是回撤压制器：关掉后 maxDD +2pp 以上；证伪：|ΔmaxDD| < 1pp 且 |Δannual| < 2pp（惰性）",
+    "why": "V1.7 的版本卖点（独立拆分的盈利保护）；5% 单日回撤阈值对 ETF 很宽，可能几乎不触发",
+    "design": "study/七星高照/variants/q-4_no-profit-protection.py：enable_profit_protection True→False，单行 diff",
+    "from": [
+      "q-e6-0"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 5,
+    "status": "answered",
+    "result": "V1.7 的招牌盈利保护不是回撤压制器：关掉它回撤反而少 0.7pp、年化多 2.7pp，objective +0.033，改善几乎全在 2023。预注册「maxDD +2pp 以上」被证伪，惰性判据（|Δannual| < 2pp 且 |ΔmaxDD| < 1pp）也未成立——它是一个轻度净负的部件"
+  },
+  {
+    "id": "q-e6-5",
+    "kind": "understand",
+    "title": "部件：关掉近 3 日单日跌幅 >3% 的排除（loss 0.97→0）",
+    "hypothesis": "该排除是回撤压制器：关掉后 maxDD 上升；证伪：|ΔmaxDD| < 1pp 且 |Δannual| < 2pp（惰性）",
+    "why": "白银/原油/纳指单日 >3% 跌幅常见，这条可能频繁把第一名踢出、改变持仓",
+    "design": "study/七星高照/variants/q-5_no-loss-filter.py：loss 0.97→0.0，单行 diff",
+    "from": [
+      "q-e6-0"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 6,
+    "status": "answered",
+    "result": "3 日跌幅排除是本族唯一明确净正的滤波：关掉它 objective 降 0.073，两年都降（2022 −13pp、2023 −1.8pp），回撤几乎不变。预注册的机理（回撤压制器）不对——它保的是收益而不是回撤：躲开刚刚急跌过的资产，避免在急跌后的续跌里持有"
+  },
+  {
+    "id": "q-e6-6",
+    "kind": "understand",
+    "title": "拆 q-e6-2 的闸门：只关 25 日得分 > 0 要求",
+    "hypothesis": "2023 的误杀来自 10 日短期过滤而非 25 日得分闸门：只关得分闸门 Δobj < +0.02；证伪：Δobj ≥ +0.04（得分闸门本身就是误杀源）",
+    "why": "q-e6-2 同时关掉两个条件；只保留在两年都不伤的那一半需要先知道是谁",
+    "design": "study/七星高照/variants/q-6_no-score-gate.py：min_score_threshold 0→−1e9，单行 diff",
+    "from": [
+      "q-e6-2"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 7,
+    "status": "answered",
+    "result": "只关 25 日得分闸门几乎不改变任何东西（相关 0.996，Δobj +0.017）。预注册（Δobj < +0.02）成立：得分 > 0 这道闸门基本被 10 日过滤覆盖，很少单独起作用"
+  },
+  {
+    "id": "q-e6-7",
+    "kind": "understand",
+    "title": "拆 q-e6-2 的闸门：只关 10 日收益 > 0 过滤",
+    "hypothesis": "10 日过滤是误杀源：只关它 Δobj ≥ +0.04；证伪：Δobj < +0.02",
+    "why": "与 q-e6-6 配对",
+    "design": "study/七星高照/variants/q-7_no-short-filter.py：use_short_momentum_filter True→False，单行 diff",
+    "from": [
+      "q-e6-2"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 8,
+    "status": "answered",
+    "result": "只关 10 日短期过滤就复现了 q-e6-2 的全部效应（+0.064，sharpe 1.71）。预注册（Δobj ≥ +0.04）成立：本族正趋势闸门的作用全部来自这条 10 日过滤。它在 2022 以不变的收益买到了 5.8pp 回撤，在 2023 砍掉了 21pp 收益"
+  },
+  {
+    "id": "q-e6-8",
+    "kind": "understand",
+    "title": "动量 edge 在无闸门版上复核：q-e6-2 + 反排",
+    "hypothesis": "无闸门时反排持的是池内最弱（可含负趋势）资产，年化应大幅损失（< q-e6-2 的 50%）；证伪：≥ 75%",
+    "why": "q-e6-2 的 2023 收益来自「持第一名不躲」；若在无闸门版上反排也赚，则 2023 的收益是池本身（持什么都行），不是动量",
+    "design": "study/七星高照/variants/q-8_invert-no-gate.py：q-2 + sort reverse=False；对照 = q-e6-2",
+    "from": [
+      "q-e6-2",
+      "q-e6-1"
+    ],
+    "edgeRef": "动量",
+    "rank": 9,
+    "status": "answered",
+    "result": "在不躲闪的书上把排序反过来，年化只剩 42%，且两年都一样：2022 47.6→17.5、2023 31.4→15.8。预注册证伪项（≥ 75%）未触发。两本书日收益几乎不相关（0.06），持的是完全不同的资产。即使持池内最弱者也能赚约 16%/年——池子本身有正漂移，动量在它之上再加约 23pp"
+  },
+  {
+    "id": "imp-1",
+    "kind": "improve",
+    "title": "去掉 10 日短期动量过滤（= q-e6-7）",
+    "hypothesis": "已由 q-e6-7 测得：obj 0.1892 / sharpe 1.71；采纳判据：两年都不劣于 base 的 objective 贡献，否则 rejected",
+    "why": "q-e6-7：10 日过滤净负，误杀第一名",
+    "design": "enhance/candidates/qixing-imp-1.py（与 variants/q-7 相同）；不重跑",
+    "from": [
+      "q-e6-7",
+      "q-e6-2"
+    ],
+    "edgeRef": "动量",
+    "rank": 10,
+    "status": "answered",
+    "result": "= q-e6-7"
+  },
+  {
+    "id": "imp-2",
+    "kind": "improve",
+    "title": "10 日过滤放慢到 20 日",
+    "hypothesis": "较慢的方向过滤少误杀 2023 的第一名、仍躲开 2022 的下跌段：obj > imp-1 且 2022 maxDD < 18%；证伪：obj ≤ imp-1（q-e6-5 预期：方向型过滤拉长仍不如去掉）",
+    "why": "q-e6-7 的年度不对称：过滤在 2022 买回撤、在 2023 砍收益",
+    "design": "enhance/candidates/qixing-imp-2.py：short_lookback_days 10→20，单行 diff",
+    "from": [
+      "q-e6-7",
+      "q-e6-5"
+    ],
+    "edgeRef": "动量",
+    "rank": 11,
+    "status": "answered",
+    "result": "把 10 日过滤放慢到 20 日，objective 介于 base 与 imp-1 之间（0.1670 < 0.1892），且没有躲开 2022 的下跌段（2022 maxDD 20.19）。预注册的两条（obj > imp-1、2022 maxDD < 18%）都没达成"
+  },
+  {
+    "id": "imp-3",
+    "kind": "improve",
+    "title": "imp-1 + 关盈利保护",
+    "hypothesis": "两个踢出第一名的滤波可叠加：obj > imp-1 + 0.02；证伪：|obj − imp-1| < 0.01（误杀的是同一批日子）",
+    "why": "q-e6-4 与 q-e6-7 同为净负的第一名剔除器",
+    "design": "enhance/candidates/qixing-imp-3.py：q-7 + enable_profit_protection False；对照 = imp-1",
+    "from": [
+      "q-e6-4",
+      "q-e6-7"
+    ],
+    "edgeRef": "动量",
+    "rank": 12,
+    "status": "answered",
+    "result": "在无 10 日过滤的书上再关盈利保护几乎没有变化（Δobj −0.002）。预注册证伪项（|Δ| < 0.01）触发：两个滤波不叠加"
+  }
+]
