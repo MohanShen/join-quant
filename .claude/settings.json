@@ -61,7 +61,26 @@
       "Bash(node utils/wiki-epoch-repair.js:*)",
       "Bash(node utils/normalize-backfill.js:*)",
       "Bash(node utils/jq-http.js:*)",
-      "Bash(node utils/post-cache.js:*)"
+      "Bash(node utils/post-cache.js:*)",
+      "Bash(node utils/research-queue.js:*)",
+      "Bash(node utils/family-queue.js:*)",
+      "Bash(node utils/val-budget.js:*)",
+      "Bash(node utils/research-sync.js:*)",
+      "Bash(node utils/edge-redundancy.js:*)",
+      "Bash(node utils/family-assign.js:*)",
+      "Bash(node utils/edge-migrate.js:*)",
+      "Bash(node utils/stockcost-affected.js:*)",
+      "Bash(node utils/daily-summary.js:*)",
+      "Bash(node utils/wiki-factor-signature.js:*)",
+      "Bash(node utils/screen-prefilter.js:*)",
+      "Bash(node utils/screen-score.js:*)",
+      "Bash(node utils/factorlib-ingest.js:*)",
+      "Bash(node utils/screen-merge.js:*)",
+      "Bash(node utils/tutorial-ingest.js:*)",
+      "Bash(node utils/normalize-ledger-rebuild.js:*)",
+      "Bash(node utils/migrate-unique-key.js:*)",
+      "Bash(node utils/resource-fetch.js:*)",
+      "Bash(node utils/strategy-copy.js:*)"
     ]
   }
 }
