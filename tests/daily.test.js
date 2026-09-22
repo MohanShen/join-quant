@@ -685,12 +685,10 @@ test('research dispatches per family, not per stage', async (t) => {
 test('research is never blocked for want of a per-stage pin', async (t) => {
   const daily = require('../utils/daily-pipeline');
 
-  await t.test('a family with no pin is a cold start, not a block', () => {
+  await t.test('the planner selects research and carries the family it chose', () => {
     const p = daily.plan({ stageOverride: 'research' });
     assert.strictEqual(p.stage, 'research');
-    const r = daily.execute
-      ? null : null;   // execute would run; the dry path below is what we assert on
-    assert.ok(true);
+    assert.ok(Array.isArray(p.q.research), 'the plan must carry the family queue it decided from');
   });
 
   await t.test('the source no longer routes research through the per-stage pin check', () => {
