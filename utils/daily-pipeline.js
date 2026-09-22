@@ -104,7 +104,7 @@ const STAGE_TIMEOUT_MIN = (() => {
  * normalize. `enhance`/`study` remain dispatchable via --stage for fallback while their pinned
  * sessions still exist, but they are out of the automatic order.
  */
-const PRIORITY = ['research', 'normalize', 'discover'];
+const PRIORITY = ['research', 'assign', 'normalize', 'discover'];
 
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
 
@@ -166,6 +166,10 @@ function queues() {
   catch (e) { research = []; }
   return {
     research,
+    // A normalized strategy with no family: is invisible to the family queue — wiki-family-build
+    // skips pages without one. Assigning costs no backtest minutes, so it sits AHEAD of normalize:
+    // making what we already measured visible beats measuring more.
+    assign: (() => { try { return require('./family-assign').pending(); } catch { return []; } })(),
     enhance: staleFamilies('enhance', { requireBest: true }),
     study: staleFamilies('study'),
     normalize: normalizeQueue(),
@@ -373,6 +377,13 @@ function runStage(stage, q, dry) {
     : stage === 'study' ? (q.study[0] || {}).family : null;
   let r;
   if (stage === 'normalize') r = runNormalize(q, { dry });
+  else if (stage === 'assign') {
+    r = dry ? { outcome: 'dry', note: `would assign ${q.assign.length} strategy(ies)` }
+            : (() => { const x = sh('bash', [path.join(ROOT, 'scripts/run-assign.sh')]);
+                       return { outcome: x.ok ? 'ran' : 'error',
+                                note: `family assignment over ${q.assign.length} pending`,
+                                tail: x.out.split('\n').filter(Boolean).slice(-4).join('\n') }; })();
+  }
   else if (stage === 'research' || stage === 'enhance' || stage === 'study') {
     r = runAgentLoop(stage, target, { dry });
   } else r = runDiscover({ dry });
@@ -533,6 +544,7 @@ function printPlan(p) {
   const head = q.research.slice(0, 3)
     .map(x => `${x.family}(${x.score ?? '—'}/${x.reason})`).join(', ') || '—';
   console.log(`   research  ${String(q.research.length).padStart(4)}   ${head}`);
+  console.log(`   assign    ${String(q.assign.length).padStart(4)}   normalized but no family: (invisible to the queue)`);
   console.log(`   normalize ${String(q.normalize.total).padStart(4)}   ${q.normalize.pending.length} pending + ${q.normalize.retry.length} deferred-retry`);
   console.log(`   discover  ${String(q.discover.uncopied).padStart(4)}   uncopied of ${q.discover.total} in queue`);
   console.log(`   (legacy: enhance ${q.enhance.length}, study ${q.study.length} — --stage only)`);
