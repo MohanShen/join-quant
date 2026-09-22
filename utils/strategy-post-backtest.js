@@ -1107,4 +1107,13 @@ async function main() {
     : { status: 'completed via persistent profile' };
 }
 
-main().catch(err => { console.error('Fatal:', err.message); process.exit(1); });
+// ⚠ GUARDED. Without this, `require('./strategy-post-backtest')` RUNS A BACKTEST — it creates an
+// algorithm on JoinQuant, spends billed minutes and may spend the family's one VAL. Exactly the
+// bug CLAUDE.md records for strategy-normalize.js, which a bare require turned into a
+// 214-strategy batch that burned 42 of the day's 60 minutes before it was killed. That rule says
+// EVERY entry point in utils/ needs a guard; this one — the executor itself — never got it.
+if (require.main === module) {
+  main().catch(err => { console.error('Fatal:', err.message); process.exit(1); });
+}
+
+module.exports = { parseArgs, concurrencyGate, usageGate, parseCnDuration, WINDOWS };

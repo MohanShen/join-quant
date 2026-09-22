@@ -595,3 +595,46 @@ test('resume nudges send the agent to the queue, not to its own memory', async (
       'the override exists, so the nudge has to say not to reach for it');
   });
 });
+
+/**
+ * Every entry point in utils/ must be inert on require().
+ *
+ * CLAUDE.md's rule, written after a bare `require('./strategy-normalize')` started a 214-strategy
+ * batch and spent 42 of the day's 60 backtest minutes before it was killed: "every entry point in
+ * utils/ needs one". Three had never got it, and the worst was the EXECUTOR — requiring
+ * strategy-post-backtest.js ran a backtest, spending billed minutes and possibly the family's one
+ * VAL. wiki-family-build.js regenerated the wiki and called process.exit(), which is why
+ * normalize-sync.js spawns it as a subprocess rather than requiring it.
+ */
+test('utils entry points are inert on require', async (t) => {
+  const dir = path.join(__dirname, '../utils');
+  const files = fs.readdirSync(dir).filter(f => f.endsWith('.js'));
+
+  await t.test('no module-scope call to main() or process.exit()', () => {
+    const offenders = [];
+    for (const f of files) {
+      const src = fs.readFileSync(path.join(dir, f), 'utf8');
+      // A top-level (column-0) call is the signature: inside a guard or a function it is indented.
+      if (/^main\(\)/m.test(src) || /^\s{0,1}process\.exit\(/m.test(src)) offenders.push(f);
+    }
+    assert.deepStrictEqual(offenders, [],
+      `these run on require(): ${offenders.join(', ')}`);
+  });
+
+  await t.test('the three that mattered are guarded', () => {
+    for (const f of ['strategy-post-backtest.js', 'jq-budget.js', 'wiki-family-build.js',
+                     'strategy-normalize.js']) {
+      const src = fs.readFileSync(path.join(dir, f), 'utf8');
+      assert.match(src, /require\.main === module/, `${f} has no require.main guard`);
+    }
+  });
+
+  await t.test('requiring the executor does not start a backtest', () => {
+    // The sharpest case: this one spends real money and can consume a VAL budget.
+    const out = require('child_process').execFileSync(process.execPath,
+      ['-e', "require('./utils/strategy-post-backtest'); console.log('INERT');"],
+      { cwd: path.join(__dirname, '..'), encoding: 'utf8', timeout: 30000 });
+    assert.match(out, /INERT/);
+    assert.doesNotMatch(out, /Backtest|回测|algorithmId/);
+  });
+});

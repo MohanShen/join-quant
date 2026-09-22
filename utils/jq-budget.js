@@ -51,4 +51,8 @@ async function main() {
   }
 }
 
-main();
+// Guarded: requiring this made a live CDP call and printed to stdout, which corrupts any caller
+// parsing its own output. Callers should shell out to it (as daily-pipeline does) or import main.
+if (require.main === module) main();
+
+module.exports = { main };

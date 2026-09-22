@@ -191,86 +191,96 @@ ${section3}
 `;
 }
 
-// ── build ──
-const ledger = loadLedger();
-const strats = loadStrategies();
-const families = {};
-for (const s of strats) (families[s.family] ||= []).push({ ...s, ...(ledger[s.sourceFile] || {}) });
+// ⚠ GUARDED. Everything below is CLI body: it reads the ledger, rewrites pages and calls
+// process.exit(). A bare require() therefore REGENERATED THE WIKI and could take the caller
+// down with it — which is why normalize-sync.js spawns this file as a subprocess instead of
+// requiring it. That workaround is documented in CLAUDE.md; this is the actual fix. The
+// spawn is still correct (it isolates a non-zero exit), but requiring is no longer dangerous.
+if (require.main === module) {
+  // ── build ──
+  const ledger = loadLedger();
+  const strats = loadStrategies();
+  const families = {};
+  for (const s of strats) (families[s.family] ||= []).push({ ...s, ...(ledger[s.sourceFile] || {}) });
 
-if (LIST) {
-  Object.entries(families).sort((a, b) => b[1].length - a[1].length)
-    .forEach(([f, m]) => console.log(`${String(m.length).padStart(3)}  ${m.filter(x => x.gate === 'pass').length} pass  ${f}`));
-  process.exit(0);
-}
-
-fs.mkdirSync(FAM, { recursive: true });
-// Ledger preflight: a ledger with no usable rows can only ever blank pages.
-const normalizedRows = Object.keys(ledger).length;
-if (normalizedRows === 0 && !FORCE) {
-  console.error(
-    `REFUSING TO RUN: ${path.relative(ROOT, LEDGER)} has 0 \`normalized\` rows.\n` +
-    `  §3 is generated from that ledger, and it is gitignored — so the family pages\n` +
-    `  are currently the ONLY copy of the normalization results. Running now would\n` +
-    `  erase them. Rebuild the ledger first (utils/strategy-normalize.js).\n` +
-    `  Override with --force only if you intend to publish empty tables.`);
-  process.exit(1);
-}
-
-let stale = 0, wrote = 0, scaffolded = 0, blocked = 0;
-for (const [family, members] of Object.entries(families)) {
-  if (family === '其他') continue; // singletons bucket: no family page
-  const { text: section3, best } = horizSection(members);
-  const file = path.join(FAM, family + '.md');
-  let next;
-  if (fs.existsSync(file)) {
-    let cur = fs.readFileSync(file, 'utf8');
-    const replaced = replaceSection3(cur, section3);
-    next = replaced != null ? replaced : cur; // if no §3 heading, leave body (page malformed)
-    // refresh AUTO frontmatter keys
-    const fmMatch = next.match(/^---\n([\s\S]*?)\n---/);
-    if (fmMatch) {
-      let fm = fmMatch[1];
-      fm = setFmKey(fm, 'memberCount', members.length);
-      if (best) { fm = setFmKey(fm, 'bestVariant', `[[${best.id}]]`); fm = setFmKey(fm, 'bestObjective', best.obj.toFixed(4)); }
-      fm = setFmKey(fm, 'updatedAt', TODAY);
-      next = next.replace(/^---\n[\s\S]*?\n---/, `---\n${fm}\n---`);
-    }
-  } else {
-    next = scaffold(family, section3, best, members.length);
+  if (LIST) {
+    Object.entries(families).sort((a, b) => b[1].length - a[1].length)
+      .forEach(([f, m]) => console.log(`${String(m.length).padStart(3)}  ${m.filter(x => x.gate === 'pass').length} pass  ${f}`));
+    process.exit(0);
   }
-  const cur = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
-  if (next === cur) continue;
 
-  // Refuse to trade populated metric cells for empty ones (see countMetricCells).
-  const had = countMetricCells(extractSection3(cur));
-  const gets = countMetricCells(section3);
-  if (cur && gets < had && !FORCE) {
+  fs.mkdirSync(FAM, { recursive: true });
+  // Ledger preflight: a ledger with no usable rows can only ever blank pages.
+  const normalizedRows = Object.keys(ledger).length;
+  if (normalizedRows === 0 && !FORCE) {
     console.error(
-      `BLOCKED: wiki/families/${family}.md — would drop ${had - gets} metric value(s) ` +
-      `(${had} → ${gets}). The ledger is incomplete, not the page.`);
-    blocked++;
-    continue;
+      `REFUSING TO RUN: ${path.relative(ROOT, LEDGER)} has 0 \`normalized\` rows.\n` +
+      `  §3 is generated from that ledger, and it is gitignored — so the family pages\n` +
+      `  are currently the ONLY copy of the normalization results. Running now would\n` +
+      `  erase them. Rebuild the ledger first (utils/strategy-normalize.js).\n` +
+      `  Override with --force only if you intend to publish empty tables.`);
+    process.exit(1);
   }
 
-  if (CHECK) { console.error(`STALE: wiki/families/${family}.md`); stale++; continue; }
-  fs.writeFileSync(file, next);
-  if (cur) { wrote++; } else { scaffolded++; }
-  console.log(`${cur ? 'updated ' : 'scaffold'} wiki/families/${family}.md (${members.length} members)`);
+  let stale = 0, wrote = 0, scaffolded = 0, blocked = 0;
+  for (const [family, members] of Object.entries(families)) {
+    if (family === '其他') continue; // singletons bucket: no family page
+    const { text: section3, best } = horizSection(members);
+    const file = path.join(FAM, family + '.md');
+    let next;
+    if (fs.existsSync(file)) {
+      let cur = fs.readFileSync(file, 'utf8');
+      const replaced = replaceSection3(cur, section3);
+      next = replaced != null ? replaced : cur; // if no §3 heading, leave body (page malformed)
+      // refresh AUTO frontmatter keys
+      const fmMatch = next.match(/^---\n([\s\S]*?)\n---/);
+      if (fmMatch) {
+        let fm = fmMatch[1];
+        fm = setFmKey(fm, 'memberCount', members.length);
+        if (best) { fm = setFmKey(fm, 'bestVariant', `[[${best.id}]]`); fm = setFmKey(fm, 'bestObjective', best.obj.toFixed(4)); }
+        fm = setFmKey(fm, 'updatedAt', TODAY);
+        next = next.replace(/^---\n[\s\S]*?\n---/, `---\n${fm}\n---`);
+      }
+    } else {
+      next = scaffold(family, section3, best, members.length);
+    }
+    const cur = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+    if (next === cur) continue;
+
+    // Refuse to trade populated metric cells for empty ones (see countMetricCells).
+    const had = countMetricCells(extractSection3(cur));
+    const gets = countMetricCells(section3);
+    if (cur && gets < had && !FORCE) {
+      console.error(
+        `BLOCKED: wiki/families/${family}.md — would drop ${had - gets} metric value(s) ` +
+        `(${had} → ${gets}). The ledger is incomplete, not the page.`);
+      blocked++;
+      continue;
+    }
+
+    if (CHECK) { console.error(`STALE: wiki/families/${family}.md`); stale++; continue; }
+    fs.writeFileSync(file, next);
+    if (cur) { wrote++; } else { scaffolded++; }
+    console.log(`${cur ? 'updated ' : 'scaffold'} wiki/families/${family}.md (${members.length} members)`);
+  }
+  if (blocked) {
+    // Reported in BOTH modes, and never as "stale" — telling someone to run the
+    // tool is the wrong advice when the tool is what would destroy the data.
+    console.error(
+      `\n${blocked} family page(s) BLOCKED: regenerating would delete metric rows.\n` +
+      `  Cause: harness/normalize-train.tsv is incomplete (${normalizedRows} normalized row(s)).\n` +
+      `  Fix:   rebuild the ledger — node utils/strategy-normalize.js\n` +
+      `  The pages are correct; the ledger is not. Do NOT --force unless you mean it.`);
+  }
+  if (CHECK) {
+    if (stale) console.error(`\n${stale} family page(s) stale — run: node utils/wiki-family-build.js`);
+    if (stale || blocked) process.exit(1);
+    console.log('all family pages up to date ✓');
+  } else {
+    console.log(`\ndone: ${wrote} updated, ${scaffolded} scaffolded${blocked ? `, ${blocked} blocked` : ''}`);
+    if (blocked) process.exit(1);
+  }
+
 }
-if (blocked) {
-  // Reported in BOTH modes, and never as "stale" — telling someone to run the
-  // tool is the wrong advice when the tool is what would destroy the data.
-  console.error(
-    `\n${blocked} family page(s) BLOCKED: regenerating would delete metric rows.\n` +
-    `  Cause: harness/normalize-train.tsv is incomplete (${normalizedRows} normalized row(s)).\n` +
-    `  Fix:   rebuild the ledger — node utils/strategy-normalize.js\n` +
-    `  The pages are correct; the ledger is not. Do NOT --force unless you mean it.`);
-}
-if (CHECK) {
-  if (stale) console.error(`\n${stale} family page(s) stale — run: node utils/wiki-family-build.js`);
-  if (stale || blocked) process.exit(1);
-  console.log('all family pages up to date ✓');
-} else {
-  console.log(`\ndone: ${wrote} updated, ${scaffolded} scaffolded${blocked ? `, ${blocked} blocked` : ''}`);
-  if (blocked) process.exit(1);
-}
+
+module.exports = { loadLedger, loadStrategies, horizSection, scaffold };
