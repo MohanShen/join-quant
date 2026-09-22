@@ -1,0 +1,303 @@
+[
+  {
+    "id": "q-e6-0",
+    "kind": "understand",
+    "title": "base 7a1c225f（小市值低开优化）在 epoch-6 台上的真实水平",
+    "hypothesis": "微盘高换手书在 pin（5% 成交量上限、印花税 0.1%、零滑点）下收益明显缩水；证伪：objective < 0.3 或 sharpe < 2.0（家族头名不再是一个强基线）",
+    "why": "§3 的 7a1c225f 行（1.3738）是 epoch 2；epoch 4 的 order_volume_ratio=0.05 对微盘逐笔成交可能咬合，没有 epoch-6 基线任何 Δ 都不可比。旧 study（q-1..q-3）也测于 epoch 2",
+    "design": "py2to3(7a1c225f)+当前 OVERRIDE → study/小市值/baseline-e6.py（build-e6.js），--window train；年度拆分 yearsplit.js",
+    "from": [
+      "ledger:7a1c225f@epoch2 obj 1.3738",
+      "git:51334e3^ study-q-1..q-3"
+    ],
+    "edgeRef": "规模",
+    "rank": 1,
+    "status": "answered",
+    "result": "家族头名在 epoch-6 台上原样站住：objective 1.3861、sharpe 6.07，比 epoch 2 还略高。预注册证伪项（obj < 0.3 或 sharpe < 2.0）远未触发。5% 成交量上限与股票成本钉死都没咬到它（作者用的 set_commission 本就管不到股票，跑的一直是 JQ 默认 = 台值）。两年都强：2022 +200%、2023 +108%，回撤两年都在 12% 以内"
+  },
+  {
+    "id": "q-e6-1",
+    "kind": "understand",
+    "title": "edge test 规模：选股池换成市值升序第 1001–2000 名",
+    "hypothesis": "若规模是收益主体，换池后年化损失过半；证伪：年化 ≥ base-e6 的 75%",
+    "why": "edge 草稿的 test:。旧 study 断言「低回撤来自日内机器而非 size」，但从未测过 size 本身——换池是唯一直接的测量",
+    "design": "study/小市值/variants/q-1_next-1000.py：get_stocks 取 limit(2000) 后 [1000:]，其余不动（排序仍按市值升序、候选仍按买一额/市值排）",
+    "from": [
+      "q-e6-0",
+      "git:51334e3^ §4 size 因子本身 vs 日内机器"
+    ],
+    "edgeRef": "规模",
+    "rank": 2,
+    "status": "answered",
+    "result": "同一套低开入场 + 退出机器搬到稍大一档（第 1001–2000 名）后年化只剩 40%，回撤从 11.6% 深到 19.8%，objective 掉 0.98。预注册证伪项（年化 ≥ 75%）远未触发。两本书日收益几乎不相关（0.23），持的是完全不同的股票。损失在两年不对称：2022 还剩 132%（保留 66%），2023 从 108% 塌到 10%"
+  },
+  {
+    "id": "q-e6-2",
+    "kind": "understand",
+    "title": "edge test 低开反转：去掉低开入场条件",
+    "hypothesis": "若低开闸门是选择性来源，去掉后年化损失过半；证伪：年化 ≥ base-e6 的 75%",
+    "why": "edge 草稿第二条的 test:。epoch 2 旧 q-2b 测得去掉后年化 148.5→32.7——在 epoch 6 复核，因为 5% 成交量上限可能恰好改变低开日的成交",
+    "design": "study/小市值/variants/q-2_no-gap.py：is_eligible_for_buy 的条件 4 删除，单处 diff",
+    "from": [
+      "q-e6-0",
+      "git:51334e3^ study-q-2b"
+    ],
+    "edgeRef": "低开反转",
+    "rank": 3,
+    "status": "answered",
+    "result": "去掉低开条件后，同池同退出的书年化只剩 22%、sharpe 1.42 不过闸、回撤深 8pp。预注册证伪项（年化 ≥ 75%）远未触发，且两年都塌（2022 保留 21%、2023 保留 24%）。与 epoch 2 旧 q-2b（年化 32.7）几乎逐位复现"
+  },
+  {
+    "id": "q-e6-3",
+    "kind": "understand",
+    "title": "部件：关掉 11:30「现价 < 今日开盘价即清仓」（只作用于前日及更早的持仓，T+1）",
+    "hypothesis": "该退出是收益的存在性部件：关掉后 objective 转负；证伪：Δobj > −0.3",
+    "why": "旧 q-2a（epoch 2）称其为「日内止损 / EV 转换器」，但代码是 T+1——它是次日起每日的弱势退出，不是日内止损。机理描述错了，量级需在 epoch 6 重测",
+    "design": "study/小市值/variants/q-3_no-below-open-exit.py：initialize 里的 run_daily(sell, 11:30) 删除",
+    "from": [
+      "q-e6-0",
+      "git:51334e3^ study-q-2a"
+    ],
+    "edgeRef": "低开反转",
+    "rank": 4,
+    "status": "answered",
+    "result": "去掉 11:30 退出，书两年都亏、回撤近 40%。预注册证伪项（Δobj > −0.3）未触发。但这个消融是混淆的：11:30 是本书唯一的亏损退出，去掉后只剩 +5% 止盈，涨不到 5% 的仓位永远不走；而买入要求可用现金 ≥ 总资产×0.5/5，满仓的 5 只套牢股会把买入整个堵死——测到的是「无止损 + 资金锁死」，不是「破开盘价」这条规则的价值"
+  },
+  {
+    "id": "q-e6-4",
+    "kind": "understand",
+    "title": "部件：1/4 月日历空仓（avoid_months [1,4] → []）",
+    "hypothesis": "1/4 月财报季微盘回撤真实存在：关掉后 maxDD +3pp 以上；证伪：|ΔmaxDD| < 1pp",
+    "why": "在本 base 上从未测过；七星旧 q-3 在 406a1e4d 的小市值腿上测得 +4.30pp maxDD，那是另一套机器",
+    "design": "study/小市值/variants/q-4_no-avoid-months.py：g.avoid_months = []",
+    "from": [
+      "q-e6-0",
+      "七星高照:q-3"
+    ],
+    "edgeRef": "规模",
+    "rank": 5,
+    "status": "answered",
+    "result": "1/4 月日历空仓在本 base 上对回撤完全惰性（ΔmaxDD −0.05pp），对收益只有 −2.9pp 年化的小效应，且方向逐年相反：2022 的 1/4 月交易亏掉 34pp，2023 的 1/4 月交易多赚 14pp。预注册「maxDD +3pp 以上」被证伪"
+  },
+  {
+    "id": "q-e6-5",
+    "kind": "understand",
+    "title": "11:30 退出去掉条件：所有可卖持仓次日 11:30 一律卖（严格持一夜）",
+    "hypothesis": "若「破开盘价」挑出的是该走的仓位，base 优于无条件退出：Δobj ≤ −0.3；证伪：|Δobj| < 0.15（退出的价值只在于有退出）",
+    "why": "q-e6-3 的消融混淆了「有无亏损退出 + 资金锁死」与「破开盘价条件」本身；本题只拿掉条件，保留退出与时点",
+    "design": "study/小市值/variants/q-5_unconditional-exit.py：sell() 里 if last_price < today_open → if True",
+    "from": [
+      "q-e6-3"
+    ],
+    "edgeRef": "低开反转",
+    "rank": 6,
+    "status": "answered",
+    "result": "把「破开盘价才卖」换成「次日一律卖」，objective 降 0.42、回撤深 7.6pp。预注册（Δobj ≤ −0.3）成立：破开盘价条件本身带信息——留下次日开盘后仍走强的仓位、清掉走弱的。但这份信息全在 2022：2022 base 200% vs 一夜持有 90%（回撤 11.6 vs 19.3），2023 反而是一夜持有更好（146% vs 108%）"
+  },
+  {
+    "id": "imp-1",
+    "kind": "improve",
+    "title": "池子收到最小 500 只（g.choice 1000→500）",
+    "hypothesis": "若规模溢价在最小档内仍单调，收小池子提高 objective；采纳判据（预注册）：Δobj ≥ +0.05 且两年分年 objective（total−maxdd）都不劣于 base；Δobj < 0 即证伪「越小越好」",
+    "why": "规模 edge 已 measured（q-e6-1 保留 40%）；收紧规模阈值是 on-mechanism 的改动。注意预选按市值升序且只取前 (5−持仓)×5 只触发者，故 g.choice 只在触发者稀少的日子起作用",
+    "design": "enhance/candidates/xsz-imp-1.py：g.choice 1000→500，单行 diff",
+    "from": [
+      "q-e6-1",
+      "q-e6-5"
+    ],
+    "edgeRef": "规模",
+    "rank": 7,
+    "status": "answered",
+    "result": "池子收到最小 500 只，objective 降 0.24，两年都降（2023 尤甚：108%→77%），只换回 1pp 回撤。预注册证伪项（Δobj < 0）触发：在最小 1000 只之内「越小越好」不成立"
+  },
+  {
+    "id": "imp-2",
+    "kind": "improve",
+    "title": "低开阈值收紧：chg < −1 → chg < −2",
+    "hypothesis": "若跳空越深反转越强，收紧阈值提高 objective；采纳判据同 imp-1；Δobj < 0 即证伪",
+    "why": "低开反转 edge 已 measured（q-e6-2 保留 22%）；阈值是 edge 本身的旋钮。代价是触发者变少、空仓天数增加",
+    "design": "enhance/candidates/xsz-imp-2.py：条件 4 的 −1 → −2，单行 diff",
+    "from": [
+      "q-e6-2",
+      "q-e6-5"
+    ],
+    "edgeRef": "低开反转",
+    "rank": 8,
+    "status": "answered",
+    "result": "要求跳空 < −2% 后 objective 腰斩（−0.66），两年都降，回撤几乎不变。预注册证伪项（Δobj < 0）触发：「跳空越深反转越强」不成立——更深的阈值只是让触发者变少，而不是让每笔更好"
+  },
+  {
+    "id": "imp-3",
+    "kind": "improve",
+    "title": "池子放宽到最小 1500 只（g.choice 1000→1500）",
+    "hypothesis": "若本书宽度受限，放宽池子在触发稀少日补回候选、提高 objective；采纳判据（预注册）：Δobj ≥ +0.05 且两年分年 objective（total−maxdd）都不劣于 base；Δobj ≤ 0 即证伪",
+    "why": "imp-1 收小池子为负且机制是砍宽度；预选按市值升序，放宽只在最小 1000 只触发不足时才启用 1001–1500 名，规模稀释有限（但 q-e6-1 显示下一档在 2023 很弱）",
+    "design": "enhance/candidates/xsz-imp-3.py：g.choice 1000→1500",
+    "from": [
+      "imp-1",
+      "imp-2",
+      "q-e6-1"
+    ],
+    "edgeRef": "规模",
+    "rank": 9,
+    "status": "answered",
+    "result": "池子放宽到 1500 只，objective 掉一半（−0.67），回撤深 5pp，两年都坏。预注册证伪项（Δobj ≤ 0）触发。放进来的第 1001–1500 名不是只在触发稀少日补位——它们经买一额/市值排序后经常入选，并且差（与 q-e6-1 的下一档一致）"
+  },
+  {
+    "id": "imp-4",
+    "kind": "improve",
+    "title": "低开阈值放宽：chg < −1 → chg < −0.5",
+    "hypothesis": "若本书宽度受限且浅跳空仍有反转，放宽提高 objective；采纳判据（预注册）：Δobj ≥ +0.05 且两年分年 objective（total−maxdd）都不劣于 base；Δobj ≤ 0 即证伪",
+    "why": "imp-2 收紧为负、机制是砍宽度；today_open < prev_low 仍然保留，所以浅跳空也必须低于昨日最低",
+    "design": "enhance/candidates/xsz-imp-4.py：−1 → −0.5",
+    "from": [
+      "imp-2"
+    ],
+    "edgeRef": "低开反转",
+    "rank": 10,
+    "status": "answered",
+    "result": "低开阈值放宽到 −0.5%，objective 也掉一半（−0.64），回撤不变，两年都坏（2023 尤甚）。预注册证伪项（Δobj ≤ 0）触发。低开阈值的形状：−0.5 → 0.75，−1 → 1.39，−2 → 0.73，同样在作者值上尖峰"
+  },
+  {
+    "id": "q-e6-6",
+    "kind": "understand",
+    "title": "脊宽：g.choice 1000→800",
+    "hypothesis": "若 base 坐在平台上，邻点 objective ≥ 1.2（base 1.39 的 ~87%）；证伪（=尖刺）：邻点 objective < 1.0",
+    "why": "imp-1..imp-4 显示两个入场旋钮都在作者值上尖峰、两侧各掉约一半；邻点决定 base 的量级是平台还是尖刺——这决定 §3 头名能否被引用为家族水平",
+    "design": "study/小市值/variants/q-6_choice-800.py，单行 diff",
+    "from": [
+      "imp-1",
+      "imp-1",
+      "imp-2",
+      "imp-3",
+      "imp-4"
+    ],
+    "edgeRef": "规模",
+    "rank": 11,
+    "status": "answered",
+    "result": "g.choice 800 的 objective 1.24，达到预注册的平台线（≥ 1.2），未触发尖刺判据（< 1.0）。损失全在 2022（−44pp），2023 反而多 8.5pp"
+  },
+  {
+    "id": "q-e6-7",
+    "kind": "understand",
+    "title": "脊宽：g.choice 1000→1200",
+    "hypothesis": "若 base 坐在平台上，邻点 objective ≥ 1.2（base 1.39 的 ~87%）；证伪（=尖刺）：邻点 objective < 1.0",
+    "why": "imp-1..imp-4 显示两个入场旋钮都在作者值上尖峰、两侧各掉约一半；邻点决定 base 的量级是平台还是尖刺——这决定 §3 头名能否被引用为家族水平",
+    "design": "study/小市值/variants/q-7_choice-1200.py，单行 diff",
+    "from": [
+      "imp-3",
+      "imp-1",
+      "imp-2",
+      "imp-3",
+      "imp-4"
+    ],
+    "edgeRef": "规模",
+    "rank": 12,
+    "status": "answered",
+    "result": "g.choice 1200 的 objective 1.06，落在平台线与尖刺线之间，两年都降。只多放进 200 只稍大的股票就掉 0.32"
+  },
+  {
+    "id": "q-e6-8",
+    "kind": "understand",
+    "title": "脊宽：低开阈值 −1→−0.75（作者注释值）",
+    "hypothesis": "若 base 坐在平台上，邻点 objective ≥ 1.2（base 1.39 的 ~87%）；证伪（=尖刺）：邻点 objective < 1.0",
+    "why": "imp-1..imp-4 显示两个入场旋钮都在作者值上尖峰、两侧各掉约一半；邻点决定 base 的量级是平台还是尖刺——这决定 §3 头名能否被引用为家族水平",
+    "design": "study/小市值/variants/q-8_gap-075.py，单行 diff",
+    "from": [
+      "imp-4",
+      "imp-1",
+      "imp-2",
+      "imp-3",
+      "imp-4"
+    ],
+    "edgeRef": "低开反转",
+    "rank": 13,
+    "status": "answered",
+    "result": "作者注释里的阈值 0.75% 给 objective 1.14，不到平台线也未到尖刺线；损失几乎全在 2023（108→78）"
+  },
+  {
+    "id": "q-e6-9",
+    "kind": "understand",
+    "title": "脊宽：低开阈值 −1→−1.5",
+    "hypothesis": "若 base 坐在平台上，邻点 objective ≥ 1.2（base 1.39 的 ~87%）；证伪（=尖刺）：邻点 objective < 1.0",
+    "why": "imp-1..imp-4 显示两个入场旋钮都在作者值上尖峰、两侧各掉约一半；邻点决定 base 的量级是平台还是尖刺——这决定 §3 头名能否被引用为家族水平",
+    "design": "study/小市值/variants/q-9_gap-150.py，单行 diff",
+    "from": [
+      "imp-2",
+      "imp-1",
+      "imp-2",
+      "imp-3",
+      "imp-4"
+    ],
+    "edgeRef": "低开反转",
+    "rank": 14,
+    "status": "answered",
+    "result": "阈值 −1.5 的 objective 0.99，刚触发尖刺判据（< 1.0）。它逐年符号相反：2022 收益少 89pp、回撤深到 20.8%，2023 多赚 19pp、回撤只有 5%"
+  },
+  {
+    "id": "q-e6-10",
+    "kind": "understand",
+    "title": "排序层：去掉 买一额/市值 排序，候选按市值升序（纯规模排序）",
+    "hypothesis": "买一额/市值 排序带信息：去掉后 Δobj ≤ −0.15；证伪：|Δobj| < 0.1（排序层惰性）。若 Δobj ≥ +0.05 则纯规模排序是 on-mechanism 的 improve 候选",
+    "why": "本 base 上从未测过；旧 study 在 8dbd994c 上称排序层惰性（epoch 2，另一成员）。q-e6-1/imp-3 显示稍大的股票入选就伤，而 买一额/市值 不是纯规模排序",
+    "design": "study/小市值/variants/q-10_rank-by-size.py：valid_stocks.sort 删除",
+    "from": [
+      "q-e6-1",
+      "imp-3",
+      "q-e6-7"
+    ],
+    "edgeRef": "规模",
+    "rank": 15,
+    "status": "answered",
+    "result": "去掉 买一额/市值 排序、改按市值升序挑，objective 反而 +0.13，sharpe 6.43。预注册「排序层带信息（Δobj ≤ −0.15）」被证伪，惰性判据也未成立——作者的排序层是净负的：买一额/市值 会把盘口厚、但市值稍大的股票排到前面，而规模 edge 说越小越好。改善在 2022（+34pp），2023 持平"
+  },
+  {
+    "id": "q-e6-11",
+    "kind": "understand",
+    "title": "q-10 的增益是否离开驼峰顶仍在：在g.choice 800 肩部上改纯规模排序（对照 q-e6-6）",
+    "hypothesis": "若纯规模排序是结构性改进，在肩部上同样提高 objective：Δobj（vs q-e6-6）≥ +0.05；证伪：Δobj < 0（q-10 的 +0.13 是坐在脊顶上的偶然）",
+    "why": "q-10 的 +0.13 小于本族旋钮半径内的波动（±0.15–0.4）；只在脊顶成立的改进不能采纳",
+    "design": "study/小市值/variants/q-11_rank-by-size-choice-800.py = q-10 叠在 q-e6-6 上",
+    "from": [
+      "q-e6-10",
+      "q-e6-6"
+    ],
+    "edgeRef": "规模",
+    "rank": 16,
+    "status": "answered",
+    "result": "在 g.choice 800 的肩部上，纯规模排序同样提高 objective +0.16（比在脊顶上还大）。预注册证伪项（Δobj < 0）未触发，达到 +0.05 的结构性判据"
+  },
+  {
+    "id": "q-e6-12",
+    "kind": "understand",
+    "title": "q-10 的增益是否离开驼峰顶仍在：在低开 −0.75 肩部上改纯规模排序（对照 q-e6-8）",
+    "hypothesis": "若纯规模排序是结构性改进，在肩部上同样提高 objective：Δobj（vs q-e6-8）≥ +0.05；证伪：Δobj < 0（q-10 的 +0.13 是坐在脊顶上的偶然）",
+    "why": "q-10 的 +0.13 小于本族旋钮半径内的波动（±0.15–0.4）；只在脊顶成立的改进不能采纳",
+    "design": "study/小市值/variants/q-12_rank-by-size-gap-075.py = q-10 叠在 q-e6-8 上",
+    "from": [
+      "q-e6-10",
+      "q-e6-8"
+    ],
+    "edgeRef": "规模",
+    "rank": 17,
+    "status": "answered",
+    "result": "在低开阈值的肩部上，纯规模排序也提高 objective +0.16，两年都更好。预注册证伪项未触发"
+  },
+  {
+    "id": "imp-5",
+    "kind": "improve",
+    "title": "纯规模排序（= q-10）采纳为 VAL 候选",
+    "hypothesis": "采纳判据（预注册）：Δobj ≥ +0.05 且两年分年 objective 不劣于 base，且肩部复核 Δobj ≥ +0.05",
+    "why": "q-e6-10..12",
+    "design": "enhance/candidates/xsz-imp-5.py",
+    "from": [
+      "q-e6-10",
+      "q-e6-11",
+      "q-e6-12"
+    ],
+    "edgeRef": "规模",
+    "rank": 18,
+    "status": "answered",
+    "result": "满足预注册采纳判据：Δobj ≥ +0.05、两年分年 objective 都不劣于 base，且在两个驼峰肩部上增益一致（+0.16）。是减部件的改动（去掉作者的 买一额/市值 排序层）"
+  }
+]
