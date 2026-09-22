@@ -28,6 +28,20 @@ const state = require('../utils/daily-state');
 
 const ROOT = path.join(__dirname, '..');
 
+/**
+ * A constant's value with the environment CLEARED.
+ *
+ * daily-pipeline.sh exports USAGE_LIMIT and SLOW_SKIP_MIN to every child, so a test that reads
+ * the ambient value asserts whatever the caller happened to set. Spawn a clean child instead.
+ */
+function defaultOf(name) {
+  const env = { ...process.env };
+  delete env.USAGE_LIMIT; delete env.SLOW_SKIP_MIN; delete env.STAGE_TIMEOUT_MIN;
+  return Number(require('child_process').execFileSync(process.execPath,
+    ['-e', `process.stdout.write(String(require('./utils/daily-pipeline')['${name}']))`],
+    { cwd: ROOT, encoding: 'utf8', env }).trim());
+}
+
 test('queue priority', async t => {
   await t.test('the funnel drains its end before widening its mouth', () => {
     // The unit of work is a FAMILY. `enhance` and `study` were two queues over the same 14
@@ -90,7 +104,11 @@ test('queue priority', async t => {
 
 test('this pipeline raises the slow-skip cap', async t => {
   await t.test('30 minutes per backtest, above the 20-minute default', () => {
-    assert.strictEqual(daily.SLOW_SKIP_MIN, 30);
+    // ⚠ Read the DEFAULT from a clean child, not the ambient value. These constants are
+    // env-configurable, and daily-pipeline.sh exports USAGE_LIMIT/SLOW_SKIP_MIN to everything it
+    // spawns — so an agent running `npm test` from inside a pipeline run saw 45 !== 30 and
+    // reported a broken suite. The test was wrong, not the code.
+    assert.strictEqual(defaultOf('SLOW_SKIP_MIN'), 30);
     const src = fs.readFileSync(path.join(ROOT, 'utils/strategy-normalize.js'), 'utf8');
     assert.match(src, /max-poll-min/, 'the cap has to be forwardable to the child');
   });
@@ -101,7 +119,9 @@ test('this pipeline raises the slow-skip cap', async t => {
   });
 
   await t.test('the daily budget stays inside the free tier', () => {
-    assert.ok(daily.USAGE_LIMIT <= 60, 'above 60 spends credits, not free minutes');
+    // The DEFAULT must stay inside the free tier; an explicit override (VIP is 180) is the
+    // caller's decision and is not this test's business.
+    assert.ok(defaultOf('USAGE_LIMIT') <= 60, 'the default above 60 would spend credits');
   });
 });
 

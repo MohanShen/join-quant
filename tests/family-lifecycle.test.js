@@ -300,9 +300,13 @@ test('family lineage', async t => {
   });
 
   await t.test('every declared parent names a real family page', () => {
-    const { bases } = familyMatch.familyBases();
+    // ⚠ Checks the PAGE exists, not that its base: resolves. familyBases() excludes scaffolds
+    // (their base: is the literal placeholder), so keying on it failed for 五福闹新春 -> ETF动量
+    // with the message "which has no page" while ETF动量.md was sitting right there. A parent
+    // that has not been researched yet is still a real parent.
     for (const [child, parent] of par) {
-      assert.ok(bases.has(parent), `${child} declares parent "${parent}", which has no page`);
+      assert.ok(fsx.existsSync(pathx.join(__dirname, '../wiki/families', `${parent}.md`)),
+        `${child} declares parent "${parent}", but wiki/families/${parent}.md does not exist`);
     }
   });
 
