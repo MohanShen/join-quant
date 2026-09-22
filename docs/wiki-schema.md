@@ -180,7 +180,8 @@ study 做到穷尽、又跑过 enhance 的 ETF动量。知识库一直记着「�
 | 趋势择时 | anomaly | edge pass 2026-09-21（[[三进兵]] q-3） | EMA 底部反转、择时 overlay |
 | 涨停动量延续 | anomaly | edge pass 2026-09-21（[[打板短线]] q-4） | 打板、首板接力、弱转强 |
 | 股息率 | risk-premium | edge pass 2026-09-21（[[红利低频]]） | 红利、高股息、dividend yield |
-| 风格轮动择时 | anomaly | edge pass 2026-09-21（[[大小盘轮动]] q-1，**已证伪**） | 大小盘切换、风格投票 |
+| 风格轮动择时 | anomaly | edge pass 2026-09-21（[[大小盘轮动]] q-1，**已证伪**；epoch 6 u-1 复证伪） | 大小盘切换、风格投票 |
+| 低价股效应 | anomaly | [[大小盘轮动]] u-7（2026-09-22）：同等小市值上删去 <¥9 上限，年化腰斩 | 低价股、低价小盘、nominal price |
 
 > **edge pass 2026-09-21**：14 个家族一次性定名，0 回测。产出见 `node utils/edge-redundancy.js`。
 > 最重要的一条结论是**冗余**：**5 个家族**（[[小市值]]、[[七星高照]]、[[多因子ML]]、[[ETF动量]]、

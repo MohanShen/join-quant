@@ -1,0 +1,187 @@
+[
+  {
+    "id": "e6-0",
+    "kind": "understand",
+    "title": "base 2f5bc859 在 epoch 6 台上复测（锚点）",
+    "hypothesis": "pin 只动 511010 基金费用与 5% 成交量上限，月频低换手书应在 ±0.03 内复现 epoch-2 的 0.4550",
+    "why": null,
+    "design": "baseline-e6.py = py2to3(source)+OVERRIDE，--window train",
+    "from": [
+      "baseline"
+    ],
+    "edgeRef": null,
+    "rank": 1,
+    "status": "answered",
+    "result": "epoch 6 复测与 epoch 2 锚点只差 +0.0017、maxDD 逐位相同；两年收益几乎相等（+57.6% / +57.0%），不是靠某一年撑起来的"
+  },
+  {
+    "id": "u-1",
+    "kind": "understand",
+    "title": "always-small：投票全关、dapan 保留（edge 风格轮动择时 的 test）",
+    "hypothesis": "epoch-2 归档 q-1 在 epoch 6 复现：objective 高于 base（投票为净拖累）",
+    "why": null,
+    "design": "signal() 开头 g.signal=small; return",
+    "from": [
+      "q-4",
+      "q-7"
+    ],
+    "edgeRef": "风格轮动择时",
+    "rank": 2,
+    "status": "answered",
+    "result": "关掉投票、一直持小盘 sleeve，两年各多赚约 21pt，只多出 1.18pt 回撤；与 epoch-2 归档 q-1（+0.2092，maxDD 14.70）几乎逐位复现。与 base 的日收益相关仅 0.73，说明投票确实大量时间不在小盘，而那些时间是亏的"
+  },
+  {
+    "id": "u-3",
+    "kind": "understand",
+    "title": "always-small + 同过滤集取市值最大的 10 只（edge 规模因子 的 test）",
+    "hypothesis": "规模是收益主体：年化损失过半",
+    "why": null,
+    "design": "daily_my_trader_1 order_by market_cap.asc → desc",
+    "from": [
+      "q-6"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 3,
+    "status": "answered",
+    "result": "同一过滤集（有分红前 25% + 盈利 + <¥9）里改取市值最大的 10 只，年化只剩 always-small 的 19%、sharpe 跌破闸门；2022 几乎归零，2023 也少了 50pt。过滤集本身并不赚钱，赚钱的是在里面取最小的"
+  },
+  {
+    "id": "u-4",
+    "kind": "understand",
+    "title": "always-small + 股息率最低 25%（edge 股息率 的 test）",
+    "hypothesis": "股息率闸门贡献收益：年化损失 >25%",
+    "why": null,
+    "design": "get_dividend_ratio_filter_list sort False→True",
+    "from": [
+      "q-6"
+    ],
+    "edgeRef": "股息率",
+    "rank": 4,
+    "status": "answered",
+    "result": "换成有分红但股息率最低的四分之一，年化只剩 32%、回撤几乎翻倍，损失集中在 2022。按 test 的 75% 线股息率闸门有贡献——但股息率 = 分红/市值，高息档机械地偏小市值，低息档里「最小的 10 只」大概率比高息档的更大，所以这个 Δ 里混着规模"
+  },
+  {
+    "id": "u-5",
+    "kind": "understand",
+    "title": "always-small 上关 dapan：顶背离清仓在无投票的书上还是收益发动机吗",
+    "hypothesis": "epoch-2 q-2 在投票书上 dapan 贡献 +0.46 sharpe；在 always-small 上应同号",
+    "why": null,
+    "design": "top_divergence=False",
+    "from": [
+      "q-2"
+    ],
+    "edgeRef": null,
+    "rank": 5,
+    "status": "answered",
+    "result": "在没有投票的书上 dapan 仍是净正，但只值 0.057 objective，且几乎全部来自 2022；最大回撤与窗口不变。复现 epoch-2 q-2 的读法（收益来源而非回撤保护），量级约为投票书上的一半"
+  },
+  {
+    "id": "u-2",
+    "kind": "understand",
+    "title": "always-big：白马腿单独能赚多少",
+    "hypothesis": "白马腿在 2022–23 远弱于小盘腿（年化 <15%）；轮动的唯一价值只能是回撤",
+    "why": null,
+    "design": "signal() 开头 g.signal=big; return",
+    "from": [
+      "q-4"
+    ],
+    "edgeRef": null,
+    "rank": 6,
+    "status": "dropped",
+    "result": null,
+    "note": "u-1 关闭了投票方向：白马腿单独赚多少不再改变任何下一步，省下的分钟给 u-6/u-7"
+  },
+  {
+    "id": "u-6",
+    "kind": "understand",
+    "title": "always-small + 去掉股息率闸门（显式补次新过滤）：去混淆 u-4",
+    "hypothesis": "若股息率在规模之外有贡献，去闸门（池子只会更小）年化应低于 u-1；若 ≥ u-1，u-4 的损失是规模混淆",
+    "why": null,
+    "design": "DIV 行 → filter_new_stock",
+    "from": [
+      "u-4",
+      "q-6"
+    ],
+    "edgeRef": "股息率",
+    "rank": 3,
+    "status": "answered",
+    "result": "去掉股息闸门后池子只会更小，年化反而 +6.6pt、sharpe 略降、回撤 +1.7pt；逐年是 2022 +14.5pt / 2023 −2.3pt。股息闸门不贡献收益，至多是一个温和的回撤过滤器。u-4 的 −55pt 因此几乎全是规模：低息档里的最小 10 只更大"
+  },
+  {
+    "id": "u-7",
+    "kind": "understand",
+    "title": "always-small + 去掉 <¥9 股价上限：低价有无规模之外的贡献",
+    "hypothesis": "低价只是规模的代理：去掉上限（池子只会更小）年化 ≥ u-1",
+    "why": null,
+    "design": "删 filter_highprice_stock 一行",
+    "from": [
+      "u-6",
+      "u-3"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 4,
+    "status": "answered",
+    "result": "去掉股价上限后池子只会更小（最小 10 只的市值 ≤ 原来），年化却腰斩，两年各少约 40pt、同号。损失只能来自新进入的「高价小票」——在同样小的市值上，低价票显著更好。与 u-6（去股息闸门，年化反升）对比：股息闸门是规模的影子，股价上限不是"
+  },
+  {
+    "id": "dxp-imp-1",
+    "kind": "improve",
+    "title": "去掉风格投票，恒持小盘 sleeve（= u-1）",
+    "hypothesis": "已测 0.6623（+0.2056 vs base）",
+    "why": null,
+    "design": null,
+    "from": [
+      "u-1"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 10,
+    "status": "answered",
+    "result": "= u-1：obj 0.6623"
+  },
+  {
+    "id": "dxp-imp-2",
+    "kind": "improve",
+    "title": "imp-1 去掉股息闸门（= u-6）",
+    "hypothesis": "已测 0.7113（+0.0490 vs imp-1），但增益全在 2022",
+    "why": null,
+    "design": null,
+    "from": [
+      "u-6"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 11,
+    "status": "answered",
+    "result": "= u-6：obj 0.7113"
+  },
+  {
+    "id": "dxp-imp-3",
+    "kind": "improve",
+    "title": "imp-1 股价上限 ¥9→¥5",
+    "hypothesis": "低价股效应 若单调，收紧上限应不降 objective；若降 >0.05，¥9 是作者调出来的顶",
+    "why": null,
+    "design": "g.max_stock_price 9→5",
+    "from": [
+      "u-7"
+    ],
+    "edgeRef": "低价股效应",
+    "rank": 1,
+    "status": "answered",
+    "result": "收紧到 ¥5 并不更好：2022 几乎不变，2023 从 +78% 塌到 +10%。¥5 与不设上限（u-7）落在同一个 ~40% 年化——¥9 像是一个峰顶，而不是单调关系上的一点"
+  },
+  {
+    "id": "u-8",
+    "kind": "understand",
+    "title": "always-small 股价上限 ¥9→¥12：¥9 是尖峰还是宽平台",
+    "hypothesis": "若低价效应是宽的，¥12 的 objective 应在 imp-1 的 ±0.1 内；若 ¥12 也跌到 ~0.3，¥9 是调出来的尖峰",
+    "why": null,
+    "design": "g.max_stock_price 9→12",
+    "from": [
+      "dxp-imp-3",
+      "u-7"
+    ],
+    "edgeRef": "低价股效应",
+    "rank": 1,
+    "status": "answered",
+    "result": "¥12 只比 ¥9 低 0.047，且逐年符号相反（2022 −19pt / 2023 +9pt）——上侧是宽平台；价格响应是 ¥5 0.25 / ¥9 0.66 / ¥12 0.62 / 无上限 0.27，下侧断崖、上侧缓降"
+  }
+]
