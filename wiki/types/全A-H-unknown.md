@@ -1,18 +1,18 @@
 ---
-type: 小盘-H-high
-universe: 小盘
-horizon: H-high
-families: [[[ETF动量]], [[七星高照]]]
-familyCount: 2
-memberStrategies: 38
-bestFamily: [[ETF动量]]
-bestFamilyObjective: 0.5267
+type: 全A-H-unknown
+universe: 全A
+horizon: H-unknown
+families: [[[红利低频]]]
+familyCount: 1
+memberStrategies: 7
+bestFamily: [[红利低频]]
+bestFamilyObjective: 0.1348
 intradayDependent: true
 generatedBy: utils/wiki-type-build.js
-updatedAt: 2026-09-20
+updatedAt: 2026-09-22
 ---
 
-# 小盘-H-high — strategy type
+# 全A-H-unknown — strategy type
 
 **由 `utils/wiki-type-build.js` 生成，勿手改。** 家族归属由基类源码（universe）+ 实测换手
 （horizon）导出，不读正文叙述。
@@ -21,8 +21,7 @@ updatedAt: 2026-09-20
 
 | 家族 | 成员数 | bestObjective | 实测换手 | 盘中依赖 |
 |---|---|---|---|---|
-| [[ETF动量]] | 27 | 0.5267 | 0.16112 | ⚠ 是 |
-| [[七星高照]] | 11 | 0.1871 | 0.133 | ⚠ 是 |
+| [[红利低频]] | 7 | 0.1348 | — | ⚠ 是 |
 
 ## 整合回合（见 `docs/consolidation-plan.md` §4）
 
