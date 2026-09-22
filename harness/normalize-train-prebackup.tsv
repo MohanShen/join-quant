@@ -1,0 +1,48 @@
+sourceFile	postId	title	status	start	end	days	total_pct	annual_pct	sharpe	maxdd_pct	objective	gate
+strategies/2026-05-13_价值选股与RSRS择时-5a5ba567.py	5a5ba567903e1b326697d71ecb7bbc6e	价值选股与RSRS择时	compile-error									
+strategies/2026-05-15_价值投资--低估价值选股策略-c748b9d5.py	c748b9d5a6cce64134608ffc955cac53	价值投资--低估价值选股策略	compile-error									
+strategies/2026-05-15_回馈社区_分享市盈率股息率选股_均线止盈交易策略-796c6f98.py	796c6f98179db57b54f7b51d76e52b0e	回馈社区，分享市盈率股息率选股+均线止盈交易策略	compile-error									
+strategies/2026-05-17_复现东方证券研报--特质波动率因子研究-b0e7b728.py	b0e7b728504b30d962e03784838f7424	复现东方证券研报--特质波动率因子研究	compile-error									
+strategies/2026-05-17_量化课堂_季报预告信号策略的失效_-_知情交易的查证-26b52dca.py	26b52dcafc4dcefb062cdcd8a4d016c8	【量化课堂】季报预告信号策略的失效 - 知情交易的查证	compile-error									
+strategies/2026-05-18_基本面单因子测试_以BP因子为例-c18e0923.py	c18e09235b37184eb461af1c721770f8	基本面单因子测试——以BP因子为例	compile-error									
+strategies/2026-05-19_多任务学习一条龙框架优化修复版-77e78b06.py	77e78b06949fb2a0dca5f0245896179b	多任务学习一条龙框架优化修复版	compile-error									
+strategies/2026-06-13_以混沌之火_点亮投资之路_信息熵策略-775faa4e.py	775faa4e74dd72085c01e18cc3cfee6e	以混沌之火，点亮投资之路——信息熵策略	normalized	2022-01-01	2023-12-31	729	25.77	12.16	0.47	12.27	DQ	fail
+strategies/2026-06-21_首次将实战模型转化为量化策略年化468_07_amp_11_92-b8a7451f.py	b8a7451f9f7dd98789e3e98d565d244c	首次将实战模型转化为量化策略年化468.07%&amp;11.92%	slow-skipped									
+strategies/2026-06-22_中证500增强_优化版_24年至今收益252_4-914d5724.py	914d5724487bceb9332af8b3541d8c9c	【中证500增强】优化版：24年至今收益252.4%	slow-skipped									
+strategies/2026-06-24_行为金融学_预测结果分析1_更新_2019_03_17-5a127075.py	5a12707575f1259818d9c99ea80ff1a5	“行为金融学”预测结果分析1(更新: 2019/03/17)	compile-error									
+strategies/2026-06-28_高质量稳定上涨策略-d02cde29.py	d02cde29e649c9e8056582149cebf276	高质量稳定上涨策略	normalized	2022-01-01	2023-12-31	729	146.11	56.98	3.21	9.61	0.4737	pass
+strategies/2026-05-11_量化课堂_多因子策略入门-5b915770.py	5b915770c17e6804b7eb3a97b0588aa5	【量化课堂】多因子策略入门	normalized	2022-01-01	2023-12-31	729	-45.22	-26.02	-1.47	48.63	DQ	fail
+strategies/2026-05-12_网格交易策略-年化30_-网格大法好_熊市不用跑-598050b9.py	598050b93b58673d8629a33b7ba31851	【网格交易策略-年化30%+】-网格大法好，熊市不用跑~	normalized	2022-01-01	2023-12-31	729	78.86	33.79	1.19	19.68	DQ	fail
+strategies/2026-05-13_股指期货跨期套利策略-1294c538.py	1294c538b5f7c2fdaf74368cf3222bda	股指期货跨期套利策略	incompatible-futures									
+strategies/2026-05-13_量化课堂_多因子策略入门-49efd264.py	49efd264b1487b2bd4453933cd6c2487	【量化课堂】多因子策略入门	normalized	2022-01-01	2023-12-31	729	-45.22	-26.02	-1.47	48.63	DQ	fail
+strategies/2026-05-14_年化42_的市值选股与阶梯调仓策略-052da9b4.py	052da9b4e38c64356e0258b957426b1d	年化42%的市值选股与阶梯调仓策略	normalized	2022-01-01	2023-12-31	729	-81.62	-57.18	-1.84	82.90	DQ	fail
+strategies/2026-05-14_年化64_的市值选股策略_有止损模块-fa9c8c9e.py	fa9c8c9e4b94933fa65d494a92efd583	年化64%的市值选股策略（有止损模块）	slow-skipped									
+strategies/2026-05-14_量化课堂_机器学习多因子策略-f9ca1d2e.py	f9ca1d2e1a810511ee9915bcb85dfbe9	【量化课堂】机器学习多因子策略	normalized	2022-01-01	2023-12-31	729	25.60	12.09	0.46	19.32	DQ	fail
+strategies/2026-05-15_海龟交易体系_股票版-11406b82.py	11406b828df0987573b95815e75cf737	海龟交易体系（股票版）	no-trades	2022-01-01	2023-12-31	729	0.00	0.00	0.00	0.00		
+strategies/2026-05-15_连板龙头策略-b518f737.py	b518f73788d0081c3828553305fe813c	连板龙头策略	slow-skipped									
+strategies/2026-05-16_MACD_波动率过滤_追踪止损_期货择时汇总-10a3c43d.py	10a3c43d1f0b20e3b92abc741f177d83	MACD+波动率过滤+追踪止损 期货择时汇总	incompatible-futures									
+strategies/2026-05-16_趋势交易能赚钱吗_商品期货动量效应挖掘初探-ec720559.py	ec72055934e85240c34f7d3d9730f7dd	趋势交易能赚钱吗？商品期货动量效应挖掘初探	incompatible-futures									
+strategies/2026-05-16_面向对象重构-28择时小市值V2_0_8_实盘_个人接口_东方财富证券-f3ca90a7.py	f3ca90a7475312e5e44b4dc2dae74fdc	面向对象重构-28择时小市值V2.0.8 实盘   个人接口    东方财富证券	no-trades	2022-01-01	2023-12-31	729	0.00	0.00	0.00	0.00		
+strategies/2026-05-17_小市值排除3个bug版_22年至今收益506_回撤11-aaba7575.py	aaba7575e667a148a8469cb3a6a081d2	小市值排除3个bug版，22年至今收益506%回撤11%	normalized	2022-01-01	2023-12-31	729	296.10	99.21	3.85	11.10	0.8811	pass
+strategies/2026-05-17_年化15_84_的单均线策略-57abbac2.py	57abbac20a8584f8ef8f8e0e10ebb489	年化15.84%的单均线策略	normalized	2022-01-01	2023-12-31	729	-13.47	-6.99	-1.05	20.37	DQ	fail
+strategies/2026-05-17_策略发布_CSI300_多因子截面策略_低换手-34e0e03f.py	34e0e03fa79223fd28b1d4b6b072d74e	【策略发布】CSI300_多因子截面策略_低换手	compile-error									
+strategies/2026-05-17_终极优化-ETF核心资产轮动策略-2768beaa.py	2768beaa9eaa6abe494378db218202b1	终极优化-ETF核心资产轮动策略	normalized	2022-01-01	2023-12-31	729	64.73	28.39	1.62	11.36	DQ	fail
+strategies/2026-05-15_海龟交易体系_股票版-11406b82.py	11406b828df0987573b95815e75cf737	海龟交易体系（股票版）	no-trades	2022-01-01	2023-12-31	729	0.00	0.00	0.00	0.00		
+strategies/2026-05-16_面向对象重构-28择时小市值V2_0_8_实盘_个人接口_东方财富证券-f3ca90a7.py	f3ca90a7475312e5e44b4dc2dae74fdc	面向对象重构-28择时小市值V2.0.8 实盘   个人接口    东方财富证券	no-trades	2022-01-01	2023-12-31	729	0.00	0.00	0.00	0.00		
+strategies/2026-05-18_也谈技术指标布林通道的策略-3c269466.py	3c26946696b3bf9cc741e5abd077ef00	也谈技术指标布林通道的策略	normalized	2022-01-01	2023-12-31	729	12.31	5.98	0.08	26.63	DQ	fail
+strategies/2026-05-18_策略发布_A股日频均值回归_低换手_多因子截面-23f07734.py	23f077343c62f8c3bcb8d919258c5164	【策略发布】A股日频均值回归_低换手_多因子截面	compile-error									
+strategies/2026-05-19_单股2014_01_01-2016_08_01_收益6508_年化386-cf5cbac2.py	cf5cbac2d157b0b87ffbaf8868713226	单股2014.01.01-2016.08.01，收益6508%，年化386%	compile-error									
+strategies/2026-05-19_首板炸板回封买入策略-9106ccaf.py	9106ccaf1d8f2f25bffdc8d9ffaca3c6	首板炸板回封买入策略	compile-error									
+strategies/2026-05-20_双均线择时优化_考虑均线低于一定比例进行卖出判断-a67b6f26.py	a67b6f261c9dfe2da84239e2a95c4f30	双均线择时优化（考虑均线低于一定比例进行卖出判断）	slow-skipped									
+strategies/2026-05-20_四择时高息低价小市值和白马大市值轮动-2f5bc859.py	2f5bc8596aa24d07126677f70869b556	四择时高息低价小市值和白马大市值轮动	slow-skipped									
+strategies/2026-05-20_小市值微调_年化109_回撤15_胜率75-17c95d16.py	17c95d16cc715df781ff7f2004d0f5e2	小市值微调：年化109%｜回撤15%｜胜率75%	normalized	2022-01-01	2023-12-31	729	299.78	100.14	4.33	9.88	0.9026	pass
+strategies/2026-05-21_shi盘4_1-511大结局三马七星胜_五福惨遭淘汰七星小胜-c4291a66.py	c4291a66183d0a0d31873498746f215a	shi盘4.1-511大结局三马七星胜！五福惨遭淘汰七星小胜	compile-error									
+strategies/2026-05-21_大小外择时小市值-1c80dd9a.py	1c80dd9ae76ddcc7f3b051ce2df54899	大小外择时小市值	normalized	2022-01-01	2023-12-31	729	151.48	58.68	2.52	11.94	0.4674	pass
+strategies/2026-05-21_行业热点资金流入小市值策略2_0-9cba5a29.py	9cba5a29944d27512ac5b057ea1b11e5	行业热点资金流入小市值策略2.0	slow-skipped									
+strategies/2026-05-22_三部曲吃透ETF动量轮动1_纵有狂风拔地起_我亦乘风破万里-d1cf57eb.py	d1cf57eb50bab9595ba186cf78a50c23	【三部曲吃透ETF动量轮动1】纵有狂风拔地起，我亦乘风破万里	normalized	2022-01-01	2023-12-31	729	-10.62	-5.47	-0.26	35.93	DQ	fail
+strategies/2026-05-22_五福闹新春_v5_1-拟合ETF池最严厉的父亲-fd5d388d.py	fd5d388d9762e7d8c4ba65810366a7d1	【五福闹新春】v5.1-拟合ETF池最严厉的父亲	normalized	2022-01-01	2023-12-31	729	95.58	39.91	1.48	14.85	DQ	fail
+strategies/2026-05-22_关于小市值的不同筛选条件的差异研究-5a70adc1.py	5a70adc1fb0757d17ea6cd3e3514c9a7	关于小市值的不同筛选条件的差异研究	normalized	2022-01-01	2023-12-31	729	302.58	100.84	4.25	10.59	0.9025	pass
+strategies/2026-05-23_一份ETF动量轮动的实盘反思-无法规避下跌风险-71117205.py	71117205ca8e3c6d15a45023a64fc169	一份ETF动量轮动的实盘反思-无法规避下跌风险	normalized	2022-01-01	2023-12-31	729	-12.52	-6.48	-0.29	35.93	DQ	fail
+strategies/2026-05-23_三部曲吃透ETF动量3_地囚人_欲成仙_殊不知_天亦囚仙-62c2664f.py	62c2664f4f8cdfc492b392fb73bab57d	【三部曲吃透ETF动量3】地囚人，欲成仙，殊不知，天亦囚仙	normalized	2022-01-01	2023-12-31	729	162.11	62.01	1.94	17.70	DQ	fail
+strategies/2026-05-23_三马105-五福35-修复版-11年收益677倍回撤14-bf30eb36.py	bf30eb3671670bd5b5943cdc77a14bf3	三马105-五福35-修复版-11年收益677倍回撤14%	slow-skipped									
+strategies/2026-05-23_三马七星172-大池子-11年收益346倍回撤15_68-3c462ece.py	3c462ece6b24117f67aab4b16bee94c8	三马七星172-大池子-11年收益346倍回撤15.68	slow-skipped									

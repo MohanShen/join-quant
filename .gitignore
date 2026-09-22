@@ -1,60 +1,57 @@
 node_modules/
-# data/ — tracked for private backup
-# auth/ — tracked for private backup
+__pycache__/
 
-# Session cookies — secrets, never track (kept on disk, ignored)
+# ── Secrets: never tracked, no exceptions ───────────────────────────────────
+# CLAUDE.md is explicit — a cookie file is a live brokerage session.
 auth/cookies.json
 data/cookies.json
-
-# Local scratch / exploration scripts (contain hardcoded credentials)
+# Holds the remote QMT server host. CDP on a logged-in session is a full
+# remote-control channel and must not be published.
+config/exec.env
+# Local scratch with hardcoded credentials.
 test-jq-login.js
 test-jq-editor.js
-__pycache__/
-harness/normalize-*.tsv
-harness/normalize-*.bak
-harness/normalize-*.rebuild.json
 
-# ⚠ enhance/ideas-queue.json, enhance/loop-state.json and enhance/results.tsv are TRACKED
-# as of 2026-09-20. They were ignored as "transient working state", but they are the only
-# durable record of where the enhance loop is: with them gone, a cold start has nothing to
-# reconcile against and falls through to a brand-new epoch per program.md Setup — which is
-# exactly what happened (all three were absent while 13 families waited to be enhanced).
-# Resume was therefore session-only, and a lost Claude session lost the queue with it.
-# Same lesson as harness/normalize-*.tsv, which regressed from ~119 rows to 18 while ignored.
-
-# Auto-study transient state (queue + findings ledger), not tracked
-study/*/findings.tsv
-study/*/questions.json
-study/manifest.json
-
-# Execution-mode config — holds the remote server host, never track
-config/exec.env
-
-# One-time uniqueKey migration backups — safety copies, not history
-data/*.pre-uniquekey.bak
-
-# Screening working state — candidates carry fetched post bodies; batches are per-run
-screen/candidates.json
-screen/batches/
-
-# Backtest-curve scan cache — a fingerprint index of every backtest the JQ account still
-# holds, rebuilt for free by `series-backfill.js --scan`. The CURVES themselves
-# (data/series/) stay tracked: gitignoring a ledger is what let normalize-*.tsv regress
-# from ~119 rows to 18 unnoticed.
-data/series-scan.json
-
-# Local git worktrees created under .claude/ — they are separate checkouts, never content
-# of this repo. `git add -A .claude` once staged rq-executor as a gitlink, which would make
-# clones reference a submodule that does not exist.
+# ── Not repository content ──────────────────────────────────────────────────
+# Separate checkouts. `git add -A .claude` once staged rq-executor as a gitlink,
+# which makes clones reference a submodule that does not exist.
 .claude/worktrees/
-
-# Daily pipeline transients. `data/daily-state.json` and `data/deferred.json` are TRACKED on
-# purpose — the run log and the deferred work queue are what let tomorrow resume, and losing
-# the pool would re-strand every slow-skipped strategy with no route back.
-data/daily-logs/
+# PID files.
 data/*.lock
 
-# Cron wrapper logs — they churn on every fire and were tracked by accident (22 files,
-# dirtying `git status` after each run). Runtime output, not repository content.
+# ── Runtime logs ────────────────────────────────────────────────────────────
+# Full agent transcripts, rewritten on every fire. These are the one thing here
+# that is genuinely churn rather than state: they record what a run SAID, while
+# the ledgers below record what it DID, and the ledgers are what any later run
+# reads. Un-ignore these if you want the transcripts in history too.
+data/daily-logs/
 data/autoenhance-logs/
 data/autostudy-logs/
+data/autoresearch-logs/
+
+# ── Backups, not history ────────────────────────────────────────────────────
+harness/normalize-*.bak
+data/*.pre-uniquekey.bak
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EVERYTHING ELSE IS TRACKED, on purpose (2026-09-22).
+#
+# This repo has been bitten three times by ignoring state that later turned out
+# to be the only copy:
+#   - harness/normalize-*.tsv silently regressed from ~119 rows to 18 and blocked
+#     every family page from regenerating;
+#   - enhance/ideas-queue.json + results.tsv were absent, so a cold start had
+#     nothing to reconcile against and opened a brand-new epoch instead of
+#     resuming 13 waiting families;
+#   - study/<family>/findings.tsv held 4 results with no §2/§6 counterpart when
+#     an API 529 killed a round — results that existed only outside git.
+#
+# So the ledgers, queues, manifests, findings and caches are all tracked now:
+#   harness/normalize-*.tsv      study/*/findings.tsv    study/*/questions.json
+#   study/*/queue.json           study/manifest.json     enhance/*.json
+#   enhance/results.tsv          screen/candidates.json  screen/batches/
+#   data/series/                 data/series-scan.json   data/consumption.tsv
+#   data/daily-state.json        data/deferred.json      data/research-sessions/
+#
+# They churn, and that is the point: a diff on them is the record of what the
+# pipeline did. If one becomes genuinely too large, prune it — do not ignore it.

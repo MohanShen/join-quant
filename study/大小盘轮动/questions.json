@@ -1,0 +1,72 @@
+[
+  {
+    "id": "q-2",
+    "question": "把 dapan 顶背离风控（国证2000 MACD 顶背离 → 清仓非涨停标的 + 买国债ETF）中性化，回撤/收益/换手各变多少？",
+    "type": "ablation",
+    "hypothesis": "dapan 是基类两个 risk-off 机制中的主力：关掉后 maxDD 13.52% → 18~24%，年化 +5~+20pt，换手下降 ≥15%，|Δobj| ≥ 0.05。",
+    "why": "组件归因：定位「谁在压回撤」。上一轮单策略解剖只消融了整个 style vote（obj 0.4564→0.6656），从未单独测 dapan。注意：dapan 并非唯一 risk-off 通道（见 q-7），本实验只切断其中一条。",
+    "design": "复制 baseline.py → variants/q-2_no_dapan.py，在 dapan() 内 detect_divergences 之后插入 top_divergence = False（第 741 行后），只此一处改动。跑 --window train，与基线 total 152.56% / annual 59.02% / sharpe 2.67 / obj 0.4550 / maxDD 13.52% 对比。预算 ≈14 JQ min。证伪：|ΔmaxDD| < 1.5pt 且 Δ换手 < 5%。",
+    "rank": 10,
+    "status": "active"
+  },
+  {
+    "id": "q-3",
+    "question": "把基类原样放进 2024-02 微盘踩踏（2024-01-01→2024-06-30），它的 style vote + dapan 风控到底有没有兑现保护？",
+    "type": "regime",
+    "hypothesis": "保护不兑现：该子窗 maxDD ≥ 25%、回撤区间落在 2024-02-05→02-08、区间收益 < 0、sharpe < 2.5。",
+    "why": "上一轮解剖判「style vote 是净拖累」，但自己标注了最大 caveat：TRAIN(2022-2023) 里从未出现真正考验小盘避险的极端事件，结论可能 window-specific。这是唯一能直接检验该 caveat 的实验，且最便宜。study-schema §3 明确允许 2022-01-01→2024-12-31 内任意子窗做 regime 分析。",
+    "design": "不改代码，直接跑 baseline.py：--start 2024-01-01 --end 2024-06-30（≈4 JQ min）。⚠ 6 个月窗的 annual/sharpe 噪声大、objective 与 2 年 TRAIN 基线不可直接横比，只作绝对压力刻画。分支：若 maxDD ≥ 25% → 结论直接成立，收工；若 maxDD ≤ 15%（歧义分支，可能是保护生效、也可能只是持仓池根本不含被踩踏的微盘），再跑一次上一轮的 force-small 变体（final_signal 强制 'small'）在同一子窗做反事实对照（+4 JQ min）。总预算 4~8 JQ min。证伪：maxDD ≤ 15% 且区间收益 ≥ 0 且反事实对照更差 ⇒ 保护是真的、只是 TRAIN 内从未触发，须把上一轮「净拖累」重述为「保险未被触发」。",
+    "rank": 9,
+    "status": "queued"
+  },
+  {
+    "id": "q-7",
+    "question": "投票里唯一活着的空仓通道——1:1 分歧且择时一无效时回落到 'empty'（第 435-437 行）——对回撤和收益各值多少？",
+    "type": "ablation",
+    "hypothesis": "该通道真实触发但稀少：改掉后 maxDD +1~+4pt、年化 +2~+8pt、avg_position_days 上升、|Δobj| ≤ 0.08。",
+    "why": "机理修正（取代 Agent 1 原 q-5，其前提有误）：择时三的 'empty' 确为死代码，但择时一在「大小盘10日涨幅均值双双 ≤0」时返回 'empty'（第 190/192 行 else 分支），于是 s1 弃权、s2/s3 二人 1:1 分歧时第 436 行落到 'empty' → 国债ETF 腿被激活。这是基类里 dapan 之外的第二条 risk-off 通道，且从未被单独测过；上一轮结论里的「切向 白马/empty」正是它。测它才能把 q-2 的 dapan Δ 解读干净。",
+    "design": "复制 baseline.py → variants/q-7_tie_no_cash.py，只改第 436 行一处：final_signal = s1_signal if s1_signal in ('big','small') else 'empty' → ... else s3_signal（1:1 分歧改为让择时三决定，不再空仓）。跑 --window train。预算 ≈14 JQ min。证伪：Δ 全为 0（|Δobj| < 0.005 且 ΔmaxDD < 0.2pt）⇒ 该通道在窗内从未触发，国债ETF 腿也是死代码，dapan 才真是唯一 risk-off 机制。",
+    "rank": 8,
+    "status": "queued"
+  },
+  {
+    "id": "q-4",
+    "question": "关掉择时二（只留择时一 + 择时三投票），结果能否复现基类？即择时二是否只是装饰？",
+    "type": "ablation",
+    "hypothesis": "择时二近乎装饰：|Δobj| ≤ 0.06、ΔmaxDD 在 ±2pt 内。理由：择时二在 ratio ∈ [1.0,1.2] 时返回 'neutral'、双双跌破 -2% 时返回 'empty'，两种情形都在第 386 行被丢弃而弃权；择时三永远给出 big/small，择时一在平票时优先。",
+    "why": "变体归因：把「三信号投票」这个叙事拆开验伪。⚠ 本条是对 Agent 1 原双开关设计（同时关择时二+择时三）的重新规范——原设计既是两处改动（违反一次一处），又会让 enabled_strategies 变空、把第 440-442 行的空仓通道从「不可达」变成「常态触发」，把信号归因和一个全新的现金择时混在一起。关择时二是三个 leave-one-out 里唯一无副作用的那个：剩下 s1+s3，s3 恒有效 ⇒ 集合永不为空；1:1 分歧时 s1 必然有效 ⇒ 不会落到 'empty'。归因干净。",
+    "design": "复制 baseline.py → variants/q-4_no_s2.py，只改第 110 行：g.enable_strategy_two = False。跑 --window train。预算 ≈14 JQ min。证伪：obj ≥ 0.60 或 ≤ 0.35（即择时二实际承担了大量决策权）。",
+    "rank": 7,
+    "status": "queued"
+  },
+  {
+    "id": "q-6",
+    "question": "实际交易池 daily_my_trader_1 没有次新过滤（harness §3 要求剔除上市不足 250 天者），补上后 objective 掉多少？",
+    "type": "ablation",
+    "hypothesis": "近乎为零：|Δobj| ≤ 0.03。因为 get_dividend_ratio_filter_list 要求有分红记录，已隐性排除绝大多数次新股。",
+    "why": "真实性红线审计（program.md §红线）：filter_new_stock 只用在择时一的信号池（第 335/355 行），交易池 daily_my_trader_1（617-640）与 White_Horse（590-614）都没调用。White_Horse 取沪深300 成分股，天然无次新；风险敞口只在高息低价小盘 sleeve。若 Δ 显著，家族页所有绝对指标都要挂 ⚠。",
+    "design": "复制 baseline.py → variants/q-6_new_stock_filter.py，只在第 624 行 filter_all_stock 之后插入 stocks = filter_new_stock(context, stocks)。跑 --window train。预算 ≈14 JQ min。⚠ filter_new_stock 用 375 天，严于 harness §3 的 250 天，故所得 Δ 是「违规收益」的保守上界而非精确值。证伪：Δobj ≤ -0.08 ⇒ objective 的实质部分来自 harness §3 禁止的标的，家族页需整体挂 ⚠ 真实性旗标。",
+    "rank": 6,
+    "status": "queued"
+  },
+  {
+    "id": "q-8",
+    "question": "关掉择时三（只留择时一 + 择时二投票），基类还剩多少？",
+    "type": "ablation",
+    "hypothesis": "择时三是唯一恒有效的投票人，关掉后决策频繁落空 → 空仓时间大增：avg_position_days 下降、年化 -10~-30pt、maxDD 下降。",
+    "why": "补齐 leave-one-out 的第三条腿。⚠ 已知混淆且不可避免：择时三是唯一永远返回 big/small 的信号（'empty' 分支不可达），关掉它后「择时一 empty + 择时二 neutral/empty」会让 enabled_strategies 变空，第 440-442 行的空仓通道由不可达变为可达，故 Δ 同时包含「少一个投票人」和「多一条现金通道」两重效应，结论须带此 caveat 记账。正因如此排在 q-4 之后。",
+    "design": "复制 baseline.py → variants/q-8_no_s3.py，只改第 111 行：g.enable_strategy_three = False。跑 --window train。预算 ≈14 JQ min。证伪：|Δobj| ≤ 0.05 且 avg_position_days 变化 < 5% ⇒ 择时三既非决定性投票人、新增现金通道也未触发。",
+    "rank": 5,
+    "status": "queued"
+  },
+  {
+    "id": "q-5",
+    "question": "把被丢弃的 'empty' 票变成有约束力（任一择时报 empty 即强制空仓），会怎样？",
+    "type": "ablation",
+    "hypothesis": "（原假设：效应全部来自择时二，因为择时三的 empty 不可达；maxDD -2~-5pt，年化 -5~-15pt。）",
+    "why": "DROPPED —— 前提经源码核对不成立。原假设漏了择时一：strategy_one_signal 第 190/192 行在「大小盘涨幅均值双双 ≤ 0」时返回 'empty'，这在 2022 熊市里是常态，不是罕见事件。所以该改动不是「让两个阈值生效」，而是给策略装上一个全市场下跌即空仓的择时器——效应方向已可先验断定（大幅降收益、大幅降回撤），信息量低，且它是设计变体而非归因实验（study 无选择压力，不做「要不要加这个功能」）。真正值得测的活着的空仓通道已重新规范为 q-7。此条保留在册以免丢失记录。",
+    "design": "（不执行）原设计：在第 390 行后插入 if 'empty' in (s1_signal, s2_signal, s3_signal): enabled_strategies = []，跑 --window train，≈14 JQ min。",
+    "rank": 4,
+    "status": "dropped"
+  }
+]

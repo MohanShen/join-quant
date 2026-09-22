@@ -1,0 +1,72 @@
+[
+  {
+    "id": "q-4",
+    "question": "冻结基类在 TRAIN 内部的年度形态是什么？56.98% 年化与 9.61% 最大回撤分别落在 2022 熊市还是 2023 震荡？",
+    "type": "regime",
+    "hypothesis": "两年均为正但极不均衡（2022 年 15–35%，2023 年 55–90%），且全窗 9.61% 的最大回撤发生在 2022 年；2023 年子窗 maxDD < 9.61%。证伪：任一年为负、或 2023 子窗 maxDD >= 9.61%（即回撤主因在 2023 而非 2022）。",
+    "why": "家族页 §1/§2 完全空白，目前只有一个两年合并的标量。所有后续消融的 Δ 都要靠『基线在哪一年赚钱、在哪一年回撤』来解读——尤其 q-2 假设『etf 是 2022 年的收益来源』、q-3 假设『1/4 月日历规则躲开了 2022 微盘踩踏』，这两个假设的分母就是本题的输出。无代码改动、零改错风险、两个一年期回测约等于一次全窗回测的机时，是本轮性价比最高的一步，故排在消融之前。",
+    "design": "不造 variant，直接用不可变快照 /Users/mshen/join-quant/study/多因子ML/baseline.py 跑两个子窗（study-schema §3 允许 2022-01-01→2024-12-31 内任意子窗）：\n  node utils/strategy-post-backtest.js study/多因子ML/baseline.py \"多因子ML-q-4-2022\" --start 2022-01-01 --end 2022-12-31 --usage-limit 55\n  node utils/strategy-post-backtest.js study/多因子ML/baseline.py \"多因子ML-q-4-2023\" --start 2023-01-01 --end 2023-12-31 --usage-limit 55\n读两行 SUMMARY 的 total%/annual%/sharpe/maxdd%。\n⚠ 读数注意：(a) 子窗 annual% 由执行器按实际天数从 total% 年化（harness §4），一年期时 annual≈total，勿与全窗 annual 直接横比；(b) 一年期 sharpe 噪声大，子窗的 gate/objective 只作描述，不得与 TRAIN 的 0.4737 当同一量纲比较；(c) 两个子窗的 maxDD 不可相加，全窗 maxDD 可能跨年，若两子窗 maxDD 均 < 9.61% 则说明存在跨年连续回撤。",
+    "rank": 5,
+    "status": "answered"
+  },
+  {
+    "id": "q-1",
+    "question": "把 small_cap 分仓权重从 0.35 归零，组合年化会掉多少？它是不是这个三分仓组合的收益发动机？",
+    "type": "ablation",
+    "hypothesis": "small_cap 是主要收益来源，annual 56.98% → 22–35%，maxDD 大致持平（±2pp），objective → 0.15–0.27。证伪：Δannual > −8pp（即去掉它几乎不掉收益，则收益发动机另有其人）。",
+    "why": "三分仓恒定混合结构里『哪个仓在赚钱、哪个仓在控回撤』是家族页 §1 的第一性问题，目前完全未知。small_cap 权重次高（0.35）但机制最激进（6 只微盘、周度调仓、三档止损），先验上最可能是收益引擎，Δ 幅度预期最大，信息量最高，故为消融三连的第一发。",
+    "design": "cp /Users/mshen/join-quant/study/多因子ML/baseline.py → /Users/mshen/join-quant/study/多因子ML/variants/q-1.py；只改第 29 行 `    'small_cap': 0.35,` → `    'small_cap': 0.0,`。不动其它任何字符，尾部 AUTORESEARCH NORMALIZATION OVERRIDE 块原样保留。副作用（预期内、须在发现里写明）：schedule_tasks 第 176 行的 `if STRATEGY_ALLOCATION['small_cap'] > 0` 会整块跳过该仓的 6 个调度（含 1/4 月空仓切换与三档止损）。\n  node utils/strategy-post-backtest.js study/多因子ML/variants/q-1.py \"多因子ML-q-1\" --window train --usage-limit 55\n⚠ 闲置资金混淆（q-1/q-2/q-5 共有，必须带进 findings 的 flags）：各仓一律按 context.portfolio.total_value * STRATEGY_ALLOCATION[...] 定仓位，归零后那 35% 资金空闲吃 0 收益，不会分给其余两仓。故 Δannual = 『该仓自身边际损益』+『这笔资金失去的复利』两者之和，不能读成纯粹的选股 alpha。因为 study 无选择压力（不挑最优变体、不做 keep/discard），该混淆可接受：它测的正是『在这个恒定混合权重下该仓对组合的贡献』，这本身就是要理解的量；但结论措辞必须是『该仓位对组合的贡献』而非『该仓策略本身的收益能力』。",
+    "rank": 4,
+    "status": "answered"
+  },
+  {
+    "id": "q-2",
+    "question": "把 etf 分仓权重从 0.40 归零，最大回撤会抬多少？它是不是这个组合的回撤压制器？",
+    "type": "ablation",
+    "hypothesis": "etf 跨资产轮动（14 只 ETF 含黄金/国债/海外，单标的持有）是回撤压制器兼 2022 年收益来源：maxDD 9.61% → 14–20%，sharpe 跌破 2.5 触发 gate DQ。证伪：maxDD 抬升 < 2pp（则低回撤另有来源，多半来自 q-3 的日历规则或 small_cap 的三档止损）。",
+    "why": "objective = annual − maxDD，基类 9.61% 的低回撤是 gate PASS（sharpe 3.21）的一半功劳，必须定位其来源。etf 仓权重最高（0.40）且池子含 518880 黄金 / 511090 国债这类避险资产，是先验上最可能的减震器；与 q-1 合起来就把『收益 vs 回撤』两个角色钉在具体仓位上。",
+    "design": "cp baseline.py → /Users/mshen/join-quant/study/多因子ML/variants/q-2.py；只改第 28 行 `    'etf': 0.4,` → `    'etf': 0.0,`。副作用：schedule_tasks 第 173 行跳过 etf_trade 的 9:31 调度。\n  node utils/strategy-post-backtest.js study/多因子ML/variants/q-2.py \"多因子ML-q-2\" --window train --usage-limit 55\n⚠ 同 q-1 的闲置资金混淆，此处更大（40% 空闲）：若 annual 下降而 maxDD 也下降，须先归因于『四成仓位变现金』的机械减震，而非 etf 仓本身波动大。判 gate DQ 时也要注意：sharpe 会因组合总波动被现金稀释而人为抬高，故『sharpe 跌破 2.5』若未发生，不构成对『etf 是减震器』的证伪，真正的判据是 maxDD。",
+    "rank": 3,
+    "status": "answered"
+  },
+  {
+    "id": "q-3",
+    "question": "关掉 SMALL_CAP_CONFIG['pass_april']（1 月与 4 月不再把微盘换成 600036），回撤会抬多少？纯日历规则贡献了多少低回撤？",
+    "type": "ablation",
+    "hypothesis": "这条纯日历规则躲开了 2022-01 与 2022-04 两次微盘杀跌，是 9.61% 低回撤的重要来源：maxDD 9.61% → 13–19%，objective −0.15~−0.30。证伪：maxDD 抬升 < 1.5pp 且 Δannual < 3pp（则该规则只是噪声，低回撤来自 etf 仓或止损）。",
+    "why": "这是全套问题里唯一无闲置资金混淆的消融——开关两侧 small_cap 仓都满仓，只是标的从 6 只微盘换成 600036（招商银行），资金占用不变，Δ 是干净的因果量。同时它是全策略最可疑的过拟合部件：一条硬编码的月份规则，在 TRAIN 里只有 4 次观测（2022/2023 各一个 1 月、一个 4 月）。若它扛下大部分回撤压制，那么基类『低回撤』的稳健性要在家族页 §1 打上重标记。排在 q-1 之后是因为：若 q-1 证伪了『small_cap 是发动机』，本题的叙事框架需要改写，先跑 q-1 可避免把一次回测花在错误框架上。",
+    "design": "cp baseline.py → /Users/mshen/join-quant/study/多因子ML/variants/q-3.py；只改第 62 行 `    'pass_april': True,` → `    'pass_april': False,`。传导路径：is_no_trading_month()（第 1148–1154 行）直接 return False → g.small_cap['no_trading_today'] 恒 False → small_cap_check_no_trading_month() 不再买入 no_trading_buy。\n  node utils/strategy-post-backtest.js study/多因子ML/variants/q-3.py \"多因子ML-q-3\" --window train --usage-limit 55\n⚠ 叙事纠正（分析官务必照此措辞）：该规则不是『1/4 月空仓』，而是『1/4 月把 small_cap 仓整体切换到 600036.XSHG 招商银行』（第 67 行 no_trading_buy，代码注释误称其为 ETF）。所以本消融测的是『日历驱动的 微盘→大盘银行 轮动』，不是『日历驱动的降仓』。⚠ flags 必带 overfit-risk（in-sample n=4）。",
+    "rank": 2,
+    "status": "answered"
+  },
+  {
+    "id": "q-5",
+    "question": "把 white_horse 分仓权重从 0.25 归零，组合怎么变？三个仓的贡献是可加的，还是存在跨仓耦合？",
+    "type": "ablation",
+    "hypothesis": "white_horse（20 只大盘白马、月度信号、大小盘 regime 切换）是最弱的一条腿，Δobjective −0.05~−0.12；并且三仓贡献近似可加。证伪：Δobjective 幅度 > 0.20（则它并非配角），或可加性检验残差显著为正（则存在跨仓复利耦合）。",
+    "why": "补齐三仓中最后一条腿，把『去一仓』三连凑满，才能得到完整的仓位贡献分解；单看它自身信息量最低，故排最后。真正的增量价值在可加性检验：各仓按 total_value * 权重 定仓，意味着赢钱的仓会把浮盈按权重摊回给全体仓位（跨仓再平衡），所以三仓贡献未必可加——残差大小直接量化了这条耦合链，且不额外消耗任何机时。",
+    "design": "cp baseline.py → /Users/mshen/join-quant/study/多因子ML/variants/q-5.py；只改第 30 行 `    'white_horse': 0.25` → `    'white_horse': 0.0`。副作用：schedule_tasks 第 184 行跳过该仓 6 个调度。\n  node utils/strategy-post-backtest.js study/多因子ML/variants/q-5.py \"多因子ML-q-5\" --window train --usage-limit 55\n可加性检验（纯纸面计算，复用 q-1/q-2/q-5 已跑出的行，0 次额外回测）——⚠ 纠正提问官的原始写法：objective = annual − maxDD 对 maxDD 与 sharpe gate 是非线性的，Δobjective 不可相加。检验必须做在 total% 上：令 R = 基线 total 146.11%，A_etf/A_sc/A_wh 为三次去一仓的 total%，各仓贡献 c_i = R − A_i，可加则 Σc_i ≈ R，即 ΣA_i ≈ 2R = 292.2%。报残差 ΣA_i − 2R：显著为负说明存在正向跨仓耦合（去掉任一仓都伤及其余仓的复利基数）。⚠ 该检验受与 q-1/q-2 相同的闲置资金效应影响，只作耦合强弱的定性指标，不作精确分解。",
+    "rank": 1,
+    "status": "answered"
+  },
+  {
+    "id": "q-6",
+    "question": "etf 腿的贡献在时间上有多集中？把 q-2 的消融只放在 2022 熊市年跑，能否说明 +93.52% 的异常收益是这条腿造的？",
+    "type": "regime",
+    "hypothesis": "etf 腿的贡献高度集中在 2022：c_etf(2022) 显著大于全窗 c_etf/2。预注册分支——Case A：去掉 etf 后 2022 掉到约 50% 以下，则该腿是 2022 异常的主因；Case B：仍在 50% 以上，则异常主体不在该腿。",
+    "why": "q-4 测出收益 3.3× 集中在 2022，q-2 测出 etf 腿全窗只贡献 36.52pp 且不减震——两者合起来无法区分「该腿常年平庸」与「该腿只在 2022 赢一次」。复用现成变体、只换窗口，1 次回测即可分辨，并直接切进「2022 异常从何而来」这一头号未解问题。",
+    "design": "不造新文件：直接用 variants/q-2.py（etf=0.0，单行 diff 已核）跑 --start 2022-01-01 --end 2022-12-31，与 q-4 已跑出的 2022 基线子窗（total 93.52 / sharpe 5.09 / maxDD 8.54）对照。集中比 = c_etf(2022) / 全窗 c_etf。⚠ 读数纪律同 q-4：子窗 annual% 为 364 天再年化，不与两年 56.98% 同量纲；一年期 sharpe 噪声大，子窗 objective/gate 仅描述性。⚠ 40% 闲置现金混淆同 q-2，措辞须为「该腿在其固定 0.40 混合权重下对组合的贡献」。",
+    "rank": 6,
+    "status": "answered"
+  },
+  {
+    "id": "q-audit",
+    "question": "在把 2022 年 +93.52% 当作真实 edge 之前，baseline.py 里有没有未来函数（look-ahead）？",
+    "type": "probe",
+    "hypothesis": "存在至少一处可疑的前视数据访问（先验指向盘中 frequency='1m' 调用与不带 date 的横截面查询）。证伪：逐点核对后全部数据访问都取不到决策时点之后的信息，则头条数字的不可实现性须由成本/执行/构建层面的偏差解释，而非泄漏。",
+    "why": "§4 头号未解问题（2022 熊市 +93.52% 而 maxDD 仅 8.54%）在归因收口前必须排除「靠未来数据」这一最强替代解释；否则前面所有消融 Δ 的解读都建立在一个可能虚假的分母上。零回测成本，是本轮性价比最高的一步。",
+    "design": "全文只读审计，0 次回测、无变体。逐点判定每个数据访问能否取到决策时点之后的信息：(1) 分钟线看 end_date 与 JQ 以结束分钟标注 bar 的约定；(2) 日频看是否走 previous_date / attribute_history；(3) get_fundamentals 看是否传 date 及公告日对齐；(4) 硬编码标的列表逐个核上市日期与回测窗口的关系（注意静默的长度守卫 continue 会掩盖剪枝）；(5) 核对冻结台实际运行频率，再判断 run_daily 的盘中时点在该频率下是否真的存在。措辞纪律：结论既不得写成「策略作弊」，也不得写成「已证明无泄漏」。",
+    "rank": 7,
+    "status": "answered"
+  }
+]

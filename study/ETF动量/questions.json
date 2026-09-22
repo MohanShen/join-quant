@@ -1,0 +1,82 @@
+[
+  {
+    "id": "q-1",
+    "question": "把第 138 行 `g.portfolio_value_proportion` 改成 `[0,0,1,0]`（纯 ETF轮动 = 家族同名腿，满仓），V1.7.2 的这条腿单独跑是什么形态？相对姊妹家族 [[七星高照]] V1.6 同名腿（sharpe 1.60 / annual 38.52% / maxDD 17.19% / beta 0.140 / turnover 0.1884 / 89 笔）差在哪？",
+    "type": "isolate",
+    "hypothesis": "提问官原假设：DQ（sharpe 1.6–2.2）、annual 30–55%、maxDD 18–28%、**beta 0.25–0.50**；证伪项 sharpe ≥ 2.5 或 beta ≤ 0.18。排序官对 beta 一项提出**预注册反预测**：beta 会落在 0.10–0.25、很可能直接触发提问官自己的证伪项。理由两条：(i) 提问官「这个池子偏 A 股宽基故 beta 更高」的说法与源码不符 —— 实测 `g.etf_pool_3` 38 只里约 15 只 QDII/跨境、4 只商品（518880 黄金 / 159985 豆粕 / 501018 原油 / 161226 白银）、3 只债（511380 可转债 / 511010 国债 / 511220 城投债），A 股宽基只约 11 只，按数量**不是**宽基为主；(ii) 混合 beta 算术：0.41581 ≈ 0.5·β(小市值) + 0.5·β(ETF)，若 β(ETF)≈0.14（姊妹实测）则 β(小市值)≈0.69，自洽；若 β(ETF) 真有 0.40，则 β(小市值) 需 ≈0.43，对一条微盘腿不合理。",
+    "why": "同名腿单独能不能撑起头条，是本家族 §1「为什么有效」的第一块基石；且这是与姊妹家族 V1.6 同名腿的**受控跨版本对照**（同一 isolate 手法、同一冻结台），可把 V1.7.2 相对 V1.6 的整体退步（obj 0.3830 vs 0.4814 / sharpe 2.52 vs 3.17 / maxDD 12.71 vs 8.53）分摊到 ETF 腿这一侧。",
+    "design": "已造 `variants/q-1.py` = baseline.py 第 138 行**单行**改为 `[0,0,1,0]`（diff 已核，确为 1 行）。已 dispatch，运行中。命令 `node utils/strategy-post-backtest.js study/ETF动量/variants/q-1.py \"ETF动量-q-1\" --window train --usage-limit 55`。预算 ~10 JQ 分钟 / ~10–15 分钟墙钟。**承载结论的指标**：sharpe、annualReturn、maxDrawdown、**beta**、vol、turnover_rate、成交笔数、max_drawdown_period 端点。**objective/gate 不承载任何结论**（基线闸口余量仅 +0.0237，任何消融后 obj 都不可作比较量）；此处 DQ/PASS 只作「同名腿能否独立过闸」这一个二值判断，不作 Δ。⚠ 满仓口径 = 混合内 2× 规模，不可算术分解；⚠ 相对姊妹 q-1 的 Δ 是**整条腿的版本差**（池 7→38 + 新增 profit_protection / volume_check / short_momentum_filter），非单点归因，措辞须照此限定。",
+    "rank": 10,
+    "status": "active"
+  },
+  {
+    "id": "q-3",
+    "question": "把第 169 行 `g.avoid_trade_april = False` 改回 `True`（1/4 月把小市值腿整体转持 511880 货币 ETF）—— 作者在 V1.7.2 里**关掉**了这个开关，而姊妹家族 V1.6 里它是**开着**的。把它开回来，能不能把 V1.7.2 的头条回撤 12.71% 拉回 V1.6 的 8.53% 量级？",
+    "type": "ablation",
+    "hypothesis": "姊妹家族 study-q-3 在**同样 50% 稀释**下测得：关掉该规则 maxDD +4.30pp、annual −2.99pp、sharpe −0.35，且最深回撤窗迁移到 2022-03-23→04-26。本家族方向相反（开回来），故**可预注册一个定量迁移预测**：maxDD 12.71 → 8.0–10.5%（Δ −2.2~−4.7pp）、annual **+1~+4pp**（不是提问官写的 −3~+3pp —— 姊妹实测该规则剔除的是收益/回撤**双输**持仓，故开回来收益应同向变好）、sharpe +0.15~+0.45。maxDD 窗口：现窗 2022-03-22→2022-04-28 起点在**3 月**（未被规则遮蔽）、终点在 4 月（被遮蔽），故预测**截断/后缩而非消失**。证伪项（须同时成立）：|ΔmaxDD| < 1.0pp **且** max_drawdown_period 两端点不变 ⇒ 头条回撤属 ETF 腿而非小市值日历。",
+    "why": "本家族与姊妹家族的小市值腿源码差异**恰好只有两处开关**（实测核对：`avoid_trade_april` True→False、`enable_dynamic_position` True→False，其余 ATR/成本保护/一致性/DBL/check_defense/xsz v3/动态选股数 全部逐字相同）。本项把其中**一处**单独翻回，是**一次一处**地归因一处版本退步，价值远高于一次普通消融；同时它把姊妹家族已测定的效应量做一次**跨版本可迁移性检验**（同一稀释系数、同一替代标的 511880）。不依赖 q-1，可独立跑，无级联风险。",
+    "design": "复制 baseline.py → `variants/q-3.py`，**只改第 169 行** `g.avoid_trade_april = False` → `True`。命令 `node utils/strategy-post-backtest.js study/ETF动量/variants/q-3.py \"ETF动量-q-3\" --window train --usage-limit 55`。预算 ~10 JQ 分钟 / ~10–15 分钟墙钟。**承载结论的指标：maxDrawdown + max_drawdown_period 两端点（主）、annualReturn、total、成交笔数与胜负拆分（姊妹处 15 笔多出的里 14 笔为亏损单，是机理旁证）、turnover_rate、sharpe（仅作幅度参考）**。**排序官驳回提问官「本项 objective 仍可读」的论证**：闸口余量 +0.0237 = sharpe 的 0.94% 相对变动，而把半个账本在 24 个月里的 4 个月转成货币 ETF 会同时压低收益与波动，sharpe 的**符号本身不可先验预测**；「效应方向对闸口有利」不成立，obj/gate 在本项同样**不承载结论**，只作附注记录。⚠ TRAIN(2022-01-01→2023-12-31) 内仅 n=4 次触发（2022-01/2022-04/2023-01/2023-04），overfit-suspect 必带；⚠ 效应稀释在 50% 权重的小市值腿上；⚠ 零滑点：基线一臂在 1/4 月持微盘、变体一臂持货币 ETF，故**基线才是真实成本更高的一臂**，测得的改善是该规则真实收益的下界。",
+    "rank": 9,
+    "status": "queued"
+  },
+  {
+    "id": "q-2",
+    "question": "把第 138 行改成 `[1,0,0,0]`（纯小市值，满仓），这条腿单独跑是什么形态？混合的 sharpe 2.5237 是否高于两条单腿（超可加）？相对姊妹家族 V1.6 同一 isolate（obj 0.5984 / sharpe 2.85 / annual 72.45% / maxDD 12.61% / vol 0.2505 / turnover 0.0751）差多少？",
+    "type": "isolate",
+    "hypothesis": "小市值腿满仓过闸、annual 60–85%、maxDD 11–16%、sharpe 2.5–3.0，头条主要由它承载（复现姊妹的 label-contradiction）；且混合 sharpe 2.5237 > 两条单腿之 sharpe（分散/低相关证据，须配 vol 佐证：混合 vol 0.19414 应低于两条单腿）。提问官原证伪项「obj < 0.3830」**被排序官替换**为：sharpe(q-2) ≥ 2.5237 **或** vol(q-2) ≤ 0.19414 —— 任一成立则「混合带来分散收益」这一读法被证伪。",
+    "why": "与 q-1 合起来才闭合 50/50 的两腿分解，是 §1 的第二块基石；也是 q-8（满权重日历规则）的必要对照。**非姊妹家族的重复**：本版小市值腿与 V1.6 相差恰两处开关，故 q-2 与姊妹 q-2 的差值是这两处开关在满权重下的**合并**效应。",
+    "design": "复制 baseline.py → `variants/q-2.py`，**只改第 138 行** → `[1, 0, 0, 0]`。命令 `node utils/strategy-post-backtest.js study/ETF动量/variants/q-2.py \"ETF动量-q-2\" --window train --usage-limit 55`。预算 ~10 JQ 分钟 / ~10–15 分钟墙钟。**承载结论的指标：sharpe、vol、annualReturn、maxDrawdown + 窗口、turnover_rate、beta（配合 q-1 做 0.41581 的两腿 beta 分解）**。obj/gate **不承载结论**，即使 PASS 也只记为「腿单独可过闸」的二值事实，绝不与 0.3830 排名。⚠ 满仓口径 = 混合内 2× 规模；⚠ 微盘零滑点高估在本项最重，任何绝对数不可读作可实现；⚠ **与姊妹 q-2 的差值混合了 `avoid_trade_april` 与 `enable_dynamic_position` 两处翻转，不可归因到单一开关**（拆分归因分别是 q-3 和一个尚未提出的 dynamic_position 项）；⚠ label-contradiction 只标不裁决。**前置**：`initialize` 里 `capital_balance_2` 会在 2023-09-28 前做 `proportion[2] += g.strategy_ETF_2000_proportion`，但本家族 `proportion[1] = 0` 故该项恒为 0、两个 isolate 均无污染（已核对第 3101–3128 行）。",
+    "rank": 8,
+    "status": "queued"
+  },
+  {
+    "id": "q-6",
+    "question": "在 q-1 的纯 ETF轮动 isolate 之上，把第 385 行 `g.premium_threshold` 从 0.20 降到 0.03（作者自己注释里建议的量级），38 只池、其中约 15 只 QDII/跨境的溢价率过滤会不会终于开始起作用？",
+    "type": "ablation",
+    "hypothesis": "姊妹家族 study-q-4 已证：V1.6 的 7 只池上 `enable_premium_filter` 开/关是**逐位精确恒等的 null**（0.20 阈值在 2022–2023 内从未与「该标的排第一」同时发生），且 `premium is None` 净值闸门同被证伪。故在本家族预测：0.20→0.03 会**产生非零 Δ**（预测 annual −5~−25pp、成交笔数下降、若无候选则更多回落到 `g.defensive_etf = 511880`）。证伪项：Δ 全零（逐位恒等）⇒ 该家族的溢价率过滤**在任何合理阈值下都惰性**，是纯叙事组件。",
+    "why": "姊妹家族 §4 **已把这个 sweep 明确登记为「未打包（正确不捆绑）」的下一步**，并指出因 None 闸门已被证伪、任何 Δ 现在**只能归因于溢价幅度本身** —— 解读比原计划更干净。本家族换了打分函数（`get_ranked_etfs_172` vs V1.6 的 `get_target_etfs_16`）且池扩到 38 只、QDII 占比更高，故姊妹的 null **不能外推**，值得实测。",
+    "design": "复制 `variants/q-1.py` → `variants/q-6.py`，**相对 q-1 只改第 385 行** `g.premium_threshold = 0.20` → `0.03`（相对 baseline 两行：138 + 385）。**对照 = q-1 的 SUMMARY，非基类** —— 该过滤器住在 ETF 腿里，在基线 50% 权重下 1–3pp 的效应会与稀释不可分。**硬前置：q-1 必须先跑出有效 SUMMARY**。预算 ~10 JQ 分钟 / ~10–15 分钟墙钟。**承载结论的指标：annualReturn、成交笔数与 turnover_rate（过滤是否改变了目标列表的直接证据）、maxDrawdown + 窗口、sharpe；若 Δ 全零则须比对回收的 stats payload 全精度位（turnover / win_ratio / beta / vol）以区分「恒等 null」与「四舍五入相同」**。obj/gate 不承载结论（q-1 侧本就大概率 DQ）。⚠ 该 Δ 免疫零滑点方向性（滑点动水平不动零 Δ）；⚠ 结论 measured 于 `[0,0,1,0]`，向混合的外推须声明依据（`get_ranked_etfs_172` 是否 capital-independent 需在写回时复核，本版含 `profit_protection` 会读持仓，**不可照抄姊妹的「按构造推得」措辞**）。",
+    "rank": 7,
+    "status": "queued"
+  },
+  {
+    "id": "q-7",
+    "question": "在 q-1 的纯 ETF轮动 isolate 之上，把第 353 行 `g.holdings_num` 从 1 改成 2 —— 38 只池的动量排名是有宽度的信号，还是只有第一名能赚钱的单名彩票？",
+    "type": "sweep",
+    "hypothesis": "若动量分数是真实排序信号，持 2 名应显著降波动与回撤（vol −15~−30%、maxDD −3~−8pp）而只小幅损失收益（annual −5~−15pp），sharpe 大致持平或改善；若分数只在第一名处有效（过拟合到极值），则持 2 名会**同时**掉收益与掉 sharpe。证伪项：vol 与 maxDD 均未改善（|Δvol| < 5% 相对 且 |ΔmaxDD| < 1pp）⇒ 排名在 top-2 内无判别力。",
+    "why": "`holdings_num = 1` 是本家族最激进的设定，也是它与多数同族成员（§3 里 26 个 DQ 成员多为多持仓）的关键区别；姊妹家族因池只有 7 只从未测过。这是 §4.2 参数敏感性的核心一问：分辨「平台 vs 悬崖」，直接决定 §1 该写「动量排序有效」还是「押注头名的极值效应」。",
+    "design": "复制 `variants/q-1.py` → `variants/q-7.py`，**相对 q-1 只改第 353 行** `g.holdings_num = 1` → `2`。**对照 = q-1**。**硬前置：q-1 先出结果**。预算 ~10 JQ 分钟 / ~10–15 分钟墙钟。**承载结论的指标：vol、maxDrawdown + 窗口、sharpe、annualReturn、成交笔数 / avg_position_days / turnover_rate、win_ratio + profit_loss_ratio（判别「少数极值贡献」的直接读数）**。obj/gate 不承载结论。⚠ 单点非曲线：一个 1→2 的点不足以断言「平台」，措辞只能说方向；若需曲线须另排 3/5 两点（各再 ~10 分钟），本轮不打包。",
+    "rank": 6,
+    "status": "queued"
+  },
+  {
+    "id": "q-4",
+    "question": "在 q-1 的纯 ETF轮动 isolate 之上，把 `g.etf_pool_3`（第 261–299 行，38 只）裁剪为「2021-10-01 前已上市」的成员，硬编码池里的**后见之明/幸存者偏差**在 TRAIN 上到底有没有实际污染回测？",
+    "type": "ablation",
+    "hypothesis": "**排序官已实质改写提问官的预测。** 提问官预测 annual −5~−20pp「完全集中在 2023」，但两条事实压缩了可测面：(i) **TRAIN = 2022-01-01→2023-12-31**（729 日历 / 484 交易日，harness §1），故 563360（2024-11 上市）与 159201（2025 上市）**根本无法进入 TRAIN**，提问官举的最刺眼两例与本窗无关；(ii) 未上市成员本来就被 `calculate_momentum_metrics_172` 的 `if len(prices) < g.lookback_days: return None`（第 1576 行，位于第 1631 行 `except: return None` 之内）**静默剔除**。故 Δ 只可能来自 **2022-01 至 2023-11 之间上市**的少数成员（159509 / 513290 / 159529 / 563300 / 513730 一类）在其上市半年后进入排名。修正预测：|Δannual| **0–8pp**，且**出现精确恒等 null 的概率不低**（姊妹 study-q-4 已有先例）。2022 段**按构造必须逐位相同**（未上市成员永不进 2022 排名）—— 这是本项自带的**内部一致性校验**：若 2022 段有任何变化，说明剔除机制的理解是错的。证伪项：|Δannual| < 2pp **且** maxDD 窗口两端点不变 ⇒ TRAIN 内不存在可测的池后见之明污染。",
+    "why": "家族页 `realism:` 字段仍是「<⚠ 待人工填写>」，而硬编码 ETF 池的后见之明是 harness §3 真实性红线里最典型的一类。这里**null 与非 null 同样可发表**：null = 「25 根 K 线的长度闸门已经把未上市成员挡干净」，非 null = 「排名在 TRAIN 后半段被新上市标的污染，头条不可全信」。",
+    "design": "复制 `variants/q-1.py` → `variants/q-4.py`，**相对 q-1 只改 `g.etf_pool_3` 这一处字面量列表**（第 261–299 行）。**排序官裁定（两条，实验官须照办）**：(1) **驳回**提问官的 `get_security_info(...).start_date` 动态过滤 —— 对无数据代码 `get_security_info` 可能返回 None，`.start_date` 触发 AttributeError 会在 `initialize` 里**整跑失败**，在墙钟只够 ~4 跑的当天代价过高；且动态过滤使变体源码不自证、不可审计。**必须写死裁剪后的字面量列表**，并把被剔除成员及其上市日**逐条写进 findings 的 description 列**。(2) **接受 2021-10-01 这个日期，但驳回提问官给的理由** —— 真正的闸门是 `len(prices) >= g.lookback_days` = **25 根**，不是 45 根；`lookback = max(25,10)+20 = 45` 只是**请求**根数，`attribute_history` 在上市初期会返回更少。2021-10-01 距 2022-01-01 有 ~60 个交易日，对 25 根的要求足够保守，故日期可用，但写回时必须写对闸门数。**对照 = q-1**。**硬前置：q-1 先出结果**。预算 ~10 JQ 分钟 / ~10–15 分钟墙钟。**承载结论的指标：annualReturn、total、成交笔数、maxDrawdown + 窗口、turnover_rate；若疑似 null 必须比对全精度 stats payload**。obj/gate 不承载结论。**一次一处裁定：通过** —— 相对 baseline 是两行（138 + 池），但相对其对照 q-1 恰一处，归因干净（与姊妹 study-q-4 的先例一致）。",
+    "rank": 5,
+    "status": "queued"
+  },
+  {
+    "id": "q-5",
+    "question": "127.79% 的两年总回报在 2022 与 2023 之间怎么分？把不可变快照只跑 2023 一年，本版是不是也像姊妹 V1.6 那样重心压在 2022（≈+100.7% vs +22.15%，4.5×）？",
+    "type": "regime",
+    "hypothesis": "2023 total 15–45%（对应反解 2022 ≈ +60~+100%），即重心仍在 2022 但不均衡程度**弱于**姊妹的 4.5×。证伪项：2023 total > 60%（重心翻转到 2023）或 < 5%（比姊妹更极端）。附带一条**版本判别**：姊妹 V1.6 的最深回撤整段落在 **2023-09-25→10-23**（ETF 腿秋季事件），而本版锚点最深回撤在 **2022-03-22→04-28**（微盘四月杀跌）—— 两个版本的风险位置不同，故本项跑 2023 子窗时，其 maxDD 应**明显低于** 12.71%，且窗口与全窗**不同**（与姊妹的「子窗窗口与全窗完全相同」形成反例）。",
+    "why": "跨家族「收益集中在 2022」的模式目前 n=3（[[七星高照]] / [[多因子ML]] / [[打板短线]]），本项是 n=4。**但排序官明确标注这是本队列里价值最低的一项**：本家族是姊妹 V1.6 的**版本孪生**，是可能拿到的**最不独立**的第 4 个样本，对该模式的证据增量很小。真正的增量在上面那条「回撤位置版本判别」上。",
+    "design": "**无变体**：直接跑不可变快照 `study/ETF动量/baseline.py`。**排序官改了子窗** —— 提问官提的是 2022-only，改为 **2023-only**：`node utils/strategy-post-backtest.js study/ETF动量/baseline.py \"ETF动量-q-5\" --start 2023-01-01 --end 2023-12-31 --usage-limit 55`。理由两条：(i) 与姊妹 study-q-5 **方法完全一致**（同样跑 2023、同样乘法反解 2022），才能做像素级的跨版本比较，否则两边口径不同；(ii) 2022-only 的产出里有一半是**同义反复** —— 锚点已经报了 max_drawdown_period 2022-03-22→04-28，跑 2022 子窗几乎必然复现它，等于花一整跑确认已知事实；跑 2023 反而能拿到「本版 2023 有没有姊妹那个秋季 ETF 腿事件」这个新信息。预算 ~10 JQ 分钟 / ~10–15 分钟墙钟。**承载结论的指标：total（主）、maxDrawdown + max_drawdown_period 端点、annualReturn 仅作描述**。**口径纪律（必带）**：子窗 annual 与两年期 51.01% **不同量纲**，子窗 sharpe 与描述性 obj **绝不**与 2.5237 / 0.3830 排名或比较。⚠ 乘法反解非恒等（子窗从空仓重建、回看期重新预热；[[多因子ML]] 同型残差实测 +1.98pp），只作方向性判断；⚠ regime-specific；⚠ 共同外因（2022 熊市对微盘与跨资产 ETF 普遍友好）尚未排除，n=4 仍记作**待检假设**而非规律。",
+    "rank": 4,
+    "status": "queued"
+  },
+  {
+    "id": "q-8",
+    "question": "把 q-3 的日历规则消融**叠在 q-2 的纯小市值满仓 isolate 之上**（`[1,0,0,0]` + `g.avoid_trade_april = True`），把 50% 稀释项消掉后，1/4 月转持 511880 的真实效应量有多大？",
+    "type": "ablation",
+    "hypothesis": "去掉稀释后效应量约翻倍：相对 q-2 的 maxDD −5~−9pp、annual +2~+8pp。若翻倍关系成立（实测 Δ ≈ 2× q-3 的 Δ），则「稀释系数 ≈ 权重」这一目前**只是假设、从未测量**的换算关系首次被验证。",
+    "why": "姊妹家族 study-q-3 的跨家族判别里**明确登记了这个设计**（「把本消融叠在 q-2 的纯小市值 isolate 之上跑满权重，把稀释项消掉 —— 已登记为 study-legal 设计，本轮未跑」）。它同时解决两件事：给出该日历规则的**未稀释**效应量，并把 study 全线在用的「稀释系数 = 权重」换算从假设变成实测。",
+    "design": "复制 `variants/q-2.py` → `variants/q-8.py`，**相对 q-2 只改第 169 行** → `True`（相对 baseline 两行：138 + 169）。**对照 = q-2**。**硬前置：q-2 与 q-3 都必须先跑出有效 SUMMARY**（q-2 是对照，q-3 是稀释侧的配对读数；缺任一则本项无法解读）。预算 ~10 JQ 分钟 / ~10–15 分钟墙钟。**承载结论的指标：maxDrawdown + 窗口端点、annualReturn、成交笔数与胜负拆分、turnover_rate**；核心读数是 `Δ(q-8 vs q-2) / Δ(q-3 vs baseline)` 这个**比值**是否接近 2。obj/gate 不承载结论。⚠ n=4 触发、overfit-suspect；⚠ 微盘满仓零滑点高估最重；⚠ 三阶依赖，若当日墙钟不足应顺延而非压缩其他项。",
+    "rank": 3,
+    "status": "queued"
+  }
+]

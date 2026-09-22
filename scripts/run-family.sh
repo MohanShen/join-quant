@@ -156,7 +156,10 @@ fi
 
 if [ -z "$SID" ]; then
   SID="$(uuidgen | tr 'A-Z' 'a-z')"
-  printf '%s\t%s\n' "$BRANCH" "$SID" > "$PIN"
+  # ⚠ Do NOT pin on a dry run. A DRY=1 preview was minting a uuid and writing the pin, so merely
+  # LOOKING at what would happen marked the family as started — and the next real run then
+  # "resumed" a session that had never existed.
+  [ "${DRY:-0}" = "1" ] || printf '%s\t%s\n' "$BRANCH" "$SID" > "$PIN"
 fi
 
 RUN_LOG="$LOG_DIR/$FAMILY-$(date '+%Y%m%d-%H%M%S').log"
