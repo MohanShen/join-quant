@@ -1,0 +1,72 @@
+[
+  {
+    "id": "q-e6-0",
+    "kind": "understand",
+    "title": "base d02cde29 在 epoch-6 台上是否仍成立（旧 7 条发现全部测于 epoch 2）",
+    "hypothesis": "epoch 4/6 的 pin（作者 1bp 股票佣金→3bp、order_volume_ratio 0.05、基金成本）只小幅削减收益；证伪：objective < 0.30 或 sharpe < 1.5",
+    "why": "全部既有发现与 0.4737 均在 epoch 2 测得，measurementValid(2)=false；无有效基线则任何 Δ 都不可比。该成员 epoch-6 复测曾在 30min 上限 slow-skip",
+    "design": "py2to3(src)+当前 OVERRIDE → study/多因子ML/baseline-e6.py（策略主体与旧 baseline.py 逐字相同），--window train --max-poll-min 60",
+    "from": [
+      "q-4",
+      "q-1",
+      "q-2",
+      "q-3",
+      "q-5",
+      "q-6",
+      "q-audit"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 1,
+    "status": "answered",
+    "result": "base 在当前台上存活：pin 掉作者的 1bp 股票佣金与自定基金成本并加 5% 成交量上限后，年化只少 4.40pp、sharpe 仍 3.01，回撤反降 1.06pp；epoch-2 头条被高估约 0.03 objective，量级小。该成员此前 epoch-6 复测在 30min 上限 slow-skip，本次 324s 完成——那次 slow-skip 是平台排队而非策略本身慢"
+  },
+  {
+    "id": "q-e6-1",
+    "kind": "understand",
+    "title": "edge test: epoch-6 台上 small_cap 权重 0.35→0",
+    "hypothesis": "规模因子 edge 成立则 Δannual 超过 baseline-e6 年化的 1/3 且 sharpe 大幅下滑；证伪：Δannual 小于年化 1/3",
+    "why": "edge 草稿的 test:；q-1 在 epoch 2 上测过，但 epoch 6 的 volume cap 与股票成本恰好最重地作用于微盘腿，可能改变其贡献",
+    "design": "baseline-e6.py 第 29 行 small_cap 0.35→0.0，单行 diff，--window train",
+    "from": [
+      "q-1",
+      "q-e6-0"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 2,
+    "status": "answered",
+    "result": "微盘腿以 35% 权重供给 39% 的年化（166.6 total%/unit-weight，其余两腿合计 114.2），是最大单一来源，但不是唯一来源：去掉它组合仍年化 32.05%、sharpe 1.99 过 1.5 闸。预注册证伪项（Δannual < 年化 1/3）未触发；更强的预测（失去过半、跌破闸）也未成立。epoch 2 的同一消融（q-1）读成「跌破闸」只因当时闸是 2.5"
+  },
+  {
+    "id": "q-e6-2",
+    "kind": "understand",
+    "title": "edge test 动量: epoch-6 台 2023 单年 etf 0.40→0 vs 同窗 baseline-e6",
+    "hypothesis": "若 etf 腿有非事后的动量 edge，2023 单年 c_etf = base2023 − var2023 > 0；证伪：c_etf ≤ 0（与 epoch-2 q-6 倒推的 2023 拖累一致）",
+    "why": "q-e6-1 显示微盘腿之外还有 ~32% 年化；q-6/q-audit（epoch 2）指 etf 贡献集中于 2022 且池为事后组装。2023 是事后池偏差较小的一年，是检验动量本身的唯一干净切片",
+    "design": "两次回测，均 --start 2023-01-01 --end 2023-12-31：baseline-e6.py（对照）与 variants/q-e6-2.py（第 28 行 etf 0.4→0.0）",
+    "from": [
+      "q-6",
+      "q-audit",
+      "q-e6-1"
+    ],
+    "edgeRef": "动量",
+    "rank": 1,
+    "status": "answered",
+    "result": "在事后池偏差最小的 2023 年，etf 腿是净拖累：去掉它（且 40% 资金闲置吃零）收益 +8.43pp、sharpe +0.93、回撤 −3.26pp，三个指标同向变好。与 epoch-2 q-6 的倒推（2023 ×0.933）在 epoch 6 上直接测得一致"
+  },
+  {
+    "id": "idea-imp-1",
+    "kind": "improve",
+    "title": "把权重移向 small_cap（0.35→0.50，etf 0.40→0.25）",
+    "hypothesis": "small_cap 单位权重产出最高（166.6 vs 114.2），加权应抬 TRAIN objective",
+    "why": "q-e6-1 的单位权重读数",
+    "design": "STRATEGY_ALLOCATION 两行改动，--window train",
+    "from": [
+      "q-e6-1"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 90,
+    "status": "dropped",
+    "note": "gatekeeper 否决，不回测：在 on-mechanism 方向上机械加杠杆，TRAIN 上几乎必然抬分，但增量全部来自零滑点最失真的 6 只微盘周度轮换腿，并把本家族推成 [[小市值]] 的更差副本（edge 冗余）。q-e6-1 的 implication 已关闭该方向",
+    "result": null
+  }
+]
