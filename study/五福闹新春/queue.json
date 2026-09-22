@@ -1,0 +1,127 @@
+[
+  {
+    "id": "q-e6-0",
+    "kind": "understand",
+    "title": "base 17b3b439 (v5.2) 在 epoch-6 台上是否仍成立（家族全部 20 行都测于 epoch 2）",
+    "hypothesis": "epoch 4/6 的 pin（作者 1bp 基金佣金+1bp 滑点 → 3bp/0 滑点，order_volume_ratio 0.05）只小幅削减收益；证伪：objective < 0.40 或 sharpe < 1.5",
+    "why": "family-queue 报 validMembers=0：measurementValid(2)=false，没有有效基线则任何 Δ 都不可比。日频单持仓轮动对基金成本最敏感，且海外池里有日均成交 <1 亿的薄 ETF，5% 成交量上限可能咬住",
+    "design": "py2to3(src)+当前 OVERRIDE → study/五福闹新春/baseline-e6.py（build-e6.js 生成），--window train",
+    "from": [
+      "ledger:17b3b439@epoch2 obj 0.6855",
+      "family-queue:validMembers=0"
+    ],
+    "edgeRef": "动量",
+    "rank": 1,
+    "status": "answered",
+    "result": "base 在 epoch-6 台上仍过 1.5 闸（sharpe 1.99），但 epoch-2 头条被高估了近一半：年化少 32pp、objective 从 0.6855 跌到 0.3755，预注册证伪项（objective < 0.40）触发。回撤几乎不变，损失全在收益侧。两年都赚钱，但 2023 的风险调整质量只有 2022 的约 2/3"
+  },
+  {
+    "id": "q-e6-1",
+    "kind": "understand",
+    "title": "edge test 动量：排序方向反转（持通过全部滤波的最弱正趋势 ETF）",
+    "hypothesis": "若动量排序有预测力，反排 TRAIN 年化损失过半；证伪：反排年化 ≥ base-e6 年化的 75%",
+    "why": "edge 草稿的 test:。滤波已要求动量分 ∈ [0,5] 且 R²>0.4，所以反排比较的是「同一批正趋势 ETF 里最强 vs 最弱」，把选强本身和「只买上涨趋势」的池效应分开",
+    "design": "baseline-e6 第 953 行 filtered_list.sort reverse=True→False，单行 diff；其余（候选池阈值、持仓保留逻辑）不动",
+    "from": [
+      "q-e6-0"
+    ],
+    "edgeRef": "动量",
+    "rank": 2,
+    "status": "answered",
+    "result": "把选强反成选弱，年化只丢 11.5pp（仍保留 base 的 78%），sharpe 反而从 1.99 升到 2.50、回撤从 13.96 降到 8.48；两本书的日收益相关只有 0.33，持的是不同的 ETF，却赚到了差不多的钱。预注册证伪项（反排年化 ≥ base 的 75%）触发"
+  },
+  {
+    "id": "q-e6-2",
+    "kind": "understand",
+    "title": "edge test 趋势择时：走弱期永不触发（universe 恒为国内+海外合并池）",
+    "hypothesis": "若 A 股 breadth<MA10 的切池是独立 edge，Δobj ≤ −0.15；证伪：Δobj > −0.05",
+    "why": "edge 草稿第二条的 test:。走弱期同时改变池子、关掉 R² 滤波、打开 MA 滤波、把候选阈值系数 0.9→1.0，这是它的整体贡献，拆分留给后续",
+    "design": "baseline-e6 check_a_share_weak_period: below_count>=3 → >=999，单行 diff",
+    "from": [
+      "q-e6-0"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 3,
+    "status": "answered",
+    "result": "关掉走弱期切池，年化掉 35pp、sharpe 跌到 0.46 不过闸、最大回撤几乎翻倍到 27%，objective 变负。预注册证伪项（Δobj > −0.05）远未触发，Δobj −0.48 是预测门槛的三倍。塌陷不只在 2022 熊市：2023 也从 38.5% 掉到 14.9%，且全窗最深回撤出现在 2023。切池同时供给收益与回撤控制"
+  },
+  {
+    "id": "q-e6-3",
+    "kind": "understand",
+    "title": "事后池检验：正常期去掉手选固定池，只用逐日机械生成的动态池",
+    "hypothesis": "固定池是作者按 2025 年成交额与上市日期手选（含 2023 年后上市、TRAIN 内表现已知的 ETF）；若超额主要来自事后选池，去掉后 Δobj ≤ −0.15；证伪：Δobj > −0.05",
+    "why": "q-e6-1 只能说明池内排序有无用；池本身若是事后组装，任何 edge 读数都被抬高。动态池由 get_all_securities + 当日流动性逐日生成，是点时 universe",
+    "design": "daily_merge_etf_pools: merged = filtered_fixed_pool + dynamic_etf_pool → dynamic_etf_pool，单行 diff；走弱期全球池不动",
+    "from": [
+      "q-e6-0",
+      "source:fixed-pool comments cite 2025 turnover and 2023–25 listings"
+    ],
+    "edgeRef": "动量",
+    "rank": 4,
+    "status": "answered",
+    "result": "正常期把作者手选的固定池整张拿掉、只留机械生成的动态池，objective 只少 0.028，年化几乎不变。预注册证伪项（Δobj > −0.05）触发：正常期的事后选池不是收益来源"
+  },
+  {
+    "id": "q-e6-4",
+    "kind": "understand",
+    "title": "走弱期对照：避风港换成货币 ETF 511880（非事后选择）",
+    "hypothesis": "若趋势择时是 A 股择时本身，objective 保留 base-e6 的大部分（≥ 0.20）；证伪（edge 归于事后海外池）：objective ≤ 0.05",
+    "why": "q-e6-2 的 implication：切池的整体贡献混着「择时」与「事后手选的避风港」",
+    "design": "afternoon_routine 走弱分支 g.merged_etf_pool.sort() → g.merged_etf_pool = []，排名为空即落到防御 ETF 511880，单行 diff",
+    "from": [
+      "q-e6-2"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 1,
+    "status": "answered",
+    "result": "走弱期只躲进货币 ETF，objective 从无切池的 −0.10 回到 0.13，最大回撤从 27% 减半到 13.4%——A 股 breadth 择时本身是真的，而且它买的主要是回撤。但它只解释切池贡献的一半：另一半（+0.24）来自走弱期持有的手选海外/商品池，且高度集中在 2023——同一个择时，2023 持现金只赚 13.6%，持海外池赚 38.5%。预注册的两个门槛（≥0.20 成立 / ≤0.05 证伪）都没碰到，结果落在中间"
+  },
+  {
+    "id": "idea-imp-1",
+    "kind": "improve",
+    "title": "正常期持仓保留带放宽：score_threshold_ratio 0.9→0.7",
+    "hypothesis": "排序无信息（q-e6-1），按名次换仓只买手续费；放宽保留带降换手应抬 objective；证伪：Δobj ≤ 0",
+    "why": "q-e6-1 反排在更宽的保留条件下 sharpe 2.50 > base 1.99；q-e6-0 显示 epoch-6 成本 pin 吃掉 32pp",
+    "design": "baseline-e6 g.score_threshold_ratio 0.9→0.7，单行 diff → enhance/candidates/wufu-imp-1.py；走弱期系数恒 1.0 不受影响",
+    "from": [
+      "q-e6-1",
+      "q-e6-0"
+    ],
+    "edgeRef": "动量",
+    "rank": 2,
+    "status": "answered",
+    "result": "放宽正常期保留带不但没省出成本收益，反而年化少 12pp、回撤变深、sharpe 掉到 1.52 贴着闸。预注册证伪项（Δobj ≤ 0）触发。持有一只已经从第一名滑落的 ETF 更久是有代价的"
+  },
+  {
+    "id": "idea-imp-2",
+    "kind": "improve",
+    "title": "走弱期取消 20 日强制退出：max_weak_days 20→999（base 版 + 现金对照版各一次）",
+    "hypothesis": "若 breadth 择时是真 edge，让信号自己决定退出应不劣于定时强退；只在 base 版与现金版 Δobj 同号为正时采纳；证伪：任一版 Δobj < 0",
+    "why": "q-e6-4 的 implication：改择时触发器必须两版同向才算 on-mechanism；20 日上限是唯一与信号无关的退出条件",
+    "design": "g.max_weak_days 20→999 单行 diff → enhance/candidates/wufu-imp-2.py（对 baseline-e6）与 wufu-imp-2c.py（对 q-4_weak-to-cash）",
+    "from": [
+      "q-e6-2",
+      "q-e6-4"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 1,
+    "status": "answered",
+    "result": "取消 20 日强制退出后结果与 base 逐点相同：TRAIN 两年里没有一次走弱期撑到 20 个交易日，每一次都先被「≥3/4 指数站上 MA10」的信号结束（或被再次触发重置了计数）。这个参数在本窗口内是惰性的"
+  },
+  {
+    "id": "idea-imp-3",
+    "kind": "improve",
+    "title": "走弱期进入条件放宽：below_count>=3 → >=2（base 版 + 现金对照版）",
+    "hypothesis": "择时是短躲避（imp-2），更敏感的进入应躲开更多 A 股下跌；只在两版 Δobj 同为正时采纳；证伪：任一版 Δobj < 0",
+    "why": "imp-2 implication：退出上限惰性，要动就动进入条件；q-e6-4 要求两版同向",
+    "design": "weak_condition_met below_count>=3→>=2 单行 diff → enhance/candidates/wufu-imp-3.py（对 baseline-e6）与 wufu-imp-3c.py（对 q-4_weak-to-cash）",
+    "from": [
+      "idea-imp-2",
+      "q-e6-4"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 1,
+    "status": "answered",
+    "result": "更敏感的走弱进入（4 指数中 2 个跌破 MA10 即躲）在现金版上是实在的改进（objective +0.036、回撤 −1.0pp），在 base 版上几乎为零（+0.002，回撤反而 +0.8pp）。两版同号但 base 版的 Δ 落在已记录的 ~0.15pp 复跑漂移之内，不构成可采纳的改进"
+  }
+]
