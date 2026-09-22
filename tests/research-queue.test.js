@@ -105,3 +105,50 @@ test('context() is what makes the loop a loop', async (t) => {
     assert.ok(Array.isArray(c), 'lint must return a list, not throw, on a real family');
   });
 });
+
+/**
+ * findings.tsv is gitignored; §6 is the durable copy — the same relationship the `normalized:`
+ * blocks have with the normalize ledger, which regressed from ~119 rows to 18.
+ *
+ * The recorder wrote the ledger first and the page second, so an interruption between the two
+ * lost the durable copy silently. Measured: a 红利低频 round killed by an API 529 left 4 findings
+ * in findings.tsv, 0 rows in §2, and no §6 section at all.
+ */
+test('research-sync makes the page catch up with the ledger', async (t) => {
+  const sync = require('../utils/research-sync');
+
+  await t.test('it renders the IMPLICATION, not just the conclusion', () => {
+    // A §6 carrying only the finding would be a weaker handoff than the ledger it backs up —
+    // the implication is the field the next round's generators read for closed directions.
+    const out = sync.renderEntry({
+      qId: 'q-1', type: 'ablation', component_or_param: 'turnover rank',
+      finding: 'yield alone earns nothing', implication: 'that direction is closed',
+      metric_delta: 'obj 0.13 -> -0.27', confidence: 'high', edgeRef: '股息率',
+    });
+    assert.match(out, /\[Q q-1\]/);
+    assert.match(out, /yield alone earns nothing/);
+    assert.match(out, /that direction is closed/);
+    assert.match(out, /edge: 股息率/);
+  });
+
+  await t.test('a missing implication is marked as a contract violation, not left blank', () => {
+    const out = sync.renderEntry({ qId: 'q-2', finding: 'x' });
+    assert.match(out, /contract violation/);
+  });
+
+  await t.test('it is idempotent — a second run adds nothing', () => {
+    // Append-only: a human edit to a conclusion must survive the next sync.
+    const before = sync.sync('红利低频', { dry: true });
+    assert.strictEqual(before.wrote, 0,
+      `expected 红利低频 to be in sync, but ${before.wrote} entry(ies) are missing from §6`);
+  });
+
+  await t.test('every family with findings has them in §6', () => {
+    for (const f of sync.families()) {
+      const r = sync.sync(f, { dry: true });
+      if (r.err) continue;
+      assert.strictEqual(r.wrote, 0,
+        `${f}: ${r.wrote} finding(s) exist only in the gitignored ledger — run research-sync`);
+    }
+  });
+});

@@ -12,3 +12,8 @@
 [2026-09-21 17:37:28] from-scratch family: discarding the pre-reset pin 红利低频.txt
 [2026-09-21 17:37:28] new session 18b108d5 for family 红利低频 (branch main, budget 0/170min) -> /Users/mshen/join-quant/data/autoresearch-logs/红利低频-20260921-173728.log
 [2026-09-21 17:37:28] DRY=1 — would run: claude -p --session-id 18b108d5-9647-4b7d-929e-f2890eb088e8 --permission-mode acceptEdits
+[2026-09-21 17:37:47] from-scratch family: discarding the pre-reset pin 红利低频.txt
+[2026-09-21 17:37:47] new session be43f8d2 for family 红利低频 (branch main, budget 0/170min) -> /Users/mshen/join-quant/data/autoresearch-logs/红利低频-20260921-173747.log
+    [33mWarning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.[39m
+    API Error: 529 Overloaded. This is a server-side issue, usually temporary — try again in a moment. If it persists, check https://status.claude.com.
+[2026-09-21 17:56:31] claude exited rc=1 (likely rate-limited — the pin is kept, next fire resumes this family)

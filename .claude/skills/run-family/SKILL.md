@@ -110,6 +110,17 @@ node -e "require('./utils/research-queue').recordFinding('<family>', {...})"
 - `edgeRef` = which edge claim it bears on. **A result that refutes an edge claim must flip that
   claim's `status` to `refuted` in the same write.**
 
+**Before you stop — for any reason, including running out of budget — run:**
+
+```bash
+node utils/research-sync.js <family>      # findings.tsv -> §6, append-only, idempotent
+```
+
+`findings.tsv` is **gitignored**; §6 is the durable copy. Measured: a round killed mid-loop by an
+API 529 left **4 findings in the ledger, 0 rows in §2 and no §6 at all** — results that existed
+only in a file git does not track. The sync is what makes an interrupted round survive, and it is
+safe to run at any point.
+
 Then the §2 row on the family page: `类型` (understand|improve|raw) and `判定`
 (adopted|rejected|informative). A `rejected` row gets **one line** — ETF动量's §2 averages 3.6KB
 per row, which is why failures need a short form, not exclusion.
