@@ -48,8 +48,16 @@
  *   node utils/val-budget.js <family>      # check one
  */
 
+const fs = require('fs');
+const path = require('path');
 const consumption = require('./consumption');
 const harness = require('./harness-config');
+
+// Redirectable for the same reason consumption.js and daily-state.js are: a test must be able to
+// use synthetic family names without either touching the real wiki or being refused by the
+// existence check below.
+const familiesDir = () =>
+  process.env.JQ_FAMILIES_DIR || path.resolve(__dirname, '../wiki/families');
 
 const ALLOW_REVAL = process.env.JQ_ALLOW_REVAL === '1';
 
@@ -74,6 +82,17 @@ function check(family, { epoch = activeEpoch() } = {}) {
     return { allowed: false, reason: 'no-family',
              why: 'VAL requires a family: the budget is one validation per (family, epoch), ' +
                   'so a run that does not say which family it belongs to cannot be counted.' };
+  }
+
+  // ⚠ The family must EXIST. Without this, a typo in --family ("红利低频X") reads as a family
+  // with no prior validation and is waved through — spending a VAL that is then charged to a
+  // family nobody will ever look at, while the real one keeps its budget. The whole rule is
+  // per-family accounting, so an unaccountable family is not a lesser problem than a second run.
+  if (!fs.existsSync(path.join(familiesDir(), `${family}.md`))) {
+    return { allowed: false, reason: 'unknown-family',
+             why: `VAL-BLOCKED: no family page at wiki/families/${family}.md. The budget is ` +
+                  'per (family, epoch), so a name nothing can be charged against is refused — ' +
+                  'check the spelling, or register the family first.' };
   }
 
   const prior = priorValidations(family);
@@ -117,9 +136,7 @@ function record(family, runId, { outcome = '', note = '' } = {}) {
 
 /** Every family the wiki knows, with its VAL state at the active epoch. */
 function report() {
-  const fs = require('fs');
-  const path = require('path');
-  const dir = path.resolve(__dirname, '../wiki/families');
+  const dir = familiesDir();
   let families = [];
   try {
     families = fs.readdirSync(dir).filter(f => f.endsWith('.md')).map(f => f.replace(/\.md$/, ''));
@@ -127,7 +144,7 @@ function report() {
   return families.map(f => ({ family: f, ...check(f) }));
 }
 
-module.exports = { check, record, priorValidations, activeEpoch, report };
+module.exports = { check, record, priorValidations, activeEpoch, report, familiesDir };
 
 if (require.main === module) {
   const who = process.argv.slice(2).filter(a => !a.startsWith('--'))[0];

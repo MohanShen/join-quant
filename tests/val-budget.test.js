@@ -24,6 +24,12 @@ const path = require('path');
 
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'jq-val-'));
 process.env.JQ_CONSUMPTION_FILE = path.join(TMP, 'consumption.tsv');
+// The budget refuses a family it cannot account for, so the synthetic ones need pages.
+process.env.JQ_FAMILIES_DIR = path.join(TMP, 'families');
+fs.mkdirSync(process.env.JQ_FAMILIES_DIR, { recursive: true });
+for (const f of ['家族A', '家族B', '家族C', 'TEST家族']) {
+  fs.writeFileSync(path.join(process.env.JQ_FAMILIES_DIR, `${f}.md`), `---\nfamily: ${f}\n---\n`);
+}
 
 const val = require('../utils/val-budget');
 const consumption = require('../utils/consumption');
@@ -139,5 +145,21 @@ test('VAL budget is enforced in the executor, not merely documented', async (t) 
   await t.test('TRAIN is untouched', () => {
     assert.match(src, /window\.name !== 'val'\) return/,
       'the guard must be scoped to val — selection on TRAIN stays free');
+  });
+});
+
+test('VAL budget refuses a family it cannot account for', async (t) => {
+  const val = require('../utils/val-budget');
+
+  await t.test('a typo in --family does not grant a fresh budget', () => {
+    // The rule is per-family accounting. A name with no page reads as "never validated" and was
+    // waved through, spending a VAL charged to a family nobody will look at while the real one
+    // kept its budget. An unaccountable family is not a lesser problem than a second run.
+    assert.strictEqual(val.check('没有这个家族').reason, 'unknown-family');
+    assert.match(val.check('没有这个家族').why, /VAL-BLOCKED/);
+  });
+
+  await t.test('a registered family is still evaluated normally', () => {
+    assert.notStrictEqual(val.check('家族A').reason, 'unknown-family');
   });
 });
