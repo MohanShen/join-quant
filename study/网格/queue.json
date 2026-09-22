@@ -1,0 +1,173 @@
+[
+  {
+    "id": "baseline-e6",
+    "kind": "understand",
+    "title": "基类在 epoch 6 上的锚点（ledger 无 epoch-6 行）",
+    "hypothesis": "源码不设任何成本/滑点/成交量上限，epoch-4/6 的 pin 全部落在它本来就跑的 JQ 默认值上，且 epoch-4 行已逐位复现 epoch-2；预期 annual 33.79 / sharpe 1.19 / maxDD 19.68 逐位复现。证伪：任一指标偏离 >0.2pp，或 no-trades",
+    "why": "每个后续 Δ 都对它量；若它复现，epoch-2 的 q-1 / q-2 / q-3 就是同一台上的读数，可以直接引用而不必再花分钟重跑",
+    "design": "study/网格/baseline-e6.py = 源码 + live OVERRIDE（build-e6.js）",
+    "from": [
+      "baseline",
+      "q-dup"
+    ],
+    "edgeRef": null,
+    "rank": 1,
+    "status": "answered",
+    "result": "epoch-6 锚点逐位复现 epoch-2/4 的归档行：源码不设任何成本 / 滑点 / 成交量上限，epoch-4/6 的每个 pin 都落在它本来就跑的 JQ 默认值上。q-3 的 regime 读数原样成立：两年收益里 2022 只有 +6.3%，2023 +68.3%"
+  },
+  {
+    "id": "u-1",
+    "kind": "understand",
+    "title": "关掉分档：只买入场档（4 units）不加不减——分档相对「持有同一篮子」赚了什么（edge 均值回归 的 test）",
+    "hypothesis": "分档只在价格跌到锚点 −8% 以下才首次买入、−16/−24/−32% 加到 7/9/10 units，涨到 +15/+30/+45/+60% 减到 6/3/1/0——它赚的是价格围绕锚点的往返。若持有控制组（同池、同轮换、同止损，首见即买 4 units 并持有）objective ≥ 网格书，则分档没有在篮子之上加任何东西，均值回归 证伪",
+    "why": "q-3 显示两年收益的 99% 来自 2023-H1 单个半年（TMT/AI 行情），家族标题主张的熊市网格叙事已被数字否定；剩下的问题是「分档」还是「篮子」在赚钱——这决定 edge 是 均值回归 还是 none-found",
+    "design": "variants/u-1_hold-control.py：handle_data 里两处 setup_position 换成 hold_position（amount==0 时 order_target_value 4*(g.cash/40)，其余不动）",
+    "from": [
+      "q-3",
+      "baseline"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 2,
+    "status": "answered",
+    "result": "持有同一篮子（同止损）两年只有 +12.4%、回撤 32.9%，而分档是 +78.9% / 19.7%：分档在两年里都赢（2022 +18pp、2023 +45pp）。两本书都被同一个 1M 现金封顶、持有组反而更早满仓，所以差额不是「多用了暴露」——是分档在 2022 只在 −8/−16/−24/−32% 处接、在 2023 把 2022 接到的大仓位（最多 10 units）拿到 +15/+30/+45/+60% 才逐档减"
+  },
+  {
+    "id": "u-2",
+    "kind": "understand",
+    "title": "行业换成作者自己注释掉的 C27+C39——同一台机器离开 I64/I65 还剩什么",
+    "hypothesis": "q-3 的 2023-H1 集中度（+78% 单半年）与宇宙 I64/I65（互联网/软件）正是 AI 行情的板块重合；若同一规则在 C27（医药）+C39（电子）上 objective ≤ 0，则家族收益是板块 beta 而非分档机制。证伪：换板块后 objective ≥ 基类 −0.05",
+    "why": "一个只在一个板块的一个半年里有效的机制不是 edge；作者注释里保留了替代板块，是最贴近原文意图的对照",
+    "design": "variants/u-2_sector-swap.py：industry_list 一行 I64,I65 → C27,C39（仍是 2 个行业，g.cash/40 的梯形与每行业 5 只不变）",
+    "from": [
+      "q-3"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 3,
+    "status": "answered",
+    "result": "离开 I64/I65 之后同一台机器仍两年为正（2022 +6.0% / 2023 +18.2%）、回撤更浅（14.5%），但年化从 33.8% 掉到 11.9%：2022 几乎一样（+6.3 vs +6.0），差额全部在 2023（68 vs 18）——正是 q-3 点名的 2023-H1 TMT/AI 行情。机制可迁移，但迁移后的产出是 12%/年、sharpe 0.46，不是 34%"
+  },
+  {
+    "id": "u-3",
+    "kind": "understand",
+    "title": "文档 vs 实现：注释说取波动率最高，代码 s1[s1<6] 取的是价格方差最低的 5 只——翻成文档意图",
+    "hypothesis": "variance() 算的是 180 日收盘价水平的方差（随价格平方放大），rank 升序取 <6 即选出市值前 30 里价格最低/最稳的 5 只；翻成最高 5 只后，若 objective 下降 ≥0.10，则「低价格方差」这一实际选股是承重的（可能是 低价股效应 的变体）；证伪：翻转后 objective ≥ 基类",
+    "why": "baseline 量到 77% 特质方差、5 只票；选股规则的实际内容从未被指认，而它和文档相反",
+    "design": "variants/u-3_top-variance.py：一行 s1[s1 < 6] → s1[s1 > len(s1) - 5]",
+    "from": [
+      "baseline"
+    ],
+    "edgeRef": null,
+    "rank": 4,
+    "status": "answered",
+    "result": "按文档意图选「价格方差最高的 5 只」，两年 −1.4%、回撤 34.5%，两年都塌：实际实现的「市值前 30 且 PE<50 里价格水平方差最低的 5 只」是承重的，Δobj −0.49 为本轮最大。这是本项目又一例「文档 vs 实现」——而且这一次是实现赚钱、文档亏钱"
+  },
+  {
+    "id": "wg-imp-1",
+    "kind": "improve",
+    "title": "名字翻倍、单位减半：每行业 10 只、unit_value = g.cash/80",
+    "hypothesis": "baseline 说 DQ 的成因是 77% 特质方差（5 只票），闸门需要 vol 从 26% 降到 ~20%；同样的梯形铺在两倍名字上应压 vol ≥4pp 而年化下降 <5pp。证伪：objective ≤ 基类",
+    "why": "唯一直接作用在 DQ 成因（集中度）上的杠杆；on-mechanism（不改分档、不改止损）。排在三个 understand 之后：若 u-1 证伪分档，本条无意义",
+    "design": "enhance/candidates/wg-imp-1.py：s1[s1 < 11] + unit_value = g.cash/80（两处一个概念）",
+    "from": [
+      "baseline",
+      "q-3"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 5,
+    "status": "answered",
+    "result": "铺到两倍名字，年化少 20pp、回撤反而更深、sharpe 0.40：vol 没有被分散掉，收益被 rank 6–10 的票稀释了。这不是分散，是选股稀释——与 u-3/u-6/u-7 一致：那个筛子在前 5 名之外就不成立"
+  },
+  {
+    "id": "u-4",
+    "kind": "understand",
+    "title": "镜像分档：涨到锚点 +8/16/24/32% 才买、跌到 −15/30/45/60% 才卖——方向是不是信息所在",
+    "hypothesis": "u-1 说分档相对持有值 +18pp（2022）/ +45pp（2023）；若任何「按偏离锚点缩放暴露」的梯子都能赚，镜像书 objective ≥ 基类 −0.05，均值回归 证伪；若镜像书塌掉（objective < 0），信息在方向（跌买涨卖）本身",
+    "why": "u-1 的控制组暴露路径与分档不同（首见即满 4 units vs 等 −8%），「分档赢过持有」仍可能是暴露择时而非均值回归；镜像保留了同样的暴露缩放几何，只翻方向",
+    "design": "variants/u-4_mirror-ladder.py：setup_position 内 8 个比较符翻转 + 两处调用的 bench 变号（build-e6.js 断言恰好 8 处）",
+    "from": [
+      "u-1"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 6,
+    "status": "answered",
+    "result": "同一梯形翻成「涨买跌卖」两年只剩 +0.7%、回撤 30.8%，两年同号塌掉；而 u-1 的持有组还有 +12.4%。信息在方向本身：这 5 只票围绕首见锚点是回归的（跌下去接、涨上去减赚钱；追涨杀跌亏钱），而不是「任何按偏离缩放暴露的梯子都行」"
+  },
+  {
+    "id": "u-5",
+    "kind": "understand",
+    "title": "在 epoch-6 锚点上关掉沪指 2 日 −3% 整卷清仓（q-2 的同台复跑，去掉跨 epoch 注脚）",
+    "hypothesis": "baseline-e6 逐位复现 epoch-2，故预期 q-2 的读数复现：annual −13.4pp、maxDD +9.3pp、回撤窗端点不变。证伪：objective 不降",
+    "why": "1 JQ 分钟换 趋势择时 的 evidence 完全落在 epoch 6 上",
+    "design": "variants/u-5_no-index-stop.py：handle_data 首行 if conduct_nday_stoploss(...) → if False",
+    "from": [
+      "q-2",
+      "baseline-e6"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 7,
+    "status": "answered",
+    "result": "q-2 逐位复现。逐年拆开后新内容：开关的全部贡献在 2022（+6.3 vs −18.6，25pp），2023 它反而少赚 10pp（68 vs 78）——它是熊市保险，在行情里是成本。最深回撤窗端点与 q-2 一样不变，只改幅度"
+  },
+  {
+    "id": "u-6",
+    "kind": "understand",
+    "title": "u-3 拆分 (a)：按最新收盘价升序取 5 只（纯低价）——「最低价格方差」是不是 低价股效应",
+    "hypothesis": "variance() 是 180 日收盘价水平的方差 ∝ 价格² × 收益方差；若纯低价书 objective 在基类 ±0.05 内，则实际选股 = 低价股效应；证伪：纯低价书 objective < 基类 −0.15",
+    "why": "u-3 证明这条选股承重 −0.49；它到底选的是「便宜的票」还是「不动的票」决定 edge 的名字",
+    "design": "variants/u-6_low-price.py：variance_list.append 一行换成最新收盘价",
+    "from": [
+      "u-3"
+    ],
+    "edgeRef": null,
+    "rank": 8,
+    "status": "answered",
+    "result": "只按名义价格最低选 5 只，两年 +24%、回撤 25%：比文档意图（u-3，−1%）好得多，但离基类（+79%）还差一半以上。低价不是这条选股的全部"
+  },
+  {
+    "id": "u-7",
+    "kind": "understand",
+    "title": "u-3 拆分 (b)：按 180 日对数收益 std 升序取 5 只（纯低波动）",
+    "hypothesis": "若纯低波动书 objective 在基类 ±0.05 内而 u-6 不在，则选股是低波动而非低价；两者都在 ±0.05 内则两者共线（低价大票本来就低波）；两者都不在则价格水平方差里的组合本身才是那 5 只",
+    "why": "与 u-6 互为对照，一条线各答一半",
+    "design": "variants/u-7_low-vol.py：variance_list.append 一行换成 180 日对数收益 std",
+    "from": [
+      "u-3"
+    ],
+    "edgeRef": null,
+    "rank": 9,
+    "status": "answered",
+    "result": "只按已实现波动最低选 5 只，两年 +53%、回撤 24%：比纯低价（u-6，+24%）近得多，但仍比基类少 26pp。排序：价格水平方差最低（基类 0.141）> 低波动（0.000）> 低价（−0.140）> 高方差（−0.352）——两个分量各自都不够，乘积才选出那 5 只"
+  },
+  {
+    "id": "wg-imp-2",
+    "kind": "improve",
+    "title": "买入档距收紧：−8/16/24/32% → −5/10/15/20%（只动买档）",
+    "hypothesis": "u-1/u-4 说信息在「跌买涨卖」的方向上；更密的买档在同一往返里更早、更多次地接住回撤，若均值回归成立应抬 annual ≥5pp 且 maxDD 不升；证伪：objective ≤ 基类",
+    "why": "on-mechanism：直接作用在 measured 的 均值回归 上；imp-1 已证明动选股会稀释，所以只动档距",
+    "design": "enhance/candidates/wg-imp-2.py：handle_data 里 long 调用的 bench −0.08 → −0.05（一处）",
+    "from": [
+      "u-1",
+      "u-4"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 10,
+    "status": "answered",
+    "result": "买档从 8% 收到 5%，几乎惰性：年化 −0.6pp，回撤 +1.2pp，2022 略差、2023 持平。更早、更密地接回撤没有多赚——分档的产出不来自接的次数"
+  },
+  {
+    "id": "wg-imp-3",
+    "kind": "improve",
+    "title": "卖出档距收紧：+15/30/45/60% → +10/20/30/40%（只动卖档）",
+    "hypothesis": "基类卖档比买档宽近一倍（15 vs 8），2023-H1 的 +78% 里大部分是在 +60% 才清空；更早减仓应压 maxDD 但也削弱 2023；若 objective 上升则往返更对称更好，证伪：objective ≤ 基类",
+    "why": "与 imp-2 互为一半：买/卖档各自的贡献分开量",
+    "design": "enhance/candidates/wg-imp-3.py：handle_data 里 short 调用的 bench 0.15 → 0.10（一处）",
+    "from": [
+      "u-1",
+      "u-4"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 11,
+    "status": "answered",
+    "result": "卖档从 15% 收到 10%，年化 −3.7pp、最大回撤逐位不变（那是 2022 的窗，由指数止损决定，与卖档无关），2023 少赚 4pp：更早减仓只是把行情让出去，没有换来任何回撤压缩"
+  }
+]
