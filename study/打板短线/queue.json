@@ -1,0 +1,147 @@
+[
+  {
+    "id": "baseline-e6",
+    "kind": "understand",
+    "title": "基类 439385b4 在 epoch 6 上的锚点（ledger 在任何 epoch 都没有它的行；2026-08 的 6 条 finding 全在 pin 之前）",
+    "hypothesis": "源码不调 set_slippage / set_commission / set_order_cost，已设 avoid_future_data；唯一可能绑定的 pin 是 order_volume_ratio=0.05——¥1M 按当日候选数等分、标的前日成交额 ≥¥5.5e8/¥3e8，预期不绑定。预期 total 424.33 / annual 129.24 / sharpe 2.58 / maxDD 32.56 复现（容差 0.5pp，含已知 ~0.15pp 重跑漂移），obj 0.9668，在 1.5 闸门下 PASS。证伪：任一指标偏离 >0.5pp（则成交量上限在打板成交上绑定，q-1..q-5 变成跨 epoch 读数）；或 no-trades",
+    "why": "家族在 epoch 6 上 0 过闸、且账本里唯一「过闸」的历史行属于一个从未被本 epoch 量过的基类；每个后续 Δ 都对它量。复现则 6 条 epoch-2 finding 直接升为同台读数，不必重跑（≈16 JQ 分钟/次）",
+    "design": "study/打板短线/baseline-e6.py = py2to3(源码) + live OVERRIDE（build-e6.js）；--window train --max-poll-min 50",
+    "from": [
+      "baseline",
+      "q-3",
+      "e6-ledger-audit"
+    ],
+    "edgeRef": null,
+    "rank": 1,
+    "status": "answered",
+    "result": "epoch-6 锚点逐位复现 epoch-2：源码不设任何成本 / 滑点 / 成交量上限、已设 avoid_future_data，epoch-4/6 的每个 pin 都落在它本来就跑的默认值上，order_volume_ratio=0.05 对这本 ¥1M 的打板书不绑定。q-3 的两年拆分原样成立（2022 +442.5 与 stats 回收的 442.51 一致，2023 −3.35 与算术反解一致），新内容是回撤的归属——TRAIN 的 32.56% 最深回撤整段落在 2023、且四个半年单调衰减（+206 → +77 → +18 → −18），不是「2022 好 / 2023 差」的"
+  },
+  {
+    "id": "u-2023",
+    "kind": "understand",
+    "title": "2023 单年子窗：q-3 只用总回报反解出 2023 ≈ −3.35%，sharpe / maxDD / win_ratio / avg_position_days 全部未知——边缘为什么在第二年消失",
+    "hypothesis": "2023 total 在 −3.35% ± 3pp 内复现算术反解；stats 的 avg_position_days 与 2022 的 1.51 天相近（机器仍在转，只是接力不再赚），而 win_ratio 明显低于 69.87%。证伪：2023 total > +10%（反解错误，需重查 baseline-e6 的两年拆分）；或 avg_position_days ≫ 1.51（2023 是被套牢而不是接力失效）",
+    "why": "「整段业绩只属于 2022」是这个家族最重要、也最未被解释的事实；2023 的机理指标决定 improve 该往 regime 门控（imp-3）还是往腿的取舍（imp-1）走。≈8 JQ 分钟",
+    "design": "不造 variant：baseline-e6.py --start 2023-01-01 --end 2023-12-31（run.js 的 argv[4]/[5]）；结果记为信息性单年读数，不与 TRAIN objective 并列",
+    "from": [
+      "q-3",
+      "baseline-e6"
+    ],
+    "edgeRef": "涨停动量延续",
+    "rank": 2,
+    "status": "answered",
+    "result": "2023 机器仍在转（94 笔、≈1.8 天/轮、胜率仍 60%）但赚不到钱：消失的不是信号频率也不是胜率，而是**盈亏比**——2022 那条肥右尾（q-4 归到弱转强腿的大赢家）在 2023 没有了。「边缘为什么在第二年消失」的答案是「大赢家消失、小赢家还在」，不是「被套牢」（持仓天数几乎没变）也不是「没信号」"
+  },
+  {
+    "id": "u-nolimit",
+    "kind": "understand",
+    "title": "edge 的对照：把「昨日首板」候选池换成「昨日涨 7%–9.9% 但未触及涨停」的同规则票——收益是涨停事件本身，还是那套过滤",
+    "hypothesis": "若 涨停动量延续 是来源，对照本的 annual 应 < 基类的一半（同 TRAIN 或同 2022 子窗）；若对照本 ≥ 基类的一半，边缘不在涨停事件而在成交额 / 市值 / 竞价量比 / 左压那套筛子，edge 改判 refuted 并转 proposed 的新名字。两条腿都要换：hl_list → 未触板的强势票，hl_list2（曾涨停未封）→ 最高价达 +7% 但收盘低于 +7% 的票",
+    "why": "现有 edge 的 evidence（q-4：三池不等权）只回答「哪条腿」，不回答「是否因为涨停」；这是唯一直接证伪 edge 名字的实验",
+    "design": "variants/u-nolimit.py：get_hl_stock / get_ever_hl_stock2 各加一个 near-miss 版本（close/pre_close ≥1.07 且 close<high_limit；high/pre_close ≥1.07 且 close/pre_close <1.07），prepare_stock_list 改调它们；其余过滤一行不动。先跑 2022 子窗对照 q-3 锚点（≈8 分钟）",
+    "from": [
+      "q-4",
+      "q-3"
+    ],
+    "edgeRef": "涨停动量延续",
+    "rank": 3,
+    "status": "answered",
+    "result": "把「涨停」换成「涨 7% 以上但没涨停」，同一台机器以同样的换手交易了更多的票（225 笔 vs 156），却从 +442% 塌到 −10%、回撤翻倍：胜率从 70% 掉到 49%（抛硬币），盈亏比从 2.28 掉到 1.02。证伪线（对照本 annual ≥ 基类一半）远未触及。**收益来源是涨停事件本身**——成交额 / 市值 / 竞价量比 / 左压那套筛子套在非涨停的强势票上什么也选不出来。同时这是对 q-1 的补充：既然价位是日线开盘价、两本书成交机制相同，Δ 不可能来自成交假设的差异"
+  },
+  {
+    "id": "u-rzq-deconf",
+    "kind": "understand",
+    "title": "q-4 的去混淆重跑：弱转强腿保留在第 46 行的计数里、只在下单循环里跳过——把「少一条腿」与「单票仓位变大」拆开",
+    "hypothesis": "若该腿的独立贡献仍 ≥ 终值的三分之一（q-4 合成读数是 48%），「肥右尾在弱转强腿」成立且可作为 imp-1 的前提；证伪：独立贡献 < 15% 终值（q-4 的量级主要是集中度效应）",
+    "why": "imp-1（只跑弱转强腿）的全部依据是 q-4，而 q-4 打包了两件事；不拆开就做 improve 会把集中度当成 alpha",
+    "design": "variants/u-rzq-deconf.py（build-e6.js：g.rzq_skip + 循环内 continue，两处一个概念）；--window train（≈16 分钟）或 2022 子窗（≈8 分钟）对照",
+    "from": [
+      "q-4"
+    ],
+    "edgeRef": "涨停动量延续",
+    "rank": 4,
+    "status": "answered",
+    "result": "弱转强腿的独立贡献是终值的约三分之一（−36%），比 q-4 的合成读数（−48%）小但方向不变——q-4 的「肥右尾在弱转强腿」成立，仓位混淆只占差额的四分之一（2022 单年：q-4 去腿重分仓 181.66 vs 本条不重分仓 183.85，几乎相同）。**新内容在逐年**：这条腿是 2022-H1 的全部肥尾（206 vs 76），**也是 2023-H2 的全部亏损**（基类 −18.1，去腿 +8.6）；剩下的首板高开 + 首板低开两腿在四个半年里全部为正（76 / 61 / 8 / 9），回撤浅 7pp、vol 低 10pp、胜率与盈亏比都更高，只是赚得少得多。edge 的 re"
+  },
+  {
+    "id": "u-barprice",
+    "kind": "understand",
+    "title": "日线台究竟按哪根 bar 价成交：把第 50 行改成荒谬的 MarketOrderStyle(0.01)",
+    "hypothesis": "仍与锚点逐位相同 ⇒ 价格参数被丢弃，成交价 = JQ 日线模式规则（开盘价），q-1 的「execution-fiction」应改写为「显式参数冗余、成交在开盘价」；成交全部落空 / 异常 ⇒ 参数其实被读取，q-1 需重新解释。仓库级结论",
+    "why": "q-1 只证明了「忽略」，没有定位价位；本家族全部业绩建立在什么价位上仍未写定。⚠ 实际上 09:26 竞价价 ≈ 开盘价，所以「按开盘价成交」并非虚构——这正是要用探针钉死的",
+    "design": "复制 baseline-e6.py，仅第 50 行 MarketOrderStyle(current_data[s].day_open) → MarketOrderStyle(0.01)；2022 子窗对照 q-3 锚点（≈8 分钟）",
+    "from": [
+      "q-1"
+    ],
+    "edgeRef": null,
+    "rank": 5,
+    "status": "answered",
+    "result": "价格参数被**丢弃**：把成交价参数写成 0.01（若被读取，限价单一笔也成交不了，或全部按 0.01 成交），结果与锚点在 SUMMARY 精度上相同、笔数与持仓天数逐位相同；与 epoch-2 跑的第 4 位差异与 baseline-e6 自己的 2022 切片对 q-3 的差异（442.49 vs 442.51）同量级，是 JQ 的重跑漂移而不是价位变化。结合 q-1（去掉参数亦逐位相同）：日线台上 MarketOrderStyle 的价格参数不参与成交，成交价是台子自己的规则（JQ 日线模式 = 当日开盘价）。仓库级结论：任何日线台策略里的 MarketOrderStyle(price"
+  },
+  {
+    "id": "dbdx-imp-1",
+    "kind": "improve",
+    "title": "只跑弱转强腿：qualified_stocks = rzq_stocks",
+    "hypothesis": "q-4：该腿 ~17% 笔数、~一半终值；若它独立承重（u-rzq-deconf），单腿书应 obj ≥ 基类且两年同号不差于基类（2023 不得比基类的 2023 更差）。证伪：obj < 基类，或 2023 更差——那 q-4 的一半终值是集中度而非腿的 alpha",
+    "why": "edge 的先验指向这条腿；这是唯一 on-mechanism 的选腿 improve。排在 u-rzq-deconf 之后",
+    "design": "enhance/candidates/dbdx-imp-1.py（build-e6.js，一行）；--window train，逐年拆分",
+    "from": [
+      "q-4",
+      "u-rzq-deconf"
+    ],
+    "edgeRef": "涨停动量延续",
+    "rank": 6,
+    "status": "dropped",
+    "result": null,
+    "note": "u-rzq-deconf：弱转强腿 2023 贡献 ≈ −21pp（基类 −3.35 vs 去腿 +17.51），单腿书在 2023 必然比基类更差——预注册证伪条件不跑即触发。撤下不测"
+  },
+  {
+    "id": "dbdx-imp-2",
+    "kind": "improve",
+    "title": "把资金周转推到极限：次日无条件卖出（T+1 强制离场），去掉 MA5 与「浮盈即止盈」两条件",
+    "hypothesis": "q-2：MA5 止损首先是资金周转引擎（1.51 天/轮），不是回撤压制器。若接力边缘只在隔夜一跳，强制 T+1 离场应 annual ≥ 基类且 maxDD 更浅；证伪：annual 掉 >30%（持有到第 2–3 天的那部分收益是承重的）",
+    "why": "直接检验 edge 的时间尺度（隔夜 vs 数日），同时是最简单的规则，减少一整套手调条件",
+    "design": "variants：sell() 改为对所有持仓 order_target_value(s, 0)（保留 closeable_amount 检查）；--window train",
+    "from": [
+      "q-2"
+    ],
+    "edgeRef": "涨停动量延续",
+    "rank": 7,
+    "status": "dropped",
+    "result": null,
+    "note": "u-2023：2023 的问题不在持有期（≈1.8 天/轮，机器仍在转），而在盈亏比；强制 T+1 离场不针对它。未测，撤下"
+  },
+  {
+    "id": "dbdx-imp-3",
+    "kind": "improve",
+    "title": "情绪门控：昨日涨停家数（或首板池大小）低于阈值时不开新仓",
+    "hypothesis": "2022 +442% / 2023 ≈ −3%（q-3）说明边缘依赖打板情绪 regime；用 len(hl_list) 的 20 日均值做门控，若 2023 抬到 ≥0 而 2022 保留 ≥70% 的 annual，则门控是 on-mechanism 的改进；证伪：2022 损失 >30% 或 2023 仍为负",
+    "why": "唯一直接针对「第二年消失」的 improve；依赖 u-2023 的机理读数决定阈值形式，故排最后",
+    "design": "enhance/candidates/dbdx-imp-3.py（build-e6.js）：g.hl_counts 记录昨日原始涨停家数（过滤前），低于其前 20 日中位数则当日不开新仓；一个先验形式，不扫；--window train，逐年拆分",
+    "from": [
+      "q-3",
+      "u-2023"
+    ],
+    "edgeRef": "涨停动量延续",
+    "rank": 8,
+    "status": "answered",
+    "result": "门控把一本「只有 2022」的书变成四个半年全正的书（2023 +31%，2023-H2 +9 而基类 −18），sharpe 2.58 → 3.00、盈亏比 1.43 → 1.73；代价是 2022 少赚 44%（442 → 247）、TRAIN objective −0.12。预注册的两个条件一个成立（2023 ≥ 0）一个不成立（2022 损失 >30%）；objective 规则判 rejected。它挡住的确实是 2023-H2 那段（u-rzq-deconf 归到弱转强腿的亏损），但同时也挡掉了 2022-H1 肥尾的一半"
+  },
+  {
+    "id": "dbdx-imp-4",
+    "kind": "improve",
+    "title": "去掉弱转强腿并重分仓：qualified_stocks = sbgk_stocks + sbdk_stocks（q-4 的那一行，TRAIN 全窗）",
+    "hypothesis": "u-rzq-deconf：该腿是 2022-H1 肥尾也是 2023-H2 全部亏损，另两腿四个半年全正。重分仓后预期 obj 在 0.55–0.70（2022 单年 q-4 181.66 ≈ 不重分仓 183.85，重分仓几乎不加钱），仍低于基类 0.9668 ⇒ 按 TRAIN objective 规则 rejected，但 2023 为正、maxDD 更浅、sharpe 仍过闸。证伪（即被采纳）：obj ≥ 0.9668",
+    "why": "唯一由 edge 与 regime 读数共同指向的 on-mechanism 稳健化候选；必须在 TRAIN 上正式量一次并按规则判定，而不是因为它 2023 更好就选它（那是在 2023 上选择）",
+    "design": "enhance/candidates/dbdx-imp-4.py（build-e6.js，一行）；--window train，逐年拆分",
+    "from": [
+      "u-rzq-deconf",
+      "q-4",
+      "u-2023"
+    ],
+    "edgeRef": "涨停动量延续",
+    "rank": 6,
+    "status": "answered",
+    "result": "重分仓什么也没加：去腿的书与「腿留计数不下单」的书在两年、逐年、逐半年上都在 2pp 以内——三条腿很少在同一天同时出候选，第 46 行的等分很少真正把现金让渡给弱转强腿，所以 q-4 的仓位混淆在量级上是小项（终值 −36% vs −48% 的差额主要来自 2022 子窗 vs 全窗的复利基数，不是仓位）。作为 improve：obj 0.5600 < 0.9668，rejected；作为形态：四个半年全正、回撤浅 6pp、vol 低 10pp、胜率 70%——是一本更稳、赚得少一半以上的书。2022 的 181.66 与 epoch-2 q-4 逐位相同，再次确认 pin 对本基类无效"
+  }
+]

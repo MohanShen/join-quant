@@ -623,8 +623,21 @@ async function pollUntilComplete(page, algorithmId) {
   // then spins to the safety cap and cancels a backtest that actually succeeded. So we accept a
   // second, independent completion signal: the editor's own result panel has rendered metrics
   // while running[] is empty. Same 2-poll confirmation to avoid a stale/partial render.
+  // ⚠ The page text INCLUDES the Ace editor's visible source lines. Authors paste their own
+  // results into header comments ("策略收益2483.22%，…最大回撤13.13%"), and the first regex match
+  // used to land on that comment instead of the result panel — three 打板短线 epoch-6 rows
+  // recorded the authors' 2025–26 numbers as TRAIN results (annual 409% next to sharpe 0.16;
+  // the curve and the stats endpoint said 8.96%). Sharpe survived only because the panel's
+  // label is "Sharpe" while the comments say "夏普比率". Read the page with the editor hidden.
+  // (`pageTextSansEditor` is the same code in both evaluate blocks — evaluate() serializes the
+  // callback, so a shared helper cannot be closed over.)
   const resultsRendered = () => page.evaluate(() => {
-    const t = (document.body?.innerText || '').replace(/\s+/g, ' ');
+    const eds = Array.from(document.querySelectorAll('.ace_editor, textarea#code'));
+    const prev = eds.map(e => e.style.display);
+    eds.forEach(e => { e.style.display = 'none'; });
+    let t;
+    try { t = (document.body?.innerText || '').replace(/\s+/g, ' '); }
+    finally { eds.forEach((e, i) => { e.style.display = prev[i]; }); }
     return /策略收益\s*-?[\d.]+%/.test(t) && /最大回撤\s*-?[\d.]+%/.test(t);
   }).catch(() => false);
 
@@ -673,7 +686,14 @@ async function pollUntilComplete(page, algorithmId) {
   let dom = '';
   for (let i = 0; i < 12; i++) {
     const s = await page.evaluate(() => {
-      const t = (document.body?.innerText || '').replace(/\s+/g, ' ');
+      // Same editor-hiding read as resultsRendered() above: the Ace editor's visible lines are
+      // part of innerText, and an author's header comment can carry "策略收益 N% … 最大回撤 N%".
+      const eds = Array.from(document.querySelectorAll('.ace_editor, textarea#code'));
+      const prev = eds.map(e => e.style.display);
+      eds.forEach(e => { e.style.display = 'none'; });
+      let t;
+      try { t = (document.body?.innerText || '').replace(/\s+/g, ' '); }
+      finally { eds.forEach((e, i) => { e.style.display = prev[i]; }); }
       const g = re => { const m = t.match(re); return m ? m[1] : null; };
       const inp = id => (document.getElementById(id)?.value || '').trim();
       return {

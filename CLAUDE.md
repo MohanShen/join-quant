@@ -570,3 +570,13 @@ Only the directories whose contents aren't self-evident:
   set through the `newStrategy` URL params. The **2026+ OOS window is hard-blocked** (`OOS-BLOCKED`)
   unless `JQ_ALLOW_OOS=1` — see `harness/harness.md`. No flag = JQ default range (ad-hoc).
 - Do not close the CDP Chrome process — it invalidates the JQ session and forces re-login.
+- ⚠ **The result scrape used to read the page's innerText INCLUDING the Ace editor's visible source
+  lines.** Authors paste their own results into header comments (`# 回测2025-01-01到2026-04-27，策略收益
+  2483.22%，…最大回撤13.13%`), and the first `策略收益 N%` / `最大回撤 N%` match landed on the comment,
+  not the result panel — three 打板短线 epoch-6 rows recorded the authors' 2025–26 numbers as TRAIN
+  results (annual 409% beside sharpe 0.16; sharpe survived only because the panel's label is
+  "Sharpe" and comments say 夏普比率). The free `POST /algorithm/backtest/stats?backtestId=&ajax=1`
+  and the stored curve both said 8.96%. `strategy-post-backtest.js` now hides `.ace_editor` /
+  `#code` before reading. **A sharpe that cannot coexist with its annual/maxDD (implied vol
+  > ~150%) is a scrape artefact until the stats endpoint says otherwise**; 289177df's epoch-2
+  row (maxDD 10.68 = its header comment) is still unchecked.
