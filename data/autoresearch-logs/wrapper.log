@@ -1,0 +1,14 @@
+[2026-09-21 08:25:29] skip: no data/autoresearch-session.txt — start the epoch interactively first (scripts/autoresearch-interactive.sh)
+[2026-09-21 17:26:13] no family given; took the queue head: 大小盘轮动
+[2026-09-21 17:26:19] new session c665478f for family 大小盘轮动 (branch main, budget 0/170min) -> /Users/mshen/join-quant/data/autoresearch-logs/大小盘轮动-20260921-172619.log
+[2026-09-21 17:26:19] DRY=1 — would run: claude -p --session-id c665478f-8630-412b-91ff-59de17e6235f --permission-mode acceptEdits
+[2026-09-21 17:34:16] new session 12d27c70 for family 红利低频 (branch main, budget 0/170min) -> /Users/mshen/join-quant/data/autoresearch-logs/红利低频-20260921-173416.log
+    - **If you wanted a fresh start for 红利低频 only:** restore the other 13 pages and 套利.md from HEAD, keep the 红利低频 reset, and re-run.
+    
+    **Status:** nothing ran and the tree is exactly as I found it (not clean). HEAD lists no 红利低频 ideas as queued, and on disk there is no queue at all.
+[2026-09-21 17:35:10] 红利低频: run complete rc=0 — check its ledger, exit 0 is not proof work happened
+[2026-09-21 17:37:05] resume session 12d27c70 for family 红利低频 (branch main, budget 0/170min) -> /Users/mshen/join-quant/data/autoresearch-logs/红利低频-20260921-173705.log
+[2026-09-21 17:37:05] DRY=1 — would run: claude -p --resume 12d27c70-16aa-4661-bd89-4ca320777c70 --permission-mode acceptEdits
+[2026-09-21 17:37:28] from-scratch family: discarding the pre-reset pin 红利低频.txt
+[2026-09-21 17:37:28] new session 18b108d5 for family 红利低频 (branch main, budget 0/170min) -> /Users/mshen/join-quant/data/autoresearch-logs/红利低频-20260921-173728.log
+[2026-09-21 17:37:28] DRY=1 — would run: claude -p --session-id 18b108d5-9647-4b7d-929e-f2890eb088e8 --permission-mode acceptEdits

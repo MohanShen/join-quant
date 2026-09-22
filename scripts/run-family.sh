@@ -112,13 +112,35 @@ else
   echo $$ > "$PLOCK"; PLOCK_MINE=1
 fi
 
+# ⚠ Say whether an EMPTY family is empty on purpose.
+#
+# A fresh session has no context by design, so it cannot tell a deliberate reset from an accident.
+# The first from-scratch run proved it: the session found a scaffolded page, a missing study/
+# directory and removed consumption rows, concluded the tree had been wiped by mistake, and
+# correctly refused to run — it would otherwise have re-bought findings that HEAD already held.
+# Refusing was the right call on the evidence it had; the missing piece was the intent, which only
+# the caller knows. So the caller states it.
+FROM_SCRATCH=0
+if [ ! -d "$REPO/study/$FAMILY" ] \
+   && ! grep -q "^$FAMILY	" "$REPO/data/consumption.tsv" 2>/dev/null; then
+  FROM_SCRATCH=1
+fi
+
 # ── resume this FAMILY's own session, or start a clean one ──────────────────
 BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 PIN="$PIN_DIR/$FAMILY.txt"
 SID=""
 MODE="new"
 
-if [ "${FRESH:-0}" != "1" ] && [ -f "$PIN" ]; then
+# ⚠ A from-scratch family NEVER resumes. Any pinned session predates the reset, so resuming it
+# hands back the very context the reset was meant to clear — including, in the first attempt, a
+# session whose whole conclusion was "the tree has been wiped, I refuse to run".
+if [ "$FROM_SCRATCH" = "1" ] && [ -f "$PIN" ]; then
+  log "from-scratch family: discarding the pre-reset pin ${PIN##*/}"
+  rm -f "$PIN"
+fi
+
+if [ "${FRESH:-0}" != "1" ] && [ "$FROM_SCRATCH" != "1" ] && [ -f "$PIN" ]; then
   pin_branch="$(cut -f1 "$PIN" 2>/dev/null)"
   pin_sid="$(cut -f2 "$PIN" 2>/dev/null)"
   if [ "$pin_branch" = "$BRANCH" ] && [ -n "$pin_sid" ] \
@@ -141,6 +163,17 @@ RUN_LOG="$LOG_DIR/$FAMILY-$(date '+%Y%m%d-%H%M%S').log"
 PERM_FLAG="--permission-mode acceptEdits"
 [ "${USE_BYPASS:-0}" = "1" ] && PERM_FLAG="--dangerously-skip-permissions"
 
+SCRATCH_NOTE=""
+if [ "$FROM_SCRATCH" = "1" ]; then
+  SCRATCH_NOTE="
+INTENT: this family is empty ON PURPOSE. There is no study/$FAMILY directory, no findings, no
+queue and no consumption history, and the family page is a freshly generated scaffold. That is the
+starting state you are meant to build from, NOT damage — do not treat it as a wipe to be restored,
+and do not go looking in git history for prior findings to reuse. §3 is auto-generated and is your
+only measured input. Build the page: draft the edge: block, raise the first understand questions,
+and fill §1 from the base source."
+fi
+
 # A NEW session gets the full brief — it has no history to continue. A RESUMED one is mid-round on
 # THIS family, so it is pointed back at the on-disk state rather than re-briefed.
 if [ "$MODE" = "new" ]; then
@@ -151,7 +184,7 @@ whole handoff — wiki/families/$FAMILY.md, study/$FAMILY/queue.json, study/$FAM
 Start by running 'node utils/research-queue.js $FAMILY' and reading the family page, exactly as the
 skill requires. Work ONLY this family and stop when it is done. Backtest cap: pass
 --usage-limit $USAGE_LIMIT, foreground/blocking, ONE backtest at a time. Stop at a clean git state
-with a one-line status naming what is still queued."
+with a one-line status naming what is still queued.$SCRATCH_NOTE"
 else
   PROMPT="/run-family $FAMILY
 
