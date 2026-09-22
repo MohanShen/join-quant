@@ -131,6 +131,17 @@ function build() {
     members.get(a.family).push(r);
   }
 
+  // ⚠ `members` counts strategies with a NORMALIZED ledger row — the only ones that can be
+  // researched. A family page's own `memberCount` counts every assigned strategy, so the two
+  // differ, sometimes hugely: 打板短线's page says 25 and only 9 are measured, because 15 have no
+  // ledger row at all and two are compile-error / slow-skipped. Reporting the gap is what keeps
+  // the queue from silently understating a family and what tells `normalize` where to aim.
+  const assignedCount = new Map();
+  for (const [, a] of asg) {
+    if (!a.family) continue;
+    assignedCount.set(a.family, (assignedCount.get(a.family) || 0) + 1);
+  }
+
   const out = [];
   for (const family of reg) {
     const mem = members.get(family) || [];
@@ -151,6 +162,8 @@ function build() {
         objective: m.objective, gate: m.gate, valid: m.valid,
       })).sort((a, b) => (b.objective ?? -99) - (a.objective ?? -99)),
       members: mem.length,
+      assigned: assignedCount.get(family) || 0,
+      unmeasured: Math.max(0, (assignedCount.get(family) || 0) - mem.length),
       validMembers: mem.filter(m => m.valid).length,
       bestObjective: mem.reduce((a, m) => (m.objective != null && (a == null || m.objective > a) ? m.objective : a), null),
       reason,
@@ -195,9 +208,9 @@ if (require.main === module) {
   }
 
   console.log(`[fq] family queue — ${q.due.length} due of ${q.all.length} registered\n`);
-  console.log('  score  members  bestObj   reason            family');
+  console.log('  score  meas/assigned  bestObj   reason            family');
   for (const f of q.due) {
-    console.log(`  ${String(f.score ?? '—').padStart(5)}  ${String(f.members).padStart(7)}  ` +
+    console.log(`  ${String(f.score ?? '—').padStart(5)}  ${String(f.members + '/' + f.assigned).padStart(13)}  ` +
                 `${String(f.bestObjective == null ? '—' : f.bestObjective.toFixed(4)).padStart(7)}   ` +
                 `${f.reason.padEnd(17)} ${f.family}${f.note ? '  (' + f.note + ')' : ''}`);
   }

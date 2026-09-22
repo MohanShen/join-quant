@@ -159,6 +159,18 @@ function recordFinding(family, row) {
   if (!fs.existsSync(f)) fs.writeFileSync(f, FINDING_COLUMNS.join('\t') + '\n');
   const line = FINDING_COLUMNS.map(k => clean(row[k] == null ? (k === 'spawned' ? 'none' : '') : row[k]));
   fs.appendFileSync(f, line.join('\t') + '\n');
+
+  // Close the idea this answers. Without it a run leaves its own finished ideas sitting at
+  // `queued`, so the next round re-reads them as open work — the first trial did exactly that,
+  // recording two findings while both ideas still showed `queued`. The link is the id: a finding
+  // whose qId matches an entry answers that entry.
+  const entries = load(family);
+  const hit = entries.find(e => e.id === row.qId && e.status !== 'answered');
+  if (hit) {
+    hit.status = 'answered';
+    hit.result = String(row.finding || '').slice(0, 300);
+    save(family, entries);
+  }
   return true;
 }
 

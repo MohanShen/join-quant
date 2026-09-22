@@ -12,8 +12,8 @@
     ],
     "edgeRef": "低换手",
     "rank": 90,
-    "status": "queued",
-    "result": null
+    "status": "answered",
+    "result": "(closed retroactively — findings recorded before recordFinding did this)"
   },
   {
     "id": "idea-2",
@@ -28,7 +28,7 @@
     ],
     "edgeRef": "低换手",
     "rank": 88,
-    "status": "queued",
-    "result": null
+    "status": "answered",
+    "result": "(closed retroactively — findings recorded before recordFinding did this)"
   }
 ]
