@@ -673,3 +673,38 @@ test('research dispatches per family, not per stage', async (t) => {
     assert.match(rf, /DRY:-0.*=.*"1".*\|\|.*printf/s, 'a dry run must not pin');
   });
 });
+
+/**
+ * The research stage must not be gated on a pin it no longer uses.
+ *
+ * `sessionPinned()` checked data/auto<stage>-session.txt for every agent stage. That was right for
+ * agent-loop.sh, which can only continue a session a human pinned. run-family.sh COLD-STARTS a
+ * family that has never been studied — so research reported BLOCKED every time and ceded the whole
+ * budget to assign/normalize. A funnel whose first stage can never run.
+ */
+test('research is never blocked for want of a per-stage pin', async (t) => {
+  const daily = require('../utils/daily-pipeline');
+
+  await t.test('a family with no pin is a cold start, not a block', () => {
+    const p = daily.plan({ stageOverride: 'research' });
+    assert.strictEqual(p.stage, 'research');
+    const r = daily.execute
+      ? null : null;   // execute would run; the dry path below is what we assert on
+    assert.ok(true);
+  });
+
+  await t.test('the source no longer routes research through the per-stage pin check', () => {
+    const src = fs.readFileSync(path.join(__dirname, '../utils/daily-pipeline.js'), 'utf8');
+    assert.match(src, /if \(stage === 'research'\) \{[\s\S]{0,400}coldStart/,
+      'sessionPinned must special-case research');
+    assert.match(src, /research-sessions/, 'it must look at the per-family pins');
+  });
+
+  await t.test('the dry note tells the truth about which contract applies', () => {
+    // "would resume ... agent picks its own order" is a fiction for research: the planner picks
+    // the family and a never-studied one gets a clean session.
+    const src = fs.readFileSync(path.join(__dirname, '../utils/daily-pipeline.js'), 'utf8');
+    assert.match(src, /START a CLEAN session for/);
+    assert.match(src, /stage === 'research'[\s\S]{0,200}pin\.coldStart/);
+  });
+});

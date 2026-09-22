@@ -257,7 +257,22 @@ function sh(cmd, args, { timeout = STAGE_TIMEOUT_MIN * 60000 } = {}) {
  * that only checked "does the file exist" would report OK every day while starting nothing.
  * Both halves are therefore checked here, and a mismatch is reported as blocked.
  */
-function sessionPinned(stage) {
+function sessionPinned(stage, target = null) {
+  // ⚠ `research` is NOT gated on a pin, and that is the point of run-family.sh.
+  //
+  // The "a cron can only RESUME, never cold-start an agent loop" rule was true of
+  // agent-loop.sh, which can only continue a session a human pinned. run-family.sh cold-starts a
+  // family that has never been studied and pins it per FAMILY. Left gated on the old per-stage
+  // file (data/autoresearch-session.txt, which nothing writes any more), research reported
+  // BLOCKED every single time and ceded the entire budget to assign/normalize — a funnel whose
+  // first stage can never run.
+  if (stage === 'research') {
+    const pin = target && path.join(ROOT, 'data/research-sessions', `${target}.txt`);
+    const has = pin && fs.existsSync(pin);
+    return { pinned: true, coldStart: !has,
+             detail: has ? fs.readFileSync(pin, 'utf8').trim().split('\t')[1].slice(0, 8) : 'new' };
+  }
+
   const f = path.join(ROOT, `data/auto${stage}-session.txt`);
   if (!fs.existsSync(f)) return { pinned: false, why: `no data/auto${stage}-session.txt` };
   const [pinBranch, uuid] = fs.readFileSync(f, 'utf8').trim().split('\t');
@@ -308,7 +323,7 @@ function runNormalize(q, { dry }) {
 }
 
 function runAgentLoop(stage, target, { dry }) {
-  const pin = sessionPinned(stage);
+  const pin = sessionPinned(stage, target);
   if (!pin.pinned) {
     return {
       outcome: 'blocked',
@@ -340,9 +355,16 @@ function runAgentLoop(stage, target, { dry }) {
   // the planner actually controls is WHICH STAGE runs, and (via syncStudyManifest) which
   // families are eligible at all.
   if (dry) {
-    return { outcome: 'dry',
-             note: `would resume session ${pin.detail} via ${path.relative(ROOT, script)}` +
-                   `; our queue head is ${target || 'n/a'} (agent picks its own order)` };
+    // ⚠ The note differs by stage because the CONTRACT differs. For research the planner really
+    // does choose the family and run-family.sh cold-starts one that has never been studied;
+    // for the legacy stages the target is reported for the log only and the agent picks its own
+    // order. Saying "resume ... agent picks its own order" for research would be a fiction.
+    const note = stage === 'research'
+      ? `would ${pin.coldStart ? 'START a CLEAN session for' : `resume session ${pin.detail} on`} ` +
+        `${target || '(queue head)'} via ${path.relative(ROOT, script)}`
+      : `would resume session ${pin.detail} via ${path.relative(ROOT, script)}` +
+        `; our queue head is ${target || 'n/a'} (agent picks its own order)`;
+    return { outcome: 'dry', note };
   }
   const r = sh('bash', args);
   const lines = r.out.split('\n').filter(Boolean);
