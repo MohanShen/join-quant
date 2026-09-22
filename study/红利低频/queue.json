@@ -41,8 +41,8 @@
     ],
     "edgeRef": "股息率",
     "rank": 3,
-    "status": "queued",
-    "result": null
+    "status": "answered",
+    "result": "inside CSI800 the same rule keeps ~60% of the objective (annual 17.89% vs 22.61%) at an unchanged drawdown; the remaining ~0.054 comes from names outside the 800"
   },
   {
     "id": "q-4",
@@ -56,8 +56,8 @@
     ],
     "edgeRef": "股息率",
     "rank": 6,
-    "status": "queued",
-    "result": null
+    "status": "answered",
+    "result": "the base earns about equally in both years against a falling benchmark; yield-only fails ENTIRELY in the 2022 bear (-14.31, the whole 26% drawdown) and works in 2023, while turnover-only is the better of the two in 2022"
   },
   {
     "id": "q-5",
@@ -71,8 +71,8 @@
     ],
     "edgeRef": null,
     "rank": 5,
-    "status": "queued",
-    "result": null
+    "status": "answered",
+    "result": "5 and 10 names score alike (0.120 / 0.135) while widening to 20 costs 0.057 at the same drawdown: the return is concentrated in the top of the rank-sum, not spread across a broad high-yield/low-turnover sleeve"
   },
   {
     "id": "q-6",
@@ -86,8 +86,8 @@
     ],
     "edgeRef": null,
     "rank": 7,
-    "status": "queued",
-    "result": null
+    "status": "answered",
+    "result": "shifting the 25-day rebalance calendar by 12 days changes the objective by only -0.006 with an identical drawdown"
   },
   {
     "id": "i-1",
@@ -101,8 +101,8 @@
     ],
     "edgeRef": "股息率",
     "rank": 8,
-    "status": "queued",
-    "result": null
+    "status": "answered",
+    "result": "replacing TTM yield with a 3-year average dividend yield cuts the objective to -0.0107, about the level of turnover-only (q-2 0.0028) — the smoothed yield adds almost nothing on top of the turnover rank"
   },
   {
     "id": "i-2",
@@ -116,8 +116,8 @@
     ],
     "edgeRef": "股息率",
     "rank": 20,
-    "status": "queued",
-    "result": null
+    "status": "answered",
+    "result": "the ST filter barely moves the base (Δ -0.002, identical drawdown): the rank-sum essentially never selects ST names on TRAIN"
   },
   {
     "id": "i-3",
@@ -131,8 +131,8 @@
     ],
     "edgeRef": "股息率",
     "rank": 10,
-    "status": "queued",
-    "result": null
+    "status": "answered",
+    "result": "adding the quality/growth screen before the rank-sum turns the book negative (annual -1.92%, maxdd 19.34%), nearly as bad as yield-only"
   },
   {
     "id": "q-7",
@@ -162,8 +162,8 @@
     ],
     "edgeRef": "股息率",
     "rank": 2,
-    "status": "queued",
-    "result": null
+    "status": "answered",
+    "result": "pure yield within the lowest-turnover tercile still falls well short of the base (-0.0663 vs 0.1348) while within the highest tercile it tracks the market crash (-0.4574); turnover level orders the results monotonically (high tercile < low tercile < rank-sum base)"
   },
   {
     "id": "q-9",
@@ -176,8 +176,39 @@
       "q-2"
     ],
     "edgeRef": null,
-    "rank": 4,
-    "status": "queued",
-    "result": null
+    "rank": 1,
+    "status": "answered",
+    "result": "objective peaks at equal weights and falls ~0.08 symmetrically when either rank is tilted 3x, i.e. a single sharp peak rather than a plateau; with the full sweep endpoints q-1 (-0.2658) and q-2 (0.0028) the curve is -0.27 / 0.06 / 0.13 / 0.05 / 0.00"
+  },
+  {
+    "id": "i-4",
+    "kind": "improve",
+    "title": "更新鲜的股息率：按董事会预案公告日计近12个月派息",
+    "hypothesis": "i-1 显示股息率腿的价值在于新近派息；提前约2个月用预案公告日计入，objective 上升",
+    "why": null,
+    "design": "get_dividend_yield_ttm 的日期过滤由 a_registration_date 改为 board_plan_pub_date，去掉 plan_progress 过滤（避免用到事后状态），其余不动",
+    "from": [
+      "i-1"
+    ],
+    "edgeRef": "股息率",
+    "rank": 1,
+    "status": "answered",
+    "result": "counting dividends from their board announcement instead of registration costs 0.018 obj with a slightly higher drawdown"
+  },
+  {
+    "id": "q-10",
+    "kind": "understand",
+    "title": "换手率窗口敏感性 20 -> 10 / 60 日",
+    "hypothesis": "若低换手是持续的低关注属性（流动性溢价），60 日应不差于 20 日；10 日若明显更好则是短期噪声而非属性",
+    "why": null,
+    "design": "g.turnover_window = 10 与 60 各一跑",
+    "from": [
+      "i-4",
+      "q-1"
+    ],
+    "edgeRef": "流动性溢价",
+    "rank": 1,
+    "status": "answered",
+    "result": "20 days is the best of the three; 60 days loses less than 10 days and has the lowest drawdown, so shortening the window hurts more than lengthening it"
   }
 ]
