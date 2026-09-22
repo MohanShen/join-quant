@@ -1,0 +1,183 @@
+[
+  {
+    "id": "q-1",
+    "kind": "understand",
+    "title": "消融换手率排名：只按股息率TTM选前10",
+    "hypothesis": "若低换手独立贡献（流动性溢价 claim），objective 下降且 maxDD 抬高",
+    "why": null,
+    "design": "baseline.py 中 total_rank = dy_rank*3（换手权重 0），其余不动，--window train",
+    "from": [
+      "normalized:93379f98"
+    ],
+    "edgeRef": "流动性溢价",
+    "rank": 1,
+    "status": "answered",
+    "result": "top-10 by dividend-yield TTM alone earns nothing (annual -0.20%, maxdd 26.38%): the whole base result depends on the low-turnover rank"
+  },
+  {
+    "id": "q-2",
+    "kind": "understand",
+    "title": "消融股息率排名：只在派息股里按20日低换手选前10",
+    "hypothesis": "若股息率是收益来源，objective 大幅下降；若不降，收益来自低换手/派息股资格本身",
+    "why": null,
+    "design": "total_rank = turnover_rank*3（仍保留 dy_ttm>0 的派息股池），--window train",
+    "from": [
+      "normalized:93379f98"
+    ],
+    "edgeRef": "股息率",
+    "rank": 2,
+    "status": "answered",
+    "result": "low 20d turnover among dividend payers alone gives annual 11.56% at maxdd 11.28% — positive but far below the combination; removing the yield rank costs 0.132 obj"
+  },
+  {
+    "id": "q-3",
+    "kind": "understand",
+    "title": "规模混淆：universe 限定中证800",
+    "hypothesis": "若超额来自股息率而非小盘暴露，限定 000906 成分后 objective 基本保持",
+    "why": null,
+    "design": "get_stock_pool 改为 get_index_stocks(000906.XSHG) ∩ 原过滤，其余不动",
+    "from": [
+      "normalized:93379f98"
+    ],
+    "edgeRef": "股息率",
+    "rank": 3,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "q-4",
+    "kind": "understand",
+    "title": "regime：2022 与 2023 分年",
+    "hypothesis": "高股息在 2022 熊市防御、2023 红利行情领涨，两年都为正；若只一年贡献则是单一 regime",
+    "why": null,
+    "design": "baseline.py 跑 --start 2022-01-01 --end 2022-12-31 与 2023-01-01..2023-12-31",
+    "from": [
+      "normalized:93379f98"
+    ],
+    "edgeRef": "股息率",
+    "rank": 6,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "q-5",
+    "kind": "understand",
+    "title": "持仓数敏感性 10 -> 5 / 20",
+    "hypothesis": "高股息因子是宽截面效应，20 只应接近或优于 10 只；5 只若骤变则 10 只结果靠少数票",
+    "why": null,
+    "design": "g.stock_num = 5 与 20 各一跑",
+    "from": [
+      "normalized:93379f98"
+    ],
+    "edgeRef": null,
+    "rank": 5,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "q-6",
+    "kind": "understand",
+    "title": "调仓相位敏感性：计数器起点偏移 12 天",
+    "hypothesis": "25 日周期若无相位依赖，偏移后 objective 变化 < 0.03",
+    "why": null,
+    "design": "g.day_count 初值 12（首日仍调仓），其余不动",
+    "from": [
+      "normalized:93379f98"
+    ],
+    "edgeRef": null,
+    "rank": 7,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "i-1",
+    "kind": "improve",
+    "title": "借 2596a8ab：股息率改用近3年累计分红/市值",
+    "hypothesis": "三年平均股息率滤掉一次性特别分红，提高股息率信号质量，objective 上升",
+    "why": null,
+    "design": "get_dividend_yield_ttm 改为 3 年 bonus_amount_rmb 累计/3 ÷ market_cap",
+    "from": [
+      "normalized:2596a8ab"
+    ],
+    "edgeRef": "股息率",
+    "rank": 8,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "i-2",
+    "kind": "improve",
+    "title": "借 1a8a41cf：加 ST/退市/次新过滤",
+    "hypothesis": "高股息 ST 票是价值陷阱，剔除后回撤下降",
+    "why": null,
+    "design": "get_stock_pool 增加 is_st/名称含ST退 与上市<250日过滤",
+    "from": [
+      "normalized:1a8a41cf"
+    ],
+    "edgeRef": "股息率",
+    "rank": 20,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "i-3",
+    "kind": "improve",
+    "title": "借 1a8a41cf：盈利质量过滤（PE 5-50, ROE>5, 净利增速>0）",
+    "hypothesis": "剔除股息率高但盈利恶化的价值陷阱，objective 上升",
+    "why": null,
+    "design": "股息率排名前先用 get_fundamentals 过滤",
+    "from": [
+      "normalized:1a8a41cf"
+    ],
+    "edgeRef": "股息率",
+    "rank": 10,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "q-7",
+    "kind": "understand",
+    "title": "只按股息率 + ST/退/次新过滤：困境股是否就是价值陷阱",
+    "hypothesis": "若 q-1 的失败来自 ST/困境高股息股，过滤后纯股息率 objective 明显回升",
+    "why": null,
+    "design": "q-1 + get_stock_pool 滤 is_st / 名称含 ST 退 / 上市<250日",
+    "from": [
+      "q-1"
+    ],
+    "edgeRef": "股息率",
+    "rank": 1,
+    "status": "answered",
+    "result": "removing ST/delisting/<250-day listings leaves yield-only as bad as before (annual -0.47%, maxdd 25.42%); the picks changed but the loss did not"
+  },
+  {
+    "id": "q-8",
+    "kind": "understand",
+    "title": "条件关系：低换手三分之一内按股息率选 vs 高换手三分之一内按股息率选",
+    "hypothesis": "低换手 tercile 内纯股息率 ≈ 基类；高换手 tercile 内显著为负",
+    "why": null,
+    "design": "派息股按 turnover_20d 三分位切，tercile 内按 dy_rank 取前10；两跑",
+    "from": [
+      "q-1",
+      "q-2"
+    ],
+    "edgeRef": "股息率",
+    "rank": 2,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "q-9",
+    "kind": "understand",
+    "title": "排名权重 dy:turnover = 3:1 与 1:3",
+    "hypothesis": "二者互补，权重在 1:1 附近是平台；偏任一端向 q-1/q-2 退化",
+    "why": null,
+    "design": "total_rank 权重改 3:1 与 1:3 各一跑",
+    "from": [
+      "q-2"
+    ],
+    "edgeRef": null,
+    "rank": 4,
+    "status": "queued",
+    "result": null
+  }
+]
