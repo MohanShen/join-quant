@@ -9,7 +9,7 @@ memberCount: 2
 sources: { normalized: 2, study: 0, enhance: 0 }
 realism: "<⚠ 待人工填写>"
 status: active
-updatedAt: 2026-09-22
+updatedAt: 2026-09-23
 ---
 
 # ETF溢价 — strategy family
@@ -36,7 +36,7 @@ updatedAt: 2026-09-22
 | **1** | **[[15c36e0c_ETF溢价改进版]]** | 1.5642 | 8.87 | 177.88 | 21.46 | ✅ |
 | 2 | [[edd94ebc_ETF溢价回撤]] | DQ/— | — | — | — | — |
 
-*1 gate-pass / 2 members. 快照 2026-09-22（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*1 gate-pass / 2 members. 快照 2026-09-23（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)   ← 待人工填写：本家族未试方向
 

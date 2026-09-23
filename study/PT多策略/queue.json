@@ -1,0 +1,170 @@
+[
+  {
+    "id": "q-struct",
+    "kind": "understand",
+    "title": "家族成员计数：c70281d3 的 4358 行「分仓隔离插件」是否真的运行（零回测）",
+    "hypothesis": "文件第 143 行与第 4355 行是一对模块级 '''，其间的第二个 initialize / subPortfolio 类 / 小市值子策略全部在字符串字面量里，从不执行；真正跑的是 1–142 行的单一 ETF 折价 sleeve（与 fa0d3bd9 同源，差异：09:30 last_price 取代 09:25 day_open、多一个 −5%/+10% 止损止盈）。证伪：任一 run_daily 注册来自 143 行之后",
+    "why": "标题与 wiki 桩页都把它记成「小市值 + ETF 动量 + 打板」多策略；若它是同一 sleeve，家族独立证据量 = 1 份代码体，而且「多策略/账本」框架不是 edge 来源",
+    "design": "逐行读源码（grep 模块级三引号与 def initialize），零回测",
+    "from": [],
+    "edgeRef": null,
+    "rank": 0,
+    "status": "answered",
+    "result": "c70281d3 第 143 行与第 4355 行是一对模块级 '''：其间 4,200 行（第二个 initialize、subPortfolio/subPosition/subOrder 类、「小市值策略A」、PTrade 兼容层）全部在字符串字面量里，从不执行。真正跑的是 1–142 行：与 fa0d3bd9 同一 ETF 折价 sleeve（band 5e6–2e7、premium<0、top-10、|premium| 加权），差异只有三处——09:30 的 last_price 取代 09:25 的 day_open 作信号、多一个 09:30/14:59 的 −5% 止损 / +1"
+  },
+  {
+    "id": "baseline-e6",
+    "kind": "understand",
+    "title": "基类 fa0d3bd9 在 epoch 6 上的锚点（ledger 只有 epoch 2/4 行）",
+    "hypothesis": "源码自设基金费率 0.00025 与 0.1% 滑点、不设 order_volume_ratio；epoch 6 的股票费率 pin 对纯 ETF 书是 no-op，故预期逐位复现 epoch-4 行 annual 195.74 / sharpe 11.15 / maxDD 9.82 / obj 1.8592。证伪：任一指标偏离 >0.3pp。同时读出 epoch-2 → 4 的腰斩（369 → 196）是 5% 参与上限还是费率造成的（费率差 0.00005/边 × 每日全换 ≈ 5% 两年，解释不了 −173pp）",
+    "why": "每个后续 Δ 都对它量；腰斩本身是 流动性溢价 claim 的第一条证据——若成交被限在成交量 5% 就少赚一半，收益就活在「能吃掉薄基金成交量」这件事上",
+    "design": "study/PT多策略/baseline-e6.py = 源码 + live OVERRIDE（build-e6.js）；曲线 → yearsplit.js 逐年拆",
+    "from": [
+      "q-struct"
+    ],
+    "edgeRef": "流动性溢价",
+    "rank": 1,
+    "status": "answered",
+    "result": "epoch-6 锚点逐位复现 epoch-4 行（纯 ETF 书，epoch 6 的股票费率 pin 是 no-op）。腰斩发生在 epoch 4：对这本书 epoch 4 只咬两处——order_volume_ratio=0.05 与基金费率 0.00025→0.0003；费率差每边 0.00005、每日近乎全换，两年合计约 5%，解释不了 annual −173pp ⇒ epoch-2 的 369% 里约一半是「一笔单吃掉薄基金一天成交量 5% 以上」的成交，是容量，不是信号。两年都强正：2022（熊）+300%、2023 +121%，回撤全在 2022（9.82 vs 2.69），202"
+  },
+  {
+    "id": "u-1",
+    "kind": "understand",
+    "title": "edge test 流动性溢价 (a)：同一规则搬到流动基金 band 5e7–1e8",
+    "hypothesis": "若 edge 是薄基金 illiquidity 溢价，流动 band 上折价信号应失去风险调整后的收益（epoch-2 先例：obj 0.0535 / sharpe 1.09）。证伪：流动 band objective ≥ 基类 −0.1",
+    "why": "这是家族 edge 的直接检验，也是 realizability 的判决：唯一可真实成交的 band 恰是 edge 消失的 band 这一读数，需要在有 5% 参与上限的本 epoch 重新确立",
+    "design": "variants/u-1_band-liquid.py：一行 band 5e6–2e7 → 5e7–1e8",
+    "from": [
+      "baseline-e6"
+    ],
+    "edgeRef": "流动性溢价",
+    "rank": 2,
+    "status": "answered",
+    "result": "搬到流动 band 后同一折价规则只剩年化 22.7%、sharpe 0.94、回撤 22%——过不了 1.5 闸门，obj 归零。但没有变负：两年各 +14.5% / +30.6%，仍是正的。与 epoch-2 的同臂读数（0.05 / 1.09）一致，参与上限没有改变这条结论。折价信号在流动 ETF 上是一个弱的、DQ 的信号；把它做成 sharpe 11 的，是薄 band"
+  },
+  {
+    "id": "u-2",
+    "kind": "understand",
+    "title": "edge test 流动性溢价 (b)：去掉 2e7 上界（流动基金可以挤进 top-10）",
+    "hypothesis": "若 alpha 专属薄尾部，让流动基金参与只会稀释（epoch-2 先例 obj 2.89 vs 3.60，−20%）；若在 5% 参与上限下薄基金本就填不满，放开上界反而可能变好。证伪方向双向，都是信息",
+    "why": "与 u-1 合起来给 band 的两端各一个读数；u-2 同时是 realizability 的可行版本（上界是作者刻意加的）",
+    "design": "variants/u-2_band-nocap.py：一行 band → money > 5e6",
+    "from": [
+      "baseline-e6"
+    ],
+    "edgeRef": "流动性溢价",
+    "rank": 3,
+    "status": "answered",
+    "result": "放开上界后收益几乎不动（annual −1.2pp），回撤 +4.2pp、sharpe −1.85。在 epoch 2（无参与上限）同一臂丢了 0.71 obj，现在只丢 0.05：有了 5% 上限之后，上界对「选谁」几乎不起作用——最深折价本来就在薄基金里，top-10 by 折价深度基本还是那些名字；偶尔挤进来的流动基金带来的是回撤（2022 13.99 vs 9.82），不是收益。上界是一道回撤过滤器，不是收益来源"
+  },
+  {
+    "id": "u-3",
+    "kind": "understand",
+    "title": "edge test 均值回归 by mirror：同一薄 band，买最高溢价（premium>0，降序 top-10）",
+    "hypothesis": "若信息在折价的符号里，镜像应塌（两年同号为负或 obj ≤ 0）；若镜像也赚到同量级，则收益是薄 ETF 的 universe/回弹效应而非折价回归。证伪：镜像 objective ≥ 基类 −0.1",
+    "why": "流动性溢价 说的是 universe，均值回归 说的是信号；两条 claim 要分开测，否则「薄基金」和「折价」不可区分",
+    "design": "variants/u-3_mirror-premium.py：两行（排序降序 + premium>0）",
+    "from": [
+      "baseline-e6"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 4,
+    "status": "answered",
+    "result": "镜像两年亏掉 91%：买开盘价高于净值最多的薄 ETF，两年只有 14% 的交易日是涨的（基类 68%）。对数尺度上基类 +2.17 与镜像 −2.43 近似对称——收益就是「开盘价对净值的偏离在当天/次日回归」这一件事：折价方向赚，溢价方向亏，量级相同。这是 均值回归（对 NAV）能给出的最强形态"
+  },
+  {
+    "id": "u-4",
+    "kind": "understand",
+    "title": "无信号控制组：同一薄 band，不看 NAV，持最薄 10 只等权",
+    "hypothesis": "若 universe 本身（薄 ETF）就能给出基类量级的收益，则折价信号是装饰；若控制组 ≤ 0 而基类 >> 0，信号承重。证伪（对 均值回归）：控制组 objective ≥ 基类 −0.1",
+    "why": "u-3 只翻符号；u-4 把 NAV 信息整个拿掉，两者合读才能把「薄 universe」与「折价信号」的贡献拆开",
+    "design": "variants/u-4_universe-control.py：premium 一行换成 −1e7/money（最薄在前，过滤全过）+ 权重等权（两处一个概念）",
+    "from": [
+      "baseline-e6"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 5,
+    "status": "answered",
+    "result": "拿掉 NAV 信息、只持 band 里最薄的 10 只等权，两年亏 42%、回撤 43%，两年同号为负。薄 universe 本身不赚钱，它亏钱（最薄的 ETF 是在萎缩/清盘边缘的基金，加上每日换仓的往返）。分解：universe −42% / 折价信号 +772% / 镜像 −91%——收益全部来自信号，universe 是它的载体而非来源"
+  },
+  {
+    "id": "u-5",
+    "kind": "understand",
+    "title": "|premium| 加权 → 等权（其余不动）",
+    "hypothesis": "按折价深度加权把资金压向最深折价（通常也最薄）的名字；等权若 objective 不降（|Δ| < 0.05），加权是惰性；若降 ≥ 0.1，深折价的边际信息是真的。证伪：无——两个方向都是发现",
+    "why": "pre-wipe §4 列为空白；也是 ETF溢价 q-2「集中度是回撤一等旋钮」的对照",
+    "design": "variants/u-5_equal-weight.py：weights 一行",
+    "from": [
+      "baseline-e6"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 6,
+    "status": "answered",
+    "result": "等权少赚 17pp 年化、回撤只浅 1.1pp：折价深度有边际信息——最深折价的名字回归得更多，把资金压向它们是对的。差额几乎全在 2022（+300 vs +251），2023 持平（+121 vs +125）：深折价在熊市里更深、回归也更大。不是惰性（|Δobj| 0.16 > 0.05 的阈）"
+  },
+  {
+    "id": "u-6",
+    "kind": "understand",
+    "title": "regime：基类曲线逐年拆（2022 熊 / 2023 震荡），零回测",
+    "hypothesis": "折价族的低回撤在跨族规律里多为 2022 熊市专属（ETF溢价 §4）；若 2023 单年 total ≤ 0 或 sharpe~ < 1，edge 是 regime 承载的。证伪：两年同号为正且各自 sharpe~ ≥ 2",
+    "why": "VAL 2024–25 是另一个 regime；先知道 TRAIN 内部是否已经不稳",
+    "design": "yearsplit.js 读 data/series/study_PT多策略_baseline-e6__train__e6.json",
+    "from": [
+      "baseline-e6"
+    ],
+    "edgeRef": null,
+    "rank": 7,
+    "status": "answered",
+    "result": "两年同号强正，没有「2022 专属」：熊市年赚得更多（+300 vs +121）也承担全部回撤（9.82 vs 2.69）；2023 的 vol 只有 2022 的一半，风险调整后两年几乎一样（sharpe~ 6.3 / 6.7）。上涨日占比两年都在 2/3——这是一个每天赚一点、极少大亏的分布，与 多因子ML / 打板短线 / 大小盘轮动 那条「收益集中在 2022」的模式不同，也与 网格 的「99% 在一个半年」不同"
+  },
+  {
+    "id": "pt-imp-1",
+    "kind": "improve",
+    "title": "下界 5e6 → 1e7（保留 2e7 上界）：丢掉 band 最薄的一半",
+    "hypothesis": "ETF溢价 q-1：把过松的下界收紧一档反而 obj +0.47、maxDD 减半（超薄尾部贡献回撤多于收益）。若 obj > 基类，则更可实现的 band 也更好；若 obj 降，则收益确实活在最薄一半。证伪：obj ≤ 基类",
+    "why": "on-mechanism（作用在 流动性溢价 的 band 上）且方向是可实现性变好的方向——本家族唯一不违反 realizability 否决的 improve",
+    "design": "enhance/candidates/pt-imp-1.py：一行 band 1e7–2e7",
+    "from": [
+      "baseline-e6",
+      "u-1",
+      "u-2"
+    ],
+    "edgeRef": "流动性溢价",
+    "rank": 8,
+    "status": "answered",
+    "result": "丢掉最薄一半，年化少 58pp、回撤只浅 0.7pp：收益跟着薄尾走，回撤不跟。三档 band 单调：5e6–2e7 年化 196 / 1e7–2e7 138 / 5e7–1e8 23——越可成交越少赚，没有 ETF溢价 q-1 那种「下界过松、收紧反而更好」的甜点。ETF溢价 的 2e6 是股数下界、本家族的 5e6 是成交额下界，两者不是同一个量，甜点不迁移"
+  },
+  {
+    "id": "pt-imp-2",
+    "kind": "improve",
+    "title": "top-10 → top-5（作者从 5 放宽到 10「以求尽可能多地成交」）",
+    "hypothesis": "ETF溢价 q-2：obj 在 N=2 单峰，N=5 回撤最低；本家族 N=10 在 5% 参与上限下可能是必要的填单宽度。若 top-5 obj > 基类，集中度还有余量；若降，作者的放宽是对的（填单限制）。证伪：obj ≤ 基类",
+    "why": "on-mechanism（集中到最深折价）；与 u-5 一起回答「深折价的边际信息」",
+    "design": "enhance/candidates/pt-imp-2.py：一行 head(10) → head(5)",
+    "from": [
+      "baseline-e6",
+      "u-5"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 9,
+    "status": "answered",
+    "result": "集中到 top-5 少赚 14pp、回撤不变；2022 反而多赚 17pp，2023 少赚 29pp。与 u-5 合读：深度有信息（加权 > 等权）但集中到 5 只不如 10 只——第 6–10 名在 2023 贡献正收益，因为 5% 参与上限下最深的 5 只吃不下全部资金（2023 vol 从 0.118 降到 0.098 = 资金留在现金里）。作者的放宽是填单宽度，不是分散"
+  },
+  {
+    "id": "u-7",
+    "kind": "understand",
+    "title": "执行从 09:30（开盘价成交）挪到 14:50（收盘价成交），信号不动——偏离在集合竞价之后还剩多少",
+    "hypothesis": "若收益是「集合竞价开盘价对净值的偏离在开盘后即回归」，把成交挪到 14:50 应把它抹掉大半（obj 降 ≥ 1.0，甚至转负）；若 14:50 成交仍保留基类一半以上的年化，则偏离是持续到收盘的、日频账户可以拿到。证伪：obj ≥ 基类 −0.3",
+    "why": "TRAIN/VAL 每个数字都建立在「薄 ETF 的开盘价能按全天成交量 5% 成交」上；这是唯一能把 realizability 从定性变成数字的一次实验，也是 u-3 镜像 −91% 提出的机制问题",
+    "design": "variants/u-7_exec-1450.py：一行 run_daily(market_open, '09:30') → '14:50'（买卖都在 14:50，信号仍是 09:25 的 day_open）",
+    "from": [
+      "u-3",
+      "val-base-e6",
+      "baseline-e6"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 10,
+    "status": "answered",
+    "result": "同一信号、只把成交从开盘价挪到收盘价，两年从 +772% 变成 −29%，回撤 40%——落到与「无信号最薄 10 只」（u-4，−42%）同一量级。开盘价对净值的偏离到收盘不但已经回归，还越过了：在收盘价买那些开盘折价最深的薄 ETF，拿到的是薄 ETF universe 的负漂移。收益 100% 是「在集合竞价的成交价上买到」这一件事，没有任何部分持续到日内可交易的时段"
+  }
+]

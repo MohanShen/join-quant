@@ -9,7 +9,7 @@ memberCount: 27
 sources: { normalized: 27, study: 0, enhance: 0 }
 realism: "<⚠ 待人工填写>"
 status: active
-updatedAt: 2026-09-22
+updatedAt: 2026-09-23
 ---
 
 # ETF动量 — strategy family
@@ -61,7 +61,7 @@ updatedAt: 2026-09-22
 | 26 | [[48187f0c_ETF轮动大A行情判断]] | DQ/— | — | — | — | — |
 | 27 | [[77cabc3c_纳指增强]] | DQ/— | — | — | — | — |
 
-*6 gate-pass / 27 members. 快照 2026-09-22（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*6 gate-pass / 27 members. 快照 2026-09-23（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)   ← 待人工填写：本家族未试方向
 

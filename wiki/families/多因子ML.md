@@ -22,7 +22,7 @@ memberCount: 20
 sources: { normalized: 20, study: 0, enhance: 0 }
 realism: "epoch-6 头条 52.58% 年化 / 8.55% 回撤不可当作可实现水平：(a) 台仍零滑点，而最大单一收益来源是 6 只微盘周度轮换（q-e6-1）；(b) etf 腿收益全在 2022 且池为事后组装，2023 净拖累 −8.43pp（q-e6-2, q-audit）；(c) 日线台把盘中止损坍缩成收盘检查、隐藏盘中回撤（q-audit）；(d) 约 3.8pp 回撤保护挂在 n=4 的 1/4 月日历规则上（q-3, epoch 2）。源码审计未发现确证的未来函数——是不可实现，不是造假"
 status: active
-updatedAt: 2026-09-22
+updatedAt: 2026-09-23
 ---
 
 # 多因子ML — strategy family
@@ -71,7 +71,7 @@ updatedAt: 2026-09-22
 | 19 | [[c18e0923_BP单因子测试]] | DQ/— | — | — | — | — |
 | 20 | [[c748b9d5_价值投资低估选股]] | DQ/— | — | — | — | — |
 
-*2 gate-pass / 20 members. 快照 2026-09-22（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*2 gate-pass / 20 members. 快照 2026-09-23（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 - **家族归属**：base 是组合书，与 [[小市值]]、[[ETF动量]] 部分重叠；是否应将 d02cde29 改归或将本家族改名，是人工 / `/ingest-strategy` 决定（`family:` 不自动改）。真正的多因子/ML 成员（49efd264 / f9ca1d2e / 775faa4e / f8d8348c）全部不过闸。

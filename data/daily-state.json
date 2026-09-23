@@ -1,5 +1,10 @@
 {
-  "inFlight": null,
+  "inFlight": {
+    "stage": "research",
+    "target": null,
+    "budget": 88,
+    "at": "2026-09-23T00:09:45.712Z"
+  },
   "lastRun": {
     "stage": "research",
     "target": null,
