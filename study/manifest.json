@@ -12,8 +12,10 @@
     "family": "PT多策略",
     "bestObjective": 1.8592,
     "memberCount": 2,
-    "status": "done",
-    "note": "2026-09-22/23 epoch-6 run-family 收口：10 TRAIN + 1 VAL（used 88→123）。家族 = 一份代码体（c70281d3 的 4,200 行插件是 ''' 里的死代码）。两条 edge measured（均值回归：镜像 −91% / 无信号 −42% / 基类 +772%；流动性溢价：band 三档单调 196/138/23）。improve 穷尽（下界、集中度 rejected）。VAL 基类 2024–25 annual 241.7 / sharpe 12.82 / maxDD 5.92。u-7：同信号 14:50 成交 −29% ⇒ 收益全在集合竞价开盘价上，不可实现；建议 status → DQ-realizability（人裁决）。见 wiki/families/PT多策略.md。"
+    "status": "pending",
+    "note": "2026-09-22/23 epoch-6 run-family 收口：10 TRAIN + 1 VAL（used 88→123）。家族 = 一份代码体（c70281d3 的 4,200 行插件是 ''' 里的死代码）。两条 edge measured（均值回归：镜像 −91% / 无信号 −42% / 基类 +772%；流动性溢价：band 三档单调 196/138/23）。improve 穷尽（下界、集中度 rejected）。VAL 基类 2024–25 annual 241.7 / sharpe 12.82 / maxDD 5.92。u-7：同信号 14:50 成交 −29% ⇒ 收益全在集合竞价开盘价上，不可实现；建议 status → DQ-realizability（人裁决）。见 wiki/families/PT多策略.md。",
+    "reopenedBy": "daily-pipeline",
+    "reopenedWhy": "last run predates membership tracking"
   },
   {
     "family": "小市值",

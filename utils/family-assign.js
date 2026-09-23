@@ -51,9 +51,16 @@ const COLUMNS = ['at', 'sourceFile', 'page', 'family', 'confidence', 'decidedBy'
 const fm = (t, k) => ((t.match(new RegExp(`^${k}:\\s*(.*)$`, 'm')) || [])[1] || '').trim();
 const clean = v => String(v == null ? '' : v).replace(/[\t\r\n]/g, ' ').trim();
 
+// wiki-schema §2.2 registers one family that has NO page by rule: `其他`, the singleton bucket for
+// one-off strategies that formed no lineage ("不建家族页"; wiki-family-build.js skips it). Page
+// existence is the right proxy for "registered" everywhere else, but for this entry it turned a
+// schema-sanctioned answer into a refusal that could only be passed with --new-family — the flag
+// meant for lineages nobody has registered.
+const SINGLETON_BUCKET = '其他';
+
 const registered = () => {
-  try { return fs.readdirSync(FAMS).filter(f => f.endsWith('.md')).map(f => f.replace(/\.md$/, '')); }
-  catch { return []; }
+  try { return fs.readdirSync(FAMS).filter(f => f.endsWith('.md')).map(f => f.replace(/\.md$/, '')).concat(SINGLETON_BUCKET); }
+  catch { return [SINGLETON_BUCKET]; }
 };
 
 /** page file -> { sourceFile, family } for every strategy page. */

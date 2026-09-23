@@ -1,14 +1,19 @@
 {
-  "inFlight": null,
-  "lastRun": {
+  "inFlight": {
     "stage": "assign",
     "target": null,
     "budget": 155,
-    "at": "2026-09-23T02:39:58.600Z",
+    "at": "2026-09-23T15:34:09.424Z"
+  },
+  "lastRun": {
+    "stage": "research",
+    "target": null,
+    "budget": 155,
+    "at": "2026-09-23T15:32:42.209Z",
     "outcome": "ran",
-    "note": "family assignment over 4 pending",
+    "note": "resumed research session 5e6c9c72 (exit 0 is NOT proof work happened — check its ledger)",
     "minutesUsed": null,
-    "endedAt": "2026-09-23T02:44:40.952Z"
+    "endedAt": "2026-09-23T15:33:58.728Z"
   },
   "runs": [
     {
@@ -220,6 +225,16 @@
       "note": "family assignment over 4 pending",
       "minutesUsed": null,
       "endedAt": "2026-09-23T02:44:40.952Z"
+    },
+    {
+      "stage": "research",
+      "target": null,
+      "budget": 155,
+      "at": "2026-09-23T15:32:42.209Z",
+      "outcome": "ran",
+      "note": "resumed research session 5e6c9c72 (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-09-23T15:33:58.728Z"
     }
   ]
 }
