@@ -2,6 +2,7 @@
 postId: c954a48c4d83e06a85c1d11b39f8bfb0
 title: 一个可行的小仓位ETF低开策略
 sourceFile: strategies/2026-07-06_一个可行的小仓位ETF低开策略-c954a48c.py
+family: 其他
 concepts: [未分类]
 factors:
   选股: [未分类]
