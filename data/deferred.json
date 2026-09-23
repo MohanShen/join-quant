@@ -1,11 +1,11 @@
 {
   "strategies/2026-06-21_首次将实战模型转化为量化策略年化468_07_amp_11_92-b8a7451f.py": {
-    "attempts": 3,
+    "attempts": 4,
     "firstDeferredAt": "2026-09-20T11:56:57.521Z",
-    "reason": "RETIRED by human 2026-09-23: slow-skipped twice (20min then 45min = 65 backtest-minutes for zero measurements), and the strategy is not worth the cap it would need. Do not re-offer at any cap.",
+    "reason": "slow-skipped",
     "lastCapMin": 45,
     "maxCapTried": 999,
-    "lastDeferredAt": "2026-09-23T16:25:09.984Z"
+    "lastDeferredAt": "2026-09-23T18:09:21.606Z"
   },
   "strategies/2026-06-22_中证500增强_优化版_24年至今收益252_4-914d5724.py": {
     "attempts": 1,
@@ -16,12 +16,12 @@
     "lastDeferredAt": "2026-09-20T11:56:57.522Z"
   },
   "strategies/2026-05-14_年化64_的市值选股策略_有止损模块-fa9c8c9e.py": {
-    "attempts": 1,
+    "attempts": 2,
     "firstDeferredAt": "2026-09-20T11:56:57.522Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-09-20T11:56:57.522Z"
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-09-23T18:09:21.606Z"
   },
   "strategies/2026-05-15_连板龙头策略-b518f737.py": {
     "attempts": 1,
@@ -56,12 +56,12 @@
     "lastDeferredAt": "2026-09-20T11:56:57.522Z"
   },
   "strategies/2026-05-23_三马105-五福35-修复版-11年收益677倍回撤14-bf30eb36.py": {
-    "attempts": 1,
+    "attempts": 2,
     "firstDeferredAt": "2026-09-20T11:56:57.522Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-09-20T11:56:57.522Z"
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-09-23T18:09:21.606Z"
   },
   "strategies/2026-05-23_三马七星172-大池子-11年收益346倍回撤15_68-3c462ece.py": {
     "attempts": 1,

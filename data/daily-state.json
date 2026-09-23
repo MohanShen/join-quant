@@ -1,19 +1,14 @@
 {
-  "inFlight": {
-    "stage": "assign",
-    "target": null,
-    "budget": 155,
-    "at": "2026-09-23T15:34:09.424Z"
-  },
+  "inFlight": null,
   "lastRun": {
-    "stage": "research",
+    "stage": "normalize",
     "target": null,
     "budget": 155,
-    "at": "2026-09-23T15:32:42.209Z",
-    "outcome": "ran",
-    "note": "resumed research session 5e6c9c72 (exit 0 is NOT proof work happened — check its ledger)",
+    "at": "2026-09-23T15:37:43.222Z",
+    "outcome": "error",
+    "note": "70 queued, 3 deferred at 45min",
     "minutesUsed": null,
-    "endedAt": "2026-09-23T15:33:58.728Z"
+    "endedAt": "2026-09-23T18:09:21.606Z"
   },
   "runs": [
     {
@@ -235,6 +230,26 @@
       "note": "resumed research session 5e6c9c72 (exit 0 is NOT proof work happened — check its ledger)",
       "minutesUsed": null,
       "endedAt": "2026-09-23T15:33:58.728Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 155,
+      "at": "2026-09-23T15:34:09.424Z",
+      "outcome": "ran",
+      "note": "family assignment over 1 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-09-23T15:37:37.684Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 155,
+      "at": "2026-09-23T15:37:43.222Z",
+      "outcome": "error",
+      "note": "70 queued, 3 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-09-23T18:09:21.606Z"
     }
   ]
 }
