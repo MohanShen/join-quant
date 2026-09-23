@@ -1,0 +1,205 @@
+[
+  {
+    "id": "baseline-e6",
+    "kind": "understand",
+    "title": "基类 7d1012a5 在 epoch 6 上的锚点（ledger 只有 epoch-2 行）",
+    "hypothesis": "源码自设的 stock 成本表与 bench 逐项相同（epoch-6 pin 是 no-op）；滑点 PriceRelated 0.00246 → FixedSlippage(0) 在 epoch 2 已生效；order_volume_ratio 0.25 → 0.05 对 5 只创业板大票、11–26% 的仓位不应卡单。预期 annual 0.07 / sharpe −0.49 / maxDD 9.00 / 27 笔逐位复现。证伪：任一指标偏离 >0.2pp、笔数 ≠ 27、或 no-trades",
+    "why": "每个后续 Δ 都对它量；若复现，epoch-2 的 q-1 / q-2 / q-3 / q-4 就是同一台上的读数，可直接引用而不必重跑",
+    "design": "study/三进兵/baseline-e6.py = py2to3(源码) + live OVERRIDE（build-e6.js）",
+    "from": [
+      "baseline",
+      "q-dup"
+    ],
+    "edgeRef": null,
+    "rank": 1,
+    "status": "answered",
+    "result": "epoch-6 锚点逐位复现 epoch-2 的归档行：源码自设的 stock 成本表与 bench 逐项相同（epoch-6 pin 是 no-op），滑点在 epoch 2 已被 OVERRIDE 归零，order_volume_ratio 0.25→0.05 对 5 只创业板大票、11–26% 的仓位不卡单。q-3 的 regime 读数原样成立：2022 +8.1%，2023 −7.3%"
+  },
+  {
+    "id": "u-1",
+    "kind": "understand",
+    "title": "同一 overlay 换到规则选出的池：2021-12-31 创业板指市值前 5（数据止于 TRAIN 之前）——择时信息是形态的，还是这 5 个名字的",
+    "hypothesis": "作者自述「发现本策略并不是适合所有的股票的」并手挑 5 只；q-1 量到那个篮子在 TRAIN 上是后见之明的输家（B&H −48%）而 overlay 仍比等暴露随机在场高约 +7pp/年。若择时信息属于形态，换到规则池后 overlay 相对该池自己的 B&H（u-1c）应仍有同号的 Δsharpe（≥ +0.3）；若 Δsharpe ≤ 0，则 q-1 的 +0.56 是名字挑出来的，趋势择时 证伪",
+    "why": "这是 edge 块 test: 的 (a) 半——家族唯一可能的收益来源就是这条 overlay，而它此前只在作者挑过的 5 只上量过",
+    "design": "variants/u-1_pool-transfer.py：g.stokcs_pool 一行换成 get_index_stocks(399006, date=2021-12-31) 按 market_cap 降序前 5（initialize 内，只读 TRAIN 之前的数据）；hold_count 5、三条规则、分仓不动",
+    "from": [
+      "q-1",
+      "q-3"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 2,
+    "status": "answered",
+    "result": "池 1 上 overlay 的读数恰好等于「等暴露随机在场」：期望 0.269×(−38.37) = −10.3%，实测 −12.13%，Δ −1.8pp，两年都在 ±3pp 内。预注册的证伪项（Δsharpe ≤ 0）触发：Δsharpe −0.54。在这 5 个名字上，overlay 没有任何超出暴露缩放的信息"
+  },
+  {
+    "id": "u-1c",
+    "kind": "understand",
+    "title": "u-1 的读数基准：同一规则池、首日等权买入持有（q-1 持有控制组的原形）",
+    "hypothesis": "2022–23 创业板指 −29% / −19%，规则池 B&H 预期为负（annual −15 ~ −30%、maxDD ≥ 40%）；它本身不是发现，只是 u-1 的 Δ 所对的那本账。证伪项无——这是控制臂",
+    "why": "q-1 的教训：overlay 相对「哪本 B&H」才是那个 Δ；没有它 u-1 的 sharpe 读不出「择时信息」还是「池子本身更好」",
+    "design": "variants/u-1c_hold-on-pool.py：u-1 的池 + trade_func 换成 q-1 的持有体（首日 order_target_value 等权，g.bought 后不再交易）",
+    "from": [
+      "q-1"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 3,
+    "status": "answered",
+    "result": "规则池 1（创业板指市值前 5）持有两年 −38.4%，比作者篮子（−48.0%）好 10pp、与创业板指（约 −43%）同量级——规则池不是一个被挑坏的篮子"
+  },
+  {
+    "id": "u-3",
+    "kind": "understand",
+    "title": "第三条规则单独拆：收盘跌破 EMA20（且 EMA20 < EMA60）止损关掉",
+    "hypothesis": "q-1 一次合并了三条出入场规则，+0.56 sharpe 无法拆到止损与均线交叉之间；q-4 已证倒置的 is_sell 是一条有效的意外止盈。若关掉止损后 sharpe 下降 ≥ 0.2，止损承重（overlay 的信息有一半在退出）；若上升，止损在 2023 的磨人行情里只是在割反弹底部的仓位",
+    "why": "把 q-1 的合成消融拆成部件，是 q-1 自己留下的未完成项；也决定 improve 能不能碰止损",
+    "design": "variants/u-3_no-stop.py：re_loss = False 一行；is_sell 与入场不动",
+    "from": [
+      "q-1",
+      "q-4"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 4,
+    "status": "answered",
+    "result": "关掉止损，overlay 的择时信息从 +12.6pp 归零（−3.0pp）：2023 暴露从 0.16 涨到 0.48、单年 −24.5%，等暴露 Δ −13.4pp。入场 + 倒置止盈两条规则合起来在作者篮子上没有超出暴露缩放的信息；q-1 的 +0.56 sharpe 全部由「跌破 EMA20 就走」这条退出规则承担——它在 2023 把 12 笔亏损单一一砍短"
+  },
+  {
+    "id": "u-2",
+    "kind": "understand",
+    "title": "去掉入场的「底部」子句（EMA20 < EMA60）：入场变成任何阶段的 EMA5/EMA60 金叉——2023 的 1W/12L 是不是底部过滤造成的",
+    "hypothesis": "q-3 把入场读成只在熊市 V 反弹里触发的底部反转形态（2022 P/L 2.64、2023 P/L 0.18）。若去掉底部子句后 2023 单年不再是 1W/12L（P/L ≥ 0.8）而 2022 保持为正，则「只在底部买」是 2023 的成本；若两年同时变差，底部子句承重、q-3 的机理读法成立",
+    "why": "q-3 的机理读法是这个家族目前唯一的「为什么」，但它没有被单独检验过",
+    "design": "variants/u-2_no-bottom-filter.py：is_buy 里删去 and (y_ma_med_value < y_ma_max_value)，一行；逐年读数从曲线切",
+    "from": [
+      "q-3"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 5,
+    "status": "answered",
+    "result": "底部子句近乎惰性：去掉后暴露只从 0.260 到 0.268、回撤窗端点不变（2023-12-07/08）、2023 逐位几乎相同（−7.34→−8.08，暴露 0.158→0.160）——在这两年的这些名字上，EMA5 上穿 EMA60 时 EMA20 几乎总在 EMA60 之下，子句很少起作用。它保留的 3pp 全在 2022"
+  },
+  {
+    "id": "sjb-imp-1",
+    "kind": "improve",
+    "title": "同一规则、池子放宽到 2021-12-31 创业板指市值前 20（hold_count 仍 5）——用更多名字治「信号稀缺」",
+    "hypothesis": "q-2：仓位 scale-invariant、常年只有 11–26% 在场，DQ 的成因是信号稀缺而非风控；加仓走不出 sharpe=(annual−rf)/vol 的陷阱，唯一 on-mechanism 的杠杆是更多名字产生更多信号。若 u-1 显示 overlay 可迁移，则 20 只池应把在场率抬到 ≥ 40% 且 sharpe ≥ u-1；证伪：sharpe ≤ u-1 或仍 < 0",
+    "why": "仅在 u-1 迁移成立时有意义（否则是在更多名字上摊一个没有信息的 overlay）；故排在 u-1 之后、由 u-1 的结果决定是否派发",
+    "design": "enhance/candidates/sjb-imp-1.py：u-1 的池规则 limit(5) → limit(20)，其余逐字节相同",
+    "from": [
+      "q-2",
+      "u-1"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 6,
+    "status": "answered",
+    "result": "20 只名字把在场率从 ~0.27 抬到 0.67（2023 到 0.80），overlay 的信息量不变（+11.5pp，与四池均值 +10 一致），但书从 ±5% 变成 −15.6%：更多名字买到的是对一个 −40% 篮子更多的暴露，保险付不起。sharpe −0.87，四个 5 名池里三个都比它好"
+  },
+  {
+    "id": "u-1b",
+    "kind": "understand",
+    "title": "u-1 的第二个规则池：同一规则的市值第 6–10 名（与 u-1 池不相交）——一个池上的证伪会不会只是那 5 个名字的运气",
+    "hypothesis": "u-1 在市值前 5 上量到 overlay = 等暴露随机在场（annual −6.27 vs 期望 −5.8）。若第 6–10 名上 overlay 相对其 B&H（u-1bc）的等暴露差额仍在 ±3pp 内且 Δsharpe ≤ 0，证伪成立于两个不相交的池；若这里出现 ≥ +7pp（作者篮子的量级），u-1 的读数只是一个池的抽样",
+    "why": "证伪一条 edge 与作者当初「挑到有效的名字」犯的是同一类抽样错误，除非在第二个池上复现",
+    "design": "variants/u-1b_pool-transfer-6-10.py：limit(10) 后取 [5:10]，其余与 u-1 逐字节相同",
+    "from": [
+      "u-1",
+      "u-1c"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 3,
+    "status": "answered",
+    "result": "池 2 与池 1 相反：overlay 相对同池等暴露持有两年 +16.2pp，两年同号为正，量级与作者篮子（+12.6）相当；且它是四个规则池里唯一 2023 也不亏的（−0.24%）。sharpe −0.10 是本家族在任何池上量到的最高值"
+  },
+  {
+    "id": "u-1bc",
+    "kind": "understand",
+    "title": "u-1b 的持有控制组（第 6–10 名池首日等权持有）",
+    "hypothesis": "控制臂，无证伪项；给 u-1b 的等暴露读数一个基准",
+    "why": "同 u-1c",
+    "design": "variants/u-1bc_hold-on-pool-6-10.py",
+    "from": [
+      "u-1b"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 4,
+    "status": "answered",
+    "result": "池 2 持有两年 −26.3%，是四个规则池里跌得最少的"
+  },
+  {
+    "id": "u-0c",
+    "kind": "understand",
+    "title": "q-1 的持有控制组（作者 5 只首日等权持有）在 epoch 6 上复跑——给 baseline / u-2 / u-3 一条同台的等暴露基准曲线",
+    "hypothesis": "q-1 报 B&H annual −28.64 / maxDD 50.37 / vol 0.3103；同台复跑应逐位复现（源码不设成本以外的东西，pin 无关）。证伪：偏离 >0.3pp",
+    "why": "本轮的读法是「overlay − 暴露×B&H」，作者篮子这条 B&H 只有 epoch-2 的标量、没有曲线；15 秒买到逐年的等暴露读数",
+    "design": "variants/u-0c_hold-author-basket.py：trade_func 换成 q-1 的持有体，池不动",
+    "from": [
+      "q-1",
+      "baseline-e6"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 2,
+    "status": "answered",
+    "result": "q-1 逐位复现（−47.96 / −1.05 / 50.37）。逐年新内容：作者篮子两年都比创业板指差（2022 −32.4 vs 指数约 −29，2023 −23.1 vs 约 −19）。用它读锚点：baseline 暴露 0.260（2022 0.305 / 2023 0.158），等暴露期望 0.26×(−47.96) = −12.5%，实测 +0.14% ⇒ overlay 两年带来 +12.6pp 的择时信息——全部在 2022（+17.9pp），2023 为 −3.7pp"
+  },
+  {
+    "id": "u-1d",
+    "kind": "understand",
+    "title": "第三个规则池：同一规则的市值第 11–15 名（与前两池不相交）",
+    "hypothesis": "前两池分别给出等暴露差额 −1.8pp 与 +16pp（两年）。四个不相交池里若 ≥3 个 ≥ +8pp，overlay 的择时信息成立但弱（约 +8pp/年 × 30–40% 暴露）；若 2/4 或更少，信息与池间抽样噪声同量级，claim 无法成立",
+    "why": "一个池支持、一个池反对——再抽两个池是最便宜的裁决（每池 2 分钟）",
+    "design": "variants/u-1d_pool-transfer-11-15.py：limit(15) 后取 [10:15]",
+    "from": [
+      "u-1",
+      "u-1b"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 5,
+    "status": "answered",
+    "result": "池 3：overlay 相对等暴露持有 +7.5pp，两年同号为正，但绝对收益仍为负（−5.8%）——持有 −49% 的篮子被 overlay 削到 −6%"
+  },
+  {
+    "id": "u-1dc",
+    "kind": "understand",
+    "title": "u-1d 的持有控制组",
+    "hypothesis": "控制臂",
+    "why": "同 u-1c",
+    "design": "variants/u-1dc_hold-on-pool-11-15.py",
+    "from": [
+      "u-1d"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 6,
+    "status": "answered",
+    "result": "池 3 持有两年 −49.0%，与作者篮子同量级"
+  },
+  {
+    "id": "u-1e",
+    "kind": "understand",
+    "title": "第四个规则池：同一规则的市值第 16–20 名",
+    "hypothesis": "同 u-1d",
+    "why": "同 u-1d",
+    "design": "variants/u-1e_pool-transfer-16-20.py：limit(20) 后取 [15:20]",
+    "from": [
+      "u-1",
+      "u-1b"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 7,
+    "status": "answered",
+    "result": "四个不相交、数据止于 TRAIN 前的规则池：3 池 overlay 相对等暴露持有为正（+7.5 / +16.2 / +18.2pp，各自两年同号），1 池为零（−1.8）。overlay 可迁移，作者的 +12.6 不是挑名字挑出来的；但它在任何池上都不是收益来源——四池绝对收益均值 −1.9%，sharpe 全部 < 0，而这四池持有均值 −40.5%：它是把 −40% 的篮子削到 ±5% 的少在场保险，约 +5pp/年 × 30% 暴露"
+  },
+  {
+    "id": "u-1ec",
+    "kind": "understand",
+    "title": "u-1e 的持有控制组",
+    "hypothesis": "控制臂",
+    "why": "同 u-1c",
+    "design": "variants/u-1ec_hold-on-pool-16-20.py",
+    "from": [
+      "u-1e"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 8,
+    "status": "answered",
+    "result": "池 4 持有两年 −48.5%，2022 一年 −40.7%"
+  }
+]
