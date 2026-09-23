@@ -1,0 +1,158 @@
+[
+  {
+    "id": "q-ledger",
+    "kind": "understand",
+    "title": "成员 edd94ebc 为什么没有 ledger 行（§3 显示 DQ/—），零回测",
+    "hypothesis": "pre-wipe 页面记它 epoch-2 obj 3.5961 / annual 374.38 / sharpe 14.77；现在 harness/normalize-train.tsv、所有 .bak、deferred.json、series-scan.json 里都没有它，pending-normalize 也没有排它。它的策略页没有 normalized: 块，所以 ledger 回退后 normalize-ledger-rebuild.js 无从重建。证伪：任一处找到它的行",
+    "why": "家族只有 2 个成员；一个没有任何本台数字，§3 的「DQ/—」不是 DQ，是丢失。决定本轮要不要花分钟给它一个锚点",
+    "design": "grep 全部 ledger 与备份；读 wiki/strategies/edd94ebc 页",
+    "from": [],
+    "edgeRef": null,
+    "rank": 0,
+    "status": "answered",
+    "result": "harness/normalize-train.tsv、四个 .bak、normalize-train.rebuild.json、data/deferred.json、data/series-scan.json 里都没有 edd94ebc；data/pending-normalize.json 也没有排它。它的策略页没有 normalized: 块（15c36e0c 的有），所以 ledger 回退后 normalize-ledger-rebuild.js 无从重建它——§3 的「DQ/—」不是 DQ，是行丢失。它的代码是基类 + 三个入场过滤（昨日 high−low<0.1、成交额>8e5、"
+  },
+  {
+    "id": "baseline-e6",
+    "kind": "understand",
+    "title": "基类 15c36e0c 在 epoch 6 上的锚点（ledger 只有 epoch-2 行 1.5642）",
+    "hypothesis": "源码自设基金费率 0.00025 min 0、无滑点、不设 order_volume_ratio；epoch 6 的股票费率 pin 对纯基金书是 no-op，咬到的是 5% 参与上限（share-volume 下界只有 2e6 股，比 PT多策略 的 5e6 成交额更薄）与 min_commission 5。预期 annual 明显低于 177.88，方向与 PT多策略 的 369 -> 196 一致；证伪：obj 落在 1.5642 ± 0.05",
+    "why": "每个后续 Δ 都对它量；参与上限造成的缩水本身是 流动性溢价 的第一条证据",
+    "design": "study/ETF溢价/baseline-e6.py = py2to3(源码) + live OVERRIDE（build-e6.js）；曲线 -> yearsplit.js 逐年",
+    "from": [
+      "q-ledger"
+    ],
+    "edgeRef": "流动性溢价",
+    "rank": 1,
+    "status": "answered",
+    "result": "epoch 6 上基类年化从 178% 掉到 105%，obj 1.56→0.86，仍过闸（sharpe 5.93）。纯基金书，epoch 6 的股票费率 pin 是 no-op；咬到它的是 epoch 4 的两处——order_volume_ratio=0.05 与基金费率 0.00025/min 0 → 0.0003/min 5。费率差每边 0.00005、日频全换两年约 5%，解释不了 −72pp ⇒ 缩水的主体是参与上限：2e6 股的下界比 PT多策略 的 5e6 成交额更薄，一笔单吃掉薄基金一天成交量 5% 以上的成交在 epoch 2 里占了年化的四成。与 PT多策略 的 369→"
+  },
+  {
+    "id": "u-1",
+    "kind": "understand",
+    "title": "realizability：信号不动（09:30 = 开盘价），成交挪到 14:50（收盘价）",
+    "hypothesis": "若收益是「在集合竞价那口价上成交」这件事（PT多策略 u-7：+772% -> −29%），把成交挪到收盘应塌到负；若折价在开盘后逐步回归，14:50 成交仍应保留一部分。证伪（对 DQ-realizability 读法）：14:50 成交的 objective ≥ 基类 −0.3 且两年同号为正",
+    "why": "兄弟家族的判决性实验；本家族信号用 last_price 而非 day_open、等权 top-5、含 LOF，机制是否相同要在本家族量一次。这是决定整合层能否引用本家族 objective 的一条",
+    "design": "variants/u-1_exec-1450.py：market_open 只算 g.order_fund，新增 market_exec 在 14:50 执行卖/买（两处一个概念）",
+    "from": [
+      "baseline-e6"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 2,
+    "status": "answered",
+    "result": "同一信号、只把成交从开盘价挪到收盘价，两年从 +321% 变成 +10%（年化 5%、sharpe 0.07）。开盘时对净值的折价到收盘已经回归完毕——不是逐步回归、能在盘中分一杯羹，而是全部发生在开盘那口价与收盘之间。与 PT多策略 u-7（+772% → −29%）同一判决，本家族没有塌到负：等权 top-5 + 含 LOF 的 universe 在收盘价上是零收益而非负漂移（PT 的 |premium| 加权 top-10 最薄 band 是 −29%）。收益 ≈100% 是「在集合竞价的成交价上以全天成交量 5% 成交」这个撮合假设"
+  },
+  {
+    "id": "u-2",
+    "kind": "understand",
+    "title": "universe：去掉 LOF、只留 ETF（edd94ebc 的 universe）",
+    "hypothesis": "LOF / QDII 的 T−1 净值发布有滞后（CLAUDE.md 记为折价族的公开问题）：若「折价」多半是净值陈旧造成的假折价，收益应集中在 LOF 上，去掉 LOF 后 objective 大幅下降；若 ETF 上同量级，NAV 滞后不是主要来源。证伪：|Δobj| < 0.1",
+    "why": "本家族是库里唯一 universe 含 LOF 的折价书，只有它能回答这个公开问题；同时给 edd94ebc 的 universe 一个可比读数",
+    "design": "variants/u-2_etf-only.py：一行 ['lof','etf'] -> ['etf']",
+    "from": [
+      "baseline-e6"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 3,
+    "status": "answered",
+    "result": "去掉 LOF 后年化 +69pp、回撤 −6.8pp、sharpe 5.93→8.06：LOF 腿是拖累，不是来源。差额几乎全在 2022（+83 → +238），2023 持平略降（+134 → +123）。机制读法：ETF 的折价靠一级市场实物申赎（T+0）当日套平，所以开盘折价到收盘回归（u-1）；LOF 的申赎是现金、T+2 确认、有费用，折价是持续的而不是回归的——按「最深折价」排序，LOF 在 2022 熊市里长期占住 top-5 的位置却不回归，还带来更深回撤。CLAUDE.md 记的「LOF/QDII 净值发布滞后造成假折价」这个方向，若成立应表现为 LOF 贡献正收益（假折价"
+  },
+  {
+    "id": "u-3",
+    "kind": "understand",
+    "title": "edge test 均值回归 by mirror：同一 universe / 下界 / top-5 等权，买最高溢价（premium>0，降序）",
+    "hypothesis": "若信息在折价的符号里，镜像应塌（两年同号为负或 obj ≤ 0）；若镜像也赚到同量级，则收益是薄基金 universe 的效应而非折价回归。证伪：镜像 objective ≥ 基类 −0.1",
+    "why": "流动性溢价 说的是 universe，均值回归 说的是信号；两条 claim 要分开测。PT多策略 的镜像 −91%，本家族含 LOF、等权，要自己量",
+    "design": "variants/u-3_mirror.py：排序降序 + premium>0（两个 sort 分支一起翻）",
+    "from": [
+      "baseline-e6"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 4,
+    "status": "answered",
+    "result": "镜像两年亏掉 98.7%：买开盘价高于净值最多的 5 只基金，两年只有 20% 的交易日是涨的（基类 58%）。折价方向赚、溢价方向亏，符号承载全部信息。与 PT多策略 u-3（−91%，对数近似对称）不同，本家族不对称——lof+etf 的 universe 里最高溢价的名字是 QDII-LOF / 持续高溢价的 LOF（净值陈旧或额度受限），溢价方向除了回归还叠加了这些名字的清算式塌陷；这与 u-2「LOF 腿是拖累」互相印证"
+  },
+  {
+    "id": "u-4",
+    "kind": "understand",
+    "title": "edge test 流动性溢价，流动臂：share-volume 下界 2e6 -> 1e8",
+    "hypothesis": "epoch-2 q-1 在无参与上限下量到 1e8 臂 sharpe 1.10 / obj −1.45（DQ）。若 edge 是薄基金的 illiquidity 溢价，本台上流动臂仍应 DQ；若参与上限已经把薄尾部的收益削掉，流动臂与基类的差距应缩小。证伪：流动臂 objective ≥ 基类 −0.1",
+    "why": "家族 edge 的直接检验，也是 realizability 的定量读数：唯一能真实成交的 universe 上这条血统值多少",
+    "design": "variants/u-4_floor-1e8.py：一行 2e6 -> 1e8",
+    "from": [
+      "baseline-e6"
+    ],
+    "edgeRef": "流动性溢价",
+    "rank": 5,
+    "status": "answered",
+    "result": "只留昨日成交量 ≥ 1e8 股的流动基金，同一折价规则只剩年化 34% / sharpe 1.04 / 回撤 24%——过不了 1.5 闸门，obj 归零。两年仍为正（+46 / +23）。与 epoch-2 的同臂读数（sharpe 1.10）一致：参与上限没有改变这条结论，因为流动基金上 5% 本来就不绑。折价信号在流动 ETF 上是一个弱的、DQ 的信号；做成 sharpe 6–8 的，是薄 universe"
+  },
+  {
+    "id": "ep-imp-1",
+    "kind": "improve",
+    "title": "share-volume 下界 2e6 -> 1e7（epoch-2 甜点：obj +0.47、maxDD 减半）",
+    "hypothesis": "epoch-2 q-1 说基类的 2e6 下界过松、纳入超薄高回撤尾部。有了 5% 参与上限后，那段尾部本就填不满，甜点可能消失（PT多策略 imp-1：下界收紧一档 −0.57，band 单调）。若 obj > 基类，更可实现的 universe 也更好；若降，收益活在最薄一档。证伪：obj ≤ 基类",
+    "why": "on-mechanism（作用在 流动性溢价 的下界上）且方向是可实现性变好的方向",
+    "design": "enhance/candidates/ep-imp-1.py：一行 2e6 -> 1e7",
+    "from": [
+      "baseline-e6",
+      "u-4",
+      "u-2"
+    ],
+    "edgeRef": "流动性溢价",
+    "rank": 6,
+    "status": "answered",
+    "result": "收紧下界到 1e7 股：年化 +7.8pp、回撤 +2.4pp、sharpe −0.8，obj +0.054——刚过惰性阈（0.05），方向是可实现性变好的方向，但 epoch-2 的甜点（+0.47、回撤减半）没有了：那时最薄一档的收益是无参与上限的容量幻觉，现在 5% 上限已把它削掉，收紧下界只是不再买那些填不满的名字。2022 +242 / 2023 +134，两年都略高于 u-2",
+    "note": "u-2 之后重建：候选建立在 ETF-only universe（u-2，obj 1.6193）上——对基类两处改动、对 u-2 一处；Δ 对 u-2 量"
+  },
+  {
+    "id": "ep-imp-2",
+    "kind": "improve",
+    "title": "top-5 -> top-2（epoch-2 q-2 的单峰顶点：obj +0.35，maxDD +2.9）",
+    "hypothesis": "epoch-2 说集中度在 N=2 单峰、N=1 崩塌。5% 参与上限下最深的 2 只可能吃不下资金（PT多策略 imp-2：top-10 -> top-5 反而 −0.14，现金拖累）。若 obj > 基类，深折价的边际信息还在；若降，填单宽度压过集中度。证伪：obj ≤ 基类",
+    "why": "on-mechanism（集中到最深折价）；与 u-3 一起回答折价深度的边际信息",
+    "design": "enhance/candidates/ep-imp-2.py：一行 df[:5] -> df[:2]",
+    "from": [
+      "baseline-e6",
+      "u-3",
+      "u-2"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 7,
+    "status": "answered",
+    "result": "集中到最深折价的 2 只：年化 −58pp、回撤不变。epoch-2 的「N=2 单峰、+0.35」在本台上翻成 −0.58：5% 参与上限下最深的 2 只吃不下 100 万资金，第 3–5 名是填单宽度而不是分散（与 PT多策略 imp-2 的 top-10→top-5 −0.14 同一机制，本家族更陡因为从 5 到 2）。两年都低于 u-2（2022 +170 vs +238，2023 +75 vs +123）",
+    "note": "u-2 之后重建：候选建立在 ETF-only universe（u-2，obj 1.6193）上——对基类两处改动、对 u-2 一处；Δ 对 u-2 量"
+  },
+  {
+    "id": "ep-imp-3",
+    "kind": "improve",
+    "title": "可实现形态：信号与成交都在 14:50（14:49 分钟收盘价 vs T−1 净值，收盘价买入）",
+    "hypothesis": "若开盘折价到收盘已回归（u-1 预期），那么在收盘看到的折价是新的一次偏离，次日开盘可能回归；这才是一个不抢集合竞价的账户能拿到的版本。若 obj > 0 且过闸，家族有一个可实现候选；否则机制只存在于集合竞价。证伪：obj ≤ 0 或 sharpe < 1.5",
+    "why": "本家族唯一不违反 realizability 否决的 improve 方向；u-1 的结果决定它是否值得跑",
+    "design": "enhance/candidates/ep-imp-3.py：run_daily 时点 09:30 -> 14:50，last_price 换成 get_price(frequency='1m', count=1) 的分钟收盘。⚠ 日频台上 14:50 读当日分钟数据是否被 avoid_future_data 放行未验证；跑失败即记 blocked",
+    "from": [
+      "u-1",
+      "u-2"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 8,
+    "status": "answered",
+    "result": "在收盘看到的折价、在收盘买、等次日回归：两年 −53%、回撤 54%，两年同号为负。收盘时仍然折价最深的 ETF 不是「新的一次偏离」，而是当天没被套平的——薄到实物申赎也不去套的名字，持有它们拿到的是薄 ETF 的负漂移（与 PT多策略 u-4 无信号最薄 10 只 −42% 同量级）。日频台上 14:50 读当日 1m 数据被 avoid_future_data 放行（run completed、有成交），这是一个可复用的读法",
+    "note": "u-2 之后重建：候选建立在 ETF-only universe（u-2，obj 1.6193）上——对基类两处改动、对 u-2 一处；Δ 对 u-2 量"
+  },
+  {
+    "id": "ep-imp-0",
+    "kind": "improve",
+    "title": "采纳 u-2 的 ETF-only universe 作为候选（同一次测量，不重跑）",
+    "hypothesis": "u-2 已量：去 LOF 后 obj 0.8607→1.6193。improve 型登记：候选 = variants/u-2_etf-only.py；不另花回测",
+    "why": "understand 实验给出了一个改进方向；按 study-schema §10，improve 型要做选择并入账，所以以 improve 条目登记采纳，测量共享 u-2",
+    "design": "无新回测；§2 行 类型 improve / 判定 adopted，来源 study-u-2",
+    "from": [
+      "u-2"
+    ],
+    "edgeRef": "均值回归",
+    "rank": 5,
+    "status": "answered",
+    "result": "= u-2：obj 1.6193 / annual 174.40 / sharpe 8.06 / maxDD 12.47（adopted on TRAIN）"
+  }
+]

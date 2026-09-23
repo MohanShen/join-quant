@@ -2,18 +2,18 @@
   "inFlight": {
     "stage": "research",
     "target": null,
-    "budget": 88,
-    "at": "2026-09-23T00:09:45.712Z"
+    "budget": 123,
+    "at": "2026-09-23T01:16:29.016Z"
   },
   "lastRun": {
     "stage": "research",
     "target": null,
-    "budget": 147,
-    "at": "2026-09-22T15:40:00.980Z",
+    "budget": 88,
+    "at": "2026-09-23T00:09:45.712Z",
     "outcome": "ran",
     "note": "resumed research session new (exit 0 is NOT proof work happened — check its ledger)",
     "minutesUsed": null,
-    "endedAt": "2026-09-22T17:51:10.929Z"
+    "endedAt": "2026-09-23T01:16:25.671Z"
   },
   "runs": [
     {
@@ -185,6 +185,16 @@
       "note": "resumed research session new (exit 0 is NOT proof work happened — check its ledger)",
       "minutesUsed": null,
       "endedAt": "2026-09-22T17:51:10.929Z"
+    },
+    {
+      "stage": "research",
+      "target": null,
+      "budget": 88,
+      "at": "2026-09-23T00:09:45.712Z",
+      "outcome": "ran",
+      "note": "resumed research session new (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-09-23T01:16:25.671Z"
     }
   ]
 }
