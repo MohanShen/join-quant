@@ -64,12 +64,12 @@
     "lastDeferredAt": "2026-09-23T18:09:21.606Z"
   },
   "strategies/2026-05-23_三马七星172-大池子-11年收益346倍回撤15_68-3c462ece.py": {
-    "attempts": 1,
+    "attempts": 2,
     "firstDeferredAt": "2026-09-20T11:56:57.522Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-09-20T11:56:57.522Z"
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-09-26T17:28:51.754Z"
   },
   "strategies/2026-07-17_七星1_72_全行业_A股弱势播报-275daac9.py": {
     "attempts": 1,
