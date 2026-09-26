@@ -25,6 +25,18 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 
 const ROOT       = path.resolve(__dirname, '..');
+
+/**
+ * How long to wait for the account to clear when a backtest is already running.
+ *
+ * The blocker is usually our own slow-skip leftover, which JQ reaps within minutes. Ten is long
+ * enough for that and short enough that a human genuinely using the JQ UI is not waited on all
+ * day — that case stops the batch, which is what the gate is for.
+ */
+const CONCURRENT_WAIT_MIN = (() => {
+  const n = parseInt(process.env.JQ_CONCURRENT_WAIT_MIN || '', 10);
+  return Number.isFinite(n) && n > 0 ? n : 10;
+})();
 const STRAT_DIR  = path.join(ROOT, 'strategies');
 const TMP_DIR    = '/tmp/jq-normalize';
 const POST_BT    = path.join(__dirname, 'strategy-post-backtest.js');
@@ -255,7 +267,11 @@ function main() {
   if (opt.dryRun) { slice.forEach(f => console.log('  would run:', f)); return; }
 
   let n = 0;
-  for (const f of slice) {
+  // A strategy blocked by a concurrent backtest is retried in place rather than consumed, so the
+  // index only advances on a real outcome. Bounded by concurrentRetries so it cannot spin.
+  const concurrentRetries = {};
+  for (let si = 0; si < slice.length; si++) {
+    const f = slice[si];
     n++;
     const srcFile = 'strategies/' + f;
     const src = fs.readFileSync(path.join(STRAT_DIR, f), 'utf8');
@@ -306,11 +322,40 @@ function main() {
     const cs = out.split('\n').find(l => l.startsWith('CONCURRENT-STOP\t'));
     if (cs) {
       const m = cs.match(/running=(\d+)/);
+      // ⚠ WAIT, do not stop. The blocker is almost always OURS: a slow-skipped strategy is
+      // cancelled locally at the cap, JQ does not always honour the cancel (「在此状态不能取消」),
+      // and the leftover blocks the very next strategy. Measured 2026-09-26: the batch normalized
+      // 2, slow-skipped 1, and the next stage hit CONCURRENT STOP instantly — the chain read that
+      // as no progress and ended with ~130 of 180 budget minutes unspent.
+      //
+      // So poll until the account clears and retry THE SAME strategy. Only a blocker that
+      // outlasts the wait stops the batch, which is the case the gate actually exists for
+      // (a human running something in the JQ UI).
       console.log(`[normalize] CONCURRENT STOP: ${m ? m[1] : '?'} backtest(s) already running on ` +
-                  `the account. Stopping (${f} not run, NOT recorded as a failure) — the ` +
-                  `completion signal is the account-wide running count, so a second run would be ` +
-                  `ambiguous. Wait for it to finish, then re-run to resume.`);
-      break;
+                  `the account (${f} not started). Waiting up to ${CONCURRENT_WAIT_MIN}min for it ` +
+                  `to clear — a leftover from our own slow-skip usually clears in a few minutes.`);
+      let cleared = false;
+      try {
+        execFileSync('node', [path.join(__dirname, 'jq-running.js'), '--wait',
+                              '--timeout-min', String(CONCURRENT_WAIT_MIN)],
+          { encoding: 'utf8', cwd: ROOT, stdio: 'inherit',
+            timeout: (CONCURRENT_WAIT_MIN + 3) * 60000 });
+        cleared = true;
+      } catch { cleared = false; }
+
+      if (!cleared) {
+        console.log(`[normalize] still blocked after ${CONCURRENT_WAIT_MIN}min — stopping ` +
+                    `(${f} NOT recorded as a failure). Re-run to resume.`);
+        break;
+      }
+      if ((concurrentRetries[srcFile] = (concurrentRetries[srcFile] || 0) + 1) > 2) {
+        console.log(`[normalize] ${f} blocked ${concurrentRetries[srcFile]}x by concurrency — ` +
+                    `skipping it this batch rather than looping.`);
+        continue;
+      }
+      console.log(`[normalize] account clear — retrying ${f}`);
+      si--; n--;               // `continue` advances the loop; step back so the SAME file re-runs
+      continue;
     }
 
     // Escalate a retriable failure to failed-final once it has failed enough times.

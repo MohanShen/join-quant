@@ -235,13 +235,15 @@ cst('a gate refusal is distinguished from a crash', async (t) => {
     }
   });
 
-  await t.test('CONCURRENT-STOP stops the batch without blaming the strategy', () => {
-    // Locate the CODE, not the comment that explains it.
+  await t.test('CONCURRENT-STOP never blames the strategy', () => {
+    // The stop-vs-wait behaviour is covered by its own test below; what matters HERE is that a
+    // refusal to start is never recorded as a failure of the strategy — that is what turned six
+    // refusals into six crash rows and stranded them.
     const at = norm.indexOf("const cs = out.split");
     csa.ok(at > 0, 'the CONCURRENT-STOP handler is missing');
-    const block = norm.slice(at, at + 700);
-    csa.match(block, /break;/, 'it must stop the batch');
+    const block = norm.slice(at, at + 2200);
     csa.doesNotMatch(block, /appendRow/, 'it must not write a ledger row against the strategy');
+    csa.match(block, /break;/, 'it must still be able to stop when the blocker outlasts the wait');
   });
 
   await t.test('a genuine crash records WHY, not an empty row', () => {
@@ -275,5 +277,66 @@ cst('backtest logs are readable', async (t) => {
     csa.doesNotMatch(doc, /log is not retrievable/,
       'the corrected note must replace the old claim, not sit beside it');
     csa.match(doc, /The backtest log IS retrievable/);
+  });
+});
+
+/**
+ * A concurrent backtest must be WAITED OUT, not treated as the end of the batch.
+ *
+ * The blocker is usually ours: a slow-skipped strategy is cancelled locally at the cap, JQ does
+ * not always honour the cancel (「在此状态不能取消」), and the leftover blocks the next strategy.
+ * Measured 2026-09-26 — the batch normalized 2, slow-skipped 1, and its next stage hit
+ * CONCURRENT STOP instantly; the chain read that as no progress and ended with ~130 of 180 budget
+ * minutes unspent.
+ */
+const cwt = require('node:test');
+const cwa = require('node:assert');
+const cwfs = require('fs');
+const cwpath = require('path');
+
+cwt('a concurrent backtest is waited out', async (t) => {
+  const norm = cwfs.readFileSync(cwpath.join(__dirname, '../utils/strategy-normalize.js'), 'utf8');
+  const runner = require('../utils/jq-running');
+
+  await t.test('the handler waits before it gives up', () => {
+    const at = norm.indexOf("const cs = out.split");
+    const block = norm.slice(at, at + 2200);
+    cwa.match(block, /jq-running\.js/, 'it must poll the account rather than stop immediately');
+    cwa.match(block, /--wait/);
+    cwa.match(block, /CONCURRENT_WAIT_MIN/);
+    cwa.match(block, /still blocked after/, 'it must still stop when the blocker outlasts the wait');
+  });
+
+  await t.test('a blocked strategy is retried in place, not consumed', () => {
+    const at = norm.indexOf("const cs = out.split");
+    const block = norm.slice(at, at + 2200);
+    cwa.match(block, /si--/, '`continue` advances the loop, so a retry must step the index back');
+    cwa.match(norm, /for \(let si = 0; si < slice\.length; si\+\+\)/,
+      'the loop must be index-based for a retry to be possible');
+  });
+
+  await t.test('the retry is bounded, so it cannot spin', () => {
+    const at = norm.indexOf("const cs = out.split");
+    cwa.match(norm.slice(at, at + 2200), /concurrentRetries\[srcFile\][\s\S]{0,60}> 2/);
+  });
+
+  await t.test('a stale phantom does not make the waiter block forever', () => {
+    // One reached 701 minutes while billing nothing. The waiter must ignore those, exactly as
+    // concurrencyGate does, or the batch waits on something JQ will never reap.
+    const src = cwfs.readFileSync(cwpath.join(__dirname, '../utils/jq-running.js'), 'utf8');
+    cwa.match(src, /JQ_CONCURRENT_STALE_MIN/);
+    cwa.match(src, /cnMinutes\(r\.usedSec\) <= STALE_MIN/);
+  });
+
+  await t.test('an unreadable account is treated as clear, not as blocked', () => {
+    // A transient CDP failure must not wedge the batch; the executor's own gate re-checks anyway.
+    const src = cwfs.readFileSync(cwpath.join(__dirname, '../utils/jq-running.js'), 'utf8');
+    cwa.match(src, /treating as clear/);
+  });
+
+  await t.test('the duration parser handles JQ\'s Chinese format', () => {
+    cwa.strictEqual(Math.round(runner.cnMinutes('701分34秒')), 702);
+    cwa.strictEqual(Math.round(runner.cnMinutes('1时02分')), 62);
+    cwa.strictEqual(runner.cnMinutes(''), 0);
   });
 });

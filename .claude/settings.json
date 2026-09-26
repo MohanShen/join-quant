@@ -80,7 +80,9 @@
       "Bash(node utils/normalize-ledger-rebuild.js:*)",
       "Bash(node utils/migrate-unique-key.js:*)",
       "Bash(node utils/resource-fetch.js:*)",
-      "Bash(node utils/strategy-copy.js:*)"
+      "Bash(node utils/strategy-copy.js:*)",
+      "Bash(node utils/jq-running.js:*)",
+      "Bash(node utils/backtest-log.js:*)"
     ]
   }
 }
