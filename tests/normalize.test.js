@@ -158,59 +158,46 @@ const bfa = require('node:assert');
 const bffs = require('fs');
 const bfpath = require('path');
 
-bft('normalize backfill is epoch-aware', async (t) => {
+bft('normalize backlog is decided by the NEWEST ledger row', async (t) => {
   const backfill = require('../utils/normalize-backfill');
-  const harness = require('../utils/harness-config');
   const LEDGER = bfpath.join(__dirname, '../harness/normalize-train.tsv');
+  const RETRIABLE = new Set(['failed', 'crash', 'window-mismatch', 'rate-limited', 'budget-stopped']);
 
-  const rows = () => {
-    const out = new Map();
+  const newest = () => {
+    const last = new Map();
     let text;
-    try { text = bffs.readFileSync(LEDGER, 'utf8'); } catch { return out; }
+    try { text = bffs.readFileSync(LEDGER, 'utf8'); } catch { return last; }
     for (const l of text.split('\n').slice(1)) {
       const c = l.split('\t');
-      if (!c[0]) continue;
-      if (!out.has(c[0])) out.set(c[0], []);
-      out.get(c[0]).push({ status: c[3], epoch: c[13] || '2' });
+      if (c[0] && c[3]) last.set(c[0], c[3]);   // append-only: final write wins
     }
-    return out;
+    return last;
   };
 
-  await t.test('a terminal row from a superseded epoch does not count as done', () => {
-    const all = rows();
+  await t.test('a file whose newest row FAILED is back in the backlog', () => {
+    // The eight stranded on 2026-09-23 read `slow-skipped@e2, normalized@e2, crash@e6`: an old
+    // terminal row plus a newer failed attempt. Matching on "has any terminal row" called them
+    // done and nothing re-offered them at any cap.
     const queued = new Set(backfill.build({}).queued.map(q => `strategies/${q.file}`));
-    for (const [file, rs] of all) {
-      const validTerminal = rs.some(r => harness.measurementValid(r.epoch) &&
-        ['normalized', 'compile-error', 'slow-skipped', 'no-trades',
-         'incompatible-futures', 'incompatible-notrunnable', 'failed-final'].includes(r.status));
-      const onlyStale = !validTerminal && rs.some(r => !harness.measurementValid(r.epoch));
-      if (onlyStale && bffs.existsSync(bfpath.join(__dirname, '..', file))) {
-        bfa.ok(queued.has(file),
-          `${file} has only superseded rows but is not in the backlog — stranded`);
-      }
+    for (const [file, status] of newest()) {
+      if (!RETRIABLE.has(status)) continue;
+      if (!bffs.existsSync(bfpath.join(__dirname, '..', file))) continue;
+      bfa.ok(queued.has(file), `${file} newest row is ${status} but it is not in the backlog`);
     }
   });
 
-  await t.test('a crashed strategy is reachable again', () => {
-    // `crash` is retriable by every other component; the backfill was the one that forgot.
-    const crashed = [...rows()].filter(([, rs]) => rs.some(r => r.status === 'crash')).map(([f]) => f);
-    if (!crashed.length) return;
+  await t.test('a file whose newest row is terminal stays OUT, whatever its epoch', () => {
+    // Epoch is not a queueing trigger. Gating on measurementValid() turned 141 already-measured
+    // strategies into backlog and took the queue from 53 to 175. Those went through the family
+    // pipeline and have numbers; a deliberate re-measurement is stockcost-affected.js's job.
     const queued = new Set(backfill.build({}).queued.map(q => `strategies/${q.file}`));
-    for (const f of crashed) {
-      if (!bffs.existsSync(bfpath.join(__dirname, '..', f))) continue;
-      bfa.ok(queued.has(f), `${f} crashed and cannot be retried`);
+    let checked = 0;
+    for (const [file, status] of newest()) {
+      if (RETRIABLE.has(status)) continue;
+      if (!queued.has(file)) { checked++; continue; }
+      bfa.fail(`${file} newest row is ${status} (terminal) but it is queued for re-normalizing`);
     }
-  });
-
-  await t.test('re-measurements queue BEHIND genuinely unmeasured work', () => {
-    // Otherwise 121 re-measurements land ahead of 54 strategies we have no number for at all.
-    const q = backfill.build({}).queued;
-    const firstRestale = q.findIndex(x => x.restale);
-    const lastFresh = q.map(x => !x.restale).lastIndexOf(true);
-    if (firstRestale >= 0 && lastFresh >= 0) {
-      bfa.ok(firstRestale > lastFresh,
-        'a superseded-epoch re-measurement is queued ahead of never-measured work');
-    }
+    bfa.ok(checked > 50, `expected many already-normed files to stay out, saw ${checked}`);
   });
 });
 
