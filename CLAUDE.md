@@ -489,9 +489,16 @@ Only the directories whose contents aren't self-evident:
   strategies using the `get_extras` ST form and the 130 undated fundamentals calls are clean.
   The 七星高照 NAV-premium lookahead claim is moot: study q-4 measured that filter as exactly
   inert. Still open: LOF/QDII NAV publication lag for the discount families.
-- The backtest **log is not retrievable** via the API (`/algorithm/backtest/log` returns empty).
-  A probe must encode its answer as a marker trade, and **always needs a control** — `no-trades`
-  otherwise cannot be told apart from "the code path never ran". See `study/_probes/README.md`.
+- ⚠ **The backtest log IS retrievable — the old note here was wrong.** `/algorithm/backtest/log`
+  returns 400/empty only in its BARE form; with parameters it returns the full 日志 tab:
+  `/algorithm/backtest/log?backtestId=X&offset=0&limit=2000&ajax=1` → `{data:{state,logArr[]}}`
+  (23KB on a normal run). `/algorithm/backtest/error?backtestId=X&ajax=1` is the 错误 tab, where a
+  Python traceback lands. `utils/backtest-log.js` wraps both; `--algorithm <id>` resolves the
+  backtestId first, because ids are re-minted per request.
+  The old claim shaped all of `study/_probes/`: every probe had to smuggle its answer out as a
+  marker trade because nothing could read what the strategy printed. **That is no longer
+  necessary** — though a control is still good practice, since `no-trades` and "the code path
+  never ran" remain different things.
 - **Harness constants live in `harness/config/epoch-<n>.json`; `active.json` says which is in
   force; code reads them through `utils/harness-config.js`.** They used to be duplicated across
   seven files and had already drifted. Bump an epoch by writing a new JSON + updating
@@ -554,6 +561,15 @@ Only the directories whose contents aren't self-evident:
   permitting silently re-spends the protected resource. `JQ_CONSUMPTION_FILE` /
   `JQ_DAILY_STATE_DIR` redirect the file — it is TRACKED, and a test appending probe rows would
   silently cost a real family its one validation.
+- ⚠ **A `crash` row means the EXECUTOR produced no `SUMMARY` line — not that the strategy
+  errored.** Every completion path (completed / slow-skipped / compile-error / no-trades) prints
+  one, so a missing SUMMARY means the child died or refused before reporting. On 2026-09-23 that
+  was the CONCURRENCY GATE: it prints `CONCURRENT-STOP` and returns before `reportResult`, the
+  normalizer only knew `USAGE-STOP`, and six refusals in a row became six `crash` rows and a
+  circuit break blamed on "JQ rate-limit or session drop" — the session was fine, something was
+  simply still running on the account. The normalizer now recognises `CONCURRENT-STOP` and stops
+  the batch without recording a failure, and a genuine crash appends the child's last lines to
+  `data/normalize-crashes.log` instead of leaving an all-empty row with no cause.
 - ⚠ **`utils/strategy-normalize.js` had no `require.main === module` guard**, so a bare
   `require()` of it started a full 214-strategy batch and spent 42 of the day's 60 backtest
   minutes before it was killed. Guard added; every entry point in `utils/` needs one.

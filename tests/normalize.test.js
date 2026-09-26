@@ -213,3 +213,80 @@ bft('normalize backfill is epoch-aware', async (t) => {
     }
   });
 });
+
+/**
+ * A refusal is not a crash.
+ *
+ * `crash` means the executor emitted no SUMMARY line. Every completion path prints one, so the
+ * status is meant to catch "the child died". But the concurrency gate returns BEFORE reportResult,
+ * printing only CONCURRENT-STOP — so on 2026-09-23 six refusals in a row became six crash rows and
+ * tripped the circuit breaker, which blamed "JQ rate-limit or session drop". The session was fine.
+ *
+ * The strategies then became unreachable, because a crash row plus an older terminal row hid them
+ * from the backfill. A gate that refuses to start must not look like a strategy that failed.
+ */
+const cst = require('node:test');
+const csa = require('node:assert');
+const csfs = require('fs');
+const cspath = require('path');
+
+cst('a gate refusal is distinguished from a crash', async (t) => {
+  const norm = csfs.readFileSync(cspath.join(__dirname, '../utils/strategy-normalize.js'), 'utf8');
+  const exec = csfs.readFileSync(cspath.join(__dirname, '../utils/strategy-post-backtest.js'), 'utf8');
+
+  await t.test('every early-return marker the executor prints is understood by the normalizer', () => {
+    // Only markers that signal an EARLY EXIT: by convention those end in -STOP or -BLOCKED.
+    // (QUOTA is printed on every normal run and is not an exit.) Anything the child prints and
+    // then returns on, without a SUMMARY, must be handled here — otherwise it is silently
+    // recorded as a failure of the strategy.
+    const markers = [...new Set(
+      [...exec.matchAll(/([A-Z][A-Z-]*(?:STOP|BLOCKED))\\t/g)].map(m => m[1]))];
+    csa.ok(markers.includes('USAGE-STOP') && markers.includes('CONCURRENT-STOP'),
+      `expected both stop markers in the executor, found: ${markers.join(', ')}`);
+    for (const m of markers) {
+      csa.ok(norm.includes(`${m}\\t`), `the normalizer does not recognise ${m} — it will record a crash`);
+    }
+  });
+
+  await t.test('CONCURRENT-STOP stops the batch without blaming the strategy', () => {
+    // Locate the CODE, not the comment that explains it.
+    const at = norm.indexOf("const cs = out.split");
+    csa.ok(at > 0, 'the CONCURRENT-STOP handler is missing');
+    const block = norm.slice(at, at + 700);
+    csa.match(block, /break;/, 'it must stop the batch');
+    csa.doesNotMatch(block, /appendRow/, 'it must not write a ledger row against the strategy');
+  });
+
+  await t.test('a genuine crash records WHY, not an empty row', () => {
+    csa.match(norm, /normalize-crashes\.log/,
+      'the child output is the only evidence of a crash and must be kept');
+    csa.match(norm, /const why = out\.split/);
+  });
+});
+
+/**
+ * The backtest log is retrievable. CLAUDE.md said otherwise for months, and that claim shaped
+ * every probe in study/_probes/ — they smuggled answers out as marker trades because nothing
+ * could read what a strategy printed. The bare URL does 400; the parameters are the difference.
+ */
+cst('backtest logs are readable', async (t) => {
+  const src = csfs.readFileSync(cspath.join(__dirname, '../utils/backtest-log.js'), 'utf8');
+
+  await t.test('the working URL carries its parameters', () => {
+    csa.match(src, /backtest\/log\?backtestId=\$\{bid\}&offset=0&limit=\$\{limit\}&ajax=1/);
+    csa.match(src, /backtest\/error\?backtestId=\$\{bid\}&ajax=1/);
+  });
+
+  await t.test('it resolves the id rather than storing one', () => {
+    // Ids are re-minted per request, so resolution and use must happen together.
+    csa.match(src, /buildList\?algorithmId=/);
+    csa.match(src, /re-minted/);
+  });
+
+  await t.test('CLAUDE.md no longer claims the log is unavailable', () => {
+    const doc = csfs.readFileSync(cspath.join(__dirname, '../CLAUDE.md'), 'utf8');
+    csa.doesNotMatch(doc, /log is not retrievable/,
+      'the corrected note must replace the old claim, not sit beside it');
+    csa.match(doc, /The backtest log IS retrievable/);
+  });
+});

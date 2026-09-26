@@ -291,6 +291,28 @@ function main() {
       break;
     }
 
+    // ⚠ Concurrency gate tripped in the child (didn't run) → stop the batch, do NOT blame the
+    // strategy.
+    //
+    // This cost eight strategies on 2026-09-23. The gate prints CONCURRENT-STOP and returns
+    // BEFORE reportResult, so no SUMMARY line is emitted — and a missing SUMMARY is exactly how
+    // this loop detects a `crash`. Six refusals in a row therefore recorded six crashes and
+    // tripped the circuit breaker, which reported "likely JQ rate-limit or session drop". The
+    // session was fine; something was simply still running on the account.
+    //
+    // Worse, a `crash` row plus an older terminal row made those files invisible to the backfill
+    // (see normalize-backfill.js), so they were stranded with no path back. Handled like
+    // USAGE-STOP: the batch stops, nothing is written against the strategy.
+    const cs = out.split('\n').find(l => l.startsWith('CONCURRENT-STOP\t'));
+    if (cs) {
+      const m = cs.match(/running=(\d+)/);
+      console.log(`[normalize] CONCURRENT STOP: ${m ? m[1] : '?'} backtest(s) already running on ` +
+                  `the account. Stopping (${f} not run, NOT recorded as a failure) — the ` +
+                  `completion signal is the account-wide running count, so a second run would be ` +
+                  `ambiguous. Wait for it to finish, then re-run to resume.`);
+      break;
+    }
+
     // Escalate a retriable failure to failed-final once it has failed enough times.
     const finalize = (st) => ((failCount[srcFile] || 0) >= MAX_RETRIES ? 'failed-final' : st);
     const breaker = () => {
@@ -304,8 +326,18 @@ function main() {
     const sm = out.split('\n').find(l => l.startsWith('SUMMARY\t'));
     if (!sm) {
       const st = finalize('crash');
+      // ⚠ RECORD WHY. This branch used to append an all-empty row and throw `out` away, so a
+      // crash was a fact with no cause attached — eight of them on 2026-09-23 and nothing on
+      // disk said more than "crash". The child's own output is the only evidence there is, and
+      // it is already in hand.
+      const why = out.split('\n')
+        .filter(l => l.trim() && !/^\[post\] Running:/.test(l))
+        .slice(-6).join(' ⏎ ').replace(/\s+/g, ' ').slice(0, 400);
+      fs.appendFileSync(path.join(ROOT, 'data/normalize-crashes.log'),
+        `${new Date().toISOString()}\t${srcFile}\t${why}\n`);
       appendRow(ledgerPath, [srcFile, postId, title, st, '', '', '', '', '', '', '', '', '']);
       console.log(`[${n}/${slice.length}] ${st}  ${f}`);
+      console.log(`          └─ ${why.slice(0, 160)}`);
       consecFails++; breaker(); continue;
     }
     // SUMMARY\t<window>\t<start>\t<end>\t<days>\t<total%>\t<annual%>\t<sharpe>\t<maxdd%>\t<status>
