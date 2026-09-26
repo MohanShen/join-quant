@@ -139,3 +139,77 @@ test('the rebuilt ledger', async t => {
     assert.deepStrictEqual(dupes, [], `duplicate ledger rows: ${dupes.join(', ')}`);
   });
 });
+
+/**
+ * The backfill must be epoch-aware, or terminal rows from a dead bench strand work forever.
+ *
+ * Measured 2026-09-23: JQ dropped the session mid-normalize, eight strategies came back `crash`,
+ * and the normalizer's circuit breaker correctly stopped after 6 consecutive failures. `crash` is
+ * retriable everywhere — strategy-normalize, normalize-sync and normalize-daily all keep it out of
+ * TERMINAL. But every one of those eight ALSO carried an epoch-2 `normalized` or `slow-skipped`
+ * row, and ledgerStatus() matched on status alone. So the backfill called them done, the pending
+ * queue no longer held them, and they became unreachable at any cap — silently.
+ *
+ * The same blind spot hid the entire epoch-6 re-measurement set: any strategy with a stale
+ * terminal row was excluded from the backlog by construction.
+ */
+const bft = require('node:test');
+const bfa = require('node:assert');
+const bffs = require('fs');
+const bfpath = require('path');
+
+bft('normalize backfill is epoch-aware', async (t) => {
+  const backfill = require('../utils/normalize-backfill');
+  const harness = require('../utils/harness-config');
+  const LEDGER = bfpath.join(__dirname, '../harness/normalize-train.tsv');
+
+  const rows = () => {
+    const out = new Map();
+    let text;
+    try { text = bffs.readFileSync(LEDGER, 'utf8'); } catch { return out; }
+    for (const l of text.split('\n').slice(1)) {
+      const c = l.split('\t');
+      if (!c[0]) continue;
+      if (!out.has(c[0])) out.set(c[0], []);
+      out.get(c[0]).push({ status: c[3], epoch: c[13] || '2' });
+    }
+    return out;
+  };
+
+  await t.test('a terminal row from a superseded epoch does not count as done', () => {
+    const all = rows();
+    const queued = new Set(backfill.build({}).queued.map(q => `strategies/${q.file}`));
+    for (const [file, rs] of all) {
+      const validTerminal = rs.some(r => harness.measurementValid(r.epoch) &&
+        ['normalized', 'compile-error', 'slow-skipped', 'no-trades',
+         'incompatible-futures', 'incompatible-notrunnable', 'failed-final'].includes(r.status));
+      const onlyStale = !validTerminal && rs.some(r => !harness.measurementValid(r.epoch));
+      if (onlyStale && bffs.existsSync(bfpath.join(__dirname, '..', file))) {
+        bfa.ok(queued.has(file),
+          `${file} has only superseded rows but is not in the backlog — stranded`);
+      }
+    }
+  });
+
+  await t.test('a crashed strategy is reachable again', () => {
+    // `crash` is retriable by every other component; the backfill was the one that forgot.
+    const crashed = [...rows()].filter(([, rs]) => rs.some(r => r.status === 'crash')).map(([f]) => f);
+    if (!crashed.length) return;
+    const queued = new Set(backfill.build({}).queued.map(q => `strategies/${q.file}`));
+    for (const f of crashed) {
+      if (!bffs.existsSync(bfpath.join(__dirname, '..', f))) continue;
+      bfa.ok(queued.has(f), `${f} crashed and cannot be retried`);
+    }
+  });
+
+  await t.test('re-measurements queue BEHIND genuinely unmeasured work', () => {
+    // Otherwise 121 re-measurements land ahead of 54 strategies we have no number for at all.
+    const q = backfill.build({}).queued;
+    const firstRestale = q.findIndex(x => x.restale);
+    const lastFresh = q.map(x => !x.restale).lastIndexOf(true);
+    if (firstRestale >= 0 && lastFresh >= 0) {
+      bfa.ok(firstRestale > lastFresh,
+        'a superseded-epoch re-measurement is queued ahead of never-measured work');
+    }
+  });
+});

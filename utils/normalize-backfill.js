@@ -39,13 +39,36 @@ const TERMINAL = new Set(['normalized', 'incompatible-futures', 'incompatible-no
 
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
 
+/**
+ * Files that need no further attempt.
+ *
+ * ⚠ EPOCH-AWARE, and it was not. A terminal row from a SUPERSEDED bench is not a result for the
+ * active one — `harness.measurementValid()` is the same rule the normalizer's own done-check uses.
+ *
+ * What the old version did, measured 2026-09-23: eight strategies were re-measured for epoch 6,
+ * crashed when JQ dropped the session, and then became UNREACHABLE. `crash` is retriable
+ * everywhere (strategy-normalize, normalize-sync, normalize-daily all exclude it from TERMINAL),
+ * but every one of them also carried an epoch-2 `normalized` or `slow-skipped` row — so this
+ * function called them done and the backfill never re-offered them. They were not in the pending
+ * queue either. Silently stranded, with no path back at any cap.
+ *
+ * The same bug hid the whole epoch-6 re-measurement set: any strategy with a stale terminal row
+ * was excluded from the backlog by construction.
+ */
 function ledgerStatus(window = 'train') {
   const file = path.join(ROOT, `harness/normalize-${window}.tsv`);
+  const harness = require('./harness-config');
   const done = new Set();
+  const stale = new Set();
   for (const line of (readFileSafe(file) || '').split('\n').slice(1)) {
     const c = line.split('\t');
-    if (c[0] && TERMINAL.has(c[3])) done.add(c[0]);
+    if (!c[0] || !TERMINAL.has(c[3])) continue;
+    if (harness.measurementValid(c[13] || '2')) done.add(c[0]);
+    else stale.add(c[0]);
   }
+  // A row valid at the active epoch wins over any stale one for the same file.
+  for (const f of done) stale.delete(f);
+  done.staleOnly = stale;
   return done;
 }
 
@@ -83,10 +106,19 @@ function build({ window = 'train' } = {}) {
                       flags: v.flags || [] });
       continue;
     }
+    // ⚠ Two different kinds of backlog, and they must not be interleaved.
+    //   NEW      — never measured on any bench. Every minute buys a number we do not have.
+    //   RESTALE  — has a terminal row from a superseded epoch. Re-measuring buys a number we
+    //              already have an older version of, and CLAUDE.md's policy is to re-measure
+    //              these by screening priority rather than in bulk (the epoch-6 set that
+    //              actually CHANGES is 23 of 215, per utils/stockcost-affected.js).
+    // Making them one pool would put 121 re-measurements ahead of genuinely unmeasured work.
+    const restale = (done.staleOnly || new Set()).has(`strategies/${f}`);
     queued.push({
       file: f,
       key,
       slow,
+      restale,
       priority: v ? v.priority : -1,       // unscreened sorts last, never first
       band: v ? v.band : 'unscreened',
       family: v ? v.family : null,
@@ -94,8 +126,10 @@ function build({ window = 'train' } = {}) {
     });
   }
 
-  // known-slow last, then priority, then stable by name
-  queued.sort((a, b) => (a.slow === b.slow ? 0 : a.slow ? 1 : -1)
+  // never-measured first, then known-slow last within each tier, then priority, then by name.
+  // The restale tier sits behind everything genuinely unmeasured — see the note above.
+  queued.sort((a, b) => (a.restale === b.restale ? 0 : a.restale ? 1 : -1)
+                     || (a.slow === b.slow ? 0 : a.slow ? 1 : -1)
                      || b.priority - a.priority
                      || a.file.localeCompare(b.file));
   return { queued, excluded };
@@ -106,7 +140,10 @@ if (require.main === module) {
   const { queued, excluded } = build();
   const scored = queued.filter(q => q.priority >= 0).length;
 
-  console.log(`[backfill] ${queued.length} strategies never measured on the frozen harness`);
+  const fresh = queued.filter(q => !q.restale).length;
+  const restale = queued.length - fresh;
+  console.log(`[backfill] ${queued.length} strategies in the backlog: ${fresh} never measured, ` +
+              `${restale} measured on a superseded epoch (queued behind the fresh ones)`);
   console.log(`[backfill]   ${scored} carry a screening priority, ${queued.length - scored} unscreened (queued last)`);
   const slowN = queued.filter(q => q.slow).length;
   console.log(`[backfill]   ${excluded.length} EXCLUDED as unrunnable (S=0) — would waste backtest minutes`);
