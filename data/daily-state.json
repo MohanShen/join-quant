@@ -1,14 +1,19 @@
 {
-  "inFlight": null,
-  "lastRun": {
-    "stage": "normalize",
+  "inFlight": {
+    "stage": "research",
     "target": null,
-    "budget": 50,
-    "at": "2026-09-26T20:34:32.844Z",
+    "budget": 2,
+    "at": "2026-09-27T18:29:21.706Z"
+  },
+  "lastRun": {
+    "stage": "research",
+    "target": null,
+    "budget": 0,
+    "at": "2026-09-27T18:16:01.659Z",
     "outcome": "ran",
-    "note": "72 queued, 0 deferred at 45min",
+    "note": "resumed research session 5e6c9c72 (exit 0 is NOT proof work happened — check its ledger)",
     "minutesUsed": null,
-    "endedAt": "2026-09-26T23:07:01.316Z"
+    "endedAt": "2026-09-27T18:29:17.142Z"
   },
   "runs": [
     {
@@ -280,6 +285,36 @@
       "note": "72 queued, 0 deferred at 45min",
       "minutesUsed": null,
       "endedAt": "2026-09-26T23:07:01.316Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 0,
+      "at": "2026-09-27T18:00:15.624Z",
+      "outcome": "ran",
+      "note": "family assignment over 5 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-09-27T18:08:19.525Z"
+    },
+    {
+      "stage": "research",
+      "target": null,
+      "budget": 0,
+      "at": "2026-09-27T18:08:24.596Z",
+      "outcome": "ran",
+      "note": "resumed research session 032e64a7 (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-09-27T18:15:56.874Z"
+    },
+    {
+      "stage": "research",
+      "target": null,
+      "budget": 0,
+      "at": "2026-09-27T18:16:01.659Z",
+      "outcome": "ran",
+      "note": "resumed research session 5e6c9c72 (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-09-27T18:29:17.142Z"
     }
   ]
 }
