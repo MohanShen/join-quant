@@ -126,6 +126,26 @@ const ROWS = {
     description: '冻结台 epoch 6，完成',
     spawned: 'none',
   },
+  'q-e6-9': {
+    type: 'isolate', window: W, confidence: 'high', edgeRef: '动量',
+    component_or_param: 'g.etf_pool = g.etf_pool_bak（variants/q-9_big-pool.py，单行插入）＝同一套打分与滤波，池从 7 只换成源码自带的 38 只大池（商品/国际/港股/宽基/风格/债券）',
+    metric_delta: 'Δ vs baseline-e6: annual 28.79→20.41 (−8.38pp) / sharpe 1.21→0.75 / maxdd 16.27→20.25 (+3.98pp) / objective 0.1252→0.0016 (−0.1236)；日收益相关 0.71；年度 2022 total 50.97→41.13 (maxdd 17.67)，2023 total 9.75→2.64 (maxdd 17.16)',
+    finding: '把池子从 7 只换成 38 只，objective 掉到 0.0016（−0.124），两年都更差、回撤更深。预注册证伪项（Δobj ≤ −0.05）触发：同一套动量排序在更宽的跨资产池上不成立，收益绑在这 7 只手选资产上',
+    implication: '池构成升为本族的第一性成分，而不是背景：动量 edge 的可主张范围收窄为「在这 7 只资产内部排序」，不能表述为一条可移植的跨资产动量规律——引用本族时必须带上「池是 2026 年写下的事后名单」。这把 §4 的「点时池」从最高优先变成**前置条件**：在拿到按上市日期+流动性逐日生成的跨资产池之前，本族的任何水平数字（包括 VAL）都不可解读为机制证据。同时关闭「扩池」这一类 improve（加行业/加宽基/加港股都在这 38 只里，实测更差）',
+    flags: `${Z}, hypothesis-falsified, hindsight-pool, 大池含 2022 后上市的 ETF（159509/513310/159201/563300 等），历史不足者被自动剔除，故有效池随时间增长`,
+    description: '冻结台 epoch 6，完成 130s。新成员 275daac9 在野外把池换大 + 加 A 股 breadth 择时，epoch-2 obj 0.0385；本测把两个改动中的「池」单独拆出',
+    spawned: 'q-e6-10',
+  },
+  'q-e6-10': {
+    type: 'improve', window: W, confidence: 'high', edgeRef: '动量',
+    component_or_param: '跨家族借用 [[五福闹新春]] 的 A 股 breadth 走弱切换（variants/q-10_breadth-timing.py）：≥3/4 指数收盘跌破 MA10 → 排名置空 → 走源码既有防御分支持 511880；≥3/4 站上则退出。指数清单逐字照抄五福，故与五福自己的实测一样，中证A500 在 TRAIN 无历史、规则实际是 3/3（沪深300/中小板综/创业板指）',
+    metric_delta: 'Δ vs baseline-e6: annual 28.79→3.55 (−25.24pp) / sharpe 1.21→−0.03 / maxdd 16.27→12.67 (−3.60pp) / objective 0.1252→−0.0912 (−0.2164)；日收益相关 0.58；年度 2022 total 50.97→9.80 (maxdd 11.96)，2023 total 9.75→−2.38 (maxdd 8.68)',
+    finding: 'A 股 breadth 择时不但没帮上，还几乎抹平了整本书：年化 28.79→3.55、sharpe 转负，两年同向（2022 51→9.8、2023 9.75→−2.38），只换来 3.6pp 的回撤。预注册证伪项（Δobj < +0.01）被远远触发（−0.216）',
+    implication: '关闭「给本族加市场级择时」这条跨家族借用——本族的资产级闸门（q-e6-2/q-e6-7）与市场级 breadth 择时在 TRAIN 上都是净负，两个层级都测过了，方向闭合。更重要的是它与 [[五福闹新春]] q-e6-4 组合成一条可主张的跨家族规律：A 股走弱期里赚钱的是**持有跨资产/海外标的**，不是**持有现金**——五福走弱期持现金只拿回切池收益的一半，而本族的 7 只池正是那批跨资产标的，把它在 A 股走弱时换成现金就等于卖掉本族的收益来源（2022 A 股走弱与黄金/原油/纳指走强高度重合）。下一次要在本族做择时，必须是「换到池内另一类资产」而不是「退现金」',
+    flags: `${Z}, hypothesis-falsified, cross-family-composition, 与五福口径一致（A500 在 TRAIN 无数据，实际 3/3）, 回撤确实降了 3.6pp——这是买到的唯一东西`,
+    description: '冻结台 epoch 6，完成 55s。实现只改两处行为：13:55 更新走弱状态、走弱时 get_cached_rankings 返回空（复用源码既有 defensive 分支），故卖出侧与买入侧一致',
+    spawned: 'none',
+  },
 };
 
 module.exports = id => {

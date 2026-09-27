@@ -49,6 +49,44 @@ const VARIANTS = {
     '    g.use_short_momentum_filter = False  # q-7: short-momentum filter off\n'),
   // edge 动量 re-check on the no-gate book (q-2 + inverted rank; control = q-2)
   'q-8_invert-no-gate': s => VARIANTS['q-1_invert-rank'](VARIANTS['q-2_no-trend-gate'](s)),
+  // pool composition: rank the same way over the 38-ETF pool the source already ships
+  'q-9_big-pool': s => edit(s,
+    '    # ---------- 核心参数 ----------\n',
+    '    g.etf_pool = g.etf_pool_bak  # q-9: 38-ETF big pool instead of the 7\n\n    # ---------- 核心参数 ----------\n'),
+  // cross-family borrow: 五福's A-share breadth switch. Its index list is copied VERBATIM, so
+  // (as in 五福's own measured round) 中证A500 has no TRAIN history and the rule is effectively
+  // 3/3 of 沪深300 / 中小板综 / 创业板指 below MA10. An empty ranking routes both the sell and buy
+  // paths through the source's existing defensive fallback -> 511880.
+  'q-10_breadth-timing': s => edit(edit(s + `
+
+# ==================== q-10: 借用[[五福闹新春]]的 A 股 breadth 走弱切换 ====================
+def q10_update_weak(context):
+    indexes = {'大盘': '000300.XSHG', '小盘': '399101.XSHE', '创业板': '399006.XSHE', '中证A500': '000510.XSHG'}
+    above_count = 0
+    below_count = 0
+    for name, code in indexes.items():
+        df = attribute_history(code, 11, '1d', ['close'], skip_paused=False)
+        if df is None or len(df) < 10:
+            continue
+        current_price = df['close'][-1]
+        ma_val = df['close'][-10:].mean()
+        if current_price > ma_val:
+            above_count += 1
+        elif current_price < ma_val:
+            below_count += 1
+    if g.q10_weak:
+        if above_count >= 3:
+            g.q10_weak = False
+            log.info("q-10: A股走弱期结束")
+    else:
+        if below_count >= 3:
+            g.q10_weak = True
+            log.info("q-10: 进入A股走弱期 -> 目标池置空 -> 防御 511880")
+`,
+    "    run_daily(check_positions, time='09:10')\n",
+    "    g.q10_weak = False\n    run_daily(check_positions, time='09:10')\n    run_daily(q10_update_weak, time='13:55')\n"),
+    "    return g.rankings_cache['data']\n",
+    "    if g.q10_weak:\n        return []   # q-10: weak period -> no candidate -> defensive 511880\n    return g.rankings_cache['data']\n"),
 };
 
 // improve candidates -> enhance/candidates/ (added after the understand round)
