@@ -1,19 +1,14 @@
 {
-  "inFlight": {
-    "stage": "research",
-    "target": null,
-    "budget": 2,
-    "at": "2026-09-27T18:29:21.706Z"
-  },
+  "inFlight": null,
   "lastRun": {
-    "stage": "research",
+    "stage": "normalize",
     "target": null,
-    "budget": 0,
-    "at": "2026-09-27T18:16:01.659Z",
+    "budget": 13,
+    "at": "2026-09-27T19:44:17.844Z",
     "outcome": "ran",
-    "note": "resumed research session 5e6c9c72 (exit 0 is NOT proof work happened — check its ledger)",
+    "note": "63 queued, 0 deferred at 45min",
     "minutesUsed": null,
-    "endedAt": "2026-09-27T18:29:17.142Z"
+    "endedAt": "2026-09-27T19:54:35.930Z"
   },
   "runs": [
     {
@@ -315,6 +310,36 @@
       "note": "resumed research session 5e6c9c72 (exit 0 is NOT proof work happened — check its ledger)",
       "minutesUsed": null,
       "endedAt": "2026-09-27T18:29:17.142Z"
+    },
+    {
+      "stage": "research",
+      "target": null,
+      "budget": 2,
+      "at": "2026-09-27T18:29:21.706Z",
+      "outcome": "ran",
+      "note": "resumed research session 01920083 (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-09-27T18:35:25.714Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 2,
+      "at": "2026-09-27T18:35:30.589Z",
+      "outcome": "ran",
+      "note": "67 queued, 1 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-09-27T19:44:14.975Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 13,
+      "at": "2026-09-27T19:44:17.844Z",
+      "outcome": "ran",
+      "note": "63 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-09-27T19:54:35.930Z"
     }
   ]
 }

@@ -134,5 +134,13 @@
     "lastCapMin": 30,
     "maxCapTried": 30,
     "lastDeferredAt": "2026-09-20T18:56:10.014Z"
+  },
+  "strategies/2026-06-02_挑战纳指增强_更新-77cabc3c.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-09-27T19:44:14.975Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-09-27T19:44:14.975Z"
   }
 }
