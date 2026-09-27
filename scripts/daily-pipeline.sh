@@ -1,20 +1,31 @@
 #!/usr/bin/env bash
 # daily-pipeline.sh — cron entry point for the one-a-day pipeline.
 #
-# Picks ONE stage by queue priority (enhance > study > normalize > discover), spends the day's
-# backtest budget on it, and leaves enough on disk to resume tomorrow. All of the decision
+# Drains the funnel — research (/run-family) > assign > normalize > discover+fetch — CHAINING
+# stages while budget remains, and leaves enough on disk to resume tomorrow. All of the decision
 # logic lives in utils/daily-pipeline.js; this wrapper only owns the things a cron must own:
 # a lock, the shared pipeline lock, the CDP tunnel, and a log.
 #
-# ⚠ It takes the SHARED jq-pipeline lock. The autostudy and autoenhance crons take the same
-# one, because only one thing may spend JoinQuant backtest minutes at a time — two concurrent
-# consumers of a 60-minute budget produce two half-finished runs rather than one finished one.
+# ⚠ It chains, up to 6 stages per fire. A 2026-09-22 run took six families in one go; a
+# 2026-09-26 run spent 143 backtest-minutes on normalize alone. "One stage a day" was the old
+# shape and is no longer true.
+#
+# ⚠ It takes the SHARED jq-pipeline lock, because only one thing may spend JoinQuant backtest
+# minutes at a time — two concurrent consumers produce two half-finished runs rather than one
+# finished one. The autostudy/autoenhance crons take the same lock, but neither is loaded any
+# more: the funnel's research stage replaced them (they stay reachable via --stage).
 #
 # ⚠ Exit codes are load-bearing. The node planner exits 1 when a stage is BLOCKED (for example
 # an agent loop whose pinned session is on another branch), so a silent daily no-op shows up as
 # a failing cron instead of a green one. Do not "fix" that by swallowing the code.
 #
-# Env: REPO, USAGE_LIMIT (default 55), STAGE (force one stage), DRY (1 = plan only).
+# Env: REPO, USAGE_LIMIT (default 55; the plist sets 170 for the VIP 180-minute tier),
+#      SLOW_SKIP_MIN (default 30; plist sets 45), STAGE (force one stage), DRY (1 = plan only).
+#
+# ⚠ USAGE_LIMIT stops new backtests STARTING; one already running is left to finish and keeps
+# billing. So the real ceiling is USAGE_LIMIT + SLOW_SKIP_MIN — at 170+45 that is 215 against a
+# free 180, and 2026-09-26 ended on 193, i.e. 13 minutes into paid credits. Set USAGE_LIMIT to
+# ~135 if staying strictly inside the free tier matters more than throughput.
 #
 # Install (launchd, mirroring the existing loops):
 #   cp scripts/com.mohanshen.join-quant-daily.plist ~/Library/LaunchAgents/
