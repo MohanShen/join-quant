@@ -68,5 +68,21 @@
     "status": "dropped",
     "note": "gatekeeper 否决，不回测：在 on-mechanism 方向上机械加杠杆，TRAIN 上几乎必然抬分，但增量全部来自零滑点最失真的 6 只微盘周度轮换腿，并把本家族推成 [[小市值]] 的更差副本（edge 冗余）。q-e6-1 的 implication 已关闭该方向",
     "result": null
+  },
+  {
+    "id": "q-e6-3",
+    "kind": "understand",
+    "title": "epoch-6 台复测 1/4 月日历轮换（SMALL_CAP_CONFIG.pass_april True→False）",
+    "hypothesis": "epoch 2 测得关掉后 maxDD +3.78pp / total −19.34pp；epoch 6 上方向不变而量级变小（微盘腿被 volume cap 与股票成本削弱）。证伪：maxDD 抬升 < 1.5pp（则该规则在当前台上是装饰件）",
+    "why": "这是家族唯一被正面测到的回撤压制组件，也是 §1「9.61%/8.55% 低回撤」的主要来源之一，但目前只有 epoch-2 证据；n=4 事件的过拟合嫌疑使它是 realism 里最该被当前台确认的一条",
+    "design": "baseline-e6.py 第 62 行 pass_april True→False，单行 diff，--window train --max-poll-min 60（约 5 分钟）",
+    "from": [
+      "q-3",
+      "q-e6-0"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 3,
+    "status": "queued",
+    "result": null
   }
 ]

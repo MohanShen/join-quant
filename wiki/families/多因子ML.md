@@ -45,6 +45,9 @@ updatedAt: 2026-09-27
 | q-e6-2 etf=0（2023） | understand | etf 0.40→0，仅 2023 | [[study-q-e6-2]] | 2023 子窗，不与全窗比 | +0.93（2023） | −3.26（2023） | informative | etf 腿 2023 净拖累 −8.43pp；动量 edge → refuted |
 | idea-imp-1 加大微盘权重 | improve | small_cap 0.35→0.50 | queue（未回测） | — | — | — | rejected | 未回测即否决：增量全在零滑点最失真的腿，并把本家族推成 [[小市值]] 的副本 |
 | q-1…q-audit | understand | 三腿消融 / 年度 / 日历 / 审计 | §6（epoch 2） | — | — | — | informative | epoch 2 测得，数字不可再引用，方向由 q-e6-0 背书 |
+| q-e6-verify | understand | 无改动（0 回测复核） | [[study-q-e6-verify]] | — | — | — | informative | 本轮 4 个读数用已存曲线全部重现（≤0.01pp），早于 ddc178c 的抓取 bug 未污染本家族 |
+| [[914d5724_中证500增强]] | raw | 成员，非变体 | 账本 epoch 6 | −0.2362 | −0.44 | 21.32 | — | 新测成员，不过闸 |
+| [[c777b7b2_选股策略]] | raw | 成员，非变体 | 账本 epoch 6 | −0.3586 | −0.54 | 29.17 | — | 新测成员，不过闸 |
 
 ## 3. 家族内绩效横评 (auto)
 
@@ -76,9 +79,10 @@ updatedAt: 2026-09-27
 
 ## 4. 待研究 / 空白 (research gaps)
 - **家族归属**：base 是组合书，与 [[小市值]]、[[ETF动量]] 部分重叠；是否应将 d02cde29 改归或将本家族改名，是人工 / `/ingest-strategy` 决定（`family:` 不自动改）。真正的多因子/ML 成员（49efd264 / f9ca1d2e / 775faa4e / f8d8348c）全部不过闸。
-- **10 个成员没有有效测量**（8 个 compile-error、2 个 slow-skipped，均为 epoch 2）——属于归一化 / deferred 池，不属于本循环。
+- **9 个成员没有有效测量**（compile-error / slow-skipped）——属于归一化 / deferred 池，不属于本循环。2026-09-27 复查：914d5724 与 c777b7b2 已在 epoch 6 测出（均不过闸，已作 raw 行入 §2），两者都先产生过 `crash` 行（CONCURRENT-STOP 类）。
 - **VAL 未花**：没有 improve 候选；base 的 VAL 2024–25 对作者而言很可能是样本内（帖子 2026-02、ETF 池为事后组装）。epoch 6 的一次 VAL 预算留给未来的候选。
-- q-3 日历轮换未在 epoch 6 上复测（n=4，过拟合嫌疑，方向先验来自 epoch 2）。
+- q-3 日历轮换未在 epoch 6 上复测（n=4，过拟合嫌疑，方向先验来自 epoch 2）→ 已作 **q-e6-3 queued** 入 `study/多因子ML/queue.json`，约 5 分钟一次回测。
+- **账本仍是 epoch-2 的 0.4737**（§3 与 frontmatter `bestObjective` 由账本生成）：研究执行器不写 `normalize-train.tsv`，而 base 的 epoch-6 复测在 deferred 池里记着 slow-skip。归一化器以 >30min 上限重跑一次即可（本轮实测 324s 完成），随后 §3 会自动显示 0.4403。
 
 ## 5. 沿革 (provenance)   ← 待人工填写：首发 postId/作者、版本演进
 
@@ -123,3 +127,7 @@ updatedAt: 2026-09-27
   **→** 在事后池偏差最小的 2023 年，etf 腿是净拖累：去掉它（且 40% 资金闲置吃零）收益 +8.43pp、sharpe +0.93、回撤 −3.26pp，三个指标同向变好。与 epoch-2 q-6 的倒推（2023 ×0.933）在 epoch 6 上直接测得一致
   **⇒** 动量 edge claim 证伪（status → refuted）：etf 腿在 TRAIN 内的全部贡献来自 2022 一年，且该年池为事后组装，不构成可引用的动量 edge；家族页 realism 必须写明 TRAIN objective 0.4403 里有一段是 2022 事后池收益。不开「删 etf 腿」的 improve：epoch-2 q-2 显示全窗删 etf 会降 TRAIN objective，而按 2023 子窗挑选即是反向后视偏差，也不能拿 VAL 来做这个选择。edge 层面本家族剩下的唯一 measured edge 是规模因子
   （Δ 2023：total 26.94→35.37（+8.43pp）/ sharpe 1.56→2.49（+0.93）/ maxdd 8.25→4.99（−3.26pp）；c_etf(2023) = −8.43pp；confidence high；⚠ ⚠零滑点高估 / idle-cash-confound（40% 闲置却仍变好，故方向稳健、量级偏保守）/ regime-specific（仅 2023）/ hypothesis-falsified / 一年期 sharpe 噪声大，仅作方向） edge: 动量 溯源 [[study-q-e6-2]]
+- **[Q q-e6-verify]** 本轮 4 个 epoch-6 读数的抓取正确性复核（0 回测：用已存日线曲线重算 total/annual/maxDD，与当时抓到的面板数字比对）（type: probe）
+  **→** 四个读数全部独立重现，最大差异 0.01pp（一处 maxDD 舍入）。本轮 4 次回测跑在 2026-09-22 00:46，早于同日 10:50 的抓取修复 ddc178c（旧抓取会把 Ace 编辑器可见的作者注释当成结果面板，打板短线 3 行因此记进了作者的 2025–26 数字）；本家族 base 源码头部不含 策略收益/最大回撤 注释，所以旧 bug 没有污染它——这是核对过的，不是假定
+  **⇒** q-e6-0/1/2 三条发现与家族页 §1 的 epoch-6 数字不需要重跑，可继续引用；核对配方（已存曲线 vs 面板数字，零成本）应当在引用任何 ddc178c 之前的 epoch-6 行之前先跑一遍，尤其是 annual 与 sharpe 不自洽的行。本家族剩下的数字风险不在 study 读数而在账本：normalize-train.tsv 仍只有 epoch-2 的 0.4737，且 base 仍挂在 deferred 池
+  （Δ baseline-e6 train 132.55/52.58/8.55 ↔ 曲线 132.55/52.58/8.55；q-e6-1 train 74.25/32.05/7.54 ↔ 74.25/32.05/7.54；baseline-e6 2023 26.94/27.02/8.25 ↔ 26.94/27.02/8.24；q-e6-2 2023 35.37/35.48/4.99 ↔ 35.37/35.48/4.99；confidence high；⚠ probe-零回测 / scrape-artefact-ruled-out(ddc178c 之前的运行) / 曲线与面板一致到 0.01pp / 账本未更新（与本条无关，另记）） edge: 规模因子 溯源 [[study-q-e6-verify]]
