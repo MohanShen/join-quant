@@ -249,9 +249,16 @@ function main() {
     // screening-priority order, and re-sorting by directory listing would silently
     // throw that away — the highest-value strategy would wait behind an alphabetical
     // queue while the daily backtest budget ran out.
-    const asked = opt.files.split(',').map(s => s.trim()).filter(Boolean);
-    files = asked.filter(f => onDisk.has(f));
-    console.log(`[normalize] --files → ${files.length}/${asked.length} present (caller order preserved)`);
+      const raw = opt.files.split(',').map(s => s.trim()).filter(Boolean);
+      // De-dupe HERE too, not only in the caller: a repeated basename runs the strategy twice
+      // and appends two identical ledger rows — which happened on 2026-09-26 (5511f8f0,
+      // `normalized epoch=6` twice) and a ledger-integrity test caught it. Set preserves
+      // first-seen order, so the caller's priority survives.
+      const asked = [...new Set(raw)];
+      files = asked.filter(f => onDisk.has(f));
+      const dupes = raw.length - asked.length;
+      console.log(`[normalize] --files → ${files.length}/${asked.length} present ` +
+                  `(caller order preserved${dupes ? `, ${dupes} duplicate(s) dropped` : ''})`);
   }
   if (opt.concept) {
     const wanted = conceptSourceBasenames(opt.concept);

@@ -340,3 +340,55 @@ cwt('a concurrent backtest is waited out', async (t) => {
     cwa.strictEqual(runner.cnMinutes(''), 0);
   });
 });
+
+/**
+ * A strategy must not be normalized twice in one batch.
+ *
+ * Measured 2026-09-26: 5511f8f0 got two identical `normalized epoch=6` rows. A file can sit in the
+ * deferred pool and the pending queue at the same time, the pipeline concatenated
+ * `retry ++ pending` without de-duplicating, and the normalizer preserves caller order without
+ * de-duping either — so it ran twice and appended twice. A ledger-integrity test caught it, which
+ * is the only reason it did not sit there.
+ */
+const ddt = require('node:test');
+const dda = require('node:assert');
+const ddfs = require('fs');
+const ddpath = require('path');
+
+ddt('a file is normalized at most once per batch', async (t) => {
+  await t.test('the pipeline de-duplicates the --files list it builds', () => {
+    const src = ddfs.readFileSync(ddpath.join(__dirname, '../utils/daily-pipeline.js'), 'utf8');
+    dda.match(src, /const files = \[\.\.\.new Set\(\[/,
+      'retry ++ pending must be de-duplicated — a file can be in both');
+  });
+
+  await t.test('the normalizer de-duplicates whatever it is handed', () => {
+    // Belt and braces: any caller, not just the daily pipeline, can repeat a basename.
+    const src = ddfs.readFileSync(ddpath.join(__dirname, '../utils/strategy-normalize.js'), 'utf8');
+    dda.match(src, /const asked = \[\.\.\.new Set\(raw\)\]/);
+    dda.match(src, /duplicate\(s\) dropped/, 'dropping duplicates silently hides the caller bug');
+  });
+
+  await t.test('and it reports them, so the caller bug stays visible', () => {
+    const out = require('child_process').execFileSync(process.execPath,
+      ['utils/strategy-normalize.js', '--window', 'train', '--files', 'x.py,x.py,y.py', '--dry-run'],
+      { cwd: ddpath.join(__dirname, '..'), encoding: 'utf8', timeout: 60000 });
+    dda.match(out, /1 duplicate\(s\) dropped/);
+  });
+
+  await t.test('the ledger holds no duplicate file+status+epoch triple', () => {
+    // The invariant the run violated. Newest-wins makes a duplicate harmless to READ, but it
+    // inflates every count derived from the ledger.
+    const text = ddfs.readFileSync(ddpath.join(__dirname, '../harness/normalize-train.tsv'), 'utf8');
+    const seen = new Set();
+    const dupes = [];
+    for (const l of text.split('\n').slice(1)) {
+      if (!l.trim()) continue;
+      const c = l.split('\t');
+      const k = `${c[0]}|${c[3]}|${c[13] || ''}`;
+      if (seen.has(k)) dupes.push(k);
+      seen.add(k);
+    }
+    dda.deepStrictEqual(dupes, [], `duplicate ledger rows: ${dupes.join(', ')}`);
+  });
+});

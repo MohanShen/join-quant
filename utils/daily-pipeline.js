@@ -296,10 +296,15 @@ function sessionPinned(stage, target = null) {
 }
 
 function runNormalize(q, { dry }) {
-  const files = [
+  // ⚠ DE-DUPLICATED. A file can sit in the deferred pool and the pending queue at once, and the
+  // normalizer preserves caller order without de-duping — so it would run twice and append two
+  // identical ledger rows. That happened on 2026-09-26 (5511f8f0, `normalized epoch=6` twice) and
+  // a ledger-integrity test caught it. Retry entries come first, so keeping the first occurrence
+  // preserves their priority.
+  const files = [...new Set([
     ...q.normalize.retry.map(r => r.file.replace(/^strategies\//, '')),
     ...q.normalize.pending,
-  ];
+  ])];
   if (!files.length) return { outcome: 'empty', note: 'nothing pending' };
   const list = files.slice(0, 40).join(',');
   const args = ['utils/strategy-normalize.js', '--window', 'train',
