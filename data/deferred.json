@@ -142,5 +142,13 @@
     "lastCapMin": 45,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-09-27T19:44:14.975Z"
+  },
+  "strategies/2026-06-17_RPS多周期趋势跟踪策略_无未来函数版-995abb4d.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-09-28T20:38:29.172Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-09-28T20:38:29.172Z"
   }
 }
