@@ -220,3 +220,4 @@ strategies/2026-06-25_小市值优选_KNN预测择股策略V1_0版-3141242e.py	3
 strategies/2026-05-28_五福闹新春_v3_1-2026年3月1日优化-be107ff9.py	be107ff95c942579b62a2a45f2e7e727	【五福闹新春】v3.1-2026年3月1日优化	normalized	2022-01-01	2023-12-31	729	36.21	16.73	0.44	29.55	-0.1282	fail	6
 strategies/2026-05-28_经典策略系列_之周规则交易策略_使用分级移动止盈_移动止盈方法_以及新api--run_daily等的用法-23b0cbdc.py	23b0cbdc6ab1f0fb90dfbaed43c09d5d	【经典策略系列】之周规则交易策略（使用分级移动止盈、移动止盈方法，以及新api--run_daily等的用法）	compile-error										6
 strategies/2026-06-17_RPS多周期趋势跟踪策略_无未来函数版-995abb4d.py	995abb4db9469615cedb9e754fe67e39	RPS多周期趋势跟踪策略（无未来函数版）	slow-skipped										6
+strategies/2026-06-25_小市值优选_KNN预测择股策略V1_0版-3141242e.py	3141242edf50e5f3d037e904781fc979	小市值优选+KNN预测择股策略V1.0版	compile-error										6
