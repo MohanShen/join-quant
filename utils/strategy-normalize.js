@@ -403,8 +403,36 @@ function main() {
       consecFails++; sleepSync(RATELIMIT_BACKOFF_S); breaker(); continue;   // never finalized; retried later
     }
     if (status === 'compile-error') {                   // traceback/syntax/import error → deterministic; terminal
+      // ⚠ RECORD THE MESSAGE. The executor detects the traceback and prints it
+      // (`Status: ❌ <error>`), but this branch wrote an all-empty row and dropped it — so 21
+      // compile-errors accumulated with no cause attached and "why did it fail?" had no answer
+      // on disk. Same omission as the crash branch. The detector already excludes the Ace editor
+      // from its scan, so what it caught is the platform's message, not the strategy's own source.
+      // The detector only captures ~90 chars, which for a runtime failure is just
+      // "Traceback (most recent call last)" — true and useless. The real exception is in JQ's
+      // 错误 tab, which IS readable (utils/backtest-log.js; CLAUDE.md used to say otherwise).
+      // Debugged by hand once this way and the answer was worth having: a strategy labelled
+      // compile-error was actually raising FutureDataError, i.e. our own avoid_future_data pin
+      // catching real lookahead — a research finding, not broken code.
+      let msg = (out.split('\n').find(l => /^Status:\s+❌/.test(l)) || '')
+        .replace(/^Status:\s+❌\s*/, '').replace(/\s+/g, ' ').slice(0, 300);
+      const algId = (out.match(/algorithmId:\s*([a-f0-9]{32})/) || [])[1];
+      if (algId) {
+        try {
+          const raw = execFileSync('node', [path.join(__dirname, 'backtest-log.js'),
+                                            '--algorithm', algId, '--errors'],
+            { encoding: 'utf8', cwd: ROOT, timeout: 180000 });
+          // The exception line is the last non-frame line of the traceback.
+          const real = raw.split('\n').map(l => l.trim())
+            .filter(l => l && !/^File |^\s*\w+\(|^Traceback/.test(l)).pop();
+          if (real) msg = real.replace(/&quot;/g, '"').replace(/\s+/g, ' ').slice(0, 300);
+        } catch { /* the tab may be empty for a true syntax error — keep the detector's text */ }
+      }
+      fs.appendFileSync(path.join(ROOT, 'data/normalize-compile-errors.log'),
+        `${new Date().toISOString()}\t${srcFile}\t${msg || '(no message captured)'}\n`);
       appendRow(ledgerPath, [srcFile, postId, title, 'compile-error', '', '', '', '', '', '', '', '', '']);
       console.log(`[${n}/${slice.length}] compile-error (terminal)  ${f}`);
+      if (msg) console.log(`          └─ ${msg.slice(0, 160)}`);
       sleepSync(COOLDOWN_S); continue;
     }
     if (status === 'slow-skipped') {                    // hit the MAX_POLL safety cap → cancelled via API; terminal
