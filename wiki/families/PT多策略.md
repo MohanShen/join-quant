@@ -22,7 +22,7 @@ memberCount: 2
 sources: { normalized: 2, study: 6, enhance: 2 }
 realism: "⚠⚠ 头条不可实现，且已定量：收益 100% 是「在集合竞价的开盘成交价上买到开盘价低于 T−1 净值的薄 ETF（昨日成交额 5e6–2e7）」这一件事。同一信号把成交挪到 14:50 → 两年 −29%、回撤 40%（u-7），与无信号的最薄 10 只等权（u-4，−42%）同量级；偏离到收盘不但已回归、还越过了。偏离幅度由薄度供给：band 三档单调（5e6–2e7 年化 196 / 1e7–2e7 138 / 5e7–1e8 23，后者 sharpe 0.94 DQ），5% 参与上限已把 epoch-2 的 369% 腰斩到 196%（baseline-e6），而薄 ETF 的集合竞价成交量远小于全天的 5%。零滑点台。TRAIN 196% / VAL 242% 都建立在同一不可成交假设上，整合层不得把本家族当作可拼接 sleeve；可登记的只有「薄 ETF 集合竞价开盘价偏离净值」这个观察。建议 status → DQ-realizability，由人裁决"
 status: active
-updatedAt: 2026-09-27
+updatedAt: 2026-09-30
 ---
 
 # PT多策略 — strategy family
@@ -79,7 +79,7 @@ updatedAt: 2026-09-27
 | **1** | **[[fa0d3bd9_PT多策略并行]]** | 3.5952 | 18.16 | 369.07 | 9.55 | ✅ |
 | 2 | [[c70281d3_PT多策略分仓隔离插件V1.3]] | 3.5423 | 18.12 | 362.33 | 8.10 | ✅ |
 
-*2 gate-pass / 2 members. 快照 2026-09-27（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*2 gate-pass / 2 members. 快照 2026-09-30（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 - **人类裁决：status → DQ-realizability？** 两条 edge 都 measured、VAL 也过（sharpe 12.82），但 u-7 证明收益只存在于集合竞价的成交价上。按 wiki-schema 家族 `status` 只有 active / deprecated / DQ；本轮不改，留给人裁决。整合层在裁决前不得引用本家族的任何 objective。

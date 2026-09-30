@@ -22,7 +22,7 @@ memberCount: 2
 sources: { normalized: 2, study: 6, enhance: 4 }
 realism: "⚠⚠ 头条不可实现，且已定量：收益 ≈100% 是「在集合竞价的开盘成交价上按全天成交量 5% 买到开盘价低于 T−1 净值的薄 ETF」这一件事。同一信号把成交挪到 14:50 → 两年 +321% 变 +10%、sharpe 0.07（u-1）；在收盘看折价、收盘买、等次日回归 → −53%、回撤 54%（ep-imp-3）。偏离幅度由薄度供给：下界 1e8 股的流动 universe 上只剩年化 34% / sharpe 1.04（DQ，u-4）。5% 参与上限已把 epoch-2 的 178% 压到 105%（baseline-e6），而薄 ETF 的集合竞价成交量远小于全天的 5%。零滑点台。TRAIN 174–182% / VAL 214% 都建立在同一不可成交假设上；与 [[PT多策略]] 是同一机制的两个实现（两条 edge 同名、同 status），整合层不得把本家族当作可拼接 sleeve，引用时按 u-4 的 34% / 1.04 估值。建议 status → DQ-realizability，由人裁决"
 status: active
-updatedAt: 2026-09-27
+updatedAt: 2026-09-30
 ---
 
 # ETF溢价 — strategy family
@@ -78,7 +78,7 @@ updatedAt: 2026-09-27
 | **1** | **[[15c36e0c_ETF溢价改进版]]** | 1.5642 | 8.87 | 177.88 | 21.46 | ✅ |
 | 2 | [[edd94ebc_ETF溢价回撤]] | DQ/— | — | — | — | — |
 
-*1 gate-pass / 2 members. 快照 2026-09-27（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*1 gate-pass / 2 members. 快照 2026-09-30（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 - **人类裁决：status → DQ-realizability？** 两条 edge 都 measured、VAL 也过（sharpe 7.60），但 u-1 + ep-imp-3 证明开盘折价与收盘折价两头都不可实现。与 [[PT多策略]] 同一裁决；本轮不改 status。整合层在裁决前不得引用本家族的任何 objective；`edge-redundancy.js` 会把两家族标为 INTEGRATION-REDUNDANT（两条 edge 同名同 status）。
