@@ -221,3 +221,7 @@ strategies/2026-05-28_五福闹新春_v3_1-2026年3月1日优化-be107ff9.py	be1
 strategies/2026-05-28_经典策略系列_之周规则交易策略_使用分级移动止盈_移动止盈方法_以及新api--run_daily等的用法-23b0cbdc.py	23b0cbdc6ab1f0fb90dfbaed43c09d5d	【经典策略系列】之周规则交易策略（使用分级移动止盈、移动止盈方法，以及新api--run_daily等的用法）	compile-error										6
 strategies/2026-06-17_RPS多周期趋势跟踪策略_无未来函数版-995abb4d.py	995abb4db9469615cedb9e754fe67e39	RPS多周期趋势跟踪策略（无未来函数版）	slow-skipped										6
 strategies/2026-06-25_小市值优选_KNN预测择股策略V1_0版-3141242e.py	3141242edf50e5f3d037e904781fc979	小市值优选+KNN预测择股策略V1.0版	compile-error										6
+strategies/2026-07-10_大道至简_双均线策略_5日线金叉10日线_可观收益-2253f832.py	2253f83223bc1ad8e26de371f75e9f18	大道至简！双均线策略，5日线金叉10日线，可观收益！	normalized	2022-01-01	2023-12-31	729	-13.21	-6.85	-0.48	28.44	-0.3529	fail	6
+strategies/2026-05-27_14个月200_超短线实盘交易策略_无未来函数-01d60c34.py	01d60c34efd32e3e66da72bf45991faf	14个月200%，超短线实盘交易策略！无未来函数	slow-skipped										6
+strategies/2026-06-08_ETF轮动优化-添加大A行情判断-48187f0c.py	48187f0ce0274ff9c7a4034c18eae975	ETF轮动优化-添加大A行情判断	crash										6
+strategies/2026-07-11_带涨停基因的小市值_附PT迁移版回测结果截图_26年Q1战报-a170cc02.py	a170cc023a9cfc4a77441a9e1b4e0b4e	带涨停基因的小市值 附PT迁移版回测结果截图 26年Q1战报	slow-skipped										6

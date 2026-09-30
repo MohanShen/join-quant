@@ -150,5 +150,21 @@
     "lastCapMin": 45,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-09-28T20:38:29.172Z"
+  },
+  "strategies/2026-05-27_14个月200_超短线实盘交易策略_无未来函数-01d60c34.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-09-30T19:43:27.504Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-09-30T19:43:27.504Z"
+  },
+  "strategies/2026-07-11_带涨停基因的小市值_附PT迁移版回测结果截图_26年Q1战报-a170cc02.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-09-30T19:43:27.504Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-09-30T19:43:27.504Z"
   }
 }

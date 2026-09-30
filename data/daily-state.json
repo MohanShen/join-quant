@@ -3,12 +3,12 @@
   "lastRun": {
     "stage": "normalize",
     "target": null,
-    "budget": 0,
-    "at": "2026-09-29T18:11:14.040Z",
+    "budget": 62,
+    "at": "2026-09-30T19:48:55.719Z",
     "outcome": "ran",
-    "note": "53 queued, 0 deferred at 45min",
+    "note": "50 queued, 0 deferred at 45min",
     "minutesUsed": null,
-    "endedAt": "2026-09-29T18:21:33.269Z"
+    "endedAt": "2026-09-30T19:59:14.193Z"
   },
   "runs": [
     {
@@ -380,6 +380,46 @@
       "note": "53 queued, 0 deferred at 45min",
       "minutesUsed": null,
       "endedAt": "2026-09-29T18:21:33.269Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 0,
+      "at": "2026-09-30T18:00:17.096Z",
+      "outcome": "ran",
+      "note": "53 queued, 2 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-09-30T19:43:27.505Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 62,
+      "at": "2026-09-30T19:43:30.499Z",
+      "outcome": "ran",
+      "note": "family assignment over 1 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-09-30T19:47:13.459Z"
+    },
+    {
+      "stage": "research",
+      "target": null,
+      "budget": 62,
+      "at": "2026-09-30T19:47:16.224Z",
+      "outcome": "ran",
+      "note": "resumed research session 047699ff (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-09-30T19:48:52.954Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 62,
+      "at": "2026-09-30T19:48:55.719Z",
+      "outcome": "ran",
+      "note": "50 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-09-30T19:59:14.193Z"
     }
   ]
 }
