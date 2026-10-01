@@ -166,5 +166,13 @@
     "lastCapMin": 45,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-09-30T19:43:27.504Z"
+  },
+  "strategies/2026-06-08_ETF轮动优化-添加大A行情判断-48187f0c.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-01T18:56:31.275Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-01T18:56:31.275Z"
   }
 }
