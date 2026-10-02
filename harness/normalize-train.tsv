@@ -226,3 +226,6 @@ strategies/2026-05-27_14个月200_超短线实盘交易策略_无未来函数-01
 strategies/2026-06-08_ETF轮动优化-添加大A行情判断-48187f0c.py	48187f0ce0274ff9c7a4034c18eae975	ETF轮动优化-添加大A行情判断	crash										6
 strategies/2026-07-11_带涨停基因的小市值_附PT迁移版回测结果截图_26年Q1战报-a170cc02.py	a170cc023a9cfc4a77441a9e1b4e0b4e	带涨停基因的小市值 附PT迁移版回测结果截图 26年Q1战报	slow-skipped										6
 strategies/2026-06-08_ETF轮动优化-添加大A行情判断-48187f0c.py	48187f0ce0274ff9c7a4034c18eae975	ETF轮动优化-添加大A行情判断	slow-skipped										6
+strategies/2026-06-11_KAMA_趋势策略_社区最牛的趋势交易-已被私募机构征用-b7269ff2.py	b7269ff269212f891b2bdde52e401b3c	KAMA 趋势策略「社区最牛的趋势交易-已被私募机构征用」	failed										6
+strategies/2026-06-13_选用近5日最热门板块_人气最高最强股的策略-537edfae.py	537edfaeaae663007f1c6a5703a780d0	选用近5日最热门板块，人气最高最强股的策略	no-trades	2022-01-01	2023-12-31	729	0.00	0.00	0.00	0.00			6
+strategies/2026-07-15_超短线_快刀手_1万本金单票满仓_极致止盈损-7cf56e56.py	7cf56e569c507f9d0a1a449381042597	超短线“快刀手”：1万本金单票满仓，极致止盈损	compile-error										6
