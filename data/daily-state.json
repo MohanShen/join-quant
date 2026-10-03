@@ -3,12 +3,12 @@
   "lastRun": {
     "stage": "normalize",
     "target": null,
-    "budget": 44,
-    "at": "2026-10-02T18:58:24.887Z",
+    "budget": 130,
+    "at": "2026-10-03T21:17:05.574Z",
     "outcome": "ran",
-    "note": "47 queued, 0 deferred at 45min",
+    "note": "40 queued, 0 deferred at 45min",
     "minutesUsed": null,
-    "endedAt": "2026-10-02T19:08:45.198Z"
+    "endedAt": "2026-10-03T21:27:23.810Z"
   },
   "runs": [
     {
@@ -460,6 +460,26 @@
       "note": "47 queued, 0 deferred at 45min",
       "minutesUsed": null,
       "endedAt": "2026-10-02T19:08:45.198Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-03T18:00:11.116Z",
+      "outcome": "ran",
+      "note": "47 queued, 3 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-03T21:17:02.771Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 130,
+      "at": "2026-10-03T21:17:05.574Z",
+      "outcome": "ran",
+      "note": "40 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-03T21:27:23.810Z"
     }
   ]
 }

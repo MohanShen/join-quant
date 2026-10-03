@@ -174,5 +174,29 @@
     "lastCapMin": 45,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-10-01T18:56:31.275Z"
+  },
+  "strategies/2026-06-11_KAMA_趋势策略_社区最牛的趋势交易-已被私募机构征用-b7269ff2.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-03T21:17:02.770Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-03T21:17:02.770Z"
+  },
+  "strategies/2026-06-29_小盘绩优股轮动策略-293f4ab7.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-03T21:17:02.770Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-03T21:17:02.770Z"
+  },
+  "strategies/2026-05-23_每日更4_1-511模拟加时盘_五福淘汰VS三马胜VS七星平-54e0fd89.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-03T21:17:02.770Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-03T21:17:02.770Z"
   }
 }
