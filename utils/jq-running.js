@@ -28,7 +28,8 @@
  *
  * Usage:
  *   node utils/jq-running.js                       # print the count, exit 0 if clear
- *   node utils/jq-running.js --wait --timeout-min 10 [--poll-sec 45]
+ *   node utils/jq-running.js --wait --timeout-min 50 --cap-min 45 [--poll-sec 45]
+ *     exit 0 = clear, 1 = still busy after the wait, 2 = phantom past the cap (never clears)
  */
 
 const { chromium } = require('playwright');
@@ -61,7 +62,11 @@ async function running() {
       return ((j && j.data && j.data.running) || []).map(r => ({ usedSec: r.usedSec, time: r.time }));
     });
     const live = rows.filter(r => cnMinutes(r.usedSec) <= STALE_MIN);
-    return { live: live.length, stale: rows.length - live.length, rows };
+    // Oldest LIVE age is what distinguishes "ours, still legitimately running" from "ours, already
+    // cancelled at the cap and never reaped". Computed, not read off rows[0] — the endpoint's order
+    // is not documented and a wrong oldest flips the verdict.
+    const oldestLiveMin = live.reduce((mx, r) => Math.max(mx, cnMinutes(r.usedSec)), 0);
+    return { live: live.length, stale: rows.length - live.length, rows, oldestLiveMin };
   } catch (e) {
     return null;
   } finally {
@@ -72,29 +77,69 @@ async function running() {
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-/** Block until the account has no live backtest, or the timeout expires. */
-async function waitClear({ timeoutMin = 10, pollSec = 45, quiet = false } = {}) {
+/**
+ * Block until the account has no live backtest, or the timeout expires.
+ *
+ * ## The age-vs-cap rule
+ *
+ * The blocker is almost always ours, but there are TWO kinds of ours and they want opposite
+ * responses. Both appeared in consecutive unattended runs:
+ *
+ *   2026-10-02  oldest 18分42秒 — a backtest with 26min of LEGITIMATE runtime left under the
+ *               45min slow-skip cap. The flat 10min wait was simply shorter than the work, so
+ *               the stage recorded no progress and the chain ended with 136 of 180 budget
+ *               minutes unspent. Waiting longer was all it needed.
+ *   2026-10-03  oldest 63分49秒 — PAST the cap, i.e. already cancelled locally and not reaped by
+ *               JQ (「在此状态不能取消」). Nothing will clear it before STALE_MIN. The 10min wait
+ *               was pure loss.
+ *
+ * So the deadline cannot be one number. `capMin` splits the cases:
+ *
+ *   age <= capMin  ->  ours, still running. WAIT (the caller's timeout should exceed capMin).
+ *   age >  capMin  ->  phantom. Do not wait at all; report it and let the caller stop cleanly.
+ *
+ * ⚠ A phantom is reported, never worked around. `pollUntilComplete` consults its fallback
+ * completion signal (`resultsRendered`) ONLY while `runningCount === 0 && !seenRunning`, so with
+ * a phantom present `runningCount > 0` forever, the fallback is never reached, and any run that
+ * bypassed the gate would spin to its own cap and slow-skip. Proceeding is not merely unsafe for
+ * run identity — it cannot succeed. Waiting out STALE_MIN or clearing it by hand are the options.
+ *
+ * @returns {{cleared:boolean, phantom:boolean, ageMin:number, live:number}}
+ */
+async function waitClear({ timeoutMin = 10, pollSec = 45, capMin = 0, quiet = false } = {}) {
   const deadline = Date.now() + timeoutMin * 60000;
   let first = true;
   for (;;) {
     const r = await running();
     if (r == null) {
       if (!quiet) console.log('[running] could not read the account — treating as clear (the gate will re-check)');
-      return true;               // a read failure must not wedge the batch; the gate re-checks
+      return { cleared: true, phantom: false, ageMin: 0, live: 0 };  // never wedge the batch
     }
     if (r.live === 0) {
       if (!quiet && !first) console.log('[running] account is clear — resuming');
       else if (!quiet) console.log(`[running] clear${r.stale ? ` (${r.stale} stale entr(y/ies) ignored)` : ''}`);
-      return true;
+      return { cleared: true, phantom: false, ageMin: 0, live: 0 };
     }
+
+    const age = r.oldestLiveMin;
+    if (capMin > 0 && age > capMin) {
+      if (!quiet) {
+        console.log(`[running] ${r.live} in flight and the oldest is ${age.toFixed(0)}min — PAST the ` +
+                    `${capMin}min cap, so it was already cancelled and JQ has not reaped it. ` +
+                    `Waiting cannot clear it (only ${STALE_MIN}min staleness will) — not waiting.`);
+      }
+      return { cleared: false, phantom: true, ageMin: age, live: r.live };
+    }
+
     if (Date.now() >= deadline) {
-      if (!quiet) console.log(`[running] still ${r.live} in flight after ${timeoutMin}min — giving up`);
-      return false;
+      if (!quiet) console.log(`[running] still ${r.live} in flight after ${timeoutMin}min ` +
+                              `(oldest ${age.toFixed(0)}min) — giving up`);
+      return { cleared: false, phantom: false, ageMin: age, live: r.live };
     }
     if (!quiet) {
       const left = Math.round((deadline - Date.now()) / 60000);
-      console.log(`[running] ${r.live} backtest(s) in flight (oldest ${r.rows[0] && r.rows[0].usedSec}) — ` +
-                  `waiting, ${left}min left before giving up`);
+      console.log(`[running] ${r.live} backtest(s) in flight (oldest ${age.toFixed(0)}min` +
+                  `${capMin > 0 ? ` of ${capMin}min cap` : ''}) — waiting, ${left}min left`);
     }
     first = false;
     await sleep(pollSec * 1000);
@@ -113,8 +158,12 @@ if (require.main === module) {
   };
   (async () => {
     if (argv.includes('--wait')) {
-      const ok = await waitClear({ timeoutMin: num('--timeout-min', 10), pollSec: num('--poll-sec', 45) });
-      process.exit(ok ? 0 : 1);
+      // Exit codes are the contract: 0 clear, 1 still busy after the wait, 2 phantom (past cap).
+      // The caller needs the distinction — 1 may be worth retrying later, 2 never is.
+      const v = await waitClear({ timeoutMin: num('--timeout-min', 10),
+                                  pollSec: num('--poll-sec', 45),
+                                  capMin: num('--cap-min', 0) });
+      process.exit(v.cleared ? 0 : (v.phantom ? 2 : 1));
     }
     const r = await running();
     if (r == null) { console.log('[running] unreadable'); process.exit(0); }

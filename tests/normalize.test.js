@@ -241,7 +241,7 @@ cst('a gate refusal is distinguished from a crash', async (t) => {
     // refusals into six crash rows and stranded them.
     const at = norm.indexOf("const cs = out.split");
     csa.ok(at > 0, 'the CONCURRENT-STOP handler is missing');
-    const block = norm.slice(at, at + 2200);
+    const block = concurrentBlock(norm);
     csa.doesNotMatch(block, /appendRow/, 'it must not write a ledger row against the strategy');
     csa.match(block, /break;/, 'it must still be able to stop when the blocker outlasts the wait');
   });
@@ -289,6 +289,20 @@ cst('backtest logs are readable', async (t) => {
  * CONCURRENT STOP instantly; the chain read that as no progress and ended with ~130 of 180 budget
  * minutes unspent.
  */
+/**
+ * The CONCURRENT-STOP handler, sliced by its real boundaries.
+ *
+ * ⚠ These tests used to slice a hard-coded 2200 characters. Adding the age-vs-cap rule made the
+ * handler longer and four assertions failed on correct code, because `break;`/`si--`/the retry
+ * bound had moved past the window. A byte count is not a boundary; the next statement is.
+ */
+function concurrentBlock(norm) {
+  const at = norm.indexOf('const cs = out.split');
+  const end = norm.indexOf('// Escalate a retriable failure', at);
+  if (at < 0 || end < 0) return '';
+  return norm.slice(at, end);
+}
+
 const cwt = require('node:test');
 const cwa = require('node:assert');
 const cwfs = require('fs');
@@ -300,16 +314,27 @@ cwt('a concurrent backtest is waited out', async (t) => {
 
   await t.test('the handler waits before it gives up', () => {
     const at = norm.indexOf("const cs = out.split");
-    const block = norm.slice(at, at + 2200);
+    const block = concurrentBlock(norm);
     cwa.match(block, /jq-running\.js/, 'it must poll the account rather than stop immediately');
     cwa.match(block, /--wait/);
-    cwa.match(block, /CONCURRENT_WAIT_MIN/);
     cwa.match(block, /still blocked after/, 'it must still stop when the blocker outlasts the wait');
+
+    // The wait must be DERIVED from the slow-skip cap, not a flat number. A 10min wait in front
+    // of a 45min cap abandoned 136 of 180 budget minutes on 2026-10-02, waiting on a backtest
+    // 19 minutes into its own entitlement.
+    cwa.match(block, /waitMinFor\(MAX_POLL_MIN\)/,
+      'the wait must come from the cap — our own run is entitled to the full cap');
+    cwa.doesNotMatch(block, /--timeout-min', '10'|CONCURRENT_WAIT_MIN\b/,
+      'a flat wait is what caused the lost budget');
+
+    // And the hopeless case must be told apart from the retriable one.
+    cwa.match(block, /--cap-min/, 'the waiter needs the cap to apply the age-vs-cap rule');
+    cwa.match(block, /status === 2/, 'exit 2 (phantom past the cap) must be distinguished');
+    cwa.match(block, /PHANTOM/, 'a blocker that can never clear must say so, not say "still blocked"');
   });
 
   await t.test('a blocked strategy is retried in place, not consumed', () => {
-    const at = norm.indexOf("const cs = out.split");
-    const block = norm.slice(at, at + 2200);
+    const block = concurrentBlock(norm);
     cwa.match(block, /si--/, '`continue` advances the loop, so a retry must step the index back');
     cwa.match(norm, /for \(let si = 0; si < slice\.length; si\+\+\)/,
       'the loop must be index-based for a retry to be possible');
@@ -317,7 +342,7 @@ cwt('a concurrent backtest is waited out', async (t) => {
 
   await t.test('the retry is bounded, so it cannot spin', () => {
     const at = norm.indexOf("const cs = out.split");
-    cwa.match(norm.slice(at, at + 2200), /concurrentRetries\[srcFile\][\s\S]{0,60}> 2/);
+    cwa.match(concurrentBlock(norm), /concurrentRetries\[srcFile\][\s\S]{0,60}> 2/);
   });
 
   await t.test('a stale phantom does not make the waiter block forever', () => {

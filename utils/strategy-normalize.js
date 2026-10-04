@@ -29,14 +29,24 @@ const ROOT       = path.resolve(__dirname, '..');
 /**
  * How long to wait for the account to clear when a backtest is already running.
  *
- * The blocker is usually our own slow-skip leftover, which JQ reaps within minutes. Ten is long
- * enough for that and short enough that a human genuinely using the JQ UI is not waited on all
- * day — that case stops the batch, which is what the gate is for.
+ * ⚠ This used to be a flat 10 minutes, chosen for "our own slow-skip leftover, which JQ reaps
+ * within minutes". That reasoning was wrong about the common case: the blocker is usually our own
+ * backtest STILL RUNNING, and it is allowed to run for the whole slow-skip cap. A 10min wait in
+ * front of a 45min cap gives up on work that is going to finish — on 2026-10-02 it abandoned 136
+ * of 180 budget minutes waiting on a backtest 19 minutes into its 45.
+ *
+ * So the default is derived from the cap (`waitMinFor`) rather than fixed, and the genuinely
+ * hopeless case — a blocker already PAST the cap — is handled by `jq-running.js`'s age-vs-cap
+ * rule instead of by a short timeout. Waiting costs no budget: the usage limit counts JQ's quota
+ * minutes, which only a running backtest consumes.
+ *
+ * JQ_CONCURRENT_WAIT_MIN still overrides, for a human who wants the old impatient behaviour.
  */
-const CONCURRENT_WAIT_MIN = (() => {
+const WAIT_MARGIN_MIN = 5;      // JQ needs a moment to drop a finished run out of running[]
+const waitMinFor = (capMin) => {
   const n = parseInt(process.env.JQ_CONCURRENT_WAIT_MIN || '', 10);
-  return Number.isFinite(n) && n > 0 ? n : 10;
-})();
+  return Number.isFinite(n) && n > 0 ? n : capMin + WAIT_MARGIN_MIN;
+};
 const STRAT_DIR  = path.join(ROOT, 'strategies');
 const TMP_DIR    = '/tmp/jq-normalize';
 const POST_BT    = path.join(__dirname, 'strategy-post-backtest.js');
@@ -338,21 +348,37 @@ function main() {
       // So poll until the account clears and retry THE SAME strategy. Only a blocker that
       // outlasts the wait stops the batch, which is the case the gate actually exists for
       // (a human running something in the JQ UI).
+      const waitMin = waitMinFor(MAX_POLL_MIN);
       console.log(`[normalize] CONCURRENT STOP: ${m ? m[1] : '?'} backtest(s) already running on ` +
-                  `the account (${f} not started). Waiting up to ${CONCURRENT_WAIT_MIN}min for it ` +
-                  `to clear — a leftover from our own slow-skip usually clears in a few minutes.`);
-      let cleared = false;
+                  `the account (${f} not started). Waiting up to ${waitMin}min — our own run is ` +
+                  `entitled to the full ${MAX_POLL_MIN}min cap, so a shorter wait gives up on ` +
+                  `work that is going to finish.`);
+      let cleared = false, phantom = false;
       try {
         execFileSync('node', [path.join(__dirname, 'jq-running.js'), '--wait',
-                              '--timeout-min', String(CONCURRENT_WAIT_MIN)],
+                              '--timeout-min', String(waitMin),
+                              '--cap-min', String(MAX_POLL_MIN)],
           { encoding: 'utf8', cwd: ROOT, stdio: 'inherit',
-            timeout: (CONCURRENT_WAIT_MIN + 3) * 60000 });
+            timeout: (waitMin + 3) * 60000 });
         cleared = true;
-      } catch { cleared = false; }
+      } catch (e) {
+        // Exit 2 means the blocker is past the cap: already cancelled, unreaped, and no amount of
+        // waiting clears it. Distinguished from 1 so the message tells a human what to actually do
+        // — the two cases look identical in the log otherwise, which is how 2026-10-03 read as
+        // "still blocked" when the truth was "will never unblock".
+        phantom = e && e.status === 2;
+      }
 
       if (!cleared) {
-        console.log(`[normalize] still blocked after ${CONCURRENT_WAIT_MIN}min — stopping ` +
-                    `(${f} NOT recorded as a failure). Re-run to resume.`);
+        if (phantom) {
+          console.log(`[normalize] blocked by a PHANTOM backtest past the ${MAX_POLL_MIN}min cap — ` +
+                      `JQ did not honour its cancel and nothing will clear it until it goes stale. ` +
+                      `Stopping (${f} NOT recorded as a failure). This needs the run cleared in the ` +
+                      `JQ UI, or waiting out JQ_CONCURRENT_STALE_MIN.`);
+        } else {
+          console.log(`[normalize] still blocked after ${waitMin}min — stopping ` +
+                      `(${f} NOT recorded as a failure). Re-run to resume.`);
+        }
         break;
       }
       if ((concurrentRetries[srcFile] = (concurrentRetries[srcFile] || 0) + 1) > 2) {

@@ -193,6 +193,12 @@ const SAFE_ADD = [
   'docs/daily', 'wiki', 'data/series', 'data/daily-state.json', 'data/deferred.json',
   'data/consumption.tsv', 'data/components.tsv', 'enhance/candidates', 'enhance/results.tsv',
   'enhance/ideas-queue.json', 'enhance/loop-state.json', 'strategies', 'validated_strategies',
+  // Diagnostic records of WHY a strategy failed — the same class of evidence as consumption.tsv
+  // and components.tsv, and useless if they only ever exist on one machine. They were being
+  // written daily and reported under "untracked and NOT committed" every single run, so the
+  // causes the normalizer had just worked out were discarded on each fresh clone. Both are
+  // append-only and a few lines per day.
+  'data/normalize-compile-errors.log', 'data/normalize-crashes.log',
 ];
 
 /**
