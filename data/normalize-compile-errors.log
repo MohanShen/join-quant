@@ -1,0 +1,2 @@
+2026-10-02T18:47:56.368Z	strategies/2026-07-15_超短线_快刀手_1万本金单票满仓_极致止盈损-7cf56e56.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'close', 'volume'}字段数据, current_dt=2022-01-04 09:35:00, end_date=2022-01-04
+2026-10-03T18:46:45.414Z	strategies/2026-06-01_组合魅力_4策略融合-小市值_白马_低相关轮动_行业轮动-962e727b.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 jqmt

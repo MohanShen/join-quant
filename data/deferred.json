@@ -198,5 +198,13 @@
     "lastCapMin": 45,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-10-03T21:17:02.770Z"
+  },
+  "strategies/2026-06-04_我把_16_条实战血汗语录_写成了量化策略-390dc094.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-04T19:33:15.606Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-04T19:33:15.606Z"
   }
 }
