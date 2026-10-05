@@ -362,9 +362,12 @@ test('the chain does not repeat a stage that made no progress', async t => {
   await t.test('depth is compared before re-picking', () => {
     // Observed live: enhance "ran", its queue stayed at 13, and the planner picked it again —
     // each repeat resuming a Claude session to redo the same work.
+    // ⚠ The guard is unchanged; only its SCOPE moved. It used to end the chain, which cost
+    // 2026-10-04 its remaining 124 budget minutes and 35 queued strategies. The stage is
+    // excluded now and the chain continues — see the dedicated test at the end of this file.
     const src = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
     assert.match(src, /no-progress/);
-    assert.match(src, /not repeating it this chain/);
+    assert.match(src, /not repeated this chain/);
   });
 });
 
@@ -724,5 +727,64 @@ test('research is never blocked for want of a per-stage pin', async (t) => {
     const src = fs.readFileSync(path.join(__dirname, '../utils/daily-pipeline.js'), 'utf8');
     assert.match(src, /START a CLEAN session for/);
     assert.match(src, /stage === 'research'[\s\S]{0,200}pin\.coldStart/);
+  });
+});
+
+/**
+ * A stalled stage cedes its turn; it does not end the day.
+ *
+ * Measured 2026-10-04: the chain ran normalize -> assign -> research, research stalled (its one
+ * queued idea was blocked by a phantom backtest), and `runChain` broke out of the loop. Normalize
+ * still held 35 strategies and the day still had 124 of 180 budget minutes. Four consecutive days
+ * logged this as the day finishing.
+ *
+ * The guard itself is right — a stage that ran without draining its queue must not be picked
+ * again, because depth is the honest completion signal when the exit code is not one. What was
+ * wrong was the scope: it excluded the CHAIN instead of the STAGE, contradicting its own note
+ * ("not repeating IT this chain").
+ */
+const dpt = require('node:test');
+const dpa = require('node:assert');
+const dpfs = require('fs');
+const dppath = require('path');
+
+dpt('a stalled stage cedes its turn rather than ending the chain', async (t) => {
+  const src = dpfs.readFileSync(dppath.join(__dirname, '../utils/daily-pipeline.js'), 'utf8');
+  const dp = require('../utils/daily-pipeline');
+
+  await t.test('the no-progress branch cedes instead of breaking', () => {
+    // Anchor on the branch's own note, not on the `no-progress` token — the defensive
+    // planner-loop guard above it legitimately DOES break, and anchoring on the token found
+    // that one instead and passed a broken implementation.
+    const at = src.indexOf('ceding its turn');
+    dpa.ok(at > 0, 'the no-progress guard no longer cedes its turn');
+    const branch = src.slice(at, src.indexOf('before[p.stage] = depth', at));
+    dpa.match(branch, /stalled\.add\(p\.stage\)/, 'it must record the stage as stalled');
+    dpa.match(branch, /continue;/, 'it must try the next stage');
+    dpa.doesNotMatch(branch, /\bbreak;/,
+      'breaking here ends the day — that is the bug this test exists for');
+  });
+
+  await t.test('an exclusion does not consume a maxStages slot', () => {
+    // If it did, excluding the stages would itself end the chain early — the same loss by a
+    // different route. The counter must advance only on a stage actually executed.
+    dpa.match(src, /for \(let i = 0; i < maxStages; \)/,
+      'the loop must not auto-increment, so a ceded turn costs no slot');
+  });
+
+  await t.test('plan() honours the exclusion set', () => {
+    const first = dp.plan({});
+    dpa.ok(first.stage, 'plan must pick something on a non-empty board');
+    const second = dp.plan({ exclude: [first.stage] });
+    dpa.notStrictEqual(second.stage, first.stage,
+      'excluding the chosen stage must yield a different stage');
+  });
+
+  await t.test('exhausting every stage reports null, not a re-pick', () => {
+    // `stage: null` is what lets the caller stop honestly instead of looping on a stalled stage.
+    const all = dp.PRIORITY || ['research', 'assign', 'normalize', 'discover'];
+    const p = dp.plan({ exclude: all });
+    dpa.strictEqual(p.stage, null, 'with everything stalled there is nothing to run');
+    dpa.match(p.why, /stalled|without draining/i, 'and it must say why');
   });
 });

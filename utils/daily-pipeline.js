@@ -188,26 +188,34 @@ const depth = (stage, q) =>
  * Decide the stage for this run.
  * `discover` is the only stage allowed to run on an empty board — it is what refills it.
  */
-function plan({ stageOverride = null } = {}) {
+function plan({ stageOverride = null, exclude = [] } = {}) {
   const q = queues();
   const b = budget();
 
   if (stageOverride) {
     return { stage: stageOverride, q, budget: b, why: `--stage ${stageOverride} (override)` };
   }
+  const skip = new Set(exclude);
   for (const stage of PRIORITY) {
+    if (skip.has(stage)) continue;        // already ran without progress in this chain
     const d = depth(stage, q);
     if (stage === 'discover') {
       return { stage, q, budget: b, why: 'every other queue is empty — refill the board' };
     }
     if (d > 0) {
-      const higher = PRIORITY.slice(0, PRIORITY.indexOf(stage));
+      const higher = PRIORITY.slice(0, PRIORITY.indexOf(stage)).filter(h => !skip.has(h));
       return {
         stage, q, budget: b,
         why: `${stage} queue has ${d}` +
-             (higher.length ? `; ${higher.join('/')} empty` : ''),
+             (higher.length ? `; ${higher.join('/')} empty` : '') +
+             (skip.size ? `; ${[...skip].join('/')} stalled this chain` : ''),
       };
     }
+  }
+  // Everything is either empty or stalled. `stage: null` is the honest answer; the caller stops.
+  if (skip.has('discover')) {
+    return { stage: null, q, budget: b,
+             why: `every stage ran without draining its queue (${[...skip].join('/')})` };
   }
   return { stage: 'discover', q, budget: b, why: 'fallthrough' };
 }
@@ -485,15 +493,38 @@ function runChain({ dry = false, maxStages = 6, stageOverride = null } = {}) {
   // session to redo the same thing. Depth is the honest completion signal here, because the
   // stage's own exit code is not one.
   const before = {};
-  for (let i = 0; i < maxStages; i++) {
-    const p = plan({ stageOverride: i === 0 ? stageOverride : null });
+  // ⚠ A stalled stage CEDES ITS TURN; it does not end the day. This `break`ed the whole chain,
+  // which contradicted its own note ("not repeating IT this chain") and the comment above.
+  // Measured 2026-10-04: research stalled on a phantom-blocked backtest, the chain stopped, and
+  // normalize never got another turn despite 35 queued strategies and 124 unspent budget minutes.
+  // Four consecutive days read as "the day finished" when a later stage had simply stalled.
+  const stalled = new Set();
+  // The counter advances only on a stage we actually EXECUTE — an exclusion must not burn one of
+  // the maxStages slots, or excluding the stages would itself end the chain early. Termination is
+  // guaranteed by `stalled` growing monotonically toward PRIORITY.length, with the defensive
+  // break below as a backstop.
+  for (let i = 0; i < maxStages; ) {
+    const p = plan({ stageOverride: i === 0 ? stageOverride : null, exclude: [...stalled] });
+
+    if (!p.stage) {
+      log.push({ stage: '—', outcome: 'exhausted', note: p.why });
+      break;
+    }
+    if (stalled.has(p.stage)) {        // cannot happen via plan(); guards against a future change
+      log.push({ stage: p.stage, outcome: 'planner-loop',
+                 note: 'planner re-proposed a stalled stage — stopping rather than looping' });
+      break;
+    }
 
     if (before[p.stage] != null && depth(p.stage, p.q) >= before[p.stage]) {
       log.push({ stage: p.stage, outcome: 'no-progress',
-                 note: `queue still ${depth(p.stage, p.q)} after running — not repeating it this chain` });
-      break;
+                 note: `queue still ${depth(p.stage, p.q)} after running — ceding its turn ` +
+                       `to the next stage (not repeated this chain)` });
+      stalled.add(p.stage);
+      continue;                        // no i++ — see the counter note above
     }
     before[p.stage] = depth(p.stage, p.q);
+    i++;
 
     if (p.budget.ok && p.budget.used >= USAGE_LIMIT && p.stage !== 'discover') {
       log.push({ stage: p.stage, outcome: 'budget-spent',
