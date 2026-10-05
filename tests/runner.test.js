@@ -380,3 +380,63 @@ ckt('cancel targets our run and confirms it stopped', async (t) => {
     cka.doesNotMatch(fn, /run\.length === 1 \? run\[0\]\.id : null/, 'the count selector is gone');
   });
 });
+
+/**
+ * The executor does NOT apply the harness, and must say so.
+ *
+ * The pins live in strategy-normalize.js's OVERRIDE (appended to a temp copy) and in
+ * enhance/strategy_template.py (for generated candidates). Neither is in the executor. So calling
+ * it on a raw strategies/*.py measures the AUTHOR'S bench, and nothing about the output said so:
+ * same SUMMARY, same status, same series capture.
+ *
+ * Measured 2026-10-05: three strategies were measured that way and read as epoch-6 results. One
+ * returned 1,642,281% at sharpe 301 with a 75.8% daily win rate — lookahead that avoid_future_data
+ * exists to block. Two were used to declare existing `no-trades` rows false. All reverted,
+ * including rows already written into wiki `normalized:` blocks (the ledger's durable backup).
+ */
+const upt = require('node:test');
+const upa = require('node:assert');
+const upfs = require('fs');
+const uppath = require('path');
+
+upt('an un-pinned source is refused before anything is spent', async (t) => {
+  const ROOT2 = uppath.join(__dirname, '..');
+  const src = upfs.readFileSync(uppath.join(ROOT2, 'utils/strategy-post-backtest.js'), 'utf8');
+
+  await t.test('the check exists and refuses by default', () => {
+    upa.match(src, /function missingPins\(code\)/);
+    upa.match(src, /UNPINNED-STOP\\tmissing=/, 'it must emit a parseable marker');
+    upa.match(src, /JQ_ALLOW_UNPINNED !== '1'/, 'the override must be explicit, like JQ_ALLOW_OOS');
+  });
+
+  await t.test('it runs BEFORE the browser, so a refusal costs nothing', () => {
+    const at = src.indexOf('UNPINNED-STOP');
+    const browserDecl = src.indexOf('let browser;');
+    upa.ok(at > 0 && browserDecl > at,
+      'the check must precede browser setup — and must not touch `browser`, which would be a TDZ ReferenceError');
+    const block = src.slice(at, src.indexOf("return { status: 'unpinned-stop' }", at));
+    upa.doesNotMatch(block, /browser\./, 'browser is not in scope yet');
+  });
+
+  await t.test('both legitimate paths carry every marker the check looks for', () => {
+    // If a real path lacked one of these, the guard would refuse valid work.
+    const markers = (src.match(/const PIN_MARKERS = \[([^\]]*)\]/) || [])[1]
+      .split(',').map(x => x.trim().replace(/^'|'$/g, '')).filter(Boolean);
+    upa.ok(markers.length >= 3, `expected the pin markers, got ${markers.join(',')}`);
+    const override = require('../utils/strategy-normalize').OVERRIDE;
+    const template = upfs.readFileSync(uppath.join(ROOT2, 'enhance/strategy_template.py'), 'utf8');
+    for (const m of markers) {
+      upa.ok(override.includes(m), `strategy-normalize OVERRIDE must contain ${m}`);
+      upa.ok(template.includes(m), `enhance/strategy_template.py must contain ${m}`);
+    }
+  });
+
+  await t.test('the normalizer stops loudly if its own injection ever breaks', () => {
+    const norm = upfs.readFileSync(uppath.join(ROOT2, 'utils/strategy-normalize.js'), 'utf8');
+    upa.match(norm, /UNPINNED-STOP\\t/, 'the marker must be recognised');
+    const at = norm.indexOf("startsWith('UNPINNED-STOP");
+    const block = norm.slice(at, at + 700);
+    upa.doesNotMatch(block, /appendRow/, 'it must not record a row against the strategy');
+    upa.match(block, /break;/);
+  });
+});

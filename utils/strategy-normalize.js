@@ -342,6 +342,18 @@ function main() {
     // Worse, a `crash` row plus an older terminal row made those files invisible to the backfill
     // (see normalize-backfill.js), so they were stranded with no path back. Handled like
     // USAGE-STOP: the batch stops, nothing is written against the strategy.
+    // UNPINNED-STOP means the child was handed a source with no harness pins. From HERE that is
+    // impossible by construction — this function appends OVERRIDE to the temp copy — so seeing it
+    // means the injection broke, and every row produced after it would belong to the author's
+    // bench rather than the epoch's. Stop the batch loudly; do not blame the strategy.
+    const up = out.split('\n').find(l => l.startsWith('UNPINNED-STOP\t'));
+    if (up) {
+      console.error(`[normalize] ⚠⚠ UNPINNED-STOP for ${f}: ${up.replace(/^UNPINNED-STOP\t/, '')}`);
+      console.error('[normalize] the OVERRIDE injection is broken — results would be the author\'s ' +
+                    'bench, not epoch ' + ACTIVE_EPOCH + '. Stopping without recording anything.');
+      break;
+    }
+
     const cs = out.split('\n').find(l => l.startsWith('CONCURRENT-STOP\t'));
     if (cs) {
       const m = cs.match(/running=(\d+)/);

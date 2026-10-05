@@ -559,6 +559,31 @@ async function fetchRunState(page, algorithmId) {
 // (jQuery-style, so it also sends X-Requested-With: XMLHttpRequest — required, else JQ
 // returns a full error page). backtestId is the hidden #backtestId input on the editor
 // page. We call it directly, which reliably stops the run AND works for any backtest id.
+/**
+ * Is the submitted source actually running on the frozen bench?
+ *
+ * ⚠ THE EXECUTOR DOES NOT APPLY THE HARNESS. The pins live in two places and neither is here:
+ * `strategy-normalize.js` appends its OVERRIDE to a temp copy and then calls this script on that
+ * copy, and `enhance/strategy_template.py` carries the same literals for generated candidates.
+ * Call this script on a raw `strategies/*.py` and it runs the AUTHOR'S bench — no
+ * avoid_future_data, no pinned stock/fund costs, no order_volume_ratio, no py2to3.
+ *
+ * That is not theoretical. On 2026-10-05 three strategies were measured this way and read as
+ * epoch-6 results; one returned 1,642,281% at sharpe 301 (a 75.8% daily win rate — plainly
+ * lookahead that avoid_future_data exists to block), and two produced numbers that were used to
+ * declare existing `no-trades` ledger rows false. All of it had to be reverted, including rows
+ * already written into wiki `normalized:` blocks, the ledger's durable backup.
+ *
+ * Nothing distinguished those runs from real ones: same SUMMARY line, same status, same series
+ * capture. So refuse by default, and make the override explicit and loud — the same shape as
+ * JQ_ALLOW_OOS and JQ_ALLOW_REVAL.
+ */
+const PIN_MARKERS = ['avoid_future_data', 'order_volume_ratio', 'set_order_cost'];
+
+function missingPins(code) {
+  return PIN_MARKERS.filter(m => !code.includes(m));
+}
+
 /** Entries still listed, with the fields needed to identify one without using an id. */
 async function readRunning(page) {
   return page.evaluate(async () => {
@@ -1210,6 +1235,28 @@ async function main() {
   const code  = strategy.sourceCode;
   console.log(`[post] Strategy: "${title}" (${code.length} chars)` +
               (window ? ` | window=${window.name} ${window.start}→${window.end}` : ' | window=adhoc'));
+
+  // ── Is this the frozen bench, or the author's? Refuse before spending anything.
+  const missing = missingPins(code);
+  if (missing.length) {
+    if (process.env.JQ_ALLOW_UNPINNED !== '1') {
+      console.log(`UNPINNED-STOP\tmissing=${missing.join(',')}`);
+      console.log(`[post] ✋ This source carries none of the harness pins (${missing.join(', ')}).`);
+      console.log('[post]    The executor does NOT inject them — strategy-normalize.js appends its');
+      console.log('[post]    OVERRIDE to a temp copy, and enhance candidates carry the literals from');
+      console.log('[post]    enhance/strategy_template.py. Running a raw strategies/*.py here measures');
+      console.log("[post]    the AUTHOR'S bench, and the result is indistinguishable from a real one.");
+      console.log('[post]    For a measurement: node utils/strategy-normalize.js --files <name>.py');
+      console.log('[post]    For a deliberate un-pinned probe: JQ_ALLOW_UNPINNED=1 (never for a ledger row).');
+      // No browser to close: this check runs BEFORE browser setup (`let browser` is declared
+      // further down, so touching it here is a temporal-dead-zone ReferenceError). Refusing
+      // before CDP also means an un-pinned call costs nothing at all.
+      return { status: 'unpinned-stop' };
+    }
+    console.log(`[post] ⚠⚠ UNPINNED RUN (JQ_ALLOW_UNPINNED=1): missing ${missing.join(', ')}. ` +
+                'This is the AUTHOR\'s bench, not the frozen one — the number it produces belongs ' +
+                'to no epoch and must never be written to the ledger or a wiki normalized: block.');
+  }
 
   // ----------------------------------------------------------------
   // Browser setup
