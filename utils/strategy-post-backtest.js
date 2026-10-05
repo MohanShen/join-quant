@@ -559,19 +559,86 @@ async function fetchRunState(page, algorithmId) {
 // (jQuery-style, so it also sends X-Requested-With: XMLHttpRequest — required, else JQ
 // returns a full error page). backtestId is the hidden #backtestId input on the editor
 // page. We call it directly, which reliably stops the run AND works for any backtest id.
+/** Entries still listed, with the fields needed to identify one without using an id. */
+async function readRunning(page) {
+  return page.evaluate(async () => {
+    try {
+      const j = await (await fetch('/algorithm/index/statistics', { credentials: 'include' })).json();
+      return ((j && j.data && j.data.running) || []).map(r => ({ id: r.id, usedSec: r.usedSec, time: r.time }));
+    } catch { return null; }
+  });
+}
+
+/**
+ * Cancel the backtest this process started.
+ *
+ * ## Identifying our run (measured 2026-10-05)
+ *
+ * The old rule was `run.length === 1 ? run[0].id : null` — "sequential batch, so the single entry
+ * is ours". Two measurements broke it:
+ *
+ *   - the editor's `#backtestId` is PRESENT BUT EMPTY on the page this process holds (that page
+ *     was created before the run started), so the `onPage` shortcut never fires mid-run and the
+ *     count rule is the ONLY selector;
+ *   - the account can legitimately carry other entries — `concurrencyGate` now tolerates a
+ *     zombie past our cap — so `length === 1` is false exactly when a cancel matters most, and
+ *     the function then returned null and cancelled NOTHING, silently.
+ *
+ * So pick the youngest entry at or under our cap. ⚠ With a GRACE: the run being cancelled is by
+ * definition sitting at the cap (that is why we are cancelling it), so a strict `<= capMin`
+ * would exclude the very run we are here for.
+ *
+ * ## Verifying it (measured 2026-10-05)
+ *
+ * `status:"0"` is NOT proof the run stopped. An abandoned run returned `status:"0"` and stayed
+ * listed for another 7 minutes; the same run, asked from its own editor page, answered
+ * `{"status":"2","code":"20000","msg":"在此状态不能取消"}`. So a success code was returned for a
+ * cancel that did not happen, and this function logged "⏹ cancelled" on the strength of it.
+ *
+ * Verification cannot compare ids — JoinQuant re-mints them per request (three different ids were
+ * observed for one run). It uses `time`, the entry's start timestamp, which is stable.
+ *
+ * A run that cannot be cancelled is a zombie: it bills nothing (~1 min of quota, its log stops
+ * within days of the window start) but stays in `running[]` for hours. Saying so is the whole
+ * point — a false "cancelled" is what let these accumulate unnoticed.
+ */
+const CANCEL_AGE_GRACE_MIN = 3;
+
+/**
+ * Which listed entry is the run THIS process started? Pure, so the grace below is testable.
+ *
+ * @param {Array<{id:string,usedSec:string,time:string}>} rows  running[] as read
+ * @param {number} capMin  our own slow-skip cap
+ */
+function pickOurRun(rows, capMin) {
+  const age = r => parseCnDuration(r.usedSec);
+  return (rows || [])
+    // ⚠ The GRACE is load-bearing. The run being cancelled is by definition sitting AT the cap —
+    // that is why we are cancelling it — so a strict `<= capMin` excludes the very run we are
+    // here for, and the function would return nothing on its main code path.
+    .filter(r => age(r) <= capMin + CANCEL_AGE_GRACE_MIN)
+    .sort((a, b) => age(a) - age(b))[0] || null;
+}
+
 async function cancelBacktest(editorPage) {
   try {
-    // backtestId is usually not on the editor DOM during a run; get it from the statistics
-    // running list (sequential batch → the single running entry is ours).
-    const bid = await editorPage.evaluate(async () => {
-      const onPage = document.getElementById('backtestId')?.value;
-      if (onPage) return onPage;
-      try {
-        const run = (await (await fetch('/algorithm/index/statistics', { credentials: 'include' })).json()).data.running || [];
-        return run.length === 1 ? run[0].id : null;
-      } catch { return null; }
-    });
-    if (!bid) { console.log('\n[post] ⚠ cancel: no backtestId found (backtest may not have started)'); return false; }
+    const capMin = Math.max(1, Math.round(MAX_POLL_MS / 60000));
+    const rows = await readRunning(editorPage);
+    if (rows == null) { console.log('\n[post] ⚠ cancel: could not read running[]'); return false; }
+    if (!rows.length) { console.log('\n[post] cancel: nothing is running — already stopped'); return true; }
+
+    const target = pickOurRun(rows, capMin);
+    if (!target) {
+      console.log(`\n[post] ⚠ cancel: ${rows.length} entr(y/ies) listed but every one is past our ` +
+                  `${capMin}min cap — none of them is a run this process started, so there is ` +
+                  'nothing here to cancel.');
+      return false;
+    }
+    const onPage = await editorPage.evaluate(() => document.getElementById('backtestId')?.value || null);
+    const bid = onPage || target.id;
+    console.log(`\n[post] cancel: targeting the run started ${target.time} (age ${target.usedSec}, ` +
+                `id via ${onPage ? 'DOM' : 'running[] youngest-under-cap'})`);
+
     // The cancel API is flaky — returns {"status":"2",msg:"系统繁忙"} intermittently; success is
     // status:"0". Retry a few times.
     for (let attempt = 1; attempt <= 5; attempt++) {
@@ -587,7 +654,27 @@ async function cancelBacktest(editorPage) {
           return { ok, body: body.replace(/\s+/g, ' ').slice(0, 70) };
         } catch (e) { return { ok: false, body: String(e).slice(0, 70) }; }
       }, bid);
-      if (r.ok) { console.log(`\n[post] ⏹ cancelled backtestId=${bid.slice(0, 8)} (attempt ${attempt})`); await sleep(1000); return true; }
+      if (r.ok) {
+        // ⚠ Accepted is not stopped. Confirm the entry actually left running[], matched on its
+        // start time because ids are re-minted.
+        let gone = false;
+        for (let check = 1; check <= 4 && !gone; check++) {
+          await sleep(2000);
+          const now = await readRunning(editorPage);
+          if (now == null) break;                       // unreadable: do not claim either way
+          gone = !now.some(x => x.time === target.time);
+        }
+        if (gone) {
+          console.log(`[post] ⏹ cancelled backtestId=${bid.slice(0, 8)} (attempt ${attempt}) — confirmed gone`);
+          return true;
+        }
+        console.log(`[post] ⚠ cancel returned status:0 but the run started ${target.time} is STILL ` +
+                    'listed after 8s. JoinQuant accepted a cancel it did not perform — this is now ' +
+                    'a ZOMBIE entry: it bills ~nothing but occupies running[] for hours. ' +
+                    'Tolerated downstream (concurrencyGate ages it out, pollUntilComplete counts ' +
+                    'it as baseline), not fixable from here.');
+        return false;
+      }
       console.log(`\n[post] cancel attempt ${attempt}: ${r.body}`);
       await sleep(4000);
     }
@@ -842,7 +929,7 @@ function numPct(s) {
 // can grep (single line, tab-separated):
 //   SUMMARY\t<window>\t<start>\t<end>\t<days>\t<total%>\t<annual%>\t<sharpe>\t<maxdd%>\t<status>
 // annual% is computed from total% over the actual window (JQ gives only total).
-// status ∈ completed | window-mismatch | no-trades | failed
+// status ∈ completed | window-mismatch | no-trades | scrape-zero | failed
 //
 // A backtest that placed NO orders returns 策略收益 0.00% and 最大回撤 0.00%.
 // Because 0 is not null, this used to be logged as a perfectly good `completed`
@@ -879,6 +966,12 @@ function reportResult(title, algorithmId, result, requestedWindow) {
   if (result && result.success && totalPct == null) {
     // Poll saw 完成 but no parseable metrics row (e.g. strategy made no trades).
     console.log(`Status:      ⚠ 回测完成但无可解析指标 — 视为 failed，不可记账`);
+  } else if (result && result.success && result.zeroUnverified) {
+    // Verified against the curve: the panel was read before it populated. NOT no-trades, and not
+    // a result either — there is nothing trustworthy to record, so it must be re-run.
+    status = 'scrape-zero';
+    console.log(`Status:      ⚠ 面板读到 0.00%/0.00%，但曲线有 ${result.curveNonZero} 个非零交易日` +
+                `（终值 ${result.curveFinalPct}%）— 抓取过早，非零成交。可重试，不入账`);
   } else if (result && result.success && isNoTradeRun(totalPct, maxddPct)) {
     // A run that placed no orders comes back as a tidy 0.00% / 0.00% and would
     // otherwise be logged as a legitimate `completed` result. See isNoTradeRun.
@@ -953,24 +1046,76 @@ function reportResult(title, algorithmId, result, requestedWindow) {
 // we resolve it from the algorithm's own buildList HTML and confirm by asking for the series:
 // the id that returns a curve is the right one. (Ids are re-minted per request — CLAUDE.md —
 // so this is a lookup, never a stored key.)
+/**
+ * The algorithm's newest backtestId that actually serves a curve.
+ *
+ * Shared by captureSeries and verifyZeroResult rather than copied: ids are re-minted per request,
+ * so resolution has to happen next to the use, and two copies of that rule would be free to drift.
+ */
+async function resolveCurveBacktestId(page, algorithmId) {
+  return page.evaluate(async (alg) => {
+    const t = await (await fetch(`/algorithm/backtest/buildList?algorithmId=${alg}`,
+      { credentials: 'include' })).text();
+    const ids = [...new Set([...t.matchAll(/backtestId[=":\s]+([a-f0-9]{32})/g)].map(m => m[1]))];
+    for (const id of ids) {
+      try {
+        const j = await (await fetch(
+          `/algorithm/backtest/result?backtestId=${id}&offset=0&userRecordOffset=0&ajax=1`,
+          { credentials: 'include' })).json();
+        const o = j && j.data && j.data.result && j.data.result.overallReturn;
+        if (o && o.time && o.time.length) return id;
+      } catch {}
+    }
+    return null;
+  }, algorithmId);
+}
+
+/**
+ * A 0.00% / 0.00% panel is AMBIGUOUS. Decide it against the curve.
+ *
+ * `isNoTradeRun` is `total === 0 && maxdd === 0`, which cannot tell "the strategy placed no
+ * orders" from "the panel was read before it populated". Measured 2026-10-05: 0ff0ddba was
+ * recorded `no-trades` (0.00/0.00) and, re-run at the same epoch, returned −14.82% / maxdd 32.62
+ * with 483 of 484 non-zero days on its curve. The same check condemns 33b1b1e3, whose stored
+ * curve finishes at +101.33%.
+ *
+ * That matters more than an ordinary wrong row: `no-trades` is TERMINAL and non-retriable, so a
+ * false one permanently writes off a strategy that trades, and prunes it from the queue.
+ *
+ * ⚠ It deliberately does NOT rewrite the metrics from the curve. The ledger's return/maxdd are
+ * scraped-panel figures by convention, and silently swapping in a differently-derived number is
+ * the provenance-mixing this repo already pays for elsewhere (factor-board figures, epoch
+ * columns). It only refuses the false verdict and hands back a RETRIABLE status, so the run is
+ * repeated and the panel scraped properly.
+ */
+async function verifyZeroResult(page, algorithmId, result) {
+  if (!result || !result.success || !result.row) return result;
+  if (!isNoTradeRun(numPct(result.row.return_), numPct(result.row.maxdd))) return result;
+  console.log('[post] 0.00%/0.00% panel — ambiguous (no trades, or read before it populated). ' +
+              'Checking the curve...');
+  try {
+    const series = require('./backtest-series');
+    const bid = await resolveCurveBacktestId(page, algorithmId);
+    if (!bid) { console.log('[post] no curve available — accepting 0/0 as no-trades'); return result; }
+    const rec = series.toRecord(await series.fetchViaPage(page, bid), { backtestId: bid });
+    const cum = (rec && rec.cum) || [];
+    const nz = cum.filter(v => Math.abs(v) > 1e-9).length;
+    if (!nz) { console.log(`[post] curve is flat over ${cum.length}d — genuinely no trades`); return result; }
+    console.log(`[post] ⚠ SCRAPE ARTEFACT: the curve has ${nz}/${cum.length} non-zero days and ` +
+                `finishes at ${cum[cum.length - 1]}% — this strategy TRADES. The 0.00%/0.00% panel ` +
+                'was read before it populated. Refusing to record no-trades (which is terminal); ' +
+                'this run is retriable instead.');
+    return { ...result, zeroUnverified: true, curveFinalPct: cum[cum.length - 1], curveNonZero: nz };
+  } catch (e) {
+    console.log(`[post] curve check failed (${String(e.message).slice(0, 60)}) — accepting 0/0`);
+    return result;
+  }
+}
+
 async function captureSeries(page, algorithmId, strategyPath, window) {
   const series = require('./backtest-series');
   try {
-    const found = await page.evaluate(async (alg) => {
-      const t = await (await fetch(`/algorithm/backtest/buildList?algorithmId=${alg}`,
-        { credentials: 'include' })).text();
-      const ids = [...new Set([...t.matchAll(/backtestId[=":\s]+([a-f0-9]{32})/g)].map(m => m[1]))];
-      for (const id of ids) {
-        try {
-          const j = await (await fetch(
-            `/algorithm/backtest/result?backtestId=${id}&offset=0&userRecordOffset=0&ajax=1`,
-            { credentials: 'include' })).json();
-          const o = j && j.data && j.data.result && j.data.result.overallReturn;
-          if (o && o.time && o.time.length) return id;
-        } catch {}
-      }
-      return null;
-    }, algorithmId);
+    const found = await resolveCurveBacktestId(page, algorithmId);
     if (!found) { console.log('[series] ⚠ no backtestId with a curve — series not captured'); return null; }
 
     const raw = await series.fetchViaPage(page, found);
@@ -1125,7 +1270,8 @@ async function main() {
     const result = bt.error
       ? { success: false, error: bt.error, rateLimited: bt.rateLimited }
       : await pollUntilComplete(editorPage, algorithmId, { baseline: gate.baseline });
-    const st = reportResult(title, algorithmId, result, window);
+    const verified = await verifyZeroResult(editorPage, algorithmId, result);
+    const st = reportResult(title, algorithmId, verified, window);
     if (st === 'completed') await captureSeries(editorPage, algorithmId, strategyPath, window);
     recordValIfCompleted(st, family, title, window, result);
     // Do NOT close editorPage — it IS the logged-in hub tab now (reused, not created).
@@ -1194,7 +1340,8 @@ async function main() {
     const result = bt.error
       ? { success: false, error: bt.error, rateLimited: bt.rateLimited }
       : await pollUntilComplete(editorPage2, algorithmId, { baseline: gate2.baseline });
-    const st2 = reportResult(title, algorithmId, result, window);
+    const verified2 = await verifyZeroResult(editorPage2, algorithmId, result);
+    const st2 = reportResult(title, algorithmId, verified2, window);
     if (st2 === 'completed') await captureSeries(editorPage2, algorithmId, strategyPath, window);
     recordValIfCompleted(st2, family, title, window, result);
     try { await editorPage2.close(); } catch {}
@@ -1216,4 +1363,4 @@ if (require.main === module) {
 }
 
 module.exports = { parseArgs, concurrencyGate, usageGate, parseCnDuration,
-                   completionStep, WINDOWS };
+                   completionStep, pickOurRun, isNoTradeRun, WINDOWS };

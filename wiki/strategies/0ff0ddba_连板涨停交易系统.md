@@ -14,6 +14,7 @@ factors:
 ingestedAt: 2026-06-27
 codeLines: 1454
 stats: { annualReturn: 1.89, sharpe: 6.03, maxDrawdown: 0.092, periodLabel: 2026-04 }
+normalized: { epoch: 6, window: "TRAIN 2022-2023", annualReturn: -0.0772, sharpe: -0.48, maxDrawdown: 0.3262, objective: -0.4034, gate: fail }
 ---
 
 # 连板涨停策略交易系统_V1.100

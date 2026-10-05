@@ -63,6 +63,55 @@ function factorsYaml(f) {
 const pct = x => (x * 100).toFixed(1).replace(/\.0$/, '') + '%';
 const safe = t => t.replace(/[\\/:*?"<>|#\[\]]/g, '').replace(/\s+/g, '').slice(0, 24);
 
+/**
+ * The `normalized:` frontmatter line — ONE builder, used by both the create and the stamp path.
+ *
+ * CLAUDE.md designates this line the DURABLE BACKUP of harness/normalize-*.tsv, which is
+ * gitignored and has already regressed from ~119 rows to 18 once. Two copies of its format would
+ * be free to drift, and `normalize-ledger-rebuild.js` parses it.
+ */
+function normalizedLine(metrics) {
+  const harness = require('./harness-config');
+  const a = metrics.annual / 100, m = metrics.maxdd / 100;
+  const epoch = metrics.epoch != null ? metrics.epoch : harness.config().epoch;
+  return `normalized: { epoch: ${epoch}, window: "TRAIN 2022-2023", annualReturn: ${a.toFixed(4)}` +
+         `, sharpe: ${metrics.sharpe}, maxDrawdown: ${m.toFixed(4)}, objective: ${metrics.obj}` +
+         `, gate: ${metrics.gate} }`;
+}
+
+/**
+ * Write the measurement onto a page that ALREADY EXISTS.
+ *
+ * ⚠ createStub used to `return { existed: true }` and write nothing at all. So any strategy that
+ * already had a page — one from /ingest-strategy, or an earlier pass — never received a
+ * `normalized:` block when it was measured, and its measurement lived ONLY in the gitignored
+ * ledger. Measured 2026-10-05: 16 of 136 normalized rows were in that state, unrecoverable by
+ * `normalize-ledger-rebuild.js` if the ledger regressed again.
+ *
+ * Touches nothing but that one frontmatter line, and is idempotent: an unchanged line is not
+ * rewritten, so a page's mtime and any human edits elsewhere are left alone.
+ */
+function stampNormalized(file, metrics) {
+  if (!metrics || metrics.annual == null || metrics.sharpe == null) return 'no-metrics';
+  let t;
+  try { t = fs.readFileSync(file, 'utf8'); } catch { return 'unreadable'; }
+  if (!t.startsWith('---')) return 'no-frontmatter';      // never guess where to put it
+  const end = t.indexOf('\n---', 3);
+  if (end < 0) return 'no-frontmatter';
+  const line = normalizedLine(metrics);
+  const fm = t.slice(0, end);
+
+  // ⚠ ADD-ONLY. Replacing an existing block was tried and REVERTED the same hour: 74 of these
+  // pages carry fields this builder does not emit (`ranAt`, the measurement date), so rewriting
+  // the line from the ledger silently stripped provenance from 70 pages — the same class of
+  // quiet data loss this whole review is about. The gap being closed here is a MISSING block;
+  // correcting a stale one is a different job and `utils/wiki-epoch-repair.js` already owns it.
+  if (/^normalized:/m.test(fm)) return 'present';
+
+  fs.writeFileSync(file, fm + '\n' + line + t.slice(end));
+  return 'added';
+}
+
 // Create/overwrite a stub page. metrics: {annual%, sharpe, maxdd%, obj, gate}. Returns {path, concepts, existed}.
 function createStub(srcFile, fullSrc, metrics) {
   const postId = headerField(fullSrc, 'postId');
@@ -70,7 +119,13 @@ function createStub(srcFile, fullSrc, metrics) {
   const post = headerField(fullSrc, 'joinquantPost') || (fullSrc.match(/joinquant\.com\/post\/(\d+)/) || [])[0] || '';
   const pid8 = postId.slice(0, 8);
   const existing = fs.readdirSync(SDIR).find(f => f.startsWith(pid8 + '_'));
-  if (existing) return { path: path.join(SDIR, existing), existed: true, concepts: null };
+  if (existing) {
+    // Existing page: still record the measurement. Returning early here is what left 16
+    // measurements with no durable copy outside the gitignored ledger.
+    const full = path.join(SDIR, existing);
+    const stamped = stampNormalized(full, metrics);
+    return { path: full, existed: true, concepts: null, stamped };
+  }
 
   const { concepts, factors } = classify(fullSrc);
   const a = metrics.annual / 100, m = metrics.maxdd / 100;
@@ -114,7 +169,7 @@ ${factorsYaml(factors)}
 ${proposal}ingestedAt: ${new Date().toISOString().slice(0, 10)}
 codeLines: ${fullSrc.split('\n').length}
 stats: { 绩效未公开: true }
-normalized: { epoch: ${epoch}, window: "TRAIN 2022-2023", annualReturn: ${a.toFixed(4)}, sharpe: ${metrics.sharpe}, maxDrawdown: ${m.toFixed(4)}, objective: ${metrics.obj}, gate: ${metrics.gate} }
+${normalizedLine(metrics)}
 autoStub: true
 ---
 
@@ -165,4 +220,4 @@ function regenConceptTables() {
   return n;
 }
 
-module.exports = { classify, createStub, regenConceptTables, headerField };
+module.exports = { stampNormalized, normalizedLine, classify, createStub, regenConceptTables, headerField };

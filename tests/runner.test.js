@@ -324,3 +324,59 @@ cst2('the completion state machine', async (t) => {
     csa2.deepStrictEqual(st, S0, 'the loop reassigns from the return value; mutation would alias');
   });
 });
+
+/**
+ * Cancelling the right run, and knowing whether it worked.
+ *
+ * Both measured on 2026-10-05 by killing a stage mid-backtest:
+ *  - `#backtestId` is present but EMPTY on the page the executor holds, so the count rule was
+ *    the only selector, and `length === 1` is false exactly when a cancel matters most.
+ *  - `status:"0"` was returned for a cancel that did not happen: the run stayed listed 7 more
+ *    minutes, and from its own editor page the API said 在此状态不能取消. The executor logged
+ *    "⏹ cancelled" on the strength of that code.
+ */
+const ckt = require('node:test');
+const cka = require('node:assert');
+const { pickOurRun } = require('../utils/strategy-post-backtest');
+const ckfs = require('fs');
+const ckpath = require('path');
+
+ckt('cancel targets our run and confirms it stopped', async (t) => {
+  const row = (usedSec, time) => ({ id: 'x'.repeat(32), usedSec, time });
+
+  await t.test('a run sitting AT the cap is still selected', () => {
+    // The main code path: we cancel because it reached the cap, so a strict `<= cap` would
+    // have excluded it and cancelled nothing.
+    cka.ok(pickOurRun([row('45分02秒', 't1')], 45), 'the run at the cap is the one being cancelled');
+    cka.ok(pickOurRun([row('30分00秒', 't1')], 30));
+  });
+
+  await t.test('a zombie past the cap is never selected', () => {
+    cka.strictEqual(pickOurRun([row('701分34秒', 'z')], 45), null,
+      'cancelling a zombie is what returns status:0 and does nothing');
+    cka.strictEqual(pickOurRun([], 45), null);
+  });
+
+  await t.test('with a zombie present it picks OURS, where length===1 gave up', () => {
+    const picked = pickOurRun([row('701分34秒', 'zombie'), row('02分10秒', 'ours')], 45);
+    cka.strictEqual(picked && picked.time, 'ours');
+  });
+
+  await t.test('among several candidates it takes the youngest', () => {
+    const picked = pickOurRun([row('40分00秒', 'older'), row('01分00秒', 'newest')], 45);
+    cka.strictEqual(picked && picked.time, 'newest');
+  });
+
+  await t.test('success is verified against running[], not the status code', () => {
+    const src = ckfs.readFileSync(ckpath.join(__dirname, '../utils/strategy-post-backtest.js'), 'utf8');
+    const fn = src.slice(src.indexOf('async function cancelBacktest'), src.indexOf('// Detect a compile/runtime error'));
+    cka.match(fn, /gone = !now\.some\(x => x\.time === target\.time\)/,
+      'verification must match on start time — ids are re-minted per request');
+    cka.match(fn, /confirmed gone/, 'only a confirmed stop may report success');
+    cka.match(fn, /ZOMBIE entry/, 'an accepted-but-not-stopped cancel must say so');
+    // The old unconditional claim on status:0 is the bug.
+    cka.doesNotMatch(fn, /if \(r\.ok\) \{ console\.log\(`\\n\[post\] ⏹ cancelled/,
+      'reporting a cancel on the status code alone is what hid these');
+    cka.doesNotMatch(fn, /run\.length === 1 \? run\[0\]\.id : null/, 'the count selector is gone');
+  });
+});

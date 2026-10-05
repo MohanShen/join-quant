@@ -491,3 +491,58 @@ gpt('the pending-queue prune agrees with the normalizer about "done"', async (t)
     gpa.doesNotMatch(daily, /夏普≥2\.5/, 'epoch 5 moved the bar to 1.5');
   });
 });
+
+/**
+ * The durable backup: a measured strategy's `normalized:` block.
+ *
+ * createStub returned early for any EXISTING page and wrote nothing, so a strategy that already
+ * had a page never received the block when it was measured. 16 of 136 normalized rows were in
+ * that state — recoverable only from harness/normalize-train.tsv, which is gitignored and has
+ * regressed from ~119 rows to 18 once.
+ */
+const dbt = require('node:test');
+const dba = require('node:assert');
+const dbfs = require('fs');
+const dbos = require('os');
+const dbpath = require('path');
+const { stampNormalized, normalizedLine } = require('../utils/kb-stub');
+
+dbt('an existing page gets its measurement, without losing anything', async (t) => {
+  const M = { annual: -7.72, sharpe: '-0.48', maxdd: 32.62, obj: '-0.4034', gate: 'fail', epoch: '6' };
+  const tmp = () => dbfs.mkdtempSync(dbpath.join(dbos.tmpdir(), 'kbstub-'));
+  const write = (body) => { const d = tmp(), f = dbpath.join(d, 'p.md'); dbfs.writeFileSync(f, body); return f; };
+
+  await t.test('a page with no block gains one', () => {
+    const f = write('---\npostId: abc\ntitle: x\n---\n\n# x\n');
+    dba.strictEqual(stampNormalized(f, M), 'added');
+    dba.match(dbfs.readFileSync(f, 'utf8'), /^normalized: \{ epoch: 6,/m);
+  });
+
+  await t.test('a page that already has one is LEFT ALONE', () => {
+    // ⚠ This is the regression guard. Rewriting the line from the ledger stripped `ranAt` —
+    // a field this builder does not emit — from 70 tracked pages before it was reverted.
+    const existing = 'normalized: { epoch: 2, window: "TRAIN 2022-2023", annualReturn: 0.4705, ' +
+                     'sharpe: 1.67, maxDrawdown: 0.1740, objective: 0.2965, gate: pass, ranAt: 2026-07-11 }';
+    const f = write(`---\npostId: abc\n${existing}\n---\n\n# x\n`);
+    const before = dbfs.readFileSync(f, 'utf8');
+    dba.strictEqual(stampNormalized(f, M), 'present');
+    dba.strictEqual(dbfs.readFileSync(f, 'utf8'), before, 'not one byte may change');
+    dba.match(dbfs.readFileSync(f, 'utf8'), /ranAt: 2026-07-11/, 'provenance must survive');
+  });
+
+  await t.test('it refuses to guess where there is no frontmatter', () => {
+    dba.strictEqual(stampNormalized(write('# just a heading\n'), M), 'no-frontmatter');
+  });
+
+  await t.test('a row with no metrics writes nothing', () => {
+    dba.strictEqual(stampNormalized(write('---\na: 1\n---\n'), {}), 'no-metrics');
+  });
+
+  await t.test('one builder serves both the create and the stamp path', () => {
+    // Two copies of this format would drift, and normalize-ledger-rebuild.js parses it.
+    const src = dbfs.readFileSync(dbpath.join(__dirname, '../utils/kb-stub.js'), 'utf8');
+    dba.strictEqual((src.match(/window: "TRAIN 2022-2023"/g) || []).length, 1,
+      'the literal must appear exactly once — in normalizedLine');
+    dba.match(normalizedLine(M), /epoch: 6.*sharpe: -0\.48.*gate: fail/);
+  });
+});

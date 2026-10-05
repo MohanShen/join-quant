@@ -213,7 +213,13 @@ function main() {
   const harness = require('./harness-config');
   const ACTIVE_EPOCH = harness.config().epoch;
   const TERMINAL = new Set(['normalized', 'incompatible-futures', 'incompatible-notrunnable', 'failed-final', 'slow-skipped', 'compile-error', 'no-trades']);
-  const RETRIABLE = new Set(['failed', 'crash', 'window-mismatch', 'rate-limited', 'budget-stopped']);
+  // `scrape-zero` is RETRIABLE on purpose: the executor verified against the curve that the
+  // strategy trades and the 0.00%/0.00% panel was simply read too early, so there is nothing to
+  // record and the right answer is to run it again. It must never join TERMINAL — that is exactly
+  // the mistake `no-trades` made for 0ff0ddba, permanently writing off a strategy that returns
+  // -14.82%. The MAX_RETRIES escalation to failed-final still bounds it.
+  const RETRIABLE = new Set(['failed', 'crash', 'window-mismatch', 'rate-limited', 'budget-stopped',
+                             'scrape-zero']);
   const done = new Set();       // sourceFile with a terminal status
   const failCount = {};         // sourceFile -> # prior retriable failures
   if (fs.existsSync(ledgerPath)) {
