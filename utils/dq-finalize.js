@@ -7,6 +7,20 @@
 const fs = require('fs');
 const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
+// ⚠ ENTRY-POINT GUARD. CLAUDE.md: "every entry point in utils/ needs one" — a bare require()
+// of strategy-normalize.js once started a 214-strategy batch and spent 42 of the day's 60
+// backtest minutes. This file was the last of 41 argv-using files in utils/ without a guard, and
+// an accidental require() here is destructive in its own way: the top level writes
+// study/<id>/findings.tsv and wiki/studies/<id>.md and marks a manifest entry done — or, with no
+// argv, calls process.exit(1) and takes the requiring process down with it (the same trap that
+// makes normalize-sync SPAWN wiki-family-build instead of requiring it).
+//
+// Written as an early return rather than a main() wrapper on purpose: the body builds the wiki
+// page from multi-line template literals, so indenting it into a function would silently change
+// the text this writes. `return` at CommonJS module top level is legal — the module body is
+// already inside a function wrapper — and verified on this runtime.
+if (require.main !== module) { module.exports = {}; return; }
+
 const [, , id, category, sharpe, total, annual, maxdd] = process.argv;
 if (!id || !category) { console.error('usage: <id> <category> <sharpe> [total annual maxdd]'); process.exit(1); }
 const mp = path.join(ROOT, 'study', 'manifest.json');

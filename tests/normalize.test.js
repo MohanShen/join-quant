@@ -426,3 +426,68 @@ ddt('a file is normalized at most once per batch', async (t) => {
     dda.deepStrictEqual(dupes, [], `duplicate ledger rows: ${dupes.join(', ')}`);
   });
 });
+
+/**
+ * Two gaps found by reviewing for the SHAPE of earlier bugs rather than for new ones.
+ *
+ * 1. One source of truth, two reading rules. The concurrency gate filtered running[] by age
+ *    while the completion detector counted it unfiltered (97d8067). The same split existed one
+ *    layer up: strategy-normalize.js's done-check is epoch-aware, normalize-daily.js's prune was
+ *    not — so Pipeline 1 dropped files from data/pending-normalize.json that the normalizer still
+ *    considered unmeasured. 92 ledger rows were in that state when this was written.
+ * 2. A missing entry-point guard. A bare require() of strategy-normalize.js once spent 42 of a
+ *    60-minute budget. dq-finalize.js was the last argv-using file in utils/ without one.
+ */
+const gpt = require('node:test');
+const gpa = require('node:assert');
+const gpfs = require('fs');
+const gppath = require('path');
+
+const GP_UTILS = gppath.join(__dirname, '../utils');
+
+gpt('every argv-using entry point in utils/ is guarded', () => {
+  // Generalized on purpose. Asserting dq-finalize.js specifically would not have caught
+  // dq-finalize.js — nothing was looking at the directory as a whole.
+  const unguarded = gpfs.readdirSync(GP_UTILS)
+    .filter(f => f.endsWith('.js'))
+    .filter(f => {
+      const src = gpfs.readFileSync(gppath.join(GP_UTILS, f), 'utf8');
+      return src.includes('process.argv') && !src.includes('require.main');
+    });
+  gpa.deepStrictEqual(unguarded, [],
+    'these run on require() — a bare require of one has already cost 42 backtest minutes: ' +
+    unguarded.join(', '));
+});
+
+gpt('the pending-queue prune agrees with the normalizer about "done"', async (t) => {
+  const daily = gpfs.readFileSync(gppath.join(GP_UTILS, 'normalize-daily.js'), 'utf8');
+  const norm = gpfs.readFileSync(gppath.join(GP_UTILS, 'strategy-normalize.js'), 'utf8');
+
+  await t.test('both decide it the same way: terminal AND epoch-comparable', () => {
+    gpa.match(norm, /TERMINAL\.has\(st\) && harness\.measurementValid\(rowEpoch\)/,
+      'the normalizer is the authority here');
+    gpa.match(daily, /harness\.measurementValid\(rowEpoch\)/,
+      'the prune must apply the epoch half too, or it drops work the bump exists to redo');
+    gpa.match(daily, /TERMINAL\.has\(r\.status\) && r\.measured/,
+      'the prune must require BOTH halves');
+  });
+
+  await t.test('a stale-epoch row is not reported as 完成', () => {
+    // Reporting it as normalized while building no stub would move the disagreement into the
+    // summary rather than removing it.
+    gpa.match(daily, /'stale-epoch'/);
+    gpa.doesNotMatch(daily, /if \(!row \|\| row\[3\] !== 'normalized'\) \{/,
+      'the un-epoched fast path is the bug');
+  });
+
+  await t.test('the stub is stamped with the epoch that measured it', () => {
+    // kb-stub falls back to the ACTIVE epoch when this is absent, and that block is the
+    // ledger's durable backup — the reason 120 pages once claimed a superseded bench.
+    gpa.match(daily, /epoch: rowEpoch/);
+  });
+
+  await t.test('the gate bar is read live, not hard-coded', () => {
+    gpa.match(daily, /harness\.stageThreshold\('normalize'\)/);
+    gpa.doesNotMatch(daily, /夏普≥2\.5/, 'epoch 5 moved the bar to 1.5');
+  });
+});

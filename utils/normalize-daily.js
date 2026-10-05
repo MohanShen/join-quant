@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const { createStub, regenConceptTables } = require('./kb-stub');
+const harness = require('./harness-config');
 
 const ROOT = path.join(__dirname, '..');
 const STRAT_DIR = path.join(ROOT, 'strategies');
@@ -31,7 +32,10 @@ function ledgerByPid8() {
   if (!fs.existsSync(LEDGER)) return map;
   for (const line of fs.readFileSync(LEDGER, 'utf8').trim().split('\n').slice(1)) {
     const c = line.split('\t');
-    if (c[1]) map[c[1].slice(0, 8)] = c;   // c = [sourceFile,postId,title,status,start,end,days,total,annual,sharpe,maxdd,obj,gate]
+    // Forward loop, so the LAST row for a pid8 wins — the ledger is append-only, so that is
+    // the strategy's current state. c[13] is `epoch`, added when the bench gained one; this
+    // comment used to stop at `gate` and the column was simply not read.
+    if (c[1]) map[c[1].slice(0, 8)] = c;   // [sourceFile,postId,title,status,start,end,days,total,annual,sharpe,maxdd,obj,gate,epoch]
   }
   return map;
 }
@@ -84,10 +88,30 @@ function normalizeNew(postIds, { usageLimit = 55 } = {}) {
     const pid8 = (src.match(/^#\s*postId:\s*(\S+)/m) || [])[1]?.slice(0, 8) || (f.match(/-([a-f0-9]{8})\.py$/) || [])[1];
     const pid = pid8ToFull[pid8] || pid8;
     const row = ledAfter[pid8];
-    if (!row || row[3] !== 'normalized') { results.push({ file: f, pid, status: row ? row[3] : 'not-run' }); continue; }
-    const metrics = { annual: parseFloat(row[8]), sharpe: row[9], maxdd: parseFloat(row[10]), obj: row[11], gate: row[12] };
+    // ⚠ EPOCH-AWARE, mirroring strategy-normalize.js's done-check (`TERMINAL.has(st) &&
+    // harness.measurementValid(rowEpoch)`) rather than inventing a second rule. This file had
+    // none, so it read any `normalized` row as a result and pruned the file from
+    // data/pending-normalize.json — while the normalizer, being epoch-aware, still considered it
+    // unmeasured. Measured 2026-10-05: 92 of the ledger's rows are `normalized` under an epoch
+    // that is not comparable to the active one, so this silently dropped the work the epoch bump
+    // exists to redo. Same shape as the gate/detector split: one source of truth, two rules.
+    const rowEpoch = row ? (row[13] || null) : null;
+    const measured = !!row && harness.measurementValid(rowEpoch);
+    if (!row || row[3] !== 'normalized' || !measured) {
+      // A stale-epoch `normalized` row gets its OWN status, not 'normalized': reporting it as
+      // 完成 while building no stub would be a third disagreement, in the summary this time.
+      const status = !row ? 'not-run'
+        : (row[3] === 'normalized' && !measured) ? 'stale-epoch'
+        : row[3];
+      results.push({ file: f, pid, status, epoch: rowEpoch, measured });
+      continue;
+    }
+    // Stamp the epoch that MEASURED it, not the active one. kb-stub falls back to the active
+    // epoch when this is absent, and that block is the ledger's durable backup.
+    const metrics = { annual: parseFloat(row[8]), sharpe: row[9], maxdd: parseFloat(row[10]),
+                      obj: row[11], gate: row[12], epoch: rowEpoch };
     const stub = createStub('strategies/' + f, src, metrics);
-    results.push({ file: f, pid, title: row[2], status: 'normalized', sharpe: metrics.sharpe, gate: metrics.gate, stub: stub.existed ? 'existing-page' : 'stub-created', concepts: stub.concepts });
+    results.push({ file: f, pid, title: row[2], status: 'normalized', epoch: rowEpoch, measured: true, sharpe: metrics.sharpe, gate: metrics.gate, stub: stub.existed ? 'existing-page' : 'stub-created', concepts: stub.concepts });
   }
 
   const nStub = results.filter(r => r.stub === 'stub-created').length;
@@ -97,12 +121,20 @@ function normalizeNew(postIds, { usageLimit = 55 } = {}) {
   // Mirrors strategy-normalize.js's TERMINAL set — `no-trades` included, or those
   // entries are never pruned from pending-normalize.json and re-run every day.
   const TERMINAL = new Set(['normalized', 'failed-final', 'incompatible-futures', 'incompatible-notrunnable', 'slow-skipped', 'compile-error', 'no-trades']);
+  // `r.measured` is the epoch half of the normalizer's done-check. Without it a terminal row
+  // from an incomparable bench pruned the file out of the normalizer's own input queue.
   const resByPid = {}; for (const r of results) resByPid[r.pid] = r;
-  savePending(pending.filter(pid => { const r = resByPid[pid]; return !(r && TERMINAL.has(r.status)); }));
+  savePending(pending.filter(pid => {
+    const r = resByPid[pid];
+    return !(r && TERMINAL.has(r.status) && r.measured);
+  }));
 
   const norm = results.filter(r => r.status === 'normalized');
   const pass = norm.filter(r => r.gate === 'pass');
-  lines.push(`归一化：${norm.length}/${basenames.length} 完成，${pass.length} 过门槛(夏普≥2.5)，${nStub} 桩页新建`);
+  // The bar is read live, not hard-coded. Epoch 5 moved it 2.5 -> 1.5 and this line kept
+  // claiming 2.5 — the same staleness CLAUDE.md records for kb-stub's `夏普<2.5`.
+  const bar = harness.stageThreshold('normalize');
+  lines.push(`归一化：${norm.length}/${basenames.length} 完成，${pass.length} 过门槛(夏普≥${bar})，${nStub} 桩页新建`);
   for (const r of pass) lines.push(`  ✅ ${r.title}（夏普 ${r.sharpe}）→ [${(r.concepts || []).join('/')}]`);
   const notNorm = results.filter(r => r.status !== 'normalized');
   if (notNorm.length) lines.push(`  ⚠ ${notNorm.length} 个未完成：${notNorm.map(r => r.status).join(',')}`);
