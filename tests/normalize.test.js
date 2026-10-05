@@ -327,10 +327,19 @@ cwt('a concurrent backtest is waited out', async (t) => {
     cwa.doesNotMatch(block, /--timeout-min', '10'|CONCURRENT_WAIT_MIN\b/,
       'a flat wait is what caused the lost budget');
 
-    // And the hopeless case must be told apart from the retriable one.
+    // And a past-cap blocker must be told apart from a live one.
     cwa.match(block, /--cap-min/, 'the waiter needs the cap to apply the age-vs-cap rule');
-    cwa.match(block, /status === 2/, 'exit 2 (phantom past the cap) must be distinguished');
-    cwa.match(block, /PHANTOM/, 'a blocker that can never clear must say so, not say "still blocked"');
+    cwa.match(block, /status === 2/, 'exit 2 (blocker past the cap) must be distinguished');
+
+    // ⚠ This assertion used to demand the word PHANTOM in a STOPPING message, which encoded a
+    // design that lasted one day. A past-cap blocker is a run of ours JQ would not cancel: it
+    // never finishes, so waiting is pointless, but the executor now measures completion against
+    // a baseline that includes it, so it is no longer a reason to stop. The invariant is that
+    // exit 2 RETRIES and only a LIVE run stops the batch.
+    const deadBranch = block.slice(block.indexOf('!cleared && phantom'));
+    cwa.match(deadBranch, /cleared = true/, 'a dead blocker must let the retry proceed');
+    cwa.match(block, /still blocked after \$\{waitMin\}min by a LIVE run/,
+      'only genuine contention may stop the batch');
   });
 
   await t.test('a blocked strategy is retried in place, not consumed', () => {

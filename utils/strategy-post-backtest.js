@@ -418,6 +418,19 @@ async function readQuota(page) {
  * real minutes and a wrong number is worse than a missing one: a refusal is visible, a
  * mis-attributed result is not.
  *
+ * ⚠ What it refuses on is now LIVE contention only. The count is read 0 → ≥1 → 0 against a
+ * BASELINE this gate hands to `pollUntilComplete`, not against zero, because an entry JQ will
+ * not reap sits in `running[]` indefinitely. The two functions disagreed about those: this gate
+ * filtered them out by age, the detector counted them (`running.length`, no filter). So a
+ * lingering entry let a run START and never let it COMPLETE — it spun to MAX_POLL_MS and was
+ * recorded as a slow-skip, which then left another unreapable entry behind it.
+ *
+ * A run older than our own cap is one WE cancelled and JQ refused to drop, so it cannot be live
+ * contention and is tolerated. Residual risk, stated plainly: a human running a backtest longer
+ * than the cap in the JQ UI would also be tolerated. That is acceptable because the panel we
+ * scrape belongs to an algorithmId created this run, so the metrics can only be ours, and the
+ * baseline branch additionally requires that rendered panel before calling the run done.
+ *
  * `JQ_ALLOW_CONCURRENT=1` overrides, for the one legitimate case — a human deliberately
  * running something in the JQ web UI who accepts that the completion signal is degraded.
  */
@@ -452,33 +465,51 @@ async function concurrencyGate(page) {
   });
   if (rows == null) {
     console.log('[post] ⚠ could not read running[] — proceeding, completion signal unverified');
-    return true;
+    return { baseline: 0, live: 0, tolerated: 0 };
   }
 
-  // Split live from phantom on the entry's OWN reported age.
-  const live = [], stale = [];
+  // Three categories, not two. The middle one is what used to cost whole days.
+  //
+  //   young   age <= our own cap        a backtest that can still finish. REAL contention: refuse.
+  //   dead    cap < age <= STALE_MIN    OURS, cancelled at the cap, and JQ refused the cancel
+  //                                     (「在此状态不能取消」). It will never finish. Tolerate it.
+  //   stale   age > STALE_MIN           same thing, just older. Already tolerated.
+  //
+  // ⚠ The old split was two-way at STALE_MIN, and the prose said a past-cap entry "is not one of
+  // ours" because the pipeline caps its own runs — which is backwards. Capping is exactly how it
+  // becomes ours-and-dead. That made every entry between 45 and 120 minutes refuse new work: a
+  // 75-minute dead zone created by our own slow-skip, hit by the research stage on 2026-10-04.
+  const capMin = Math.max(1, Math.round(MAX_POLL_MS / 60000));
+  const young = [], dead = [], stale = [];
   for (const r of rows) {
-    (parseCnDuration(r.usedSec) > CONCURRENT_STALE_MIN ? stale : live).push(r);
+    const age = parseCnDuration(r.usedSec);
+    (age > CONCURRENT_STALE_MIN ? stale : age > capMin ? dead : young).push(r);
   }
-  for (const r of stale) {
-    console.log(`[post] ⚠ ignoring a stale running[] entry: ${r.usedSec} old (> ${CONCURRENT_STALE_MIN}min), ` +
-                'started ' + r.time + '. JQ cannot cancel these and they never complete; ' +
-                'this pipeline caps its own runs well below that, so it is not one of ours.');
+  for (const r of [...dead, ...stale]) {
+    console.log(`[post] ⚠ tolerating an unreapable running[] entry: ${r.usedSec} old ` +
+                `(> our ${capMin}min cap), started ${r.time}. It is a run of ours that JQ would ` +
+                'not cancel; it never completes, so waiting for it is waiting forever.');
   }
-  const running = live.length;
 
-  if (running > 0 && !ALLOW_CONCURRENT) {
-    console.log(`CONCURRENT-STOP\trunning=${running}`);
-    console.log(`[post] ✋ ${running} backtest(s) already running on this account. Refusing to start:`);
-    console.log('[post]    completion is detected from the GLOBAL running count, so a second run');
+  if (young.length > 0 && !ALLOW_CONCURRENT) {
+    console.log(`CONCURRENT-STOP\trunning=${young.length}`);
+    console.log(`[post] ✋ ${young.length} backtest(s) genuinely running on this account. Refusing to start:`);
+    console.log('[post]    completion is detected from the running count, so a second LIVE run');
     console.log('[post]    makes that signal ambiguous and the scraped panel may be the other run\'s.');
     console.log('[post]    Wait for it to finish, or set JQ_ALLOW_CONCURRENT=1 to accept the risk.');
-    return false;
+    return null;
   }
-  if (running > 0) {
-    console.log(`[post] ⚠ JQ_ALLOW_CONCURRENT=1 with ${running} run(s) in flight — metrics may be MIS-ATTRIBUTED.`);
+  if (young.length > 0) {
+    console.log(`[post] ⚠ JQ_ALLOW_CONCURRENT=1 with ${young.length} live run(s) — metrics may be MIS-ATTRIBUTED.`);
   }
-  return true;
+
+  // ⚠ The BASELINE is every entry still listed, dead and stale included — because that is the
+  // number `pollUntilComplete` will actually see. It reads `running.length` with NO age filter,
+  // while this gate filtered by age: the asymmetry meant a lingering entry let runs START and
+  // never let them COMPLETE, so each one spun to its cap and was recorded as a slow-skip.
+  // Handing the count over replaces "done when it reaches 0" with "done when it returns to
+  // where it started", which needs no age reasoning at all.
+  return { baseline: rows.length, live: young.length, tolerated: dead.length + stale.length };
 }
 
 // Pre-start usage gate: if today's used-minutes already meets/exceeds USAGE_LIMIT, do NOT
@@ -603,7 +634,39 @@ async function detectCompileError(page) {
 // no macOS window raise); Phase 2 opens the buildList tab ONCE at the end to scrape metrics
 // (client-rendered, so a raw fetch has no rows). Collapses the old persistent monitoring tab
 // into a single brief activation at completion.
-async function pollUntilComplete(page, algorithmId) {
+/**
+ * The completion state machine, as a pure function.
+ *
+ * Extracted so the invariant can be TESTED. Verifying it live is not reliable: the condition it
+ * exists for — an unreapable `running[]` entry — appears and vanishes on JQ's schedule, so a run
+ * that completes may simply have had a baseline of 0 and exercised the old path. The attempt on
+ * 2026-10-05 was exactly that: the run completed and the entry had disappeared by the time it was
+ * checked, which proves nothing either way.
+ *
+ * @param {{seenRunning:boolean, emptyStreak:number, renderedStreak:number}} st
+ * @param {{runningCount:number, baseline:number, rendered:boolean}} obs
+ * @returns {{seenRunning:boolean, emptyStreak:number, renderedStreak:number, finished:boolean}}
+ */
+function completionStep(st, { runningCount, baseline, rendered }) {
+  // Above the baseline: our run is registered and in flight.
+  if (runningCount > baseline) {
+    return { seenRunning: true, emptyStreak: 0, renderedStreak: 0, finished: false };
+  }
+  // Back at the baseline after having been above it.
+  if (st.seenRunning) {
+    // At baseline 0 that is conclusive — the only run there was, was ours. With something else
+    // listed it is NOT: that entry dropping off reads identically, so require the positive
+    // evidence of our own result panel. The panel belongs to an algorithmId created this run.
+    const evidence = baseline === 0 || rendered;
+    const emptyStreak = evidence ? st.emptyStreak + 1 : 0;
+    return { ...st, emptyStreak, renderedStreak: 0, finished: emptyStreak >= 2 };
+  }
+  // Never observed above baseline — a run fast enough to finish inside the settle wait.
+  const renderedStreak = rendered ? st.renderedStreak + 1 : 0;
+  return { ...st, renderedStreak, finished: renderedStreak >= 2 };
+}
+
+async function pollUntilComplete(page, algorithmId, { baseline = 0 } = {}) {
   const start = Date.now();
 
   // First wait for the backtest to be submitted (JQ redirects to buildList)
@@ -641,6 +704,18 @@ async function pollUntilComplete(page, algorithmId) {
     return /策略收益\s*-?[\d.]+%/.test(t) && /最大回撤\s*-?[\d.]+%/.test(t);
   }).catch(() => false);
 
+  // ⚠ `baseline` is the count of entries already listed when the gate let us through — runs of
+  // ours that JQ would not cancel and that will never finish. This loop reads `running.length`
+  // with no age filter, so with one of those present the count never reaches 0: `seenRunning`
+  // latches true on the first poll, `emptyStreak` can never accumulate, and the run spins to
+  // MAX_POLL_MS and is cancelled as a slow-skip. Every backtest, for as long as the entry lasts.
+  //
+  // Completion is therefore "the count came back to where it started", not "the count reached 0".
+  //
+  // When baseline is 0 the logic below is byte-for-byte the old behaviour — deliberately, because
+  // that is the overwhelmingly common case and the one path already known to work. The baseline
+  // branch only engages in the situation that is 100% broken today, so it cannot regress a
+  // working run.
   let seenRunning = false, emptyStreak = 0, renderedStreak = 0, finished = false;
   while (Date.now() - start < MAX_POLL_MS) {
     const st = await page.evaluate(async () => {
@@ -652,12 +727,14 @@ async function pollUntilComplete(page, algorithmId) {
     });
 
     if (st) {
-      if (st.runningCount > 0) { seenRunning = true; emptyStreak = 0; renderedStreak = 0; }
-      else if (seenRunning) { emptyStreak++; if (emptyStreak >= 2) { finished = true; break; } }
-      else if (await resultsRendered()) {
-        renderedStreak++;
-        if (renderedStreak >= 2) { finished = true; break; }   // finished before we ever saw it run
-      } else { renderedStreak = 0; }
+      // `rendered` is evaluated whenever the count is at or below baseline. At baseline 0 with
+      // seenRunning the step ignores it, so this is one extra cheap DOM read per poll in the
+      // common case and the DECISION is unchanged — worth it to keep the state machine pure.
+      const rendered = st.runningCount > baseline ? false : await resultsRendered();
+      const next = completionStep({ seenRunning, emptyStreak, renderedStreak },
+                                  { runningCount: st.runningCount, baseline, rendered });
+      ({ seenRunning, emptyStreak, renderedStreak } = next);
+      if (next.finished) { finished = true; break; }
     }
 
     // Editor-surfaced compile/runtime error → fast-fail (page stays on the editor, no nav).
@@ -1027,7 +1104,8 @@ async function main() {
 
     // Pre-start usage gate — don't create/run a backtest if we're over the daily limit.
     if (!(await usageGate(hubPage))) { if (browser) { try { await browser.close(); } catch {} } return { status: 'usage-stop' }; }
-    if (!(await concurrencyGate(hubPage))) { if (browser) { try { await browser.close(); } catch {} } return { status: 'concurrent-stop' }; }
+    const gate = await concurrencyGate(hubPage);
+    if (!gate) { if (browser) { try { await browser.close(); } catch {} } return { status: 'concurrent-stop' }; }
 
     // ── Full workflow ────────────────────────────────────────────────
     // REUSE the existing logged-in tab (do NOT ctx.newPage()): opening a new tab
@@ -1046,7 +1124,7 @@ async function main() {
     const bt = await runBacktest(editorPage);
     const result = bt.error
       ? { success: false, error: bt.error, rateLimited: bt.rateLimited }
-      : await pollUntilComplete(editorPage, algorithmId);
+      : await pollUntilComplete(editorPage, algorithmId, { baseline: gate.baseline });
     const st = reportResult(title, algorithmId, result, window);
     if (st === 'completed') await captureSeries(editorPage, algorithmId, strategyPath, window);
     recordValIfCompleted(st, family, title, window, result);
@@ -1101,7 +1179,8 @@ async function main() {
     console.log('[auth] ✅ Persistent profile ready');
 
     if (!(await usageGate(page))) { if (browser) { try { await browser.close(); } catch {} } return { status: 'usage-stop' }; }
-    if (!(await concurrencyGate(page))) { if (browser) { try { await browser.close(); } catch {} } return { status: 'concurrent-stop' }; }
+    const gate2 = await concurrencyGate(page);
+    if (!gate2) { if (browser) { try { await browser.close(); } catch {} } return { status: 'concurrent-stop' }; }
 
     const editorPage2 = await ctx.newPage();
     const algorithmId = await createNewStrategy(editorPage2, baseCapital, window);
@@ -1114,7 +1193,7 @@ async function main() {
     const bt = await runBacktest(editorPage2);
     const result = bt.error
       ? { success: false, error: bt.error, rateLimited: bt.rateLimited }
-      : await pollUntilComplete(editorPage2, algorithmId);
+      : await pollUntilComplete(editorPage2, algorithmId, { baseline: gate2.baseline });
     const st2 = reportResult(title, algorithmId, result, window);
     if (st2 === 'completed') await captureSeries(editorPage2, algorithmId, strategyPath, window);
     recordValIfCompleted(st2, family, title, window, result);
@@ -1136,4 +1215,5 @@ if (require.main === module) {
   main().catch(err => { console.error('Fatal:', err.message); process.exit(1); });
 }
 
-module.exports = { parseArgs, concurrencyGate, usageGate, parseCnDuration, WINDOWS };
+module.exports = { parseArgs, concurrencyGate, usageGate, parseCnDuration,
+                   completionStep, WINDOWS };

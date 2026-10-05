@@ -29,7 +29,8 @@
  * Usage:
  *   node utils/jq-running.js                       # print the count, exit 0 if clear
  *   node utils/jq-running.js --wait --timeout-min 50 --cap-min 45 [--poll-sec 45]
- *     exit 0 = clear, 1 = still busy after the wait, 2 = phantom past the cap (never clears)
+ *     exit 0 = clear, 1 = still busy after the wait (a LIVE run — real contention),
+ *     exit 2 = blocker is past the cap: dead, tolerated by the executor, safe to proceed
  */
 
 const { chromium } = require('playwright');
@@ -98,11 +99,16 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
  *   age <= capMin  ->  ours, still running. WAIT (the caller's timeout should exceed capMin).
  *   age >  capMin  ->  phantom. Do not wait at all; report it and let the caller stop cleanly.
  *
- * ⚠ A phantom is reported, never worked around. `pollUntilComplete` consults its fallback
- * completion signal (`resultsRendered`) ONLY while `runningCount === 0 && !seenRunning`, so with
- * a phantom present `runningCount > 0` forever, the fallback is never reached, and any run that
- * bypassed the gate would spin to its own cap and slow-skip. Proceeding is not merely unsafe for
- * run identity — it cannot succeed. Waiting out STALE_MIN or clearing it by hand are the options.
+ * ⚠ What a phantom MEANS changed once `pollUntilComplete` learned to measure completion against
+ * a baseline instead of against zero. It used to be fatal: the detector counted unreapable
+ * entries, so with one present `runningCount > 0` forever, its `resultsRendered` fallback was
+ * unreachable, and any run that bypassed the gate spun to its cap and slow-skipped. Proceeding
+ * could not succeed, so a phantom had to stop the batch.
+ *
+ * It is now tolerable — the gate admits a past-cap entry and hands its count over as the
+ * baseline. So exit 2 reports "the blocker is dead, proceeding is safe", and a caller should
+ * RETRY rather than stop. The waiter still exists for the case that genuinely needs it: a run
+ * younger than the cap, which can still finish and is real contention.
  *
  * @returns {{cleared:boolean, phantom:boolean, ageMin:number, live:number}}
  */
@@ -125,8 +131,9 @@ async function waitClear({ timeoutMin = 10, pollSec = 45, capMin = 0, quiet = fa
     if (capMin > 0 && age > capMin) {
       if (!quiet) {
         console.log(`[running] ${r.live} in flight and the oldest is ${age.toFixed(0)}min — PAST the ` +
-                    `${capMin}min cap, so it was already cancelled and JQ has not reaped it. ` +
-                    `Waiting cannot clear it (only ${STALE_MIN}min staleness will) — not waiting.`);
+                    `${capMin}min cap, so it was already cancelled and JQ has not reaped it. It ` +
+                    `will never finish, so waiting is pointless; the executor tolerates it as a ` +
+                    `completion baseline, so proceeding is safe.`);
       }
       return { cleared: false, phantom: true, ageMin: age, live: r.live };
     }

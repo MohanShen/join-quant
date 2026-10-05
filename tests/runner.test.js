@@ -189,3 +189,138 @@ test2('backtest runner refuses to start alongside another run', async t => {
     assert2.match(src, /could not read running\[\] — proceeding/);
   });
 });
+
+/**
+ * Completion is measured against a BASELINE, not against zero.
+ *
+ * The gate filtered unreapable `running[]` entries out by age; `pollUntilComplete` counted them
+ * (`running.length`, no filter). That asymmetry meant a lingering entry let a run START and never
+ * let it COMPLETE: `seenRunning` latched true on the first poll, `emptyStreak` could never
+ * accumulate, and the run spun to MAX_POLL_MS and was recorded as a slow-skip — which left
+ * another unreapable entry behind it. Self-reinforcing, and invisible: a slow-skip looks like a
+ * slow strategy.
+ */
+const blt = require('node:test');
+const bla = require('node:assert');
+const blfs = require('fs');
+const blpath = require('path');
+
+blt('completion is relative to a baseline, not to zero', async (t) => {
+  const src = blfs.readFileSync(blpath.join(__dirname, '../utils/strategy-post-backtest.js'), 'utf8');
+
+  await t.test('the detector compares against the baseline', () => {
+    bla.match(src, /async function pollUntilComplete\(page, algorithmId, \{ baseline = 0 \} = \{\}\)/,
+      'it must accept a baseline');
+    bla.match(src, /st\.runningCount > baseline/,
+      'the 0 -> >=1 -> 0 edge must be read against the baseline');
+    bla.doesNotMatch(src, /if \(st\.runningCount > 0\) \{ seenRunning = true/,
+      'comparing against 0 is the bug — a lingering entry never lets the count reach it');
+  });
+
+  await t.test('the baseline counts EVERY entry, not the filtered live ones', () => {
+    // This is the whole fix. A baseline of the age-filtered count would reproduce the original
+    // asymmetry exactly, because the detector reads the unfiltered length.
+    bla.match(src, /baseline: rows\.length/,
+      'the baseline must be what the detector will actually see');
+  });
+
+  await t.test('a non-zero baseline demands positive evidence of OUR result', () => {
+    // At baseline 0, the count returning to 0 is conclusive. With a tolerated entry present it is
+    // not: that entry dropping off reads identically. The rendered panel belongs to an
+    // algorithmId created this run, so it can only be ours.
+    // The decision now lives in the pure `completionStep`, which is driven directly by the
+    // state-machine tests below — a stronger check than matching this string ever was.
+    bla.match(src, /const evidence = baseline === 0 \|\| rendered;/,
+      'absence of a count is not evidence of completion when something else is listed');
+    bla.match(src, /function completionStep\(st, \{ runningCount, baseline, rendered \}\)/,
+      'the decision must stay a pure function so it can be tested without a browser');
+  });
+
+  await t.test('only LIVE contention refuses the run', () => {
+    bla.match(src, /young\.length > 0 && !ALLOW_CONCURRENT/,
+      'a past-cap entry is ours and dead — refusing on it created a 75-minute dead zone');
+    bla.match(src, /age > CONCURRENT_STALE_MIN \? stale : age > capMin \? dead : young/,
+      'the split must be three-way: live / dead / stale');
+  });
+
+  await t.test('both call sites carry the baseline through', () => {
+    const calls = src.match(/pollUntilComplete\([^)]*baseline:/g) || [];
+    bla.strictEqual(calls.length, 2,
+      `both dispatch paths must pass the baseline, found ${calls.length}`);
+  });
+
+  await t.test('the refusal still emits the marker the batch runner reads', () => {
+    // Narrowing what we refuse on must not change HOW we refuse — the normalizer keys on this.
+    bla.match(src, /CONCURRENT-STOP\\trunning=\$\{young\.length\}/);
+  });
+});
+
+/**
+ * The completion state machine, driven directly.
+ *
+ * These are the cases that cost real days. Driving the pure function is the only way to test
+ * them: the condition they describe — an unreapable `running[]` entry — appears and vanishes on
+ * JQ's schedule, so a live run that completes may just have had a baseline of 0.
+ */
+const cst2 = require('node:test');
+const csa2 = require('node:assert');
+const { completionStep } = require('../utils/strategy-post-backtest');
+
+cst2('the completion state machine', async (t) => {
+  const S0 = { seenRunning: false, emptyStreak: 0, renderedStreak: 0 };
+  // Drive a sequence of (runningCount, rendered) observations; return the final state.
+  const run = (baseline, obs) => {
+    let st = { ...S0 };
+    for (const [runningCount, rendered] of obs) {
+      st = completionStep(st, { runningCount, baseline, rendered });
+      if (st.finished) break;
+    }
+    return st;
+  };
+
+  await t.test('baseline 0: the classic 0 -> 1 -> 0 edge finishes', () => {
+    // The old path, unchanged. Two empty polls confirm it.
+    const st = run(0, [[1, false], [1, false], [0, false], [0, false]]);
+    csa2.strictEqual(st.finished, true);
+  });
+
+  await t.test('baseline 1: a run completes with an unreapable entry present', () => {
+    // THE case that was 100% broken. Count 1 -> 2 -> 1, panel rendered.
+    const st = run(1, [[2, false], [2, false], [1, true], [1, true]]);
+    csa2.strictEqual(st.finished, true, 'a run must be able to finish alongside a dead entry');
+  });
+
+  await t.test('baseline 1: the old logic would never have finished', () => {
+    // Proof the bug was real rather than theoretical: against a baseline of 0, the same
+    // observations never reach an empty poll, so emptyStreak can never accumulate.
+    const st = run(0, [[2, false], [2, false], [1, true], [1, true]]);
+    csa2.strictEqual(st.finished, false,
+      'comparing to 0 cannot terminate while an entry lingers — it spins to the cap');
+  });
+
+  await t.test('baseline 1: the dead entry dropping off is NOT completion', () => {
+    // Count 2 -> 1 looks identical to our run finishing, but the panel has not rendered. Calling
+    // this done would scrape an empty panel and lose the run.
+    const st = run(1, [[2, false], [1, false], [1, false], [1, false]]);
+    csa2.strictEqual(st.finished, false, 'absence of a count is not evidence of our result');
+    csa2.strictEqual(st.emptyStreak, 0, 'and the streak must reset, not creep up');
+  });
+
+  await t.test('a single blip does not finish a run', () => {
+    // Two consecutive confirmations are required, at either baseline.
+    csa2.strictEqual(run(0, [[1, false], [0, false], [1, false]]).finished, false);
+    csa2.strictEqual(run(1, [[2, false], [1, true], [2, false]]).finished, false);
+  });
+
+  await t.test('a run finishing inside the settle wait is still detected', () => {
+    // Never observed above baseline; the rendered panel is the only signal there is.
+    csa2.strictEqual(run(1, [[1, true], [1, true]]).finished, true);
+    csa2.strictEqual(run(0, [[0, true], [0, true]]).finished, true);
+  });
+
+  await t.test('it is pure — the caller\'s state object is not mutated', () => {
+    const st = { ...S0 };
+    completionStep(st, { runningCount: 5, baseline: 0, rendered: true });
+    csa2.deepStrictEqual(st, S0, 'the loop reassigns from the return value; mutation would alias');
+  });
+});

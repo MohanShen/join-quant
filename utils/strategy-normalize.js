@@ -369,16 +369,21 @@ function main() {
         phantom = e && e.status === 2;
       }
 
+      // Exit 2: the blocker is past the cap, i.e. a run of ours that JQ refused to cancel. It
+      // will never finish, so waiting is pointless — but it is no longer a reason to stop either.
+      // The executor tolerates a past-cap entry and uses its count as the completion BASELINE,
+      // so the retry can succeed. Before that existed this had to break, because the detector
+      // counted the entry and every subsequent run spun to its cap and slow-skipped.
+      if (!cleared && phantom) {
+        console.log(`[normalize] the blocker is past the ${MAX_POLL_MIN}min cap — ours, unreapable, ` +
+                    `and never going to finish. The executor measures completion against it rather ` +
+                    `than waiting for zero, so retrying ${f} is safe.`);
+        cleared = true;
+      }
+
       if (!cleared) {
-        if (phantom) {
-          console.log(`[normalize] blocked by a PHANTOM backtest past the ${MAX_POLL_MIN}min cap — ` +
-                      `JQ did not honour its cancel and nothing will clear it until it goes stale. ` +
-                      `Stopping (${f} NOT recorded as a failure). This needs the run cleared in the ` +
-                      `JQ UI, or waiting out JQ_CONCURRENT_STALE_MIN.`);
-        } else {
-          console.log(`[normalize] still blocked after ${waitMin}min — stopping ` +
-                      `(${f} NOT recorded as a failure). Re-run to resume.`);
-        }
+        console.log(`[normalize] still blocked after ${waitMin}min by a LIVE run — stopping ` +
+                    `(${f} NOT recorded as a failure). Re-run to resume.`);
         break;
       }
       if ((concurrentRetries[srcFile] = (concurrentRetries[srcFile] || 0) + 1) > 2) {
