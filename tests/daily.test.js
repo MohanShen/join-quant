@@ -850,3 +850,61 @@ swt('the research wrapper sweeps its own orphans', async (t) => {
     swa.ok(envAt > 0 && envAt < reqAt, 'JQ_MAX_POLL_MS must be set before the require');
   });
 });
+
+/**
+ * The usage ceiling is the TIER, and it is read rather than written down.
+ *
+ * The gate is pre-start only, so the spend ceiling is really `limit + cap`. The limit used to be
+ * held BELOW the free tier to keep that sum inside it (170, or 135 for strict safety) — and the
+ * cost of that caution was the tail: 2026-10-06 stopped at used=141 with 39 free minutes unspent
+ * and 21 strategies pending, because nothing may start once `used >= limit`.
+ *
+ * User's rule (2026-10-06): stop only once usage is PAST the tier; let the in-flight run carry
+ * the small overshoot.
+ */
+const ult = require('node:test');
+const ula = require('node:assert');
+const ulfs = require('fs');
+const ulpath = require('path');
+const ul = require('../utils/usage-limit');
+
+ult('the usage ceiling follows the tier', async (t) => {
+  await t.test("'free' resolves to what JQ reports, not to a literal", () => {
+    ula.strictEqual(ul.resolve('free', 180), 180);
+    ula.strictEqual(ul.resolve('free', 60), 60, 'the tier has already changed once (60 -> 180 at VIP)');
+    ula.strictEqual(ul.resolve('free', null), ul.FREE_TIER_FALLBACK, 'fallback only when unreported');
+  });
+
+  await t.test('a plain number still means exactly what it did', () => {
+    ula.strictEqual(ul.resolve('135', 180), 135);
+    ula.strictEqual(ul.resolve('', 180), ul.DEFAULT_LIMIT);
+    ula.strictEqual(ul.resolve('0', 180), ul.DEFAULT_LIMIT, 'nonsense falls back, never to 0');
+  });
+
+  await t.test('it stops ABOVE the tier, not before it', () => {
+    const c = ul.resolve('free', 180);
+    ula.ok(141 < c && 179 < c, 'the tail must remain usable');
+    ula.ok(181 >= c, 'and it must stop once past the tier');
+  });
+
+  await t.test('both gates resolve against the free value they already read', () => {
+    const exec = ulfs.readFileSync(ulpath.join(__dirname, '../utils/strategy-post-backtest.js'), 'utf8');
+    const daily = ulfs.readFileSync(ulpath.join(__dirname, '../utils/daily-pipeline.js'), 'utf8');
+    ula.match(exec, /usageLimit\.resolve\(USAGE_LIMIT, u && u\.free\)/);
+    ula.match(daily, /usageLimit\.resolve\(USAGE_LIMIT_SPEC, p\.budget\.free\)/);
+    ula.doesNotMatch(exec, /u\.used >= USAGE_LIMIT\b/, 'comparing against the raw spec would be NaN for "free"');
+  });
+
+  await t.test('the spec is forwarded to children, never pre-resolved', () => {
+    // parseInt('free') is NaN, so a child handed a resolved number would silently lose the rule.
+    const norm = ulfs.readFileSync(ulpath.join(__dirname, '../utils/strategy-normalize.js'), 'utf8');
+    const daily = ulfs.readFileSync(ulpath.join(__dirname, '../utils/daily-pipeline.js'), 'utf8');
+    ula.match(norm, /const USAGE_LIMIT = String\(opt\['usage-limit'\] \|\| '55'\)/);
+    ula.match(daily, /'--usage-limit', USAGE_LIMIT_SPEC/);
+  });
+
+  await t.test('the schedule actually carries the new value', () => {
+    const plist = ulfs.readFileSync(ulpath.join(__dirname, '../scripts/com.mohanshen.join-quant-daily.plist'), 'utf8');
+    ula.match(plist, /<key>USAGE_LIMIT<\/key>\s*<string>free<\/string>/);
+  });
+});

@@ -482,13 +482,21 @@ Only the directories whose contents aren't self-evident:
   same thing. 14 previously-stranded rows were seeded into it; ceiling is 3 attempts, after
   which they stay listed under `exhausted` rather than vanishing.
 - **The caps live in the plist, not in the defaults.** `com.mohanshen.join-quant-daily` exports
-  `USAGE_LIMIT=170` and `SLOW_SKIP_MIN=45` (the code defaults are 55 and 30, which is what a bare
-  manual run gets). ⚠ `USAGE_LIMIT` only stops a backtest STARTING — one already running keeps
-  billing — so the real ceiling is `USAGE_LIMIT + SLOW_SKIP_MIN` = **215 against a free 180**, and
-  2026-09-26 ended on 193, i.e. 13 minutes into paid credits. Set `USAGE_LIMIT≈135` to stay
-  strictly inside the free tier. ⚠ JQ settles `duration.used` when a run TERMINATES, not while it
-  is in flight (measured: used stayed 0 across 19→22 min of wall clock), so no gate can observe
-  spend mid-run.
+  `USAGE_LIMIT=free` and `SLOW_SKIP_MIN=45` (the code defaults are 55 and 30, which is what a bare
+  manual run gets).
+  **`USAGE_LIMIT=free` means the ceiling IS the tier**, resolved from JQ's own reported
+  `data.duration.free` by `utils/usage-limit.js` — not written down, because it has already
+  changed once (60 → 180 at VIP) and a second copy would go stale. A plain number still works.
+  ⚠ The limit only stops a backtest STARTING — one already running keeps billing — so the real
+  ceiling is `limit + SLOW_SKIP_MIN`, now **225 worst case**. That overshoot is DELIBERATE
+  (user's rule, 2026-10-06): holding the limit *below* the tier to protect it is what stranded
+  the tail — that day stopped at `used=141` with 39 free minutes and 21 strategies pending,
+  because nothing may start once `used >= limit`. Stop once usage is PAST the tier and let the
+  in-flight run carry the overshoot; 2026-09-26 ran to 193 that way. Set a number (`135`) to go
+  back to strict containment.
+  ⚠ JQ settles `duration.used` when a run TERMINATES, not while it is in flight (measured: used
+  stayed 0 across 19→22 min of wall clock), so no gate can observe spend mid-run — which is why
+  the overshoot cannot be trimmed, only bounded by the cap.
 - `data/daily-state.json` + `data/deferred.json` are **tracked**: the run log and the work queue
   are what let tomorrow resume. `JQ_DAILY_STATE_DIR` redirects both — tests set it to a temp dir,
   because a test run that appends probe rows writes fiction into the record the next run reads.

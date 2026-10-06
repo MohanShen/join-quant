@@ -249,9 +249,11 @@ function main() {
   const CIRCUIT_BREAK = 6;               // consecutive backtest failures → stop (rate-limit guard)
   const COOLDOWN_S = 6;                  // between strategies — let JQ's 2 backtest slots free up
   const RATELIMIT_BACKOFF_S = 45;        // wait when JQ reports the concurrency cap
-  const USAGE_LIMIT = parseInt(opt['usage-limit'] || '55', 10);   // daily used-minutes ceiling
+  const USAGE_LIMIT = String(opt['usage-limit'] || '55');   // SPEC: a number, or 'free' (the tier)
   process.env.JQ_USAGE_LIMIT = String(USAGE_LIMIT);               // children read this for the pre-start gate
-  console.log(`[normalize] usage limit = ${USAGE_LIMIT} min/day (children stop starting new backtests past this)`);
+  const _ul = require('./usage-limit');
+  console.log(`[normalize] usage limit = ${_ul.describe(USAGE_LIMIT, null)}/day ` +
+              `(children stop STARTING new backtests past this; one already running carries on)`);
   // Slow-skip cap (minutes) forwarded to each child; parent timeout must exceed it + cancel-retry overhead.
   const MAX_POLL_MIN = resolveMaxPollMin(opt);
   const PER_STRATEGY_TIMEOUT_MS = MAX_POLL_MIN * 60 * 1000 + 5 * 60 * 1000;

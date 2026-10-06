@@ -27,10 +27,17 @@
   a problem, add more hours to the array and gate on "no successful run recorded today"
   (data/daily-state.json already carries that) rather than widening the UTC gate.
 
-  USAGE_LIMIT = 170 against the VIP allowance of 180 free minutes (it was 55, the non-VIP
-  figure, which left ~125 minutes a day unused once VIP was bought). The 10-minute headroom is
-  deliberate: the limit gates the START of a backtest, so a run that begins just under the
-  line can still overshoot it.
+  USAGE_LIMIT = free — the ceiling IS the tier, read from JQ's own reported
+  data.duration.free rather than written down here (utils/usage-limit.js). It was 55 (non-VIP,
+  leaving ~125 min/day unused after VIP), then 170 for 10 minutes of headroom.
+
+  That headroom is now deliberately GONE. The limit gates only the START of a backtest, so
+  holding it below the tier to protect the tier is what stranded the tail: 2026-10-06 stopped at
+  used=141 with 39 free minutes and 21 strategies pending, because nothing may start once
+  used >= limit. The rule is now "stop only once usage is PAST the tier" and the in-flight run
+  carries the small overshoot — 2026-09-26 ran to 193 that way, 13 minutes into paid credits.
+  ⚠ So the worst case is tier + SLOW_SKIP_MIN = 225. Set a plain number (e.g. 135) to go back
+  to strict containment.
 
   SLOW_SKIP_MIN = 45 raises the per-backtest cap from 30. It also governs the deferred pool —
   a parked strategy is only re-offered at a cap HIGHER than the one that already failed it, so
@@ -67,7 +74,7 @@
     <key>PATH</key>
     <string>/Users/mshen/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
     <key>USAGE_LIMIT</key>
-    <string>170</string>
+    <string>free</string>
     <key>SLOW_SKIP_MIN</key>
     <string>45</string>
     <key>JQ_CDP_URL</key>

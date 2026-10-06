@@ -23,9 +23,14 @@
 #      SLOW_SKIP_MIN (default 30; plist sets 45), STAGE (force one stage), DRY (1 = plan only).
 #
 # ⚠ USAGE_LIMIT stops new backtests STARTING; one already running is left to finish and keeps
-# billing. So the real ceiling is USAGE_LIMIT + SLOW_SKIP_MIN — at 170+45 that is 215 against a
-# free 180, and 2026-09-26 ended on 193, i.e. 13 minutes into paid credits. Set USAGE_LIMIT to
-# ~135 if staying strictly inside the free tier matters more than throughput.
+# billing. So the real ceiling is USAGE_LIMIT + SLOW_SKIP_MIN.
+#
+# The plist now sets USAGE_LIMIT=free, which resolves to JQ's OWN reported tier
+# (utils/usage-limit.js). That is deliberate: setting it BELOW the tier to protect the tier is
+# what stranded the tail — 2026-10-06 stopped at used=141 with 39 free minutes and 21 strategies
+# pending, because nothing may START once used >= limit. The rule now is "stop only once usage is
+# past the tier", and the in-flight run carries the small overshoot (2026-09-26 ended on 193).
+# A plain number still works and still means what it did: USAGE_LIMIT=135 for strict safety.
 #
 # Install (launchd, mirroring the existing loops):
 #   cp scripts/com.mohanshen.join-quant-daily.plist ~/Library/LaunchAgents/

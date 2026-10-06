@@ -44,7 +44,10 @@ const POLL_INTERVAL_MS = 5000;
 // kept ONLY as a last-resort safety net at MAX_POLL_MS, so a truly stuck run can't block
 // the batch forever; normal slow backtests finish well before it.
 let MAX_POLL_MS = parseInt(process.env.JQ_MAX_POLL_MS || String(20 * 60 * 1000), 10);   // safety cap (default 20min): hangs never finish; normal runs ~25s, heavy ones up to ~15min. Override with --max-poll-min N (plain CLI arg, no env prefix).
-let USAGE_LIMIT = parseInt(process.env.JQ_USAGE_LIMIT || '55', 10);   // daily used-minutes ceiling to start new runs (override with --usage-limit N)
+// The SPEC, not a number: 'free' resolves to JQ's own reported tier at check time.
+// See utils/usage-limit.js — stopping short of the tier left 39 minutes unspent on 2026-10-06.
+let USAGE_LIMIT = process.env.JQ_USAGE_LIMIT || '55';   // ceiling to START runs (--usage-limit N|free)
+const usageLimit = require('./usage-limit');
 
 const JOINQUANT_USERNAME = process.env.JOINQUANT_USERNAME || '15656096430';
 const JOINQUANT_PASSWORD = process.env.JOINQUANT_PASSWORD;
@@ -99,7 +102,7 @@ function parseArgs(argv) {
   const baseCapital = parseInt(opt.capital || DEFAULT_CAPITAL, 10);
   // --usage-limit N overrides the JQ_USAGE_LIMIT env (lets the daily cap be a plain CLI arg,
   // so the command needs no leading env-var assignment and matches the settings.json allowlist).
-  if (opt['usage-limit'] != null) USAGE_LIMIT = parseInt(opt['usage-limit'], 10) || USAGE_LIMIT;
+  if (opt['usage-limit'] != null) USAGE_LIMIT = String(opt['usage-limit']);   // a number, or 'free'
   // --max-poll-min N: raise the slow-run safety cap for heavy strategies as a plain CLI arg
   // (avoids the JQ_MAX_POLL_MS=… env prefix, which breaks the allowlist and forces approval).
   if (opt['max-poll-min'] != null) {
@@ -520,11 +523,12 @@ async function usageGate(page) {
     try { return (await (await fetch('/algorithm/index/statistics', { credentials: 'include' })).json()).data.duration; }
     catch { return null; }
   });
-  if (u && u.used != null && u.used >= USAGE_LIMIT) {
-    console.log(`USAGE-STOP\tused=${u.used}\tlimit=${USAGE_LIMIT}`);
+  const limit = usageLimit.resolve(USAGE_LIMIT, u && u.free);
+  if (u && u.used != null && u.used >= limit) {
+    console.log(`USAGE-STOP\tused=${u.used}\tlimit=${limit}`);
     return false;
   }
-  console.log(`[post] usage ${u ? u.used : '?'}/${USAGE_LIMIT}min — ok to run`);
+  console.log(`[post] usage ${u ? u.used : '?'}/${usageLimit.describe(USAGE_LIMIT, u && u.free)} — ok to run`);
   return true;
 }
 

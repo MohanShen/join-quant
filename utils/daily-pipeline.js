@@ -72,10 +72,12 @@ const SLOW_SKIP_MIN = (() => {
  * spend did nothing, and a VIP account with 180 free minutes would still have stopped at 55.
  * 55 remains the default because it is the free-tier figure for a non-VIP account.
  */
-const USAGE_LIMIT = (() => {
-  const n = parseInt(process.env.USAGE_LIMIT || '', 10);
-  return Number.isFinite(n) && n > 0 ? n : 55;
-})();
+const usageLimit = require('./usage-limit');
+// SPEC, resolved per-check against JQ's reported free tier. 'free' is the configured value: stop
+// only once usage is PAST the tier, letting the in-flight run carry the small overshoot, rather
+// than stopping short to protect it and stranding the tail (2026-10-06: 39 minutes, 21 pending).
+const USAGE_LIMIT_SPEC = process.env.USAGE_LIMIT || '55';
+const USAGE_LIMIT = usageLimit.resolve(USAGE_LIMIT_SPEC, null);   // static view, for logs/exports
 /**
  * Outer wall-clock bound on one stage, in minutes. A HANG GUARD, not a budget — the budget is
  * USAGE_LIMIT and every child already enforces it.
@@ -317,7 +319,7 @@ function runNormalize(q, { dry }) {
   const list = files.slice(0, 40).join(',');
   const args = ['utils/strategy-normalize.js', '--window', 'train',
                 '--files', list,
-                '--usage-limit', String(USAGE_LIMIT),
+                '--usage-limit', USAGE_LIMIT_SPEC,
                 '--max-poll-min', String(SLOW_SKIP_MIN)];
   if (dry) return { outcome: 'dry', note: `would run: node ${args.join(' ')}`.slice(0, 300) };
 
@@ -526,9 +528,10 @@ function runChain({ dry = false, maxStages = 6, stageOverride = null } = {}) {
     before[p.stage] = depth(p.stage, p.q);
     i++;
 
-    if (p.budget.ok && p.budget.used >= USAGE_LIMIT && p.stage !== 'discover') {
+    const ceiling = usageLimit.resolve(USAGE_LIMIT_SPEC, p.budget.free);
+    if (p.budget.ok && p.budget.used >= ceiling && p.stage !== 'discover') {
       log.push({ stage: p.stage, outcome: 'budget-spent',
-                 note: `used ${p.budget.used} >= ${USAGE_LIMIT}` });
+                 note: `used ${p.budget.used} >= ${ceiling}` });
       break;
     }
     const r = execute(p, { dry });
@@ -682,7 +685,8 @@ if (require.main === module) {
   // correctly stood down left NO trace at all, indistinguishable from a day the cron never
   // fired. "Correctly did nothing" is a result, and on a 60-minute budget it will be the most
   // common one; it has to be visible or the record only covers the days work happened.
-  const budgetSpent = p.budget.ok && p.budget.used >= USAGE_LIMIT && p.stage !== 'discover';
+  const budgetSpent = p.budget.ok &&
+    p.budget.used >= usageLimit.resolve(USAGE_LIMIT_SPEC, p.budget.free) && p.stage !== 'discover';
   let log = [], last = null;
 
   if (budgetSpent) {
