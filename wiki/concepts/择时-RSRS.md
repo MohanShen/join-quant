@@ -4,7 +4,7 @@ kind: 机制
 rollup: 择时·RSRS
 aliases: [RSRS, 阻力支撑相对强度]
 strategyCount: 2
-updatedAt: 2026-10-04
+updatedAt: 2026-10-06
 ---
 
 # 择时-RSRS
@@ -30,7 +30,7 @@ updatedAt: 2026-10-04
 - RSRS 标准分阈值（N、M）对收益/回撤的敏感性未拆解；样本仅 2 篇，待更多 RSRS 策略补充。
 
 ## 归一化绩效横评（TRAIN 2022–2023）
-> 同一区间/同一成本(零滑点)/同一 objective 的 apples-to-apples 横评；按 objective 排序。本概念归一化成员 2，过门槛(夏普≥2.5) 1。⚠ 打板/涨停类成交假设不真实，其数值仅参考。
+> 同一区间/同一成本(零滑点)/同一 objective 的 apples-to-apples 横评；按 objective 排序。本概念归一化成员 2，过门槛(夏普≥1.5) 1。⚠ 打板/涨停类成交假设不真实，其数值仅参考。
 
 | 策略 | 年化 | 回撤 | 夏普 | objective | gate |
 |------|------|------|------|-----------|------|
