@@ -1424,4 +1424,5 @@ if (require.main === module) {
 }
 
 module.exports = { parseArgs, concurrencyGate, usageGate, parseCnDuration,
-                   completionStep, pickOurRun, isNoTradeRun, WINDOWS };
+                   completionStep, pickOurRun, isNoTradeRun,
+                   cancelBacktest, readRunning, WINDOWS };

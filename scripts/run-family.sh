@@ -34,6 +34,7 @@ set -uo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="${REPO:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 USAGE_LIMIT="${USAGE_LIMIT:-55}"
+SLOW_SKIP_MIN="${SLOW_SKIP_MIN:-45}"   # cap used to tell our run from an unreapable zombie
 JQ_CDP_URL="${JQ_CDP_URL:-http://localhost:9225}"
 PIN_DIR="$REPO/data/research-sessions"
 LOG_DIR="$REPO/data/autoresearch-logs"
@@ -217,4 +218,25 @@ if [ $rc -ne 0 ]; then
 else
   log "$FAMILY: run complete rc=0 — check its ledger, exit 0 is not proof work happened"
 fi
+
+# ── Orphan sweep ────────────────────────────────────────────────────────────
+# The agent must not leave a backtest running after its session ends. The prompt already says
+# "foreground/blocking, ONE backtest at a time"; this is the enforcement, because an instruction
+# is not a guarantee. Measured 2026-10-06: the stage exited rc=0 at 22:01 with a run launched at
+# ~21:05 still in flight — 57 minutes later it was still listed, with nobody left to read its
+# panel. The quota was spent and the result lost.
+#
+# Cancel rather than wait: once the agent has exited nothing can read the result, so waiting only
+# converts lost minutes into more lost minutes. Safe because this script holds the SHARED
+# jq-pipeline lock, so a live run right now is ours.
+#
+# Never fails the stage — the research work is already recorded by this point, and a bookkeeping
+# problem must not mask a round that succeeded.
+if ! node "$REPO/utils/jq-running.js" >/dev/null 2>&1; then
+  log "⚠ a backtest is STILL RUNNING after the agent exited — orphaned; cancelling"
+  node "$REPO/utils/jq-cancel.js" --cap-min "$SLOW_SKIP_MIN" 2>&1 | while IFS= read -r l; do log "  $l"; done
+else
+  log "account clear — no orphaned backtest"
+fi
+
 exit 0

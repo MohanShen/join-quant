@@ -788,3 +788,65 @@ dpt('a stalled stage cedes its turn rather than ending the chain', async (t) => 
     dpa.match(p.why, /stalled|without draining/i, 'and it must say why');
   });
 });
+
+/**
+ * The research stage must not leave a backtest running after its agent exits.
+ *
+ * The stage is a Claude agent loop that runs long backtests in the background, so its session can
+ * end cleanly (rc=0) with a run still in flight. Measured 2026-10-06: the stage finished at 22:01
+ * having launched a run at ~21:05; 57 minutes later it was still listed with nobody left to read
+ * its panel. The quota was spent and the result lost — and before zombie tolerance existed, that
+ * orphan also refused the next stage's first backtest and ended the day.
+ */
+const swt = require('node:test');
+const swa = require('node:assert');
+const swfs = require('fs');
+const swpath = require('path');
+
+swt('the research wrapper sweeps its own orphans', async (t) => {
+  const sh = swfs.readFileSync(swpath.join(__dirname, '../scripts/run-family.sh'), 'utf8');
+
+  await t.test('the sweep runs after the agent, on every exit path', () => {
+    const rcAt = sh.indexOf('rc=$?');
+    const sweepAt = sh.indexOf('jq-cancel.js');
+    const exitAt = sh.lastIndexOf('exit 0');
+    swa.ok(rcAt > 0 && sweepAt > rcAt, 'the sweep must come after the agent returns');
+    swa.ok(sweepAt < exitAt, 'and before the script exits');
+    // It sits outside the rc branches, so a rate-limited exit is swept too.
+    const branch = sh.slice(sh.indexOf('if [ $rc -ne 0 ]'), sweepAt);
+    swa.match(branch, /\nfi\n/, 'the rc if/else must be closed before the sweep');
+  });
+
+  await t.test('it CANCELS rather than waits', () => {
+    // Once the agent has exited nothing can read the result, so waiting only converts lost
+    // minutes into more lost minutes.
+    swa.match(sh, /jq-cancel\.js.*--cap-min/, 'the cap is what tells our run from a zombie');
+    const sweep = sh.slice(sh.indexOf('Orphan sweep'), sh.lastIndexOf('exit 0'));
+    swa.doesNotMatch(sweep, /jq-running\.js.*--wait/, 'waiting is the wrong response here');
+  });
+
+  await t.test('it never fails the stage', () => {
+    // The research round is already recorded by this point; a bookkeeping problem must not mask
+    // a round that succeeded.
+    const cancel = swfs.readFileSync(swpath.join(__dirname, '../utils/jq-cancel.js'), 'utf8');
+    swa.match(cancel, /never fail a stage/);
+    swa.match(cancel, /process\.exit\(0\)/, 'a crash in the sweep must not propagate');
+  });
+
+  await t.test('it reuses the executor cancel instead of copying it', () => {
+    const cancel = swfs.readFileSync(swpath.join(__dirname, '../utils/jq-cancel.js'), 'utf8');
+    swa.match(cancel, /require\(path\.join\(__dirname, 'strategy-post-backtest\.js'\)\)/);
+    swa.match(cancel, /cancelBacktest, readRunning/);
+    swa.doesNotMatch(cancel, /algorithm\/index\/cancel/,
+      'a second copy of the cancel POST would be free to drift from the real one');
+  });
+
+  await t.test('the cap is set before the executor is required', () => {
+    // MAX_POLL_MS is read at module load, so requiring first would use the 20-min default and
+    // misclassify our own run as a zombie.
+    const cancel = swfs.readFileSync(swpath.join(__dirname, '../utils/jq-cancel.js'), 'utf8');
+    const envAt = cancel.indexOf('JQ_MAX_POLL_MS');
+    const reqAt = cancel.indexOf("require(path.join(__dirname, 'strategy-post-backtest.js'))");
+    swa.ok(envAt > 0 && envAt < reqAt, 'JQ_MAX_POLL_MS must be set before the require');
+  });
+});
