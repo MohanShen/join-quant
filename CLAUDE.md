@@ -596,3 +596,10 @@ Only the directories whose contents aren't self-evident:
   `#code` before reading. **A sharpe that cannot coexist with its annual/maxDD (implied vol
   > ~150%) is a scrape artefact until the stats endpoint says otherwise**; 289177df's epoch-2
   row (maxDD 10.68 = its header comment) is still unchecked.
+- ⚠ **A run JQ refuses to cancel at the slow-skip cap (「在此状态不能取消」) is not necessarily lost.**
+  打板短线's jy-u-2 hit the 50-min cap, five cancel attempts failed, the executor reported
+  `slow-skipped` — and the run completed server-side two minutes later. The algorithm's buildList
+  read 完成 and `POST /algorithm/backtest/stats` + `GET /algorithm/backtest/result` served the full
+  484-day result and curve at zero cost (`backtest-series.fetchViaHttp`, saved under the normal
+  series key; the finding is flagged `recovered-after-slow-skip`). Check the buildList before
+  writing a capped run off as a phantom; the minutes are already billed either way.

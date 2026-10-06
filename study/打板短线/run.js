@@ -14,6 +14,6 @@ const logPath = `data/autostudy-logs/${id}.log`;
 const log = fs.openSync(logPath, 'w');
 const win = start && end ? ['--start', start, '--end', end] : ['--window', 'train'];
 const r = spawnSync('node', ['utils/strategy-post-backtest.js', file, id, ...win,
-  '--usage-limit', '170', '--max-poll-min', '50'], { stdio: ['ignore', log, log] });
+  '--usage-limit', process.env.DBDX_USAGE_LIMIT || '135', '--max-poll-min', '50'], { stdio: ['ignore', log, log] });
 fs.writeSync(log, `\nEXIT ${r.status}\n`);
 console.log(fs.readFileSync(logPath, 'utf8').split('\n').filter(l => /^(SUMMARY|SERIES|EXIT)|usage|STOP|error|algorithmId|backtestId/i.test(l)).join('\n'));
