@@ -440,3 +440,33 @@ upt('an un-pinned source is refused before anything is spent', async (t) => {
     upa.match(block, /break;/);
   });
 });
+
+/**
+ * No early return may orphan a running backtest.
+ *
+ * An orphaned run sits in running[], refuses the next strategy in the batch, and the chain stops
+ * waiting on a blocker it created itself. Measured: that is the signature of EVERY under-spent
+ * day — 09-29 used 0/180, 10-01 used 2, 10-02 used 44, 10-03 used 130, all ending on
+ * "still blocked after 10min". The settings expect 170+45 of a free 180, so this was the gap
+ * between intent and outcome.
+ */
+const orp = require('node:test');
+const ora = require('node:assert');
+const orfs = require('fs');
+const orpath = require('path');
+
+orp('every early exit from the poll loop cancels first', () => {
+  const src = orfs.readFileSync(orpath.join(__dirname, '../utils/strategy-post-backtest.js'), 'utf8');
+  const loop = src.slice(src.indexOf('async function pollUntilComplete'),
+                         src.indexOf('// ── Phase 2'));
+
+  // Each `return` that leaves with the run unfinished must be preceded by a cancel.
+  const unfinished = [...loop.matchAll(/return \{ success: false[^}]*\}/g)];
+  ora.ok(unfinished.length >= 2, `expected the fast-fail and safety-cap exits, found ${unfinished.length}`);
+  for (const m of unfinished) {
+    const before = loop.slice(Math.max(0, m.index - 400), m.index);
+    ora.match(before, /cancelBacktest\(page\)/,
+      `an early exit at offset ${m.index} returns without cancelling — that orphans the run:\n` +
+      m[0].slice(0, 80));
+  }
+});

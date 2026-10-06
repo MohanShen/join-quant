@@ -850,8 +850,22 @@ async function pollUntilComplete(page, algorithmId, { baseline = 0 } = {}) {
     }
 
     // Editor-surfaced compile/runtime error → fast-fail (page stays on the editor, no nav).
+    //
+    // ⚠ CANCEL FIRST. This used to return immediately, while the safety-cap path below cancelled.
+    // An import-time traceback kills the backtest itself so there is nothing to cancel, but
+    // detectCompileError also fires on a RUNTIME traceback (the FutureDataError class) while JQ
+    // is still executing — and then returning here orphans a run that stays in running[]. The
+    // next strategy in the batch is refused by the concurrency gate, the wait expires, and the
+    // chain stops: that is the signature of all five under-spent days (09-29 used 0, 10-01 used 2,
+    // 10-02 44, 10-03 130), each of which ended waiting on a blocker it had created itself.
+    //
+    // Safe in both cases: cancelBacktest reports "nothing is running — already stopped" and
+    // returns true when the run is already gone.
     const cerr = await detectCompileError(page);
-    if (cerr) return { success: false, error: cerr, compileError: true };
+    if (cerr) {
+      await cancelBacktest(page);
+      return { success: false, error: cerr, compileError: true };
+    }
 
     const elapsed = Math.round((Date.now()-start)/1000);
     process.stdout.write(`\r[post] Running: ${Math.floor(elapsed/60)}m ${elapsed%60}s...   \r`);
