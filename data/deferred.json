@@ -206,5 +206,29 @@
     "lastCapMin": 45,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-10-04T19:33:15.606Z"
+  },
+  "strategies/2026-06-18_短线情绪门控_回测_3425_倍_核心设计和瓶颈复盘-4b3b39e1.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-06T21:39:00.354Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-06T21:39:00.354Z"
+  },
+  "strategies/2026-06-29_10年15000倍_无未来函数_但是没什么卵用-7be4bce3.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-06T21:39:00.355Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-06T21:39:00.355Z"
+  },
+  "strategies/2026-07-06_竞价擒龙_年化245_83_策略秘籍深度拆解-96fb1ca0.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-06T21:39:00.355Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-06T21:39:00.355Z"
   }
 }

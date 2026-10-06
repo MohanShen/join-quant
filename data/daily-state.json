@@ -3,12 +3,12 @@
   "lastRun": {
     "stage": "normalize",
     "target": null,
-    "budget": 141,
-    "at": "2026-10-06T14:30:39.930Z",
+    "budget": 0,
+    "at": "2026-10-06T18:00:51.220Z",
     "outcome": "ran",
-    "note": "34 queued, 0 deferred at 45min",
+    "note": "31 queued, 3 deferred at 45min",
     "minutesUsed": null,
-    "endedAt": "2026-10-06T15:24:54.695Z"
+    "endedAt": "2026-10-06T21:39:00.355Z"
   },
   "runs": [
     {
@@ -530,6 +530,26 @@
       "note": "34 queued, 0 deferred at 45min",
       "minutesUsed": null,
       "endedAt": "2026-10-06T15:24:54.695Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-06T18:00:33.749Z",
+      "outcome": "ran",
+      "note": "family assignment over 1 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-06T18:00:34.672Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-06T18:00:51.220Z",
+      "outcome": "ran",
+      "note": "31 queued, 3 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-06T21:39:00.355Z"
     }
   ]
 }
