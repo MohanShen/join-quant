@@ -74,7 +74,7 @@ flags are the guard.
 the largest at 12%. The highest-value results were **falsifications of what we already hold**
 (lookahead dissections, an overfit audit, a list of backtest cheats), not new strategies —
 which is axis M behaving as designed. 93 `NEW:<mechanism>` families were proposed and **none is
-registered yet**; registering them is what unblocks `/run-study` and `/run-enhance`.
+registered yet**; registering them is what unblocks `/run-family`.
 
 ## Validating a rubric change
 

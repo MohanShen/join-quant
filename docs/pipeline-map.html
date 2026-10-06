@@ -170,27 +170,26 @@
   <header>
     <span class="eyebrow">join-quant · repo map</span>
     <h1>Pipeline &amp; Skill Coverage</h1>
-    <p class="sub">Fifteen stages from community crawl to out-of-sample reserve, which skill drives each one,
+    <p class="sub">Sixteen stages from community crawl to out-of-sample reserve, which skill drives each one,
       and where the chain still breaks. Derived from the repo, not from memory.</p>
-    <p class="stamp">harness epoch 5 &nbsp;·&nbsp; TRAIN 2022-01-01 → 2023-12-31 &nbsp;·&nbsp; VAL 2024-01-01 → 2025-12-31
-      &nbsp;·&nbsp; OOS reserve 2026-01-01+ (hard-blocked) &nbsp;·&nbsp; 60 backtest-min/day</p>
+    <p class="stamp">harness epoch 6 &nbsp;·&nbsp; TRAIN 2022-01-01 → 2023-12-31 &nbsp;·&nbsp; VAL 2024-01-01 → 2025-12-31
+      &nbsp;·&nbsp; OOS reserve 2026-01-01+ (hard-blocked) &nbsp;·&nbsp; 180 free backtest-min/day (USAGE_LIMIT 170)</p>
   </header>
 
   <section>
     <h2>Where the library stands</h2>
     <div class="counts">
       <div><b>215</b><span>raw strategies</span></div>
-      <div><b>124</b><span>normalized rows</span></div>
-      <div><b>190</b><span>wiki pages</span></div>
-      <div><b>14</b><span>families</span></div>
-      <div><b>7</b><span>types</span></div>
-      <div><b>89</b><span>return series</span></div>
-      <div><b>53</b><span>pending normalize</span></div>
+      <div><b>135</b><span>normalized rows</span></div>
+      <div><b>197</b><span>wiki pages</span></div>
+      <div><b>13</b><span>families</span></div>
+      <div><b>2</b><span>types</span></div>
+      <div><b>294</b><span>return series</span></div>
+      <div><b>21</b><span>pending normalize</span></div>
       <div><b>90<span style="font-size:.75rem;font-weight:400;color:var(--ink-3)">/1408</span></b><span>resources fetched</span></div>
     </div>
-    <p class="note">Ledger tail beyond the 124: 18 compile-error, 14 slow-skipped, 5 incompatible-futures,
-      2 no-trades. Next up per <code>consumption-report --next</code> — study <strong>ETF动量</strong>,
-      enhance <strong>ETF动量</strong>, integrate <strong>ETF-H-unknown</strong>.</p>
+    <p class="note">Ledger tail beyond the 135: 22 compile-error, 16 slow-skipped, 6 incompatible,
+      3 no-trades. Next up is whatever the PLANNER picks, not this report: <code>utils/daily-pipeline.js</code> reads <code>family-queue</code> (research) and <code>family-assign</code> (assign), both empty right now, so the next fire falls through to <strong>normalize</strong> with 21 pending. <code>consumption-report --next</code> still names study/enhance and is the legacy reporter — it does not drive the cron.</p>
   </section>
 
   <section>
@@ -285,44 +284,34 @@
       </div>
 
       <div class="stage">
-        <div class="stage-key"><span class="n">05</span><span class="nm">Study</span></div>
+        <div class="stage-key"><span class="n">05</span><span class="nm">Research</span></div>
         <div class="stage-body">
           <div class="nodes">
-            <span class="node store">consumption.tsv</span><span class="arrow">→</span>
-            <span class="node">4 agents</span><span class="arrow">→</span>
-            <span class="node store">family §2 / §6</span>
-            <span class="skill has">/run-study</span>
-          </div>
-          <p class="note">Understand one lineage. Now reopens a family when its membership changes, not just when
-            it has never been studied.</p>
-        </div>
-      </div>
-
-      <div class="stage">
-        <div class="stage-key"><span class="n">06</span><span class="nm">Enhance</span></div>
-        <div class="stage-body">
-          <div class="nodes">
-            <span class="node">ideator</span><span class="arrow">→</span>
-            <span class="node">critic</span><span class="arrow">→</span>
-            <span class="node">engineer</span><span class="arrow">→</span>
+            <span class="node">understand</span><span class="arrow">+</span>
+            <span class="node">improve</span><span class="arrow">→</span>
+            <span class="node">gatekeeper</span><span class="arrow">→</span>
+            <span class="node">executor</span><span class="arrow">→</span>
             <span class="node">recorder</span><span class="arrow">→</span>
-            <span class="node store">validated_strategies</span>
-            <span class="skill has">/run-enhance</span>
+            <span class="node store">family §2 / §6 · edge:</span>
+            <span class="skill has">/run-family</span>
           </div>
-          <p class="note">Optimise one lineage on TRAIN; VAL confirms a finalised variant once. Gate-failing work
-            can still be banked as a component.</p>
+          <p class="note">ONE loop over one lineage: why it works and whether it can be better share a single
+            ranked queue, because they were the same machine. 無選擇壓力 is scoped to the IDEA TYPE, so a
+            negative <em>understand</em> result is a finding, not a failed iteration. Finalises once on VAL —
+            one validation per (family, epoch), enforced in the executor. Replaced the separate Study and
+            Enhance stages, which could starve each other over the same 13 families.</p>
         </div>
       </div>
 
       <div class="stage">
-        <div class="stage-key"><span class="n">07</span><span class="nm">Components</span></div>
+        <div class="stage-key"><span class="n">06</span><span class="nm">Components</span></div>
         <div class="stage-body">
           <div class="nodes">
             <span class="node">backtest-series</span><span class="arrow">→</span>
-            <span class="node store">data/series · 89</span><span class="arrow">→</span>
+            <span class="node store">data/series · 294</span><span class="arrow">→</span>
             <span class="node">component-scan</span><span class="arrow">→</span>
             <span class="node store">components.tsv</span>
-            <span class="skill has">study · enhance · integrate</span>
+            <span class="skill has">research · integrate</span>
           </div>
           <p class="note">Ranks members by what they add to the type leader, not by standalone score — the only
             layer that can see correlation.</p>
@@ -330,7 +319,7 @@
       </div>
 
       <div class="stage">
-        <div class="stage-key"><span class="n">08</span><span class="nm">Integrate</span></div>
+        <div class="stage-key"><span class="n">07</span><span class="nm">Integrate</span></div>
         <div class="stage-body">
           <div class="nodes">
             <span class="node store">wiki/types</span><span class="arrow">→</span>
@@ -345,7 +334,7 @@
       </div>
 
       <div class="stage">
-        <div class="stage-key"><span class="n">09</span><span class="nm">Out-of-sample</span></div>
+        <div class="stage-key"><span class="n">08</span><span class="nm">Out-of-sample</span></div>
         <div class="stage-body">
           <div class="nodes">
             <span class="node store" style="border-color:var(--gap); color:var(--gap)">2026-01-01+ reserve</span>
@@ -377,21 +366,20 @@
         <tbody>
           <tr><td>1</td><td>Discovery &amp; clone</td><td class="driver">strategy-discover → strategy-fetch</td><td class="driver">—</td><td><span class="dot gap"></span>cron / CLI only</td></tr>
           <tr><td>2</td><td>Research resources</td><td class="driver">resource-fetch</td><td class="driver">ingest-strategy</td><td><span class="dot part"></span>90 of 1408 drained</td></tr>
-          <tr><td>3</td><td>Factor library</td><td class="driver">factorlib-ingest · factorlib-query</td><td class="driver">run-enhance · ideator</td><td><span class="dot ok"></span>wired as hypothesis source</td></tr>
+          <tr><td>3</td><td>Factor library</td><td class="driver">factorlib-ingest · factorlib-query</td><td class="driver">/run-family · ideator</td><td><span class="dot ok"></span>wired as hypothesis source</td></tr>
           <tr><td>4</td><td>量化课堂 tutorials</td><td class="driver">tutorial-ingest</td><td class="driver">—</td><td><span class="dot part"></span>unwired by decision</td></tr>
           <tr><td>5</td><td>Screening</td><td class="driver">screen-prefilter → post-screener → screen-merge</td><td class="driver">/run-screen</td><td><span class="dot ok"></span>covered</td></tr>
           <tr><td>6</td><td>Normalization</td><td class="driver">strategy-normalize → normalize-sync</td><td class="driver">—</td><td><span class="dot gap"></span>cron only</td></tr>
           <tr><td>7</td><td>KB · strategy pages</td><td class="driver">kb-stub · ingest</td><td class="driver">/ingest-strategy</td><td><span class="dot ok"></span>covered</td></tr>
-          <tr><td>8</td><td>KB · families</td><td class="driver">wiki-family-build</td><td class="driver">run-study + 2 agents</td><td><span class="dot part"></span>4 families BLOCKED</td></tr>
+          <tr><td>8</td><td>KB · families</td><td class="driver">wiki-family-build</td><td class="driver">/run-family</td><td><span class="dot ok"></span>13 families</td></tr>
           <tr><td>9</td><td>KB · types</td><td class="driver">wiki-type-build</td><td class="driver">—</td><td><span class="dot gap"></span>no skill</td></tr>
           <tr><td>10</td><td>KB · concepts</td><td class="driver">wiki-concept-lint</td><td class="driver">query-wiki</td><td><span class="dot part"></span>lints, never rewrites prose</td></tr>
-          <tr><td>11</td><td>Family assignment</td><td class="driver">family-match</td><td class="driver">—</td><td><span class="dot part"></span>proposes only · 4 pending</td></tr>
-          <tr><td>12</td><td>Study (one family)</td><td class="driver">4 agents</td><td class="driver">/run-study</td><td><span class="dot ok"></span>covered · member-aware</td></tr>
-          <tr><td>13</td><td>Enhance (one family)</td><td class="driver">4 agents</td><td class="driver">/run-enhance</td><td><span class="dot ok"></span>covered · external-factor mode</td></tr>
-          <tr><td>14</td><td>Series &amp; components</td><td class="driver">backtest-series · series-backfill · component-scan</td><td class="driver">study · enhance · integrate</td><td><span class="dot ok"></span>89 series stored</td></tr>
-          <tr><td>15</td><td>Integrate (one type)</td><td class="driver">type-integrate-check</td><td class="driver">/run-integrate</td><td><span class="dot ok"></span>1 round run, 1 vetoed</td></tr>
-          <tr><td>16</td><td>OOS / final validation</td><td class="driver">—</td><td class="driver">—</td><td><span class="dot gap"></span>not built</td></tr>
-          <tr><td>17</td><td>Query</td><td class="driver">wiki read path</td><td class="driver">/query-wiki</td><td><span class="dot ok"></span>covered</td></tr>
+          <tr><td>11</td><td>Family assignment</td><td class="driver">family-match · family-assign</td><td class="driver">run-assign.sh + agent</td><td><span class="dot part"></span>proposes only · 0 pending</td></tr>
+          <tr><td>12</td><td>Research (one family)</td><td class="driver">5 agents</td><td class="driver">/run-family</td><td><span class="dot ok"></span>covered · member-aware · edge-aware</td></tr>
+          <tr><td>13</td><td>Series &amp; components</td><td class="driver">backtest-series · series-backfill · component-scan</td><td class="driver">research · integrate</td><td><span class="dot ok"></span>294 series stored</td></tr>
+          <tr><td>14</td><td>Integrate (one type)</td><td class="driver">type-integrate-check</td><td class="driver">/run-integrate</td><td><span class="dot ok"></span>1 round run, 1 vetoed</td></tr>
+          <tr><td>15</td><td>OOS / final validation</td><td class="driver">—</td><td class="driver">—</td><td><span class="dot gap"></span>not built</td></tr>
+          <tr><td>16</td><td>Query</td><td class="driver">wiki read path</td><td class="driver">/query-wiki</td><td><span class="dot ok"></span>covered</td></tr>
         </tbody>
       </table>
     </div>
@@ -409,7 +397,7 @@
       <article>
         <h3>Discovery never triggers screening <span class="sev soft">manual seam</span></h3>
         <p><code>strategy-daily</code> and <code>/run-screen</code> share <code>copy-queue.json</code>, but nothing
-          hands over. A human decides when to screen, and 53 strategies sit pending normalization behind that.</p>
+          hands over. A human decides when to screen, and 21 strategies sit pending normalization behind that.</p>
       </article>
       <article>
         <h3>Four family pages refuse to regenerate <span class="sev soft">data guard</span></h3>
@@ -436,7 +424,7 @@
   </section>
 
   <footer>
-    Derived from the working tree at commit 416feec · 279 tests passing · figures read from
+    Derived from the working tree at commit 84bcc40 · 530 tests passing · figures read from
     normalize-train.tsv, consumption.tsv, data/series and wiki/ at time of writing.
   </footer>
 

@@ -5,7 +5,7 @@ description: Run a TYPE-level integration round — take the strategy families t
 
 # Run a type-level integration round
 
-The layer above `/run-enhance`. Enhance improves **one lineage**; this asks whether the families
+The layer above `/run-family`. That loop works **one lineage**; this asks whether the families
 in one **type** (`wiki/types/<universe>-<horizon>.md`) can be combined into something better than
 any of them alone.
 
@@ -69,13 +69,13 @@ single-shot OOS reserve. So:
    integrate event. A single-family type has nothing to integrate.
 2. Collect each member's baseline from the type page and `harness/normalize-train.tsv`. Do not
    re-measure what is already in the ledger — the 60 backtest-min/day are shared with the
-   normalize queue and `/run-enhance`.
+   normalize queue and `/run-family`.
 2b. **Choose the legs on marginal contribution, not on standalone score.** Two free inputs:
    - `node utils/component-scan.js --type <type>` ranks every member by the score uplift a
      50/50 blend with the type leader would produce, and prints the correlation. Members that
      **fail the gate but still lift the leader** are flagged — those are exactly what a
      standalone bar would have thrown away.
-   - `node utils/components.js --type <type>` lists ingredients `/run-study` and `/run-enhance`
+   - `node utils/components.js --type <type>` lists ingredients `/run-family`
      already registered, each with the measurement behind it.
    If members lack curves, run `node utils/series-backfill.js --dry` first (no backtest cost).
    ⚠ Those blends are **cost-free, daily-rebalanced upper bounds** — a screening device for
@@ -83,7 +83,7 @@ single-shot OOS reserve. So:
 3. Write the candidate as one strategy file under `enhance/candidates/<expId>.py`, using the
    frozen cost block. Start **equal-weight**.
 4. Run it: `node utils/strategy-post-backtest.js enhance/candidates/<expId>.py "<expId>" --window train --usage-limit 55`
-   (foreground, plain form, per `/run-enhance`).
+   (foreground, plain form, per `/run-family`).
 5. Build `candidate.json` and run the guard. `reject` ends it; record why.
 6. On `keep` or `keep-with-caveat`: one VAL run, then append a row to the type page's
    整合回合 section and record the event:

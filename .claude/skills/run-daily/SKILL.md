@@ -1,11 +1,11 @@
 ---
 name: run-daily
-description: Run one day of the join-quant pipeline — pick the stage by queue priority (enhance > study > normalize > discover), spend the backtest budget on it, chain to the next stage while minutes remain, write a dated markdown summary to docs/daily/, and commit and push it. Use when asked to run the daily pipeline, move strategies forward, drain the queues, or decide what today's backtest budget should be spent on.
+description: Run one day of the join-quant pipeline — pick the stage by queue priority (research > assign > normalize > discover), spend the backtest budget on it, chain to the next stage while minutes remain, write a dated markdown summary to docs/daily/, and commit and push it. Use when asked to run the daily pipeline, move strategies forward, drain the queues, or decide what today's backtest budget should be spent on.
 ---
 
 # Run one day of the pipeline
 
-The orchestration layer above `/run-study`, `/run-enhance` and the normalizer. It does not
+The orchestration layer above `/run-family` and the normalizer. It does not
 decide *how* to study or enhance — it decides **which stage gets today's 60 backtest-minutes**,
 runs it, reads what came back, and moves on.
 
