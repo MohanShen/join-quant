@@ -46,7 +46,7 @@ node utils/tutorial-ingest.js --catalog               # catalog only
 # One-off: re-key the stores from postId to uniqueKey (idempotent, backs up)
 node utils/migrate-unique-key.js --dry
 
-# Daily cron pipeline — one stage per fire, by queue priority (enhance > study > norm > discover)
+# Daily cron pipeline — one stage per fire, by queue priority (research > assign > norm > discover)
 node utils/daily-pipeline.js --plan            # decide and explain, run nothing
 node utils/daily-pipeline.js --status          # queues, budget, deferred pool, last runs
 node utils/daily-pipeline.js                   # decide and run
@@ -430,8 +430,11 @@ Only the directories whose contents aren't self-evident:
   widening the UTC gate.
 - **Two of the four queues are FILES, two are DERIVED.** `data/pending-normalize.json` and
   `data/copy-queue.json` are real files the normalize/fetch pipelines themselves read. The
-  enhance and study queues are **derived** from `wiki/families/*.md` + `data/consumption.tsv`
-  — no file, and **the agent loops do not read them**.
+  research and assign queues are **derived** — research from `wiki/families/*.md` +
+  `data/consumption.tsv` (`utils/family-queue.js`), assign from pages with no `family:`
+  (`utils/family-assign.js`) — no file, and **the agent loops do not read them**.
+  (enhance/study were the derived pair before `/run-family` merged them; they remain reachable
+  via `--stage` only.)
 - ⚠ **That asymmetry caused a silent no-op.** The planner derives study staleness from the
   consumption ledger; the loop nudge tells the agent to work `study/manifest.json`. The manifest
   said all 14 families were `done` while the ledger said all 14 were stale, so a dispatch would
@@ -451,27 +454,41 @@ Only the directories whose contents aren't self-evident:
   in the deterministic planner because it is arithmetic with one right answer, and the skill
   handles only what needs judgement (a blocked stage, a loop that exits 0 having done nothing).
 - **The daily cron picks ONE stage by queue priority — later stages outrank earlier ones**:
-  `enhance > study > normalize > discover`. A pull system: finish what is in the pipe before
-  admitting more, because the 60 backtest-min/day are the binding constraint and an idle
-  enhance-ready family is a worse use of them than a raw strategy nothing can act on yet.
-  ⚠ **Consequence, by design**: while any family is enhance-ready, normalization never runs —
-  13 families and 53 pending strategies mean normalize starves indefinitely. `--plan` prints
-  every queue's depth so it is visible; `--stage <name>` overrides for one run.
+  `research > assign > normalize > discover` (`PRIORITY` in `utils/daily-pipeline.js`). A pull
+  system: finish what is in the pipe before admitting more, because the backtest minutes/day are
+  the binding constraint and an idle research-ready family is a worse use of them than a raw
+  strategy nothing can act on yet.
+  ⚠ **There is no "advance to the next stage" logic** — `runChain` RE-PLANS every iteration and
+  takes the highest-priority non-empty queue. So 2026-10-04's normalize → assign → research was
+  emergent, not sequenced: normalize produced strategies with no `family:`, which filled the
+  higher-priority assign queue; assign gave a family a new member, which filled research.
+  ⚠ **Consequence, by design**: while any family is research-due, normalization does not run.
+  `--plan` prints every queue's depth so it is visible; `--stage <name>` overrides for one run.
+  A stage that runs without draining its queue **cedes its turn** to the next stage rather than
+  ending the day (it used to `break`, which cost 2026-10-04 its remaining 124 minutes).
 - ⚠ **The cron can RESUME study/enhance but never cold-start them.** They are Claude agent
   loops; their wrappers resume a session pinned by a human
   (`data/auto{study,enhance}-session.txt`, format `<branch>\t<uuid>`). The loop script refuses
   a pin from another branch and **exits 0** — so checking only that the file exists reports
   success every day while starting nothing. `daily-pipeline.js` checks the branch too, reports
   `blocked`, **cedes the budget to the next stage**, and exits non-zero so a dead cron is
-  visible. The enhance pin is currently on `research/jul12` while HEAD is `main`.
+  visible. ⚠ This applies to the LEGACY `--stage enhance|study` paths; the automatic order
+  runs `research`, whose wrapper pins per FAMILY in `data/research-sessions/<family>.txt` and
+  CAN cold-start one that has never been researched.
 - **`slow-skipped` stays TERMINAL in the normalizer** (making it retriable re-bills it every
   batch — the `no-trades` bug). The retry path is a separate **deferred pool**,
   `data/deferred.json`, drained only by the daily pipeline and only at a **higher cap than the
   one that already failed** — re-running at the same cap spends the same minutes to learn the
   same thing. 14 previously-stranded rows were seeded into it; ceiling is 3 attempts, after
   which they stay listed under `exhausted` rather than vanishing.
-- This pipeline runs a **30-min slow-skip cap** (`--max-poll-min 30`), above the 20-min default,
-  and a 55-min daily usage limit to stay inside the free tier.
+- **The caps live in the plist, not in the defaults.** `com.mohanshen.join-quant-daily` exports
+  `USAGE_LIMIT=170` and `SLOW_SKIP_MIN=45` (the code defaults are 55 and 30, which is what a bare
+  manual run gets). ⚠ `USAGE_LIMIT` only stops a backtest STARTING — one already running keeps
+  billing — so the real ceiling is `USAGE_LIMIT + SLOW_SKIP_MIN` = **215 against a free 180**, and
+  2026-09-26 ended on 193, i.e. 13 minutes into paid credits. Set `USAGE_LIMIT≈135` to stay
+  strictly inside the free tier. ⚠ JQ settles `duration.used` when a run TERMINATES, not while it
+  is in flight (measured: used stayed 0 across 19→22 min of wall clock), so no gate can observe
+  spend mid-run.
 - `data/daily-state.json` + `data/deferred.json` are **tracked**: the run log and the work queue
   are what let tomorrow resume. `JQ_DAILY_STATE_DIR` redirects both — tests set it to a temp dir,
   because a test run that appends probe rows writes fiction into the record the next run reads.

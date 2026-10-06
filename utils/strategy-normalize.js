@@ -50,7 +50,8 @@ const waitMinFor = (capMin) => {
 const STRAT_DIR  = path.join(ROOT, 'strategies');
 const TMP_DIR    = '/tmp/jq-normalize';
 const POST_BT    = path.join(__dirname, 'strategy-post-backtest.js');
-const SHARPE_GATE = 2.5;
+// (no SHARPE_GATE constant: the gate is harness.gate()/stageThreshold(), which epoch 5
+//  moved 2.5 -> 1.5. A local copy here was dead code and an invitation to the stale value.)
 // Child MAX_POLL safety cap in MINUTES ("slow-skip"). Precedence: --max-poll-min flag >
 // JQ_MAX_POLL_MS env > child default (20). Forwarded to the child as a plain CLI arg so no
 // JQ_MAX_POLL_MS=… env prefix is needed (that prefix breaks the allowlist and forces approval).

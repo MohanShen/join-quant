@@ -5,6 +5,7 @@
 //   sourceFile is read from study/manifest.json. Also snapshots the source into study/<id>/target.py.
 // Writes study/<id>/findings.tsv, wiki/studies/<id>.md, and marks manifest status=done.
 const fs = require('fs');
+const harness = require('./harness-config');   // the gate moved 2.5 -> 1.5 at epoch 5; never hard-code it
 const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 // ⚠ ENTRY-POINT GUARD. CLAUDE.md: "every entry point in utils/ needs one" — a bare require()
@@ -32,13 +33,13 @@ const sourceFile = entry.sourceFile;
 const measured = total != null;
 const metricStr = measured
   ? `total ${total}% / annual ${annual}% / sharpe ${sharpe} / maxdd ${maxdd}%`
-  : `Sharpe ${sharpe}（normalize train）< 2.5 门槛`;
+  : `Sharpe ${sharpe}（normalize train）< ${harness.stageThreshold('normalize')} 门槛`;
 const src = measured ? 'baseline 直接观测' : 'transfer + normalize 指标';
 
 const T = {
   'etf-momentum': {
     refs: '[[ETF轮动]], [[动量与趋势]]',
-    concl: `ETF/七星-五福-三马 动量轮动家族成员。${measured ? `train 2022-2023 ` : `normalize train `}**Sharpe ${sharpe} → DQ**（不达 2.5 门槛）。属 [[ETF轮动]] 动量轮动家族典型 regime-dependent DQ。`,
+    concl: `ETF/七星-五福-三马 动量轮动家族成员。${measured ? `train 2022-2023 ` : `normalize train `}**Sharpe ${sharpe} → DQ**（不达 ${harness.stageThreshold('normalize')} 门槛）。属 [[ETF轮动]] 动量轮动家族典型 regime-dependent DQ。`,
     why: `动量轮动高度依赖趋势 regime（[[ETF轮动]] 核心结论）；冻结 2022-23 非趋势窗动量 whipsaw，Sharpe 结构性不足。参数/池/滤波/实盘链路类变体不改动量核心的 regime 依赖，故与家族同 DQ。头条长窗高倍数是含牛市产物。`,
     finding: `DQ：ETF/七星-五福-三马 动量轮动家族成员。Sharpe ${sharpe} → 不达门槛。属 [[ETF轮动]] 动量轮动家族 regime-dependent DQ（2022-23 非趋势窗 whipsaw），与 [[0aa4028d_追电ETF动量轮动]]/[[4fa17009_五福v5差异化滤波]] 同源。`,
     flags: measured ? 'regime-dependent' : 'regime-dependent, transfer-only',
