@@ -1,14 +1,19 @@
 {
-  "inFlight": null,
-  "lastRun": {
-    "stage": "normalize",
+  "inFlight": {
+    "stage": "research",
     "target": null,
     "budget": 0,
-    "at": "2026-10-06T18:00:51.220Z",
+    "at": "2026-10-07T18:01:42.168Z"
+  },
+  "lastRun": {
+    "stage": "assign",
+    "target": null,
+    "budget": 0,
+    "at": "2026-10-07T18:00:34.252Z",
     "outcome": "ran",
-    "note": "31 queued, 3 deferred at 45min",
+    "note": "family assignment over 1 pending",
     "minutesUsed": null,
-    "endedAt": "2026-10-06T21:39:00.355Z"
+    "endedAt": "2026-10-07T18:01:26.860Z"
   },
   "runs": [
     {
@@ -550,6 +555,16 @@
       "note": "31 queued, 3 deferred at 45min",
       "minutesUsed": null,
       "endedAt": "2026-10-06T21:39:00.355Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-07T18:00:34.252Z",
+      "outcome": "ran",
+      "note": "family assignment over 1 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-07T18:01:26.860Z"
     }
   ]
 }
