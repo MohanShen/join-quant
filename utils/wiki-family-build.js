@@ -39,7 +39,24 @@ const LIST = args.includes('--list');
 const FORCE = args.includes('--force');
 const TODAY = new Date().toISOString().slice(0, 10);
 
-// ── ledger: sourceFile -> best (highest-objective) normalized row ──
+// ── ledger: sourceFile -> best normalized row, EPOCH-AWARE ──
+//
+// ⚠ This used to take the highest objective across ALL epochs, so a superseded row outranked the
+// current one. Measured 2026-10-07: 7 of 13 families displayed a figure from a bench that no
+// longer applies — 五福闹新春 showed 0.6855 (epoch 2) against an epoch-6 best of 0.0878, and
+// 趋势技术 showed +0.2936 while its best epoch-6 row is −0.1976. A family that read as a modest
+// winner was a loser under the live bench. The same epoch-mixing defect as component-scan.js had.
+//
+// An epoch-valid row ALWAYS beats an invalid one, whatever the objective. Within one validity
+// class the highest objective still wins, as before.
+//
+// ⚠ It does NOT simply drop invalid rows. 三进兵 and 网格 have no epoch-6 measurement at all, and
+// blanking them would delete the only numbers they have — the data loss this builder's own guard
+// exists to prevent. Instead every figure is LABELLED with the epoch that produced it
+// (`bestObjectiveEpoch`), the way kb-stub stamps its `normalized:` block, so a stale number is
+// visible as stale rather than silently passing for current.
+const harness = require('./harness-config');
+
 function loadLedger() {
   const by = {};
   const rows = fs.readFileSync(LEDGER, 'utf8').split('\n').slice(1);
@@ -48,8 +65,14 @@ function loadLedger() {
     if (c[3] !== 'normalized') continue;
     const src = c[0];
     const obj = parseFloat(c[11]);
-    const rec = { obj: isNaN(obj) ? null : obj, sharpe: c[9], annual: c[8], maxdd: c[10], gate: c[12] };
-    if (!by[src] || (rec.obj != null && (by[src].obj == null || rec.obj > by[src].obj))) by[src] = rec;
+    const epoch = c[13] || null;
+    const valid = harness.measurementValid(epoch);
+    const rec = { obj: isNaN(obj) ? null : obj, sharpe: c[9], annual: c[8], maxdd: c[10],
+                  gate: c[12], epoch, valid };
+    const cur = by[src];
+    if (!cur) { by[src] = rec; continue; }
+    if (rec.valid !== cur.valid) { if (rec.valid) by[src] = rec; continue; }  // validity dominates
+    if (rec.obj != null && (cur.obj == null || rec.obj > cur.obj)) by[src] = rec;
   }
   return by;
 }
@@ -78,16 +101,27 @@ function loadStrategies() {
 // ── §3 ranked 横评 table ──
 function horizSection(members) {
   const ranked = members.slice().sort((a, b) => (b.obj ?? -1e9) - (a.obj ?? -1e9));
-  const best = ranked.find(m => m.obj != null) || null;
+  // ⚠ The BEST must come from the live bench, even when a superseded row scores higher. Sorting
+  // the table by objective alone is fine — it is a comparison — but the bolded champion and the
+  // frontmatter figure are claims about what this family IS, and an epoch-2 row is not that.
+  // 2026-10-07: without this, 7 of 13 families advertised a superseded number (五福闹新春 0.6855
+  // vs an epoch-6 best of 0.0878; 趋势技术 +0.2936 vs −0.1976 — a sign flip).
+  // Falls back to the best row of any epoch when the family has NO valid measurement, so a family
+  // that has simply not been re-measured keeps its number rather than being blanked. The epoch
+  // label on the figure is what keeps that honest.
+  const best = ranked.find(m => m.obj != null && m.valid)
+            || ranked.find(m => m.obj != null)
+            || null;
   const L = ['## 3. 家族内绩效横评 (auto)',
              '',
-             '| 排名 | 变体 | obj | sharpe | annual% | maxDD% | gate |',
-             '|---|---|---|---|---|---|---|'];
+             '| 排名 | 变体 | obj | sharpe | annual% | maxDD% | gate | epoch |',
+             '|---|---|---|---|---|---|---|---|'];
   ranked.forEach((m, i) => {
     const obj = m.obj != null ? m.obj.toFixed(4) : 'DQ/—';
     const gate = m.gate === 'pass' ? '✅' : (m.gate === 'fail' ? '❌' : '—');
     const s = (best && m.id === best.id) ? '**' : '';
-    L.push(`| ${s}${i + 1}${s} | ${s}[[${m.id}]]${s} | ${obj} | ${m.sharpe || '—'} | ${m.annual || '—'} | ${m.maxdd || '—'} | ${gate} |`);
+    const ep = m.epoch ? (m.valid ? m.epoch : `${m.epoch}⚠`) : '—';
+    L.push(`| ${s}${i + 1}${s} | ${s}[[${m.id}]]${s} | ${obj} | ${m.sharpe || '—'} | ${m.annual || '—'} | ${m.maxdd || '—'} | ${gate} | ${ep} |`);
   });
   const passN = members.filter(m => m.gate === 'pass').length;
   L.push('', `*${passN} gate-pass / ${members.length} members. 快照 ${TODAY}（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 \`wiki-family-build.js\` 生成，勿手改。*`, '');
@@ -160,6 +194,7 @@ concepts: []
 base: [[<postId8>_<代表基类>]]
 bestVariant: ${best ? `[[${best.id}]]` : '[[]]'}
 bestObjective: ${best && best.obj != null ? best.obj.toFixed(4) : 'null'}
+bestObjectiveEpoch: ${best && best.epoch ? best.epoch : 'null'}${best && best.valid === false ? '   # \u26a0 from a superseded bench; no row exists at the active epoch' : ''}
 memberCount: ${memberCount}
 sources: { normalized: ${memberCount}, study: 0, enhance: 0 }
 realism: "<⚠ 待人工填写>"
@@ -237,7 +272,13 @@ if (require.main === module) {
       if (fmMatch) {
         let fm = fmMatch[1];
         fm = setFmKey(fm, 'memberCount', members.length);
-        if (best) { fm = setFmKey(fm, 'bestVariant', `[[${best.id}]]`); fm = setFmKey(fm, 'bestObjective', best.obj.toFixed(4)); }
+        if (best) {
+          fm = setFmKey(fm, 'bestVariant', `[[${best.id}]]`);
+          fm = setFmKey(fm, 'bestObjective', best.obj.toFixed(4));
+          // Always label which bench produced it — an unlabelled number is how a
+          // superseded figure passes for current.
+          fm = setFmKey(fm, 'bestObjectiveEpoch', best.epoch || 'null');
+        }
         fm = setFmKey(fm, 'updatedAt', TODAY);
         next = next.replace(/^---\n[\s\S]*?\n---/, `---\n${fm}\n---`);
       }
