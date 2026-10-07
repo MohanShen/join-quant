@@ -56,6 +56,7 @@
       "Bash(node utils/backtest-series.js:*)",
       "Bash(node utils/harness-config.js:*)",
       "Bash(node utils/wiki-type-build.js:*)",
+      "Bash(node utils/integrate-queue.js:*)",
       "Bash(node utils/wiki-concept-lint.js:*)",
       "Bash(node utils/normalize-sync.js:*)",
       "Bash(node utils/wiki-epoch-repair.js:*)",

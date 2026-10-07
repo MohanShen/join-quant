@@ -65,9 +65,21 @@ function activeEpoch() {
   return String(harness.config().epoch);
 }
 
-/** Family-level validations already on the ledger, newest last. */
-function priorValidations(family) {
-  return consumption.events({ stage: 'validate', kind: 'family', key: family });
+/**
+ * Validations already on the ledger for one key, newest last.
+ *
+ * `kind` is 'family' by default and 'type' for a UNIVERSE-level composition
+ * (docs/proposals/type-integration-by-edge.md §6). The budget is deliberately per UNIVERSE, not
+ * per composition: composing five conjunctions and validating each until one passes is selection
+ * on VAL at the type level, which is the very leak the family rule exists to stop. One shot per
+ * (universe, epoch) means the composition is CHOSEN on TRAIN and VAL only confirms it.
+ *
+ * ⚠ A VAL failure is therefore TERMINAL for that universe this epoch — it does not license a
+ * different conjunction. Promotion is unaffected: it ships a family champion that already spent
+ * its own family-level VAL, and costs nothing here.
+ */
+function priorValidations(key, kind = 'family') {
+  return consumption.events({ stage: 'validate', kind, key });
 }
 
 /**
@@ -77,7 +89,7 @@ function priorValidations(family) {
  * caller never has to parse prose to decide what happened — the repo has been bitten by grepping
  * rendered output before (`detectCompileError` matching the editor's own source).
  */
-function check(family, { epoch = activeEpoch() } = {}) {
+function check(family, { epoch = activeEpoch(), kind = 'family' } = {}) {
   if (!family) {
     return { allowed: false, reason: 'no-family',
              why: 'VAL requires a family: the budget is one validation per (family, epoch), ' +
@@ -88,14 +100,16 @@ function check(family, { epoch = activeEpoch() } = {}) {
   // with no prior validation and is waved through — spending a VAL that is then charged to a
   // family nobody will ever look at, while the real one keeps its budget. The whole rule is
   // per-family accounting, so an unaccountable family is not a lesser problem than a second run.
-  if (!fs.existsSync(path.join(familiesDir(), `${family}.md`))) {
-    return { allowed: false, reason: 'unknown-family',
-             why: `VAL-BLOCKED: no family page at wiki/families/${family}.md. The budget is ` +
-                  'per (family, epoch), so a name nothing can be charged against is refused — ' +
-                  'check the spelling, or register the family first.' };
+  const dir = kind === 'type' ? path.resolve(__dirname, '../wiki/types') : familiesDir();
+  const label = kind === 'type' ? 'type page at wiki/types' : 'family page at wiki/families';
+  if (!fs.existsSync(path.join(dir, `${family}.md`))) {
+    return { allowed: false, reason: kind === 'type' ? 'unknown-type' : 'unknown-family',
+             why: `VAL-BLOCKED: no ${label}/${family}.md. The budget is ` +
+                  `per (${kind}, epoch), so a name nothing can be charged against is refused — ` +
+                  'check the spelling, or register it first.' };
   }
 
-  const prior = priorValidations(family);
+  const prior = priorValidations(family, kind);
   const blocking = prior.filter(e => e.epoch === epoch || !e.epoch);
 
   if (!blocking.length) {
@@ -127,9 +141,9 @@ function check(family, { epoch = activeEpoch() } = {}) {
 }
 
 /** Record a validation. `runId` is the candidate that was validated. */
-function record(family, runId, { outcome = '', note = '' } = {}) {
+function record(family, runId, { outcome = '', note = '', kind = 'family' } = {}) {
   return consumption.record({
-    key: family, kind: 'family', stage: 'validate', runId, outcome,
+    key: family, kind, stage: 'validate', runId, outcome,
     note: (ALLOW_REVAL ? '[JQ_ALLOW_REVAL] ' : '') + note,
   });
 }
