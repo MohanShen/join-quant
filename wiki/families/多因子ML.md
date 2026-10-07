@@ -16,6 +16,10 @@ edge:
     status: refuted
     evidence: [[study-q-e6-2]]（epoch 6，2023：去 etf 后 total 26.94→35.37、sharpe 1.56→2.49、maxDD 8.25→4.99；c_etf(2023) = −8.43pp，贡献全在 2022 事后池）
 base: [[d02cde29_高质量稳定上涨]]
+universe: 小盘
+universeBasis: "111 literal small-cap signals (小市值/中证1000); the ETF tickers are a satellite sleeve"
+universeSecondOpinion: 小盘
+universeAt: 2026-10-07
 bestVariant: [[d02cde29_高质量稳定上涨]]
 bestObjective: 0.4737
 memberCount: 21

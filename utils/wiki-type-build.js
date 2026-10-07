@@ -161,11 +161,26 @@ function build() {
         if (sf && fs.existsSync(abs)) src = fs.readFileSync(abs, 'utf8');
       }
     }
+    // ⚠ READ the recorded universe; do not re-derive it per build.
+    //
+    // `universe:` is assigned by reading the base SOURCE and written once onto the family
+    // page (docs/proposals/type-integration-by-edge.md §4). Re-deriving here would reshuffle
+    // types silently between builds and make integrate rounds incomparable — the same reason
+    // `family:` is never auto-assigned.
+    //
+    // universeOf() survives as the SECOND OPINION, stamped on the page as
+    // `universeSecondOpinion`. It disagreed with the reading on 6 of 13 families
+    // (2026-10-07), including every ETF one: a 117-line pure-ETF rotation scores ETF:2,
+    // below MIN_EVIDENCE, so conciseness alone sent it to 全A; and a benchmark
+    // set_benchmark('000300.XSHG') counted as universe evidence for a family whose pool is
+    // five hard-coded tickers.
+    const recorded = fmField(text, 'universe').trim();
 
     const turnover = statedTurnover(text);
     rows.push({
       family: name,
-      universe: src ? universeOf(src) : '其他',
+      universe: recorded || (src ? universeOf(src) : '其他'),
+        universeRecorded: Boolean(recorded),
       turnover,
       horizon: horizonOf(turnover),
       intraday: src ? INTRADAY.test(src) : false,
@@ -177,7 +192,18 @@ function build() {
   return rows;
 }
 
-function typeKey(r) { return `${r.universe}-${r.horizon}`; }
+/**
+ * ONE axis: the type IS the universe.
+ *
+ * The horizon axis was dropped on 2026-10-07. It bucketed a `turnover` number scraped by regex
+ * out of family-page prose, and 6 of 13 families had none, so half the coordinate was
+ * `H-unknown`. Worse, turnover is not a holding period: 大小盘轮动 measures 0.0373 and holds 59
+ * days (monthly), while 打板短线 measures 0.3061 and holds 1.51 — turnover mixes cadence with
+ * breadth and with how much of the book rotates.
+ *
+ * `horizon` is still computed and still rendered as information; it simply no longer partitions.
+ */
+function typeKey(r) { return r.universe; }
 
 function render(key, group) {
   const best = group.reduce((a, b) => ((b.bestObjective ?? -9) > (a.bestObjective ?? -9) ? b : a));
@@ -198,8 +224,7 @@ function render(key, group) {
     '',
     `# ${key} — strategy type`,
     '',
-    '**由 `utils/wiki-type-build.js` 生成，勿手改。** 家族归属由基类源码（universe）+ 实测换手',
-    '（horizon）导出，不读正文叙述。',
+    '**由 `utils/wiki-type-build.js` 生成，勿手改。** 家族归属读家族页的 `universe:` 字段（由基类**源码**判定后一次性写入），**不**每次构建重新推导；`horizon` 仅作信息展示，已不再参与分组。',
     '',
     '## 成员家族',
     '',

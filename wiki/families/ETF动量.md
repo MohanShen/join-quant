@@ -2,7 +2,11 @@
 family: ETF动量
 aliases: []
 concepts: []
-base: [[<postId8>_<代表基类>]]
+base: [[0aa4028d_追电ETF动量轮动]]
+universe: ETF
+universeBasis: "g.etf_pool = [513100 纳指, 513520 日经, 513030 德国, 518880 黄金] — momentum rotation over a fixed global ETF pool"
+universeSecondOpinion: 全A   # ⚠ disagrees — LLM wins, see universeBasis
+universeAt: 2026-10-07
 bestVariant: [[23584678_从想法到策略，我如何让AI帮我评审量化回测？]]
 bestObjective: 0.5267
 memberCount: 27

@@ -16,6 +16,10 @@ edge:
     status: measured
     evidence: "[[study-u-4]]（下界 1e8：obj 0.8607→0.0937，annual 33.7 / sharpe 1.04 / maxDD 24.3，DQ，两年仍为正，复现 epoch-2 的 sharpe 1.10）+ [[study-ep-imp-1]]（ETF-only 上下界 2e6→1e7：obj +0.054，收益不丢——收益活在 1e7–1e8 股这一档，最薄的 2e6–1e7 在 5% 参与上限下本就填不满）+ [[study-baseline-e6]]（参与上限单独把 epoch-2 的 178% 压到 105%：容量，不是信号）"
 base: [[15c36e0c_ETF溢价改进版]]
+universe: ETF
+universeBasis: "get_all_securities(['lof','etf']) — discount/premium arbitrage over the whole LOF+ETF list"
+universeSecondOpinion: 混合   # ⚠ disagrees — LLM wins, see universeBasis
+universeAt: 2026-10-07
 bestVariant: [[15c36e0c_ETF溢价改进版]]
 bestObjective: 1.5642
 memberCount: 2

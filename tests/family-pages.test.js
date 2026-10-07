@@ -129,7 +129,11 @@ test('family pages carry the post-merge §2 schema', async (t) => {
     }
     // A scaffold legitimately has no §6 — it has no findings yet. What must not happen is a
     // page WITH findings and no §6, which utils/research-sync.js and its test cover exactly.
-    const populated = files.filter(f => !/^base:\s*\[\[<postId8>/m.test(
+    // ⚠ "Scaffold" used to mean "still has the placeholder base". That proxy broke on
+    // 2026-10-07: ETF动量 was given a real base (so the universe classifier had a source to
+    // read) while remaining an untouched scaffold — §1 all 待人工填写, no findings, no §6.
+    // The durable marker is the fill-me text itself, not the base field.
+    const populated = files.filter(f => !/待人工填写/.test(
       fs.readFileSync(path.join(DIR, f), 'utf8')));
     assert.ok(withLog >= populated.length,
       `${populated.length - withLog} populated page(s) have no §6 study log`);

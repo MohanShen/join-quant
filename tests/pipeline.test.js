@@ -63,7 +63,12 @@ test('horizonOf buckets measured turnover', () => {
   assert.strictEqual(horizonOf(0.09), 'H-mid');
   assert.strictEqual(horizonOf(0.3061), 'H-high');   // 打板短线, the highest measured
   assert.strictEqual(horizonOf(null), 'H-unknown');
-  assert.strictEqual(typeKey({ universe: 'ETF', horizon: 'H-mid' }), 'ETF-H-mid');
+  assert.strictEqual(typeKey({ universe: 'ETF', horizon: 'H-mid' }), 'ETF');
+  // ⚠ ONE axis since 2026-10-07: the type IS the universe. horizonOf still buckets (above)
+  // and is still rendered as information, but no longer partitions — 6 of 13 families had no
+  // turnover, and turnover is not a holding period (大小盘轮动: 0.0373 yet 59 days held).
+  assert.strictEqual(typeKey({ universe: '小盘', horizon: 'H-unknown' }), '小盘',
+    'an unknown horizon must not leak into the key');
 });
 
 // ── the integration guard ────────────────────────────────────────────────────

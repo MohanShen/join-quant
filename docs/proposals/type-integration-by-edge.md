@@ -1,6 +1,6 @@
 # Integration by edge composition, on one axis
 
-**Status**: proposal · 2026-10-07
+**Status**: ACCEPTED 2026-10-07 · in progress (see §9)
 **Replaces**: the type layer's two-axis coordinate and the blend-first integration round
 **Authority it must obey**: `harness/harness.md` (frozen), `docs/consolidation-plan.md` §4,
 `.claude/skills/run-integrate/SKILL.md`
@@ -166,7 +166,10 @@ a search surface, and once that happens the only clean window left is the 2-test
 only a *pre-declared floor* ("does not collapse"), stated before the run. Weaker, but leak-free for
 the same reason — the bar is fixed in advance.
 
-This is the one open decision in this document.
+**DECIDED 2026-10-07 (user)**: the recommended resolution. Iterate on TRAIN against
+beat-or-equal; confirm ONCE on VAL where beat-or-equal must also hold; a VAL failure is
+TERMINAL for that composition. A type-level VAL budget enforces one validation per
+(composition, epoch), the way `utils/val-budget.js` does for families.
 
 ## 7. Budget and ranking
 

@@ -16,6 +16,10 @@ edge:
     status: measured
     evidence: "[[study-u-3]]（镜像买最高溢价：total −91.22%，annual −70.4 / sharpe −5.24 / maxDD 91.2，上涨日 14%；对数尺度与基类 +2.17 / −2.43 近似对称）+ [[study-u-4]]（无 NAV 信息、最薄 10 只等权：total −42.26%，annual −24.0 / maxDD 43.3，两年同号为负）+ [[study-u-5]]（折价深度加权比等权多 17pp 年化——深度有边际信息）。信号承重、universe 不承重；两条 edge 是同一件事的两面：偏离的方向由 NAV 供给、幅度由薄度供给"
 base: [[fa0d3bd9_PT多策略并行]]
+universe: ETF
+universeBasis: "get_all_securities(['etf']) — the tradable set is ETFs"
+universeSecondOpinion: 混合   # ⚠ disagrees — LLM wins, see universeBasis
+universeAt: 2026-10-07
 bestVariant: [[fa0d3bd9_PT多策略并行]]
 bestObjective: 3.5952
 memberCount: 2
