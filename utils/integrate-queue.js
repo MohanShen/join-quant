@@ -72,10 +72,29 @@ function families() {
       edge: e.name,
       edgeStatus: e.status,
       bestObjective: parseFloat(fmField(t, 'bestObjective')),
+      realism: fmField(t, 'realism'),
       members: parseInt(fmField(t, 'memberCount'), 10) || 0,
     };
   });
 }
+
+
+/**
+ * Does the family's own `realism:` declare its headline unrealizable?
+ *
+ * ⚠ A promotion SHIPS a family as the universe's answer, so it must inherit the same discipline
+ * integration applies at rule 4 (realizability at the worst leg). Without this, the ETF universe
+ * promotes PT多策略 on objective 3.5952 / VAL sharpe 12.82 — a book whose own realism block opens
+ * 「⚠⚠ 头条不可实现，且已定量」 and whose edge evidence says 「band 越薄头条越高、越不可成交」. CLAUDE.md
+ * records the same figure as "an ETF-discount book that dies under mild friction".
+ *
+ * ⚠ This is a FLOOR, not the judgement: it reads one phrase out of prose a human wrote. It cannot
+ * rank degrees of unrealizability, and a family with no realism recorded passes by default. What
+ * it catches is the explicit self-declaration, which is the case that matters. Skipped candidates
+ * are reported, never silently dropped.
+ */
+const UNREALIZABLE = /\u4e0d\u53ef\u5b9e\u73b0/;   // 不可实现 — "not realizable"
+const declaredUnrealizable = (realism) => UNREALIZABLE.test(String(realism || ''));
 
 /**
  * Provably the same edge? Name equality, or one name containing the other.
@@ -87,6 +106,44 @@ function sameEdge(a, b) {
   return x === y || x.includes(y) || y.includes(x);
 }
 
+
+/**
+ * Gatekeeper refusals, append-only and tracked (`data/integrate-refusals.tsv`).
+ *
+ * ⚠ Without this the queue re-proposes a pair the gatekeeper has already killed, and the next
+ * round pays again for a decision already made with evidence. It is the same role
+ * `closedDirections` plays in the research loop: a reasoned NO is a result, and results are kept.
+ *
+ * A refusal is keyed by the unordered pair, so (A,B) and (B,A) are one fact.
+ */
+const REFUSALS = () => path.join(
+  process.env.JQ_DAILY_STATE_DIR || path.join(ROOT, 'data'), 'integrate-refusals.tsv');
+
+const pairKey = (u, a, b) => [u, ...[a, b].sort()].join('\u0000');
+
+function refusals() {
+  const out = new Map();
+  let text;
+  try { text = fs.readFileSync(REFUSALS(), 'utf8'); } catch { return out; }
+  for (const line of text.trim().split('\n').slice(1)) {
+    const c = line.split('\t');
+    if (c.length < 4 || !c[0]) continue;
+    out.set(pairKey(c[0], c[1], c[2]), { universe: c[0], a: c[1], b: c[2], why: c[3], at: c[4] || '' });
+  }
+  return out;
+}
+
+function refuse(universe, a, b, why) {
+  if (!universe || !a || !b || !why || why.trim().length < 15) {
+    throw new Error('refuse(universe, a, b, why): a refusal needs a reason of its own — ' +
+                    'the whole point is that the next round can read why, not just that');
+  }
+  const f = REFUSALS();
+  if (!fs.existsSync(f)) fs.writeFileSync(f, 'universe\tfamilyA\tfamilyB\twhy\tat\n');
+  fs.appendFileSync(f, [universe, a, b, why.replace(/[\t\n]/g, ' '), new Date().toISOString()].join('\t') + '\n');
+  return { universe, a, b, why };
+}
+
 /** Integration events already recorded against a universe. */
 function attempted(universe) {
   try {
@@ -96,6 +153,7 @@ function attempted(universe) {
 
 function build() {
   const fams = families().filter(f => f.universe);
+  const known = refusals();
   const byU = {};
   for (const f of fams) (byU[f.universe] = byU[f.universe] || []).push(f);
 
@@ -107,7 +165,9 @@ function build() {
       for (let j = i + 1; j < measured.length; j++) {
         const a = measured[i], b = measured[j];
         const entry = { a: a.family, b: b.family, edges: [a.edge, b.edge] };
+        const gk = known.get(pairKey(universe, a.family, b.family));
         if (sameEdge(a.edge, b.edge)) refused.push({ ...entry, why: 'same edge, by name' });
+        else if (gk) refused.push({ ...entry, why: gk.why, gatekeeper: true });
         else pairs.push(entry);
       }
     }
@@ -124,7 +184,17 @@ function build() {
       (Number.isFinite(y.bestObjective) ? y.bestObjective : -Infinity) -
       (Number.isFinite(x.bestObjective) ? x.bestObjective : -Infinity));
     const top = ranked.find(f => Number.isFinite(f.bestObjective)) || null;
-    const promote = top && top.bestObjective > 0 ? top : null;
+    const eligible = ranked.filter(f => Number.isFinite(f.bestObjective) && f.bestObjective > 0
+                                     && !declaredUnrealizable(f.realism));
+    const promote = eligible[0] || null;
+    // Everything stronger that was passed over, and why — a promotion that quietly skipped the
+    // top family would hide the most important thing about the universe.
+    const skipped = ranked
+      .filter(f => Number.isFinite(f.bestObjective) && (!promote || f.bestObjective > promote.bestObjective))
+      .map(f => ({ family: f.family, objective: f.bestObjective,
+                   why: f.bestObjective <= 0 ? 'negative objective'
+                      : declaredUnrealizable(f.realism) ? 'its own realism: declares the headline unrealizable'
+                      : 'passed over' }));
 
     // Does that champion actually have a validation behind it? A promotion ships it as the
     // universe's answer, so an unvalidated one is a caveat the caller must see, not a detail.
@@ -151,6 +221,7 @@ function build() {
       attempted: done.map(e => ({ runId: e.runId, outcome: e.outcome, at: e.at })),
       action,
       promote: promote && { family: promote.family, objective: promote.bestObjective, val: promoteVal },
+      skipped,
       why: pairs.length
         ? `${pairs.length} admissible pair(s) from ${measured.length} measured edge(s)`
         : promote
@@ -158,8 +229,8 @@ function build() {
             `— promote ${promote.family}` +
             (promoteVal && !promoteVal.validated ? ' ⚠ never validated' : '')
           : top
-            ? `nothing to deliver: no admissible pair and the best family (${top.family}) scores ` +
-              `${top.bestObjective} — a negative objective is not a deliverable`
+            ? `nothing to deliver: no admissible pair, and every family is either negative or ` +
+              `declares its own headline unrealizable (best: ${top.family} at ${top.bestObjective})`
             : 'no family in this universe carries a measurable objective',
     };
   }).sort((a, b) => b.pairs.length - a.pairs.length || b.families - a.families);
@@ -174,9 +245,18 @@ function next() {
       || null;
 }
 
-module.exports = { build, next, sameEdge, families, edgeOf };
+module.exports = { build, next, sameEdge, families, edgeOf, refusals, refuse, REFUSALS };
 
 if (require.main === module) {
+  const argv = process.argv.slice(2);
+  if (argv[0] === '--refuse') {
+    const i = argv.indexOf('--why');
+    const why = i >= 0 ? argv.slice(i + 1).join(' ') : '';
+    const [, u, a, b] = argv;
+    try { refuse(u, a, b, why); console.log(`[integrate] refused ${a} \u00d7 ${b} in ${u}`); }
+    catch (e) { console.error('[integrate] ' + e.message); process.exit(1); }
+    process.exit(0);
+  }
   const rows = build();
   if (process.argv.includes('--next')) {
     const n = next();
@@ -194,6 +274,7 @@ if (require.main === module) {
     for (const p of r.refused) console.log(`   refused ${p.a} × ${p.b}  [${p.edges.join(' × ')}] — ${p.why}`);
     if (r.action === 'promote' && r.promote) console.log(`   promote ${r.promote.family} (objective ${r.promote.objective})` +
       (r.promote.val ? (r.promote.val.validated ? `  VAL ${r.promote.val.runId} -> ${r.promote.val.outcome}` : '  ⚠ never validated') : ''));
+    for (const k of (r.skipped || [])) console.log(`   skipped ${k.family} (objective ${k.objective}) — ${k.why}`);
     for (const a of r.attempted) console.log(`   done    ${a.runId} -> ${a.outcome}`);
   }
   console.log('\n⚠ A surviving pair is a CANDIDATE, not a verdict: name-distinctness is a floor, and');

@@ -22,6 +22,7 @@ function famDir(pages) {
   for (const [name, p] of Object.entries(pages)) {
     fs.writeFileSync(path.join(d, name + '.md'),
       `---\nfamily: ${name}\nuniverse: ${p.u}\nbestObjective: ${p.obj}\nmemberCount: 1\n` +
+      `realism: "${p.realism || ''}"\n` +
       `edge:\n  - name: ${p.edge}\n    status: ${p.status}\n---\n\n# ${name}\n`);
   }
   return d;
@@ -89,7 +90,7 @@ test('the universe round queue', async (t) => {
     const u = rows.find(r => r.universe === 'U');
     assert.strictEqual(u.action, 'blocked');
     assert.strictEqual(u.promote, null);
-    assert.match(u.why, /negative objective is not a deliverable/);
+    assert.match(u.why, /every family is either negative or declares its own headline unrealizable/);
   });
 
   await t.test('a singleton with a positive champion still delivers', () => {
@@ -117,5 +118,62 @@ test('the type-level VAL budget is separate from the family one', async (t) => {
     const r = v.check('no-such-universe', { kind: 'type' });
     assert.strictEqual(r.allowed, false);
     assert.strictEqual(r.reason, 'unknown-type');
+  });
+});
+
+test('promotion inherits the realizability discipline', async (t) => {
+  await t.test('a family that declares its own headline unrealizable is not shipped', () => {
+    // The ETF universe's top two both open their realism with 「⚠⚠ 头条不可实现，且已定量」.
+    // Promotion SHIPS a family as the universe's answer, so it must apply the same discipline
+    // integration applies at rule 4 — otherwise the round delivers a book its own page says
+    // cannot be traded (PT多策略, objective 3.5952, VAL sharpe 12.82).
+    const rows = queueFor({
+      // same edge on both, so the pair is refused and PROMOTION is what is under test here
+      Rich: { u: 'U', obj: 3.59, edge: '折价', status: 'measured',
+              realism: '⚠⚠ 头条不可实现，且已定量：收益来自集合竞价成交价' },
+      Modest: { u: 'U', obj: 0.68, edge: '折价', status: 'measured', realism: '⚠ 零滑点台，滑点折价小' },
+    });
+    const u = rows.find(r => r.universe === 'U');
+    assert.strictEqual(u.action, 'promote');
+    assert.strictEqual(u.promote.family, 'Modest', 'the richer book declares itself untradeable');
+    assert.ok(u.skipped.some(k => k.family === 'Rich' && /unrealizable/.test(k.why)),
+      'and the skip must be REPORTED — silently passing over the top family hides the finding');
+  });
+
+  await t.test('a universe where everything is unrealizable delivers nothing', () => {
+    const rows = queueFor({
+      A: { u: 'U', obj: 3.59, edge: '折价', status: 'measured', realism: '⚠⚠ 头条不可实现' },
+      B: { u: 'U', obj: 1.56, edge: '折价', status: 'measured', realism: '⚠⚠ 头条不可实现' },
+    });
+    const u = rows.find(r => r.universe === 'U');
+    assert.strictEqual(u.action, 'blocked');
+    assert.match(u.why, /declares its own headline unrealizable/);
+  });
+
+  await t.test('a missing realism block does not block a promotion', () => {
+    // The check reads one phrase out of human prose. Absence is not evidence of unrealizability.
+    const rows = queueFor({ A: { u: 'U', obj: 1.0, edge: 'a', status: 'measured' } });
+    assert.strictEqual(rows.find(r => r.universe === 'U').action, 'promote');
+  });
+});
+
+test('a gatekeeper refusal is durable', async (t) => {
+  const q = require('../utils/integrate-queue');
+
+  await t.test('it demands a reason, not just a verdict', () => {
+    assert.throws(() => q.refuse('U', 'A', 'B', 'no'), /reason of its own/,
+      'the next round must be able to read WHY, or it pays for the decision again');
+    assert.throws(() => q.refuse('U', 'A', '', 'a perfectly good long reason here'));
+  });
+
+  await t.test('the pair is unordered — (A,B) and (B,A) are one fact', () => {
+    const src = fs.readFileSync(path.join(__dirname, '../utils/integrate-queue.js'), 'utf8');
+    assert.match(src, /\[a, b\]\.sort\(\)/);
+  });
+
+  await t.test('refused pairs leave the queue but stay visible', () => {
+    const src = fs.readFileSync(path.join(__dirname, '../utils/integrate-queue.js'), 'utf8');
+    assert.match(src, /refused\.push\(\{ \.\.\.entry, why: gk\.why, gatekeeper: true \}\)/,
+      'a gatekeeper refusal must be reported with its reason, not dropped');
   });
 });
