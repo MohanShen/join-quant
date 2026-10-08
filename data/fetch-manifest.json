@@ -1,49 +1,52 @@
 {
-  "fetchedAt": "2026-09-12T08:44:42.339Z",
+  "fetchedAt": "2026-10-07T22:07:41.838Z",
   "entries": [
     {
-      "postId": "6e1255fab52662fb9f50d9723ff40539",
-      "backtestId": "c5ea449b80c811edda3e831734e3feae",
-      "title": "年化64%的市值选股策略（有止损模块）",
-      "url": "https://www.joinquant.com/view/community/detail/6e1255fab52662fb9f50d9723ff40539",
+      "postId": "b5c0ce178ff660b916ecc327c8771e87",
+      "backtestId": "dc5ca9d3314251287b7812f0363eb3ea",
+      "title": "严格约束选股条件 能否找到跑赢市场的好公司？",
+      "url": "https://www.joinquant.com/view/community/detail/b5c0ce178ff660b916ecc327c8771e87",
+      "sourceFile": "2026-10-08_严格约束选股条件_能否找到跑赢市场的好公司-b5c0ce17.py",
       "stats": {
-        "annualReturn": 0.64427018750993,
-        "cumulativeReturn": 18.84115186,
-        "maxDrawdown": 0.47150007552632,
-        "sharpe": 1.9873945294343,
-        "winRatio": 0.60163666121113,
-        "tradingDays": 1502,
-        "periodLabel": "2019-03"
+        "annualReturn": -0.056523497666694,
+        "cumulativeReturn": -0.32691436,
+        "maxDrawdown": 0.60798747653138,
+        "sharpe": -0.3571096028884,
+        "winRatio": 0.58659217877095,
+        "tradingDays": 1701,
+        "periodLabel": "2018-12"
       }
     },
     {
-      "postId": "cefad376ab51d4b33869320a22d45d2f",
-      "backtestId": "0c644d0f69f8f35d0fe94841bf2ef3f3",
-      "title": "年化42%的市值选股与阶梯调仓策略",
-      "url": "https://www.joinquant.com/view/community/detail/cefad376ab51d4b33869320a22d45d2f",
+      "postId": "eda22a433508c4527764fed0cceefffb",
+      "backtestId": "d0001fb0a98f840ee1d1282d8f081526",
+      "title": "全天候风险平价 + 波动趋势调整策略，最大回撤2.8%",
+      "url": "https://www.joinquant.com/view/community/detail/eda22a433508c4527764fed0cceefffb",
+      "sourceFile": "2026-10-08_全天候风险平价_波动趋势调整策略_最大回撤2_8-eda22a43.py",
       "stats": {
-        "annualReturn": 0.42813604007356,
-        "cumulativeReturn": 7.50855148,
-        "maxDrawdown": 0.52964662643664,
-        "sharpe": 1.645923729923,
-        "winRatio": 0.51158555094607,
-        "tradingDays": 1502,
-        "periodLabel": "2019-03"
+        "annualReturn": 0.083000135946995,
+        "cumulativeReturn": 0.6357885757,
+        "maxDrawdown": 0.026499049434262,
+        "sharpe": 1.3482288629064,
+        "winRatio": 0.83766233766234,
+        "tradingDays": 1543,
+        "periodLabel": "2026-05"
       }
     },
     {
-      "postId": "258b34e1f4009b751f230889e3bb1d4c",
-      "backtestId": "718ef9bc0fb2d6bf86a27cae8d5f7b62",
-      "title": "海龟交易体系（股票版）",
-      "url": "https://www.joinquant.com/view/community/detail/258b34e1f4009b751f230889e3bb1d4c",
+      "postId": "45fbd57db3ecc0e203a08c45defb4c87",
+      "backtestId": "f9a301de414880a3d8ae5f961012aa61",
+      "title": "高股息低估值策略的上限在哪里？",
+      "url": "https://www.joinquant.com/view/community/detail/45fbd57db3ecc0e203a08c45defb4c87",
+      "sourceFile": "2026-10-08_高股息低估值策略的上限在哪里-45fbd57d.py",
       "stats": {
-        "annualReturn": 0.30083256389495,
-        "cumulativeReturn": 2.7563157,
-        "maxDrawdown": 0.21730309773912,
-        "sharpe": 1.3066232753597,
-        "winRatio": 0.42105263157895,
-        "tradingDays": 1258,
-        "periodLabel": "2019-03"
+        "annualReturn": 0.37894793640313,
+        "cumulativeReturn": 4.262394331,
+        "maxDrawdown": 0.21437163149717,
+        "sharpe": 1.7047364815275,
+        "winRatio": 0.66666666666667,
+        "tradingDays": 1292,
+        "periodLabel": "2026-05"
       }
     }
   ]

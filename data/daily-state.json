@@ -1,19 +1,14 @@
 {
-  "inFlight": {
-    "stage": "research",
-    "target": null,
-    "budget": 0,
-    "at": "2026-10-07T18:01:42.168Z"
-  },
+  "inFlight": null,
   "lastRun": {
-    "stage": "assign",
+    "stage": "discover",
     "target": null,
-    "budget": 0,
-    "at": "2026-10-07T18:00:34.252Z",
-    "outcome": "ran",
-    "note": "family assignment over 1 pending",
+    "budget": 178,
+    "at": "2026-10-07T22:07:21.850Z",
+    "outcome": "error",
+    "note": "discover + fetch",
     "minutesUsed": null,
-    "endedAt": "2026-10-07T18:01:26.860Z"
+    "endedAt": "2026-10-08T02:22:22.119Z"
   },
   "runs": [
     {
@@ -565,6 +560,56 @@
       "note": "family assignment over 1 pending",
       "minutesUsed": null,
       "endedAt": "2026-10-07T18:01:26.860Z"
+    },
+    {
+      "stage": "research",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-07T18:01:42.168Z",
+      "outcome": "ran",
+      "note": "resumed research session 01920083 (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-07T18:04:36.943Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-07T18:04:41.537Z",
+      "outcome": "ran",
+      "note": "23 queued, 4 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-07T22:05:28.845Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 177,
+      "at": "2026-10-07T22:05:32.398Z",
+      "outcome": "ran",
+      "note": "14 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-07T22:07:07.325Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 178,
+      "at": "2026-10-07T22:07:12.423Z",
+      "outcome": "ran",
+      "note": "13 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-07T22:07:12.478Z"
+    },
+    {
+      "stage": "discover",
+      "target": null,
+      "budget": 178,
+      "at": "2026-10-07T22:07:21.850Z",
+      "outcome": "error",
+      "note": "discover + fetch",
+      "minutesUsed": null,
+      "endedAt": "2026-10-08T02:22:22.119Z"
     }
   ]
 }

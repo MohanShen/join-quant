@@ -260,3 +260,14 @@ strategies/2026-06-29_10年15000倍_无未来函数_但是没什么卵用-7be4bc
 strategies/2026-07-03_头狼涨停战法-a7872a22.py	a7872a22dd1913f38b0352ab86742f88	头狼涨停战法	no-trades	2022-01-01	2023-12-31	729	0.00	0.00	0.00	0.00			6
 strategies/2026-07-06_竞价擒龙_年化245_83_策略秘籍深度拆解-96fb1ca0.py	96fb1ca0ca64bd724083ef88697b8494	竞价擒龙，年化245.83%！策略秘籍深度拆解	slow-skipped										6
 strategies/2026-07-19_年化160000000倍百分之10万有未来函数的策略见过吗-db14a731.py	db14a7316ed712b3f01ef9d9b4c675d3	年化160000000倍百分之10万有未来函数的策略见过吗	no-trades	2022-01-01	2023-12-31	729	0.00	0.00	0.00	0.00			6
+strategies/2026-05-23_利用爬虫进行每日市场行情推送-477c48dc.py	477c48dc8b6287bf528169c20cc0d29d	利用爬虫进行每日市场行情推送	compile-error										6
+strategies/2026-05-23_基于RSRS策略的改进年化20-9ca7f493.py	9ca7f4936e068afaa01be14d7a52d14f	基于RSRS策略的改进年化20%	compile-error										6
+strategies/2026-05-24_二八轮动小市值策略改进版07年至16年4000多倍-1ae37a5f.py	1ae37a5f9b441395244d6a9459afa77b	二八轮动小市值策略改进版07年至16年4000多倍	compile-error										6
+strategies/2026-05-26_一日游短线策略-43fca771.py	43fca771ed17613212b6056fed74911f	一日游短线策略	compile-error										6
+strategies/2026-05-29_策略研发_三进兵策略_第二版-87ab0122.py	87ab0122bfe7600e2d3ec2b35c4ae443	【策略研发】三进兵策略（第二版）	compile-error										6
+strategies/2026-05-30_传统反转因子的改进与实测-3691829a.py	3691829a0d8e1ab8de3a60a4170ba41a	传统反转因子的改进与实测	crash										6
+strategies/2026-07-16_四模式量化-无未来-25年至今收益138_回撤16_3-61c9c428.py	61c9c42855e0393f2c2ca2732d8abf3b	四模式量化-无未来-25年至今收益138%回撤16.3%	slow-skipped										6
+strategies/2026-05-23_收益提升到471_--加入风控升级的连续涨停基因轮动-c658ef98.py	c658ef984ae714a7d158e7dcb4fa823c	收益提升到471%--加入风控升级的连续涨停基因轮动	slow-skipped										6
+strategies/2026-07-04_多因子优选_KNN预测择股策略V3_0-13819419.py	1381941977792b27803aa8c3fb41d9be	多因子优选+KNN预测择股策略V3.0	slow-skipped										6
+strategies/2026-06-23_增量学习收益472_--shipan今日两个9-d5b83074.py	d5b83074f796738f9818c566b066e7ae	增量学习收益472%--shipan今日两个9%	slow-skipped										6
+strategies/2026-05-30_传统反转因子的改进与实测-3691829a.py	3691829a0d8e1ab8de3a60a4170ba41a	传统反转因子的改进与实测	compile-error										6

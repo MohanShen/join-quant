@@ -1,2 +1,8 @@
 2026-10-02T18:47:56.368Z	strategies/2026-07-15_超短线_快刀手_1万本金单票满仓_极致止盈损-7cf56e56.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'close', 'volume'}字段数据, current_dt=2022-01-04 09:35:00, end_date=2022-01-04
 2026-10-03T18:46:45.414Z	strategies/2026-06-01_组合魅力_4策略融合-小市值_白马_低相关轮动_行业轮动-962e727b.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 jqmt
+2026-10-07T18:05:45.879Z	strategies/2026-05-23_利用爬虫进行每日市场行情推送-477c48dc.py	AttributeError: 'NoneType' object has no attribute 'get_text'
+2026-10-07T18:06:49.594Z	strategies/2026-05-23_基于RSRS策略的改进年化20-9ca7f493.py	ModuleNotFoundError: 您是否想导入研究中的自定义库? 自定义库暂时不支持文件夹, 请把库文件放在研究根目录: pandas.stats.api
+2026-10-07T18:08:15.779Z	strategies/2026-05-24_二八轮动小市值策略改进版07年至16年4000多倍-1ae37a5f.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 tradestat
+2026-10-07T18:15:29.544Z	strategies/2026-05-26_一日游短线策略-43fca771.py	KeyError: '002652.XSHE'
+2026-10-07T18:25:08.896Z	strategies/2026-05-29_策略研发_三进兵策略_第二版-87ab0122.py	jqdata.exceptions.FutureDataError: 设置avoid_future_data=True之后, get_bars的end_dt(2025-09-18 17:00:00)不能大于当前时间current_dt(2022-03-15 09:30:00)
+2026-10-07T22:07:01.137Z	strategies/2026-05-30_传统反转因子的改进与实测-3691829a.py	TypeError: slice indices must be integers or None or have an __index__ method

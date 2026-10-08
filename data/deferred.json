@@ -230,5 +230,37 @@
     "lastCapMin": 45,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-10-06T21:39:00.355Z"
+  },
+  "strategies/2026-07-16_四模式量化-无未来-25年至今收益138_回撤16_3-61c9c428.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-07T22:05:28.843Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-07T22:05:28.843Z"
+  },
+  "strategies/2026-05-23_收益提升到471_--加入风控升级的连续涨停基因轮动-c658ef98.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-07T22:05:28.844Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-07T22:05:28.844Z"
+  },
+  "strategies/2026-07-04_多因子优选_KNN预测择股策略V3_0-13819419.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-07T22:05:28.844Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-07T22:05:28.844Z"
+  },
+  "strategies/2026-06-23_增量学习收益472_--shipan今日两个9-d5b83074.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-07T22:05:28.845Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-07T22:05:28.845Z"
   }
 }
