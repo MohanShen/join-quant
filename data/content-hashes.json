@@ -1226,5 +1226,20 @@
     "postId": "45fbd57db3ecc0e203a08c45defb4c87",
     "sourceFile": "2026-10-08_高股息低估值策略的上限在哪里-45fbd57d.py",
     "registeredAt": "2026-10-07T22:07:41.821Z"
+  },
+  "6248240d3919f45780d2c97d64a5c23e276d5a56b74469a96a97dff857503675": {
+    "postId": "bdaa7d7f05580fcd1d47341f21a78efe",
+    "sourceFile": "2026-10-09_七星高照-V1_7_附PT迁移版回测结果截图-bdaa7d7f.py",
+    "registeredAt": "2026-10-08T18:03:17.663Z"
+  },
+  "3f3bb45af91f98789c0a9f9f52f8af00ead9fc3562d6415e5c09455c982778a5": {
+    "postId": "720b0743a2a930da6f851b1949b3a143",
+    "sourceFile": "2026-10-09_引入AI互搏后_高收益名策略潜在Bug被找到了-720b0743.py",
+    "registeredAt": "2026-10-08T18:03:23.051Z"
+  },
+  "cc486313440ed737f6c51f4b4c349e998db298c0dba0088fad0f284b0da5f581": {
+    "postId": "ba950e028c3d59322b3dcc83985319a8",
+    "sourceFile": "2026-10-09_一致性风险度量_桥水全天候为例-ba950e02.py",
+    "registeredAt": "2026-10-08T18:03:25.700Z"
   }
 }

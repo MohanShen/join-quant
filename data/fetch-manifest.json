@@ -1,52 +1,52 @@
 {
-  "fetchedAt": "2026-10-07T22:07:41.838Z",
+  "fetchedAt": "2026-10-08T18:03:25.717Z",
   "entries": [
     {
-      "postId": "b5c0ce178ff660b916ecc327c8771e87",
-      "backtestId": "dc5ca9d3314251287b7812f0363eb3ea",
-      "title": "严格约束选股条件 能否找到跑赢市场的好公司？",
-      "url": "https://www.joinquant.com/view/community/detail/b5c0ce178ff660b916ecc327c8771e87",
-      "sourceFile": "2026-10-08_严格约束选股条件_能否找到跑赢市场的好公司-b5c0ce17.py",
+      "postId": "bdaa7d7f05580fcd1d47341f21a78efe",
+      "backtestId": "fbac3076fc15a97457fea97956de349c",
+      "title": "七星高照-V1.7 附PT迁移版回测结果截图",
+      "url": "https://www.joinquant.com/view/community/detail/bdaa7d7f05580fcd1d47341f21a78efe",
+      "sourceFile": "2026-10-09_七星高照-V1_7_附PT迁移版回测结果截图-bdaa7d7f.py",
       "stats": {
-        "annualReturn": -0.056523497666694,
-        "cumulativeReturn": -0.32691436,
-        "maxDrawdown": 0.60798747653138,
-        "sharpe": -0.3571096028884,
-        "winRatio": 0.58659217877095,
-        "tradingDays": 1701,
-        "periodLabel": "2018-12"
+        "annualReturn": 2.5561861858639,
+        "cumulativeReturn": 1.130035082,
+        "maxDrawdown": 0.23822437215234,
+        "sharpe": 6.1444245385543,
+        "winRatio": 0.5,
+        "tradingDays": 149,
+        "periodLabel": "2026-08"
       }
     },
     {
-      "postId": "eda22a433508c4527764fed0cceefffb",
-      "backtestId": "d0001fb0a98f840ee1d1282d8f081526",
-      "title": "全天候风险平价 + 波动趋势调整策略，最大回撤2.8%",
-      "url": "https://www.joinquant.com/view/community/detail/eda22a433508c4527764fed0cceefffb",
-      "sourceFile": "2026-10-08_全天候风险平价_波动趋势调整策略_最大回撤2_8-eda22a43.py",
+      "postId": "720b0743a2a930da6f851b1949b3a143",
+      "backtestId": "88b61a6afc8682653d26a4c526dafd69",
+      "title": "引入AI互搏后，高收益名策略潜在Bug被找到了",
+      "url": "https://www.joinquant.com/view/community/detail/720b0743a2a930da6f851b1949b3a143",
+      "sourceFile": "2026-10-09_引入AI互搏后_高收益名策略潜在Bug被找到了-720b0743.py",
       "stats": {
-        "annualReturn": 0.083000135946995,
-        "cumulativeReturn": 0.6357885757,
-        "maxDrawdown": 0.026499049434262,
-        "sharpe": 1.3482288629064,
-        "winRatio": 0.83766233766234,
-        "tradingDays": 1543,
+        "annualReturn": 0.77751574002932,
+        "cumulativeReturn": 33.18649797727,
+        "maxDrawdown": 0.15077679429511,
+        "sharpe": 3.2849459537078,
+        "winRatio": 0.52599388379205,
+        "tradingDays": 1535,
         "periodLabel": "2026-05"
       }
     },
     {
-      "postId": "45fbd57db3ecc0e203a08c45defb4c87",
-      "backtestId": "f9a301de414880a3d8ae5f961012aa61",
-      "title": "高股息低估值策略的上限在哪里？",
-      "url": "https://www.joinquant.com/view/community/detail/45fbd57db3ecc0e203a08c45defb4c87",
-      "sourceFile": "2026-10-08_高股息低估值策略的上限在哪里-45fbd57d.py",
+      "postId": "ba950e028c3d59322b3dcc83985319a8",
+      "backtestId": "0f2b90b63317183858cbdb8382fdadfc",
+      "title": "一致性风险度量（桥水全天候为例）",
+      "url": "https://www.joinquant.com/view/community/detail/ba950e028c3d59322b3dcc83985319a8",
+      "sourceFile": "2026-10-09_一致性风险度量_桥水全天候为例-ba950e02.py",
       "stats": {
-        "annualReturn": 0.37894793640313,
-        "cumulativeReturn": 4.262394331,
-        "maxDrawdown": 0.21437163149717,
-        "sharpe": 1.7047364815275,
-        "winRatio": 0.66666666666667,
-        "tradingDays": 1292,
-        "periodLabel": "2026-05"
+        "annualReturn": 0.086640027166148,
+        "cumulativeReturn": 0.27586072333333,
+        "maxDrawdown": 0.032914550237784,
+        "sharpe": 1.020635583608,
+        "winRatio": null,
+        "tradingDays": 733,
+        "periodLabel": "2016-08"
       }
     }
   ]

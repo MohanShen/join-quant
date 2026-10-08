@@ -271,3 +271,9 @@ strategies/2026-05-23_收益提升到471_--加入风控升级的连续涨停基�
 strategies/2026-07-04_多因子优选_KNN预测择股策略V3_0-13819419.py	1381941977792b27803aa8c3fb41d9be	多因子优选+KNN预测择股策略V3.0	slow-skipped										6
 strategies/2026-06-23_增量学习收益472_--shipan今日两个9-d5b83074.py	d5b83074f796738f9818c566b066e7ae	增量学习收益472%--shipan今日两个9%	slow-skipped										6
 strategies/2026-05-30_传统反转因子的改进与实测-3691829a.py	3691829a0d8e1ab8de3a60a4170ba41a	传统反转因子的改进与实测	compile-error										6
+strategies/2026-10-08_严格约束选股条件_能否找到跑赢市场的好公司-b5c0ce17.py	b5c0ce178ff660b916ecc327c8771e87	严格约束选股条件 能否找到跑赢市场的好公司？	compile-error										6
+strategies/2026-10-08_全天候风险平价_波动趋势调整策略_最大回撤2_8-eda22a43.py	eda22a433508c4527764fed0cceefffb	全天候风险平价 + 波动趋势调整策略，最大回撤2.8%	incompatible-notrunnable										6
+strategies/2026-10-08_高股息低估值策略的上限在哪里-45fbd57d.py	45fbd57db3ecc0e203a08c45defb4c87	高股息低估值策略的上限在哪里？	no-trades	2022-01-01	2023-12-31	729	0.00	0.00	0.00	0.00			6
+strategies/2026-10-09_七星高照-V1_7_附PT迁移版回测结果截图-bdaa7d7f.py	bdaa7d7f05580fcd1d47341f21a78efe	七星高照-V1.7 附PT迁移版回测结果截图	normalized	2022-01-01	2023-12-31	729	65.75	28.79	1.21	16.27	0.1252	fail	6
+strategies/2026-10-09_引入AI互搏后_高收益名策略潜在Bug被找到了-720b0743.py	720b0743a2a930da6f851b1949b3a143	引入AI互搏后，高收益名策略潜在Bug被找到了	normalized	2022-01-01	2023-12-31	729	104.69	43.14	2.15	13.20	0.2994	pass	6
+strategies/2026-10-09_一致性风险度量_桥水全天候为例-ba950e02.py	ba950e028c3d59322b3dcc83985319a8	一致性风险度量（桥水全天候为例）	compile-error										6

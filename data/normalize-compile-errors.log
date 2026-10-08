@@ -6,3 +6,5 @@
 2026-10-07T18:15:29.544Z	strategies/2026-05-26_一日游短线策略-43fca771.py	KeyError: '002652.XSHE'
 2026-10-07T18:25:08.896Z	strategies/2026-05-29_策略研发_三进兵策略_第二版-87ab0122.py	jqdata.exceptions.FutureDataError: 设置avoid_future_data=True之后, get_bars的end_dt(2025-09-18 17:00:00)不能大于当前时间current_dt(2022-03-15 09:30:00)
 2026-10-07T22:07:01.137Z	strategies/2026-05-30_传统反转因子的改进与实测-3691829a.py	TypeError: slice indices must be integers or None or have an __index__ method
+2026-10-08T18:01:28.902Z	strategies/2026-10-08_严格约束选股条件_能否找到跑赢市场的好公司-b5c0ce17.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-10-08T18:14:04.009Z	strategies/2026-10-09_一致性风险度量_桥水全天候为例-ba950e02.py	TypeError: type numpy.ndarray doesn't define __round__ method

@@ -3,12 +3,12 @@
   "lastRun": {
     "stage": "discover",
     "target": null,
-    "budget": 178,
-    "at": "2026-10-07T22:07:21.850Z",
+    "budget": 0,
+    "at": "2026-10-08T18:03:04.587Z",
     "outcome": "error",
     "note": "discover + fetch",
     "minutesUsed": null,
-    "endedAt": "2026-10-08T02:22:22.119Z"
+    "endedAt": "2026-10-08T22:18:04.872Z"
   },
   "runs": [
     {
@@ -610,6 +610,36 @@
       "note": "discover + fetch",
       "minutesUsed": null,
       "endedAt": "2026-10-08T02:22:22.119Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-08T18:00:20.811Z",
+      "outcome": "ran",
+      "note": "16 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-08T18:02:29.056Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-08T18:02:55.461Z",
+      "outcome": "ran",
+      "note": "13 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-08T18:02:55.521Z"
+    },
+    {
+      "stage": "discover",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-08T18:03:04.587Z",
+      "outcome": "error",
+      "note": "discover + fetch",
+      "minutesUsed": null,
+      "endedAt": "2026-10-08T22:18:04.872Z"
     }
   ]
 }
