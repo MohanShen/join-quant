@@ -51,6 +51,27 @@ const VARIANTS = {
   'q-10_rank-by-size': s => edit(s,
     '    valid_stocks.sort(key=get_ratio, reverse=True)\n',
     '    pass  # q-10: bid1/mcap sort removed, preselect order (market cap asc) kept\n'),
+  // The 2026-10-09 round, prompted by the JQ log (data/autostudy-logs/xsz-base-jqlog-full.txt):
+  // JQ's tick b1_v is in SHARES, so `a1_p * a1_v * 100` overstates bid-1 money 100x and the
+  // advertised "买一档金额 > 5万" gate really means "> 500". q-13 makes the gate mean what it says.
+  'q-13_fix-bid-units': s => edit(s,
+    '        money = a1_p * a1_v * 100\n',
+    '        money = a1_p * a1_v  # q-13: b1_v is in shares, the *100 was a 100x overstatement\n'),
+  // q-14: the same gate turned OFF, to measure what it contributes at its current (100x) threshold
+  'q-14_no-liquidity-gate': s => edit(s,
+    '        if money > 5e4:  ',
+    '        if money > 0:  # q-14: liquidity gate off  '),
+  // q-15: size each buy at the reserve the strategy's own cash gate implies (total*0.5/target_count)
+  // instead of handing all available cash to however many candidates appeared (1 name = 100% book)
+  'q-15_cap-position-size': s => edit(s,
+    '    cash_per_stock = available_cash / len(final_buy_list)\n',
+    '    cash_per_stock = min(available_cash / len(final_buy_list), total_value * 0.5 / g.target_count)  # q-15\n'),
+  // Do the two measured edges survive the unit fix? Both were measured with the gate inert.
+  // Controls for these two are q-13 (the corrected base), NOT baseline-e6.
+  'q-16_fix-units-no-gap': s => VARIANTS['q-2_no-gap'](VARIANTS['q-13_fix-bid-units'](s)),
+  'q-17_fix-units-next-1000': s => VARIANTS['q-1_next-1000'](VARIANTS['q-13_fix-bid-units'](s)),
+  // q-18: the honest configuration — real liquidity gate + the position discipline §1 claims
+  'q-18_fix-units-cap-size': s => VARIANTS['q-15_cap-position-size'](VARIANTS['q-13_fix-bid-units'](s)),
   // is q-10's gain structural or ridge luck? apply it at the two shoulders (controls: q-6, q-8)
   'q-11_rank-by-size-choice-800': s => VARIANTS['q-10_rank-by-size'](VARIANTS['q-6_choice-800'](s)),
   'q-12_rank-by-size-gap-075': s => VARIANTS['q-10_rank-by-size'](VARIANTS['q-8_gap-075'](s)),
@@ -79,6 +100,9 @@ const CANDIDATES = {
     '    if not (today_open < prev_low and chg < -0.5):  # imp-4\n'),
   // imp-5 (edge 规模, = q-10): rank the final candidates by market cap alone, not bid1-money / cap
   'xsz-imp-5': s => VARIANTS['q-10_rank-by-size'](s),
+  // imp-6: imp-5 on the CORRECTED base (q-13). Control = q-13, not baseline-e6. This is the
+  // candidate a next epoch would validate, since epoch 6's VAL for this family is already spent.
+  'xsz-imp-6': s => VARIANTS['q-10_rank-by-size'](VARIANTS['q-13_fix-bid-units'](s)),
 };
 
 // q-1 must actually have changed g.choice (the .replace above is not asserted by edit())
