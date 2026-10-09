@@ -2,6 +2,7 @@
 postId: bdaa7d7f05580fcd1d47341f21a78efe
 title: 七星高照-V1.7 附PT迁移版回测结果截图
 sourceFile: strategies/2026-10-09_七星高照-V1_7_附PT迁移版回测结果截图-bdaa7d7f.py
+family: 七星高照
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/70855
 concepts: [ETF轮动, 动量与趋势]
 factors:
