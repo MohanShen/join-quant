@@ -222,5 +222,21 @@
     "rank": 2,
     "status": "answered",
     "result": "A 股 breadth 择时不但没帮上，还几乎抹平了整本书：年化 28.79→3.55、sharpe 转负，两年同向（2022 51→9.8、2023 9.75→−2.38），只换来 3.6pp 的回撤。预注册证伪项（Δobj < +0.01）被远远触发（−0.216）"
+  },
+  {
+    "id": "q-e6-11",
+    "kind": "understand",
+    "title": "免费的独立复测：新成员 bdaa7d7f 是 V1.7 的去表情/标点规范化重贴，经 normalizer 自己的路径在 epoch 6 上重测",
+    "hypothesis": "若本轮 baseline-e6（我们自建的 src+OVERRIDE 快照）没有引入偏差，normalizer 的独立结果应与之一致；证伪：|Δannual| > 0.3pp 或 |Δmaxdd| > 0.3pp（则本轮全部 Δ 的基线口径可疑）",
+    "why": "本轮 20 条发现全部以 study/七星高照/baseline-e6.py 为基线，而该文件是本轮自己拼的（py2to3(src)+OVERRIDE）。一个走 normalizer 正常路径、独立创建回测的同源重贴，是对该基线的免费外部校验——零回测成本",
+    "design": "不跑任何回测：对比台账行 bdaa7d7f@epoch6 与 q-e6-0 的 SUMMARY；并逐行 diff 两份源码确认差异全为注释/日志/标点",
+    "from": [
+      "q-e6-0",
+      "member:bdaa7d7f"
+    ],
+    "edgeRef": "动量",
+    "rank": 1,
+    "status": "answered",
+    "result": "走 normalizer 正常路径、由不同 postId/backtestId 独立创建的同源重贴，在 epoch 6 上复现出与本轮 baseline-e6 完全相同的四个指标。预注册证伪项（|Δannual| > 0.3pp）未触发，实测漂移为 0.00pp，而项目记录的复跑漂移先验是 ~0.15pp"
   }
 ]
