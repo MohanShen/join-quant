@@ -1241,5 +1241,20 @@
     "postId": "ba950e028c3d59322b3dcc83985319a8",
     "sourceFile": "2026-10-09_一致性风险度量_桥水全天候为例-ba950e02.py",
     "registeredAt": "2026-10-08T18:03:25.700Z"
+  },
+  "990ba5028fdfd34887a84bdcef8fc4d6990563f680c6181bf9b0ba70b92f582e": {
+    "postId": "1aec4293e835ed0dd4f25e5ddc9af709",
+    "sourceFile": "2026-10-10_仓位控制_动态调仓-1aec4293.py",
+    "registeredAt": "2026-10-09T18:39:17.948Z"
+  },
+  "a65965d87e25a8b57d91d3f9def013ef6a599bbca175af0aba88d4001a3587d4": {
+    "postId": "1c50b3a30dab9ab599463ce7c0bb2d79",
+    "sourceFile": "2026-10-10_文竹3_4更新_年化17_6_最大回撤12_43-1c50b3a3.py",
+    "registeredAt": "2026-10-09T18:39:20.568Z"
+  },
+  "b858fccf6f6d68da065b6387a99e5553360621bd300c9d4e0adabef60b97b1c1": {
+    "postId": "0717871e0a1d680573c8d349c1647642",
+    "sourceFile": "2026-10-10_全自动拟合神器_别再当拟合怪的奴隶了_我要让人人都能拟合-0717871e.py",
+    "registeredAt": "2026-10-09T18:39:23.201Z"
   }
 }

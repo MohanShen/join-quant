@@ -1,52 +1,52 @@
 {
-  "fetchedAt": "2026-10-08T18:03:25.717Z",
+  "fetchedAt": "2026-10-09T18:39:23.216Z",
   "entries": [
     {
-      "postId": "bdaa7d7f05580fcd1d47341f21a78efe",
-      "backtestId": "fbac3076fc15a97457fea97956de349c",
-      "title": "七星高照-V1.7 附PT迁移版回测结果截图",
-      "url": "https://www.joinquant.com/view/community/detail/bdaa7d7f05580fcd1d47341f21a78efe",
-      "sourceFile": "2026-10-09_七星高照-V1_7_附PT迁移版回测结果截图-bdaa7d7f.py",
+      "postId": "1aec4293e835ed0dd4f25e5ddc9af709",
+      "backtestId": "a4f85494f67578714e54dd9584e38177",
+      "title": "仓位控制：动态调仓",
+      "url": "https://www.joinquant.com/view/community/detail/1aec4293e835ed0dd4f25e5ddc9af709",
+      "sourceFile": "2026-10-10_仓位控制_动态调仓-1aec4293.py",
       "stats": {
-        "annualReturn": 2.5561861858639,
-        "cumulativeReturn": 1.130035082,
-        "maxDrawdown": 0.23822437215234,
-        "sharpe": 6.1444245385543,
-        "winRatio": 0.5,
-        "tradingDays": 149,
-        "periodLabel": "2026-08"
-      }
-    },
-    {
-      "postId": "720b0743a2a930da6f851b1949b3a143",
-      "backtestId": "88b61a6afc8682653d26a4c526dafd69",
-      "title": "引入AI互搏后，高收益名策略潜在Bug被找到了",
-      "url": "https://www.joinquant.com/view/community/detail/720b0743a2a930da6f851b1949b3a143",
-      "sourceFile": "2026-10-09_引入AI互搏后_高收益名策略潜在Bug被找到了-720b0743.py",
-      "stats": {
-        "annualReturn": 0.77751574002932,
-        "cumulativeReturn": 33.18649797727,
-        "maxDrawdown": 0.15077679429511,
-        "sharpe": 3.2849459537078,
-        "winRatio": 0.52599388379205,
-        "tradingDays": 1535,
-        "periodLabel": "2026-05"
-      }
-    },
-    {
-      "postId": "ba950e028c3d59322b3dcc83985319a8",
-      "backtestId": "0f2b90b63317183858cbdb8382fdadfc",
-      "title": "一致性风险度量（桥水全天候为例）",
-      "url": "https://www.joinquant.com/view/community/detail/ba950e028c3d59322b3dcc83985319a8",
-      "sourceFile": "2026-10-09_一致性风险度量_桥水全天候为例-ba950e02.py",
-      "stats": {
-        "annualReturn": 0.086640027166148,
-        "cumulativeReturn": 0.27586072333333,
-        "maxDrawdown": 0.032914550237784,
-        "sharpe": 1.020635583608,
+        "annualReturn": 0.39757433392856,
+        "cumulativeReturn": 2.1502514,
+        "maxDrawdown": 0.16366293943438,
+        "sharpe": 2.0975187560508,
         "winRatio": null,
-        "tradingDays": 733,
-        "periodLabel": "2016-08"
+        "tradingDays": 857,
+        "periodLabel": "2016-07"
+      }
+    },
+    {
+      "postId": "1c50b3a30dab9ab599463ce7c0bb2d79",
+      "backtestId": "73915ccb513e1ca2d6231ae808d44973",
+      "title": "【文竹3.4更新】年化17.6%|最大回撤12.43%",
+      "url": "https://www.joinquant.com/view/community/detail/1c50b3a30dab9ab599463ce7c0bb2d79",
+      "sourceFile": "2026-10-10_文竹3_4更新_年化17_6_最大回撤12_43-1c50b3a3.py",
+      "stats": {
+        "annualReturn": 0.17597165065455,
+        "cumulativeReturn": 2.2884745336,
+        "maxDrawdown": 0.12425195995077,
+        "sharpe": 1.0137509659368,
+        "winRatio": 0.84166666666667,
+        "tradingDays": 1836,
+        "periodLabel": "2026-07"
+      }
+    },
+    {
+      "postId": "0717871e0a1d680573c8d349c1647642",
+      "backtestId": "4560c0c5f06a2a97ba634aaf68586a74",
+      "title": "全自动拟合神器 别再当拟合怪的奴隶了 我要让人人都能拟合",
+      "url": "https://www.joinquant.com/view/community/detail/0717871e0a1d680573c8d349c1647642",
+      "sourceFile": "2026-10-10_全自动拟合神器_别再当拟合怪的奴隶了_我要让人人都能拟合-0717871e.py",
+      "stats": {
+        "annualReturn": 1.0650459125737,
+        "cumulativeReturn": 1.01183445757,
+        "maxDrawdown": 0.11470562119845,
+        "sharpe": 3.5762953242291,
+        "winRatio": 0.63157894736842,
+        "tradingDays": 241,
+        "periodLabel": "2026-04"
       }
     }
   ]

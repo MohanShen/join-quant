@@ -3,12 +3,12 @@
   "lastRun": {
     "stage": "discover",
     "target": null,
-    "budget": 0,
-    "at": "2026-10-08T18:03:04.587Z",
+    "budget": 9,
+    "at": "2026-10-09T18:39:10.108Z",
     "outcome": "error",
     "note": "discover + fetch",
     "minutesUsed": null,
-    "endedAt": "2026-10-08T22:18:04.872Z"
+    "endedAt": "2026-10-09T22:54:10.394Z"
   },
   "runs": [
     {
@@ -640,6 +640,66 @@
       "note": "discover + fetch",
       "minutesUsed": null,
       "endedAt": "2026-10-08T22:18:04.872Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-09T18:00:34.401Z",
+      "outcome": "ran",
+      "note": "family assignment over 2 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-09T18:02:21.975Z"
+    },
+    {
+      "stage": "research",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-09T18:02:26.716Z",
+      "outcome": "ran",
+      "note": "resumed research session 5e6c9c72 (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-09T18:06:06.114Z"
+    },
+    {
+      "stage": "research",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-09T18:06:21.460Z",
+      "outcome": "ran",
+      "note": "resumed research session ce45da2b (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-09T18:38:57.018Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 9,
+      "at": "2026-10-09T18:39:00.478Z",
+      "outcome": "ran",
+      "note": "16 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-09T18:39:00.535Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 9,
+      "at": "2026-10-09T18:39:03.583Z",
+      "outcome": "ran",
+      "note": "13 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-09T18:39:03.640Z"
+    },
+    {
+      "stage": "discover",
+      "target": null,
+      "budget": 9,
+      "at": "2026-10-09T18:39:10.108Z",
+      "outcome": "error",
+      "note": "discover + fetch",
+      "minutesUsed": null,
+      "endedAt": "2026-10-09T22:54:10.394Z"
     }
   ]
 }

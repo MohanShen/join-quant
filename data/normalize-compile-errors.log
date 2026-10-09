@@ -8,3 +8,4 @@
 2026-10-07T22:07:01.137Z	strategies/2026-05-30_传统反转因子的改进与实测-3691829a.py	TypeError: slice indices must be integers or None or have an __index__ method
 2026-10-08T18:01:28.902Z	strategies/2026-10-08_严格约束选股条件_能否找到跑赢市场的好公司-b5c0ce17.py	AttributeError: 'DataFrame' object has no attribute 'sort'
 2026-10-08T18:14:04.009Z	strategies/2026-10-09_一致性风险度量_桥水全天候为例-ba950e02.py	TypeError: type numpy.ndarray doesn't define __round__ method
+2026-10-09T18:40:18.001Z	strategies/2026-10-10_仓位控制_动态调仓-1aec4293.py	TypeError: type numpy.ndarray doesn't define __round__ method

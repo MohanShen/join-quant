@@ -4,7 +4,7 @@ kind: 机制
 rollup: 择时·RSRS
 aliases: [RSRS, 阻力支撑相对强度]
 strategyCount: 2
-updatedAt: 2026-10-08
+updatedAt: 2026-10-09
 ---
 
 # 择时-RSRS
