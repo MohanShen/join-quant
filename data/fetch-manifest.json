@@ -1,52 +1,51 @@
 {
-  "fetchedAt": "2026-10-09T18:39:23.216Z",
+  "fetchedAt": "2026-10-10T18:22:10.283Z",
   "entries": [
     {
-      "postId": "1aec4293e835ed0dd4f25e5ddc9af709",
-      "backtestId": "a4f85494f67578714e54dd9584e38177",
-      "title": "仓位控制：动态调仓",
-      "url": "https://www.joinquant.com/view/community/detail/1aec4293e835ed0dd4f25e5ddc9af709",
-      "sourceFile": "2026-10-10_仓位控制_动态调仓-1aec4293.py",
+      "postId": "8f57bd36b93e0d427721ef4bbfd198d9",
+      "backtestId": "b7e45ea8432e451321de07070ec3209b",
+      "title": "ETF网格交易策略 v30 — 渐进式网格策略简介",
+      "url": "https://www.joinquant.com/view/community/detail/8f57bd36b93e0d427721ef4bbfd198d9",
+      "sourceFile": "2026-10-11_ETF网格交易策略_v30_渐进式网格策略简介-8f57bd36.py",
       "stats": {
-        "annualReturn": 0.39757433392856,
-        "cumulativeReturn": 2.1502514,
-        "maxDrawdown": 0.16366293943438,
-        "sharpe": 2.0975187560508,
-        "winRatio": null,
-        "tradingDays": 857,
-        "periodLabel": "2016-07"
+        "annualReturn": 0.16222620661017,
+        "cumulativeReturn": 1.54593180883,
+        "maxDrawdown": 0.18804457615402,
+        "sharpe": 0.8173372920341,
+        "winRatio": 0.78761061946903,
+        "tradingDays": 1554,
+        "periodLabel": "2026-06"
       }
     },
     {
-      "postId": "1c50b3a30dab9ab599463ce7c0bb2d79",
-      "backtestId": "73915ccb513e1ca2d6231ae808d44973",
-      "title": "【文竹3.4更新】年化17.6%|最大回撤12.43%",
-      "url": "https://www.joinquant.com/view/community/detail/1c50b3a30dab9ab599463ce7c0bb2d79",
-      "sourceFile": "2026-10-10_文竹3_4更新_年化17_6_最大回撤12_43-1c50b3a3.py",
+      "postId": "1cc495be1432103381eee10658637d34",
+      "backtestId": "b66f15644c2e8a9b8152f96030b73f4f",
+      "title": "给五福多ETF动量增加卖出冷却，7年54倍，最大回撤16%",
+      "url": "https://www.joinquant.com/view/community/detail/1cc495be1432103381eee10658637d34",
+      "sourceFile": "2026-10-11_给五福多ETF动量增加卖出冷却_7年54倍_最大回撤16-1cc495be.py",
       "stats": {
-        "annualReturn": 0.17597165065455,
-        "cumulativeReturn": 2.2884745336,
-        "maxDrawdown": 0.12425195995077,
-        "sharpe": 1.0137509659368,
-        "winRatio": 0.84166666666667,
-        "tradingDays": 1836,
-        "periodLabel": "2026-07"
+        "annualReturn": 0.80718906537609,
+        "cumulativeReturn": 54.6632275196,
+        "maxDrawdown": 0.16366396445835,
+        "sharpe": 3.158708638039,
+        "winRatio": 0.53482587064677,
+        "tradingDays": 1698,
+        "periodLabel": "2026-09"
       }
     },
     {
-      "postId": "0717871e0a1d680573c8d349c1647642",
-      "backtestId": "4560c0c5f06a2a97ba634aaf68586a74",
-      "title": "全自动拟合神器 别再当拟合怪的奴隶了 我要让人人都能拟合",
-      "url": "https://www.joinquant.com/view/community/detail/0717871e0a1d680573c8d349c1647642",
-      "sourceFile": "2026-10-10_全自动拟合神器_别再当拟合怪的奴隶了_我要让人人都能拟合-0717871e.py",
+      "postId": "5c1a11f75adc0ef90f1b53e217fc3cfe",
+      "backtestId": "c81c35e144500d77d278845b01f893c9",
+      "title": "策略讨论：大盘蓝筹股均值回归策略（持续更新版）",
+      "url": "https://www.joinquant.com/view/community/detail/5c1a11f75adc0ef90f1b53e217fc3cfe",
       "stats": {
-        "annualReturn": 1.0650459125737,
-        "cumulativeReturn": 1.01183445757,
-        "maxDrawdown": 0.11470562119845,
-        "sharpe": 3.5762953242291,
-        "winRatio": 0.63157894736842,
-        "tradingDays": 241,
-        "periodLabel": "2026-04"
+        "annualReturn": 0.84117704378453,
+        "cumulativeReturn": 1.338907289992,
+        "maxDrawdown": 0.24403843274235,
+        "sharpe": 2.1896312671708,
+        "winRatio": 0.63148788927336,
+        "tradingDays": 348,
+        "periodLabel": "2026-06"
       }
     }
   ]

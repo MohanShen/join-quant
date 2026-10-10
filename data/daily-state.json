@@ -3,12 +3,12 @@
   "lastRun": {
     "stage": "discover",
     "target": null,
-    "budget": 9,
-    "at": "2026-10-09T18:39:10.108Z",
+    "budget": 3,
+    "at": "2026-10-10T18:21:41.493Z",
     "outcome": "error",
     "note": "discover + fetch",
     "minutesUsed": null,
-    "endedAt": "2026-10-09T22:54:10.394Z"
+    "endedAt": "2026-10-10T22:36:41.757Z"
   },
   "runs": [
     {
@@ -700,6 +700,56 @@
       "note": "discover + fetch",
       "minutesUsed": null,
       "endedAt": "2026-10-09T22:54:10.394Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-10T18:00:19.213Z",
+      "outcome": "ran",
+      "note": "family assignment over 2 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-10T18:01:22.484Z"
+    },
+    {
+      "stage": "research",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-10T18:01:27.071Z",
+      "outcome": "ran",
+      "note": "resumed research session new (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-10T18:21:24.354Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 3,
+      "at": "2026-10-10T18:21:28.774Z",
+      "outcome": "ran",
+      "note": "16 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-10T18:21:28.834Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 3,
+      "at": "2026-10-10T18:21:32.891Z",
+      "outcome": "ran",
+      "note": "13 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-10T18:21:32.950Z"
+    },
+    {
+      "stage": "discover",
+      "target": null,
+      "budget": 3,
+      "at": "2026-10-10T18:21:41.493Z",
+      "outcome": "error",
+      "note": "discover + fetch",
+      "minutesUsed": null,
+      "endedAt": "2026-10-10T22:36:41.757Z"
     }
   ]
 }
