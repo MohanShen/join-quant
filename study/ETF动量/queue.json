@@ -1,0 +1,164 @@
+[
+  {
+    "id": "q-e6-0",
+    "kind": "understand",
+    "title": "base 0aa4028d（追电，11 只跨资产 ETF，斜率×R² 持第一）在 epoch-6 台上的真实水平",
+    "hypothesis": "单持仓日频 ETF 轮动受 pin 影响有限；证伪：objective < 0.05 或 sharpe < 1.0（家族没有可研究的正基线）",
+    "why": "页面是 09-21 wipe 留下的空脚手架，且是唯一未在 epoch 6 重建的家族；旧 study（baseline..q-12）跑在 22152780 的 50/50 小市值+ETF 混合上，收益由小市值腿承载，不描述本家族的动量机制。base 只有 epoch-2 行（0.2965）",
+    "design": "py2to3(0aa4028d)+当前 OVERRIDE → study/ETF动量/baseline-e6.py（build-e6.js），--window train",
+    "from": [
+      "ledger:0aa4028d@epoch2 obj 0.2965",
+      "baseline",
+      "q-1"
+    ],
+    "edgeRef": "动量",
+    "rank": 1,
+    "status": "answered",
+    "result": "纯动量 base 在 epoch-6 台上 objective 0.1868、sharpe 1.41，不过 1.5 闸；pin 吃掉 10.9pp 年化（作者自带 1bp 滑点与 2bp 基金佣金被替换），回撤不变。预注册证伪项（obj < 0.05 或 sharpe < 1.0）未触发。两年极不均衡：2022 赚 66%，2023 只赚 11%"
+  },
+  {
+    "id": "q-e6-1",
+    "kind": "understand",
+    "title": "edge test 动量：排序方向反转（持 0<score≤4.8 合格者中得分最低者）",
+    "hypothesis": "若截面动量有预测力，反排年化损失过半；证伪：反排年化 ≥ base-e6 的 75%",
+    "why": "edge 草稿的 test:。子族 [[五福闹新春]] 同一打分反排保留 78%（refuted），[[七星高照]] 7 只池反排保留 22%/42%（measured）——本族 11 只池介于两者之间，是第三个复制点",
+    "design": "study/ETF动量/variants/q-1_invert-rank.py：sort_values ascending False→True，单行 diff",
+    "from": [
+      "q-e6-0",
+      "五福闹新春:q-e6-1",
+      "七星高照:q-e6-1"
+    ],
+    "edgeRef": "动量",
+    "rank": 2,
+    "status": "answered",
+    "result": "反排后年化只剩 base 的 29%，objective 变负；预注册证伪项（反排年化 ≥ 75%）远未触发。差距主要在 2022（66 vs 14），2023 也同向（11.3 vs 7.1）。持池内最弱的正趋势者仍赚约 10%/年"
+  },
+  {
+    "id": "q-e6-2",
+    "kind": "understand",
+    "title": "edge test 趋势择时：去掉 score>0 绝对动量闸门（总持得分第一者）",
+    "hypothesis": "若闸门是独立来源，Δobj ≤ −0.15；证伪：Δobj > −0.05",
+    "why": "edge 草稿第二条的 test:。新成员 0717871e 用同一打分但无闸门、只用 A 股池，TRAIN 年化 −22%、maxDD 41%——它的失败是池子造成的还是缺闸门造成的，须由 q-e6-2 与 q-e6-3 拆开",
+    "design": "study/ETF动量/variants/q-2_no-abs-gate.py：df[(score>0)&(score<=4.8)] → df[score<=4.8]，单行 diff",
+    "from": [
+      "q-e6-0",
+      "ledger:0717871e@epoch6 obj -0.6365",
+      "七星高照:q-e6-2"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 3,
+    "status": "answered",
+    "result": "去掉绝对动量闸门几乎不改变任何东西：2022 逐位相同、2023 少 2pp，相关 0.996。预注册证伪项（Δobj > −0.05）触发：11 只跨资产池在 TRAIN 里几乎总有一只正趋势，闸门极少咬合"
+  },
+  {
+    "id": "q-e6-3",
+    "kind": "understand",
+    "title": "池子归因：同一打分+闸门+止损，换成 0717871e 的 A 股 4 只池（300/500/创业板/创业板50）",
+    "hypothesis": "若收益来自打分+闸门这套机制，换到 A 股池仍应显著好于 0717871e 的 −22%（闸门在 2022 熊市躲开）；证伪（=收益属于跨资产池）：objective < 0",
+    "why": "新成员 0717871e 提出的、本族从未问过的问题：机制 vs 池子。旧 study 全部在混合书上，没有一条测过池子",
+    "design": "study/ETF动量/variants/q-3_ashare-pool.py：g.etf_pool 换为 4 只 A 股宽基，其余不动",
+    "from": [
+      "ledger:0717871e@epoch6 obj -0.6365",
+      "q-e6-0"
+    ],
+    "edgeRef": "动量",
+    "rank": 4,
+    "status": "answered",
+    "result": "同一套打分+闸门+止损搬到 A 股宽基池，年化 −7%、objective −0.27；预注册证伪项（obj < 0）触发：收益属于跨资产池，不属于这套机制。与新成员 0717871e 比，闸门把 2022 熊市从大亏拉到 +3%、回撤从 41% 压到 20%——闸门在单一资产类别池上是真的；但 2023 A 股来回震荡里动量本身亏 16%"
+  },
+  {
+    "id": "q-e6-4",
+    "kind": "understand",
+    "title": "部件：去掉 −10% 固定止损",
+    "hypothesis": "日频轮动下 −10% 止损很少先于排名换仓触发；证伪（=止损有作用）：|ΔmaxDD| ≥ 1pp 或 |Δannual| ≥ 2pp",
+    "why": "唯一的显式风控部件，归属待定",
+    "design": "study/ETF动量/variants/q-4_no-stop.py：stop_loss −0.10→−9，单行 diff",
+    "from": [
+      "q-e6-0"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 5,
+    "status": "answered",
+    "result": "去掉 −10% 止损后结果逐位相同；预注册证伪项（|ΔmaxDD| ≥ 1pp 或 |Δannual| ≥ 2pp）未触发：TRAIN 里止损一次也没先于排名换仓触发"
+  },
+  {
+    "id": "q-e6-5",
+    "kind": "understand",
+    "title": "部件：去掉 score≤4.8 的「不极端」上限",
+    "hypothesis": "上限 4.8（年化 380%×R²）在 TRAIN 几乎不咬合；证伪（=上限有作用）：|Δobj| ≥ 0.02",
+    "why": "作者的「正动量但不极端」滤波，可能是对某次暴涨（如白银）的事后修补",
+    "design": "study/ETF动量/variants/q-5_no-cap.py：去掉 score<=4.8，单行 diff",
+    "from": [
+      "q-e6-0"
+    ],
+    "edgeRef": "动量",
+    "rank": 6,
+    "status": "answered",
+    "result": "去掉「不极端」上限 objective 降 0.0225，全部在 2022（−5.5pp），2023 不变；预注册（|Δobj| ≥ 0.02 即有作用）刚过线"
+  },
+  {
+    "id": "q-e6-7",
+    "kind": "understand",
+    "title": "打分部件：去掉 R² 乘子（只按加权斜率年化排序）",
+    "hypothesis": "若 R²（趋势平滑度）承载信息，去掉后 obj 显著下降；证伪：|Δobj| < 0.03",
+    "why": "q-e6-1 测得排序有信息，需要知道信息在斜率还是在 R² 上",
+    "design": "study/ETF动量/variants/q-7_no-r2.py：return annual_ret*r2 → annual_ret，单行 diff",
+    "from": [
+      "q-e6-1"
+    ],
+    "edgeRef": "动量",
+    "rank": 7,
+    "status": "answered",
+    "result": "去掉 R² 乘子 objective 掉 0.17，两年都更差，2023 由正转负；预注册证伪项（|Δobj| < 0.03）未触发：信息有相当一部分在「趋势是否平滑」而不只是斜率"
+  },
+  {
+    "id": "q-e6-8",
+    "kind": "understand",
+    "title": "池底：持全部合格 ETF（max_hold 1→11），第一名 vs 合格者平均",
+    "hypothesis": "若集中于第一名是来源，年化显著下降；证伪：年化 ≥ base 的 90%",
+    "why": "与 q-e6-1 配对，q-e6-3 已显示池子是来源，需要池子平均的水平",
+    "design": "study/ETF动量/variants/q-8_hold-all.py：max_hold 1→11，单行 diff",
+    "from": [
+      "q-e6-1",
+      "q-e6-3",
+      "七星高照:q-e6-3"
+    ],
+    "edgeRef": "动量",
+    "rank": 8,
+    "status": "answered",
+    "result": "持全部合格者年化只剩 4.4%、回撤只有 5.2%——但这主要是现金拖累，不是等权池的收益：源码的买入按 available_cash/(max_hold−held) 分钱，max_hold=11 而合格者常只有 3–6 只时大半仓位闲置。预注册证伪项（≥90% 年化）未触发，但该读数被仓位不足混淆，不能作为「池平均」"
+  },
+  {
+    "id": "etfmom-e6-imp-1",
+    "kind": "improve",
+    "title": "improve：动量窗口 25→50 日（放慢以减少 2023 的来回打脸）",
+    "hypothesis": "采纳条件（预注册，拆年度）：两年 sharpe 都不低于 base 且 Δobj > 0；否则 rejected",
+    "why": "base 2023 sharpe~0.48，换仓噪声大；放慢动量是 on-mechanism（edge=动量）的唯一参数方向，闸门/止损已测为惰性",
+    "design": "enhance/candidates/etfmom-e6-imp-1.py：m_days 25→50，单行 diff",
+    "from": [
+      "q-e6-0",
+      "q-e6-1",
+      "q-e6-2",
+      "q-e6-4"
+    ],
+    "edgeRef": "动量",
+    "rank": 9,
+    "status": "answered",
+    "result": "放慢到 50 日，2022 从赚 66% 变成赚 4%，2023 也更差，objective −0.38。预注册采纳条件（两年 sharpe 都不低于 base 且 Δobj>0）不满足：rejected"
+  },
+  {
+    "id": "q-e6-9",
+    "kind": "understand",
+    "title": "窗口敏感度另一侧：m_days 25→20",
+    "hypothesis": "若 25 日处在平台上，20 日 Δobj > −0.05；证伪（=25 是拟合点）：Δobj ≤ −0.10",
+    "why": "imp-1（50 日）把 2022 的 66% 打到 4%——必须知道 25 是平台还是孤峰，才能决定 动量 edge 的措辞",
+    "design": "study/ETF动量/variants/q-9_m20.py：m_days 25→20，单行 diff",
+    "from": [
+      "etfmom-e6-imp-1"
+    ],
+    "edgeRef": "动量",
+    "rank": 10,
+    "status": "answered",
+    "result": "20 日仍是同一本书的量级（objective 0.14，2022 赚 53%），相关 0.72；预注册（Δobj > −0.05 即平台）刚好成立。窗口曲线是 20→0.14、25→0.19、50→−0.20：短端平缓、长端断崖"
+  }
+]
