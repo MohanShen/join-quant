@@ -123,5 +123,38 @@
     "rank": 1,
     "status": "answered",
     "result": "更敏感的走弱进入（4 指数中 2 个跌破 MA10 即躲）在现金版上是实在的改进（objective +0.036、回撤 −1.0pp），在 base 版上几乎为零（+0.002，回撤反而 +0.8pp）。两版同号但 base 版的 Δ 落在已记录的 ~0.15pp 复跑漂移之内，不构成可采纳的改进"
+  },
+  {
+    "id": "idea-imp-5",
+    "kind": "improve",
+    "title": "正常期持仓数 1→3（走弱期保持 1）",
+    "hypothesis": "动量排序已被证伪（q-e6-1），则集中在第 1 名只买方差不买收益；分散到 3 只应保住年化并压低回撤，Δobj > 0；证伪：Δobj ≤ 0",
+    "why": "q-e6-1 的直接推论，此前从未测过持仓数；新成员 1cc495be 独立选择了正常期 3 只/走弱期 2 只，说明社区也走到了这一步",
+    "design": "baseline-e6 g.holdings_num 1→3，单行 diff → enhance/candidates/wufu-imp-5.py",
+    "from": [
+      "q-e6-1",
+      "member:1cc495be"
+    ],
+    "edgeRef": "动量",
+    "rank": 1,
+    "status": "answered",
+    "result": "分散到 3 只把年化砍掉 41%、sharpe 跌破闸，回撤只换回 2.27pp，两年都掉（2023 掉掉 55%、2022 掉 30%）。预注册证伪项（Δobj ≤ 0）触发。集中在第 1 名确实比等权持前 3 名赚得多"
+  },
+  {
+    "id": "idea-imp-4",
+    "kind": "improve",
+    "title": "移植新成员 1cc495be 的卖出冷却（卖出后 2 个交易日禁止再买该标的）到家族 base",
+    "hypothesis": "若换仓的代价主要来自来回打脸式再买入，冷却应抬 objective；证伪：Δobj ≤ 0",
+    "why": "§4 遗留的「正常期离场规则」从未单独测过——imp-1 关闭的是「持有带」这个杠杆，不是再入场节流；新成员把它作为主要改动并在 epoch 6 上过闸（obj 0.2689），但它同时改了持仓数与相关性滤波，其 0.2689 无法归因",
+    "design": "把 1cc495be 的 mark_sell_cooldown / trading_days_since_sell / is_in_sell_cooldown 三个函数原样移入 baseline-e6，在 smart_order_target_value 里买入前拦截、卖出成功后打标；g.sell_cooldown_days=2 → enhance/candidates/wufu-imp-4.py",
+    "from": [
+      "q-e6-1",
+      "idea-imp-1",
+      "member:1cc495be"
+    ],
+    "edgeRef": "动量",
+    "rank": 2,
+    "status": "answered",
+    "result": "卖出后禁买 2 个交易日，年化少 12.31pp、回撤反而深 1.82pp、sharpe 掉到 1.55 贴着闸。预注册证伪项（Δobj ≤ 0）触发。它与 imp-1 构成一对：延后离场（imp-1，−0.138）与延后再入场（本测，−0.141）代价几乎一样大，方向相反的两个「少交易」杠杆都亏"
   }
 ]
