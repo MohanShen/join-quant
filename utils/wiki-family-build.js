@@ -67,12 +67,30 @@ function loadLedger() {
     const obj = parseFloat(c[11]);
     const epoch = c[13] || null;
     const valid = harness.measurementValid(epoch);
+    // A RECONSTRUCTED row carries no total_pct: normalize-ledger-rebuild.js rebuilds the ledger
+    // from the wiki's `normalized:` blocks, which do not store it. That is how a measured row is
+    // told from a reconstructed one (CLAUDE.md).
+    const measured = (c[7] || '').trim() !== '';
     const rec = { obj: isNaN(obj) ? null : obj, sharpe: c[9], annual: c[8], maxdd: c[10],
-                  gate: c[12], epoch, valid };
+                  gate: c[12], epoch, valid, measured };
     const cur = by[src];
     if (!cur) { by[src] = rec; continue; }
-    if (rec.valid !== cur.valid) { if (rec.valid) by[src] = rec; continue; }  // validity dominates
-    if (rec.obj != null && (cur.obj == null || rec.obj > cur.obj)) by[src] = rec;
+
+    // Precedence, highest first — each tier is a documented rule, not a preference:
+    //   1. epoch validity — a superseded bench is not a result for this one
+    //   2. measured over reconstructed — "Measured rows win over reconstructed ones"
+    //   3. NEWEST — "the ledger is append-only, so a file's last row is its current state"
+    //
+    // ⚠ Tier 3 replaces "highest objective wins". Re-running one strategy moves annual by ~0.15pp,
+    // so picking the max across re-runs quietly cherry-picks the luckiest of several measurements
+    // of the same thing. Taking the last one is the honest current state.
+    //
+    // ⚠ This is PREVENTATIVE: as of 2026-10-11 no file has more than one epoch-valid normalized
+    // row, so it changes nothing today. It stops the cherry-pick from appearing the first time a
+    // strategy is re-measured under the live epoch.
+    if (rec.valid !== cur.valid) { if (rec.valid) by[src] = rec; continue; }
+    if (rec.measured !== cur.measured) { if (rec.measured) by[src] = rec; continue; }
+    by[src] = rec;                                   // same tier -> later row wins
   }
   return by;
 }
