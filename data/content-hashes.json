@@ -1266,5 +1266,30 @@
     "postId": "1cc495be1432103381eee10658637d34",
     "sourceFile": "2026-10-11_给五福多ETF动量增加卖出冷却_7年54倍_最大回撤16-1cc495be.py",
     "registeredAt": "2026-10-10T18:22:07.594Z"
+  },
+  "bbcb755d42183ac2dc9dfaf0fb664dd8a16c96fa734d81d0c5f51b6f482bff71": {
+    "postId": "73b13d9210889319c78d2b3a623a6aea",
+    "sourceFile": "2026-10-12_五福_ETF_轮动五年迭代_谁才是五年收益之王-73b13d92.py",
+    "registeredAt": "2026-10-11T18:18:52.123Z"
+  },
+  "09178b62d85fc5c1f12f76c8cf05f6756806aae240a31a7cc90db66f88016a14": {
+    "postId": "0d1bbe83e05b19c73d1bfe9f4efda477",
+    "sourceFile": "2026-10-12_年化51_的晴雨双轨_小盘游击_ETF防御-0d1bbe83.py",
+    "registeredAt": "2026-10-11T18:18:54.870Z"
+  },
+  "012fe2a85cbd9708c0863e4c2ff257ecf61905a3501fe2ed786a657b95e6a6f7": {
+    "postId": "c4f480e3e9868a1173cbcf6dde16e769",
+    "sourceFile": "2026-10-12_7_8_极限回撤_用架构解耦重构多策略动态路由-c4f480e3.py",
+    "registeredAt": "2026-10-11T18:18:57.508Z"
+  },
+  "f1ee11bb58bb856e694909635d4f8490730c79b4fa9259a269170500a1d01610": {
+    "postId": "6a15900595a88d9231c4429fd286bcf6",
+    "sourceFile": "2026-10-12_从标普红利机会指数学到的_限制行业比重上限_很好很强大-6a159005.py",
+    "registeredAt": "2026-10-11T18:50:25.410Z"
+  },
+  "c899408bf16935a6c12d46ed323b14eb9b28ec246273b4be276ea7de7f089bb9": {
+    "postId": "f3c6bfd6301e3d23310aac17c03e0f76",
+    "sourceFile": "2026-10-12_牛熊分界_取强舍弱_均线动量指标择时选股策略-f3c6bfd6.py",
+    "registeredAt": "2026-10-11T18:50:28.024Z"
   }
 }

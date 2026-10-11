@@ -1,51 +1,51 @@
 {
-  "fetchedAt": "2026-10-10T18:22:10.283Z",
+  "fetchedAt": "2026-10-11T18:50:28.040Z",
   "entries": [
     {
-      "postId": "8f57bd36b93e0d427721ef4bbfd198d9",
-      "backtestId": "b7e45ea8432e451321de07070ec3209b",
-      "title": "ETF网格交易策略 v30 — 渐进式网格策略简介",
-      "url": "https://www.joinquant.com/view/community/detail/8f57bd36b93e0d427721ef4bbfd198d9",
-      "sourceFile": "2026-10-11_ETF网格交易策略_v30_渐进式网格策略简介-8f57bd36.py",
+      "postId": "af41bbad32b6eaf61221d00cf55702eb",
+      "backtestId": "75e1886d9282487b3cce619ffe966442",
+      "title": "价值选股与RSRS择时",
+      "url": "https://www.joinquant.com/view/community/detail/af41bbad32b6eaf61221d00cf55702eb",
       "stats": {
-        "annualReturn": 0.16222620661017,
-        "cumulativeReturn": 1.54593180883,
-        "maxDrawdown": 0.18804457615402,
-        "sharpe": 0.8173372920341,
-        "winRatio": 0.78761061946903,
-        "tradingDays": 1554,
-        "periodLabel": "2026-06"
+        "annualReturn": 0.34455616408017,
+        "cumulativeReturn": 3.25102734,
+        "maxDrawdown": 0.11887040219188,
+        "sharpe": 1.7031328547793,
+        "winRatio": 0.73684210526316,
+        "tradingDays": 1222,
+        "periodLabel": "2018-10"
       }
     },
     {
-      "postId": "1cc495be1432103381eee10658637d34",
-      "backtestId": "b66f15644c2e8a9b8152f96030b73f4f",
-      "title": "给五福多ETF动量增加卖出冷却，7年54倍，最大回撤16%",
-      "url": "https://www.joinquant.com/view/community/detail/1cc495be1432103381eee10658637d34",
-      "sourceFile": "2026-10-11_给五福多ETF动量增加卖出冷却_7年54倍_最大回撤16-1cc495be.py",
+      "postId": "6a15900595a88d9231c4429fd286bcf6",
+      "backtestId": "325494b7fe75f21a7781cadb66b3021f",
+      "title": "从标普红利机会指数学到的 —— 限制行业比重上限，很好很强大",
+      "url": "https://www.joinquant.com/view/community/detail/6a15900595a88d9231c4429fd286bcf6",
+      "sourceFile": "2026-10-12_从标普红利机会指数学到的_限制行业比重上限_很好很强大-6a159005.py",
       "stats": {
-        "annualReturn": 0.80718906537609,
-        "cumulativeReturn": 54.6632275196,
-        "maxDrawdown": 0.16366396445835,
-        "sharpe": 3.158708638039,
-        "winRatio": 0.53482587064677,
-        "tradingDays": 1698,
-        "periodLabel": "2026-09"
+        "annualReturn": 0.60274099589512,
+        "cumulativeReturn": 2.98712021,
+        "maxDrawdown": 0.41352292222198,
+        "sharpe": 1.524070963427,
+        "winRatio": 0.63709677419355,
+        "tradingDays": 733,
+        "periodLabel": "2016-12"
       }
     },
     {
-      "postId": "5c1a11f75adc0ef90f1b53e217fc3cfe",
-      "backtestId": "c81c35e144500d77d278845b01f893c9",
-      "title": "策略讨论：大盘蓝筹股均值回归策略（持续更新版）",
-      "url": "https://www.joinquant.com/view/community/detail/5c1a11f75adc0ef90f1b53e217fc3cfe",
+      "postId": "f3c6bfd6301e3d23310aac17c03e0f76",
+      "backtestId": "cdef3a99a88e16cfc6ce1e33d75ccf68",
+      "title": "牛熊分界+取强舍弱+均线动量指标择时选股策略",
+      "url": "https://www.joinquant.com/view/community/detail/f3c6bfd6301e3d23310aac17c03e0f76",
+      "sourceFile": "2026-10-12_牛熊分界_取强舍弱_均线动量指标择时选股策略-f3c6bfd6.py",
       "stats": {
-        "annualReturn": 0.84117704378453,
-        "cumulativeReturn": 1.338907289992,
-        "maxDrawdown": 0.24403843274235,
-        "sharpe": 2.1896312671708,
-        "winRatio": 0.63148788927336,
-        "tradingDays": 348,
-        "periodLabel": "2026-06"
+        "annualReturn": null,
+        "cumulativeReturn": 2.17227158,
+        "maxDrawdown": 0.11848616354567,
+        "sharpe": 6.4714306991531,
+        "winRatio": null,
+        "tradingDays": 296,
+        "periodLabel": "2016-03"
       }
     }
   ]
