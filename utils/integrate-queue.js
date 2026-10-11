@@ -48,15 +48,38 @@ const fmField = (t, k) => {
   return m ? m[1].trim() : '';
 };
 
-/** The edge block's name and status — the two fields admissibility turns on. */
-function edgeOf(text) {
+/**
+ * ALL of a family's edge claims, not just the first.
+ *
+ * ⚠ This read one 600-char window and returned the FIRST name/status, so a family with several
+ * edges was represented by whichever happened to be listed first. Measured 2026-10-11: ETF溢价
+ * carries 均值回归 + 流动性溢价 and PT多策略 carries 流动性溢价 + 均值回归 — the IDENTICAL set in
+ * the opposite order — and the queue reported them as 均值回归 vs 流动性溢价, i.e. as a distinct
+ * pair. Under Revision 1, where a shared edge was a veto, that silently weakened the gate; under
+ * Revision 2 a shared edge no longer vetoes, so this is now an evidence-quality defect rather
+ * than a gating one. Either way the judge must see the real set.
+ */
+function edgesOf(text) {
   const at = text.indexOf('edge:');
-  if (at < 0) return { name: null, status: null };
-  const blk = text.slice(at, at + 600);
-  return {
-    name: (blk.match(/name:\s*(\S+)/) || [])[1] || null,
-    status: (blk.match(/status:\s*([a-z-]+)/) || [])[1] || null,
-  };
+  if (at < 0) return [];
+  // Stop at the next top-level frontmatter key so a long evidence block cannot run past the list.
+  const rest = text.slice(at);
+  const end = rest.search(/\n[a-z][A-Za-z]*:\s/);
+  const blk = end > 0 ? rest.slice(0, end) : rest.slice(0, 4000);
+  const out = [];
+  for (const line of blk.split('\n')) {
+    const n = line.match(/^\s+-\s+name:\s*(.*)$/);
+    if (n) { out.push({ name: n[1].trim(), status: null, kind: null, claim: null }); continue; }
+    const kv = line.match(/^\s+(status|kind|claim|test):\s*(.*)$/);
+    if (kv && out.length) out[out.length - 1][kv[1]] = kv[2].trim().replace(/^"(.*)"$/, '$1');
+  }
+  return out;
+}
+
+/** Back-compat: the first edge, as the old callers and tests expect. */
+function edgeOf(text) {
+  const e = edgesOf(text)[0];
+  return { name: e ? e.name : null, status: e ? e.status : null };
 }
 
 function families() {
@@ -65,12 +88,16 @@ function families() {
   try { names = fs.readdirSync(dir).filter(f => f.endsWith('.md')); } catch { return []; }
   return names.map(f => {
     const t = fs.readFileSync(path.join(dir, f), 'utf8');
-    const e = edgeOf(t);
+    const all = edgesOf(t);
+    const e = all[0] || { name: null, status: null };
+    const measuredEdges = all.filter(x => x.status === 'measured');
     return {
       family: f.replace(/\.md$/, ''),
       universe: fmField(t, 'universe') || null,
       edge: e.name,
       edgeStatus: e.status,
+      edges: all,
+      measuredEdges,
       bestObjective: parseFloat(fmField(t, 'bestObjective')),
       realism: fmField(t, 'realism'),
       members: parseInt(fmField(t, 'memberCount'), 10) || 0,
@@ -158,16 +185,28 @@ function build() {
   for (const f of fams) (byU[f.universe] = byU[f.universe] || []).push(f);
 
   return Object.entries(byU).map(([universe, group]) => {
-    const measured = group.filter(f => f.edgeStatus === 'measured' && f.edge);
+    // A family with no measured edge has no identified return source, so there is nothing
+    // trustworthy to take a step from. That is the only eligibility floor.
+    const measured = group.filter(f => (f.measuredEdges || []).length > 0);
 
     const pairs = [], refused = [];
     for (let i = 0; i < measured.length; i++) {
       for (let j = i + 1; j < measured.length; j++) {
         const a = measured[i], b = measured[j];
-        const entry = { a: a.family, b: b.family, edges: [a.edge, b.edge] };
+        const ea = a.measuredEdges.map(e => e.name);
+        const eb = b.measuredEdges.map(e => e.name);
+        // ⚠ ANNOTATION, NOT A VERDICT (user's decision, 2026-10-11: the universe check is
+        // deterministic, the edge judgement is not). A shared edge no longer refuses anything —
+        // under Revision 2 it is what makes a merge coherent. And a name is a free-text label,
+        // not an identity: 规模 vs 规模因子 are one edge in two spellings, while 动量 in 七星高照
+        // (cross-sectional over 7 hand-picked ETFs, its own evidence says NOT portable) and in
+        // 趋势技术 (HS300 large caps) are two mechanisms under one word. Only a reader can tell,
+        // so the queue reports what it sees and leaves the call to the gatekeeper.
+        const shared = ea.filter(x => eb.some(y => sameEdge(x, y)));
+        const entry = { a: a.family, b: b.family, edgesA: ea, edgesB: eb, shared,
+                        sameSet: shared.length === ea.length && shared.length === eb.length };
         const gk = known.get(pairKey(universe, a.family, b.family));
-        if (sameEdge(a.edge, b.edge)) refused.push({ ...entry, why: 'same edge, by name' });
-        else if (gk) refused.push({ ...entry, why: gk.why, gatekeeper: true });
+        if (gk) refused.push({ ...entry, why: gk.why, gatekeeper: true });
         else pairs.push(entry);
       }
     }
@@ -210,7 +249,7 @@ function build() {
     }
 
     const done = attempted(universe);
-    const action = pairs.length ? 'compose' : (promote ? 'promote' : 'blocked');
+    const action = pairs.length ? 'merge' : (promote ? 'promote' : 'blocked');
 
     return {
       universe,
@@ -223,9 +262,9 @@ function build() {
       promote: promote && { family: promote.family, objective: promote.bestObjective, val: promoteVal },
       skipped,
       why: pairs.length
-        ? `${pairs.length} admissible pair(s) from ${measured.length} measured edge(s)`
+        ? `${pairs.length} mergeable pair(s) from ${measured.length} famil(y/ies) with a measured edge`
         : promote
-          ? `no admissible pair (${measured.length} measured edge(s), ${refused.length} refused) ` +
+          ? `no mergeable pair (${measured.length} eligible, ${refused.length} refused by the gatekeeper) ` +
             `— promote ${promote.family}` +
             (promoteVal && !promoteVal.validated ? ' ⚠ never validated' : '')
           : top
@@ -239,13 +278,13 @@ function build() {
 /** The single highest-value next action: the most composable universe, else the best promotion. */
 function next() {
   const rows = build();
-  return rows.find(r => r.action === 'compose' && r.pairs.length > r.attempted.length)
-      || rows.find(r => r.action === 'compose')
+  return rows.find(r => r.action === 'merge' && r.pairs.length > r.attempted.length)
+      || rows.find(r => r.action === 'merge')
       || rows.find(r => r.action === 'promote')
       || null;
 }
 
-module.exports = { build, next, sameEdge, families, edgeOf, refusals, refuse, REFUSALS };
+module.exports = { build, next, sameEdge, families, edgeOf, edgesOf, refusals, refuse, REFUSALS };
 
 if (require.main === module) {
   const argv = process.argv.slice(2);
@@ -263,15 +302,18 @@ if (require.main === module) {
     if (!n) { console.log('[integrate] nothing to do'); process.exit(0); }
     console.log(`[integrate] -> ${n.action.toUpperCase()}  ${n.universe}`);
     console.log(`   ${n.why}`);
-    if (n.action === 'compose') for (const p of n.pairs) console.log(`   pair: ${p.a} × ${p.b}  [${p.edges.join(' × ')}]`);
+    if (n.action === 'merge') for (const p of n.pairs) console.log(`   pair: ${p.a} × ${p.b}  | ${p.a}: ${p.edgesA.join(', ')} | ${p.b}: ${p.edgesB.join(', ')} | shared: ${p.shared.join(', ') || 'none'}`);
     else if (n.promote) console.log(`   promote: ${n.promote.family} (objective ${n.promote.objective})`);
     process.exit(0);
   }
   for (const r of rows) {
-    console.log(`\n■ ${r.universe}  ${r.families} famil(y/ies), ${r.measured} measured edge(s) -> ${r.action.toUpperCase()}`);
+    console.log(`\n■ ${r.universe}  ${r.families} famil(y/ies), ${r.measured} with a measured edge -> ${r.action.toUpperCase()}`);
     console.log(`   ${r.why}`);
-    for (const p of r.pairs) console.log(`   pair    ${p.a} × ${p.b}  [${p.edges.join(' × ')}]`);
-    for (const p of r.refused) console.log(`   refused ${p.a} × ${p.b}  [${p.edges.join(' × ')}] — ${p.why}`);
+    for (const p of r.pairs) console.log(`   pair    ${p.a} × ${p.b}`
+      + `\n             ${p.a}: ${p.edgesA.join(', ')}`
+      + `\n             ${p.b}: ${p.edgesB.join(', ')}`
+      + `\n             shared: ${p.shared.length ? p.shared.join(', ') + (p.sameSet ? '  ⚠ IDENTICAL SET' : '') : 'none'}`);
+    for (const p of r.refused) console.log(`   refused ${p.a} × ${p.b} — ${p.why}`);
     if (r.action === 'promote' && r.promote) console.log(`   promote ${r.promote.family} (objective ${r.promote.objective})` +
       (r.promote.val ? (r.promote.val.validated ? `  VAL ${r.promote.val.runId} -> ${r.promote.val.outcome}` : '  ⚠ never validated') : ''));
     for (const k of (r.skipped || [])) console.log(`   skipped ${k.family} (objective ${k.objective}) — ${k.why}`);

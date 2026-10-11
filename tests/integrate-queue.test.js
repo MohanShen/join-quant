@@ -60,27 +60,32 @@ test('the universe round queue', async (t) => {
     assert.strictEqual(u.action, 'promote');
   });
 
-  await t.test('same-edge families promote instead of composing', () => {
+  await t.test('a shared edge is REPORTED, not refused', () => {
+    // ⚠ Revision 2 (2026-10-11): a shared edge no longer vetoes. It is what makes a merge
+    // coherent — 多因子ML and 小市值 both earn from 规模, which is precisely why their entry,
+    // exit and risk steps are interchangeable. The queue reports the overlap; the gatekeeper
+    // decides what it means, because an edge name is a free-text label and not an identity.
     const rows = queueFor({
       A: { u: 'U', obj: 0.5, edge: '规模',     status: 'measured' },
       B: { u: 'U', obj: 1.4, edge: '规模因子', status: 'measured' },
     });
     const u = rows.find(r => r.universe === 'U');
-    assert.strictEqual(u.pairs.length, 0);
-    assert.strictEqual(u.refused.length, 1, 'the refusal must be reported, not silently dropped');
-    assert.strictEqual(u.action, 'promote');
-    assert.strictEqual(u.promote.family, 'B', 'the stronger objective is promoted');
+    assert.strictEqual(u.action, 'merge');
+    assert.strictEqual(u.pairs.length, 1, 'the pair stands');
+    assert.deepStrictEqual(u.pairs[0].shared, ['规模'], 'and the overlap is surfaced');
+    assert.strictEqual(u.pairs[0].sameSet, true, 'identical sets are called out');
   });
 
-  await t.test('distinct edges compose', () => {
+  await t.test('distinct edges merge', () => {
     const rows = queueFor({
       A: { u: 'U', obj: 1, edge: '均值回归',   status: 'measured' },
       B: { u: 'U', obj: 1, edge: '流动性溢价', status: 'measured' },
       C: { u: 'U', obj: 1, edge: '动量',       status: 'measured' },
     });
     const u = rows.find(r => r.universe === 'U');
-    assert.strictEqual(u.pairs.length, 3, 'three distinct edges give three pairs');
-    assert.strictEqual(u.action, 'compose');
+    assert.strictEqual(u.pairs.length, 3, 'three eligible families give three pairs');
+    assert.strictEqual(u.action, 'merge');
+    assert.ok(u.pairs.every(p => p.shared.length === 0), 'and none of them overlaps');
   });
 
   await t.test('a losing best family is BLOCKED, never promoted', () => {
@@ -128,10 +133,10 @@ test('promotion inherits the realizability discipline', async (t) => {
     // integration applies at rule 4 — otherwise the round delivers a book its own page says
     // cannot be traded (PT多策略, objective 3.5952, VAL sharpe 12.82).
     const rows = queueFor({
-      // same edge on both, so the pair is refused and PROMOTION is what is under test here
+      // only ONE family carries a measured edge, so there is no pair and PROMOTION is under test
       Rich: { u: 'U', obj: 3.59, edge: '折价', status: 'measured',
               realism: '⚠⚠ 头条不可实现，且已定量：收益来自集合竞价成交价' },
-      Modest: { u: 'U', obj: 0.68, edge: '折价', status: 'measured', realism: '⚠ 零滑点台，滑点折价小' },
+      Modest: { u: 'U', obj: 0.68, edge: '折价', status: 'refuted', realism: '⚠ 零滑点台，滑点折价小' },
     });
     const u = rows.find(r => r.universe === 'U');
     assert.strictEqual(u.action, 'promote');
@@ -143,7 +148,7 @@ test('promotion inherits the realizability discipline', async (t) => {
   await t.test('a universe where everything is unrealizable delivers nothing', () => {
     const rows = queueFor({
       A: { u: 'U', obj: 3.59, edge: '折价', status: 'measured', realism: '⚠⚠ 头条不可实现' },
-      B: { u: 'U', obj: 1.56, edge: '折价', status: 'measured', realism: '⚠⚠ 头条不可实现' },
+      B: { u: 'U', obj: 1.56, edge: '折价', status: 'refuted',  realism: '⚠⚠ 头条不可实现' },
     });
     const u = rows.find(r => r.universe === 'U');
     assert.strictEqual(u.action, 'blocked');
@@ -175,5 +180,7 @@ test('a gatekeeper refusal is durable', async (t) => {
     const src = fs.readFileSync(path.join(__dirname, '../utils/integrate-queue.js'), 'utf8');
     assert.match(src, /refused\.push\(\{ \.\.\.entry, why: gk\.why, gatekeeper: true \}\)/,
       'a gatekeeper refusal must be reported with its reason, not dropped');
+    assert.doesNotMatch(src, /if \(sameEdge\([^)]*\)\) refused\.push/,
+      'the queue must not refuse on a shared edge — that is the gatekeeper\u2019s call now');
   });
 });
