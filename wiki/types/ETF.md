@@ -1,15 +1,15 @@
 ---
 type: ETF
 universe: ETF
-horizon: H-unknown
+horizon: H-high
 families: [[[ETF动量]], [[ETF溢价]], [[PT多策略]], [[七星高照]], [[五福闹新春]]]
 familyCount: 5
-memberStrategies: 64
+memberStrategies: 67
 bestFamily: [[PT多策略]]
-bestFamilyObjective: 3.5952
+bestFamilyObjective: 1.8448
 intradayDependent: true
 generatedBy: utils/wiki-type-build.js
-updatedAt: 2026-10-07
+updatedAt: 2026-10-11
 ---
 
 # ETF — strategy type
@@ -20,11 +20,11 @@ updatedAt: 2026-10-07
 
 | 家族 | 成员数 | bestObjective | 实测换手 | 盘中依赖 |
 |---|---|---|---|---|
-| [[PT多策略]] | 2 | 3.5952 | — | ⚠ 是 |
-| [[ETF溢价]] | 2 | 1.5642 | — | 否 |
-| [[五福闹新春]] | 20 | 0.6855 | — | ⚠ 是 |
-| [[ETF动量]] | 27 | 0.5267 | — | 否 |
-| [[七星高照]] | 13 | 0.3365 | 0.1884 | 否 |
+| [[PT多策略]] | 2 | 1.8448 | — | ⚠ 是 |
+| [[ETF溢价]] | 2 | 0.7767 | — | 否 |
+| [[ETF动量]] | 29 | 0.4725 | 0.1884 | 否 |
+| [[七星高照]] | 14 | 0.3365 | 0.1884 | 否 |
+| [[五福闹新春]] | 20 | 0.0878 | — | ⚠ 是 |
 
 ## 整合回合（见 `docs/consolidation-plan.md` §4）
 

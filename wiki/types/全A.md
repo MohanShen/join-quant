@@ -4,12 +4,12 @@ universe: 全A
 horizon: H-high
 families: [[[打板短线]], [[红利低频]]]
 familyCount: 2
-memberStrategies: 35
+memberStrategies: 36
 bestFamily: [[打板短线]]
 bestFamilyObjective: 0.9668
 intradayDependent: true
 generatedBy: utils/wiki-type-build.js
-updatedAt: 2026-10-07
+updatedAt: 2026-10-11
 ---
 
 # 全A — strategy type
@@ -20,7 +20,7 @@ updatedAt: 2026-10-07
 
 | 家族 | 成员数 | bestObjective | 实测换手 | 盘中依赖 |
 |---|---|---|---|---|
-| [[打板短线]] | 28 | 0.9668 | 0.3061 | ⚠ 是 |
+| [[打板短线]] | 29 | 0.9668 | 0.3061 | ⚠ 是 |
 | [[红利低频]] | 7 | 0.1348 | — | ⚠ 是 |
 
 ## 整合回合（见 `docs/consolidation-plan.md` §4）
