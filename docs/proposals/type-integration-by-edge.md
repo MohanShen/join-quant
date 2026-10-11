@@ -1,6 +1,6 @@
 # Integration by edge composition, on one axis
 
-**Status**: ACCEPTED 2026-10-07 · in progress (see §9)
+**Status**: ACCEPTED 2026-10-07 · **Revision 2, 2026-10-11** (merge replaces composition: §5, §6, §7, §9)
 **Replaces**: the type layer's two-axis coordinate and the blend-first integration round
 **Authority it must obey**: `harness/harness.md` (frozen), `docs/consolidation-plan.md` §4,
 `.claude/skills/run-integrate/SKILL.md`
@@ -16,8 +16,11 @@ Three things, decided by the user on 2026-10-07:
    page, not re-derived by regex at build time.
 3. **Integration composes EDGES, not capital.** The round stops being "blend these books" and
    becomes "build one strategy whose edge is the conjunction of theirs".
+   → ⚠ **Superseded by Revision 2 (§5)**: a round now MERGES two families in one universe into a
+   single strategy by taking the best variant of each pipeline step, and a shared edge is no
+   longer a refusal. The reasoning that led here is kept because it explains the guard set.
 
-And one acceptance rule: a composed strategy must **beat or equal the best input family**, with
+And one acceptance rule: a merged strategy must **beat or equal the best input family**, with
 TRAIN and VAL agreeing (§6).
 
 ## 2. Why the H axis goes
@@ -46,20 +49,24 @@ field, it is an LLM job for the same reason universe is.
 
 ## 3. What one axis actually yields
 
-Collapsing the nine two-axis cells gives six universes, four with more than one family:
+Collapsing the nine two-axis cells gives six universes, four with more than one family. These are
+the figures AFTER the §4 classification, not the earlier regex estimate:
 
-| universe | families | distinct measured edges | composable pairs |
+| universe | families | measured edges | mergeable (§5) |
 |---|---|---|---|
-| 全A | 4 | 趋势择时 · 均值回归 · 涨停动量延续 | **3** |
-| ETF | 3 | 均值回归 · 流动性溢价 | **1** |
-| 小盘 | 2 | 规模因子 · 规模 — **the same edge** | **0** |
-| 混合 | 2 | 1 measured + 1 `proposed` | 0 |
-| 宽基大盘 | 1 | — | 0 |
-| 其他 | 1 (ETF动量) | none declared | 0 |
+| ETF | 5 — ETF动量, ETF溢价, PT多策略, 七星高照, 五福闹新春 | 均值回归 · 流动性溢价 · 动量 | ⚠ yes, but the top two declare themselves unrealizable |
+| 小盘 | 2 — 多因子ML, 小市值 | 规模因子 · 规模 — **one edge, two spellings** | **yes — the best first candidate** |
+| 全A | 2 — 打板短线, 红利低频 | 涨停动量延续 (红利低频's is `refuted`) | yes |
+| 宽基大盘 | 2 — 网格, 趋势技术 | 均值回归 · 动量 | yes, but 网格 has no epoch-6 row |
+| 固定篮子 | 1 — 三进兵 | 趋势择时 | no — promote (and it is BLOCKED: objective −0.09) |
+| 混合 | 1 — 大小盘轮动 | 风格轮动择时 (`proposed`) | no — promote |
 
-That is **4 real pairs today**, against a `wiki/types/` directory currently holding two stale
-single-family pages. 小盘 is the instructive one: `规模因子` and `规模` are one edge spelled two
-ways, so the same-edge check in §5 must be semantic, not string equality.
+Against a `wiki/types/` directory that held **two stale single-family pages**, that is four
+mergeable universes.
+
+⚠ Under Revision 1 小盘 scored **0 composable pairs** — `规模因子` and `规模` are one edge spelled
+two ways. Under Revision 2 that is exactly what makes it the best *merge* candidate: same market,
+same source of return, two different implementations to pick steps from.
 
 ## 4. `universe:` as a family property
 
@@ -93,109 +100,169 @@ records both and the disagreement is surfaced, rather than one silently winning.
 no source to classify and it falls to `其他`. **No classifier fixes this** — it is a data gap and
 must be filled first.
 
-## 5. The composition loop
+## 5. The merge loop  *(REVISED 2026-10-11 — replaces the composition loop)*
 
-### Why composition rather than blending
+> **Revision 2.** §1–§4 stand unchanged: one axis, `universe:` assigned by reading the base
+> source, recorded on the family page. What changes is what a round *does* with two families in
+> one universe.
+>
+> | | Revision 1 (composition) | Revision 2 (merge) |
+> |---|---|---|
+> | the round builds | a conjunction of two EDGES | one strategy assembled from the best STEP of each |
+> | same edge | refused | **allowed** |
+> | nothing admissible | promote | promote (unchanged) |
+> | binding risk | diversification masquerading as alpha | **overfitting a step search** |
 
-A blend allocates capital across finished books. Its *return* cannot exceed the weighted average
-of its legs; only its risk improves. That is why the existing guard exists: 七星高照's blend scored
-sharpe **3.17** from legs of 2.85/1.60 and still lost to its own small-cap leg (0.4814 vs 0.5984).
+### Why this replaces composition
 
-A conjunction can be superadditive, and this repo has measured one: 红利低频's two-factor
-conjunction returned **23.41% against 11.75% for the sum of its legs, at lower risk than either**.
+**The instrument-overlap problem dissolves.** Two families can share a `universe:` label and trade
+disjoint instruments — PT多策略 screens to ETFs with 5e6 < turnover < 2e7 while 七星高照 holds 7
+hand-picked liquid ones, so their intersection is empty. Under composition that had to be detected,
+and detecting it turned out to be expensive:
 
-So composition is where the alpha could be, and blending is where the illusion is.
+- JoinQuant exposes **no holdings**. Probed 2026-10-11: `trade`, `trades`, `transaction(s)`,
+  `order(s)`, `position(s)`, `holding(s)`, `record` all return 60-byte empties; only `detail`
+  answers, with metadata. `result.orders` looked promising — it is in the endpoint we already call
+  for the curve — but it is `{buy:{time,value}, sell:{time,value}}`, a per-day marker count for
+  plotting. **No instrument identity anywhere.**
+- Static parsing covers 6 of 13 families; the other 7 define their pool dynamically and their only
+  literal ticker is usually `set_benchmark`.
+- So an overlap test would have required instrumenting the OVERRIDE and re-running all 13 bases.
+
+**A merge builds ONE strategy and therefore declares ONE universe.** The question "do these two
+trade the same names?" stops existing, because the merged strategy trades whatever universe we
+choose for it. That cost is avoided entirely, not deferred.
+
+### Why same-edge is no longer a refusal
+
+Refusing a shared edge was right for *conjunction* — a mechanism cannot be conjoined with itself.
+It is wrong for *assembly*. 多因子ML and 小市值 both earn from 规模, and that is exactly why their
+steps are interchangeable: same market, same source of return, two different implementations of
+entry, exit and risk. The shared edge makes the merge coherent rather than redundant.
+
+⚠ The same-edge check stays in `integrate-queue.js` but **stops gating**: it becomes information
+("these two earn the same way"), not a veto.
+
+### The pipeline skeleton
+
+A merge decomposes each family into the same steps and picks one variant per step:
+
+| step | what it decides |
+|---|---|
+| universe screen | which instruments are eligible at all |
+| selection / ranking | which of them to hold, and in what order |
+| entry | the condition and the moment of buying |
+| holding / exit | how long, and what ends it |
+| risk overlay | market filter, calendar blackout, stop |
+| sizing | count, weights, participation |
+
+The evidence already exists, in §2 rather than in the register. `data/components.tsv` has **1 row**,
+but 小市值's §2 alone carries `q-1 换到第 1001–2000 名` (universe), `q-2 去低开条件` (entry),
+`q-3 去 11:30 退出` (exit), `q-4 去 1/4 月空仓` (calendar), and 多因子ML's carries `q-e6-1
+small_cap=0` and `q-e6-2 etf=0` (factor weights). A distillation pass over §2 costs no backtests.
 
 ### Shape
 
-Four roles, mirroring `/run-family` because the machine is the same:
+1. **decomposer** — map both families onto the skeleton from their §2 findings and base source,
+   and state, per step, which family's variant is the candidate and the measured row that says so.
+2. **gatekeeper** — bound the search (below), and refuse steps whose evidence does not apply.
+3. **builder** — write ONE strategy implementing the chosen steps; run it on the frozen bench.
+4. **judge** — `utils/type-integrate-check.js`, with the revised rule set in §6.
 
-1. **composer** — proposes a conjunction from two (or more) families in one universe, stating
-   *which mechanism is taken from each* and why they can coexist. Grounded in the families' `edge:`
-   blocks and §6 findings, exactly as the family generators are.
-2. **gatekeeper** — ranks candidate pairs and refuses the inadmissible (§5 rules).
-3. **builder** — writes ONE strategy file implementing the conjunction and runs it on the frozen
-   bench, `--window train`.
-4. **judge** — `utils/type-integrate-check.js`, unchanged in spirit (§6).
+## 6. Acceptance  *(REVISED)*
 
-### Admissibility rules for a pair
+### The guard set changes shape
 
-- **Same universe**, by the recorded `universe:` field.
-- **Both edges `measured`.** Never `proposed` (unevidenced) and never `refuted` (known false).
-  Today that excludes 五福闹新春, 红利低频 and 大小盘轮动 from any composition.
-- **⚠ Distinct edges, semantically.** `规模因子` and `规模` are one edge. `utils/edge-redundancy.js`
-  already clusters by edge name; it needs to cluster by *meaning*, and that comparison is the
-  gatekeeper's judgement, recorded with a reason.
-- **Compatible mechanics**, argued explicitly: two cross-sectional screens on the same rebalance
-  compose (size floor + dividend screen); a 1.5-day limit-up book and an ETF discount mean-reversion
-  do not obviously compose, and the composer must say why it believes they do.
+| rule | status under merge |
+|---|---|
+| 1. beat the best MEMBER, not the gate | **binds** |
+| 2. declare the diversification share | **inert** — there is no blend to attribute |
+| 3. optimised weights must beat equal weight | **inert** — there are no weights across books |
+| 4. realizability inherited at its WORST leg | **binds** |
 
-## 6. Acceptance
+Rules 2 and 3 were the guard against diversification masquerading as alpha. A merge produces one
+book, so they have nothing to measure. ⚠ That is not a relaxation — the risk they covered is gone,
+and a *different* risk takes its place, which rules 5 and 6 exist for.
 
-The judge's four existing rules stay as the **floor**:
+### 5. The candidate set is declared and bounded
 
-1. beat the best MEMBER, not the gate (integration's threshold is 2.0, not 1.5)
-2. declare the diversification share — attribution from stored curves; if stripping diversification
-   drops sharpe below the best member, the verdict is `keep-with-caveat`
-3. optimised weights must beat equal weight by more than 1pp (the ~0.15pp re-run noise floor)
-4. realizability is inherited at its WORST leg
+Best-of-each across six steps from two families is up to 2⁶ combinations. Evaluated on TRAIN that
+is a multiple-comparisons search, and it is a larger search than the family loop ever runs.
 
-Rule 2 matters *more* under composition, not less: a conjunction that happens to diversify will
-look brilliant for the wrong reason, and we need to know which it was.
+- at most **3 candidates per (universe, epoch)**, named and justified **before** the first is run;
+- each step choice cites the measured §2 row or component that supports it;
+- a sweep is not a candidate set. Enumerating combinations and keeping the winner is the failure
+  mode this rule exists to prevent.
 
-### The new rule, and the protocol problem it creates
+### 6. No assembly from summed deltas
 
-The user's rule: **the composite must beat or equal the best input family, with TRAIN and VAL
-agreeing.**
+⚠ A step's measured delta belongs to the pipeline that produced it. "Removing the 11:30 exit cost
+X" was measured inside 小市值's holding period, on 小市值's names. Transplanted into a weekly
+rebalance it inherits nothing — the same principle CLAUDE.md states for factor-board figures: *a
+result belongs to the bench that produced it.*
 
-⚠ `harness.md` is explicit that VAL `仅定稿一次` and `不回头驱动选择` — it may not drive selection.
-If "beat-or-equal on VAL" is a test a failed candidate can be retried against, VAL silently becomes
-a search surface, and once that happens the only clean window left is the 2-test OOS reserve.
+**Every merged candidate is built and measured as one strategy.** Predicted deltas may rank the
+candidates; they may never stand in for a measurement.
 
-**Recommended resolution** — keeps the intent, keeps the protocol:
+### The VAL rule is unchanged, and matters more
 
-- **Iterate on TRAIN only.** The TRAIN criterion is beat-or-equal the best input family.
-- **One VAL confirmation** on the finalised composite, where beat-or-equal must *also* hold.
-- **A VAL failure is terminal for that composition** — recorded as refuted, with its reason. It is
-  not an invitation to compose a different variant and try again. That single word is what keeps
-  this from being selection-on-VAL.
-- The type layer therefore needs its **own VAL budget**, enforced like `utils/val-budget.js`
-  enforces the family one: one validation per (composition, epoch).
+**ONE validation per (universe, epoch)**, `utils/val-budget.js` with `kind: 'type'`. Iterate on
+TRAIN; the composite must beat or equal the best input family there, and again on the single VAL.
+**A VAL failure is TERMINAL for that universe this epoch** — it does not license a fourth
+candidate. With a step search upstream, this is the only thing standing between the loop and a
+held-out window quietly turned into a second training set.
 
-**Alternative, if the above is too strict**: require beat-or-equal on TRAIN, and on VAL require
-only a *pre-declared floor* ("does not collapse"), stated before the run. Weaker, but leak-free for
-the same reason — the bar is fixed in advance.
+## 7. Budget and ranking  *(REVISED)*
 
-**DECIDED 2026-10-07 (user)**: the recommended resolution. Iterate on TRAIN against
-beat-or-equal; confirm ONCE on VAL where beat-or-equal must also hold; a VAL failure is
-TERMINAL for that composition. A type-level VAL budget enforces one validation per
-(composition, epoch), the way `utils/val-budget.js` does for families.
+A merge candidate is one strategy and one backtest, at up to the 45-minute cap against ~180 free
+minutes a day — so **4–6 experiments per day**, and §6 rule 5 caps a universe at 3 candidates per
+epoch anyway. The scarce resource is no longer backtest slots; it is the VAL, of which each
+universe has exactly one.
 
-## 7. Budget and ranking
+Ranking therefore applies to UNIVERSES, not pairs:
 
-N families in a universe give N(N−1)/2 pairs, each a real backtest at up to the 45-minute cap
-against ~180 free minutes a day. That is **4–6 experiments per day**, so ranking is mandatory:
+- prefer universes whose families have the richest §2 — the decomposition is only as good as the
+  step evidence behind it, and a family with no ablations contributes nothing to pick from;
+- **skip universes whose candidates declare themselves unrealizable.** Merging steps from such a
+  book inherits the problem under rule 4; ETF's top two are in this state;
+- a universe with one family is a PROMOTE, not a cheap merge.
 
-- prefer pairs whose edges are furthest apart (the redundancy clusterer already measures this);
-- prefer universes with more usable material — 全A (3 pairs) before ETF (1);
-- `component-scan.js` blends remain a **screening device only** for ordering pairs: they are
-  ex-post, cost-free and daily-rebalanced, an upper bound and never a result.
+⚠ `component-scan.js` blends are now irrelevant to this layer. They ranked BLEND candidates by
+ex-post, cost-free, daily-rebalanced uplift; a merge is not a blend, and the figure has nothing to
+say about which step to take from which family.
 
 ## 8. What this does NOT change
 
-- The frozen bench. Every composite is measured under the active epoch, with the same pins.
+- The frozen bench. Every merged candidate is measured under the active epoch, with the same pins.
 - OOS stays hard-blocked and user-only.
-- `type-integrate-check.js`'s four rules, which become the floor rather than the whole test.
+- `type-integrate-check.js` keeps rules 1 and 4; rules 2 and 3 go inert under a merge (§6).
+- The PROMOTE path, including its positivity floor and its realizability floor.
+- The VAL budget: one validation per (universe, epoch), a failure terminal for that epoch.
 - Family-level work. `/run-family` continues to produce the champions this layer consumes.
 
 ## 9. Sequence
 
-1. Fill `ETF动量`'s `base:` — one line, unblocks its classification.
-2. Classify `universe:` for all 13 families; record both the LLM call and the regex second opinion.
-3. Rebuild `wiki/types/` on the single axis (free, no backtests).
-4. Audit edges within each universe for *semantic* distinctness — this is what decides whether the
-   loop has anything to do on day one, and 小盘 already shows it will collapse a pair.
-5. Only then build the composition loop.
+Steps 1–5 are DONE (commits 6b077ec, a4f5215, 9dbb381):
 
-⚠ Step 4 can legitimately conclude "there is nothing composable yet". That is a finding, not a
-failure, and it is cheaper to learn before the loop exists than after.
+1. ~~Fill `ETF动量`'s `base:`~~ — done; it was the unfilled template.
+2. ~~Classify `universe:` for all 13 families~~ — done, with `universeBasis` and the regex second
+   opinion recorded. ⚠ The regex disagreed on **6 of 13**, including every ETF family.
+3. ~~Rebuild `wiki/types/`~~ — done: 9 two-axis cells → 6 universes, 4 multi-family.
+4. ~~Audit edges per universe~~ — done. ⚠ Under Revision 2 this audit's *conclusion* changes: the
+   pairs it refused for sharing an edge (小盘) are now the best merge candidates.
+5. ~~Build the loop~~ — the queue, the promote path and the VAL budget are built and in use. The
+   ETF round ran and refused all three pairs with recorded reasons.
+
+Remaining, under Revision 2:
+
+6. **Distil §2 into the pipeline skeleton** for the families of one universe — free, no backtests.
+   `data/components.tsv` exists for this and has 1 row; §2 has the material.
+7. **Re-point `integrate-queue.js`**: same-edge becomes information, not a veto; a universe with
+   ≥2 families is MERGE; the gatekeeper refusals already recorded stay valid as *composition*
+   verdicts and must not be read as merge verdicts.
+8. **Run the first merge on 小盘** (多因子ML × 小市值) — same universe, same edge, two different
+   implementations, both with rich §2. It is precisely the pair Revision 1 refused, so it exercises
+   the change end to end.
+
+⚠ Not ETF. Its top two declare their own headlines unrealizable, and a merge inherits that at
+rule 4.
