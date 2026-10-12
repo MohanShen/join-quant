@@ -156,5 +156,102 @@
     "rank": 2,
     "status": "answered",
     "result": "卖出后禁买 2 个交易日，年化少 12.31pp、回撤反而深 1.82pp、sharpe 掉到 1.55 贴着闸。预注册证伪项（Δobj ≤ 0）触发。它与 imp-1 构成一对：延后离场（imp-1，−0.138）与延后再入场（本测，−0.141）代价几乎一样大，方向相反的两个「少交易」杠杆都亏"
+  },
+  {
+    "id": "idea-imp-6",
+    "kind": "improve",
+    "title": "移植新成员 73b13d92 的 H78a：走弱期保留 R² 滤波（base 在走弱期是关掉它的）",
+    "hypothesis": "走弱期入场质量没有把关，是 base 的真实缺口；加上 R²>0.4 应抬 objective，Δobj > 0；证伪：Δobj ≤ 0",
+    "why": "idea-imp-3 的 implication 指明剩下的改进空间在「走弱期拿什么」而非「何时走弱」，这是该方向上第一个可测的具体机制；新成员在 epoch 6 上 0.4848 > base 0.3755，且 H78a 是它唯一落在该方向上的改动",
+    "design": "baseline-e6 apply_filters 的 R² 步骤改为 (enable_r2_filter and not weak) or (enable_weak_r2_filter and weak)，并在 initialize 加 g.enable_weak_r2_filter=True；MA 滤波照旧保留（成员的方案B）→ enhance/candidates/wufu-imp-6.py",
+    "from": [
+      "idea-imp-3",
+      "q-e6-4",
+      "member:73b13d92"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 1,
+    "status": "answered",
+    "result": "走弱期恢复 R²>0.4 的入场质量门槛，objective +0.0480、sharpe 1.99→2.21、两年都改善（2022 +8.2pp 且回撤 −2.8pp，2023 +1.6pp）。这是本家族两轮 6 个 improve 想法里**第一个为正且远超复跑漂移**的结果；预注册证伪项（Δobj ≤ 0）未触发"
+  },
+  {
+    "id": "q-e6-5",
+    "kind": "understand",
+    "title": "原位敲除：在成员 73b13d92 自己的代码里关掉 H78a，对照其账本行 0.4848",
+    "hypothesis": "若 H78a 是该成员超过 base 的主要来源，敲除后 objective 明显回落（Δ ≤ −0.05）；证伪：Δ > −0.02，则其优势来自 H72/超级主线/分钟百分比止损",
+    "why": "成员一次加了四样（H72 动态窗口、H78a、超级主线保留、分钟百分比止损），0.4848 无法归因；与 imp-6 的移植构成同一机制的两个方向读数",
+    "design": "member 源码 g.enable_weak_r2_filter True→False，单行 diff → study/五福闹新春/variants/q-5_member-no-h78a.py；对照用账本行（同窗同 epoch，不另跑）",
+    "from": [
+      "member:73b13d92",
+      "idea-imp-6"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 2,
+    "status": "answered",
+    "result": "在成员自己的代码里敲除 H78a，objective 掉 0.0707、回撤加深 2.41pp，预注册判据（Δ ≤ −0.05）成立：H78a 是该成员超过 base 的最大单一来源。两个方向的读数同号且量级相近（移植到 base +0.0480，原位 −0.0707），其余三样（H72 动态窗口、超级主线保留、分钟百分比止损）合计只值 +0.0386"
+  },
+  {
+    "id": "idea-imp-7",
+    "kind": "improve",
+    "title": "移植 73b13d92 的 H72：按池 R² 滞回在 25/23 日之间动态切换走弱期动量窗口",
+    "hypothesis": "—（未测）",
+    "why": "为完整性登记：成员的另一项主改动",
+    "design": "需移植 adjust_weak_momentum_lookback + compute_regime_p0_daily 等一组函数",
+    "from": [
+      "member:73b13d92"
+    ],
+    "edgeRef": "动量",
+    "rank": 99,
+    "status": "dropped",
+    "note": "gatekeeper 否决，不回测：q-e6-1 的 implication 明确关闭了 lookback / 斜率加权 / R² 乘子这类「把第一名选得更准」的旋钮，而 H72 正是其中之一（25↔23 日，幅度 8%）；在排序已被证伪的家族里调窗口长度没有前提，且 2 日幅度的双阈值滞回本身是高自由度拟合件。若 imp-6 证明走弱期入场质量确实重要，可以再以「质量门槛」而非「窗口长度」的形式重提",
+    "result": null
+  },
+  {
+    "id": "q-e6-6",
+    "kind": "understand",
+    "title": "imp-6 的走弱期 R² 门槛是平台还是单点：0.4 → 0.5",
+    "hypothesis": "若「走弱期入场质量」是真机制，适度改门槛仍应优于 base（0.3755）；若 0.5 回到 base 水平或更低，则 imp-6 的 +0.048 是单点拟合",
+    "why": "imp-6 沿用了 base 的 0.4，未做曲线；在采纳之前必须知道它是平台还是崖",
+    "design": "在 imp-6 上新增独立的 g.weak_r2_threshold=0.5 与 passed_r2_weak，正常期门槛不动 → variants/q-6_weak-r2-050.py",
+    "from": [
+      "idea-imp-6",
+      "q-e6-5"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 1,
+    "status": "answered",
+    "result": "把走弱期门槛从 0.4 收紧到 0.5，imp-6 的 +0.0480 几乎全部消失，只剩 +0.0041——回到 base 水平。预注册证伪项（0.5 回到 base 水平即判为单点拟合）触发"
+  },
+  {
+    "id": "idea-imp-8",
+    "kind": "improve",
+    "title": "移植 73b13d92 的超级主线（B 型阶梯主线）",
+    "hypothesis": "—（未测）",
+    "why": "为完整性登记：成员剩余 +0.0386 里最大的单项",
+    "design": "需移植 evaluate_super_mainline + laplace_filter + get_series_ending_at + get_historical_volume_ratio",
+    "from": [
+      "q-e6-5"
+    ],
+    "edgeRef": "动量",
+    "rank": 99,
+    "status": "dropped",
+    "note": "gatekeeper 否决，不回测：初读误当作「保留规则」，实际是 score>max_score_threshold 的入场豁免（让 score 5–20 的强趋势绕过上限），属 q-e6-1 已关闭的「选最强」方向；且依赖 base 没有的 laplace_filter / 量比历史辅助函数，不是原子移植，一次改动会引入四个机制",
+    "result": null
+  },
+  {
+    "id": "q-e6-7",
+    "kind": "understand",
+    "title": "走弱期 R² 门槛的第三个点：0.3（比 base 更松）",
+    "hypothesis": "若 0.4 是真正的内部最优，0.3 应低于 0.4 的 0.4235；若 0.3 ≥ 0.4235，则「越松越好」，机制不是入场质量而是别的东西",
+    "why": "q-e6-6 显示 0.5 把 +0.048 消掉，单点媲疑；两点不成曲线，采纳前必须有第三个点",
+    "design": "q-6 变体的 g.weak_r2_threshold 0.5→0.3，单行 diff → variants/q-7_weak-r2-030.py",
+    "from": [
+      "q-e6-6",
+      "idea-imp-6"
+    ],
+    "edgeRef": "趋势择时",
+    "rank": 1,
+    "status": "answered",
+    "result": "放松到 0.3 同样回到 base 附近（+0.0116）。三点连起来，0.4 是一个两侧邻点都塌回 base 的孤立尖峰：±0.1 的门槛变动吃掉 75–91% 的优势。预注册判据（0.3 < 0.4235 → 0.4 为内部最优）成立，但「内部最优」在这里等于「尖峰」，不等于「机制」"
   }
 ]
