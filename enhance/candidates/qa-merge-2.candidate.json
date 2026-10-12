@@ -1,0 +1,38 @@
+{
+  "type": "全A",
+  "expId": "qa-merge-2",
+  "weights": "equal",
+  "_note": "MERGE round 1, 全A universe, epoch 6. COMBINE case (disjoint edge sets): 打板短线 [涨停动量延续] x 红利低频 [流动性溢价, 股息率 3rd formulation]. One strategy, not a blend — the donor mechanism replaces two of the base's hand-tuned prior-day 成交额 conditions, so rules 2 and 3 are structurally inert and no member sourceFile is supplied (running the blend decomposition would attribute a blend that does not exist). qa-merge-2 is the highest-objective of the three declared candidates (0.2872 vs qa-merge-1 0.2068, qa-merge-3 0.1855); all three lose to the best member by a wide margin.",
+  "candidate": {
+    "annual": 72.32,
+    "sharpe": 1.56,
+    "maxdd": 43.60,
+    "objective": 0.2872
+  },
+  "members": [
+    {
+      "family": "打板短线",
+      "_member": "439385b4_首板高开低开弱转强混合 — base archetype, epoch-6 anchor (study-baseline-e6) and the type leader",
+      "annual": 129.24,
+      "sharpe": 2.58,
+      "maxdd": 32.56,
+      "objective": 0.9668,
+      "realizability": 1,
+      "_realizability": "realism: 「⚠ 头条数字不作可实现声明」 + harness §3 红线 — it buys the next-day open of yesterday's limit-ups and a sealed 一字板 cannot be bought at all; epoch-6's order_volume_ratio=0.05 models a volume cap, not a sealed board. Zero-slippage bench applied to the library's highest-turnover style (turnover 0.3061, 1.51 days/turn). All of TRAIN's return is 2022 (2023 ≈ -3.35%), and ~half the terminal value is a handful of 弱转强 winners that a real fill constraint removes first. Does not match the repo's literal 不可实现 regex, but it is substantively the same declaration — scored 1 rather than letting a wording gap flatter it (same treatment the 小盘 round gave 小市值's 不可成交).",
+      "window": "train",
+      "epoch": 6
+    },
+    {
+      "family": "红利低频",
+      "_member": "93379f98_低换手红利策略 — base archetype, epoch-6 ledger row; VAL 2024-25 sharpe 2.05 cleared the 2.0 integration bar",
+      "annual": 22.61,
+      "sharpe": 1.46,
+      "maxdd": 9.13,
+      "objective": 0.1348,
+      "realizability": 3,
+      "_realizability": "realism: no unrealizability declaration. 14:50 fills at the daily-bar price with zero slippage; the base filters neither ST nor new listings (a high-yield ST name would be a live exposure, measured inert on TRAIN by i-2); the low-turnover end is thin, but 10 equal-weight names on a 25-day cycle is the lowest turnover in the library and order_volume_ratio=0.05 already caps participation. Discounted to 3 rather than 4 for the zero-slippage fill in deliberately low-liquidity names.",
+      "window": "train",
+      "epoch": 6
+    }
+  ]
+}

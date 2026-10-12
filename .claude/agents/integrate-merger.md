@@ -149,8 +149,13 @@ TRAIN comparison, not a tradeable claim.
 
 ## Step 7 — VAL, once
 
-**One validation per (universe, epoch)** — `node utils/val-budget.js <universe>` with
-`kind: 'type'`. Iterate on TRAIN; the winner must beat or equal the best input family there, and
+**One validation per (universe, epoch)** — check it with
+`node utils/val-budget.js <universe> --type`.
+
+⚠ **The `--type` flag is required.** Without it the CLI looks the name up in `wiki/families`
+and answers `BLOCKED (unknown-family)` — which reads like "already spent" but means "wrong
+keyspace". The 全A round reported the budget as unavailable for exactly this reason when it was
+in fact `ALLOWED (first-of-epoch)`. Iterate on TRAIN; the winner must beat or equal the best input family there, and
 again on the single VAL.
 
 ⚠ **A VAL failure is TERMINAL for that universe this epoch.** It does not license a fourth
