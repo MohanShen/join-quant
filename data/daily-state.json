@@ -1,14 +1,19 @@
 {
-  "inFlight": null,
-  "lastRun": {
+  "inFlight": {
     "stage": "discover",
     "target": null,
-    "budget": 14,
-    "at": "2026-10-11T18:50:17.579Z",
-    "outcome": "error",
-    "note": "discover + fetch",
+    "budget": 30,
+    "at": "2026-10-12T18:30:58.728Z"
+  },
+  "lastRun": {
+    "stage": "normalize",
+    "target": null,
+    "budget": 30,
+    "at": "2026-10-12T18:30:52.329Z",
+    "outcome": "ran",
+    "note": "15 queued, 0 deferred at 45min",
     "minutesUsed": null,
-    "endedAt": "2026-10-11T23:05:17.871Z"
+    "endedAt": "2026-10-12T18:30:52.387Z"
   },
   "runs": [
     {
@@ -810,6 +815,46 @@
       "note": "discover + fetch",
       "minutesUsed": null,
       "endedAt": "2026-10-11T23:05:17.871Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 14,
+      "at": "2026-10-12T18:00:11.755Z",
+      "outcome": "ran",
+      "note": "family assignment over 3 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-12T18:01:20.978Z"
+    },
+    {
+      "stage": "research",
+      "target": null,
+      "budget": 14,
+      "at": "2026-10-12T18:01:23.919Z",
+      "outcome": "ran",
+      "note": "resumed research session a6b44bf4 (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-12T18:30:46.430Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 30,
+      "at": "2026-10-12T18:30:49.358Z",
+      "outcome": "ran",
+      "note": "20 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-12T18:30:49.416Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 30,
+      "at": "2026-10-12T18:30:52.329Z",
+      "outcome": "ran",
+      "note": "15 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-12T18:30:52.387Z"
     }
   ]
 }

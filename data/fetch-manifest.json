@@ -1,51 +1,51 @@
 {
-  "fetchedAt": "2026-10-11T18:50:28.040Z",
+  "fetchedAt": "2026-10-12T18:31:08.892Z",
   "entries": [
     {
-      "postId": "af41bbad32b6eaf61221d00cf55702eb",
-      "backtestId": "75e1886d9282487b3cce619ffe966442",
-      "title": "价值选股与RSRS择时",
-      "url": "https://www.joinquant.com/view/community/detail/af41bbad32b6eaf61221d00cf55702eb",
+      "postId": "3110f331e6ea72881578bb40eafaa9bc",
+      "backtestId": "05a905dc2ecdfea37905d770926dba27",
+      "title": "复现东方证券研报--特质波动率因子研究",
+      "url": "https://www.joinquant.com/view/community/detail/3110f331e6ea72881578bb40eafaa9bc",
       "stats": {
-        "annualReturn": 0.34455616408017,
-        "cumulativeReturn": 3.25102734,
-        "maxDrawdown": 0.11887040219188,
-        "sharpe": 1.7031328547793,
-        "winRatio": 0.73684210526316,
-        "tradingDays": 1222,
-        "periodLabel": "2018-10"
+        "annualReturn": 0.28187322654681,
+        "cumulativeReturn": 11.428303210719,
+        "maxDrawdown": 0.64766960567606,
+        "sharpe": 0.79245351442693,
+        "winRatio": 0.57952955287532,
+        "tradingDays": 2537,
+        "periodLabel": "2015-07"
       }
     },
     {
-      "postId": "6a15900595a88d9231c4429fd286bcf6",
-      "backtestId": "325494b7fe75f21a7781cadb66b3021f",
-      "title": "从标普红利机会指数学到的 —— 限制行业比重上限，很好很强大",
-      "url": "https://www.joinquant.com/view/community/detail/6a15900595a88d9231c4429fd286bcf6",
-      "sourceFile": "2026-10-12_从标普红利机会指数学到的_限制行业比重上限_很好很强大-6a159005.py",
+      "postId": "f39183042833a1215920962c038f48da",
+      "backtestId": "983a2fabeee16abc8e707b61bea90605",
+      "title": "量化周年札记|年化81%的“量化幻梦”",
+      "url": "https://www.joinquant.com/view/community/detail/f39183042833a1215920962c038f48da",
+      "sourceFile": "2026-10-13_量化周年札记_年化81_的_量化幻梦-f3918304.py",
       "stats": {
-        "annualReturn": 0.60274099589512,
-        "cumulativeReturn": 2.98712021,
-        "maxDrawdown": 0.41352292222198,
-        "sharpe": 1.524070963427,
-        "winRatio": 0.63709677419355,
-        "tradingDays": 733,
-        "periodLabel": "2016-12"
+        "annualReturn": 0.88140840176071,
+        "cumulativeReturn": 0.3272979372,
+        "maxDrawdown": 0.15136177270622,
+        "sharpe": 2.6756371669527,
+        "winRatio": 0.80952380952381,
+        "tradingDays": 112,
+        "periodLabel": "2026-06"
       }
     },
     {
-      "postId": "f3c6bfd6301e3d23310aac17c03e0f76",
-      "backtestId": "cdef3a99a88e16cfc6ce1e33d75ccf68",
-      "title": "牛熊分界+取强舍弱+均线动量指标择时选股策略",
-      "url": "https://www.joinquant.com/view/community/detail/f3c6bfd6301e3d23310aac17c03e0f76",
-      "sourceFile": "2026-10-12_牛熊分界_取强舍弱_均线动量指标择时选股策略-f3c6bfd6.py",
+      "postId": "b1531180d2a053730269362207ece435",
+      "backtestId": "a7146bf77abdab6540399cc02d4eea3b",
+      "title": "低利率时代的稳健选择：国债量化组合（后附PT版代码）",
+      "url": "https://www.joinquant.com/view/community/detail/b1531180d2a053730269362207ece435",
+      "sourceFile": "2026-10-13_低利率时代的稳健选择_国债量化组合_后附PT版代码-b1531180.py",
       "stats": {
-        "annualReturn": null,
-        "cumulativeReturn": 2.17227158,
-        "maxDrawdown": 0.11848616354567,
-        "sharpe": 6.4714306991531,
-        "winRatio": null,
-        "tradingDays": 296,
-        "periodLabel": "2016-03"
+        "annualReturn": 0.10484915793683,
+        "cumulativeReturn": 1.7179557,
+        "maxDrawdown": 0.092472803486477,
+        "sharpe": 0.95319690240863,
+        "winRatio": 1,
+        "tradingDays": 2507,
+        "periodLabel": "2026-04"
       }
     }
   ]

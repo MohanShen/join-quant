@@ -1,0 +1,34 @@
+{
+  "type": "小盘",
+  "expId": "xp-merge-1",
+  "weights": "equal",
+  "_note": "MERGE round 1, 小盘 universe, epoch 6. One strategy, not a blend — so rule 2 (diversification share) and rule 3 (optimised vs equal weight) are structurally inert and no member sourceFile is supplied: running the blend decomposition would attribute a blend that does not exist. xp-merge-1 is submitted because it is the highest-objective candidate of the three; its measured merge content is nevertheless exactly zero (484/484 identical days vs 小市值 baseline-e6, max abs diff 0).",
+  "candidate": {
+    "annual": 150.24,
+    "sharpe": 6.07,
+    "maxdd": 11.63,
+    "objective": 1.3861
+  },
+  "members": [
+    {
+      "family": "小市值",
+      "_member": "a30641fb_学习策略5年70倍 — best epoch-6 ledger member of the type",
+      "annual": 120.78,
+      "sharpe": 5.55,
+      "maxdd": 18.20,
+      "objective": 1.0258,
+      "realizability": 1,
+      "_realizability": "realism: 头条的约 7/8 不可成交 — the advertised 买一额>5万 gate is a 100x unit error (really >500), and sizing puts the whole book into one microcap. Honest accounting (q-e6-18) is objective 0.1606, i.e. 1/8.6 of the headline. Does not match the repo's literal 不可实现 regex only because it says 不可成交; substantively the same declaration, so scored 1 rather than letting a wording gap flatter it."
+    },
+    {
+      "family": "多因子ML",
+      "_member": "d02cde29_高质量稳定上涨 — the leg the transplant was taken from, at its study-measured epoch-6 level (the ledger still carries an invalid epoch-2 0.4737)",
+      "annual": 52.58,
+      "sharpe": 3.01,
+      "maxdd": 8.55,
+      "objective": 0.4403,
+      "realizability": 1,
+      "_realizability": "realism: 头条 ... 不可当作可实现水平 and 是不可实现，不是造假 — matches utils/integrate-queue.js's own declaredUnrealizable detector. ETF leg's return is all in 2022 on an ex-post assembled pool; the daily bench collapses intraday stops to a close check and hides intraday drawdown."
+    }
+  ]
+}
