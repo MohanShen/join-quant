@@ -45,7 +45,8 @@
  *   val.record('ETF动量', 'etfprem-007', { outcome: 'pass', note: '…' });
  *
  *   node utils/val-budget.js               # report every family's VAL state
- *   node utils/val-budget.js <family>      # check one
+ *   node utils/val-budget.js <family>            # check one family
+ *   node utils/val-budget.js <universe> --type   # check a universe-level (merge) budget
  */
 
 const fs = require('fs');
@@ -161,12 +162,17 @@ function report() {
 module.exports = { check, record, priorValidations, activeEpoch, report, familiesDir };
 
 if (require.main === module) {
-  const who = process.argv.slice(2).filter(a => !a.startsWith('--'))[0];
+  const argv = process.argv.slice(2);
+  const who = argv.filter(a => !a.startsWith('--'))[0];
+  // A universe-level budget is keyed `type`, and without this flag the CLI looked the name up in
+  // wiki/families and refused it as unknown — which reads like "already spent" to a caller that
+  // only checks the exit code.
+  const kind = (argv.includes('--type') || argv.includes('--kind=type')) ? 'type' : 'family';
   const epoch = activeEpoch();
 
   if (who) {
-    const v = check(who);
-    console.log(`[val] epoch ${epoch}  ${who}: ${v.allowed ? 'ALLOWED' : 'BLOCKED'} (${v.reason})`);
+    const v = check(who, { kind });
+    console.log(`[val] epoch ${epoch}  ${kind} ${who}: ${v.allowed ? 'ALLOWED' : 'BLOCKED'} (${v.reason})`);
     console.log(`      ${v.why}`);
     process.exit(v.allowed ? 0 : 1);
   }
