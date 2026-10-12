@@ -1,19 +1,14 @@
 {
-  "inFlight": {
+  "inFlight": null,
+  "lastRun": {
     "stage": "discover",
     "target": null,
     "budget": 30,
-    "at": "2026-10-12T18:30:58.728Z"
-  },
-  "lastRun": {
-    "stage": "normalize",
-    "target": null,
-    "budget": 30,
-    "at": "2026-10-12T18:30:52.329Z",
-    "outcome": "ran",
-    "note": "15 queued, 0 deferred at 45min",
+    "at": "2026-10-12T18:30:58.728Z",
+    "outcome": "error",
+    "note": "discover + fetch",
     "minutesUsed": null,
-    "endedAt": "2026-10-12T18:30:52.387Z"
+    "endedAt": "2026-10-12T22:45:59.076Z"
   },
   "runs": [
     {
@@ -855,6 +850,16 @@
       "note": "15 queued, 0 deferred at 45min",
       "minutesUsed": null,
       "endedAt": "2026-10-12T18:30:52.387Z"
+    },
+    {
+      "stage": "discover",
+      "target": null,
+      "budget": 30,
+      "at": "2026-10-12T18:30:58.728Z",
+      "outcome": "error",
+      "note": "discover + fetch",
+      "minutesUsed": null,
+      "endedAt": "2026-10-12T22:45:59.076Z"
     }
   ]
 }
