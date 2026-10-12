@@ -64,6 +64,10 @@ function report() {
   for (const f of all) {
     if (!f.edges.length) { noEdge.push(f.family); continue; }
     for (const e of f.edges) {
+      // ⚠ A SUPERSEDED claim is history, not a live one. 红利低频 carries three successive
+      // formulations of 股息率 — two refuted, one measured — and counting the refuted ones here
+      // listed the family twice under a claim it has since replaced.
+      if (e.supersededBy) continue;
       if (e.kind === 'none-found') { noneFound.push({ family: f.family, claim: e.claim }); continue; }
       if (e.status === 'refuted') { refuted.push({ family: f.family, name: e.name }); continue; }
       if (e.status !== 'measured') { proposed.push({ family: f.family, name: e.name }); continue; }
