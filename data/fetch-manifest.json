@@ -1,51 +1,51 @@
 {
-  "fetchedAt": "2026-10-12T18:31:08.892Z",
+  "fetchedAt": "2026-10-15T18:02:21.535Z",
   "entries": [
     {
-      "postId": "3110f331e6ea72881578bb40eafaa9bc",
-      "backtestId": "05a905dc2ecdfea37905d770926dba27",
-      "title": "复现东方证券研报--特质波动率因子研究",
-      "url": "https://www.joinquant.com/view/community/detail/3110f331e6ea72881578bb40eafaa9bc",
+      "postId": "223a137ed5b63daedcb57320c10c1207",
+      "backtestId": "ed24fcb6085e668ac6e5c2bf20a86a3a",
+      "title": "回测里的坑：你选的ETF那时候还没上市呢",
+      "url": "https://www.joinquant.com/view/community/detail/223a137ed5b63daedcb57320c10c1207",
+      "sourceFile": "2026-10-16_回测里的坑_你选的ETF那时候还没上市呢-223a137e.py",
       "stats": {
-        "annualReturn": 0.28187322654681,
-        "cumulativeReturn": 11.428303210719,
-        "maxDrawdown": 0.64766960567606,
-        "sharpe": 0.79245351442693,
-        "winRatio": 0.57952955287532,
-        "tradingDays": 2537,
-        "periodLabel": "2015-07"
+        "annualReturn": 0.35143604714021,
+        "cumulativeReturn": 0.9990775739,
+        "maxDrawdown": 0.13645596537663,
+        "sharpe": 1.5433231040183,
+        "winRatio": 0.60975609756098,
+        "tradingDays": 575,
+        "periodLabel": "2026-05"
       }
     },
     {
-      "postId": "f39183042833a1215920962c038f48da",
-      "backtestId": "983a2fabeee16abc8e707b61bea90605",
-      "title": "量化周年札记|年化81%的“量化幻梦”",
-      "url": "https://www.joinquant.com/view/community/detail/f39183042833a1215920962c038f48da",
-      "sourceFile": "2026-10-13_量化周年札记_年化81_的_量化幻梦-f3918304.py",
+      "postId": "a1ccf614bbc7223d1bbce2a40a12c26b",
+      "backtestId": "74460e9f4c7c7997ee46e0613a9d1fea",
+      "title": "回馈社区，分享市盈率股息率选股+均线止盈交易策略",
+      "url": "https://www.joinquant.com/view/community/detail/a1ccf614bbc7223d1bbce2a40a12c26b",
       "stats": {
-        "annualReturn": 0.88140840176071,
-        "cumulativeReturn": 0.3272979372,
-        "maxDrawdown": 0.15136177270622,
-        "sharpe": 2.6756371669527,
-        "winRatio": 0.80952380952381,
-        "tradingDays": 112,
-        "periodLabel": "2026-06"
-      }
-    },
-    {
-      "postId": "b1531180d2a053730269362207ece435",
-      "backtestId": "a7146bf77abdab6540399cc02d4eea3b",
-      "title": "低利率时代的稳健选择：国债量化组合（后附PT版代码）",
-      "url": "https://www.joinquant.com/view/community/detail/b1531180d2a053730269362207ece435",
-      "sourceFile": "2026-10-13_低利率时代的稳健选择_国债量化组合_后附PT版代码-b1531180.py",
-      "stats": {
-        "annualReturn": 0.10484915793683,
-        "cumulativeReturn": 1.7179557,
-        "maxDrawdown": 0.092472803486477,
-        "sharpe": 0.95319690240863,
+        "annualReturn": 0.1923617239692,
+        "cumulativeReturn": 1.0398833,
+        "maxDrawdown": 0.32145377522463,
+        "sharpe": 0.66067986022988,
         "winRatio": 1,
-        "tradingDays": 2507,
-        "periodLabel": "2026-04"
+        "tradingDays": 1013,
+        "periodLabel": "2019-03"
+      }
+    },
+    {
+      "postId": "a45bd9625db10f299b789c910a870089",
+      "backtestId": "206218beed6ac7984c3d2e62a03f28a8",
+      "title": "近一个月是不是跌懵了？守正出奇4.0强势回归！",
+      "url": "https://www.joinquant.com/view/community/detail/a45bd9625db10f299b789c910a870089",
+      "sourceFile": "2026-10-16_近一个月是不是跌懵了_守正出奇4_0强势回归-a45bd962.py",
+      "stats": {
+        "annualReturn": 0.4253080281027,
+        "cumulativeReturn": 11.70086854516,
+        "maxDrawdown": 0.14980720862118,
+        "sharpe": 1.8943157456004,
+        "winRatio": 0.51111111111111,
+        "tradingDays": 1793,
+        "periodLabel": "2026-05"
       }
     }
   ]
