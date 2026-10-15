@@ -26,7 +26,7 @@ memberCount: 29
 sources: { normalized: 27, study: 0, enhance: 0 }
 realism: "⚠ epoch-6 base objective 0.1868 / sharpe 1.41（epoch 2 的 0.2965 高估 59%）；收益 85% 在 2022 一年；11 只池写于 2026（2022 年初只有约 6 只有行情），换成 A 股宽基池 objective −0.27——池子是事后选成的必要条件，VAL 2024–25 对它不是干净样本外；零滑点台仍偏乐观（单持仓日频换仓）"
 status: active
-updatedAt: 2026-10-12
+updatedAt: 2026-10-15
 bestObjectiveEpoch: 6
 ---
 
@@ -94,7 +94,7 @@ bestObjectiveEpoch: 6
 | 28 | [[48187f0c_ETF轮动大A行情判断]] | DQ/— | — | — | — | — | — |
 | 29 | [[77cabc3c_纳指增强]] | DQ/— | — | — | — | — | — |
 
-*6 gate-pass / 29 members. 快照 2026-10-12（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*6 gate-pass / 29 members. 快照 2026-10-15（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 - **[前置条件] 点时池**：池子是必要条件（q-e6-3）且写于 2026。用上市日期+流动性逐日生成的跨资产池复测，才能把「平滑短窗口动量」与「事后选中 2022 的赢家」分开。与 [[七星高照]] §4 同一缺口，宜一次做两族。
