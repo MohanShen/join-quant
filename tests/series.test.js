@@ -450,3 +450,119 @@ test('component members are epoch-filtered and de-duplicated', async t => {
     assert.match(src, /--all-epochs/, 'the CLI must label the mixed view, not hide it');
   });
 });
+
+test('yearlySplit — the per-year basis of the epoch-7 integration bar', async t => {
+  const harness = require('../utils/harness-config');
+
+  /** A curve that gains `a`%/day through 2022 then `b`%/day through 2023. */
+  const twoRegime = (a, b) => {
+    const d = [], cum = [];
+    let eq = 1;
+    for (let y of [2022, 2023]) {
+      for (let i = 0; i < 240; i++) {
+        const day = new Date(Date.UTC(y, 0, 3) + i * 86400000);
+        if (day.getUTCFullYear() !== y) break;
+        eq *= 1 + (y === 2022 ? a : b) / 100;
+        d.push(day.toISOString().slice(0, 10));
+        cum.push((eq - 1) * 100);
+      }
+    }
+    return { dates: d, cum, benchCum: cum.map(() => 0), points: d.length };
+  };
+
+  await t.test('converts BEFORE slicing — the trap that would make year 2 fiction', () => {
+    // A book that compounds hard in 2022 ends that year far above its base. Clipping `cum`
+    // first and calling dailyReturns() on the slice measures the 2023 opening day against a
+    // base of 1, folding all of 2022's gain into one day: the year's annual, vol, sharpe and
+    // drawdown all become numbers that look plausible and are wrong. Same family of error as
+    // differencing cumulative percentages (vol 1.362 vs JQ's 0.227).
+    const rec = twoRegime(1.0, 0.1);
+    const ys = scan.yearlySplit(rec, 'train');
+    assert.strictEqual(ys.length, 2);
+    // 2023 gains 0.1%/day: a flat ~24% year, nowhere near the >1000% that the trap produces.
+    assert.ok(ys[1].annualPct > 10 && ys[1].annualPct < 50,
+      `2023 should be a modest year, got ${ys[1].annualPct}%`);
+    assert.ok(ys[0].annualPct > ys[1].annualPct * 5, 'the regimes must stay distinguishable');
+  });
+
+  await t.test('annualizes over the WINDOW year, not the curve\'s own span', () => {
+    // A full calendar year of a steady riser must report annual ~= total, because the slice's
+    // day count comes from windowYears() (365) rather than from the ~240 trading days present.
+    const rec = twoRegime(0.1, 0.1);
+    const ys = scan.yearlySplit(rec, 'train');
+    for (const y of ys) {
+      assert.strictEqual(y.days, 365);
+      assert.ok(Math.abs(y.annualPct - y.totalPct) < 1.0,
+        `a full year should annualize to about its total, got ${y.annualPct} vs ${y.totalPct}`);
+    }
+  });
+
+  await t.test('objective is the harness score applied within the year', () => {
+    const ys = scan.yearlySplit(twoRegime(0.5, 0.2), 'train');
+    for (const y of ys) {
+      assert.strictEqual(y.objective, Number(((y.annualPct - y.maxddPct) / 100).toFixed(4)));
+    }
+  });
+
+  await t.test('worstYear is the minimum, which is what the maximin compares', () => {
+    const rec = twoRegime(1.0, 0.05);
+    const w = scan.worstYear(rec, 'train');
+    assert.strictEqual(w.year, 2023, 'the weak regime is the worst year');
+    const ys = scan.yearlySplit(rec, 'train');
+    assert.strictEqual(w.objective, Math.min(...ys.map(y => y.objective)));
+  });
+
+  await t.test('returns null when a TRAIN year is missing, never a partial verdict', () => {
+    // A split that silently covers one year would be compared against one covering two.
+    const rec = twoRegime(0.5, 0.5);
+    const only2022 = scan.yearlySplit(
+      series.clip(rec, '2022-01-01', '2022-12-31'), 'train');
+    assert.strictEqual(only2022, null);
+    assert.strictEqual(scan.worstYear(series.clip(rec, '2022-01-01', '2022-12-31'), 'train'), null);
+  });
+
+  await t.test('reproduces a real stored curve\'s yearly returns', () => {
+    // PT多策略: 2022 +286.1%, 2023 +121.2%, computed independently from the raw curve.
+    const r = series.loadComparable(
+      'strategies/2026-07-18_PT多策略分仓隔离插件V1_3-c70281d3.py', 'train');
+    if (!r.rec) return;          // curve store is gitignored; skip where it is absent
+    const ys = scan.yearlySplit(r.rec, 'train');
+    assert.ok(Math.abs(ys[0].totalPct - 286.1) < 0.5, `2022: ${ys[0].totalPct}`);
+    assert.ok(Math.abs(ys[1].totalPct - 121.2) < 0.5, `2023: ${ys[1].totalPct}`);
+  });
+
+  await t.test('windowYears is read from the epoch, so the split moves with the window', () => {
+    assert.deepStrictEqual(harness.windowYears('train').map(y => y.year), [2022, 2023]);
+    assert.deepStrictEqual(harness.windowYears('val').map(y => y.year), [2024, 2025]);
+    assert.deepStrictEqual(harness.windowYears('nonexistent'), []);
+  });
+});
+
+test('loadComparable — a scoring-only bump must not orphan the curve store', async t => {
+  await t.test('finds a curve measured under an earlier COMPARABLE epoch', () => {
+    // The regression this exists for: the key embeds the measuring epoch, so building one from
+    // config().epoch found nothing the instant epoch 7 activated — all 280 stored curves are
+    // stamped e6 and all 280 are still current, because epoch 7 changed only scoring.
+    const r = series.loadComparable(
+      'strategies/2026-07-18_PT多策略分仓隔离插件V1_3-c70281d3.py', 'train');
+    if (!r.rec) return;
+    assert.strictEqual(r.epoch, 6, 'the e6 curve is a current measurement under epoch 7');
+    assert.match(r.key, /__e6$/);
+  });
+
+  await t.test('never substitutes a STALE epoch for a missing current one', () => {
+    const harness = require('../utils/harness-config');
+    const comparable = harness.comparableEpochs();
+    assert.ok(!comparable.has(2), 'epoch 2 ran without the execution pins');
+    // Asking for a stale epoch explicitly does not get one: only comparable epochs are tried.
+    const r = series.loadComparable('strategies/whatever-does-not-exist.py', 'train', 2);
+    assert.strictEqual(r.rec, null);
+    for (const k of r.tried) assert.ok(!/__e2$/.test(k), `tried a stale epoch: ${k}`);
+  });
+
+  await t.test('reports the keys it tried, so a miss can be explained', () => {
+    const r = series.loadComparable('strategies/definitely-absent.py', 'train');
+    assert.strictEqual(r.rec, null);
+    assert.ok(r.tried.length >= 1);
+  });
+});

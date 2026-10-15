@@ -67,7 +67,62 @@ function decomposeMembers(members) {
   } catch { return null; }
 }
 
+/**
+ * Resolve one participant's stored curve. `sourceFile` is the ledger's identity — never a
+ * backtestId, which JQ re-mints per request — and the epoch is resolved through
+ * `loadComparable`, so a scoring-only bump does not orphan a curve measured one epoch ago.
+ */
+function curveOf(p) {
+  if (!p) return null;
+  const series = require('./backtest-series');
+  if (p.seriesKey) return series.load(p.seriesKey);
+  if (!p.sourceFile) return null;
+  return series.loadComparable(p.sourceFile, p.window || 'train', p.epoch).rec;
+}
+
+/**
+ * Rule 1 on the epoch-7 basis: the candidate's WORST TRAIN year must beat the best member's
+ * worst TRAIN year, on the same (annual − maxDrawdown)/100 metric computed WITHIN each year.
+ *
+ * Why a maximin rather than "win every year": per-year domination lets one member own the bar
+ * in 2022 and another own it in 2023, so a candidate can be rejected for losing to a PAIR that
+ * no single member matches — which is not a comparison against any real alternative. The
+ * maximin compares the most consistent member against the candidate's own weakest year.
+ *
+ * Returns null when the split cannot be built for the candidate or for EVERY member. Partial
+ * member coverage is also a null: a bar computed over a subset silently omits whichever member
+ * might have set it, and the strongest member is exactly the one most likely to be missing.
+ */
+function worstYearRule(c, members) {
+  const cs = require('./component-scan');
+  const candRec = curveOf({ ...(c.candidate || {}), window: 'train' });
+  if (!candRec) return { ok: false, why: 'the candidate has no stored TRAIN curve' };
+
+  const candWorst = cs.worstYear(candRec, 'train');
+  if (!candWorst) return { ok: false, why: 'the candidate curve does not cover every TRAIN year' };
+
+  const perMember = [];
+  for (const m of members) {
+    const rec = curveOf({ ...m, window: 'train' });
+    const w = rec && cs.worstYear(rec, 'train');
+    if (!w) return { ok: false, why: `member ${m.family} has no usable TRAIN curve` };
+    perMember.push({ family: m.family, worst: w });
+  }
+  if (!perMember.length) return { ok: false, why: 'no members carry a curve' };
+
+  const best = perMember.reduce((a, b) => (b.worst.objective > a.worst.objective ? b : a));
+  return {
+    ok: true,
+    candWorst,
+    bestMember: best.family,
+    bestWorst: best.worst,
+    beats: candWorst.objective > best.worst.objective,
+    perMember,
+  };
+}
+
 function check(c) {
+  const harness = require('./harness-config');
   const members = c.members || [];
   if (members.length < 2) {
     return { verdict: 'invalid', reasons: ['an integration candidate needs at least 2 members'] };
@@ -85,12 +140,49 @@ function check(c) {
   const flags = [];
   let verdict = 'keep';
 
-  // Rule 1 — beat the best member
-  const beatsBest = (num(cand.objective) ?? -Infinity) > (num(bestMember.objective) ?? -Infinity);
-  if (!beatsBest) {
-    verdict = 'reject';
-    reasons.push(`objective ${cand.objective} does not beat the best member ` +
-                 `${bestMember.family} at ${bestMember.objective}`);
+  // Rule 1 — beat the best member. WHAT "beat" means is the active epoch's call.
+  const bar = harness.integrateBar();
+  const beatsPooled = (num(cand.objective) ?? -Infinity) > (num(bestMember.objective) ?? -Infinity);
+  let rule1 = null;
+
+  if (bar.basis === 'worstTrainYear') rule1 = worstYearRule(c, members);
+
+  if (rule1 && rule1.ok) {
+    flags.push('bar=worstTrainYear');
+    reasons.push(`worst TRAIN year: candidate ${rule1.candWorst.year} at ` +
+                 `${rule1.candWorst.objective} (annual ${rule1.candWorst.annualPct}%, maxDD ` +
+                 `${rule1.candWorst.maxddPct}%) vs the most consistent member ${rule1.bestMember} ` +
+                 `${rule1.bestWorst.year} at ${rule1.bestWorst.objective}`);
+    if (!rule1.beats) {
+      verdict = 'reject';
+      reasons.push(`worst-year objective ${rule1.candWorst.objective} does not beat ` +
+                   `${rule1.bestMember} at ${rule1.bestWorst.objective}`);
+    }
+    // The pooled comparison stays VISIBLE but no longer vetoes: it is almost purely annual
+    // return (r=0.9698) and annual return over TRAIN is substantially a 2022 measurement
+    // (2022 supplies a median 62% of log-growth), so a merge that buys consistency rather
+    // than level loses on it by construction. Epoch 7 demoted it to evidence.
+    if (!beatsPooled) {
+      flags.push('pooled-objective-lower');
+      reasons.push(`⚠ pooled objective ${cand.objective} is below ${bestMember.family}'s ` +
+                   `${bestMember.objective} — under epoch ${harness.config().epoch} that is ` +
+                   'reported, not a rejection (bar.pooledIsVeto=false); the candidate wins on ' +
+                   'consistency and gives up level, so say which one the round was after');
+    }
+  } else {
+    // Fallback is the POOLED rule, and it must announce itself. A bar that quietly relaxes
+    // because a file was missing is worse than one that is simply strict.
+    flags.push('bar=pooled-fallback');
+    if (rule1 && rule1.why) {
+      reasons.push(`⚠ could not apply the epoch-${harness.config().epoch} worst-year bar — ` +
+                   `${rule1.why}; falling back to the pooled objective. Capture the missing ` +
+                   'curve (node utils/series-backfill.js --dry) and re-run before trusting this.');
+    }
+    if (!beatsPooled) {
+      verdict = 'reject';
+      reasons.push(`objective ${cand.objective} does not beat the best member ` +
+                   `${bestMember.family} at ${bestMember.objective}`);
+    }
   }
 
   // Rule 2 — diversification share.
@@ -155,6 +247,15 @@ function check(c) {
 
   return {
     verdict, reasons, flags,
+    bar: bar.basis,
+    barApplied: rule1 && rule1.ok ? 'worstTrainYear' : 'pooled',
+    // The binding comparison under the active epoch, when it could be made.
+    worstYear: rule1 && rule1.ok ? {
+      candidate: rule1.candWorst, member: rule1.bestMember, memberWorst: rule1.bestWorst,
+      uplift: Number((rule1.candWorst.objective - rule1.bestWorst.objective).toFixed(4)),
+      perMember: rule1.perMember,
+    } : null,
+    // The pooled comparison, kept for continuity with pre-epoch-7 rounds.
     bestMember: bestMember.family,
     bestMemberObjective: num(bestMember.objective),
     uplift: (num(cand.objective) ?? 0) - (num(bestMember.objective) ?? 0),
@@ -167,8 +268,18 @@ if (require.main === module) {
   const c = JSON.parse(fs.readFileSync(f, 'utf8'));
   const r = check(c);
   console.log(`[integrate] ${c.type || '?'} ${c.expId || ''} -> ${r.verdict.toUpperCase()}`);
-  console.log(`  best member      : ${r.bestMember} (objective ${r.bestMemberObjective})`);
-  console.log(`  uplift over it   : ${r.uplift >= 0 ? '+' : ''}${r.uplift.toFixed(4)}`);
+  console.log(`  bar applied      : ${r.barApplied}${r.barApplied === r.bar ? '' : `  (epoch asks for ${r.bar})`}`);
+  if (r.worstYear) {
+    const w = r.worstYear;
+    console.log(`  worst TRAIN year : candidate ${w.candidate.year} ${w.candidate.objective} ` +
+                `vs ${w.member} ${w.memberWorst.year} ${w.memberWorst.objective}`);
+    console.log(`  worst-year uplift: ${w.uplift >= 0 ? '+' : ''}${w.uplift.toFixed(4)}   <- the binding comparison`);
+    for (const m of w.perMember) {
+      console.log(`      ${m.family.padEnd(14)} worst ${m.worst.year}  objective ${m.worst.objective}`);
+    }
+  }
+  console.log(`  pooled (evidence): best member ${r.bestMember} ${r.bestMemberObjective}, ` +
+              `uplift ${r.uplift >= 0 ? '+' : ''}${r.uplift.toFixed(4)}`);
   console.log(`  flags            : ${r.flags.join(', ')}`);
   for (const reason of r.reasons) console.log(`  - ${reason}`);
   process.exitCode = r.verdict === 'reject' || r.verdict === 'invalid' ? 1 : 0;

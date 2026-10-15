@@ -94,6 +94,47 @@ function metrics(returns, days) {
   };
 }
 
+/**
+ * Split a stored curve into PER-CALENDAR-YEAR metrics over a named harness window — the basis
+ * of the epoch-7 integration bar.
+ *
+ * ⚠⚠ Order of operations is the whole trick. `dailyReturns()` must run on the WHOLE cum series
+ * and the RETURNS are then sliced by date. Clipping `cum` first and converting afterwards makes
+ * the slice's first entry a return measured against a base of 1 — i.e. it folds every earlier
+ * year's cumulative gain into one day. On a book that tripled in 2022, the 2023 slice would
+ * open with a ~200% "daily" return and the year's annual, vol, sharpe and drawdown would all be
+ * fiction that still looks like a number. Same family of error as differencing cumulative
+ * percentages instead of chaining them (which reported vol 1.3620 against JQ's 0.2271).
+ *
+ * Returns null if ANY year in the window cannot be measured — a split missing a year cannot be
+ * compared against one that has it.
+ */
+function yearlySplit(rec, windowName = 'train') {
+  if (!rec || !Array.isArray(rec.cum) || !Array.isArray(rec.dates)) return null;
+  const rets = series.dailyReturns(rec.cum);
+  const out = [];
+  for (const y of harness.windowYears(windowName)) {
+    const sliced = [];
+    for (let i = 0; i < rec.dates.length; i++) {
+      if (rec.dates[i] >= y.start && rec.dates[i] <= y.end) sliced.push(rets[i]);
+    }
+    const m = metrics(sliced, y.days);
+    if (!m) return null;
+    out.push({ ...y, ...m, objective: m.score });
+  }
+  return out.length ? out : null;
+}
+
+/**
+ * The worst per-year slice of a curve over a window. `null` when the split is unavailable, which
+ * the caller must treat as "cannot apply the per-year bar", never as a pass.
+ */
+function worstYear(rec, windowName = 'train') {
+  const ys = yearlySplit(rec, windowName);
+  if (!ys) return null;
+  return ys.reduce((a, b) => (b.objective < a.objective ? b : a));
+}
+
 /** Align two stored series on their shared dates. Position-alignment would compare wrong days. */
 function align(A, B) {
   const ra = series.dailyReturns(A.cum), rb = series.dailyReturns(B.cum);
@@ -400,4 +441,4 @@ if (require.main === module) {
 }
 
 module.exports = { metrics, align, members, rankType, validate, toCum, maxDrawdownPct, familyToType,
-                   diversification, RISK_FREE };
+                   diversification, yearlySplit, worstYear, RISK_FREE };

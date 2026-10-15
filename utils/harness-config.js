@@ -58,6 +58,29 @@ function window(name) {
 /** First date of the reserved out-of-sample period — the code guard's cutoff. */
 function oosCutoff() { return config().windows.holdout.start; }
 
+/**
+ * The calendar years a named window spans, each clipped to the window and carrying its own
+ * CALENDAR day count.
+ *
+ * The day count is what a per-year metric annualizes over, and it is derived from the window
+ * rather than from whatever curve is being measured — the same convention the ledger uses for
+ * the whole window, and for the same reason: a curve spans the trading days that happened to
+ * occur, so self-annualizing each slice injects a gap that scales with the return level
+ * (measured at 0.27pp median but 0.80pp on an 85.9% book, which made healthy rows look broken).
+ */
+function windowYears(name) {
+  const w = window(name);
+  if (!w) return [];
+  const out = [];
+  for (let y = Number(w.start.slice(0, 4)); y <= Number(w.end.slice(0, 4)); y++) {
+    const start = w.start > `${y}-01-01` ? w.start : `${y}-01-01`;
+    const end = w.end < `${y}-12-31` ? w.end : `${y}-12-31`;
+    if (start > end) continue;
+    out.push({ year: y, start, end, days: Math.round((Date.parse(end) - Date.parse(start)) / 86400000) + 1 });
+  }
+  return out;
+}
+
 function gate(sharpe) {
   const o = config().objective;
   const s = parseFloat(sharpe);
@@ -104,6 +127,25 @@ function stageGate(stage, sharpe) {
 function stageThreshold(stage) {
   const t = (config().objective.stageThresholds || {})[stage];
   return t == null ? config().objective.gateMin : t;
+}
+
+/**
+ * How the ACTIVE epoch defines the bar an integration candidate must clear.
+ *
+ * Epoch 7 moved it from the pooled TRAIN objective to the WORST TRAIN YEAR. The pooled
+ * objective is almost purely annual return — measured over 60 epoch-6 rows, r(annual, objective)
+ * = 0.9698 and maxDrawdown supplies 24% of the spread — and annual return over TRAIN is
+ * substantially a 2022 measurement: across the 13 stored TRAIN curves, 2022 supplies a median
+ * 62% of total log-growth and 63-71% for every top-8 book. So a merge whose payoff is
+ * robustness rather than level had no channel to register, which is exactly what both
+ * 2026-10 merge rounds reported.
+ *
+ * Epochs before 7 declare no bar, and default to the pooled rule they actually ran under — an
+ * old result must keep being judged by the rule that produced it.
+ */
+function integrateBar() {
+  const o = config().objective;
+  return o.integrateBar || { basis: 'pooled', metric: o.score, pooledIsVeto: true, fallback: 'pooled' };
 }
 
 /**
@@ -237,6 +279,7 @@ if (require.main === module) {
   }
 }
 
-module.exports = { config, window, oosCutoff, gate, objective, score, stageGate, stageThreshold,
+module.exports = { config, window, windowYears, oosCutoff, gate, objective, score,
+                   stageGate, stageThreshold, integrateBar,
                    comparableEpochs, measurementValid,
                    pythonLiterals, verify, todayISO };

@@ -182,6 +182,40 @@ function load(key) {
   return fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, 'utf8')) : null;
 }
 
+/**
+ * Load the newest curve for (sourceFile, window) that the ACTIVE epoch still accepts as a
+ * MEASUREMENT — not merely the one stamped with the active epoch number.
+ *
+ * ⚠ Why this exists. The storage key embeds the measuring epoch, so a caller that built a key
+ * from `config().epoch` found nothing the moment an epoch was bumped. That is correct for a
+ * cost change and wrong for a scoring-only one: epoch 7 changed only how results are JUDGED, so
+ * all 280 stored curves are still current — yet a default lookup would have asked for `__e7`
+ * and come back empty, silently degrading every caller that treats "no curve" as a fallback
+ * path rather than an error. Same distinction `measurementValid()` draws for ledger rows, now
+ * applied to the curve store.
+ *
+ * A `preferredEpoch` is honoured only if it is itself comparable — a stale curve must never be
+ * substituted for a missing current one. Returns `{ key, epoch, rec }`, with `rec: null` and the
+ * keys it `tried` when nothing is usable, so the caller can report WHY rather than guess.
+ */
+function loadComparable(sourceFile, windowName, preferredEpoch) {
+  const harness = require('./harness-config');
+  const comparable = harness.comparableEpochs();
+  const order = [];
+  const pref = preferredEpoch == null ? null : Number(preferredEpoch);
+  if (pref != null && comparable.has(pref)) order.push(pref);
+  for (const e of [...comparable].sort((a, b) => b - a)) if (!order.includes(e)) order.push(e);
+
+  const tried = [];
+  for (const e of order) {
+    const key = seriesKey(sourceFile, windowName, e);
+    tried.push(key);
+    const rec = load(key);
+    if (rec) return { key, epoch: e, rec, tried };
+  }
+  return { key: null, epoch: null, rec: null, tried };
+}
+
 function list() {
   if (!fs.existsSync(DIR)) return [];
   return fs.readdirSync(DIR).filter(f => f.endsWith('.json')).map(f => f.replace(/\.json$/, ''));
@@ -249,5 +283,6 @@ if (require.main === module) {
   })().catch(e => { console.error(`[series] ${e.message}`); process.exit(1); });
 }
 
-module.exports = { seriesKey, seriesPath, fetchViaPage, fetchViaHttp, toRecord, save, load, list,
+module.exports = { seriesKey, seriesPath, fetchViaPage, fetchViaHttp, toRecord, save, load,
+                   loadComparable, list,
                    dailyReturns, pearson, correlate, clip, PAGE };

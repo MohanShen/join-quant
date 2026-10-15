@@ -298,11 +298,42 @@ test('harness config', async t => {
     assert.strictEqual(harness.gate('not a number'), false);
   });
 
-  await t.test('integration holds a higher bar than the other stages', () => {
+  await t.test('every stage holds the same sharpe bar since epoch 7', () => {
+    // Epoch 7 dropped integration's 2.0 to 1.5. The 2.0 bar never bound on anything that could
+    // win: across the 60 epoch-6 rows, Spearman(objective, sharpe) = 0.9836, 0 of the top-16 by
+    // objective failed it, and the only 3 rows between 1.5 and 2.0 scored objective <= 0.2970.
+    // Integration's real bar is now the per-year comparison, not a different sharpe number.
     assert.strictEqual(harness.stageThreshold('study'), 1.5);
-    assert.strictEqual(harness.stageThreshold('integrate'), 2.0);
-    assert.strictEqual(harness.stageGate('integrate', 1.8), false);
-    assert.strictEqual(harness.stageGate('study', 1.8), true);
+    assert.strictEqual(harness.stageThreshold('integrate'), 1.5);
+    assert.strictEqual(harness.stageGate('integrate', 1.8), true);
+    assert.strictEqual(harness.stageGate('integrate', 1.49), false);
+  });
+
+  await t.test('the integration bar is read from the epoch, not hard-coded', () => {
+    const bar = harness.integrateBar();
+    assert.strictEqual(bar.basis, 'worstTrainYear');
+    assert.strictEqual(bar.pooledIsVeto, false,
+      'the pooled objective is evidence under epoch 7, not a veto');
+    assert.strictEqual(bar.fallback, 'pooled');
+  });
+
+  await t.test('epoch 7 preserves measurement, so no epoch-6 row is re-run', () => {
+    // A scoring-only bump that invalidated the ledger would re-measure the whole library at
+    // the daily backtest budget — the most expensive silent bug this repo can have.
+    assert.ok(harness.measurementValid(6), 'epoch-6 rows must survive a scoring-only bump');
+    assert.ok(harness.measurementValid(7));
+    assert.ok(!harness.measurementValid(5), 'epoch 6 changed stock fees; 5 is not comparable');
+  });
+
+  await t.test('windowYears splits TRAIN on calendar years with window-derived day counts', () => {
+    const ys = harness.windowYears('train');
+    assert.strictEqual(ys.length, 2);
+    assert.deepStrictEqual(ys.map(y => y.year), [2022, 2023]);
+    assert.strictEqual(ys[0].start, '2022-01-01');
+    assert.strictEqual(ys[0].end, '2022-12-31');
+    // 365, not the count of trading days that happened to occur — the ledger's convention.
+    assert.strictEqual(ys[0].days, 365);
+    assert.strictEqual(ys[1].days, 365);
   });
 
   await t.test('the Python literals still match — they cannot read the JSON', () => {

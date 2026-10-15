@@ -1,0 +1,118 @@
+{
+  "epoch": 7,
+  "setAt": "2026-10-13",
+  "status": "active",
+  "note": "Scoring change only — the measurement bench (windows, costs, pins) is IDENTICAL to epoch 6, byte-for-byte. Two changes, both to how a measurement is JUDGED. (a) The integrate stage threshold drops 2.0 -> 1.5, matching every other stage. (b) The integration BAR moves from the pooled TRAIN objective to the WORST TRAIN YEAR, because the pooled objective is substantially a 2022 measurement and a merge that trades the 2022 tail for 2023 steadiness could not register under it. No backtest is needed: both are functions of data already stored (ledger columns and data/series/ curves).",
+  "changedFromPreviousEpoch": [
+    "objective.stageThresholds.integrate 2.0 -> 1.5 (the 2.0 bar never bound: 0 of the top-16 rows by objective failed it, and the only 3 rows in the 1.5-2.0 band score objective <= 0.2970)",
+    "objective.integrateBar added: basis \"worstTrainYear\" — an integration candidate must beat the best member on its WORST TRAIN year, not on the pooled window",
+    "objective.integrateBar.pooledIsVeto = false — the pooled comparison is reported as evidence and no longer rejects a candidate on its own"
+  ],
+  "comparability": {
+    "trainResultsFromEarlierEpochs": "Fully comparable with epoch 6. Windows, costs and pins are unchanged, so every epoch-6 row remains a current measurement and nothing is re-run. The `epoch` column still records which bench MEASURED a row; objective, gate and the integration bar follow the ACTIVE scoring rule and are recomputed from stored data.",
+    "unchangedFromEpoch6": [
+      "windows",
+      "costs",
+      "pins",
+      "slippage",
+      "orderVolumeRatio",
+      "avoidFutureData",
+      "capital",
+      "frequency",
+      "fundOrderCost",
+      "stockOrderCost",
+      "gateMin",
+      "score",
+      "keepScoreOnGateFail"
+    ],
+    "measurementPreservedFromPrevious": true,
+    "measurementPreservedNote": "Scoring-only change; the measurement bench is identical to epoch 6. Same class of bump as epoch 5."
+  },
+  "windows": {
+    "train": {
+      "start": "2022-01-01",
+      "end": "2023-12-31"
+    },
+    "val": {
+      "start": "2024-01-01",
+      "end": "2025-12-31"
+    },
+    "holdout": {
+      "start": "2026-01-01",
+      "end": "today"
+    }
+  },
+  "costs": {
+    "capital": 1000000,
+    "frequency": "daily",
+    "useRealPrice": true,
+    "benchmark": "000300.XSHG",
+    "avoidFutureData": true,
+    "orderVolumeRatio": 0.05,
+    "slippage": {
+      "kind": "FixedSlippage",
+      "value": 0
+    },
+    "commission": {
+      "kind": "PerTrade",
+      "buy": 0.0003,
+      "sell": 0.0013,
+      "minCost": 5
+    },
+    "fundOrderCost": {
+      "openCommission": 0.0003,
+      "closeCommission": 0.0003,
+      "closeTax": 0,
+      "minCommission": 5
+    },
+    "stockOrderCost": {
+      "openCommission": 0.0003,
+      "closeCommission": 0.0003,
+      "closeTax": 0.001,
+      "minCommission": 5
+    }
+  },
+  "objective": {
+    "gateMetric": "sharpe",
+    "gateMin": 1.5,
+    "score": "annualReturn - maxDrawdown",
+    "keepScoreOnGateFail": true,
+    "stageThresholds": {
+      "normalize": 1.5,
+      "study": 1.5,
+      "enhance": 1.5,
+      "integrate": 1.5,
+      "validate": 1.5
+    },
+    "integrateBar": {
+      "basis": "worstTrainYear",
+      "metric": "annualReturn - maxDrawdown",
+      "pooledIsVeto": false,
+      "fallback": "pooled",
+      "note": "The candidate's worst TRAIN calendar year must beat the best member's worst TRAIN calendar year, on the same (annual - maxDrawdown)/100 metric computed WITHIN each year. A maximin, so the comparison picks whichever member is most consistent rather than whichever earned most. Needs the daily curve of the candidate and of at least one member (data/series/); when a curve is missing the guard falls back to the pooled rule and must SAY SO — a silently relaxed bar is worse than a strict one."
+    }
+  },
+  "oosPolicy": {
+    "maxTestsPerCandidate": 1,
+    "maxTestsPerEpoch": 2
+  },
+  "rationale": {
+    "orderVolumeRatio": "Unset, an order can absorb an implausible share of a bar. That is the mechanism behind the two highest-scoring strategies in the library: the ETF-discount study measured sharpe falling 8.44 -> 1.10 as the volume floor rose, because the edge is constructed from the thinnest instruments. At 1,000,000 CNY, 5% of bar volume keeps a position inside what a real book could absorb.",
+    "fundOrderCost": "The override patches set_commission, which does not govern type='fund'. 170 held strategies set their own fund costs, so every ETF result was running on the author's numbers rather than the bench's.",
+    "avoidFutureData": "A lookahead guard left to the author means 71 of 215 strategies ran without it.",
+    "stockOrderCost": "Economically identical to what set_commission(PerTrade(buy=0.0003, sell=0.0013, min=5)) was meant to express: 0.03% each way plus 0.1% stamp duty on the sell. The bench's intent is unchanged; epoch 6 only makes it actually apply. 36 of the affected strategies declared a CHEAPER open_commission than 0.0003, so the existing ledger flatters them."
+  },
+  "rationaleForGate": {
+    "distribution": "Across 124 measured strategies the median sharpe is 1.02 and 2.5 is roughly the 88th percentile; 1.5 is the top third (41 of 124).",
+    "deadFamilies": "At 2.5, five of fourteen families (三进兵, 红利低频, 网格, 趋势技术, 套利) had EVERY member disqualified, so objective was -inf for all of them and carried no comparative information — 红利低频's own page records that its study could never report a delta.",
+    "asAReturnHurdle": "At that family's measured volatility and JQ's flat 4% risk-free rate, sharpe 2.5 demanded an annual return of 37.3%; it made 23.4%. The page's conclusion was that the edge exists but does not fit through the gate.",
+    "epoch4Interaction": "Pinning the execution settings moved one measured strategy from sharpe 18.16 to 11.15, so a fixed 2.5 had quietly become stricter than when it was chosen."
+  },
+  "rationaleForIntegrateBar": {
+    "objectiveIsReturn": "Measured over the 60 epoch-6 normalized rows: Pearson r(annual%, objective) = 0.9698, and maxDrawdown supplies only 24% of the spread the formula sees (sd 13.7 against 43.6). So \"beat the best member's objective\" was in practice \"earn more than the biggest book in the universe\".",
+    "gateNeverBound": "Spearman rho(objective, sharpe) = 0.9836 over the same 60 rows, so the two standards never disagreed. 0 of the top-16 rows by objective failed either threshold, and the only 3 rows between 1.5 and 2.0 score objective 0.2139-0.2970 — far below any plausible integration incumbent. A bar that cannot bind on a winner is not protecting anything, so it drops to 1.5 and the real bar becomes the per-year comparison.",
+    "pooledIsARegimeMeasurement": "Across the 13 stored epoch-6 TRAIN curves, calendar 2022 supplies a median 62% of total log-growth, and 63-71% for every one of the top 8 by objective (2022 vs 2023 returns run 286/121, 182/52, 157/55, 156/55). TRAIN is 2022-01-01..2023-12-31 and 2022 was the small-cap rally, so the pooled annual return is largely a statement about one regime.",
+    "whatItFixes": "Both 2026-10 merge rounds rejected for this reason and said so. The 全A verdict reads \"combining relocates WHICH YEAR earns; it does not add\" — under a pooled bar that is a rejection, under a worst-year bar it is the question actually being asked. And the 小盘 case (多因子ML x 小市值) is a merge of two implementations of ONE edge, whose expected payoff is robustness; the pooled metric has no channel to express that.",
+    "whyNotPerYearDomination": "Requiring the candidate to win in EVERY year lets one member own the bar in one year and another own it in the other, so a candidate can lose to a pair that no single member matches. The maximin compares like with like: the most consistent member against the candidate's own worst year."
+  }
+}

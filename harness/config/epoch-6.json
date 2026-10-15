@@ -1,7 +1,7 @@
 {
   "epoch": 6,
   "setAt": "2026-09-20",
-  "status": "active",
+  "status": "superseded",
   "note": "Pins STOCK order costs, which the bench never actually controlled. The OVERRIDE intercepted only set_order_cost(type='fund') and forwarded everything else to the author's own fee schedule; set_commission(PerTrade) does NOT re-pin stocks because JQ deprecated it in favour of set_order_cost. Measured by probe: injecting a 5%/side stock commission into int-001 moved total return from +64.44% to -11.33% (-75.77pp), i.e. the author's setting governs completely. 95 of 215 held strategies set their own stock cost; 22 normalized rows declare economics that DIFFER from the bench and must be re-measured (24 already match).",
   "changedFromPreviousEpoch": [
     "costs.stockOrderCost pinned: OrderCost(open_commission=0.0003, close_commission=0.0003, close_tax=0.001, min_commission=5)",
@@ -96,5 +96,6 @@
     "deadFamilies": "At 2.5, five of fourteen families (三进兵, 红利低频, 网格, 趋势技术, 套利) had EVERY member disqualified, so objective was -inf for all of them and carried no comparative information — 红利低频's own page records that its study could never report a delta.",
     "asAReturnHurdle": "At that family's measured volatility and JQ's flat 4% risk-free rate, sharpe 2.5 demanded an annual return of 37.3%; it made 23.4%. The page's conclusion was that the edge exists but does not fit through the gate.",
     "epoch4Interaction": "Pinning the execution settings moved one measured strategy from sharpe 18.16 to 11.15, so a fixed 2.5 had quietly become stricter than when it was chosen."
-  }
+  },
+  "supersededAt": "2026-10-13"
 }
