@@ -565,9 +565,57 @@ Only the directories whose contents aren't self-evident:
   them at the head of `data/pending-normalize.json`. A missing `close_tax` counts as
   bench-default, not as a difference. 36 of the affected declared a *cheaper* commission than the
   bench, so the pre-6 ledger **flatters** them.
-- **Stage thresholds**: normalize/study/enhance/validate require sharpe 1.5, **type integration
-  requires 2.0** (`harness.stageGate(stage, sharpe)`). Same measurement, different standard —
-  a decision rule, not a different bench.
+- **Stage thresholds**: every stage requires sharpe **1.5** (`harness.stageGate(stage, sharpe)`).
+  Integration held 2.0 until epoch 7 dropped it — see below for why it never bound.
+- **Epoch 7 (2026-10-13)**: scoring only — the measurement bench is **byte-identical to epoch 6**,
+  so `measurementPreservedFromPrevious: true` and **no row is re-measured**. Two changes, both
+  about how a measurement is JUDGED:
+  (a) `stageThresholds.integrate` **2.0 → 1.5**; (b) the integration bar moves from the pooled
+  TRAIN objective to the **worst TRAIN calendar year** (`objective.integrateBar.basis =
+  "worstTrainYear"`, read via `harness.integrateBar()`).
+  ⚠ **The old integrate gate at 2.0 never bound on anything that could win.** Measured over the
+  60 epoch-6 normalized rows: Spearman ρ(objective, sharpe) = **0.9836**, so the rank-bar and the
+  gate never disagreed; **0 of the top-16 by objective** failed either threshold; and the only
+  **3** rows between 1.5 and 2.0 score objective 0.2139–0.2970, far below any plausible incumbent.
+- ⚠⚠ **`objective` is almost purely annual return** — Pearson r(annual%, objective) = **0.9698**
+  across those 60 rows, with maxDrawdown supplying only **24%** of the spread the formula sees
+  (sd 13.7 against 43.6). So "beat the best member's objective" was in practice "earn more than
+  the biggest book in the universe", and a merge whose payoff is **robustness** (the 小盘 case:
+  two implementations of ONE edge) had no channel to register at all.
+- ⚠ **And pooled `annual_pct` over TRAIN is substantially a 2022 measurement.** Across the 13
+  stored epoch-6 TRAIN curves, calendar 2022 supplies a **median 62%** of total log-growth and
+  **63–71% for every top-8 book** (2022/2023 returns run 286/121, 182/52, 157/55, 156/55). TRAIN
+  is 2022-01-01..2023-12-31 and 2022 was the small-cap rally, so a candidate that trades the 2022
+  tail for 2023 steadiness **lost by construction** — which is exactly what the 全A round recorded:
+  「combining relocates WHICH YEAR earns; it does not add」.
+- The new bar is a **maximin**: candidate's worst TRAIN year vs the **most consistent** member's
+  worst TRAIN year, same `(annual − maxDD)/100` computed **within** each year
+  (`component-scan.yearlySplit()` / `worstYear()`). Not per-year domination — that lets one member
+  own 2022 and another own 2023, so a candidate loses to a PAIR no single member matches.
+  The pooled comparison is still **printed as evidence** (`pooledIsVeto: false`), never a veto.
+  ⚠ Applied to the two completed rounds it **confirms both rejections** rather than rescuing them,
+  and says why the prose could only gesture at: all three 全A candidates have a **negative** worst
+  year (−0.0464 / −0.1014 / −0.4437). It also moves the 全A bar from 打板短线's 0.9668 to
+  红利低频's **0.1224**, because the pooled leader's own worst year is **−0.3591** — it was never
+  the right thing to beat.
+- ⚠⚠ **`yearlySplit` must convert BEFORE slicing.** `dailyReturns()` runs on the WHOLE `cum`
+  series and the RETURNS are then sliced by date. Clipping `cum` first measures the slice's first
+  entry against a base of 1, folding every earlier year's cumulative gain into one day — on a book
+  that tripled in 2022 the 2023 slice opens with a ~200% "daily" return and that year's annual,
+  vol, sharpe and drawdown are all fiction that still looks like a number. Same family of error as
+  differencing cumulative percentages instead of chaining them.
+- ⚠ **A scoring-only bump nearly orphaned the whole curve store.** `seriesKey` embeds the
+  measuring epoch, so a caller building a key from `config().epoch` asked for `__e7` and found
+  nothing — all 280 stored curves are stamped `e6` and all 280 are still current.
+  `series.loadComparable(sourceFile, window, epoch?)` walks `comparableEpochs()` newest-first and
+  honours a `preferredEpoch` only if it is itself comparable, so a stale curve is never
+  substituted for a missing current one. `component-scan.members()` and `series-backfill.js` were
+  unaffected — they key on the **row's** epoch, not the active one.
+- The integrate guard **falls back to the pooled rule when a curve is missing, and says so**
+  (`flags: bar=pooled-fallback`). A bar that quietly relaxes because a file was absent is worse
+  than one that is simply strict, so `candidate.json` now needs a `sourceFile` (or `seriesKey`) on
+  the **candidate** as well as on every member; partial member coverage is also a fallback,
+  because a bar computed over a subset silently omits whichever member might have set it.
 - ⚠⚠ **VAL is budgeted: ONE validation per (family, epoch)** — `utils/val-budget.js`, enforced in
   `strategy-post-backtest.js` before the browser opens. `--window val` now **requires `--family`**
   (an unnamed VAL is an untracked VAL) and a second run for the same family at the same epoch exits

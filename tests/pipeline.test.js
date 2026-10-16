@@ -390,12 +390,29 @@ test('epoch 4 execution pins (carried into epoch 5)', async t => {
   });
 
   await t.test('superseded epochs are sealed and comparability is stated', () => {
-    for (const n of [2, 3, 4]) {
+    const active = harness.config().epoch;
+    for (let n = 2; n < active; n++) {
       const e = JSON.parse(fs.readFileSync(path.join(ROOT, `harness/config/epoch-${n}.json`), 'utf8'));
-      assert.strictEqual(e.status, 'historical', `epoch ${n} is not sealed`);
+      assert.ok(['historical', 'superseded'].includes(e.status), `epoch ${n} is not sealed`);
+      // ⚠ From epoch 5 — where the flag was introduced — it must be an explicit boolean, never
+      // absent. `comparableEpochs()` treats anything unstated as NOT comparable, which is the
+      // safe direction, but a silent omission then reads as a real cost change and re-measures
+      // the library for nothing. Epochs 2-4 predate the flag and are correctly read as stale.
+      if (n >= 5) {
+        assert.strictEqual(typeof (e.comparability || {}).measurementPreservedFromPrevious, 'boolean',
+          `epoch ${n} does not declare measurementPreservedFromPrevious`);
+      }
     }
-    // Epoch 5 changed only SCORING, so epoch-4 measurements stay valid; epoch<=3 do not.
-    assert.match(harness.config().comparability.trainResultsFromEarlierEpochs, /not comparable/i);
+    // The active epoch must SAY where it stands; whether it is comparable depends on what the
+    // bump changed. This used to assert /not comparable/, which hard-coded the assumption that
+    // every bump breaks the bench — false for a scoring-only one like epoch 5 or epoch 7.
+    const c = harness.config().comparability;
+    assert.ok(c.trainResultsFromEarlierEpochs.length > 40, 'comparability is not stated');
+    assert.strictEqual(typeof c.measurementPreservedFromPrevious, 'boolean');
+    // Prose and flag must agree, or one of them is lying to a future reader.
+    const prosePreserves = !/not comparable/i.test(c.trainResultsFromEarlierEpochs);
+    assert.strictEqual(prosePreserves, c.measurementPreservedFromPrevious,
+      'the comparability prose contradicts measurementPreservedFromPrevious');
   });
 });
 
@@ -516,9 +533,12 @@ test('epoch 6 pins the stock order cost', async t => {
   const sc = require('../utils/stockcost-affected');
 
   await t.test('the active epoch declares a stock cost table', () => {
+    // The pin arrived in epoch 6 and must be CARRIED by every epoch after it — asserting
+    // `epoch === 6` instead made this test fail the moment a later epoch was activated, which
+    // says nothing about whether the stock leg is still priced.
     const c = h.config();
-    assert.strictEqual(c.epoch, 6);
-    assert.ok(c.costs.stockOrderCost, 'epoch 6 must declare costs.stockOrderCost');
+    assert.ok(c.epoch >= 6, `active epoch ${c.epoch} predates the stock-cost pin`);
+    assert.ok(c.costs.stockOrderCost, 'the active epoch must declare costs.stockOrderCost');
   });
 
   await t.test('it reproduces what the deprecated set_commission MEANT', () => {

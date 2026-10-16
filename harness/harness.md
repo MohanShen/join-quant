@@ -29,7 +29,10 @@
   固定的 2.5 已在无人决定的情况下变得更严。
   **闸门自此是标签不是橡皮擦**：分数照记，`gate` 列另记 pass/fail。**因 score = 年化 − 最大回撤 是账本
   已存列的纯函数，全部历史行已就地重算，未花一分钟回测**（103 行重算，16 行由 fail 转 pass）。
-  **分阶段门槛**：normalize/study/enhance = 1.5，**类型级整合 = 2.0**（同一测量，不同标准）。
+  **分阶段门槛（epoch 7 起全部为 1.5）**：整合回合曾用 2.0，但在 60 行 epoch-6 实测上
+  **它从未对任何可能胜出的候选起作用**——Spearman ρ(objective, sharpe) = **0.9836**（两个标准从不分歧）、
+  objective 前 16 名**无一人**被任一门槛拦下、1.5–2.0 之间只有 **3** 行且 objective 仅 0.2139–0.2970。
+  整合的真实门槛改为**逐年比较**，见 §4.1。
   （epoch 4：钉死 `order_volume_ratio=0.05`/基金费率/`avoid_future_data`；epoch 3：VAL 延至 2024–2025。）
   团队架构见 `enhance/program.md`。
 
@@ -111,9 +114,10 @@
 score(w)     = annualReturn(w) - maxDrawdown(w)        # 均为小数，如 0.35 = 35%
 objective(w) = score(w)                                # epoch 5：永远记分
 gate(w)      = ( sharpe(w) >= 1.5 )                    # 标签，不再抹掉分数
-# 分阶段标准（同一测量，不同门槛）：
-#   normalize / study / enhance / validate : sharpe >= 1.5
-#   type integration                       : sharpe >= 2.0
+# 分阶段标准（epoch 7 起统一）：
+#   normalize / study / enhance / validate / type integration : sharpe >= 1.5
+# 整合回合另有 BAR（不是闸门），见 §4.1：
+#   bar = worstTrainYear   # 候选最差年 objective 必须赢过「最稳健成员」的最差年
 ```
 
 - **选择指标 = `objective(TRAIN)`**：Agent 1 迭代中的 keep/继续/定稿全看它。一个变异算「正向改进」当且仅当 `gate(TRAIN)` 为真且 `objective(TRAIN) > 当前定稿中最优`。
@@ -128,6 +132,50 @@ gate(w)      = ( sharpe(w) >= 1.5 )                    # 标签，不再抹掉�
 
 ---
 
+### 4.1 整合回合的 BAR（epoch 7 起冻结）
+
+闸门（`sharpe >= 1.5`）回答「这个结果可用吗」。**BAR 回答「它赢过被整合的家族了吗」**，这才是整合
+回合真正的判据，由 `objective.integrateBar` 声明、`harness.integrateBar()` 读取。
+
+**basis = `worstTrainYear`**：候选在 **TRAIN 最差自然年**的 objective，必须赢过**最稳健成员**在其
+TRAIN 最差自然年的 objective。逐年的 annual / maxDD 在**年内**计算
+（`component-scan.yearlySplit()` / `worstYear()`），公式仍是 `(annual − maxDD)/100`。
+
+**为什么不再用汇总 objective。** 在 60 行 epoch-6 实测上：
+
+| 实测 | 值 |
+|---|---|
+| Pearson r(annual%, objective) | **0.9698** |
+| maxDrawdown 占公式所见离散度 | **24%**（sd 13.7 对 43.6） |
+| Spearman ρ(objective, sharpe) | **0.9836** |
+
+即 **objective 几乎就是年化收益**；「赢过最佳成员」实际等于「比这个 universe 里最大的那本书赚得更多」。
+而 TRAIN 的年化**本身主要是一次 2022 的测量**：13 条已存 TRAIN 曲线中，2022 贡献 log 增长的
+**中位数 62%**，前 8 名**全部在 63–71%**（2022/2023 收益为 286/121、182/52、157/55、156/55）。
+TRAIN = 2022-01-01..2023-12-31，2022 是小盘行情年。所以**用 2022 的尾部换 2023 的稳定性的候选，
+按构造必输**——2026-10 的 全A 回合原话：「combining relocates WHICH YEAR earns; it does not add」。
+同理，**以稳健性为收益的合并**（小盘：同一 edge 的两种实现）在汇总指标里**根本没有表达通道**。
+
+**为什么是 maximin 而不是「每年都赢」。** 逐年支配允许一个成员占住 2022、另一个占住 2023，于是候选
+会因为输给一个**没有任何单一成员能匹配的组合**而被拒——那不是与任何真实替代方案的比较。maximin 比的
+是同类：最稳健的那个成员，对候选自己最弱的那一年。
+
+**汇总比较仍然打印，但不再否决**（`pooledIsVeto: false`）。它是证据：候选赢在稳健性、让出了量级时，
+回合必须说清自己要的是哪一个。
+
+⚠ **缺曲线时退回汇总规则，并且必须声明**（`flags: bar=pooled-fallback`）。因为少了一个文件就悄悄
+放松的门槛，比一个单纯严格的门槛更坏。所以 `candidate.json` 的**候选本身**和**每个成员**都要带
+`sourceFile`（或 `seriesKey`）；**成员只覆盖了一部分也算退回**——在子集上算出来的 BAR，悄悄漏掉的
+恰好可能是那个定下 BAR 的成员。
+
+⚠ **`yearlySplit` 必须先换算再切片。** `dailyReturns()` 在**整条** `cum` 上跑，**收益序列**再按日期
+切。先切 `cum` 会把该片段第一天对着基数 1 来算，于是把之前所有年份的累计涨幅折进一天——一本 2022
+涨了两倍的书，2023 片段会以 ~200% 的「日收益」开场，该年的年化/波动/夏普/回撤**全是看起来像数字的
+虚构**。与「用累计百分比作差而不是链式相乘」同一类错误（那次报出波动 1.3620 对 JQ 的 0.2271）。
+
+⚠ **逐年年化按窗口年的自然日数**（`harness.windowYears()`，TRAIN 两年各 365），不是曲线自己的跨度。
+各自按自身跨度年化会注入一个**随收益水平放大**的偏差（中位 0.27pp，但在一本 85.9% 的书上 0.80pp）。
+
 ## 5. 回测执行器输出契约（SUMMARY 行）
 
 `node utils/strategy-post-backtest.js <file> "<expId>" --window <train|val>` 跑完在末尾打印一行：
@@ -139,7 +187,7 @@ SUMMARY\t<window>\t<start>\t<end>\t<days>\t<total%>\t<annual%>\t<sharpe>\t<maxdd
 - `annual%` 已按 §4 从 `total%` 与实际 `days` 年化；`sharpe`/`maxdd%` 取自 JQ。
 - `status`：`completed`（可记账）/ `window-mismatch`（实际区间≠请求，**不得记账**，修正重跑）/ `no-trades`（跑完但**零成交**：收益与回撤同为 0，通常是选股/数据链路断了，**不得记账**，查因而非重跑）/ `failed`（崩溃，记 crash）。
 - `--window` 只接受 `train` / `val`；`holdout` 或任何 `>= 2026-01-01` 的区间会被 `OOS-BLOCKED` 拒跑（除非用户 `JQ_ALLOW_OOS=1`）。
-- 迭代中（Type-1）算 `objective(TRAIN)`；定稿（Type-2）算 `objective(VAL)`。门槛见配置（epoch 5：`sharpe ≥ 1.5`；整合回合 2.0）。
+- 迭代中（Type-1）算 `objective(TRAIN)`；定稿（Type-2）算 `objective(VAL)`。门槛见配置（epoch 7：全阶段 `sharpe ≥ 1.5`；整合回合的 BAR 见 §4.1）。
 
 ## 6. 变更协议（怎么开新纪元）
 

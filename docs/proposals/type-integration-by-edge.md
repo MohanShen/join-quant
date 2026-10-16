@@ -1,6 +1,7 @@
 # Integration by edge composition, on one axis
 
 **Status**: ACCEPTED 2026-10-07 · **Revision 2, 2026-10-11** (merge replaces composition: §5, §6, §7, §9)
+· **Revision 3, 2026-10-13** (rule 1 becomes a per-year comparison; harness epoch 7: §6)
 **Replaces**: the type layer's two-axis coordinate and the blend-first integration round
 **Authority it must obey**: `harness/harness.md` (frozen), `docs/consolidation-plan.md` §4,
 `.claude/skills/run-integrate/SKILL.md`
@@ -175,7 +176,7 @@ small_cap=0` and `q-e6-2 etf=0` (factor weights). A distillation pass over §2 c
 
 | rule | status under merge |
 |---|---|
-| 1. beat the best MEMBER, not the gate | **binds** |
+| 1. beat the best MEMBER, not the gate | **binds** — per-year since Revision 3, below |
 | 2. declare the diversification share | **inert** — there is no blend to attribute |
 | 3. optimised weights must beat equal weight | **inert** — there are no weights across books |
 | 4. realizability inherited at its WORST leg | **binds** |
@@ -183,6 +184,50 @@ small_cap=0` and `q-e6-2 etf=0` (factor weights). A distillation pass over §2 c
 Rules 2 and 3 were the guard against diversification masquerading as alpha. A merge produces one
 book, so they have nothing to measure. ⚠ That is not a relaxation — the risk they covered is gone,
 and a *different* risk takes its place, which rules 5 and 6 exist for.
+
+### Rule 1 is a per-year comparison  *(REVISION 3, 2026-10-13 — harness epoch 7)*
+
+Revision 2 left rule 1 reading "beat the best member's **pooled TRAIN objective**". Two rounds ran
+under it (小盘, 全A), both REJECT, and both reported that the bar itself looked unsound. Measuring
+the objective settled it:
+
+| measured over the 60 epoch-6 normalized rows | |
+|---|---|
+| Pearson r(annual%, objective) | **0.9698** |
+| maxDrawdown's share of the spread the formula sees | **24%** (sd 13.7 vs 43.6) |
+| Spearman ρ(objective, sharpe) | **0.9836** |
+
+Two conclusions, one of which contradicts what the rounds assumed:
+
+1. **objective and sharpe do not disagree** (ρ = 0.984), so the old "rank on one, gate on the
+   other" worry was unfounded — and the separate 2.0 integrate gate never bound on anything that
+   could win (0 of the top-16 by objective failed it; the only 3 rows in 1.5–2.0 score ≤ 0.2970).
+   Epoch 7 drops it to 1.5, matching every other stage.
+2. **objective is essentially annual return**, and annual return over TRAIN is substantially a
+   **2022** measurement: across the 13 stored TRAIN curves 2022 supplies a median **62%** of
+   log-growth and 63–71% for every top-8 book. TRAIN is 2022-01-01..2023-12-31; 2022 was the
+   small-cap rally.
+
+So the pooled bar asked "did you earn more in the 2022 rally", which is the wrong question for
+this round twice over: a **same-edge merge** (小盘: two implementations of 规模) is after
+robustness and has no channel to express it, and a candidate that trades the 2022 tail for 2023
+steadiness **loses by construction** — exactly the 全A verdict, 「combining relocates WHICH YEAR
+earns; it does not add」.
+
+**Revision 3**: rule 1 compares the candidate's **worst TRAIN calendar year** against the **most
+consistent member's** worst TRAIN year, on the same `(annual − maxDD)/100` computed within each
+year. A maximin, not per-year domination — domination lets one member own 2022 and another own
+2023, so a candidate is rejected for losing to a pair no single member matches. The pooled
+comparison is retained as **evidence** and no longer vetoes (`integrateBar.pooledIsVeto = false`).
+
+⚠ **This is not a loosening.** Re-applied to the two completed rounds it confirms both rejections
+and explains them: all three 全A candidates have a **negative** worst year (−0.0464 / −0.1014 /
+−0.4437). It also corrects *who* the candidate was up against — 全A's pooled leader 打板短线
+(0.9668) has a worst year of **−0.3591**, so the real bar is 红利低频's **0.1224**.
+
+Frozen definition and the two arithmetic traps (convert-before-slice; annualize over the window
+year) live in `harness/harness.md` §4.1. Nothing is re-measured: epoch 7 declares
+`measurementPreservedFromPrevious: true`.
 
 ### 5. The candidate set is declared and bounded
 

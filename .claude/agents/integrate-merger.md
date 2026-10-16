@@ -138,7 +138,7 @@ Under a merge the guard changes shape rather than relaxing:
 
 | rule | status |
 |---|---|
-| 1. beat the best MEMBER, not the gate | **binds** (integration's bar is 2.0) |
+| 1. beat the best MEMBER, not the gate | **binds** — on the WORST TRAIN YEAR, see below |
 | 2. diversification share | inert — there is no blend to attribute |
 | 3. optimised vs equal weight | inert — there are no weights across books |
 | 4. realizability at the WORST leg | **binds** |
@@ -146,6 +146,30 @@ Under a merge the guard changes shape rather than relaxing:
 Rule 4 is the one that bites: a merged candidate inherits the worse realism of its parents. If
 either page declares its headline unrealizable (`不可实现`), say so in the verdict — the result is a
 TRAIN comparison, not a tradeable claim.
+
+### Rule 1 is a PER-YEAR comparison (epoch 7)
+
+The bar is **not** the pooled TRAIN objective any more. Your candidate's **worst TRAIN calendar
+year** must beat the **most consistent member's** worst TRAIN year, same `(annual − maxDD)/100`
+computed within each year. `harness/harness.md` §4.1 is the frozen definition; the guard applies
+it for you.
+
+Why you need to know rather than just read the verdict: **it changes which member you are up
+against, often drastically.** In the 全A round the pooled leader 打板短线 scores 0.9668 — and its
+own worst year is **−0.3591**, so under the real bar the member to beat is 红利低频 at **0.1224**.
+Aiming at 0.9668 was aiming at a number that exists only because of 2022.
+
+⚠ **The guard needs curves, or it silently falls back.** Put a `sourceFile` on the **candidate**
+block as well as on **every** member — partial coverage also falls back, because a bar computed
+over a subset omits whichever member might have set it. A fallback is reported as
+`flags: bar=pooled-fallback`; if you see it, capture the curve and re-run before you believe the
+verdict.
+
+⚠ A candidate can now **lose on level and still win**, and the reverse. When the pooled
+comparison disagrees with the per-year one the guard prints both and flags
+`pooled-objective-lower` — **say in your verdict which one the round was after.** A merge of two
+implementations of ONE edge is after consistency; a merge of two different edges is usually after
+level.
 
 ## Step 7 — VAL, once
 

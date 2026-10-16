@@ -58,7 +58,7 @@ The division is deliberate:
 
 | | |
 |---|---|
-| **deterministic** | which universes exist, who is in them, the promote and realizability floors, the VAL budget, the four judge rules |
+| **deterministic** | which universes exist, who is in them, the promote and realizability floors, the VAL budget, the four judge rules, the per-year BAR |
 | **the agent** | symbol overlap, what kind of merge the edges call for, the decomposition, the candidate set, the build |
 
 ### Why the agent and not a program
@@ -98,12 +98,36 @@ Two questions in this step have no programmatic answer, and both have been measu
 - `type-integrate-check.js` was run, and rule 4 (realizability at the worst leg) is reflected in
   the verdict — if either parent declares its headline `不可实现`, the result is a TRAIN comparison
   and not a tradeable claim;
+- the bar it applied was **`worstTrainYear`**, not `pooled-fallback`. A fallback means a curve was
+  missing and the guard judged on the pooled objective instead; it says so in `flags`, and the fix
+  is to supply the `sourceFile` on the candidate and on every member, not to accept the verdict;
+- when the guard flagged `pooled-objective-lower`, the round **says which it was after** —
+  consistency or level (§The bar, below);
 - the round is recorded as a consumption event **and** under `## 整合回合` on the type page,
   including negative results.
 
 ⚠ **VAL is yours to protect, not the agent's.** One validation per (universe, epoch); a failure is
 **terminal for that universe this epoch** and does not license a fourth candidate. If the agent
 asks for another VAL, refuse it and report.
+
+## The bar — what "beat both" means since epoch 7
+
+The sharpe gate is **1.5 at every stage**; integration no longer holds a different one. Its real
+bar is a **per-year** comparison: the candidate's **worst TRAIN calendar year** must beat the
+**most consistent member's** worst TRAIN year. `harness/harness.md` §4.1 is frozen authority.
+
+This is not a relaxation — applied to the two rounds already run it **confirms both rejections**
+and sharpens them: all three 全A candidates turn out to have a **negative** worst year
+(−0.0464 / −0.1014 / −0.4437), which is the measured form of what that round could only say in
+prose, 「combining relocates WHICH YEAR earns; it does not add」.
+
+What it fixes: the pooled objective is almost purely annual return (r = **0.9698**), and annual
+return over TRAIN is substantially a 2022 measurement (2022 supplies a median **62%** of
+log-growth across the stored curves). So a merge whose payoff is **robustness** — two
+implementations of one edge, the 小盘 case — had no channel to register, and a candidate trading
+the 2022 tail for 2023 steadiness lost by construction.
+
+The pooled comparison is still printed as **evidence** and never vetoes.
 
 ## PROMOTE
 
