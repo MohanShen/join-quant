@@ -146,6 +146,16 @@ const ROWS = {
     description: '冻结台 epoch 6，完成 55s。实现只改两处行为：13:55 更新走弱状态、走弱时 get_cached_rankings 返回空（复用源码既有 defensive 分支），故卖出侧与买入侧一致',
     spawned: 'none',
   },
+  'q-pit7': {
+    type: 'isolate', window: W, confidence: 'high', edgeRef: '动量',
+    component_or_param: 'variants/pit7-pool.py（build-pit7.js 从 pit-pool.py 生成，加 POOL_TOP_N=7 + 按 20 日中位成交额取前 7）＝与 pit-pool 完全同一套点时构造，只把池规模对齐到 7',
+    metric_delta: '三点对照（同一 TRAIN 窗、同一 epoch 口径）：手选 7 只 objective 0.1252 / sharpe 1.21 ‖ 点时 N=7（本测）−0.1975 / −0.45（annual −3.49、maxDD 16.26、total −6.85）‖ 点时全池 154-302 只 −0.6643 / −0.72。年度：本测 2022 total 0.05% (maxdd 11.44, sharpe~−0.14)、2023 total −6.71% (maxdd 16.26, sharpe~−0.59)；手选池为 2022 +50.97% / 2023 +9.75%。日志 POOLSIZE 确认每月 pool=7（偶 8，持仓并入所致，构造内已声明）',
+    finding: '把点时池规模对齐到 7 只后，objective 从 −0.6643 回升到 −0.1975 —— 规模确实解释了 pit-pool 崩塌的大部分（0.7895 的缺口里 0.4668 ≈ 59% 由「1-of-250 的排序是另一种更极端的策略」造成）。但预注册的回升条件要求 2022 内 sharpe 转正，实测 −0.14，**证伪项触发**：规模对齐后本族依然不赚钱（2022 整年 +0.05%，2023 −6.71%），正收益仍然只在手选的那 7 只名单里',
+    implication: '本族的机制问题就此关闭：水平数字既不来自排序规则、也不来自池规模，而来自 2026 年写下的那 7 个名字（名单贡献 0.3227、规模贡献 0.4668，两者都测过了）。§4 的点时池前置条件已彻底跑完且未通过，VAL 继续不花 —— 这不再是「等一个实验」，而是本族没有可主张的可移植机制。另开一条跨家族方法学方向：[[ETF动量]] 跑的是同一套 154-302 只点时构造，其 −0.27 的读数同样混着规模效应，必须先做 size-matched（N = 它自己池子的 11）对照才能把「事后选池」与「池规模」分开 —— 否则两族都会把 59% 量级的规模效应误记为选池效应',
+    flags: `${Z}, hypothesis-falsified（2022 sharpe 仍负）, size-vs-names 已分离, 最流动 7 只的成分未登记（strategy 日志被压到 error 级，只有 POOLSIZE 可读），故「偏向 A 股宽基/债券」是推断而非实测`,
+    description: '冻结台 epoch 8（计分口径，测量台与 epoch 6 逐字节相同），完成 53s，1 次回测。backtestId 4e2f590012964e2b2e77a2fb12d471eb',
+    spawned: 'none（本族关闭；跨家族方向记入 [[ETF动量]] §4）',
+  },
 };
 
 module.exports = id => {

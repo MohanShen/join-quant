@@ -238,5 +238,38 @@
     "rank": 1,
     "status": "answered",
     "result": "走 normalizer 正常路径、由不同 postId/backtestId 独立创建的同源重贴，在 epoch 6 上复现出与本轮 baseline-e6 完全相同的四个指标。预注册证伪项（|Δannual| > 0.3pp）未触发，实测漂移为 0.00pp，而项目记录的复跑漂移先验是 ~0.15pp"
+  },
+  {
+    "id": "q-pit7",
+    "kind": "understand",
+    "title": "点时池截断到 N=7：把「哪 7 只」与「几只」分开",
+    "hypothesis": "若 pit-pool 的 −0.6643 主要来自池子规模（1-of-250 的排序是另一种更极端的策略），size-matched 的 N=7 点时池应显著回升（objective > −0.20，且 2022 内 sharpe 恢复为正）；证伪：objective ≤ −0.40 或 2022 sharpe 仍为负（则失败来自名单本身，这 7 只是不可替代的后见选择，本族机制就此关闭）",
+    "why": "pit-pool 一次改了两件事：池构成（手选 2026 名单 → 点时生成）与池规模（7 → 154-302）。该发现自己开出的方向就是「截断到 N=7」。这是决定本族还有没有机制的那一个实验：若回升，edge 的适用范围比 q-e6-9 的结论更宽；若不回升，本族的水平数字全部是名单造成的",
+    "design": "study/七星高照/variants/pit7-pool.py（build-pit7.js 生成）：与 pit-pool.py 完全同一套点时构造，只加 POOL_TOP_N=7 并按 20 日中位成交额取前 7；--window train。⚠ 最流动的 7 只会偏向 A 股宽基/债券 ETF，故这同时是「点时最流动 7 只 vs 手选跨资产 7 只」的对照，不是纯粹的规模单因子",
+    "from": [
+      "pit-pool",
+      "q-e6-9",
+      "q-e6-8"
+    ],
+    "edgeRef": "动量",
+    "rank": 1,
+    "status": "answered",
+    "result": "把点时池规模对齐到 7 只后，objective 从 −0.6643 回升到 −0.1975 —— 规模确实解释了 pit-pool 崩塌的大部分（0.7895 的缺口里 0.4668 ≈ 59% 由「1-of-250 的排序是另一种更极端的策略」造成）。但预注册的回升条件要求 2022 内 sharpe 转正，实测 −0.14，**证伪项触发**：规模对齐后本族依然不赚钱（2022 整年 +0.05%，2023 −6.71%），正收益仍然只在手选的那 7 只名单里"
+  },
+  {
+    "id": "q-gate-scope",
+    "kind": "understand",
+    "title": "退出闸门的输入自检：本族 champion 是谁、realizability 2 覆盖了什么",
+    "hypothesis": "若 champion 与 realizability 指的是同一本书，则闸门自洽；证伪：champion 的腿跨越家族、且其中一条腿在别处被判 realizability 1",
+    "why": "新的 EXIT GATE 决定本族能否进入 integration，而它的两个输入都是派生的（champion 由台账最优 objective 解析、realizability 由人工写入）。在花掉唯一一次 VAL 之前，先确认这两个输入指的是同一本书——零回测",
+    "design": "node -e 调 integrate-eligible.assess(七星高照) 读 champion；对照 realizabilityBasis 与 [[小市值]] 的 realizability",
+    "from": [
+      "q-pit7",
+      "pit-pool"
+    ],
+    "edgeRef": "动量",
+    "rank": 2,
+    "status": "answered",
+    "result": "闸门的两个输入指向不同的书：champion 解析出的是一本跨家族组合书（其头条由小市值腿承载，已由旧 q-2 的腿级分解与 [[ETF动量]] q-2 两次测得），而 realizability 2 是给纯 ETF 轮动打的。于是「七星高照 R=2」这个数字正在为一本半仓微盘的书背书，而那条腿自己在 REJECTED 名单里（R=1）。同时纯本族最优行只有 sharpe 1.21，连 1.5 闸都不过"
   }
 ]
