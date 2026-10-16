@@ -299,19 +299,28 @@ function check(c) {
   // reporting so an understated bar is visible rather than quietly corrected.
   const idx = familyIndex();
   const resolved = members.map(m => {
-    const champ = m.family ? championOf(m.family, idx) : null;
+    // ⚠ A PROMOTED INCUMBENT is not a family and must not be champion-resolved. Under the
+    // incremental model (integrate-queue Revision 4) one side of a merge is the universe's
+    // currently promoted candidate, which may itself be a MERGED artifact spanning two families.
+    // There is no "champion" of it to look up — its own figures ARE the bar, because it is the
+    // thing the universe currently ships. Resolving it by family would either find nothing (and
+    // flag a false `champion-unresolved`) or, worse, substitute one contributing family's
+    // champion for the merged whole.
+    const isPromoted = m.kind === 'merged' || m.promoted === true;
+    const champ = (!isPromoted && m.family) ? championOf(m.family, idx) : null;
     const supplied = { objective: num(m.objective), sharpe: num(m.sharpe), annual: num(m.annual),
                        maxdd: num(m.maxdd), sourceFile: m.sourceFile || null,
                        epoch: m.epoch == null ? null : m.epoch };
     // The champion wins when we can resolve one; otherwise the caller's figure, flagged.
     const use = champ || { ...supplied, family: m.family };
-    return { family: m.family, supplied, champion: champ, use,
+    return { family: m.family, supplied, champion: champ, use, isPromoted,
              realizability: m.realizability == null ? 5 : Number(m.realizability),
              window: m.window || 'train', seriesKey: m.seriesKey || null };
   });
 
   const UNDERSTATED_PP = 0.01;   // 1pp of objective — comfortably above re-run noise (~0.0015)
   for (const r of resolved) {
+    if (r.isPromoted) continue;      // its own figures are the bar; nothing to resolve or flag
     if (!r.champion) {
       flags.push(`champion-unresolved:${r.family}`);
       reasons.push(`⚠ could not resolve a CHAMPION for ${r.family} from the ledger (no row ` +
@@ -331,7 +340,12 @@ function check(c) {
     }
   }
 
-  const barMembers = resolved.map(r => ({ ...r.use, family: r.family }));
+  // A promoted incumbent has no family name, so label it by its candidateId — otherwise every
+  // report of an incremental round says the bar was set by `null`.
+  const barMembers = resolved.map((r, i) => ({
+    ...r.use,
+    family: r.family || (members[i] && (members[i].candidateId || members[i].expId)) || `member-${i + 1}`,
+  }));
   const bestMember = barMembers.reduce((a, b) =>
     ((num(b.objective) ?? -Infinity) > (num(a.objective) ?? -Infinity) ? b : a));
   // ⚠ Two different aggregates, kept apart on purpose:

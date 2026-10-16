@@ -167,6 +167,32 @@ because "the last VAL disappointed so make a new candidate" is selection on VAL 
 Report back and keep iterating on TRAIN. Never set `JQ_ALLOW_REVAL` — that is the human's switch,
 like `JQ_ALLOW_OOS`.
 
+## The EXIT GATE — what this loop has to deliver for the next phase
+
+⚠ **Finishing the loop is not the same as producing a candidate.** Integration takes only the best
+variant that ALSO cleared validation, and it will not take an untradeable one (user specification,
+2026-10-16). `node utils/integrate-eligible.js <family>` is the check; three things must hold:
+
+| requirement | why |
+|---|---|
+| a **champion** measured under an epoch the active one accepts | a result on a superseded bench is history |
+| a **VAL that PASSED** `stageGate('validate')` | integration may not be handed a TRAIN-only number |
+| **`realizability:` ≥ 2** on the family page | nothing whose fills a daily bar cannot honour may enter the set a universe ships |
+
+So **scoring realizability is part of this loop's job**, not integration's. Write `realizability:`
+and `realizabilityBasis:` into the family page frontmatter, with the evidence behind the number —
+1 means fills a daily bar cannot honour.
+
+⚠ **Unknown BLOCKS, it does not permit.** A family with no `realizability:` is reported blocked
+rather than assumed fine, the same rule the VAL budget applies to an unknown epoch. ⚠ And it is
+**not** inferable from the `不可实现` regex: 打板短线 does not match it and was still scored 1 on
+evidence — it buys the next-day open of yesterday's 涨停, and a sealed 一字板 cannot be bought at
+any price.
+
+⚠ **Order matters downstream.** Families enter this loop ordered by **champion TRAIN sharpe**,
+highest first (`utils/family-queue.js`), because integration is incremental: the first family to
+clear this gate in a universe becomes what every later arrival must beat.
+
 ## Do not
 
 - Put an improvement gate in front of an `understand` experiment.

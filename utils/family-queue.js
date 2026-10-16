@@ -78,6 +78,8 @@ function normalized() {
     const row = {
       sourceFile: c[0], title: c[2], epoch,
       objective: c[11] === 'DQ' ? null : parseFloat(c[11]), gate: c[12],
+      // sharpe is the /run-family ORDER key since 2026-10-16 — see the sort below.
+      sharpe: Number.isFinite(parseFloat(c[9])) ? parseFloat(c[9]) : null,
       valid: harness.measurementValid(epoch),
     };
     const prev = best.get(c[0]);
@@ -159,20 +161,44 @@ function build() {
       score: scores.has(family) ? scores.get(family) : null,
       memberList: mem.map(m => ({
         sourceFile: m.sourceFile, title: m.title, epoch: m.epoch,
-        objective: m.objective, gate: m.gate, valid: m.valid,
+        objective: m.objective, sharpe: m.sharpe, gate: m.gate, valid: m.valid,
       })).sort((a, b) => (b.objective ?? -99) - (a.objective ?? -99)),
       members: mem.length,
       assigned: assignedCount.get(family) || 0,
       unmeasured: Math.max(0, (assignedCount.get(family) || 0) - mem.length),
       validMembers: mem.filter(m => m.valid).length,
-      bestObjective: mem.reduce((a, m) => (m.objective != null && (a == null || m.objective > a) ? m.objective : a), null),
+      // ⚠ Epoch-aware, like the family pages and wiki-family-build. Reducing over EVERY member
+      // regardless of epoch reported 小市值 at 1.3738 while its page said 1.0258 and ETF溢价 at
+      // 1.5642 against 0.7767 — numbers measured on a superseded bench, presented beside
+      // current ones. `bestObjectiveAnyEpoch` keeps the old view for families that have no valid
+      // row at all, so a stale family still shows something rather than a bare dash.
+      bestObjective: mem.reduce((a, m) => (m.valid && m.objective != null && (a == null || m.objective > a) ? m.objective : a), null),
+      bestObjectiveAnyEpoch: mem.reduce((a, m) => (m.objective != null && (a == null || m.objective > a) ? m.objective : a), null),
+      // The CHAMPION's sharpe — champion = best objective among members valid under the active
+      // epoch. This is the /run-family order key (user specification, 2026-10-16).
+      championSharpe: (() => {
+        const valid = mem.filter(m => m.valid && m.objective != null);
+        if (!valid.length) return null;
+        return valid.reduce((a, b) => (b.objective > a.objective ? b : a)).sharpe;
+      })(),
       reason,
       note: stale && stale.reason ? stale.reason : '',
     });
   }
 
+  // ⚠ Ordered by CHAMPION TRAIN SHARPE, highest first (user specification, 2026-10-16).
+  //
+  // This is not cosmetic. Integration is INCREMENTAL: the first family to clear /run-family in a
+  // universe becomes that universe's first promoted candidate and therefore defines what every
+  // later arrival has to beat. So the order families enter /run-family decides the order they
+  // arrive at integration, and the spec makes that order "highest sharpe first".
+  //
+  // The screen score — which ranks what is worth FETCHING — drops to a tiebreak. It answers a
+  // different question and should not decide which already-held family is worked first.
   const due = out.filter(f => f.reason !== 'done')
-    .sort((a, b) => (b.score ?? -1) - (a.score ?? -1) || (b.bestObjective ?? -99) - (a.bestObjective ?? -99));
+    .sort((a, b) => (b.championSharpe ?? -Infinity) - (a.championSharpe ?? -Infinity)
+                 || (b.score ?? -1) - (a.score ?? -1)
+                 || (b.bestObjective ?? -99) - (a.bestObjective ?? -99));
 
   return { due, all: out.sort((a, b) => (b.score ?? -1) - (a.score ?? -1)), unassigned, scores };
 }

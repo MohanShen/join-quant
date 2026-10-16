@@ -2,6 +2,7 @@
 
 **Status**: ACCEPTED 2026-10-07 · **Revision 2, 2026-10-11** (merge replaces composition: §5, §6, §7, §9)
 · **Revision 3, 2026-10-13** (rule 1 becomes a per-year comparison; harness epoch 7: §6)
+· **Revision 4, 2026-10-16** (INCREMENTAL rounds replace all-pairs; a `/run-family` exit gate: §10)
 **Replaces**: the type layer's two-axis coordinate and the blend-first integration round
 **Authority it must obey**: `harness/harness.md` (frozen), `docs/consolidation-plan.md` §4,
 `.claude/skills/run-integrate/SKILL.md`
@@ -311,3 +312,68 @@ Remaining, under Revision 2:
 
 ⚠ Not ETF. Its top two declare their own headlines unrealizable, and a merge inherits that at
 rule 4.
+
+---
+
+## 10. Incremental rounds  *(REVISION 4, 2026-10-16 — user specification)*
+
+§5's loop surveyed a universe for mergeable PAIRS. That was wrong in a way no amount of tuning
+fixes: it treated a universe as a static set with no memory of what it had already delivered, so
+the same pairs came back round after round and a round's own result changed nothing about the
+next one. Two rounds ran that way (小盘, 全A), both REJECT, and neither left the universe in a
+different state than it started.
+
+### The model
+
+A universe holds a set of **promoted candidates** — durable state in `data/promoted.tsv`
+(append-only, tracked, replayed by `utils/promoted.js`). Families arrive **one at a time** after
+clearing `/run-family`, and each arrival meets that set:
+
+| outcome | condition | effect |
+|---|---|---|
+| **1 — promote** | no promoted candidate overlaps its symbols | the arrival is promoted. An EMPTY set needs no judgement: it is simply the first |
+| **2 — merge** | an overlapping incumbent, merge is better | the merged candidate is promoted and **supersedes** the incumbent; the arrival lives on inside it |
+| **3 — reject** | an overlapping incumbent, merge fails | the incumbent is **unchanged**; the **arrival** is rejected |
+
+**Sequence is load-bearing**, which is the whole reason this is state and not a computed view: the
+first arrival defines what everything after it has to beat. Families therefore enter
+`/run-family` ordered by **champion TRAIN sharpe**, highest first (`utils/family-queue.js`).
+
+**Multi-overlap** resolves to the **highest-sharpe** incumbent. One merge attempt per arrival
+keeps the cost bounded; trying each in turn would be a search over incumbents, with the
+multiple-comparisons problem §6's rule 5 exists to prevent.
+
+**A rejection is keyed to the `candidateId`**, never the family. Outcome 3 is "rejected until this
+family has a new best variant", so the champion's `sourceFile` is the key and a new best variant
+is automatically a new attempt — no expiry rule to get wrong, and one failed merge can never
+silently retire a lineage.
+
+### The `/run-family` exit gate
+
+Integration takes only the best variant that ALSO passed validation, and will not take an
+untradeable one (`utils/integrate-eligible.js`):
+
+1. a **champion** measured under an epoch the active one accepts;
+2. a **VAL that PASSED** `stageGate('validate')`;
+3. **realizability ≥ 2**, agent-scored and recorded as `realizability:` on the family page.
+
+Requirement 3 is why §6's rule 4 never has to bind: nothing with an untradeable leg can arrive.
+The check remains in the guard as defence in depth.
+
+⚠ **Unknown realizability BLOCKS**, the same rule the VAL budget applies to an unknown epoch —
+blocking is visible and a human clears it with one edit, whereas permitting silently ships an
+unrealizable book. And it is **not** inferable from the `不可实现` regex: 打板短线 does not match
+it and was scored 1 on evidence.
+
+### Measured consequence
+
+As of 2026-10-16, **1 of 13 families** clears the gate: 红利低频, which seeded 全A. Four are
+rejected on realizability (PT多策略, 小市值, ETF溢价, 打板短线) and eight blocked — seven never
+validated, two with no champion under the active epoch. So the binding constraint is **VAL
+coverage and realizability**, not integration, and the queue correctly reads
+`IDLE … the gate is upstream (/run-family)` almost everywhere.
+
+⚠ **Known gap, not closed**: eligibility checks the VAL sharpe, not the champion's TRAIN sharpe.
+红利低频 seeded 全A with a champion at TRAIN sharpe **1.46**, below the 1.5 every other stage
+holds, because its VAL passed at 2.05. That is as specified, but a universe can currently ship a
+champion that fails the TRAIN gate.

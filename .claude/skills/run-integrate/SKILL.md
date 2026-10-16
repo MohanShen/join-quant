@@ -1,17 +1,16 @@
 ---
 name: run-integrate
-description: Run one UNIVERSE-level round — an agent merges two families in the same universe into one strategy that beats both, or the universe promotes its best family when there is nothing to merge. Use when asked to integrate or combine strategy families, work at the type/universe level, or deliver a champion per universe.
+description: Run one UNIVERSE-level round — one family arrives against what that universe already ships and is either promoted (no symbol overlap), merged into a better candidate, or rejected. Use when asked to integrate or combine strategy families, work at the type/universe level, or deliver a champion per universe.
 ---
 
 # Run one universe round
 
-The layer above `/run-family`. That loop works **one lineage**; this takes two lineages in the same
-universe and **merges them into one strategy** — built from the best measured variant of each
-pipeline step — and, when a universe has nothing to merge, ships its best family anyway so the
-round always delivers.
+The layer above `/run-family`. That loop works **one lineage**; this takes ONE family that has
+cleared it and meets what its universe **already ships** — promoting it, merging it into something
+better, or rejecting it.
 
-**Authority**: `docs/proposals/type-integration-by-edge.md` (accepted 2026-10-07),
-`harness/harness.md` (frozen bench, read-only), `screen/screen.md` §3 R (realizability).
+**Authority**: `docs/proposals/type-integration-by-edge.md` (Revision 4, 2026-10-16),
+`harness/harness.md` §4.1 (the frozen bar), `screen/screen.md` §3 R (realizability).
 This skill is the entry point and does not restate them.
 
 ## One strategy, not two books — the distinction this round turns on
@@ -27,90 +26,133 @@ declares **one universe**, so the question "do these two trade the same names?" 
 answered after the fact — which is fortunate, because JoinQuant exposes no holdings to answer it
 with (§Why the agent).
 
-⚠ **Revision 2 (2026-10-11)**: a round used to build a *conjunction of two edges* and refused a
-pair whose edges matched. It now MERGES, and a shared edge is no longer a refusal — two families
+⚠ **Revision 4 (2026-10-16)** replaced the all-pairs model with the incremental one below.
+Revision 2's rule still holds inside a merge: a shared edge is **not** a refusal — two families
 earning the same way are exactly the ones whose entry, exit and risk steps are worth comparing.
-See `docs/proposals/type-integration-by-edge.md` §5.
 
 ## Start here
 
 ```bash
-node utils/integrate-queue.js           # every universe and what it should do
+node utils/integrate-queue.js           # every universe: promoted set, arrival queue, action
 node utils/integrate-queue.js --next    # the single highest-value action
+node utils/integrate-eligible.js        # who may supply a candidate at all, and why not
+node utils/promoted.js                  # what each universe currently ships
 ```
 
-It returns one of three actions per universe:
+## The model is INCREMENTAL  *(Revision 4, 2026-10-16 — replaces all-pairs)*
+
+A universe holds a set of **promoted candidates**. Families arrive **one at a time** after
+clearing `/run-family`, ordered by their champion's TRAIN sharpe (highest first), and each
+arrival meets the promoted set. Three outcomes, and every round ends in exactly one:
+
+| outcome | condition | what changes |
+|---|---|---|
+| **1 — promote** | nothing promoted overlaps its symbols | the arrival is promoted. With an EMPTY set this needs no judgement: it is simply the first |
+| **2 — merge** | an overlapping incumbent, and the merge is BETTER | the merged candidate is promoted and **supersedes** the incumbent; the arrival lives on inside it |
+| **3 — reject** | an overlapping incumbent, and the merge fails | the incumbent is **unchanged**; the **arrival** is rejected until its family has a new best variant |
+
+⚠ **Sequence is load-bearing.** The first arrival defines what everything after it must beat.
+That is why this is durable state (`data/promoted.tsv`) and not a computed view.
+
+⚠ **Multi-overlap**: an arrival overlapping several promoted candidates merges against the
+**highest-sharpe** one only. One attempt per arrival; trying each in turn is a search.
+
+The queue returns one of three actions per universe:
 
 | action | meaning |
 |---|---|
-| `merge` | two or more families with a measured edge — dispatch the agent (below) |
-| `promote` | nothing to merge; ship the best family (§Promote) |
-| `blocked` | nothing to merge AND the best family has a negative objective — report it |
+| `seed` | promoted set is empty and an eligible arrival exists — **promote it, free, no judgement** |
+| `integrate` | an arrival meets a non-empty promoted set — **dispatch the agent** (below) |
+| `idle` | nothing eligible is queued; the gate is upstream in `/run-family` |
 
-## MERGE — dispatch the agent, do not do it inline
+## What `/run-family` must deliver before anything reaches here
+
+`utils/integrate-eligible.js` is the exit gate, and this round never re-litigates it:
+
+1. a **champion** measured under an epoch the active one accepts;
+2. a **VAL that PASSED** `stageGate('validate')` — one validation per (family, epoch);
+3. **realizability ≥ 2**, agent-scored and recorded as `realizability:` on the family page.
+
+Requirement 3 is why the judge's rule 4 never has to bind. ⚠ **Unknown realizability BLOCKS** —
+it is not inferable from the `不可实现` regex, and an unscored family is reported, not assumed.
+
+⚠ Measured 2026-10-16: **1 of 13 families** currently clears this gate. Four are rejected on
+realizability and eight blocked (seven never validated). `IDLE … the gate is upstream` is the
+expected reading, not a fault — the bottleneck is VAL coverage, not integration.
+
+## SEED — do it inline, it is free
+
+No judgement, no backtest, no agent. Record it and stop:
+
+```bash
+node -e "require('./utils/promoted').record({universe:'<U>', action:'promote', \
+  candidateId:'<champion sourceFile>', kind:'family', members:['<family>'], \
+  sharpe:<n>, objective:<n>, note:'SEED — first eligible candidate; …'})"
+```
+
+## INTEGRATE — dispatch the agent, do not do it inline
 
 **The agent drives this step.** Dispatch `integrate-merger` (`Agent` tool,
-`subagent_type: "integrate-merger"`) with the universe and its pairs. Its contract is
-`.claude/agents/integrate-merger.md`; what follows is only what you, the orchestrator, need to
-know to hand off and to check what comes back.
+`subagent_type: "integrate-merger"`) with the arrival and the promoted set. Its contract is
+`.claude/agents/integrate-merger.md`.
 
 The division is deliberate:
 
 | | |
 |---|---|
-| **deterministic** | which universes exist, who is in them, the promote and realizability floors, the VAL budget, the four judge rules, the per-year BAR |
+| **deterministic** | which universes exist, who is eligible, the arrival ORDER, the promoted set, the realizability floor, the VAL budget, the judge rules |
 | **the agent** | symbol overlap, what kind of merge the edges call for, the decomposition, the candidate set, the build |
 
 ### Why the agent and not a program
 
-Two questions in this step have no programmatic answer, and both have been measured wrong:
+**Symbol overlap has no programmatic answer.** A shared `universe:` does not mean two books touch
+the same instruments — PT多策略 screens to ETFs with turnover in 5e6–2e7 while 七星高照 holds seven
+named liquid ones, an empty intersection. And it cannot be looked up: JoinQuant exposes **no
+holdings** (`trade`, `order(s)`, `position(s)`, `holding(s)` all empty; `result.orders` is a
+chart-marker count with no instrument identity). The agent reads the **selection logic** and judges.
 
-- **Symbol overlap.** A shared `universe:` does not mean the two families touch the same
-  instruments — PT多策略 screens to ETFs with turnover in 5e6–2e7 while 七星高照 holds 七 named
-  liquid ones, an empty intersection. And it cannot be looked up: JoinQuant exposes **no
-  holdings** (`trade`, `order(s)`, `position(s)`, `holding(s)` all empty; `result.orders` is a
-  chart-marker count with no instrument identity). The agent reads the **selection logic** and
-  judges.
-- **Edge identity.** An edge name is free text. `规模` and `规模因子` are one mechanism in two
-  spellings; `动量` in 七星高照 and in 趋势技术 are two mechanisms under one word. `integrate-queue`
-  reports `shared` and `sameSet` as *evidence* and refuses nothing on that basis.
+Edge names are annotation only: `规模` and `规模因子` are one mechanism in two spellings, while
+`动量` in two families can be two mechanisms under one word.
+
+⚠ A declared `parent:` lineage is refused **deterministically** before the agent sees it — a child
+is a FORK of its parent and already carries its mechanism.
 
 ### What the agent must come back with
 
-1. **An overlap judgement with its reasoning.** The bar is low on purpose: overlap, or the
-   plausible possibility of large overlap, is enough to proceed. Only a provably disjoint pair
-   stops, and a stop is recorded with
-   `node utils/integrate-queue.js --refuse <universe> <A> <B> --why "…"`.
-2. **What kind of merge this is.** Identical edge sets → the merge seeks the **better
-   implementation** of one edge. Different sets → it seeks to **combine** them. Both merge; the
-   answer defines what "better" means at the judge.
-3. **A decomposition** of both families onto the pipeline skeleton (universe · selection · entry ·
-   exit · risk overlay · sizing), each step citing the §2 row that measures it.
+1. **An overlap judgement with its reasoning**, against each promoted candidate. Outcome 1 if none
+   overlaps; otherwise name the highest-sharpe overlapping one as the merge target.
+2. **What kind of merge this is.** Identical edge sets → the **better implementation** of one edge.
+   Different sets → **combine** them. Both merge; the answer defines what "better" means.
+3. **A decomposition** onto the pipeline skeleton, each step citing the §2 row that measures it.
 4. **At most 3 candidates, declared before any is run.** A sweep is not a candidate set.
-5. **One built strategy per candidate**, from `enhance/strategy_template.py` so it carries the
-   pins, measured on `--window train`. Never a result assembled from summed deltas.
+5. **One built strategy per candidate**, from `enhance/strategy_template.py`, on `--window train`.
 
-### What you check when it returns
+### What you check when it returns, and what you record
 
-- the overlap judgement is **recorded**, whichever way it went;
-- the candidate set was declared **before** the first run, and is ≤3;
-- each candidate was **measured as one strategy**;
-- `type-integrate-check.js` was run, and rule 4 (realizability at the worst leg) is reflected in
-  the verdict — if either parent declares its headline `不可实现`, the result is a TRAIN comparison
-  and not a tradeable claim;
-- the bar it applied was **`worstTrainYear`**, not `pooled-fallback`. A fallback means a curve was
-  missing and the guard judged on the pooled objective instead; it says so in `flags`, and the fix
-  is to supply the `sourceFile` on the candidate and on every member, not to accept the verdict;
-- when the guard flagged `pooled-objective-lower`, the round **says which it was after** —
-  consistency or level (§The bar, below);
-- the round is recorded as a consumption event **and** under `## 整合回合` on the type page,
-  including negative results.
+- the overlap judgement is recorded **either way**;
+- `type-integrate-check.js` was run and the bar it applied was **`perYearSharpe`**, not
+  `pooled-fallback`;
+- then write the outcome to the register — this is the step that makes the round mean anything:
+
+```bash
+# outcome 2 — the merge won
+node -e "require('./utils/promoted').record({universe:'<U>', action:'promote', \
+  candidateId:'<expId>', kind:'merged', members:['<A>','<B>'], sharpe:<n>, objective:<n>, note:'…'})"
+node -e "require('./utils/promoted').record({universe:'<U>', action:'supersede', \
+  candidateId:'<incumbent candidateId>', note:'superseded by <expId>'})"
+
+# outcome 3 — the merge failed; the incumbent stands, the ARRIVAL is rejected
+node -e "require('./utils/promoted').record({universe:'<U>', action:'reject', \
+  candidateId:'<arrival champion sourceFile>', note:'<why — required>'})"
+```
+
+⚠ A `reject` **requires a note**: the next round must read *why*, not merely *that*. And it is
+keyed to the candidate, so a new best variant for that family automatically earns another attempt.
 
 ⚠ **VAL is yours to protect, not the agent's.** One validation per (universe, epoch); a failure is
-**terminal for that universe this epoch** and does not license a fourth candidate. If the agent
-asks for another VAL, refuse it and report.
+**terminal for that universe this epoch** and does not license a fourth candidate.
 
-## The bar — what "beat both" means since epoch 7
+## The bar — what "better" means (epoch 8)
 
 The sharpe gate is **1.5 at every stage**; integration no longer holds a different one. Its real
 bar is **per-year sharpe domination** (epoch 8): in **every** TRAIN calendar year the candidate's
@@ -120,12 +162,18 @@ sharpe must exceed the best **parent champion's** sharpe in that **same** year.
 ⚠ Epoch 7's worst-year objective maximin is **invalidated**. An epoch-7 round still states an
 epoch-7 conclusion, but it is not an epoch-8 one without re-judging.
 
-⚠ The bar can be a **composite**: the best parent may differ by year, so the candidate faces
-something no single parent achieves. Deliberate, and strictly harder. And the bar needs curves for
-the candidate and every parent — 4 of 11 champions have none, so those rounds fall back to the
-pooled rule and say so.
+⚠ Under the incremental model the two **parents are the merge inputs**: the incumbent promoted
+candidate and the arrival's champion. An incumbent may itself be a MERGED artifact with no family,
+so the guard does not champion-resolve it — its own figures ARE the bar, because it is what the
+universe currently ships.
 
-This is not a relaxation — applied to the two rounds already run it **confirms both rejections**
+⚠ The bar can be a **composite**: the best parent may differ by year, so the candidate faces
+something no single parent achieves. Deliberate, and strictly harder. The bar needs stored curves
+for the candidate and every parent; without them it falls back to the pooled rule and says so
+(`bar=pooled-fallback`). All 11 family champions have one as of 2026-10-16 — `series-rekey.js`
+recovered 39 that had been saved under an unreadable key.
+
+This is not a relaxation — applied to the two all-pairs rounds already run it **confirms both rejections**
 and sharpens them: all three 全A candidates turn out to have a **negative** worst year
 (−0.0464 / −0.1014 / −0.4437), which is the measured form of what that round could only say in
 prose, 「combining relocates WHICH YEAR earns; it does not add」.
@@ -138,18 +186,6 @@ the 2022 tail for 2023 steadiness lost by construction.
 
 The pooled comparison is still printed as **evidence** and never vetoes.
 
-## PROMOTE
-
-When no pair survives, the universe still delivers: **ship its best family's champion.**
-
-- No backtest is spent. The champion already cleared its own loop and its own family VAL.
-- Record it: `stage: 'integrate'`, `outcome: 'promoted'`, with a note naming the family and why
-  nothing was mergeable (only one family carries a measured edge, or the pair was refused).
-- ⚠ If the queue reports `⚠ never validated`, say so in the note — an unvalidated champion is a
-  caveat the reader must see.
-- A `blocked` universe is reported, not promoted: a negative objective means the drawdown exceeded
-  the return, and shipping the least-bad loser is not delivering.
-
 ## Do not
 
 - Weight two finished books and call it integration.
@@ -159,3 +195,9 @@ When no pair survives, the universe still delivers: **ship its best family's cha
 - Average realizability across legs.
 - Touch VAL during selection, or OOS at all.
 - Write a merge result into a family page — it belongs to the type.
+- **Re-litigate eligibility.** If a family is not in the arrival queue, the fix is in
+  `/run-family` (validate it, or score its realizability), never a workaround here.
+- **Finish a round without writing to `utils/promoted.js`.** An unrecorded outcome means the next
+  arrival meets the wrong incumbent, and the sequence is the whole model.
+- **Reject a family rather than its candidate.** The key is the `candidateId`; keying a rejection
+  to the family would retire a lineage on one failed merge.

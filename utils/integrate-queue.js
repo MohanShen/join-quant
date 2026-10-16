@@ -1,40 +1,51 @@
 /**
  * integrate-queue.js — what the integration loop should do next, per universe.
  *
- * The type axis is the UNIVERSE alone (`docs/proposals/type-integration-by-edge.md`). Families
- * sharing a universe trade the same market, which is what makes their EDGES candidates to be
- * composed into one strategy — not blended as two books.
+ * The type axis is the UNIVERSE alone (`docs/proposals/type-integration-by-edge.md`).
  *
- * ## Why composition and not blending
+ * ## INCREMENTAL, not all-pairs  (Revision 4 — user specification, 2026-10-16)
  *
- * A blend allocates capital across finished strategies. Its return cannot exceed the weighted
- * average of its legs; only its risk improves. 七星高照's blend scored sharpe 3.17 from legs of
- * 2.85/1.60 and still lost to its own small-cap leg (0.4814 vs 0.5984). A conjunction CAN be
- * superadditive: 红利低频's two-factor conjunction returned 23.41% against 11.75% for the sum of
- * its legs, at lower risk than either. So this queue proposes pairs of EDGES, not pairs of books.
+ * This used to enumerate every PAIR of families in a universe. That treated a universe as a
+ * static set, had no notion of what the universe had already delivered, and so offered the same
+ * pairs round after round while a round's own result changed nothing about the next one.
  *
- * ## Every universe delivers something
+ * Now a universe holds a set of PROMOTED candidates (`utils/promoted.js`), and families arrive
+ * ONE AT A TIME after clearing `/run-family` (`utils/integrate-eligible.js`: champion + passing
+ * VAL + realizability >= 2). Each arrival meets the promoted set:
  *
- * A universe with no admissible pair is not skipped — it PROMOTES its best family instead
- * (user's rule, 2026-10-07). Promotion ships that family's champion as the universe's deliverable
- * with no integration attempted. A singleton universe, or one whose only edges are refuted or
- * duplicated, still produces an answer rather than silence.
+ *   1. nothing promoted OVERLAPS its symbols  -> promoted automatically. With an EMPTY set that
+ *      needs no judgement at all: it is simply the first, and the queue says `seed`.
+ *   2. an overlapping promoted candidate exists and the merge is BETTER -> the merged candidate is
+ *      promoted and SUPERSEDES the incumbent; the arrival lives on inside it.
+ *   3. an overlapping promoted candidate exists and the merge fails -> the incumbent is unchanged
+ *      and the ARRIVAL is rejected, until that family has a new best variant (the rejection is
+ *      keyed to the candidateId, so a new champion is automatically a new attempt).
  *
- * ## Admissibility
+ * ⚠ **Sequence matters, by design.** The first arrival defines what everything after it has to
+ * beat, so families enter `/run-family` ordered by their champion's TRAIN sharpe, highest first.
+ * That ordering lives in `utils/family-queue.js`; this file consumes its result.
  *
- * - both edges `measured` — never `proposed` (unevidenced) and never `refuted` (known false);
- * - edges must be DISTINCT.
+ * ⚠ **Multi-overlap**: an arrival that overlaps SEVERAL promoted candidates merges against the
+ * highest-sharpe one only (user's choice). One merge attempt per arrival keeps the cost bounded
+ * and the verdict unambiguous; trying each in turn would be a search over incumbents.
  *
- * ⚠ Distinctness is checked here only by NAME (equality, or one containing the other, which is
- * what catches 规模因子 vs 规模 — one edge spelled two ways). That is a floor, not the rule: two
- * differently-named edges can still be the same mechanism, and only a reader can tell. Pairs that
- * survive this check are CANDIDATES for the gatekeeper, which must make the semantic call and
- * record its reason. This file never decides that a pair is genuinely distinct — it only removes
- * the ones that are provably not.
+ * ## What is deterministic here and what is not
+ *
+ * Deterministic: which universes exist, who is eligible, the arrival ORDER, the promoted set, and
+ * whether a universe needs a seed or an integration. NOT deterministic, and never decided here:
+ * **symbol overlap**, which the agent reads off each candidate's selection logic because
+ * JoinQuant exposes no holdings. `edgesOf`/`sameEdge` remain as ANNOTATION for that reader — an
+ * edge name is free text, so 规模 and 规模因子 are one mechanism in two spellings while 动量 in
+ * two families can be two mechanisms under one word.
+ *
+ * ⚠ A declared `parent:` lineage IS refused here, deterministically: a child is a FORK of its
+ * parent and already carries its mechanism, so that is a within-lineage variant choice
+ * (`/run-family`), not an integration of two return sources.
  *
  * Usage:
- *   node utils/integrate-queue.js            # what every universe should do next
+ *   node utils/integrate-queue.js            # every universe: promoted set, arrival queue, action
  *   node utils/integrate-queue.js --next     # the single highest-value action
+ *   node utils/integrate-queue.js --refuse <universe> <A> <B> --why "…"
  */
 
 const fs = require('fs');
@@ -211,124 +222,125 @@ function sameLineage(a, b, byName) {
   return { related: false };
 }
 
+/**
+ * One row per universe: what it has promoted, who is queued to arrive, and what to do next.
+ */
 function build() {
+  const promoted = require('./promoted');
+  const eligible = require('./integrate-eligible');
   const fams = families().filter(f => f.universe);
   const byName = new Map(fams.map(f => [f.family, f]));
   const known = refusals();
+
+  // Eligibility is the /run-family exit gate; the queue never re-derives it.
+  const assessed = new Map(eligible.all().map(a => [a.family, a]));
+
   const byU = {};
   for (const f of fams) (byU[f.universe] = byU[f.universe] || []).push(f);
 
   return Object.entries(byU).map(([universe, group]) => {
-    // A family with no measured edge has no identified return source, so there is nothing
-    // trustworthy to take a step from. That is the only eligibility floor.
-    const measured = group.filter(f => (f.measuredEdges || []).length > 0);
+    const current = promoted.current(universe);
 
-    const pairs = [], refused = [];
-    for (let i = 0; i < measured.length; i++) {
-      for (let j = i + 1; j < measured.length; j++) {
-        const a = measured[i], b = measured[j];
-        const ea = a.measuredEdges.map(e => e.name);
-        const eb = b.measuredEdges.map(e => e.name);
-        // ⚠ ANNOTATION, NOT A VERDICT (user's decision, 2026-10-11: the universe check is
-        // deterministic, the edge judgement is not). A shared edge no longer refuses anything —
-        // under Revision 2 it is what makes a merge coherent. And a name is a free-text label,
-        // not an identity: 规模 vs 规模因子 are one edge in two spellings, while 动量 in 七星高照
-        // (cross-sectional over 7 hand-picked ETFs, its own evidence says NOT portable) and in
-        // 趋势技术 (HS300 large caps) are two mechanisms under one word. Only a reader can tell,
-        // so the queue reports what it sees and leaves the call to the gatekeeper.
-        const shared = ea.filter(x => eb.some(y => sameEdge(x, y)));
-        const entry = { a: a.family, b: b.family, edgesA: ea, edgesB: eb, shared,
-                        sameSet: shared.length === ea.length && shared.length === eb.length };
-        // Lineage first: a declared parent/child pair is refused structurally, so it can never
-        // reach the gatekeeper and spend a round on a fork of one family.
-        const lin = sameLineage(a, b, byName);
-        if (lin.related) {
-          refused.push({ ...entry, lineage: true,
-            why: `same lineage — ${lin.child} declares parent: [[${lin.ancestor}]]. A child is a `
-               + 'FORK of its parent and already carries its mechanism, so this is a within-lineage '
-               + 'variant choice (/run-family), not an integration of two return sources.' });
-          continue;
+    // Arrivals: eligible families whose CHAMPION is neither already promoted nor already
+    // rejected at this exact candidateId. Ordered by champion TRAIN sharpe — the sequence the
+    // spec makes load-bearing.
+    const promotedIds = new Set(current.map(c => c.candidateId));
+    const arrivals = [], notEligible = [], dispositioned = [];
+    for (const f of group) {
+      const a = assessed.get(f.family);
+      if (!a || !a.eligible) { notEligible.push({ family: f.family, status: a ? a.status : 'unknown', why: a ? a.why : '' }); continue; }
+      const id = a.champion.sourceFile;
+      if (promotedIds.has(id)) { dispositioned.push({ family: f.family, candidateId: id, state: 'already promoted' }); continue; }
+      if (promoted.isRejected(universe, id)) {
+        dispositioned.push({ family: f.family, candidateId: id,
+                             state: 'rejected at this champion — a NEW best variant reopens it' });
+        continue;
+      }
+      arrivals.push({ family: f.family, candidateId: id, sharpe: a.champion.sharpe,
+                      objective: a.champion.objective, epoch: a.champion.epoch,
+                      realizability: a.realizability, val: a.val,
+                      edges: (f.measuredEdges || []).map(e => e.name) });
+    }
+    arrivals.sort((x, y) => (y.sharpe ?? -Infinity) - (x.sharpe ?? -Infinity));
+
+    const arrival = arrivals[0] || null;
+
+    // Lineage refusals against the promoted set, computed deterministically so a fork of an
+    // already-promoted family can never be offered as something to merge with.
+    const lineageRefused = [];
+    if (arrival) {
+      for (const c of current) {
+        for (const m of (c.members.length ? c.members : [c.candidateId])) {
+          const a = byName.get(arrival.family), b = byName.get(m);
+          if (!a || !b) continue;
+          const lin = sameLineage(a, b, byName);
+          if (lin.related) {
+            lineageRefused.push({ promoted: c.candidateId, member: m,
+              why: `same lineage — ${lin.child} declares parent: [[${lin.ancestor}]]; a child is a ` +
+                   'FORK of its parent, so this is a within-lineage variant choice (/run-family)' });
+          }
         }
-        const gk = known.get(pairKey(universe, a.family, b.family));
-        if (gk) refused.push({ ...entry, why: gk.why, gatekeeper: true });
-        else pairs.push(entry);
       }
     }
 
-    // The deliverable when nothing is composable: the universe's strongest family.
-    //
-    // ⚠ With a FLOOR. objective = annual - maxdd, so a negative one means the drawdown exceeded
-    // the return — 固定篮子's best is 三进兵 at -0.09. "Promote the best family" must not become
-    // "ship the least bad loser": a universe whose best family loses money delivers nothing, and
-    // saying so is the honest output. The floor is the family stage threshold, not integration's
-    // 2.0, because a promotion is not an integration — it ships a champion that already cleared
-    // its own loop.
-    const ranked = [...group].sort((x, y) =>
-      (Number.isFinite(y.bestObjective) ? y.bestObjective : -Infinity) -
-      (Number.isFinite(x.bestObjective) ? x.bestObjective : -Infinity));
-    const top = ranked.find(f => Number.isFinite(f.bestObjective)) || null;
-    const eligible = ranked.filter(f => Number.isFinite(f.bestObjective) && f.bestObjective > 0
-                                     && !declaredUnrealizable(f.realism));
-    const promote = eligible[0] || null;
-    // Everything stronger that was passed over, and why — a promotion that quietly skipped the
-    // top family would hide the most important thing about the universe.
-    const skipped = ranked
-      .filter(f => Number.isFinite(f.bestObjective) && (!promote || f.bestObjective > promote.bestObjective))
-      .map(f => ({ family: f.family, objective: f.bestObjective,
-                   why: f.bestObjective <= 0 ? 'negative objective'
-                      : declaredUnrealizable(f.realism) ? 'its own realism: declares the headline unrealizable'
-                      : 'passed over' }));
-
-    // Does that champion actually have a validation behind it? A promotion ships it as the
-    // universe's answer, so an unvalidated one is a caveat the caller must see, not a detail.
-    let promoteVal = null;
-    if (promote) {
-      try {
-        const v = require('./val-budget');
-        const prior = v.priorValidations(promote.family);
-        promoteVal = prior.length
-          ? { validated: true, runId: prior[prior.length - 1].runId, outcome: prior[prior.length - 1].outcome }
-          : { validated: false };
-      } catch { promoteVal = null; }
+    // Gatekeeper refusals recorded against (universe, arrival family, promoted member).
+    const gkRefused = [];
+    if (arrival) {
+      for (const c of current) {
+        for (const m of (c.members.length ? c.members : [c.candidateId])) {
+          const gk = known.get(pairKey(universe, arrival.family, m));
+          if (gk) gkRefused.push({ promoted: c.candidateId, member: m, why: gk.why });
+        }
+      }
     }
 
-    const done = attempted(universe);
-    const action = pairs.length ? 'merge' : (promote ? 'promote' : 'blocked');
+    let action, why;
+    if (!arrival) {
+      action = 'idle';
+      why = current.length
+        ? `nothing queued — ${current.length} promoted, every eligible family already dispositioned`
+        : 'nothing promoted and nothing eligible — the gate is upstream (/run-family)';
+    } else if (!current.length) {
+      action = 'seed';
+      why = `${arrival.family} is the FIRST eligible candidate in this universe — promote it with ` +
+            'no judgement and no backtest; it becomes what later arrivals must beat';
+    } else {
+      action = 'integrate';
+      why = `${arrival.family} arrives against ${current.length} promoted candidate(s) — the agent ` +
+            'judges symbol overlap, then promotes (no overlap) or merges against the strongest ' +
+            'overlapping incumbent';
+    }
 
     return {
       universe,
       families: group.length,
-      measured: measured.length,
-      pairs,
-      refused,
-      attempted: done.map(e => ({ runId: e.runId, outcome: e.outcome, at: e.at })),
-      action,
-      promote: promote && { family: promote.family, objective: promote.bestObjective, val: promoteVal },
-      skipped,
-      why: pairs.length
-        ? `${pairs.length} mergeable pair(s) from ${measured.length} famil(y/ies) with a measured edge`
-        : promote
-          ? `no mergeable pair (${measured.length} eligible, ${refused.length} refused by the gatekeeper) ` +
-            `— promote ${promote.family}` +
-            (promoteVal && !promoteVal.validated ? ' ⚠ never validated' : '')
-          : top
-            ? `nothing to deliver: no admissible pair, and every family is either negative or ` +
-              `declares its own headline unrealizable (best: ${top.family} at ${top.bestObjective})`
-            : 'no family in this universe carries a measurable objective',
+      promoted: current,
+      arrival,
+      arrivals,
+      notEligible,
+      dispositioned,
+      lineageRefused,
+      refused: gkRefused,
+      attempted: attempted(universe).map(e => ({ runId: e.runId, outcome: e.outcome, at: e.at })),
+      action, why,
     };
-  }).sort((a, b) => b.pairs.length - a.pairs.length || b.families - a.families);
+  }).sort((a, b) => {
+    // Seeds first (free, and they define the bar), then integrations, then idle.
+    const rank = r => (r.action === 'seed' ? 0 : r.action === 'integrate' ? 1 : 2);
+    return rank(a) - rank(b) || (b.arrival ? b.arrival.sharpe : -Infinity) - (a.arrival ? a.arrival.sharpe : -Infinity);
+  });
 }
 
-/** The single highest-value next action: the most composable universe, else the best promotion. */
+/** The single highest-value next action: a free seed before a backtest-spending integration. */
 function next() {
   const rows = build();
-  return rows.find(r => r.action === 'merge' && r.pairs.length > r.attempted.length)
-      || rows.find(r => r.action === 'merge')
-      || rows.find(r => r.action === 'promote')
+  return rows.find(r => r.action === 'seed')
+      || rows.find(r => r.action === 'integrate')
       || null;
 }
 
-module.exports = { build, next, sameEdge, families, edgeOf, edgesOf, refusals, refuse, REFUSALS };
+module.exports = { build, next, sameEdge, sameLineage, families, edgeOf, edgesOf,
+                   refusals, refuse, REFUSALS };
 
 if (require.main === module) {
   const argv = process.argv.slice(2);
@@ -343,26 +355,40 @@ if (require.main === module) {
   const rows = build();
   if (process.argv.includes('--next')) {
     const n = next();
-    if (!n) { console.log('[integrate] nothing to do'); process.exit(0); }
+    if (!n) { console.log('[integrate] nothing to do — every universe is idle'); process.exit(0); }
     console.log(`[integrate] -> ${n.action.toUpperCase()}  ${n.universe}`);
     console.log(`   ${n.why}`);
-    if (n.action === 'merge') for (const p of n.pairs) console.log(`   pair: ${p.a} × ${p.b}  | ${p.a}: ${p.edgesA.join(', ')} | ${p.b}: ${p.edgesB.join(', ')} | shared: ${p.shared.join(', ') || 'none'}`);
-    else if (n.promote) console.log(`   promote: ${n.promote.family} (objective ${n.promote.objective})`);
+    if (n.arrival) {
+      console.log(`   arrival : ${n.arrival.family}  sharpe ${n.arrival.sharpe}  ` +
+                  `R=${n.arrival.realizability}  edges: ${n.arrival.edges.join(', ') || 'none'}`);
+      console.log(`             ${n.arrival.candidateId}`);
+    }
+    for (const c of n.promoted) {
+      console.log(`   promoted: ${c.kind} ${c.candidateId}  sharpe ${c.sharpe ?? '?'}` +
+                  (c.members.length > 1 ? `  <- ${c.members.join(' + ')}` : ''));
+    }
+    for (const r of n.lineageRefused) console.log(`   ⚠ lineage: ${r.why}`);
+    for (const r of n.refused) console.log(`   ⚠ refused earlier vs ${r.member}: ${r.why}`);
     process.exit(0);
   }
   for (const r of rows) {
-    console.log(`\n■ ${r.universe}  ${r.families} famil(y/ies), ${r.measured} with a measured edge -> ${r.action.toUpperCase()}`);
+    console.log(`\n■ ${r.universe}  ${r.families} famil(y/ies) -> ${r.action.toUpperCase()}`);
     console.log(`   ${r.why}`);
-    for (const p of r.pairs) console.log(`   pair    ${p.a} × ${p.b}`
-      + `\n             ${p.a}: ${p.edgesA.join(', ')}`
-      + `\n             ${p.b}: ${p.edgesB.join(', ')}`
-      + `\n             shared: ${p.shared.length ? p.shared.join(', ') + (p.sameSet ? '  ⚠ IDENTICAL SET' : '') : 'none'}`);
-    for (const p of r.refused) console.log(`   refused ${p.a} × ${p.b} — ${p.why}`);
-    if (r.action === 'promote' && r.promote) console.log(`   promote ${r.promote.family} (objective ${r.promote.objective})` +
-      (r.promote.val ? (r.promote.val.validated ? `  VAL ${r.promote.val.runId} -> ${r.promote.val.outcome}` : '  ⚠ never validated') : ''));
-    for (const k of (r.skipped || [])) console.log(`   skipped ${k.family} (objective ${k.objective}) — ${k.why}`);
-    for (const a of r.attempted) console.log(`   done    ${a.runId} -> ${a.outcome}`);
+    for (const c of r.promoted) {
+      console.log(`   promoted   ${c.kind.padEnd(7)} ${c.candidateId}`);
+      console.log(`              sharpe ${c.sharpe ?? '?'}  objective ${c.objective ?? '?'}  e${c.epoch}` +
+                  (c.members.length > 1 ? `  <- ${c.members.join(' + ')}` : ''));
+    }
+    if (!r.promoted.length) console.log('   promoted   (none yet)');
+    r.arrivals.forEach((a, i) => console.log(
+      `   ${i === 0 ? 'ARRIVAL ->' : 'queued   '} ${a.family.padEnd(12)} sharpe ${String(a.sharpe).padStart(6)}  ` +
+      `R=${a.realizability}  edges: ${a.edges.join(', ') || 'none'}`));
+    for (const d of r.dispositioned) console.log(`   done       ${d.family} — ${d.state}`);
+    for (const x of r.lineageRefused) console.log(`   ⚠ lineage  ${x.why}`);
+    for (const x of r.refused) console.log(`   ⚠ refused  vs ${x.member} — ${x.why}`);
+    for (const x of r.notEligible) console.log(`   ineligible ${x.family.padEnd(12)} [${x.status}] ${x.why}`);
+    for (const a of r.attempted) console.log(`   history    ${a.runId} -> ${a.outcome}`);
   }
-  console.log('\n⚠ A surviving pair is a CANDIDATE, not a verdict: name-distinctness is a floor, and');
-  console.log('  whether two differently-named edges are really the same mechanism is the gatekeeper\'s call.');
+  console.log('\n⚠ Symbol overlap is the AGENT\'s call — JoinQuant exposes no holdings. The queue decides');
+  console.log('  eligibility, arrival order and the promoted set; it never decides that two books overlap.');
 }

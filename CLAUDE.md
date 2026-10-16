@@ -491,6 +491,59 @@ Only the directories whose contents aren't self-evident:
   0.0301 at correlation 0.77. Recombining redundant things cannot fix redundancy, so the library
   needs orthogonal material from outside. `utils/factorlib-query.js` is the reader; the ideator
   gained an `external-factor` mode and the critic four rules for judging one.
+- **INTEGRATION IS INCREMENTAL, not all-pairs** (user specification, 2026-10-16;
+  `docs/proposals/type-integration-by-edge.md` Revision 4). A universe holds a set of **promoted
+  candidates** (`data/promoted.tsv`, append-only + tracked, replayed by `utils/promoted.js`), and
+  families arrive **one at a time** after clearing `/run-family`. Each arrival meets the set:
+  **(1)** nothing promoted overlaps its symbols → promoted automatically (an EMPTY set needs no
+  judgement at all — the queue calls that `seed`); **(2)** an overlapping incumbent and the merge
+  is better → the merged candidate is promoted and **supersedes** the incumbent, the arrival living
+  on inside it; **(3)** an overlapping incumbent and the merge fails → the incumbent is
+  **unchanged** and the **arrival** is rejected.
+  The old model enumerated every pair, which treated a universe as a static set with no memory of
+  what it had shipped, so the same pairs came back round after round and a round's own result
+  changed nothing about the next.
+- ⚠ **Sequence is load-bearing.** The first arrival defines what everything after it must beat, so
+  families enter `/run-family` ordered by their **champion's TRAIN sharpe**, highest first
+  (`family-queue.js`: `championSharpe`, with the screen score demoted to a tiebreak — that score
+  ranks what is worth FETCHING, a different question). An arrival overlapping **several** promoted
+  candidates merges against the **highest-sharpe** one only: one attempt per arrival keeps the cost
+  bounded, where trying each in turn would be a search over incumbents.
+- ⚠ **A rejection is keyed to the `candidateId`, never the family.** Outcome 3 is "rejected until
+  this family has a new best variant", so the key is the champion's `sourceFile` (or a merged
+  candidate's `expId`). A new best variant is a new `candidateId` and therefore a new attempt, with
+  no expiry rule to get wrong — and one failed merge can never silently retire a lineage.
+- **`/run-family` now has an EXIT GATE** (`utils/integrate-eligible.js`): a champion measured under
+  a comparable epoch, a **VAL that PASSED** `stageGate('validate')`, and **realizability ≥ 2**.
+  Rule 4 at the judge therefore never has to bind — nothing with an untradeable leg can arrive. The
+  check stays in the guard as defence in depth.
+  ⚠ **Unknown realizability BLOCKS, it does not permit** — the same rule the VAL budget applies to
+  an unknown epoch: blocking is visible and a human clears it with one edit, whereas permitting
+  silently ships an unrealizable book. ⚠ And it is **not** inferable from the `不可实现` regex:
+  打板短线 does not match it and was scored **1** on evidence (it buys the next-day open of
+  yesterday's 涨停, and a sealed 一字板 cannot be bought at any price).
+  `realizability:` + `realizabilityBasis:` now live in family-page frontmatter. Eight were
+  transcribed from the `candidate.json` files that recorded them (ETF动量 2, 七星高照 2, 红利低频 3,
+  打板短线 1, 小市值 1, 多因子ML 1, and ETF溢价/PT多策略 1 from their own `不可实现` declaration);
+  五福闹新春, 大小盘轮动, 三进兵, 网格, 趋势技术 are deliberately **unset** and therefore blocked.
+  Nothing was invented — the repo has already paid for one guess-based rule that permanently
+  discarded 287 of 549 strategies.
+- ⚠ **Measured consequence of the two gates: 1 of 13 families is currently eligible.** 红利低频
+  (全A) seeded 全A on 2026-10-16. Four are REJECTED on realizability (PT多策略, 小市值, ETF溢价,
+  打板短线) and eight BLOCKED — seven never validated, two have no champion under the active epoch.
+  So the pipeline's real bottleneck is **VAL coverage and realizability**, not integration, and
+  `node utils/integrate-queue.js` now reads `IDLE … the gate is upstream (/run-family)` almost
+  everywhere. That is the intended signal, not a fault.
+- ⚠ **A promoted INCUMBENT is not a family and must not be champion-resolved.** One side of an
+  incremental merge is the universe's promoted candidate, which may itself be a **merged** artifact
+  spanning two families — there is no champion of it to look up, and its own figures ARE the bar
+  because it is what the universe currently ships. `type-integrate-check.js` skips resolution for
+  `kind: 'merged'` / `promoted: true` and labels such a member by its `candidateId`, so a report
+  never says the bar was set by `null`.
+- ⚠ **Open gap I did not close**: eligibility checks the **VAL** sharpe, not the champion's TRAIN
+  sharpe. 红利低频 was seeded with a champion at TRAIN sharpe **1.46**, below the 1.5 every other
+  stage holds, because its VAL passed at 2.05. The spec says VAL, so this is as specified — but a
+  universe can currently ship a champion that fails the TRAIN gate.
 - ⚠⚠ **A parent/child pair is not an integration candidate** — `integrate-queue.js` refuses it
   structurally. `五福闹新春` declares `parent: [[ETF动量]]`, so it is a FORK of that family and
   already carries its mechanism; picking the better variant within one lineage is `/run-family`'s

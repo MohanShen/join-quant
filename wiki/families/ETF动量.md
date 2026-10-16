@@ -25,6 +25,8 @@ bestObjective: 0.4725
 memberCount: 29
 sources: { normalized: 27, study: 0, enhance: 0 }
 realism: "⚠ epoch-6 base objective 0.1868 / sharpe 1.41（epoch 2 的 0.2965 高估 59%）；收益 85% 在 2022 一年；11 只池写于 2026（2022 年初只有约 6 只有行情），换成 A 股宽基池 objective −0.27——池子是事后选成的必要条件，VAL 2024–25 对它不是干净样本外；零滑点台仍偏乐观（单持仓日频换仓）"
+realizability: 2
+realizabilityBasis: "etf-m2 round 2 candidate.json (ETF merge, 2026-10-16)"
 status: active
 updatedAt: 2026-10-15
 bestObjectiveEpoch: 6

@@ -12,15 +12,35 @@ read-only). This file is your contract and does not restate them.
 
 ## What is already decided before you start
 
-`node utils/integrate-queue.js --next` names a universe and its mergeable pairs. That part is
-deterministic: `universe:` is read from each family page, families are grouped, the promote and
-realizability floors are applied. **Do not re-litigate the universe.**
+`node utils/integrate-queue.js --next` names a universe, **one ARRIVAL**, and that universe's
+**promoted set**. All of that is deterministic — the universe, who is eligible
+(`integrate-eligible.js`: champion + passing VAL + realizability ≥ 2), the arrival ORDER (champion
+TRAIN sharpe, highest first) and what is currently promoted. **Do not re-litigate any of it.**
 
-What it hands you is *evidence*, not verdicts: each pair carries `edgesA`, `edgesB`, `shared` and
-`sameSet`. An edge name is a free-text label, not an identity — `规模` and `规模因子` are one
-mechanism in two spellings, while `动量` in 七星高照 (cross-sectional over 7 hand-picked ETFs, its
-own evidence says *not portable*) and in 趋势技术 (HS300 large caps) are two mechanisms under one
-word. Only a reader can tell. You are the reader.
+⚠ **The model is incremental, not all-pairs** (Revision 4, 2026-10-16). You are not surveying a
+universe for mergeable pairs. One family arrives against what the universe already ships, and your
+round ends in exactly one of three outcomes:
+
+| outcome | when | what you record |
+|---|---|---|
+| **1 — promote** | no promoted candidate overlaps the arrival's symbols | `action: 'promote'` for the arrival |
+| **2 — merge** | an overlapping incumbent, and the merge is BETTER | `promote` the merged candidate + `supersede` the incumbent |
+| **3 — reject** | an overlapping incumbent, and the merge fails | `reject` the ARRIVAL (never the incumbent) |
+
+⚠ **Multi-overlap**: if the arrival overlaps several promoted candidates, merge against the
+**highest-sharpe** one only — the promoted set is already ordered that way. One attempt per
+arrival; trying each in turn is a search over incumbents.
+
+⚠ A declared `parent:` lineage is already refused for you, deterministically. Edge names remain
+**annotation**: `规模` and `规模因子` are one mechanism in two spellings, while `动量` in 七星高照
+(cross-sectional over 7 hand-picked ETFs, its own evidence says *not portable*) and in 趋势技术
+(HS300 large caps) are two mechanisms under one word. Only a reader can tell. You are the reader.
+
+## Realizability is NOT your gate any more
+
+Every arrival has already cleared **realizability ≥ 2** at `/run-family`. Rule 4 stays in the
+guard as defence in depth and should never bind. Do not refuse an arrival on realizability — if
+you believe its score is wrong, say so and stop, because the fix belongs on the family page.
 
 ## Step 1 — symbol overlap, read from the SELECTION LOGIC
 
@@ -236,15 +256,44 @@ candidate. "The last VAL disappointed, so build another" is selection on VAL one
 after that the only clean surface left is the 2026 OOS reserve — nine months, two tests. Report it
 and stop. Never set `JQ_ALLOW_REVAL` or `JQ_ALLOW_OOS`; those are the human's switches.
 
-## Step 8 — record
+## Step 8 — record, in the PROMOTED REGISTER
+
+This is the step that makes the round mean anything: the register is what the next arrival meets.
+A round that ends without writing to it has changed nothing, and the sequence IS the model.
+
+```bash
+# outcome 1 — no overlap: the arrival is promoted
+node -e "require('./utils/promoted').record({universe:'<U>', action:'promote', \
+  candidateId:'<arrival champion sourceFile>', kind:'family', members:['<family>'], \
+  sharpe:<n>, objective:<n>, note:'no overlap with <incumbents> because …'})"
+
+# outcome 2 — the merge won
+node -e "require('./utils/promoted').record({universe:'<U>', action:'promote', \
+  candidateId:'<expId>', kind:'merged', members:['<A>','<B>'], sharpe:<n>, objective:<n>, note:'…'})"
+node -e "require('./utils/promoted').record({universe:'<U>', action:'supersede', \
+  candidateId:'<incumbent candidateId>', note:'superseded by <expId>'})"
+
+# outcome 3 — the merge failed: the incumbent STANDS, the ARRIVAL is rejected
+node -e "require('./utils/promoted').record({universe:'<U>', action:'reject', \
+  candidateId:'<arrival champion sourceFile>', note:'<why — required>'})"
+```
+
+⚠ A `reject` **requires a note** and is keyed to the **candidateId**, never the family: the spec is
+"rejected until this family has a new best variant", and a new champion is automatically a new
+candidateId and therefore a new attempt. Keying it to the family would retire a lineage on one
+failed merge.
+
+⚠ `epoch` is stamped from the live config and may not be passed — a caller that could choose it
+could launder a stale promotion into the current bench.
+
+Then, as before:
 
 ```bash
 node -e "require('./utils/consumption').record({key:'<universe>',kind:'type',stage:'integrate',runId:'<expId>',outcome:'<verdict>',note:'…'})"
 ```
 
-Then append the round to `wiki/types/<universe>.md` under `## 整合回合`, which
-`wiki-type-build.js` carries across verbatim. Record refusals and negative results too — a
-reasoned NO is a result, and the next round must not pay for it again.
+and append the round to `wiki/types/<universe>.md` under `## 整合回合`, which
+`wiki-type-build.js` carries across verbatim. Record refusals and negative results too.
 
 ## Do not
 
@@ -253,5 +302,10 @@ reasoned NO is a result, and the next round must not pay for it again.
 - Build on a `proposed`, `refuted` or `supersededBy` edge claim.
 - Sum deltas instead of measuring.
 - Enumerate combinations and keep the winner.
-- Re-derive the universe, or write a merge result onto a family page — it belongs to the type.
+- Re-derive the universe, eligibility, the arrival order or the promoted set — all deterministic.
+- Refuse an arrival on realizability; it already cleared that gate at `/run-family`.
+- Merge against anything other than the **highest-sharpe** overlapping incumbent.
+- Reject the INCUMBENT when a merge fails. A failed merge leaves it untouched.
+- End the round without writing the outcome to `utils/promoted.js`.
+- Write a merge result onto a family page — it belongs to the type.
 - Touch VAL during selection, or OOS at all.

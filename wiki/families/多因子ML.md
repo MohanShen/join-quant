@@ -25,6 +25,8 @@ bestObjective: 0.2139
 memberCount: 21
 sources: { normalized: 20, study: 0, enhance: 0 }
 realism: "epoch-6 头条 52.58% 年化 / 8.55% 回撤不可当作可实现水平：(a) 台仍零滑点，而最大单一收益来源是 6 只微盘周度轮换（q-e6-1）；(b) etf 腿收益全在 2022 且池为事后组装，2023 净拖累 −8.43pp（q-e6-2, q-audit）；(c) 日线台把盘中止损坍缩成收盘检查、隐藏盘中回撤（q-audit）；(d) 约 3.8pp 回撤保护挂在 n=4 的 1/4 月日历规则上（q-3, epoch 2）。源码审计未发现确证的未来函数——是不可实现，不是造假"
+realizability: 1
+realizabilityBasis: "xp-merge-1 candidate.json — its own realism says 不可当作可实现水平"
 status: active
 updatedAt: 2026-10-15
 bestObjectiveEpoch: 6
