@@ -48,7 +48,11 @@ const FILE = process.env.JQ_CONSUMPTION_FILE
  */
 const COLUMNS = ['key', 'kind', 'stage', 'runId', 'at', 'outcome', 'note', 'members', 'memberHash',
                  'epoch'];
-const KINDS = new Set(['strategy', 'family', 'concept', 'type']);
+// `candidate` is what an OOS test is charged to (utils/oos-budget.js): the reserve's
+// per-candidate limit is about one specific BOOK meeting the held-out data once, which is
+// neither a strategy file in the library nor a family. `stage: 'oos'` was already declared
+// below — the schema anticipated the stage and not the entity it belongs to.
+const KINDS = new Set(['strategy', 'family', 'concept', 'type', 'candidate']);
 // `research` is the merged loop (/run-family). `study` and `enhance` are its predecessors and
 // stay valid: they are what consumed a family before the merge, so staleness has to consider all
 // three or every already-researched family reads as untouched. See `lastConsumption`.

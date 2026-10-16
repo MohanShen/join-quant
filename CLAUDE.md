@@ -795,12 +795,32 @@ Only the directories whose contents aren't self-evident:
   ⚠ The data was **not** rewritten: `consumption.tsv` is append-only and `record()` stamps the live
   epoch on purpose, so no truthful epoch-6 row can be appended today. Fixing the READER fixes the
   class, and the blank epoch then blocks via the unknown-epoch rule, which is the right answer.
-- ⚠⚠ **The OOS budget is PRINTED but never ENFORCED.** `oosPolicy.maxTestsPerCandidate: 1` /
-  `maxTestsPerEpoch: 2` appear only in `harness-config.js`'s console output and a test asserting
-  the number went down. `assertNotOOS` guards the **window** (`JQ_ALLOW_OOS=1` required), but once
-  that flag is set **nothing counts tests** — unlike VAL, which has `utils/val-budget.js`. So the
-  ~9-month reserve can be spent repeatedly with no accounting. Anyone about to use OOS should build
-  the equivalent of `val-budget.js` for it first.
+- ⚠⚠ **The OOS budget was PRINTED and never ENFORCED, from epoch 3 until 2026-10-16.**
+  `oosPolicy.maxTestsPerCandidate: 1` / `maxTestsPerEpoch: 2` existed only in
+  `harness-config.js`'s console output and one test asserting the number went down. `assertNotOOS`
+  guarded the **window**, but once `JQ_ALLOW_OOS=1` was set **nothing counted the tests** — so the
+  repo's least recoverable surface was the only one with no budget, while VAL had `val-budget.js`.
+  **`utils/oos-budget.js` now enforces two independent limits**, checked in
+  `strategy-post-backtest.js` **before the browser opens** and recorded on completion:
+  **per candidate = 1, ABSOLUTE** (any epoch — re-testing one book on the reserve after a bench
+  change is still selection on OOS, one look at a time), and **per BENCH** for the repo-wide count.
+  ⚠ Per bench, not per epoch NUMBER: a scoring-only bump hands back no fresh 2026 data, so it must
+  not restore the reserve. That is the equality bug the VAL budget had, fixed here before it bit.
+  ⚠ **Two separate switches**: `JQ_ALLOW_OOS=1` unlocks the window, `JQ_ALLOW_OOS_OVERBUDGET=1`
+  only exceeds the budget. The window flag must not grant budget, or one legitimate first test
+  would silently authorize an unlimited number. Both are human-only; agents set neither.
+  ⚠ `touchesOOS(window)` is **shared** by the window gate and the budget gate — a second copy of
+  that rule would drift, and the budget would stop watching exactly the runs it exists for.
+  Only a **completed** run is charged: a compile-error or slow-skip saw no held-out data.
+  An unstamped or mis-filed row still counts (`outcome` matching `/^oos-/` wherever it was filed),
+  because the etfmom-005 mis-filing showed a stage filter can hide a spent test for weeks.
+  ⚠ **An honest limit**: a bump that *does* change the measurement hands back no new data either —
+  the same nine months re-priced. The declared policy says "per epoch", so that is what is
+  implemented; what genuinely helps is that the reserve is a **rolling** window
+  (`holdout.end: "today"`), so real calendar accumulates. Weigh that rather than trusting the
+  counter as a statement about leakage.
+  `consumption.js` gained the **`candidate`** kind for this; `stage: 'oos'` was already declared —
+  the schema had anticipated the stage but not the entity it belongs to.
 - ⚠⚠⚠ **The VAL budget was keyed on epoch EQUALITY, so two scoring-only bumps silently re-granted
   six validations.** `val-budget.check()` filtered prior VALs with `e.epoch === epoch`. Epochs 7
   and 8 changed only how results are JUDGED and left the measurement bench byte-identical, so an

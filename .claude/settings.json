@@ -59,6 +59,7 @@
       "Bash(node utils/integrate-queue.js:*)",
       "Bash(node utils/integrate-eligible.js:*)",
       "Bash(node utils/promoted.js:*)",
+      "Bash(node utils/oos-budget.js:*)",
       "Bash(node utils/series-rekey.js:*)",
       "Bash(node utils/wiki-concept-lint.js:*)",
       "Bash(node utils/normalize-sync.js:*)",

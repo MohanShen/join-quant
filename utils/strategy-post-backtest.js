@@ -69,11 +69,21 @@ const WINDOWS = Object.fromEntries(
 // --start/--end that overlaps 2025+. Only the user, for a private final test, may override
 // with JQ_ALLOW_OOS=1.
 const OOS_CUTOFF = harness.oosCutoff();
+/**
+ * Does this window reach into the reserved out-of-sample period? Shared by the window gate and
+ * the BUDGET gate rather than copied, so the two can never disagree about what counts as OOS —
+ * a second copy of that rule would be free to drift, and the budget would then stop watching
+ * exactly the runs it exists for.
+ */
+function touchesOOS(window) {
+  if (!window) return false;
+  // ISO dates compare lexicographically.
+  return (window.start && window.start >= OOS_CUTOFF) || (window.end && window.end >= OOS_CUTOFF);
+}
+
 function assertNotOOS(window) {
   if (!window || process.env.JQ_ALLOW_OOS === '1') return;
-  const touchesOOS = (window.start && window.start >= OOS_CUTOFF) ||
-                     (window.end && window.end >= OOS_CUTOFF);   // ISO dates compare lexicographically
-  if (touchesOOS) {
+  if (touchesOOS(window)) {
     throw new Error(
       // Message built from the active config: it used to hardcode epoch-2 dates and went
       // stale the moment the windows moved.
@@ -1219,6 +1229,34 @@ async function captureSeries(page, algorithmId, strategyPath, window, explicitSo
  * outcome of a backtest that already cost real minutes. But unlike captureSeries it SHOUTS,
  * because a missing row here means the next VAL for this family will be wrongly allowed.
  */
+/**
+ * Record a spent OOS test. Same contract as `recordValIfCompleted`: best-effort so a bookkeeping
+ * failure cannot change the outcome of a run that already cost real minutes, but it SHOUTS,
+ * because a missing row here means the reserve looks less spent than it is — and that is the
+ * resource nothing can restore.
+ *
+ * Only a COMPLETED run is charged. A compile-error or slow-skip produced no number, so it saw
+ * nothing of the held-out data and must not consume the budget — the rule VAL already follows.
+ */
+function recordOosIfCompleted(status, candidateId, family, runId, window, result) {
+  if (!touchesOOS(window) || status !== 'completed' || !candidateId) return;
+  try {
+    const r = (result && result.row) || {};
+    const wrote = require('./oos-budget').record(candidateId, runId, {
+      family,
+      outcome: r.sharpe ? `oos-sharpe ${r.sharpe}` : 'oos-completed',
+      note: `return ${r.return_ || '?'} maxdd ${r.maxdd || '?'} window ${window.start}..${window.end}`,
+    });
+    console.log(wrote
+      ? `OOS-SPENT\tcandidate=${candidateId}\trunId=${runId}`
+      : `[post] ⚠ OOS row for ${candidateId}/${runId} already existed — not double-counted`);
+  } catch (e) {
+    console.log(`[post] ⚠⚠ FAILED to record the OOS spend for ${candidateId}: ${String(e.message).slice(0, 120)}`);
+    console.log('[post]    Record it by hand, or the reserve will look less spent than it is:');
+    console.log(`[post]    node -e "require('./utils/oos-budget').record('${candidateId}','${runId}',{outcome:'completed'})"`);
+  }
+}
+
 function recordValIfCompleted(status, family, runId, window, result) {
   if (!window || window.name !== 'val' || status !== 'completed' || !family) return;
   try {
@@ -1270,6 +1308,27 @@ async function main() {
       process.exit(3);
     }
     if (v.reason === 'human-override') console.log(`[post] ⚠ ${v.why}`);
+  }
+
+  // ── OOS budget ────────────────────────────────────────────────────────────
+  // `assertNotOOS` has already decided whether the WINDOW may be touched at all (JQ_ALLOW_OOS=1).
+  // This is the separate question of whether there is any budget LEFT, and it went unenforced
+  // from epoch 3 until 2026-10-16: oosPolicy was printed by harness-config and counted nowhere,
+  // so the ~9-month reserve could be spent repeatedly with no record — while VAL, the less scarce
+  // surface, had val-budget.js watching it. Checked before the browser, like VAL.
+  const oosCandidateId = parsed.sourceFile
+    || path.relative(path.resolve(__dirname, '..'), strategyPath);
+  if (touchesOOS(window)) {
+    const oosBudget = require('./oos-budget');
+    const o = oosBudget.check(oosCandidateId, { family });
+    console.log(`OOS-BUDGET\tcandidate=${oosCandidateId}\tepoch=${oosBudget.activeEpoch()}\t` +
+                `used=${o.used}\tremaining=${o.remaining}\t` +
+                `${o.allowed ? 'allowed' : 'blocked'}\t${o.reason}`);
+    if (!o.allowed) {
+      console.error(`[post] ${o.why}`);
+      process.exit(3);
+    }
+    if (o.reason === 'human-override') console.log(`[post] ⚠ ${o.why}`);
   }
 
   const loader = new StrategyLoader();
@@ -1369,6 +1428,7 @@ async function main() {
     const st = reportResult(title, algorithmId, verified, window);
     if (st === 'completed') await captureSeries(editorPage, algorithmId, strategyPath, window, parsed.sourceFile);
     recordValIfCompleted(st, family, title, window, result);
+    recordOosIfCompleted(st, oosCandidateId, family, title, window, result);
     // Do NOT close editorPage — it IS the logged-in hub tab now (reused, not created).
     // Closing it would destroy the CDP session's cookie context. It's re-navigated next run.
 
@@ -1439,6 +1499,7 @@ async function main() {
     const st2 = reportResult(title, algorithmId, verified2, window);
     if (st2 === 'completed') await captureSeries(editorPage2, algorithmId, strategyPath, window, parsed.sourceFile);
     recordValIfCompleted(st2, family, title, window, result);
+    recordOosIfCompleted(st2, oosCandidateId, family, title, window, result);
     try { await editorPage2.close(); } catch {}
   }
 
