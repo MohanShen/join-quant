@@ -94,6 +94,8 @@ function families() {
     return {
       family: f.replace(/\.md$/, ''),
       universe: fmField(t, 'universe') || null,
+      // `parent: [[X]]` on the CHILD — the relation is stored once, never reciprocated.
+      parent: (fmField(t, 'parent').match(/\[\[([^\]]+)\]\]/) || [])[1] || null,
       edge: e.name,
       edgeStatus: e.status,
       edges: all,
@@ -178,8 +180,40 @@ function attempted(universe) {
   } catch { return []; }
 }
 
+/**
+ * Are these two families the same LINEAGE — one a declared ancestor of the other?
+ *
+ * ⚠⚠ Why this is a structural refusal and not a judgement call. A family is a lineage, and
+ * `parent:` is a declared frontmatter fact, so this sits in the same deterministic class as
+ * `universe:` rather than with the edge semantics the gatekeeper owns. Merging a family with its
+ * own parent is not integrating two return sources — the child is a FORK of the parent and
+ * already contains its mechanism by construction. Picking the better variant within one lineage
+ * is `/run-family`'s job; integration exists to combine lineages.
+ *
+ * Measured on the live queue (2026-10-16): ETF offered `ETF动量 × 五福闹新春` as a mergeable pair,
+ * and because the child's measured edge is named 趋势择时 while the parent's is 动量, the pair
+ * read as DIFFERENT edge sets — i.e. the queue presented a parent/child fork as the universe's
+ * most attractive "combine" candidate. Edge names cannot catch this; only the lineage can.
+ *
+ * Walks the chain rather than checking one hop, so a grandchild is caught too, and tolerates a
+ * cycle in the declarations instead of looping forever.
+ */
+function sameLineage(a, b, byName) {
+  for (const [from, to] of [[a, b], [b, a]]) {
+    let cur = from, hops = 0;
+    const seen = new Set();
+    while (cur && cur.parent && hops++ < 20 && !seen.has(cur.family)) {
+      seen.add(cur.family);
+      if (cur.parent === to.family) return { related: true, child: from.family, ancestor: to.family };
+      cur = byName.get(cur.parent);
+    }
+  }
+  return { related: false };
+}
+
 function build() {
   const fams = families().filter(f => f.universe);
+  const byName = new Map(fams.map(f => [f.family, f]));
   const known = refusals();
   const byU = {};
   for (const f of fams) (byU[f.universe] = byU[f.universe] || []).push(f);
@@ -205,6 +239,16 @@ function build() {
         const shared = ea.filter(x => eb.some(y => sameEdge(x, y)));
         const entry = { a: a.family, b: b.family, edgesA: ea, edgesB: eb, shared,
                         sameSet: shared.length === ea.length && shared.length === eb.length };
+        // Lineage first: a declared parent/child pair is refused structurally, so it can never
+        // reach the gatekeeper and spend a round on a fork of one family.
+        const lin = sameLineage(a, b, byName);
+        if (lin.related) {
+          refused.push({ ...entry, lineage: true,
+            why: `same lineage — ${lin.child} declares parent: [[${lin.ancestor}]]. A child is a `
+               + 'FORK of its parent and already carries its mechanism, so this is a within-lineage '
+               + 'variant choice (/run-family), not an integration of two return sources.' });
+          continue;
+        }
         const gk = known.get(pairKey(universe, a.family, b.family));
         if (gk) refused.push({ ...entry, why: gk.why, gatekeeper: true });
         else pairs.push(entry);

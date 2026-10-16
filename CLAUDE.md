@@ -399,6 +399,23 @@ Only the directories whose contents aren't self-evident:
   0.0301 at correlation 0.77. Recombining redundant things cannot fix redundancy, so the library
   needs orthogonal material from outside. `utils/factorlib-query.js` is the reader; the ideator
   gained an `external-factor` mode and the critic four rules for judging one.
+- ⚠⚠ **A parent/child pair is not an integration candidate** — `integrate-queue.js` refuses it
+  structurally. `五福闹新春` declares `parent: [[ETF动量]]`, so it is a FORK of that family and
+  already carries its mechanism; picking the better variant within one lineage is `/run-family`'s
+  job. The queue offered the pair anyway, and because the child's measured edge is named 趋势择时
+  while the parent's is 动量 it read as **DIFFERENT edge sets** — i.e. the ETF universe's most
+  attractive "combine" candidate was a fork of one family. **Edge names cannot catch lineage.**
+  `sameLineage()` walks the chain (so a grandchild is caught) and tolerates a declaration cycle;
+  it belongs in the deterministic layer because `parent:` is a declared frontmatter fact, the same
+  class as `universe:`.
+- **The ETF universe's ceiling is an ex-post pool, and epoch 7's bar is what makes it visible.**
+  Per-year objectives of the five baselines (free, from stored e6 curves): ETF动量 0.4889 / −0.0072
+  (**83%** of log-growth in 2022), 七星高照 0.3634 / −0.0651 (**82%**), 五福闹新春 0.5247 / 0.2454,
+  ETF溢价 0.6214 / 1.2905, PT多策略 2.8407 / 1.1870. The two pure momentum books are **negative in
+  2023**. Their realism blocks say why: ETF动量's 11-ETF pool was 「写于 2026」 and an A-share broad
+  pool scores **−0.27**; 七星高照's pool is 「事后选择且不可替换」 and the source's own 38-ETF pool
+  scores **0.0016**. So the measured 动量 edge is the POOL, not the ranking — and `趋势择时` is
+  **refuted** on all three momentum families.
 - ⚠⚠ **Factor-board numbers may never enter our tables.** zz500 / 3y / JQ's cost model is a
   different bench, and a result belongs to the bench that produced it (that is what the ledger's
   `epoch` column enforces). A factor earns a ledger row by being built and measured on OUR bench;

@@ -22,6 +22,7 @@ function famDir(pages) {
   for (const [name, p] of Object.entries(pages)) {
     fs.writeFileSync(path.join(d, name + '.md'),
       `---\nfamily: ${name}\nuniverse: ${p.u}\nbestObjective: ${p.obj}\nmemberCount: 1\n` +
+      (p.parent ? `parent: [[${p.parent}]]\n` : '') +
       `realism: "${p.realism || ''}"\n` +
       `edge:\n  - name: ${p.edge}\n    status: ${p.status}\n---\n\n# ${name}\n`);
   }
@@ -182,5 +183,72 @@ test('a gatekeeper refusal is durable', async (t) => {
       'a gatekeeper refusal must be reported with its reason, not dropped');
     assert.doesNotMatch(src, /if \(sameEdge\([^)]*\)\) refused\.push/,
       'the queue must not refuse on a shared edge — that is the gatekeeper\u2019s call now');
+  });
+});
+
+test('a parent/child pair is refused structurally, before the gatekeeper', async (t) => {
+  // ⚠⚠ The live regression this guards. `五福闹新春` declares `parent: [[ETF动量]]` — it is a FORK
+  // of that family — yet the queue offered the pair as mergeable, and because the child's measured
+  // edge is named 趋势择时 while the parent's is 动量 it read as DIFFERENT edge sets, i.e. as the
+  // ETF universe's most attractive "combine" candidate. Edge names cannot catch lineage; only the
+  // declared parent can. Merging a family with its own ancestor is a within-lineage variant choice
+  // (/run-family), not an integration of two return sources.
+
+  await t.test('the pair is refused and names the lineage as the reason', () => {
+    const rows = queueFor({
+      Parent: { u: 'ETF', obj: 0.5, edge: '动量', status: 'measured' },
+      Child: { u: 'ETF', obj: 0.6, edge: '趋势择时', status: 'measured', parent: 'Parent' },
+    });
+    const etf = rows.find(r => r.universe === 'ETF');
+    assert.strictEqual(etf.pairs.length, 0, 'a parent/child pair must not be offered as mergeable');
+    assert.strictEqual(etf.refused.length, 1);
+    assert.strictEqual(etf.refused[0].lineage, true);
+    assert.match(etf.refused[0].why, /same lineage/);
+    assert.match(etf.refused[0].why, /parent: \[\[Parent\]\]/);
+  });
+
+  await t.test('a refused-only universe still DELIVERS by promoting', () => {
+    // The refusal must not turn the universe into silence — every universe delivers something.
+    const rows = queueFor({
+      Parent: { u: 'ETF', obj: 0.5, edge: '动量', status: 'measured' },
+      Child: { u: 'ETF', obj: 0.6, edge: '趋势择时', status: 'measured', parent: 'Parent' },
+    });
+    const etf = rows.find(r => r.universe === 'ETF');
+    assert.strictEqual(etf.action, 'promote');
+    assert.strictEqual(etf.promote.family, 'Child');
+  });
+
+  await t.test('it walks the chain, so a GRANDchild is caught too', () => {
+    const rows = queueFor({
+      A: { u: 'ETF', obj: 0.5, edge: 'e1', status: 'measured' },
+      B: { u: 'ETF', obj: 0.6, edge: 'e2', status: 'measured', parent: 'A' },
+      C: { u: 'ETF', obj: 0.7, edge: 'e3', status: 'measured', parent: 'B' },
+    });
+    const etf = rows.find(r => r.universe === 'ETF');
+    // All three pairs are within one lineage: A-B, B-C and A-C (transitively).
+    assert.strictEqual(etf.pairs.length, 0, `expected no mergeable pair, got ${JSON.stringify(etf.pairs)}`);
+    assert.strictEqual(etf.refused.length, 3);
+    for (const r of etf.refused) assert.strictEqual(r.lineage, true);
+  });
+
+  await t.test('UNRELATED families in the same universe still pair', () => {
+    // The refusal must be about lineage, not about having a `parent:` field anywhere.
+    const rows = queueFor({
+      Parent: { u: 'ETF', obj: 0.5, edge: '动量', status: 'measured' },
+      Child: { u: 'ETF', obj: 0.6, edge: '趋势择时', status: 'measured', parent: 'Parent' },
+      Other: { u: 'ETF', obj: 0.4, edge: '均值回归', status: 'measured' },
+    });
+    const etf = rows.find(r => r.universe === 'ETF');
+    const open = etf.pairs.map(p => [p.a, p.b].sort().join('×')).sort();
+    assert.deepStrictEqual(open, ['Child×Other', 'Other×Parent']);
+  });
+
+  await t.test('a cycle in the declarations terminates instead of hanging', () => {
+    const rows = queueFor({
+      X: { u: 'ETF', obj: 0.5, edge: 'e1', status: 'measured', parent: 'Y' },
+      Y: { u: 'ETF', obj: 0.6, edge: 'e2', status: 'measured', parent: 'X' },
+    });
+    const etf = rows.find(r => r.universe === 'ETF');
+    assert.strictEqual(etf.pairs.length, 0);
   });
 });
