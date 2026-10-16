@@ -162,6 +162,28 @@ risk-side rather than edge. That is a reason to report the ceiling, not to spend
 discovering it. The guard flags this case as `all-parents-below-gate` — a warning, not a veto,
 since a blend *can* mechanically exceed both parents when correlation < 1.
 
+### The bar is the family CHAMPION, not the base you decomposed
+
+⚠⚠ You build a merge by decomposing the **base** pipelines — that is correct, it is what has a
+readable skeleton. You are judged against each family's **champion**, because rule 1 asks whether
+the merge beats what the universe would otherwise ship, and a universe ships its best family's
+champion (that is exactly what PROMOTE does).
+
+ETF round 2 conflated them and ran against a bar 0.38 too low:
+
+| family | base (supplied as the member) | champion (the actual bar) |
+|---|---|---|
+| ETF动量 | obj 0.1868, sharpe 1.41, worst year −0.0072 | obj **0.4725**, sharpe **2.23**, worst year **+0.3673** |
+| 七星高照 | obj 0.1252, sharpe 1.21, worst year −0.0651 | obj **0.3365**, sharpe **2.54** |
+
+Its candidates were reported as **+0.0274 uplift**; against the champions they lose by ~0.43.
+
+The guard now derives the bar itself from the ledger and flags
+`member-below-champion:<family>` if your `members[]` figure is lower. **You still supply the
+member block** — its `realizability` is your reading of the family page and nothing else can
+provide it — but put the champion's numbers and `sourceFile` in it, and say in your plan which
+variant you decomposed if that differs.
+
 ### Rule 1 is a PER-YEAR comparison (epoch 7)
 
 The bar is **not** the pooled TRAIN objective any more. Your candidate's **worst TRAIN calendar

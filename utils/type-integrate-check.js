@@ -51,6 +51,73 @@
  */
 
 const fs = require('fs');
+const path = require('path');
+
+const ROOT = path.resolve(__dirname, '..');
+const LEDGER = () => process.env.JQ_LEDGER || path.join(ROOT, 'harness/normalize-train.tsv');
+const PAGES = () => process.env.JQ_STRATEGY_PAGES || path.join(ROOT, 'wiki/strategies');
+
+/**
+ * sourceFile -> family. The assignment lives only on the strategy pages (`family:`), never in the
+ * ledger, and is never auto-written — see CLAUDE.md on `family-match.js`.
+ */
+function familyIndex() {
+  const idx = {};
+  let names = [];
+  try { names = fs.readdirSync(PAGES()).filter(f => f.endsWith('.md')); } catch { return idx; }
+  for (const f of names) {
+    const t = fs.readFileSync(path.join(PAGES(), f), 'utf8');
+    const fam = (t.match(/^family:\s*(.*)$/m) || [])[1];
+    const src = (t.match(/^sourceFile:\s*(.*)$/m) || [])[1];
+    if (fam && src) idx[src.trim()] = fam.trim();
+  }
+  return idx;
+}
+
+/**
+ * A family's CHAMPION: its best-objective row measured under an epoch the active one accepts.
+ *
+ * ⚠⚠ Why the guard derives this instead of trusting `members[].objective`. The bar is NOT a
+ * caller input — rule 1 asks whether the merge beats what the universe would otherwise ship, and
+ * what a universe otherwise ships is its best family's CHAMPION (that is literally what PROMOTE
+ * does). The ETF round-2 agent supplied each family's study BASELINE as the member, which is the
+ * right thing to DECOMPOSE a pipeline from and the wrong thing to be judged against:
+ *
+ *     ETF动量   base obj 0.1868 sharpe 1.41 worst-year -0.0072
+ *               CHAMPION 0.4725 sharpe 2.23 worst-year +0.3673
+ *     七星高照   base obj 0.1252 sharpe 1.21 worst-year -0.0651
+ *               CHAMPION 0.3365 sharpe 2.54
+ *
+ * So the round ran against a bar of -0.0072 when the real alternative was +0.3673, and its
+ * candidates were reported as +0.0274 uplift when against the champion they lose by ~0.35. It
+ * also made both parents look like gate failures (1.41 / 1.21) when every ETF champion clears
+ * 1.5. Same shape as the missing rule 0: the guard believed whatever it was handed.
+ *
+ * Deliberately reads the LEDGER and not `component-scan.members()`, which skips rows that have no
+ * stored curve — that would have silently picked a lesser row as 七星高照's champion (its real one
+ * has no curve) and understated the bar all over again, which is the very bug being fixed.
+ */
+function championOf(family, idx) {
+  const harness = require('./harness-config');
+  let text;
+  try { text = fs.readFileSync(LEDGER(), 'utf8'); } catch { return null; }
+  let best = null;
+  for (const line of text.split('\n').slice(1)) {
+    if (!line.trim()) continue;
+    const c = line.split('\t');
+    if (c[3] !== 'normalized') continue;
+    if ((idx[c[0]] || null) !== family) continue;
+    if (!harness.measurementValid(c[13] || null)) continue;
+    const obj = c[11] === 'DQ' ? null : parseFloat(c[11]);
+    if (!Number.isFinite(obj)) continue;
+    if (!best || obj > best.objective) {
+      best = { family, sourceFile: c[0], objective: obj,
+               annual: parseFloat(c[8]), sharpe: parseFloat(c[9]), maxdd: parseFloat(c[10]),
+               epoch: c[13] || null };
+    }
+  }
+  return best;
+}
 
 /** Measured re-run noise in this repo: the same file shifted annual return by ~0.15pp. */
 const NOISE_PP = 1.0;
@@ -140,16 +207,59 @@ function check(c) {
   }
 
   const num = v => (v == null || isNaN(parseFloat(v)) ? null : parseFloat(v));
-  const bestMember = members.reduce((a, b) => ((num(b.objective) ?? -Infinity) > (num(a.objective) ?? -Infinity) ? b : a));
-  const bestSharpe = Math.max(...members.map(m => num(m.sharpe) ?? -Infinity));
-  const meanAnnual = members.reduce((n, m) => n + (num(m.annual) ?? 0), 0) / members.length;
-  const maxAnnual = Math.max(...members.map(m => num(m.annual) ?? -Infinity));
-  const worstR = Math.min(...members.map(m => (m.realizability == null ? 5 : Number(m.realizability))));
 
   const cand = c.candidate || {};
   const reasons = [];
   const flags = [];
   let verdict = 'keep';
+
+  // Resolve the BAR from each family's champion, keeping the caller's realizability call (that
+  // one IS a reading of the family page, not a ledger fact). The caller's figures are kept for
+  // reporting so an understated bar is visible rather than quietly corrected.
+  const idx = familyIndex();
+  const resolved = members.map(m => {
+    const champ = m.family ? championOf(m.family, idx) : null;
+    const supplied = { objective: num(m.objective), sharpe: num(m.sharpe), annual: num(m.annual),
+                       maxdd: num(m.maxdd), sourceFile: m.sourceFile || null,
+                       epoch: m.epoch == null ? null : m.epoch };
+    // The champion wins when we can resolve one; otherwise the caller's figure, flagged.
+    const use = champ || { ...supplied, family: m.family };
+    return { family: m.family, supplied, champion: champ, use,
+             realizability: m.realizability == null ? 5 : Number(m.realizability),
+             window: m.window || 'train', seriesKey: m.seriesKey || null };
+  });
+
+  const UNDERSTATED_PP = 0.01;   // 1pp of objective — comfortably above re-run noise (~0.0015)
+  for (const r of resolved) {
+    if (!r.champion) {
+      flags.push(`champion-unresolved:${r.family}`);
+      reasons.push(`⚠ could not resolve a CHAMPION for ${r.family} from the ledger (no row ` +
+                   `valid under epoch ${harness.config().epoch}), so the bar falls back to the ` +
+                   "figure you supplied. Verify it IS the family's best before trusting the verdict.");
+      continue;
+    }
+    const gap = (r.champion.objective ?? -Infinity) - (r.supplied.objective ?? -Infinity);
+    if (Number.isFinite(gap) && gap > UNDERSTATED_PP) {
+      flags.push(`member-below-champion:${r.family}`);
+      reasons.push(`⚠⚠ the member you supplied for ${r.family} (objective ${r.supplied.objective}, ` +
+                   `sharpe ${r.supplied.sharpe}) is NOT its champion (${r.champion.objective}, ` +
+                   `sharpe ${r.champion.sharpe}, ${r.champion.sourceFile}). The bar is what the ` +
+                   'universe would otherwise SHIP, so the champion sets it — judged against the ' +
+                   'champion instead. Build from the base if that is what decomposes; be judged ' +
+                   'against the best.');
+    }
+  }
+
+  const barMembers = resolved.map(r => ({ ...r.use, family: r.family }));
+  const bestMember = barMembers.reduce((a, b) =>
+    ((num(b.objective) ?? -Infinity) > (num(a.objective) ?? -Infinity) ? b : a));
+  // ⚠ Two different aggregates, kept apart on purpose:
+  //   bar-side  (barMembers / champions) — rule 1: what the universe would otherwise ship.
+  //   leg-side  (supplied)               — rule 2: attribution among the things combined.
+  // Collapsing them is how the bar got understated in the first place.
+  const bestSharpe = Math.max(...resolved.map(r => r.supplied.sharpe ?? -Infinity));
+  const maxAnnual = Math.max(...resolved.map(r => r.supplied.annual ?? -Infinity));
+  const worstR = Math.min(...resolved.map(r => r.realizability));
 
   // Rule 0 — the STAGE GATE. Necessary, never sufficient.
   //
@@ -173,12 +283,16 @@ function check(c) {
   // rule 2 exists for — so "both parents fail" does not imply the candidate must. But a round
   // whose every parent fails the gate is spending backtest minutes on a ceiling it cannot clear,
   // and it should see that said out loud rather than infer it from three rejections.
-  const membersBelowGate = members.filter(m => !harness.stageGate('integrate', m.sharpe));
-  if (membersBelowGate.length === members.length) {
+  // ⚠ Measured on the CHAMPIONS, not on whatever legs the caller merged. Judged on the supplied
+  // legs this fired for ETF round 2 (bases at sharpe 1.41 / 1.21) while every ETF champion clears
+  // 1.5 — a false alarm that would have read as "this universe is hopeless" when the truth was
+  // "you merged the wrong things". The `member-below-champion` flag says that instead.
+  const belowGate = barMembers.filter(m => !harness.stageGate('integrate', m.sharpe));
+  if (belowGate.length === barMembers.length) {
     flags.push('all-parents-below-gate');
-    reasons.push(`⚠ every member is below the ${gateMin} gate ` +
-                 `(${members.map(m => `${m.family} ${m.sharpe}`).join(', ')}) — no merge of these ` +
-                 'parents is usable unless it clears a bar neither parent reaches, which is ' +
+    reasons.push(`⚠ every family CHAMPION is below the ${gateMin} gate ` +
+                 `(${barMembers.map(m => `${m.family} ${m.sharpe}`).join(', ')}) — no merge of ` +
+                 'these parents is usable unless it clears a bar no champion reaches, which is ' +
                  'precisely the pattern rule 2 treats as risk-side rather than edge');
   }
 
@@ -187,7 +301,9 @@ function check(c) {
   const beatsPooled = (num(cand.objective) ?? -Infinity) > (num(bestMember.objective) ?? -Infinity);
   let rule1 = null;
 
-  if (bar.basis === 'worstTrainYear') rule1 = worstYearRule(c, members);
+  // Against the CHAMPIONS, not the legs the caller merged — the bar is the alternative the
+  // universe would otherwise ship.
+  if (bar.basis === 'worstTrainYear') rule1 = worstYearRule(c, barMembers);
 
   if (rule1 && rule1.ok) {
     flags.push('bar=worstTrainYear');
@@ -233,6 +349,9 @@ function check(c) {
   // this is a real ATTRIBUTION: the decomposition says how much of the Sharpe is risk-side.
   // Without curves it falls back to the SIGNATURE test it has always been — sharpe up, return
   // not up — which detects the pattern but cannot quantify it.
+  // ⚠ Rule 2 stays on the SUPPLIED legs, deliberately — it asks whether the candidate's sharpe
+  // gain is explained by diversification among the things actually combined. That is a
+  // different question from rule 1's bar, which is the alternative we would otherwise ship.
   const decomp = decomposeMembers(members);
   const sharpeUp = (num(cand.sharpe) ?? 0) > bestSharpe;
   const returnUp = (num(cand.annual) ?? 0) > maxAnnual;

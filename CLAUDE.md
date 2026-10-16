@@ -290,6 +290,23 @@ Only the directories whose contents aren't self-evident:
   Sharpe mechanically whenever correlation < 1 and the gate IS a Sharpe threshold — 七星高照's
   blend scores sharpe 3.17 against legs of 2.85/1.60 and still loses to its own small-cap leg
   (0.4814 vs 0.5984). Beat the best MEMBER, not the gate.
+- ⚠⚠ **The integration bar is the family CHAMPION, and the guard derives it — it is not a caller
+  input.** ETF round 2 supplied each family's study BASELINE as the member, which is the right thing
+  to DECOMPOSE a pipeline from and the wrong thing to be judged against: ETF动量's base is objective
+  0.1868 / sharpe 1.41 / worst year −0.0072, its champion 0.4725 / 2.23 / **+0.3673**. So the round
+  reported **+0.0274 uplift** against a bar of −0.0072 when the real alternative was +0.3673 — against
+  the champion the same candidates lose by ~0.43. It also made both parents look like gate failures
+  (1.41 / 1.21) when every ETF champion clears 1.5. Rule 1 asks whether the merge beats what the
+  universe would **otherwise ship**, and that is literally what PROMOTE ships: the champion.
+  `championOf()` now resolves it from the ledger (best objective among rows `measurementValid()`
+  accepts) and flags `member-below-champion:<family>` when the caller understated it.
+  ⚠ It reads the **ledger**, not `component-scan.members()`, which skips rows with no stored curve —
+  that would have picked a lesser row as 七星高照's champion (its real one, a 三马/七星 combination
+  book, has no retrievable curve) and understated the bar all over again.
+  ⚠ **Two aggregates, kept apart**: the bar side uses champions (rule 1 — the alternative we would
+  ship), the leg side uses the supplied members (rule 2 — attribution among the things actually
+  combined). Collapsing them is what produced the bug, and it also made `all-parents-below-gate`
+  fire falsely on ETF.
 - ⚠⚠ **`type-integrate-check.js` never checked the stage gate.** It applied rules 1–4 and returned
   **`keep`** for ETF round-2 candidates at sharpe **0.94 and 0.91** against a threshold of 1.5;
   only the merge agent's own reading caught it. Rule 1's slogan — "beat the MEMBER, not the gate" —
@@ -418,10 +435,15 @@ Only the directories whose contents aren't self-evident:
   it belongs in the deterministic layer because `parent:` is a declared frontmatter fact, the same
   class as `universe:`.
 - **The ETF universe's ceiling is an ex-post pool, and epoch 7's bar is what makes it visible.**
-  Per-year objectives of the five baselines (free, from stored e6 curves): ETF动量 0.4889 / −0.0072
-  (**83%** of log-growth in 2022), 七星高照 0.3634 / −0.0651 (**82%**), 五福闹新春 0.5247 / 0.2454,
-  ETF溢价 0.6214 / 1.2905, PT多策略 2.8407 / 1.1870. The two pure momentum books are **negative in
-  2023**. Their realism blocks say why: ETF动量's 11-ETF pool was 「写于 2026」 and an A-share broad
+  Per-year objectives of the five **study BASELINES** (free, from stored e6 curves): ETF动量 0.4889 /
+  −0.0072 (**83%** of log-growth in 2022), 七星高照 0.3634 / −0.0651 (**82%**), 五福闹新春 0.5247 /
+  0.2454, ETF溢价 0.6214 / 1.2905, PT多策略 2.8407 / 1.1870. The two pure momentum BASELINES are
+  **negative in 2023**.
+  ⚠ These are baselines, **not** the families: every ETF CHAMPION clears the gate (PT多策略 1.8448
+  /sh 11.20, ETF溢价 0.7767/4.60, 五福闹新春 0.4848/2.37, ETF动量 0.4725/2.23, 七星高照 0.3365/2.54)
+  and ETF动量's champion has a worst year of **+0.3673**, not −0.0072. Do not quote a baseline as a
+  family's number — see the champion-bar note above.
+  The baselines' realism blocks say why they are 2022-shaped: ETF动量's 11-ETF pool was 「写于 2026」 and an A-share broad
   pool scores **−0.27**; 七星高照's pool is 「事后选择且不可替换」 and the source's own 38-ETF pool
   scores **0.0016**. So the measured 动量 edge is the POOL, not the ranking — and `趋势择时` is
   **refuted** on all three momentum families.

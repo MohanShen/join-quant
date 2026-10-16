@@ -160,6 +160,20 @@ TRAIN = 2022-01-01..2023-12-31，2022 是小盘行情年。所以**用 2022 的�
 会因为输给一个**没有任何单一成员能匹配的组合**而被拒——那不是与任何真实替代方案的比较。maximin 比的
 是同类：最稳健的那个成员，对候选自己最弱的那一年。
 
+**成员 = 家族 CHAMPION，不是你拆解的 base。** rule 1 问的是「这次合并是否打败了本 universe 本来
+就会交付的东西」，而 universe 交付的是最好家族的 champion（PROMOTE 就是这么做的）。拆解当然从
+base 走——那才有可读的流水线骨架——但**判定对标 champion**。ETF 第 2 回合把两者混为一谈，于是跑在一个
+低了 0.38 的 bar 上：ETF动量 base obj 0.1868 / sharpe 1.41 / 最差年 −0.0072，champion
+**0.4725 / 2.23 / +0.3673**；七星高照 base 0.1252 / 1.21，champion **0.3365 / 2.54**。该回合报出
+「+0.0274 uplift」，对标 champion 则是约 **−0.43**。bar 由 `championOf()` 从账本推导（在
+`measurementValid()` 接受的纪元里取 objective 最大的行），**不是调用方的输入**；调用方给低了会被标记
+`member-below-champion:<family>`。
+⚠ 它读**账本**而不是 `component-scan.members()`——后者会跳过没有曲线的行，那样会把一个较弱的行当成
+七星高照的 champion（它真正的 champion 是一本三马/七星组合书，没有可取回的曲线），于是又一次低估 bar。
+⚠ **两套聚合必须分开**：bar 侧用 champion（rule 1，我们本来会交付的替代品），腿侧用调用方给的成员
+（rule 2，对实际被组合的东西做归因）。把两者合并就是这个 bug 的成因，也让 `all-parents-below-gate`
+在 ETF 上误报。
+
 **汇总比较仍然打印，但不再否决**（`pooledIsVeto: false`）。它是证据：候选赢在稳健性、让出了量级时，
 回合必须说清自己要的是哪一个。
 

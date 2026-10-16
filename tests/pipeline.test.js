@@ -185,6 +185,88 @@ test('type integration guard', async t => {
     assert.notStrictEqual(r.verdict, 'reject', 'the parents failing must not veto the candidate');
   });
 
+  // ── the bar is the family CHAMPION, not the leg the caller merged ────────────
+  //
+  // ⚠⚠ The second bar bug, found 2026-10-16. The ETF round-2 agent supplied each family's study
+  // BASELINE as the member — the right thing to DECOMPOSE a pipeline from, the wrong thing to be
+  // judged against. ETF动量's base is objective 0.1868 / sharpe 1.41 with a worst year of
+  // -0.0072; its CHAMPION is 0.4725 / 2.23 with a worst year of +0.3673. So the round reported
+  // "+0.0274 uplift" against a bar of -0.0072 when the real alternative was +0.3673, and made
+  // both parents look like gate failures when every ETF champion clears 1.5.
+  //
+  // Rule 1 asks whether the merge beats what the universe would OTHERWISE SHIP, and that is the
+  // champion — it is literally what PROMOTE ships. The bar is therefore not a caller input.
+
+  await t.test('derives the bar from the ledger champion and flags an understated member', () => {
+    const d = fs.mkdtempSync(path.join(require('os').tmpdir(), 'tic-'));
+    const pages = path.join(d, 'pages');
+    fs.mkdirSync(pages);
+    fs.writeFileSync(path.join(pages, 'base.md'),
+      '---\nfamily: FAM\nsourceFile: strategies/base.py\n---\n');
+    fs.writeFileSync(path.join(pages, 'champ.md'),
+      '---\nfamily: FAM\nsourceFile: strategies/champ.py\n---\n');
+    fs.writeFileSync(path.join(pages, 'other.md'),
+      '---\nfamily: OTHER\nsourceFile: strategies/other.py\n---\n');
+    const ep = harness.config().epoch;
+    const row = (f, an, sh, dd, obj) =>
+      [f, '', '', 'normalized', '', '', '729', '100', an, sh, dd, obj, 'pass', ep].join('\t');
+    fs.writeFileSync(path.join(d, 'ledger.tsv'),
+      ['sourceFile\tpostId\ttitle\tstatus\tstart\tend\tdays\ttotal_pct\tannual_pct\tsharpe\tmaxdd_pct\tobjective\tgate\tepoch',
+       row('strategies/base.py', 36.15, 1.41, 17.47, 0.1868),
+       row('strategies/champ.py', 59.38, 2.23, 12.13, 0.4725),
+       row('strategies/other.py', 43.19, 2.54, 9.54, 0.3365)].join('\n') + '\n');
+
+    const prevL = process.env.JQ_LEDGER, prevP = process.env.JQ_STRATEGY_PAGES;
+    process.env.JQ_LEDGER = path.join(d, 'ledger.tsv');
+    process.env.JQ_STRATEGY_PAGES = pages;
+    try {
+      const r = check({
+        weights: 'equal',
+        // Beats the BASE it was handed (0.1868) and loses badly to the champion (0.4725).
+        candidate: { annual: 30, sharpe: 2.0, maxdd: 8, objective: 0.22 },
+        members: [member({ family: 'FAM', annual: 36.15, sharpe: 1.41, maxdd: 17.47, objective: 0.1868 }),
+                  member({ family: 'OTHER', annual: 43.19, sharpe: 2.54, maxdd: 9.54, objective: 0.3365 })],
+      });
+      assert.ok(r.flags.includes('member-below-champion:FAM'),
+        `expected the understated member to be flagged, got ${r.flags.join(', ')}`);
+      assert.ok(!r.flags.includes('member-below-champion:OTHER'),
+        'OTHER was supplied AS its champion and must not be flagged');
+      assert.strictEqual(r.bestMember, 'FAM', 'the bar comes from the champion, not the supplied leg');
+      assert.strictEqual(r.bestMemberObjective, 0.4725);
+      assert.strictEqual(r.verdict, 'reject');
+      // The candidate clears the gate, so the parents' own gate status must not be the reason.
+      assert.ok(!r.flags.includes('below-stage-gate'));
+      assert.ok(!r.flags.includes('all-parents-below-gate'),
+        'both champions clear 1.5, so this must not fire on the supplied legs');
+    } finally {
+      if (prevL === undefined) delete process.env.JQ_LEDGER; else process.env.JQ_LEDGER = prevL;
+      if (prevP === undefined) delete process.env.JQ_STRATEGY_PAGES; else process.env.JQ_STRATEGY_PAGES = prevP;
+    }
+  });
+
+  await t.test('says so when a champion cannot be resolved, instead of trusting silently', () => {
+    const d = fs.mkdtempSync(path.join(require('os').tmpdir(), 'tic-'));
+    fs.mkdirSync(path.join(d, 'pages'));
+    fs.writeFileSync(path.join(d, 'ledger.tsv'), 'sourceFile\n');
+    const prevL = process.env.JQ_LEDGER, prevP = process.env.JQ_STRATEGY_PAGES;
+    process.env.JQ_LEDGER = path.join(d, 'ledger.tsv');
+    process.env.JQ_STRATEGY_PAGES = path.join(d, 'pages');
+    try {
+      const r = check({
+        weights: 'equal',
+        candidate: { annual: 62, sharpe: 3.0, maxdd: 10, objective: 0.52 },
+        members: [member({ family: 'GONE', objective: 0.38 }), member({ family: 'ALSOGONE', objective: 0.33 })],
+      });
+      assert.ok(r.flags.some(f => f.startsWith('champion-unresolved:')));
+      assert.ok(r.reasons.some(x => /could not resolve a CHAMPION/.test(x)));
+      // Falls back to the supplied figure rather than refusing outright — but visibly.
+      assert.strictEqual(r.bestMemberObjective, 0.38);
+    } finally {
+      if (prevL === undefined) delete process.env.JQ_LEDGER; else process.env.JQ_LEDGER = prevL;
+      if (prevP === undefined) delete process.env.JQ_STRATEGY_PAGES; else process.env.JQ_STRATEGY_PAGES = prevP;
+    }
+  });
+
   await t.test('a passing candidate with passing parents raises neither flag', () => {
     const r = check({
       weights: 'equal',
