@@ -316,6 +316,29 @@ Only the directories whose contents aren't self-evident:
   those lands on the fallback. `node utils/series-backfill.js` is the zero-backtest-cost fix — it
   recovered 11 curves on 2026-10-16, though not 七星高照's champion (a 三马/七星 combination book,
   in the 52 unmatched).
+- ⚠⚠⚠ **63 curves were silently saved under a HIDDEN, unreadable key.**
+  `strategy-post-backtest.js` keyed the stored curve by `path.relative(ROOT, strategyPath)`, which
+  is right for a repo path and wrong for `strategy-normalize.js` — that writes a normalized COPY to
+  `/tmp/jq-normalize/<tag>.py` and runs the child on it, so the key became
+  `.._.._.._tmp_jq-normalize_<tag>__train__e6`. **Two things hid it for months**: the key starts
+  with a dot, so every `ls data/series/` listed none of them; and no reader could find them,
+  because every reader builds its key from the real `sourceFile`. So `loadComparable()` answered
+  "no curve" for curves sitting on disk.
+  This is why four family champions read as curveless, why `series-backfill.js` found **zero**
+  account matches for them (JQ had reaped the runs while the local capture existed all along), and
+  — once epoch 8 made the bar per-year sharpe — why the bar silently fell back to pooled.
+  ⚠ **I re-ran all four before finding this** (~23 backtest minutes) on the strength of the
+  backfill's zero matches. `ls -a data/series/` would have shown them. **Check for hidden files
+  before concluding a curve is unrecoverable.**
+  **Fixed in three places**: `--source-file` carries the LOGICAL identity (the normalizer passes
+  `strategies/<name>`); `logicalSourceFile()` **throws** on a path that escapes the repo rather than
+  writing a hidden file; and `node utils/series-rekey.js --dry` recovers the stranded ones.
+  It re-keyed **39** and skipped 24 whose target already existed — verified byte-identical, so the
+  skip rule is safe. Champion per-year coverage went **7/11 → 11/11**.
+  ⚠ Mapping uses the normalizer's tag, `(postId || basename).slice(0,8)`. Eight hex characters can
+  collide and a wrong curve corrupts every correlation and per-year bar built on it, so a tag
+  claimed by two sourceFiles is **skipped and reported, never guessed** — the same rule the
+  backfill applies to an ambiguous match.
 - ⚠⚠ **The curve store is LOSSY in a way the ledger is not**, and since epoch 8 that silently
   downgrades the integration bar. JQ reaps retained algorithms, so a row can be a current
   measurement while its daily curve is gone for good. Measured 2026-10-16: the four champions with

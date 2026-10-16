@@ -348,7 +348,14 @@ function main() {
 
     let out = '';
     try {
-      out = execFileSync('node', [POST_BT, tmp, `norm-${tag}`, '--window', opt.window, '--max-poll-min', String(MAX_POLL_MIN)],
+      // ⚠ `--source-file` is what the curve gets keyed by. The child runs `tmp`, a normalized
+      // COPY under /tmp, and without this it keyed the stored curve by that temp path — which
+      // produced `.._.._.._tmp_jq-normalize_<tag>__train__e6`, a HIDDEN file no reader could
+      // ever find. 63 curves were stranded that way before anyone noticed, because the epoch-8
+      // per-year bar needs them and reported "no curve" for curves sitting on disk.
+      out = execFileSync('node', [POST_BT, tmp, `norm-${tag}`, '--window', opt.window,
+                                  '--source-file', srcFile,
+                                  '--max-poll-min', String(MAX_POLL_MIN)],
         { encoding: 'utf8', timeout: PER_STRATEGY_TIMEOUT_MS, stdio: ['ignore', 'pipe', 'pipe'] });
     } catch (e) {
       out = (e.stdout || '') + (e.stderr || '');

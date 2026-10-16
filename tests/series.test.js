@@ -566,3 +566,104 @@ test('loadComparable — a scoring-only bump must not orphan the curve store', a
     assert.ok(r.tried.length >= 1);
   });
 });
+
+test('a curve is keyed by its LOGICAL source, never by the temp copy that ran', async t => {
+  // ⚠⚠ The incident, 2026-10-16. strategy-post-backtest derived the key from the file it was
+  // handed. That is right for a repo path and silently wrong for strategy-normalize.js, which
+  // runs a normalized COPY at /tmp/jq-normalize/<tag>.py — so the key became
+  // `.._.._.._tmp_jq-normalize_<tag>__train__e6`. Two things hid it completely: the key starts
+  // with a DOT so `ls data/series/` never listed the files, and no reader could find them because
+  // every reader builds its key from the real sourceFile. 63 curves were stranded, four family
+  // champions read as curveless, and the epoch-8 per-year bar silently fell back to pooled.
+  const rekey = require('../utils/series-rekey');
+
+  await t.test('the mangled pattern is recognised, and a normal key is not', () => {
+    assert.match('.._.._.._tmp_jq-normalize_406a1e4d__train__e6.json', rekey.MANGLED);
+    assert.doesNotMatch('2026-06-04_foo-406a1e4d__train__e6.json', rekey.MANGLED);
+    // The tag, window and epoch all have to come back out, or a re-key cannot be addressed.
+    const m = '.._.._.._tmp_jq-normalize_406a1e4d__train__e8.json'.match(rekey.MANGLED);
+    assert.deepStrictEqual([m[1], m[2], m[3]], ['406a1e4d', 'train', '8']);
+  });
+
+  await t.test('the executor REFUSES a path that escapes the repo instead of hiding it', () => {
+    // The fix is not just "pass --source-file"; an un-passed escape must fail loudly, because a
+    // silent hidden file is exactly how this survived months of use.
+    const src = fs.readFileSync(path.join(__dirname, '..', 'utils/strategy-post-backtest.js'), 'utf8');
+    assert.match(src, /function logicalSourceFile/);
+    assert.match(src, /rel\.startsWith\('\.\.'\)/,
+      'an escaping relative path must be detected');
+    assert.match(src, /--source-file/, 'the error must name the way out');
+    assert.match(src, /captureSeries\(editorPage, algorithmId, strategyPath, window, parsed\.sourceFile\)/,
+      'the explicit identity must actually reach captureSeries');
+  });
+
+  await t.test('the normalizer passes the strategies/ path, not its temp copy', () => {
+    const src = fs.readFileSync(path.join(__dirname, '..', 'utils/strategy-normalize.js'), 'utf8');
+    assert.match(src, /'--source-file', srcFile/);
+    // srcFile is the ledger identity; keying by anything else re-creates the bug.
+    assert.match(src, /const srcFile = 'strategies\/' \+ f;/);
+  });
+
+  await t.test('re-key never guesses: an ambiguous tag is skipped, a target is not overwritten', () => {
+    const os = require('os');
+    const d = fs.mkdtempSync(path.join(os.tmpdir(), 'rekey-'));
+    const sdir = path.join(d, 'series'); fs.mkdirSync(sdir);
+    const hdir = path.join(d, 'harness'); fs.mkdirSync(hdir);
+
+    // Two different sourceFiles sharing one 8-char tag — a wrong pick here would silently
+    // corrupt every correlation and per-year bar built on that curve.
+    fs.writeFileSync(path.join(hdir, 'normalize-train.tsv'),
+      ['sourceFile\tpostId\ttitle\tstatus',
+       'strategies/one.py\tdeadbeef\tA\tnormalized',
+       'strategies/two.py\tdeadbeef\tB\tnormalized',
+       'strategies/three.py\tcafe1234\tC\tnormalized'].join('\n') + '\n');
+    const body = JSON.stringify({ dates: ['2022-01-04'], cum: [1], benchCum: [0], points: 1 });
+    fs.writeFileSync(path.join(sdir, '.._.._.._tmp_jq-normalize_deadbeef__train__e6.json'), body);
+    fs.writeFileSync(path.join(sdir, '.._.._.._tmp_jq-normalize_cafe1234__train__e6.json'), body);
+    // …and a target that already exists must not be clobbered.
+    fs.writeFileSync(path.join(sdir, 'three__train__e6.json'), body);
+
+    const prevS = process.env.JQ_SERIES_DIR, prevH = process.env.JQ_HARNESS_DIR;
+    process.env.JQ_SERIES_DIR = sdir; process.env.JQ_HARNESS_DIR = hdir;
+    try {
+      const { moves, skipped } = rekey.plan();
+      assert.strictEqual(moves.length, 0, 'neither file is safely mappable');
+      assert.strictEqual(skipped.length, 2);
+      assert.ok(skipped.some(s => /claimed by 2 sourceFiles/.test(s.why)));
+      assert.ok(skipped.some(s => /already exists/.test(s.why)));
+    } finally {
+      if (prevS === undefined) delete process.env.JQ_SERIES_DIR; else process.env.JQ_SERIES_DIR = prevS;
+      if (prevH === undefined) delete process.env.JQ_HARNESS_DIR; else process.env.JQ_HARNESS_DIR = prevH;
+    }
+  });
+
+  await t.test('re-key rewrites the record\'s own sourceFile, not just the filename', () => {
+    const os = require('os');
+    const d = fs.mkdtempSync(path.join(os.tmpdir(), 'rekey2-'));
+    const sdir = path.join(d, 'series'); fs.mkdirSync(sdir);
+    const hdir = path.join(d, 'harness'); fs.mkdirSync(hdir);
+    fs.writeFileSync(path.join(hdir, 'normalize-train.tsv'),
+      ['sourceFile\tpostId\ttitle\tstatus', 'strategies/solo.py\tfeedface\tA\tnormalized'].join('\n') + '\n');
+    fs.writeFileSync(path.join(sdir, '.._.._.._tmp_jq-normalize_feedface__train__e6.json'),
+      JSON.stringify({ sourceFile: '../../../tmp/jq-normalize/feedface.py',
+                       dates: ['2022-01-04'], cum: [1], benchCum: [0], points: 1 }));
+
+    const prevS = process.env.JQ_SERIES_DIR, prevH = process.env.JQ_HARNESS_DIR;
+    process.env.JQ_SERIES_DIR = sdir; process.env.JQ_HARNESS_DIR = hdir;
+    try {
+      const { moves } = rekey.plan();
+      assert.strictEqual(moves.length, 1);
+      assert.strictEqual(rekey.apply(moves), 1);
+      const to = path.join(sdir, moves[0].to);
+      assert.ok(fs.existsSync(to));
+      assert.ok(!fs.existsSync(path.join(sdir, moves[0].from)), 'the original is renamed, not copied');
+      const rec = JSON.parse(fs.readFileSync(to, 'utf8'));
+      // Leaving the temp path inside the record keeps a second, stale copy of the identity.
+      assert.strictEqual(rec.sourceFile, 'strategies/solo.py');
+      assert.strictEqual(rec.rekeyedFrom, moves[0].from);
+    } finally {
+      if (prevS === undefined) delete process.env.JQ_SERIES_DIR; else process.env.JQ_SERIES_DIR = prevS;
+      if (prevH === undefined) delete process.env.JQ_HARNESS_DIR; else process.env.JQ_HARNESS_DIR = prevH;
+    }
+  });
+});

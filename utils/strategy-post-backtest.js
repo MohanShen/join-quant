@@ -122,7 +122,10 @@ function parseArgs(argv) {
   assertNotOOS(window);   // hard-block 2025+ OOS unless JQ_ALLOW_OOS=1
   assertValWindowNamesFamily(window, opt.family);
   return { strategyPath: positional[0], title: positional[1] || null, window, baseCapital,
-           family: opt.family || null };
+           family: opt.family || null,
+           // --source-file: the LOGICAL identity to key the stored curve by, when the file being
+           // run is not it. See captureSeries for what went wrong without this.
+           sourceFile: opt['source-file'] || null };
 }
 
 /**
@@ -1155,7 +1158,34 @@ async function verifyZeroResult(page, algorithmId, result) {
   }
 }
 
-async function captureSeries(page, algorithmId, strategyPath, window) {
+/**
+ * Resolve the LOGICAL source identity a curve is keyed by.
+ *
+ * ⚠⚠ The bug this exists for. This used to be `path.relative(ROOT, strategyPath)` unconditionally,
+ * which is right for a repo path (`enhance/candidates/x.py`) and silently wrong for the
+ * normalizer: it writes a normalized copy to `/tmp/jq-normalize/<tag>.py` and runs the child on
+ * THAT, so the key became `.._.._.._tmp_jq-normalize_<tag>__train__e6`. Two things then hid the
+ * damage for months — the key starts with a DOT so `ls data/series/` never listed the files, and
+ * no reader could ever find them because every reader builds its key from the real `sourceFile`.
+ * 63 curves were stranded this way (recovered by `utils/series-rekey.js`), which is also why four
+ * family champions read as curveless and why the epoch-8 per-year bar fell back to pooled.
+ *
+ * So a caller that runs a COPY must say what the copy stands for (`--source-file`), and a path
+ * that escapes the repo is refused loudly instead of becoming a hidden file.
+ */
+function logicalSourceFile(strategyPath, explicit) {
+  if (explicit) return explicit;
+  const rel = path.relative(path.resolve(__dirname, '..'), strategyPath);
+  if (rel.startsWith('..') || path.isAbsolute(rel)) {
+    throw new Error(
+      `cannot key a curve by ${rel} — it escapes the repo, so the key would start with a dot and ` +
+      'become an unreadable hidden file. Pass --source-file <the strategies/… path this copy ' +
+      'stands for>.');
+  }
+  return rel;
+}
+
+async function captureSeries(page, algorithmId, strategyPath, window, explicitSourceFile) {
   const series = require('./backtest-series');
   try {
     const found = await resolveCurveBacktestId(page, algorithmId);
@@ -1163,7 +1193,7 @@ async function captureSeries(page, algorithmId, strategyPath, window) {
 
     const raw = await series.fetchViaPage(page, found);
     const epoch = harness.config().epoch;
-    const sourceFile = path.relative(path.resolve(__dirname, '..'), strategyPath);
+    const sourceFile = logicalSourceFile(strategyPath, explicitSourceFile);
     const win = window ? window.name : 'adhoc';
     const rec = series.toRecord(raw, { sourceFile, backtestId: found, window: win, epoch });
     const key = series.seriesKey(sourceFile, win, epoch);
@@ -1337,7 +1367,7 @@ async function main() {
       : await pollUntilComplete(editorPage, algorithmId, { baseline: gate.baseline });
     const verified = await verifyZeroResult(editorPage, algorithmId, result);
     const st = reportResult(title, algorithmId, verified, window);
-    if (st === 'completed') await captureSeries(editorPage, algorithmId, strategyPath, window);
+    if (st === 'completed') await captureSeries(editorPage, algorithmId, strategyPath, window, parsed.sourceFile);
     recordValIfCompleted(st, family, title, window, result);
     // Do NOT close editorPage — it IS the logged-in hub tab now (reused, not created).
     // Closing it would destroy the CDP session's cookie context. It's re-navigated next run.
@@ -1407,7 +1437,7 @@ async function main() {
       : await pollUntilComplete(editorPage2, algorithmId, { baseline: gate2.baseline });
     const verified2 = await verifyZeroResult(editorPage2, algorithmId, result);
     const st2 = reportResult(title, algorithmId, verified2, window);
-    if (st2 === 'completed') await captureSeries(editorPage2, algorithmId, strategyPath, window);
+    if (st2 === 'completed') await captureSeries(editorPage2, algorithmId, strategyPath, window, parsed.sourceFile);
     recordValIfCompleted(st2, family, title, window, result);
     try { await editorPage2.close(); } catch {}
   }
