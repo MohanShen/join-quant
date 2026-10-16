@@ -783,6 +783,24 @@ Only the directories whose contents aren't self-evident:
   than one that is simply strict, so `candidate.json` now needs a `sourceFile` (or `seriesKey`) on
   the **candidate** as well as on every member; partial member coverage is also a fallback,
   because a bar computed over a subset silently omits whichever member might have set it.
+- ⚠⚠ **A VAL filed under the wrong STAGE was invisible to the budget.** `priorValidations()`
+  filtered `stage: 'validate'`, but `etfmom-005` sits under `stage: enhance` with
+  `outcome: val-pass` and a blank epoch — and `data/series/enhance_candidates_etfmom-005__val__e6.json`
+  proves the VAL-window run happened. So the budget reported **ETF动量 as never validated** while
+  that family's own §4 had already written down 「`val-budget.js` 只读 `validate` 阶段，所以它误报
+  ALLOWED——本族 epoch 6 的 VAL 视为已用」. The page knew; the code did not.
+  Now an `outcome` matching `/^val-/` counts wherever it was filed. Deliberately **narrow** — the
+  verdict shape, not any mention of "val" — because a false block is cheap to clear while a false
+  permit silently spends the one window.
+  ⚠ The data was **not** rewritten: `consumption.tsv` is append-only and `record()` stamps the live
+  epoch on purpose, so no truthful epoch-6 row can be appended today. Fixing the READER fixes the
+  class, and the blank epoch then blocks via the unknown-epoch rule, which is the right answer.
+- ⚠⚠ **The OOS budget is PRINTED but never ENFORCED.** `oosPolicy.maxTestsPerCandidate: 1` /
+  `maxTestsPerEpoch: 2` appear only in `harness-config.js`'s console output and a test asserting
+  the number went down. `assertNotOOS` guards the **window** (`JQ_ALLOW_OOS=1` required), but once
+  that flag is set **nothing counts tests** — unlike VAL, which has `utils/val-budget.js`. So the
+  ~9-month reserve can be spent repeatedly with no accounting. Anyone about to use OOS should build
+  the equivalent of `val-budget.js` for it first.
 - ⚠⚠⚠ **The VAL budget was keyed on epoch EQUALITY, so two scoring-only bumps silently re-granted
   six validations.** `val-budget.check()` filtered prior VALs with `e.epoch === epoch`. Epochs 7
   and 8 changed only how results are JUDGED and left the measurement bench byte-identical, so an

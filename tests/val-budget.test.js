@@ -132,6 +132,35 @@ test('VAL budget', async (t) => {
       'the budget is per (family, EPOCH) — a new bench grants a new validation');
   });
 
+  await t.test('a VAL filed under ANOTHER stage still counts as spent', () => {
+    // ⚠⚠ Live case: `etfmom-005` sits under stage `enhance` with outcome `val-pass`, and
+    // data/series/enhance_candidates_etfmom-005__val__e6.json proves the VAL-window run happened.
+    // Filtering on stage alone missed it and reported ETF动量 as never validated — while that
+    // family's own §4 had already written down that the budget 「误报 ALLOWED」 and the VAL should
+    // be treated as spent. The page knew; the code did not.
+    reset();
+    consumption.record({ key: '家族A', kind: 'family', stage: 'enhance',
+                         runId: 'cand-mis-filed', outcome: 'val-pass' });
+    const v = val.check('家族A');
+    assert.strictEqual(v.allowed, false,
+      'a validation recorded under the wrong stage is still a validation spent');
+    assert.match(v.why, /cand-mis-filed/, 'the refusal must name what spent it');
+  });
+
+  await t.test('the match is narrow — an ordinary outcome does not block', () => {
+    // A false block is cheap to clear; a false permit silently spends the one window. But
+    // over-matching "val" anywhere would block families that never validated, so the rule keys on
+    // the recorded verdict SHAPE (val-pass / val-fail) rather than the substring.
+    reset();
+    for (const outcome of ['reject', 'keep-with-caveat', 'promoted', 'logged-only', 'done',
+                           'sharpe 2.05', 'approval pending', 'interval swept']) {
+      consumption.record({ key: 'TEST家族', kind: 'family', stage: 'research',
+                           runId: 'r-' + outcome.slice(0, 4), outcome });
+    }
+    assert.strictEqual(val.check('TEST家族').allowed, true,
+      `none of those outcomes is a validation: ${val.check('TEST家族').why}`);
+  });
+
   await t.test('an UNKNOWN epoch blocks, because VAL cannot be un-spent', () => {
     // Rows written before consumption.tsv gained its epoch column carry none. Blocking is visible
     // and a human clears it in one command; permitting silently re-spends the protected resource.

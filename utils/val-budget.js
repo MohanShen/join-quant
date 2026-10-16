@@ -79,8 +79,30 @@ function activeEpoch() {
  * different conjunction. Promotion is unaffected: it ships a family champion that already spent
  * its own family-level VAL, and costs nothing here.
  */
+/**
+ * Every event that represents a COMPLETED validation for this key.
+ *
+ * ⚠⚠ Not just `stage: 'validate'`. A VAL recorded under another stage is still a VAL spent, and
+ * one exists: `etfmom-005` sits under `stage: enhance` with `outcome: val-pass` and a blank epoch,
+ * and `data/series/enhance_candidates_etfmom-005__val__e6.json` proves the VAL-window run really
+ * happened. Filtering on the stage alone missed it, so the budget reported ETF动量 as never
+ * validated — and ETF动量's own §4 had already noticed and written down that
+ * 「`val-budget.js` 只读 `validate` 阶段，所以它误报 ALLOWED——本族 epoch 6 的 VAL 视为已用」.
+ * The page knew; the code did not.
+ *
+ * So an `outcome` of the form `val-…` counts wherever it was filed. Deliberately narrow: it
+ * matches the recorded verdict shape (`val-pass` / `val-fail`), not any mention of "val", because
+ * over-matching would block a family that never validated — and a false block is cheap to clear
+ * while a false permit silently spends the one window.
+ *
+ * ⚠ The data is NOT rewritten. `consumption.tsv` is append-only and `record()` stamps the live
+ * epoch on purpose, so there is no way to append a truthful epoch-6 row today; correcting the
+ * READER fixes the whole class rather than this one instance. The blank epoch then blocks via the
+ * unknown-epoch rule, which is the right answer.
+ */
 function priorValidations(key, kind = 'family') {
-  return consumption.events({ stage: 'validate', kind, key });
+  const all = consumption.events({ kind, key });
+  return all.filter(e => e.stage === 'validate' || /^val-/i.test(String(e.outcome || '').trim()));
 }
 
 /**
