@@ -513,6 +513,29 @@ Only the directories whose contents aren't self-evident:
   this family has a new best variant", so the key is the champion's `sourceFile` (or a merged
   candidate's `expId`). A new best variant is a new `candidateId` and therefore a new attempt, with
   no expiry rule to get wrong — and one failed merge can never silently retire a lineage.
+- ⚠⚠⚠ **A passing VAL does not mean the CHAMPION was validated.** The exit gate checked "has a
+  champion" and "has a passing VAL" **independently**, and a family can satisfy each with a
+  DIFFERENT book. Caught 2026-10-16 while preparing an OOS run: 大小盘轮动's champion is the base
+  `2f5bc859` (objective 0.4567) while its one VAL — `dxp-imp-1-val`, sharpe 1.88 — ran on
+  `enhance/candidates/dxp-imp-1.py`, the always-small variant (objective 0.6623), **proven by the
+  stored curve `enhance_candidates_dxp-imp-1__val__e6`**. 混合 had already been SEEDED on that, so
+  an irreversible OOS test was about to be spent on a book nothing had validated. The seed is now
+  **withdrawn** (`supersede` row in `data/promoted.tsv`).
+  **The evidence is the stored VAL-window curve**, because `consumption.tsv` records *that* a VAL
+  happened and under which `runId` — never which FILE it ran. The key is
+  `seriesKey(sourceFile, 'val', epoch)`, so the curve names the book.
+  ⚠ An exact key match can **never** confirm: a VAL runs on `study/<fam>/baseline*.py` or
+  `enhance/candidates/*.py` (which carry pins), never on the raw `strategies/*.py` the ledger keys
+  on. So the rule is: a VAL on the family's **study baseline** validates the champion **iff
+  `base == bestVariant`**; a VAL on an `enhance/candidates/*` book never does, because a
+  constructed candidate is never a ledger row and therefore never the champion.
+  Measured across the library: **红利低频 and 打板短线 pass** (base == bestVariant, VAL on the base);
+  **PT多策略** (base fa0d3bd9 vs champion c70281d3), **小市值** (VAL on `xsz-imp-5`), **ETF溢价**
+  (VAL on `ep-imp-1`) and **大小盘轮动** (VAL on `dxp-imp-1`) all fail. So **1 of 13** families now
+  clears the gate, down from 2.
+  ⚠ This is **not** a realizability problem for 大小盘轮动 — `liq-1` confirmed R=2 by measurement.
+  It is that the family never settled on one book: TRAIN prefers imp-1 (0.6623 vs 0.4567) while its
+  VAL drew down **36%** against the base's 18%, and the page says 「采纳依据只在 TRAIN」.
 - **`/run-family` now has an EXIT GATE** (`utils/integrate-eligible.js`): a champion measured under
   a comparable epoch, a **VAL that PASSED** `stageGate('validate')`, and **realizability ≥ 2**.
   Rule 4 at the judge therefore never has to bind — nothing with an untradeable leg can arrive. The

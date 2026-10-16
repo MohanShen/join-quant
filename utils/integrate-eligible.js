@@ -102,6 +102,47 @@ function validationOf(family) {
   };
 }
 
+/**
+ * Is there a stored VAL-window curve under the CHAMPION's own key?
+ *
+ * Proof-by-artifact rather than by bookkeeping: `consumption.tsv` records that a VAL happened and
+ * under which runId, but not which FILE it ran — whereas the series key is
+ * `seriesKey(sourceFile, 'val', epoch)`, so a curve under the champion's key can only have come
+ * from running the champion. When it is absent, the VAL-window curves that DO exist usually name
+ * the book that was validated instead, which is the more useful half of the message.
+ */
+function championValidated(family, pageText) {
+  let series;
+  try { series = require('./backtest-series'); } catch { return { confirmed: false, why: 'no series module' }; }
+
+  const base = (pageText.match(/^base:\s*\[\[([^\]]+)\]\]/m) || [])[1] || null;
+  const best = (pageText.match(/^bestVariant:\s*\[\[([^\]]+)\]\]/m) || [])[1] || null;
+
+  // Which book did the VAL actually run? The series key encodes it.
+  const valKeys = series.list().filter(k => /__val__/.test(k));
+  const mine = valKeys.filter(k => k.includes(`_${family}_`) || k.startsWith(`study_${family}_`));
+  const onBase = mine.some(k => /^study_.+_baseline/.test(k));
+  const onCandidate = valKeys.filter(k => /^enhance_candidates_/.test(k));
+
+  if (onBase && base && best && base === best) {
+    return { confirmed: true, ranOn: mine.join(', '),
+             why: `the VAL ran on this family's study baseline, and base == bestVariant (${base}), ` +
+                  'so the book that met the held-out window IS the champion' };
+  }
+  if (onBase && base && best && base !== best) {
+    return { confirmed: false, ranOn: mine.join(', '),
+             why: `the VAL ran on this family's BASE (${base}) but the champion is a different ` +
+                  `member (${best}) — the base's held-out number says nothing about the champion` };
+  }
+  if (!mine.length && onCandidate.length) {
+    return { confirmed: false, ranOn: onCandidate.join(', '),
+             why: 'the only VAL-window curves are CONSTRUCTED candidates under enhance/candidates/, ' +
+                  'which are never ledger rows and therefore never the champion' };
+  }
+  return { confirmed: false, ranOn: mine.join(', ') || null,
+           why: 'no VAL-window curve can be tied to this champion' };
+}
+
 function assess(family) {
   const p = path.join(FAM_DIR(), `${family}.md`);
   if (!fs.existsSync(p)) return { family, eligible: false, status: 'unknown-family', why: 'no family page' };
@@ -128,6 +169,31 @@ function assess(family) {
   if (!val.passed) {
     return fail('rejected', `VAL ${val.runId} did not pass the ${harness.stageThreshold('validate')} ` +
                             `threshold (outcome: ${val.outcome})`);
+  }
+
+  // ⚠⚠ Did the VAL validate THIS champion, or a different book?
+  //
+  // This gate used to check "has a champion" and "has a passing VAL" INDEPENDENTLY, which silently
+  // accepted a family whose validation was run on something else. Measured 2026-10-16:
+  // 大小盘轮动's champion is the base 2f5bc859 (objective 0.4567) while its one VAL,
+  // `dxp-imp-1-val`, ran on `enhance/candidates/dxp-imp-1.py` — the always-small variant
+  // (objective 0.6623), a different file. Its own page says that adoption rests on TRAIN only
+  // (「采纳依据只在 TRAIN」) and that imp-1's VAL drew down 36% where the base drew 18%. So the
+  // family had no agreed candidate at all, and the gate was about to let an irreversible OOS test
+  // be spent on a book nothing had validated.
+  //
+  // The evidence is the stored VAL-window curve: its key is seriesKey(sourceFile, 'val', epoch),
+  // so a curve under the CHAMPION's key is proof the champion itself met the held-out window.
+  // ⚠ Absence is treated as BLOCKING, not as permission — consistent with the unknown-blocks rule
+  // the VAL budget uses. A human clears it in one command; permitting silently pairs a number with
+  // a book that never produced it.
+  const vc = championValidated(family, t);
+  if (!vc.confirmed) {
+    return fail('blocked',
+      `its one VAL (${val.runId}) did not validate the CHAMPION: ${vc.why}. A validation of a ` +
+      'different book is not a validation of this one, so the family has no agreed candidate to ' +
+      'carry forward. Settle it on ONE book, or re-validate the champion (which needs the human ' +
+      'VAL override, since the budget is spent).');
   }
   if (realizability == null || Number.isNaN(realizability)) {
     // Unknown blocks rather than permits — see the header.
@@ -175,4 +241,5 @@ if (require.main === module) {
   }
 }
 
-module.exports = { assess, all, championOf, validationOf, familyIndex, MIN_REALIZABILITY };
+module.exports = { assess, all, championOf, validationOf, championValidated,
+                   familyIndex, MIN_REALIZABILITY };

@@ -47,6 +47,7 @@ function world(families) {
       `---\nfamily: ${name}\nuniverse: ${f.u}\n` +
       (f.parent ? `parent: [[${f.parent}]]\n` : '') +
       (f.R == null ? '' : `realizability: ${f.R}\n`) +
+      `base: [[${f.base || name + '-base'}]]\nbestVariant: [[${f.best || f.base || name + '-base'}]]\n` +
       `bestObjective: ${f.obj}\nmemberCount: 1\nrealism: "${f.realism || ''}"\n` +
       `edge:\n${edges}\nstatus: active\n---\n\n# ${name}\n`);
 
@@ -65,20 +66,30 @@ function world(families) {
   }
   fs.writeFileSync(path.join(d, 'ledger.tsv'), ledger.join('\n') + '\n');
   fs.writeFileSync(path.join(d, 'consumption.tsv'), consumption.join('\n') + '\n');
-  return { dir: d, famDir, pageDir,
+
+  // VAL-window curves. `valOn: 'base'` writes study_<fam>_baseline__val__eN (the family's own
+  // base met the window); `valOn: 'candidate'` writes enhance_candidates_<fam>-imp-1__val__eN
+  // (a CONSTRUCTED book met it, which is never a ledger row and so never the champion).
+  const sdir = path.join(d, 'series'); fs.mkdirSync(sdir);
+  const curve = JSON.stringify({ dates: ['2024-01-02'], cum: [1], benchCum: [0], points: 1 });
+  for (const [name, f] of Object.entries(families)) {
+    if (f.valOn === 'base') fs.writeFileSync(path.join(sdir, `study_${name}_baseline__val__e${ep}.json`), curve);
+    if (f.valOn === 'candidate') fs.writeFileSync(path.join(sdir, `enhance_candidates_${name}-imp-1__val__e${ep}.json`), curve);
+  }
+  return { dir: d, famDir, pageDir, series: sdir,
            ledger: path.join(d, 'ledger.tsv'),
            consumption: path.join(d, 'consumption.tsv'),
            promoted: path.join(d, 'promoted.tsv') };
 }
 
 const MODULES = ['../utils/integrate-queue', '../utils/integrate-eligible', '../utils/promoted',
-                 '../utils/val-budget', '../utils/consumption'];
+                 '../utils/val-budget', '../utils/consumption', '../utils/backtest-series'];
 
 /** Run `fn` with the fixture's stores in force, with the modules reloaded around it. */
 function inWorld(w, fn) {
   const envs = {
     JQ_FAMILIES_DIR: w.famDir, JQ_STRATEGY_PAGES: w.pageDir, JQ_LEDGER: w.ledger,
-    JQ_CONSUMPTION_FILE: w.consumption, JQ_PROMOTED_FILE: w.promoted,
+    JQ_CONSUMPTION_FILE: w.consumption, JQ_PROMOTED_FILE: w.promoted, JQ_SERIES_DIR: w.series,
     JQ_REFUSALS_FILE: path.join(w.dir, 'refusals.tsv'),
   };
   const prev = {};
@@ -104,7 +115,7 @@ const row = (u, rows) => rows.find(r => r.universe === u);
 
 test('the /run-family exit gate', async t => {
   await t.test('a family with a champion, a passing VAL and R>=2 is eligible', () => {
-    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3 } });
+    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base' } });
     inWorld(w, ({ eligible }) => {
       const a = eligible.assess('A');
       assert.strictEqual(a.status, 'eligible');
@@ -122,14 +133,14 @@ test('the /run-family exit gate', async t => {
   });
 
   await t.test('a FAILING VAL rejects, and a stale-epoch VAL blocks', () => {
-    const failed = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 0.9, R: 3 } });
+    const failed = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 0.9, R: 3, valOn: 'base' } });
     inWorld(failed, ({ eligible }) => {
       const a = eligible.assess('A');
       assert.strictEqual(a.status, 'rejected');
       assert.match(a.why, /did not pass/);
     });
     // Epoch 2 predates the execution pins, so its VAL is not a current result.
-    const stale = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 9.9, valEpoch: 2, R: 3 } });
+    const stale = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 9.9, valEpoch: 2, R: 3, valOn: 'base' } });
     inWorld(stale, ({ eligible }) => {
       const a = eligible.assess('A');
       assert.strictEqual(a.status, 'blocked');
@@ -138,7 +149,7 @@ test('the /run-family exit gate', async t => {
   });
 
   await t.test('R=1 is REJECTED — rule 4 therefore never has to bind at the judge', () => {
-    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 1 } });
+    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 1, valOn: 'base' } });
     inWorld(w, ({ eligible }) => {
       const a = eligible.assess('A');
       assert.strictEqual(a.status, 'rejected');
@@ -151,7 +162,7 @@ test('the /run-family exit gate', async t => {
     // clears it with one edit, whereas permitting silently ships an unrealizable book.
     // ⚠ It must not be inferred from the 不可实现 regex either — 打板短线 does not match it and
     // was still scored 1 on evidence.
-    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: null } });
+    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: null, valOn: 'base' } });
     inWorld(w, ({ eligible }) => {
       const a = eligible.assess('A');
       assert.strictEqual(a.status, 'blocked');
@@ -160,9 +171,42 @@ test('the /run-family exit gate', async t => {
   });
 
   await t.test('a champion on a superseded bench blocks', () => {
-    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, championEpoch: 2 } });
+    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, championEpoch: 2, valOn: 'base' } });
     inWorld(w, ({ eligible }) => {
       assert.match(eligible.assess('A').why, /no champion measured under epoch/);
+    });
+  });
+
+  await t.test('a VAL that ran on a DIFFERENT book does not validate the champion', () => {
+    // ⚠⚠ The live defect, 2026-10-16. The gate checked "has a champion" and "has a passing VAL"
+    // INDEPENDENTLY, and 大小盘轮动 satisfied each with a different book: champion = base
+    // 2f5bc859 (objective 0.4567) while its one VAL (dxp-imp-1-val) ran on
+    // enhance/candidates/dxp-imp-1.py (0.6623), proven by the stored curve
+    // enhance_candidates_dxp-imp-1__val__e6. 混合 had been SEEDED on that, so an irreversible OOS
+    // test was about to be spent on a book nothing had validated.
+    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'candidate' } });
+    inWorld(w, ({ eligible }) => {
+      const a = eligible.assess('A');
+      assert.strictEqual(a.status, 'blocked');
+      assert.match(a.why, /did not validate the CHAMPION/);
+      assert.match(a.why, /enhance\/candidates\/|CONSTRUCTED candidates/);
+    });
+  });
+
+  await t.test('a VAL on the base validates the champion only when base == bestVariant', () => {
+    // PT多策略's shape: the VAL ran on the base (fa0d3bd9) while the champion is a different
+    // member (c70281d3). The base's held-out number says nothing about the champion.
+    const same = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base',
+                              base: 'b1', best: 'b1' } });
+    inWorld(same, ({ eligible }) => {
+      assert.strictEqual(eligible.assess('A').status, 'eligible');
+    });
+    const differ = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base',
+                                base: 'b1', best: 'other-member' } });
+    inWorld(differ, ({ eligible }) => {
+      const a = eligible.assess('A');
+      assert.strictEqual(a.status, 'blocked');
+      assert.match(a.why, /ran on this family's BASE/);
     });
   });
 });
@@ -171,7 +215,7 @@ test('the /run-family exit gate', async t => {
 
 test('the promoted register', async t => {
   await t.test('replays promote then supersede, and stamps the epoch itself', () => {
-    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3 } });
+    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base' } });
     inWorld(w, ({ promoted }) => {
       promoted.record({ universe: 'U', action: 'promote', candidateId: 'c1', sharpe: 2.0 });
       assert.strictEqual(promoted.current('U').length, 1);
@@ -187,7 +231,7 @@ test('the promoted register', async t => {
   });
 
   await t.test('orders strongest sharpe first — the multi-overlap merge target', () => {
-    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3 } });
+    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base' } });
     inWorld(w, ({ promoted }) => {
       promoted.record({ universe: 'U', action: 'promote', candidateId: 'weak', sharpe: 1.6 });
       promoted.record({ universe: 'U', action: 'promote', candidateId: 'strong', sharpe: 3.1 });
@@ -196,7 +240,7 @@ test('the promoted register', async t => {
   });
 
   await t.test('a reject demands a reason, and is keyed to the CANDIDATE not the family', () => {
-    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3 } });
+    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base' } });
     inWorld(w, ({ promoted }) => {
       assert.throws(() => promoted.record({ universe: 'U', action: 'reject', candidateId: 'x' }),
         /needs a note/);
@@ -209,7 +253,7 @@ test('the promoted register', async t => {
   });
 
   await t.test('an unknown action is refused rather than silently appended', () => {
-    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3 } });
+    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base' } });
     inWorld(w, ({ promoted }) => {
       assert.throws(() => promoted.record({ universe: 'U', action: 'ship', candidateId: 'x' }),
         /action must be one of/);
@@ -221,7 +265,7 @@ test('the promoted register', async t => {
 
 test('the incremental round', async t => {
   await t.test('an empty universe SEEDS its first eligible arrival, no judgement needed', () => {
-    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3 } });
+    const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base' } });
     inWorld(w, ({ queue }) => {
       const r = row('U', queue.build());
       assert.strictEqual(r.action, 'seed');
@@ -232,8 +276,8 @@ test('the incremental round', async t => {
 
   await t.test('arrivals are ordered by CHAMPION SHARPE — sequence defines the bar', () => {
     const w = world({
-      Weak:   { u: 'U', obj: 0.9, sharpe: 1.7, val: 2.1, R: 3 },
-      Strong: { u: 'U', obj: 0.2, sharpe: 4.4, val: 2.1, R: 3 },
+      Weak:   { u: 'U', obj: 0.9, sharpe: 1.7, val: 2.1, R: 3, valOn: 'base' },
+      Strong: { u: 'U', obj: 0.2, sharpe: 4.4, val: 2.1, R: 3, valOn: 'base' },
     });
     inWorld(w, ({ queue }) => {
       const r = row('U', queue.build());
@@ -245,8 +289,8 @@ test('the incremental round', async t => {
 
   await t.test('with something promoted, the action is INTEGRATE — overlap is the agent\'s call', () => {
     const w = world({
-      A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3 },
-      B: { u: 'U', obj: 0.4, sharpe: 1.8, val: 2.1, R: 3 },
+      A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base' },
+      B: { u: 'U', obj: 0.4, sharpe: 1.8, val: 2.1, R: 3, valOn: 'base' },
     });
     inWorld(w, ({ queue, promoted }) => {
       promoted.record({ universe: 'U', action: 'promote', candidateId: 'strategies/A.py', sharpe: 2.0 });
@@ -259,8 +303,8 @@ test('the incremental round', async t => {
 
   await t.test('outcome 3: a rejected arrival leaves the queue until a NEW champion', () => {
     const w = world({
-      A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3 },
-      B: { u: 'U', obj: 0.4, sharpe: 1.8, val: 2.1, R: 3 },
+      A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base' },
+      B: { u: 'U', obj: 0.4, sharpe: 1.8, val: 2.1, R: 3, valOn: 'base' },
     });
     inWorld(w, ({ queue, promoted }) => {
       promoted.record({ universe: 'U', action: 'promote', candidateId: 'strategies/A.py', sharpe: 2.0 });
@@ -278,9 +322,9 @@ test('the incremental round', async t => {
 
   await t.test('an ineligible family never becomes an arrival, and says why', () => {
     const w = world({
-      Good: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3 },
+      Good: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base' },
       NoVal: { u: 'U', obj: 0.9, sharpe: 9.9, R: 3 },
-      Unreal: { u: 'U', obj: 0.9, sharpe: 8.8, val: 2.1, R: 1 },
+      Unreal: { u: 'U', obj: 0.9, sharpe: 8.8, val: 2.1, R: 1, valOn: 'base' },
     });
     inWorld(w, ({ queue }) => {
       const r = row('U', queue.build());
@@ -303,9 +347,9 @@ test('the incremental round', async t => {
 
   await t.test('--next prefers a free SEED over a backtest-spending INTEGRATE', () => {
     const w = world({
-      A: { u: 'Seeded', obj: 0.5, sharpe: 5.0, val: 2.1, R: 3 },
-      B: { u: 'Seeded', obj: 0.4, sharpe: 4.0, val: 2.1, R: 3 },
-      C: { u: 'Fresh', obj: 0.3, sharpe: 1.6, val: 2.1, R: 3 },
+      A: { u: 'Seeded', obj: 0.5, sharpe: 5.0, val: 2.1, R: 3, valOn: 'base' },
+      B: { u: 'Seeded', obj: 0.4, sharpe: 4.0, val: 2.1, R: 3, valOn: 'base' },
+      C: { u: 'Fresh', obj: 0.3, sharpe: 1.6, val: 2.1, R: 3, valOn: 'base' },
     });
     inWorld(w, ({ queue, promoted }) => {
       promoted.record({ universe: 'Seeded', action: 'promote', candidateId: 'strategies/A.py', sharpe: 5.0 });
@@ -320,8 +364,8 @@ test('the incremental round', async t => {
     // edges are named 趋势择时 vs 动量, so the pair read as the most attractive "combine" in the
     // universe while being a FORK of one family.
     const w = world({
-      Parent: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, edges: [['动量', 'measured']] },
-      Child: { u: 'U', obj: 0.6, sharpe: 1.9, val: 2.1, R: 3, parent: 'Parent',
+      Parent: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base', edges: [['动量', 'measured']] },
+      Child: { u: 'U', obj: 0.6, sharpe: 1.9, val: 2.1, R: 3, parent: 'Parent', valOn: 'base',
                edges: [['趋势择时', 'measured']] },
     });
     inWorld(w, ({ queue, promoted }) => {
