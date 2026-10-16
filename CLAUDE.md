@@ -316,6 +316,19 @@ Only the directories whose contents aren't self-evident:
   those lands on the fallback. `node utils/series-backfill.js` is the zero-backtest-cost fix — it
   recovered 11 curves on 2026-10-16, though not 七星高照's champion (a 三马/七星 combination book,
   in the 52 unmatched).
+- ⚠⚠ **The curve store is LOSSY in a way the ledger is not**, and since epoch 8 that silently
+  downgrades the integration bar. JQ reaps retained algorithms, so a row can be a current
+  measurement while its daily curve is gone for good. Measured 2026-10-16: the four champions with
+  no curve (七星高照, 五福闹新春, 大小盘轮动, 小市值) matched **zero of 3,796** cached account curves,
+  **tight and relaxed** — `series-backfill.js` cannot recover them at any tolerance, so a re-run is
+  the only way back. (One of them, 大小盘轮动, is *reported* AMBIGUOUS by the backfill, but that
+  ambiguity belongs to its epoch-2 reconstructed row, not to the epoch-6 champion — read which row
+  the warning is about before assuming the curve is recoverable.)
+- **`strategy-normalize.js --redo`** re-measures files that already carry a valid terminal row —
+  the only path to a lost curve. ⚠ **Guarded to an explicit `--files` list**: a bare `--redo` exits
+  2, because without that guard it re-bills the whole 215-strategy library, the same shape of
+  accident as the missing `require.main` guard that once spent 42 backtest minutes. The new row
+  APPENDS and newest-row-wins makes it authoritative; expect ~0.15pp of re-run drift.
 - `JQ_SERIES_DIR` redirects `data/series/` for the same reason `JQ_DAILY_STATE_DIR` and
   `JQ_CONSUMPTION_FILE` exist: a test writing probe curves into the real store would put fiction
   into the thing every bar is computed from. It is resolved per call, so a test can set it after the

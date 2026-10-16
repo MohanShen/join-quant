@@ -546,3 +546,40 @@ dbt('an existing page gets its measurement, without losing anything', async (t) 
     dba.match(normalizedLine(M), /epoch: 6.*sharpe: -0\.48.*gate: fail/);
   });
 });
+
+test('--redo re-measures already-valid rows, but only behind an explicit --files list', async t => {
+  // Why --redo exists: the curve store is LOSSY in a way the ledger is not. JQ reaps retained
+  // algorithms, so a row can be a current measurement while its daily curve is gone — measured
+  // 2026-10-16, four family champions matched ZERO of 3,796 cached account curves at any
+  // tolerance, so series-backfill (the free path) could not recover them. Since epoch 8 the
+  // integration bar is per-year sharpe off those curves, so a missing curve silently downgrades
+  // the bar to the pooled fallback.
+  const execFileSync = require('child_process').execFileSync;
+  const norm = path.join(UTILS, 'strategy-normalize.js');
+
+  await t.test('refuses a bulk redo — it would re-bill the whole library', () => {
+    // The guard matters because the failure is expensive and silent: a bare require of this file
+    // once started a 214-strategy batch and spent 42 backtest minutes before being killed.
+    let code = 0, out = '';
+    try {
+      out = execFileSync(process.execPath, [norm, '--window', 'train', '--redo', '--dry-run'],
+        { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    } catch (e) {
+      code = e.status; out = String(e.stdout || '') + String(e.stderr || '');
+    }
+    assert.strictEqual(code, 2, 'a --redo with no --files must exit non-zero');
+    assert.match(out, /--redo requires an explicit --files list/);
+  });
+
+  await t.test('without --redo, a file with a valid row is NOT selected', () => {
+    const src = fs.readFileSync(norm, 'utf8');
+    // The default path must still filter by `done`, or every batch re-bills the library.
+    assert.match(src, /todo = files\.filter\(f => !done\.has\('strategies\/' \+ f\)\)/);
+  });
+
+  await t.test('the redo path announces the re-bill rather than doing it quietly', () => {
+    const src = fs.readFileSync(norm, 'utf8');
+    assert.match(src, /--redo: re-measuring/);
+    assert.match(src, /newest-row-wins/, 'the operator must be told the new row supersedes');
+  });
+});

@@ -139,6 +139,7 @@ function parseArgs(argv) {
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--dry-run') opt.dryRun = true;
+    else if (a === '--redo') opt.redo = true;
     else if (a.startsWith('--')) opt[a.slice(2)] = argv[++i];
   }
   return opt;
@@ -285,7 +286,36 @@ function main() {
     console.log(`[normalize] concept=${opt.concept} → ${files.length} strategies`);
   }
   if (opt.filter) files = files.filter(f => f.includes(opt.filter));
-  const todo = files.filter(f => !done.has('strategies/' + f));
+
+  // `--redo`: re-measure files that ALREADY carry a valid terminal row.
+  //
+  // Why this exists. The curve store is LOSSY in a way the ledger is not — JQ reaps retained
+  // algorithms, so a row can be a current measurement while its daily curve is gone for good.
+  // Measured 2026-10-16: four family champions (七星高照, 五福闹新春, 大小盘轮动, 小市值) matched
+  // ZERO of 3,796 cached account curves, tight or relaxed, so `series-backfill.js` — the free
+  // path — cannot recover them at any tolerance. And since epoch 8 the integration bar is
+  // per-year sharpe off those curves, so a missing curve silently downgrades the bar to the
+  // pooled fallback. Re-running is the only way back.
+  //
+  // ⚠ Guarded to an explicit `--files` list. Without that guard a stray `--redo` re-bills the
+  // entire 215-strategy library — the same shape of accident as the missing `require.main`
+  // guard that once spent 42 backtest minutes. It also refuses to pair with `--limit`-style
+  // bulk selection by concept/filter alone.
+  let todo;
+  if (opt.redo) {
+    if (!opt.files) {
+      console.error('[normalize] --redo requires an explicit --files list (it re-bills already-' +
+                    'measured strategies; a bulk redo would re-run the whole library)');
+      process.exit(2);
+    }
+    todo = files;
+    const already = files.filter(f => done.has('strategies/' + f));
+    console.log(`[normalize] ⚠ --redo: re-measuring ${already.length} file(s) that already carry a ` +
+                `valid row under epoch ${ACTIVE_EPOCH}. A new row APPENDS; newest-row-wins ` +
+                'precedence makes it authoritative, and ~0.15pp of re-run drift is expected.');
+  } else {
+    todo = files.filter(f => !done.has('strategies/' + f));
+  }
   const slice = opt.limit ? todo.slice(0, parseInt(opt.limit, 10)) : todo;
 
   console.log(`[normalize] window=${opt.window} | epoch=${ACTIVE_EPOCH} | total=${files.length} ` +
