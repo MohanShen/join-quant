@@ -544,6 +544,32 @@ Only the directories whose contents aren't self-evident:
   sharpe. 红利低频 was seeded with a champion at TRAIN sharpe **1.46**, below the 1.5 every other
   stage holds, because its VAL passed at 2.05. The spec says VAL, so this is as specified — but a
   universe can currently ship a champion that fails the TRAIN gate.
+- **The liquidity-floor test is now a measured axis, and it does NOT always bite.** Run on
+  大小盘轮动 (2026-10-16, 3 declared floors, 31 JQ min): at the sleeve's own position size
+  (1M / 10 names / `order_volume_ratio=0.05` ⇒ **2e6**/day feasibility floor) the floor removes
+  **zero** names on **31/31** rebalances, all 10 slots fill, and the curve is **bit-identical** to
+  the baseline over 484 days (`max|Δcum| = 0`). So **R=1 is measured false** here — the ETF溢价
+  (8.44→1.10) / 小市值 (7/8 不可成交) pattern did **not** reproduce, and 混合's promotion stands.
+  R=3 is refuted too: 5× headroom (1e7) costs 0.45 sharpe and **all of 2022**, 10× (2e7) drops
+  sharpe to **1.32, below the gate**. Read as a capacity curve (each floor is the feasibility
+  minimum for a multiple of the base capital): **¥1M → 2.68 pass, ¥5M → 2.23 pass, ¥10M → 1.32
+  fail**, so capacity is ~**¥1–2M** and the 规模 × 低价 edge is funded by names trading
+  **2–20M CNY/day**. ⚠ Honest bound on that reading: the floor models a manager who *declines* a
+  name he cannot fill, whereas a real ¥5M book would take **partial fills** — it is the disciplined
+  version of the capacity question, not a literal capital sweep.
+  ⚠⚠ **Why it was inert is incidental, not designed**: the 股息 top-25% + 营收>1e8 + 盈利/ROE/ROA
+  chain happens to exclude illiquid names. So any variant loosening that chain (u-6-style dividend
+  gate removal, u-7/u-8-style price-cap widening) **re-opens the axis** and must re-run liq-1 before
+  its number is citable. Recorded as a conditional gap in §4.
+  ⚠ The per-year curve is **non-monotone** while the pooled one is monotone: 2e7's 2022 (1.84) beats
+  1e7's (1.60) while its 2023 collapses (2.82→0.62). Different name sets, not smooth degradation —
+  a reason never to read one floor as "the" floor.
+- ⚠ **`missingPins` checks only three markers** (`avoid_future_data`, `order_volume_ratio`,
+  `set_order_cost`), so the pinned **benchmark** is not enforced. Two of the families inspected on
+  2026-10-16 have baselines that deviate: 七星高照 sets `510300.XSHG` and 大小盘轮动 sets none at
+  all. Severity is low — `set_benchmark` moves the benchmark curve and alpha/beta, never the
+  strategy's own return/sharpe/maxDD, which is all the ledger stores — and a variant built from
+  such a baseline is still a faithful Δ. But it is a declared pin that nothing polices.
 - ⚠⚠ **A parent/child pair is not an integration candidate** — `integrate-queue.js` refuses it
   structurally. `五福闹新春` declares `parent: [[ETF动量]]`, so it is a FORK of that family and
   already carries its mechanism; picking the better variant within one lineage is `/run-family`'s

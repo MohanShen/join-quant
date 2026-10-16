@@ -1,51 +1,52 @@
 {
-  "fetchedAt": "2026-10-15T18:02:21.535Z",
+  "fetchedAt": "2026-10-16T18:10:41.551Z",
   "entries": [
     {
-      "postId": "223a137ed5b63daedcb57320c10c1207",
-      "backtestId": "ed24fcb6085e668ac6e5c2bf20a86a3a",
-      "title": "回测里的坑：你选的ETF那时候还没上市呢",
-      "url": "https://www.joinquant.com/view/community/detail/223a137ed5b63daedcb57320c10c1207",
-      "sourceFile": "2026-10-16_回测里的坑_你选的ETF那时候还没上市呢-223a137e.py",
+      "postId": "d0a149b1e1d7834b137a11e50accd999",
+      "backtestId": "2402bd332e2754120041a30f21c5c125",
+      "title": "年化14%回撤16%—对标美股SCHD的A股红利股息策略月频",
+      "url": "https://www.joinquant.com/view/community/detail/d0a149b1e1d7834b137a11e50accd999",
+      "sourceFile": "2026-10-17_年化14_回撤16_对标美股SCHD的A股红利股息策略月频-d0a149b1.py",
       "stats": {
-        "annualReturn": 0.35143604714021,
-        "cumulativeReturn": 0.9990775739,
-        "maxDrawdown": 0.13645596537663,
-        "sharpe": 1.5433231040183,
-        "winRatio": 0.60975609756098,
-        "tradingDays": 575,
-        "periodLabel": "2026-05"
+        "annualReturn": 0.13795078638384,
+        "cumulativeReturn": 1.303208150255,
+        "maxDrawdown": 0.15507769359246,
+        "sharpe": 0.5893125664324,
+        "winRatio": 0.61793767418292,
+        "tradingDays": 1614,
+        "periodLabel": "2026-08"
       }
     },
     {
-      "postId": "a1ccf614bbc7223d1bbce2a40a12c26b",
-      "backtestId": "74460e9f4c7c7997ee46e0613a9d1fea",
-      "title": "回馈社区，分享市盈率股息率选股+均线止盈交易策略",
-      "url": "https://www.joinquant.com/view/community/detail/a1ccf614bbc7223d1bbce2a40a12c26b",
+      "postId": "8e8861f0c4c759472dee046ec006b8d3",
+      "backtestId": "3932ee250e33c2787da0fb67c2f80b60",
+      "title": "【市场仪表盘】重大升级！从 7 维到 13 维的宏观风险模型",
+      "url": "https://www.joinquant.com/view/community/detail/8e8861f0c4c759472dee046ec006b8d3",
+      "sourceFile": "2026-10-17_市场仪表盘_重大升级_从_7_维到_13_维的宏观风险模型-8e8861f0.py",
       "stats": {
-        "annualReturn": 0.1923617239692,
-        "cumulativeReturn": 1.0398833,
-        "maxDrawdown": 0.32145377522463,
-        "sharpe": 0.66067986022988,
-        "winRatio": 1,
-        "tradingDays": 1013,
-        "periodLabel": "2019-03"
+        "annualReturn": 0.74520362292822,
+        "cumulativeReturn": 13.875443450897,
+        "maxDrawdown": 0.12723603050957,
+        "sharpe": 3.1498823251742,
+        "winRatio": 0.57178217821782,
+        "tradingDays": 1212,
+        "periodLabel": "2024-12"
       }
     },
     {
-      "postId": "a45bd9625db10f299b789c910a870089",
-      "backtestId": "206218beed6ac7984c3d2e62a03f28a8",
-      "title": "近一个月是不是跌懵了？守正出奇4.0强势回归！",
-      "url": "https://www.joinquant.com/view/community/detail/a45bd9625db10f299b789c910a870089",
-      "sourceFile": "2026-10-16_近一个月是不是跌懵了_守正出奇4_0强势回归-a45bd962.py",
+      "postId": "e7c95ca1f1e6363e12c45a0f8554eec4",
+      "backtestId": "d02db35a2c97481a0448b416147109bf",
+      "title": "六因子选股版破净策略 附PT迁移版在各时期的回测截图",
+      "url": "https://www.joinquant.com/view/community/detail/e7c95ca1f1e6363e12c45a0f8554eec4",
+      "sourceFile": "2026-10-17_六因子选股版破净策略_附PT迁移版在各时期的回测截图-e7c95ca1.py",
       "stats": {
-        "annualReturn": 0.4253080281027,
-        "cumulativeReturn": 11.70086854516,
-        "maxDrawdown": 0.14980720862118,
-        "sharpe": 1.8943157456004,
-        "winRatio": 0.51111111111111,
-        "tradingDays": 1793,
-        "periodLabel": "2026-05"
+        "annualReturn": 0.22146447191977,
+        "cumulativeReturn": 3.42635173625,
+        "maxDrawdown": 0.20369837432523,
+        "sharpe": 1.039415818473,
+        "winRatio": 0.6078431372549,
+        "tradingDays": 1859,
+        "periodLabel": "2026-08"
       }
     }
   ]
