@@ -170,8 +170,8 @@ function integrateBar() {
  * alter fills and fees. Reading the list as an equivalence marked epoch 3 comparable and would
  * have silently accepted pre-pin measurements as current.
  */
-function comparableEpochs() {
-  const active = config().epoch;
+function comparableEpochs(from) {
+  const active = from == null ? config().epoch : Number(from);
   const ok = new Set([active]);
   // Walk back while each epoch declares that it preserved the previous one's measurements.
   for (let e = active; e > 1; e--) {
@@ -182,6 +182,24 @@ function comparableEpochs() {
     ok.add(e - 1);
   }
   return ok;
+}
+
+/**
+ * Are two epochs the SAME BENCH — i.e. was the measurement preserved across every bump between
+ * them? Order-independent: comparability is walked back from the later of the two.
+ *
+ * ⚠ This is the question the VAL budget has to ask, and it used to ask epoch EQUALITY instead.
+ * Epochs 7 and 8 were scoring-only, so an epoch-6 validation is still a current result — but
+ * under equality every family read "first-of-epoch" at epoch 8, including all six that had
+ * already validated. A bump that measured nothing silently re-granted the most protected
+ * resource in the repo.
+ */
+function sameBench(a, b) {
+  const x = Number(a), y = Number(b);
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return false;
+  if (x === y) return true;
+  const later = Math.max(x, y), earlier = Math.min(x, y);
+  return comparableEpochs(later).has(earlier);
 }
 
 /** Does a ledger row's `epoch` column still count as a result for the active epoch? */
@@ -281,5 +299,5 @@ if (require.main === module) {
 
 module.exports = { config, window, windowYears, oosCutoff, gate, objective, score,
                    stageGate, stageThreshold, integrateBar,
-                   comparableEpochs, measurementValid,
+                   comparableEpochs, sameBench, measurementValid,
                    pythonLiterals, verify, todayISO };

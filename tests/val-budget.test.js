@@ -55,6 +55,59 @@ test('VAL budget', async (t) => {
     assert.match(v.why, /cand-001/, 'the refusal must name what already spent the budget');
   });
 
+  await t.test('a SCORING-ONLY epoch bump does NOT reset the budget', () => {
+    // ⚠⚠ The live bug, found 2026-10-16. The filter was `e.epoch === epoch`, so the moment
+    // epochs 7 and 8 activated — both scoring-only, both leaving the measurement bench
+    // byte-identical — every family read ALLOWED (first-of-epoch), including all six that had
+    // already validated at epoch 6. The single most protected resource in the repo was silently
+    // re-granted by a bump that measured nothing.
+    //
+    // Same bug class as the normalizer's old `rowEpoch === ACTIVE_EPOCH` done-check, which
+    // `measurementValid()` exists to fix; the VAL budget never received that fix.
+    reset();
+    const active = harness.config().epoch;
+    // Find a comparable-but-earlier epoch, i.e. one a scoring-only bump preserved.
+    const earlier = [...harness.comparableEpochs()].filter(e => e < active).sort((a, b) => b - a)[0];
+    if (earlier == null) return;        // nothing to prove on a bench with no preserved predecessor
+    consumption.record({ key: '家族B', kind: 'family', stage: 'validate',
+                         runId: 'old-bench-val', outcome: 'sharpe 2.05' });
+    // Rewrite that row's epoch to the earlier one — record() stamps the live epoch on purpose.
+    const f = process.env.JQ_CONSUMPTION_FILE;
+    const lines = fs.readFileSync(f, 'utf8').trimEnd().split('\n');
+    const cols = lines[lines.length - 1].split('\t');
+    cols[9] = String(earlier);
+    lines[lines.length - 1] = cols.join('\t');
+    fs.writeFileSync(f, lines.join('\n') + '\n');
+
+    const v = val.check('家族B');
+    assert.strictEqual(v.allowed, false,
+      `an epoch-${earlier} VAL must still block at epoch ${active} — the bench is identical`);
+    assert.strictEqual(v.reason, 'already-validated');
+    assert.match(v.why, /SCORING-ONLY epoch bump does not reset it/i);
+  });
+
+  await t.test('a bump that DID change the measurement does re-authorize it', () => {
+    // The inverse must keep working: epoch 6 pinned stock costs, so it changed fills and fees and
+    // an epoch-5 VAL is genuinely not a current result. Blocking on it would strand a family
+    // forever on a bench that no longer exists.
+    reset();
+    const stale = [...Array(5).keys()].map(i => i + 1)
+      .find(e => !harness.measurementValid(e));
+    if (stale == null) return;
+    consumption.record({ key: '家族C', kind: 'family', stage: 'validate',
+                         runId: 'stale-bench-val', outcome: 'sharpe 9.9' });
+    const f = process.env.JQ_CONSUMPTION_FILE;
+    const lines = fs.readFileSync(f, 'utf8').trimEnd().split('\n');
+    const cols = lines[lines.length - 1].split('\t');
+    cols[9] = String(stale);
+    lines[lines.length - 1] = cols.join('\t');
+    fs.writeFileSync(f, lines.join('\n') + '\n');
+
+    const v = val.check('家族C');
+    assert.strictEqual(v.allowed, true,
+      `an epoch-${stale} VAL must NOT block — that bench changed fills and fees`);
+  });
+
   await t.test('A DIFFERENT CANDIDATE does not re-authorize it', () => {
     // The proposal drafted "unless the finalized candidate itself changed" and it is deliberately
     // NOT implemented: an agent that produces a new candidate whenever the last VAL disappoints is

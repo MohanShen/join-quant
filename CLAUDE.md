@@ -783,6 +783,20 @@ Only the directories whose contents aren't self-evident:
   than one that is simply strict, so `candidate.json` now needs a `sourceFile` (or `seriesKey`) on
   the **candidate** as well as on every member; partial member coverage is also a fallback,
   because a bar computed over a subset silently omits whichever member might have set it.
+- ⚠⚠⚠ **The VAL budget was keyed on epoch EQUALITY, so two scoring-only bumps silently re-granted
+  six validations.** `val-budget.check()` filtered prior VALs with `e.epoch === epoch`. Epochs 7
+  and 8 changed only how results are JUDGED and left the measurement bench byte-identical, so an
+  epoch-6 VAL is a current result — yet at epoch 8 **every** family read `ALLOWED
+  (first-of-epoch)`, including all six that had already validated. The single most protected
+  resource in the repo was handed back by a bump that measured nothing.
+  Exactly the bug `measurementValid()` was introduced to fix in the normalizer's
+  `rowEpoch === ACTIVE_EPOCH` done-check; the VAL budget never received it.
+  **The rule is one VAL per (family, BENCH)**: `harness.sameBench(a, b)` asks whether measurement
+  was preserved across every bump between two epochs, order-independently. The inverse still
+  works — epoch 6 did change fills and fees, so an epoch-5 VAL correctly does **not** block, and a
+  family is never stranded on a bench that no longer exists. ⚠ `sameBench` is deliberately
+  separate from `measurementValid` because the budget must honour the epoch it is ASKED about, not
+  only the active one.
 - ⚠⚠ **VAL is budgeted: ONE validation per (family, epoch)** — `utils/val-budget.js`, enforced in
   `strategy-post-backtest.js` before the browser opens. `--window val` now **requires `--family`**
   (an unnamed VAL is an untracked VAL) and a second run for the same family at the same epoch exits

@@ -111,11 +111,25 @@ function check(family, { epoch = activeEpoch(), kind = 'family' } = {}) {
   }
 
   const prior = priorValidations(family, kind);
-  const blocking = prior.filter(e => e.epoch === epoch || !e.epoch);
+  // ⚠⚠ A prior VAL blocks if it was measured on a bench the ACTIVE epoch still accepts — NOT
+  // only if its epoch number is equal.
+  //
+  // This was `e.epoch === epoch`, and two SCORING-ONLY bumps broke it wide open. Epochs 7 and 8
+  // changed how results are judged and left the measurement bench byte-identical
+  // (`measurementPreservedFromPrevious: true`), so an epoch-6 VAL is a current result. Under
+  // exact equality every family read `ALLOWED (first-of-epoch)` at epoch 8 — including all six
+  // that had already validated at epoch 6. The single most protected resource in the repo was
+  // silently re-granted by a bump that measured nothing.
+  //
+  // Exactly the bug `harness.measurementValid()` was introduced to fix in the normalizer's
+  // done-check (`rowEpoch === ACTIVE_EPOCH`), which would otherwise have re-measured the whole
+  // library after a scoring tweak. The VAL budget never received that fix. The inverse still
+  // works: epoch 6 DID change fills and fees, so an epoch-5 VAL is correctly non-blocking.
+  const blocking = prior.filter(e => !e.epoch || harness.sameBench(e.epoch, epoch));
 
   if (!blocking.length) {
     return { allowed: true, reason: 'first-of-epoch',
-             why: `no VAL recorded for ${family} at epoch ${epoch}`, prior };
+             why: `no VAL recorded for ${family} on a bench epoch ${epoch} accepts`, prior };
   }
 
   const p = blocking[blocking.length - 1];
@@ -134,9 +148,11 @@ function check(family, { epoch = activeEpoch(), kind = 'family' } = {}) {
     allowed: false,
     reason: unknown ? 'prior-unknown-epoch' : 'already-validated',
     prior,
-    why: `VAL-BLOCKED: ${detail}. The budget is ONE validation per (family, epoch) — ` +
+    why: `VAL-BLOCKED: ${detail}. The budget is ONE validation per (family, BENCH) — ` +
          'validating a second candidate and keeping the better number makes VAL a training set, ' +
-         'and that cannot be undone. Iterate on TRAIN, or bump the epoch. ' +
+         'and that cannot be undone. ⚠ A SCORING-ONLY epoch bump does not reset it: the bench is ' +
+         'unchanged, so the earlier VAL is still a current result. Iterate on TRAIN, or wait for ' +
+         'an epoch that actually changes the measurement. ' +
          '(User-only override for a deliberate re-validation: JQ_ALLOW_REVAL=1.)',
   };
 }
