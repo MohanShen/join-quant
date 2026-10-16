@@ -1,0 +1,121 @@
+{
+  "epoch": 8,
+  "setAt": "2026-10-16",
+  "status": "active",
+  "note": "Scoring change only — the measurement bench (windows, costs, pins) is IDENTICAL to epochs 6 and 7, byte-for-byte, so measurementPreservedFromPrevious holds and no row is re-measured. Replaces epoch 7's integration bar. Epoch 7 compared the candidate's WORST TRAIN year objective against the most consistent parent's worst TRAIN year (a maximin on annual-minus-drawdown). Epoch 8 requires the candidate to beat the BEST PARENT'S SHARPE IN EVERY TRAIN YEAR — per-year domination, on sharpe rather than objective. User decision, 2026-10-16.",
+  "changedFromPreviousEpoch": [
+    "objective.integrateBar.basis \"worstTrainYear\" -> \"perYearSharpe\"",
+    "objective.integrateBar.metric \"annualReturn - maxDrawdown\" -> \"sharpe\"",
+    "objective.integrateBar.aggregation \"maximin (worst year only)\" -> \"domination (every year)\"",
+    "epoch 7's bar is INVALIDATED: a result judged under it does not carry forward as an epoch-8 verdict"
+  ],
+  "comparability": {
+    "trainResultsFromEarlierEpochs": "Fully comparable with epochs 6 and 7. Windows, costs and pins are unchanged, so every epoch-6 and epoch-7 row remains a current measurement and nothing is re-run. The `epoch` column still records which bench MEASURED a row; objective, gate and the integration bar follow the ACTIVE scoring rule and are recomputed from stored data. ⚠ INTEGRATION VERDICTS do not carry forward: epoch 7 judged on a worst-year objective maximin and epoch 8 judges on per-year sharpe domination, so a round recorded under epoch 7 states an epoch-7 conclusion and must be re-judged (not re-measured) to claim an epoch-8 one.",
+    "unchangedFromEpoch7": [
+      "windows",
+      "costs",
+      "pins",
+      "slippage",
+      "orderVolumeRatio",
+      "avoidFutureData",
+      "capital",
+      "frequency",
+      "fundOrderCost",
+      "stockOrderCost",
+      "gateMin",
+      "score",
+      "keepScoreOnGateFail",
+      "stageThresholds"
+    ],
+    "measurementPreservedFromPrevious": true,
+    "measurementPreservedNote": "Scoring-only change; the measurement bench is identical to epoch 7. Same class of bump as epochs 5 and 7."
+  },
+  "windows": {
+    "train": {
+      "start": "2022-01-01",
+      "end": "2023-12-31"
+    },
+    "val": {
+      "start": "2024-01-01",
+      "end": "2025-12-31"
+    },
+    "holdout": {
+      "start": "2026-01-01",
+      "end": "today"
+    }
+  },
+  "costs": {
+    "capital": 1000000,
+    "frequency": "daily",
+    "useRealPrice": true,
+    "benchmark": "000300.XSHG",
+    "avoidFutureData": true,
+    "orderVolumeRatio": 0.05,
+    "slippage": {
+      "kind": "FixedSlippage",
+      "value": 0
+    },
+    "commission": {
+      "kind": "PerTrade",
+      "buy": 0.0003,
+      "sell": 0.0013,
+      "minCost": 5
+    },
+    "fundOrderCost": {
+      "openCommission": 0.0003,
+      "closeCommission": 0.0003,
+      "closeTax": 0,
+      "minCommission": 5
+    },
+    "stockOrderCost": {
+      "openCommission": 0.0003,
+      "closeCommission": 0.0003,
+      "closeTax": 0.001,
+      "minCommission": 5
+    }
+  },
+  "objective": {
+    "gateMetric": "sharpe",
+    "gateMin": 1.5,
+    "score": "annualReturn - maxDrawdown",
+    "keepScoreOnGateFail": true,
+    "stageThresholds": {
+      "normalize": 1.5,
+      "study": 1.5,
+      "enhance": 1.5,
+      "integrate": 1.5,
+      "validate": 1.5
+    },
+    "integrateBar": {
+      "basis": "perYearSharpe",
+      "metric": "sharpe",
+      "aggregation": "domination",
+      "barMember": "familyChampion",
+      "pooledIsVeto": false,
+      "fallback": "pooled",
+      "note": "In EVERY TRAIN calendar year, the candidate's sharpe computed WITHIN that year must exceed the highest sharpe any parent achieves in that SAME year. Parents are the family CHAMPIONS (what the universe would otherwise ship), not the baselines a merge was decomposed from. Needs the stored daily curve of the candidate and of EVERY parent; partial coverage falls back to the pooled objective rule and must SAY SO, because a bar computed over a subset silently omits whichever parent might have set it. ⚠ The per-year best parent may be a DIFFERENT family each year, so the candidate competes against a composite no single parent matches. That is deliberate under epoch 8: it is strictly harder than a maximin and is the point of requiring domination."
+    }
+  },
+  "oosPolicy": {
+    "maxTestsPerCandidate": 1,
+    "maxTestsPerEpoch": 2
+  },
+  "rationale": {
+    "orderVolumeRatio": "Unset, an order can absorb an implausible share of a bar. That is the mechanism behind the two highest-scoring strategies in the library: the ETF-discount study measured sharpe falling 8.44 -> 1.10 as the volume floor rose, because the edge is constructed from the thinnest instruments. At 1,000,000 CNY, 5% of bar volume keeps a position inside what a real book could absorb.",
+    "fundOrderCost": "The override patches set_commission, which does not govern type='fund'. 170 held strategies set their own fund costs, so every ETF result was running on the author's numbers rather than the bench's.",
+    "avoidFutureData": "A lookahead guard left to the author means 71 of 215 strategies ran without it.",
+    "stockOrderCost": "Economically identical to what set_commission(PerTrade(buy=0.0003, sell=0.0013, min=5)) was meant to express: 0.03% each way plus 0.1% stamp duty on the sell. The bench's intent is unchanged; epoch 6 only makes it actually apply. 36 of the affected strategies declared a CHEAPER open_commission than 0.0003, so the existing ledger flatters them."
+  },
+  "rationaleForGate": {
+    "distribution": "Across 124 measured strategies the median sharpe is 1.02 and 2.5 is roughly the 88th percentile; 1.5 is the top third (41 of 124).",
+    "deadFamilies": "At 2.5, five of fourteen families (三进兵, 红利低频, 网格, 趋势技术, 套利) had EVERY member disqualified, so objective was -inf for all of them and carried no comparative information — 红利低频's own page records that its study could never report a delta.",
+    "asAReturnHurdle": "At that family's measured volatility and JQ's flat 4% risk-free rate, sharpe 2.5 demanded an annual return of 37.3%; it made 23.4%. The page's conclusion was that the edge exists but does not fit through the gate.",
+    "epoch4Interaction": "Pinning the execution settings moved one measured strategy from sharpe 18.16 to 11.15, so a fixed 2.5 had quietly become stricter than when it was chosen."
+  },
+  "rationaleForIntegrateBar": {
+    "whySharpeNotObjective": "objective = (annual - maxDrawdown)/100 is almost purely annual return — measured over the 60 epoch-6 rows, Pearson r(annual, objective) = 0.9698 with maxDrawdown supplying only 24% of the spread. So an objective bar is a RETURN-LEVEL bar, and a merge whose payoff is risk-adjusted quality could clear or miss it for reasons unrelated to quality. Sharpe is the risk-adjusted quantity and is already the stage gate metric.",
+    "whyEveryYearNotTheWorst": "Epoch 7's maximin let a candidate win by being least-bad in one year while giving up the other. Domination asks the harder and more honest question: is this merge better than its parents whenever the market changed regime? TRAIN spans exactly two years and they are very different (2022 supplies a median 62% of log-growth across the stored curves, 63-71% for the top books), so requiring both years is requiring the merge to survive the regime change rather than ride one side of it.",
+    "acceptedCost": "The per-year best parent may differ by year, so the candidate can be rejected for losing to a composite no single parent matches. Under epoch 7 that was treated as a reason to prefer a maximin; under epoch 8 it is accepted as the price of domination.",
+    "unchanged": "The stage gate (sharpe >= 1.5), the realizability floor (rule 4), the VAL budget (one per universe per epoch) and the pooled comparison as non-vetoing evidence are all unchanged from epoch 7."
+  }
+}

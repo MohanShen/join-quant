@@ -113,8 +113,17 @@ asks for another VAL, refuse it and report.
 ## The bar — what "beat both" means since epoch 7
 
 The sharpe gate is **1.5 at every stage**; integration no longer holds a different one. Its real
-bar is a **per-year** comparison: the candidate's **worst TRAIN calendar year** must beat the
-**most consistent member's** worst TRAIN year. `harness/harness.md` §4.1 is frozen authority.
+bar is **per-year sharpe domination** (epoch 8): in **every** TRAIN calendar year the candidate's
+sharpe must exceed the best **parent champion's** sharpe in that **same** year.
+`harness/harness.md` §4.1 is frozen authority.
+
+⚠ Epoch 7's worst-year objective maximin is **invalidated**. An epoch-7 round still states an
+epoch-7 conclusion, but it is not an epoch-8 one without re-judging.
+
+⚠ The bar can be a **composite**: the best parent may differ by year, so the candidate faces
+something no single parent achieves. Deliberate, and strictly harder. And the bar needs curves for
+the candidate and every parent — 4 of 11 champions have none, so those rounds fall back to the
+pooled rule and say so.
 
 This is not a relaxation — applied to the two rounds already run it **confirms both rejections**
 and sharpens them: all three 全A candidates turn out to have a **negative** worst year

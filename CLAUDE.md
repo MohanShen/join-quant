@@ -290,6 +290,36 @@ Only the directories whose contents aren't self-evident:
   Sharpe mechanically whenever correlation < 1 and the gate IS a Sharpe threshold — 七星高照's
   blend scores sharpe 3.17 against legs of 2.85/1.60 and still loses to its own small-cap leg
   (0.4814 vs 0.5984). Beat the best MEMBER, not the gate.
+- **Epoch 8 (2026-10-16)**: scoring only — the bench is byte-identical to epochs 6 and 7, so
+  `measurementPreservedFromPrevious: true` and **no row is re-measured**. It **invalidates epoch 7's
+  integration bar** and replaces it (user decision): `integrateBar.basis` **`worstTrainYear` →
+  `perYearSharpe`**. In **every** TRAIN calendar year, the candidate's sharpe computed *within* that
+  year must exceed the highest sharpe any **parent champion** achieves in that **same** year —
+  domination, on sharpe, not a maximin on objective.
+  Why sharpe: objective is almost purely annual return (r = 0.9698), so an objective bar is a
+  return-LEVEL bar and a merge whose payoff is risk-adjusted quality clears or misses it for
+  unrelated reasons. Why every year: the maximin let a candidate win by being least-bad in one year
+  while giving up the other, and TRAIN's two years are very different (2022 supplies a median 62% of
+  log-growth), so "both years" is "survive the regime change rather than ride one side of it".
+  ⚠ **An epoch-7 verdict does not carry forward.** The guard dispatches on `integrateBar.basis`, so
+  an old epoch still judges by its own rule — but claiming an epoch-8 conclusion requires re-judging
+  (re-judging, not re-measuring).
+- ⚠ **The per-year best parent may differ by year**, so the candidate faces a composite no single
+  parent matches. Epoch 7 treated that as the reason to prefer a maximin; **epoch 8 accepts it as the
+  price of domination**, and the guard flags `parents-split-by-year` with the per-year attribution.
+  Measured: 全A's 打板短线 champion runs sharpe **2022 7.45 / 2023 −0.18** and 红利低频 **1.18 / 1.67**,
+  so 全A's bar is "beat 7.45 in 2022 **and** 1.67 in 2023" — and 打板短线's own realism declares its
+  headline unrealizable, so the 2022 half of that bar is set by a book we would not trade.
+- ⚠ **The per-year bar needs a curve for the candidate AND every parent**, else it falls back to the
+  pooled rule and says so (`flags: bar=pooled-fallback`). **7 of 11 champions** currently have a
+  usable per-year split; **4 do not** (七星高照, 五福闹新春, 大小盘轮动, 小市值), so any round touching
+  those lands on the fallback. `node utils/series-backfill.js` is the zero-backtest-cost fix — it
+  recovered 11 curves on 2026-10-16, though not 七星高照's champion (a 三马/七星 combination book,
+  in the 52 unmatched).
+- `JQ_SERIES_DIR` redirects `data/series/` for the same reason `JQ_DAILY_STATE_DIR` and
+  `JQ_CONSUMPTION_FILE` exist: a test writing probe curves into the real store would put fiction
+  into the thing every bar is computed from. It is resolved per call, so a test can set it after the
+  module is loaded.
 - ⚠⚠ **The integration bar is the family CHAMPION, and the guard derives it — it is not a caller
   input.** ETF round 2 supplied each family's study BASELINE as the member, which is the right thing
   to DECOMPOSE a pipeline from and the wrong thing to be judged against: ETF动量's base is objective

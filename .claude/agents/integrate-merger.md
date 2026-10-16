@@ -184,12 +184,24 @@ member block** — its `realizability` is your reading of the family page and no
 provide it — but put the champion's numbers and `sourceFile` in it, and say in your plan which
 variant you decomposed if that differs.
 
-### Rule 1 is a PER-YEAR comparison (epoch 7)
+### Rule 1 — PER-YEAR SHARPE DOMINATION (epoch 8)
 
-The bar is **not** the pooled TRAIN objective any more. Your candidate's **worst TRAIN calendar
-year** must beat the **most consistent member's** worst TRAIN year, same `(annual − maxDD)/100`
-computed within each year. `harness/harness.md` §4.1 is the frozen definition; the guard applies
-it for you.
+**In EVERY TRAIN calendar year, your candidate's sharpe — computed *within* that year — must
+exceed the highest sharpe any parent champion reaches in that SAME year.** Not the pooled
+objective, and not a worst-year maximin (that was epoch 7 and is **invalidated**).
+`harness/harness.md` §4.1 is the frozen definition; the guard applies it for you.
+
+⚠ **The best parent can be a different family in each year**, so you may be up against a composite
+no single parent achieves. That is deliberate under epoch 8 and strictly harder than beating any
+one family. The guard flags `parents-split-by-year`. Measured example: 全A's 打板短线 champion runs
+sharpe **2022 7.45 / 2023 −0.18** while 红利低频 runs **1.18 / 1.67** — so 全A's bar is "beat 7.45
+in 2022 **and** 1.67 in 2023". Check this **before** declaring a candidate set: if one year's bar
+is set by a book whose realism declares it unrealizable, say so in your plan rather than spending
+three backtests on it.
+
+⚠ **4 of 11 champions have no stored curve** (七星高照, 五福闹新春, 大小盘轮动, 小市值), and without
+one for the candidate *and every* parent the bar drops to the pooled rule. Run
+`node utils/series-backfill.js` first — it is free.
 
 Why you need to know rather than just read the verdict: **it changes which member you are up
 against, often drastically.** In the 全A round the pooled leader 打板短线 scores 0.9668 — and its

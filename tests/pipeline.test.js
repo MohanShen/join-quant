@@ -267,6 +267,121 @@ test('type integration guard', async t => {
     }
   });
 
+  // ── epoch 8: rule 1 is PER-YEAR SHARPE DOMINATION ───────────────────────────
+  //
+  // Replaces epoch 7's worst-year objective maximin (user decision, 2026-10-16). In EVERY TRAIN
+  // calendar year the candidate's sharpe must exceed the best parent's sharpe in that SAME year.
+  // Sharpe rather than objective because objective is almost purely annual return (r = 0.9698),
+  // i.e. a return-LEVEL bar. Domination rather than a maximin because a maximin let a candidate
+  // win by being least-bad in one year while giving up the other.
+
+  /** A fixture universe: one candidate curve + two parent champions, all with curves. */
+  function perYearFixture({ cand, p1, p2 }) {
+    const os = require('os');
+    const d = fs.mkdtempSync(path.join(os.tmpdir(), 'pys-'));
+    const pages = path.join(d, 'pages'); fs.mkdirSync(pages);
+    const series = path.join(d, 'series'); fs.mkdirSync(series);
+    const ep = harness.config().epoch;
+
+    // A curve whose 2022 and 2023 each compound at a constant daily rate, so the per-year
+    // sharpe is controlled by construction (constant returns -> tiny sd -> large sharpe; the
+    // ORDERING is what the test asserts, never the absolute value).
+    const curve = (a, b) => {
+      const dates = [], cum = []; let eq = 1;
+      for (const [y, r] of [[2022, a], [2023, b]]) {
+        for (let i = 0; i < 240; i++) {
+          const day = new Date(Date.UTC(y, 0, 3) + i * 86400000);
+          if (day.getUTCFullYear() !== y) break;
+          eq *= 1 + r / 100;
+          dates.push(day.toISOString().slice(0, 10)); cum.push((eq - 1) * 100);
+        }
+      }
+      return { dates, cum, benchCum: cum.map(() => 0), points: dates.length };
+    };
+    const put = (name, c) => fs.writeFileSync(
+      path.join(series, `${name}__train__e${ep}.json`), JSON.stringify(curve(c[0], c[1])));
+    // ⚠ seriesKey() strips the `strategies/` prefix and the `.py`, so the stored name is the
+    // bare slug — writing `strategies_cand__train__eN` leaves the lookup empty.
+    const series_ = require('../utils/backtest-series');
+    for (const [f, c] of [['cand', cand], ['p1', p1], ['p2', p2]]) {
+      put(series_.seriesKey(`strategies/${f}.py`, 'train', ep).replace(`__train__e${ep}`, ''), c);
+    }
+
+    for (const [f, fam] of [['cand', 'CAND'], ['p1', 'P1'], ['p2', 'P2']]) {
+      fs.writeFileSync(path.join(pages, f + '.md'),
+        `---\nfamily: ${fam}\nsourceFile: strategies/${f}.py\n---\n`);
+    }
+    const row = (f, obj) => [f, '', '', 'normalized', '', '', '729', '100', '50', '2.0', '10', obj, 'pass', ep].join('\t');
+    fs.writeFileSync(path.join(d, 'ledger.tsv'),
+      ['sourceFile\tpostId\ttitle\tstatus\tstart\tend\tdays\ttotal_pct\tannual_pct\tsharpe\tmaxdd_pct\tobjective\tgate\tepoch',
+       row('strategies/p1.py', 0.40), row('strategies/p2.py', 0.30)].join('\n') + '\n');
+    return { dir: d, pages, series, ledger: path.join(d, 'ledger.tsv') };
+  }
+
+  function runPerYear(fx, candidate) {
+    const envs = { JQ_LEDGER: fx.ledger, JQ_STRATEGY_PAGES: fx.pages, JQ_SERIES_DIR: fx.series };
+    const prev = {};
+    for (const k of Object.keys(envs)) { prev[k] = process.env[k]; process.env[k] = envs[k]; }
+    for (const m of ['../utils/backtest-series', '../utils/component-scan', '../utils/type-integrate-check']) {
+      delete require.cache[require.resolve(m)];
+    }
+    try {
+      return require('../utils/type-integrate-check').check({
+        weights: 'equal',
+        candidate: { sourceFile: 'strategies/cand.py', ...candidate },
+        members: [member({ family: 'P1', objective: 0.40, sourceFile: 'strategies/p1.py' }),
+                  member({ family: 'P2', objective: 0.30, sourceFile: 'strategies/p2.py' })],
+      });
+    } finally {
+      for (const k of Object.keys(envs)) {
+        if (prev[k] === undefined) delete process.env[k]; else process.env[k] = prev[k];
+      }
+      for (const m of ['../utils/backtest-series', '../utils/component-scan', '../utils/type-integrate-check']) {
+        delete require.cache[require.resolve(m)];
+      }
+    }
+  }
+
+  await t.test('the active epoch asks for perYearSharpe', () => {
+    const bar = harness.integrateBar();
+    assert.strictEqual(bar.basis, 'perYearSharpe');
+    assert.strictEqual(bar.metric, 'sharpe');
+    assert.strictEqual(bar.aggregation, 'domination');
+    assert.strictEqual(bar.barMember, 'familyChampion');
+  });
+
+  await t.test('rejects a candidate that wins one TRAIN year and loses the other', () => {
+    // The exact case a maximin would have let through: strong 2022, weak 2023.
+    const fx = perYearFixture({ cand: [0.60, 0.02], p1: [0.30, 0.30], p2: [0.10, 0.10] });
+    const r = runPerYear(fx, { annual: 120, sharpe: 3.0, maxdd: 5, objective: 1.15 });
+    assert.strictEqual(r.barApplied, 'perYearSharpe',
+      `the per-year bar must actually apply, got ${r.barApplied}: ${r.reasons.join(' | ')}`);
+    assert.strictEqual(r.perYearSharpe.beats, false);
+    assert.deepStrictEqual(r.perYearSharpe.failed, [2023]);
+    assert.strictEqual(r.verdict, 'reject');
+    assert.ok(r.reasons.some(x => /fails per-year sharpe domination/.test(x)));
+  });
+
+  await t.test('keeps a candidate that beats the best parent in BOTH years', () => {
+    const fx = perYearFixture({ cand: [0.50, 0.50], p1: [0.30, 0.20], p2: [0.10, 0.25] });
+    const r = runPerYear(fx, { annual: 200, sharpe: 4.0, maxdd: 5, objective: 1.95 });
+    assert.strictEqual(r.barApplied, 'perYearSharpe', `got ${r.barApplied}`);
+    assert.strictEqual(r.perYearSharpe.beats, true);
+    assert.deepStrictEqual(r.perYearSharpe.failed, []);
+    assert.notStrictEqual(r.verdict, 'reject');
+  });
+
+  await t.test('flags a bar set by a DIFFERENT parent in each year', () => {
+    // P1 owns 2022, P2 owns 2023 — so the candidate is up against a composite neither achieves.
+    // Accepted under epoch 8, but it is the thing a reader most needs told.
+    const fx = perYearFixture({ cand: [0.05, 0.05], p1: [0.90, 0.01], p2: [0.01, 0.90] });
+    const r = runPerYear(fx, { annual: 20, sharpe: 2.0, maxdd: 5, objective: 0.15 });
+    assert.strictEqual(r.barApplied, 'perYearSharpe', `got ${r.barApplied}`);
+    assert.ok(r.flags.includes('parents-split-by-year'),
+      `expected parents-split-by-year, got ${r.flags.join(', ')}`);
+    assert.strictEqual(new Set(r.perYearSharpe.years.map(y => y.bestParent)).size, 2);
+  });
+
   await t.test('a passing candidate with passing parents raises neither flag', () => {
     const r = check({
       weights: 'equal',
@@ -443,18 +558,27 @@ test('harness config', async t => {
   });
 
   await t.test('the integration bar is read from the epoch, not hard-coded', () => {
+    // Epoch 7 declared `worstTrainYear` (worst-year objective maximin); epoch 8 replaced it with
+    // `perYearSharpe` (domination on sharpe, every TRAIN year). The guard dispatches on this
+    // string, so each epoch judges by the rule that produced it.
     const bar = harness.integrateBar();
-    assert.strictEqual(bar.basis, 'worstTrainYear');
+    assert.strictEqual(bar.basis, 'perYearSharpe');
+    assert.strictEqual(bar.metric, 'sharpe');
     assert.strictEqual(bar.pooledIsVeto, false,
-      'the pooled objective is evidence under epoch 7, not a veto');
+      'the pooled objective is evidence, not a veto');
     assert.strictEqual(bar.fallback, 'pooled');
+    // The superseded basis must still be declared on its own epoch file, so an epoch-7 result
+    // can be re-judged by epoch 7's rule rather than silently by epoch 8's.
+    const e7 = JSON.parse(fs.readFileSync(path.join(ROOT, 'harness/config/epoch-7.json'), 'utf8'));
+    assert.strictEqual(e7.objective.integrateBar.basis, 'worstTrainYear');
   });
 
-  await t.test('epoch 7 preserves measurement, so no epoch-6 row is re-run', () => {
+  await t.test('a scoring-only bump preserves measurement, so no earlier row is re-run', () => {
     // A scoring-only bump that invalidated the ledger would re-measure the whole library at
     // the daily backtest budget — the most expensive silent bug this repo can have.
     assert.ok(harness.measurementValid(6), 'epoch-6 rows must survive a scoring-only bump');
     assert.ok(harness.measurementValid(7));
+    assert.ok(harness.measurementValid(8));
     assert.ok(!harness.measurementValid(5), 'epoch 6 changed stock fees; 5 is not comparable');
   });
 

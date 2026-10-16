@@ -132,16 +132,41 @@ gate(w)      = ( sharpe(w) >= 1.5 )                    # 标签，不再抹掉�
 
 ---
 
-### 4.1 整合回合的 BAR（epoch 7 起冻结）
+### 4.1 整合回合的 BAR（epoch 8 起冻结；epoch 7 的 bar 已作废）
 
 闸门（`sharpe >= 1.5`）回答「这个结果可用吗」。**BAR 回答「它赢过被整合的家族了吗」**，这才是整合
 回合真正的判据，由 `objective.integrateBar` 声明、`harness.integrateBar()` 读取。
 
-**basis = `worstTrainYear`**：候选在 **TRAIN 最差自然年**的 objective，必须赢过**最稳健成员**在其
-TRAIN 最差自然年的 objective。逐年的 annual / maxDD 在**年内**计算
-（`component-scan.yearlySplit()` / `worstYear()`），公式仍是 `(annual − maxDD)/100`。
+**basis = `perYearSharpe`（epoch 8）**：在 **TRAIN 的每一个自然年**里，候选在**该年内**计算的
+sharpe 都必须高于**任一 parent 在同一年**的最高 sharpe。逐年指标在**年内**计算
+（`component-scan.yearlySplit()`），parent = 家族 **champion**。
 
-**为什么不再用汇总 objective。** 在 60 行 epoch-6 实测上：
+⚠ **epoch 7 的 `worstTrainYear`（最差年 objective 的 maximin）已作废**，不再是任何结论的判据。
+epoch-7 的回合结论仍按 epoch-7 的规则成立（guard 依 `integrateBar.basis` 分派，老纪元用老规则判），
+但**不自动升格为 epoch-8 结论**——要宣称 epoch-8 结论必须按本节重判（重判，不是重测）。
+
+**为什么用 sharpe 而不是 objective。** objective = `(annual − maxDD)/100` 几乎就是年化收益
+（60 行 epoch-6 实测：r = 0.9698，maxDrawdown 只占公式所见离散度的 24%），所以 objective 的 bar 是
+一个**收益水平**的 bar；一次以风险调整质量为收益的合并，会因为与质量无关的原因过线或不过线。
+sharpe 才是风险调整后的量，而且它本来就是闸门的度量。
+
+**为什么要求「每一年」而不是「最差的那一年」。** maximin 允许候选靠「在某一年最不差」胜出，同时放弃
+另一年。domination 问的是更难也更诚实的问题：**市场换了 regime 的时候，这次合并是否仍然比它的
+parent 好？** TRAIN 恰好跨两个差异极大的年份（已存曲线上 2022 贡献 log 增长中位数 62%，头部书
+63–71%），所以「两年都要赢」就是「这次合并必须撑过 regime 切换，而不是骑在其中一边」。
+
+⚠ **逐年的最佳 parent 可能逐年不同**，于是候选面对的是一个**没有任何单一 parent 能达到的复合体**。
+epoch 7 把这当成选 maximin 的理由；**epoch 8 接受它，作为 domination 的代价**。guard 会打
+`parents-split-by-year` 标记并打印逐年归属。实测例（2026-10-16）：全A 的 打板短线 champion 逐年
+sharpe 为 **2022 7.45 / 2023 −0.18**，红利低频为 **1.18 / 1.67**，所以 全A 的 bar 是
+「2022 打败 7.45 **且** 2023 打败 1.67」。
+
+⚠ **它需要曲线**：候选与**每一个** parent 都要有已存 TRAIN 曲线，否则退回汇总 objective 规则并
+**必须声明**（`flags: bar=pooled-fallback`）。当前 13 个家族里 **7 个 champion 有可用逐年切分，
+4 个没有**（七星高照 / 五福闹新春 / 大小盘轮动 / 小市值），涉及它们的回合会落到退回路径。
+先跑 `node utils/series-backfill.js`（零回测成本）。
+
+**为什么汇总 objective 不再是判据。** 在 60 行 epoch-6 实测上：
 
 | 实测 | 值 |
 |---|---|

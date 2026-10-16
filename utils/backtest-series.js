@@ -38,7 +38,10 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const DIR = path.join(ROOT, 'data/series');
+// Redirectable for the same reason JQ_DAILY_STATE_DIR and JQ_CONSUMPTION_FILE are: a test that
+// wrote probe curves into the real store would put fiction into the thing every bar is computed
+// from. Resolved per call, so a test can set it after this module is loaded.
+const DIR_OF = () => process.env.JQ_SERIES_DIR || path.join(ROOT, 'data/series');
 const BASE = 'https://www.joinquant.com/algorithm/backtest/result';
 const PAGE = 1000;
 
@@ -54,7 +57,7 @@ function seriesKey(sourceFile, windowName, epoch) {
   return `${slug}__${windowName}__e${epoch}`;
 }
 
-const seriesPath = key => path.join(DIR, `${key}.json`);
+const seriesPath = key => path.join(DIR_OF(), `${key}.json`);
 
 /**
  * Pull every page of one series. `getJson` is injected so the same walk serves both the
@@ -172,7 +175,7 @@ function toRecord(raw, meta) {
 }
 
 function save(key, record) {
-  fs.mkdirSync(DIR, { recursive: true });
+  fs.mkdirSync(DIR_OF(), { recursive: true });
   fs.writeFileSync(seriesPath(key), JSON.stringify(record));
   return seriesPath(key);
 }
@@ -217,8 +220,8 @@ function loadComparable(sourceFile, windowName, preferredEpoch) {
 }
 
 function list() {
-  if (!fs.existsSync(DIR)) return [];
-  return fs.readdirSync(DIR).filter(f => f.endsWith('.json')).map(f => f.replace(/\.json$/, ''));
+  if (!fs.existsSync(DIR_OF())) return [];
+  return fs.readdirSync(DIR_OF()).filter(f => f.endsWith('.json')).map(f => f.replace(/\.json$/, ''));
 }
 
 /**

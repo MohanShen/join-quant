@@ -23,8 +23,14 @@
  *      `all-parents-below-gate`, says when no parent clears it — a warning and NOT a veto,
  *      because a blend can mechanically exceed both parents whenever correlation < 1.
  *   1. BEAT THE BEST MEMBER, not the gate. Clearing the gate is necessary and meaningless.
- *      ⚠ Since harness epoch 7 this is a PER-YEAR comparison — the candidate's worst TRAIN
- *      calendar year against the most consistent member's worst TRAIN year (`harness.md` §4.1).
+ *      ⚠ WHAT "beat" means is the active epoch's call, read from `harness.integrateBar()`:
+ *        epoch 8 — PER-YEAR SHARPE DOMINATION: in EVERY TRAIN calendar year the candidate's
+ *                  sharpe must exceed the best parent's sharpe in that SAME year. The per-year
+ *                  best parent may differ by year, so the bar is a composite no single parent
+ *                  matches — deliberate, and strictly harder than a maximin.
+ *        epoch 7 — worst-year objective maximin (superseded; kept so an epoch-7 result is judged
+ *                  by the rule that produced it).
+ *      The member is each family's CHAMPION, derived by `championOf()`, never the caller's figure.
  *      It needs stored curves; without them it falls back to the pooled rule and SAYS SO.
  *   2. DECLARE THE DIVERSIFICATION SHARE. If the candidate's return does not exceed its
  *      members' while its Sharpe does, the gain is risk-side — that is diversification, not edge.
@@ -199,6 +205,81 @@ function worstYearRule(c, members) {
   };
 }
 
+/**
+ * Rule 1 on the epoch-8 basis: PER-YEAR SHARPE DOMINATION.
+ *
+ * In EVERY TRAIN calendar year, the candidate's sharpe computed WITHIN that year must exceed the
+ * highest sharpe any parent achieves in that SAME year. Parents are the family CHAMPIONS, not the
+ * baselines a merge was decomposed from (`championOf`).
+ *
+ * ⚠ The per-year best parent may be a DIFFERENT family each year, so the candidate competes
+ * against a composite no single parent matches. Epoch 7 treated that as a reason to prefer a
+ * maximin; epoch 8 accepts it as the price of domination — the question being asked is whether
+ * the merge is better than its parents WHENEVER the market changed regime, and TRAIN's two years
+ * are very different (2022 supplies a median 62% of log-growth across the stored curves).
+ *
+ * ⚠ Sharpe rather than objective because objective = (annual - maxDD)/100 is almost purely annual
+ * return (r = 0.9698 over the 60 epoch-6 rows), i.e. a return-LEVEL bar. Sharpe is the
+ * risk-adjusted quantity, and it is already the stage-gate metric.
+ *
+ * Returns `{ok:false, why}` when the candidate or ANY parent lacks a usable curve — partial
+ * coverage is not a partial verdict, because the omitted parent is the one most likely to have
+ * set the bar in some year.
+ */
+function perYearSharpeRule(c, members) {
+  const cs = require('./component-scan');
+  const candRec = curveOf({ ...(c.candidate || {}), window: 'train' });
+  if (!candRec) return { ok: false, why: 'the candidate has no stored TRAIN curve' };
+
+  const candYears = cs.yearlySplit(candRec, 'train');
+  if (!candYears) return { ok: false, why: 'the candidate curve does not cover every TRAIN year' };
+
+  const perMember = [];
+  for (const m of members) {
+    const rec = curveOf({ ...m, window: 'train' });
+    const ys = rec && cs.yearlySplit(rec, 'train');
+    if (!ys) return { ok: false, why: `member ${m.family} has no usable TRAIN curve` };
+    perMember.push({ family: m.family, years: ys });
+  }
+  if (!perMember.length) return { ok: false, why: 'no members carry a curve' };
+
+  const years = candYears.map((cy, i) => {
+    // Highest parent sharpe in THIS year — possibly a different family than in the other years.
+    let bestParent = null;
+    for (const pm of perMember) {
+      const py = pm.years[i];
+      if (!py || py.sharpe == null) continue;
+      if (!bestParent || py.sharpe > bestParent.sharpe) {
+        bestParent = { family: pm.family, sharpe: py.sharpe, objective: py.objective };
+      }
+    }
+    if (!bestParent) return null;
+    return {
+      year: cy.year,
+      candidateSharpe: cy.sharpe,
+      candidateObjective: cy.objective,
+      bestParent: bestParent.family,
+      bestParentSharpe: bestParent.sharpe,
+      margin: cy.sharpe == null ? null : Number((cy.sharpe - bestParent.sharpe).toFixed(2)),
+      beats: cy.sharpe != null && cy.sharpe > bestParent.sharpe,
+    };
+  });
+  if (years.some(y => y == null)) {
+    return { ok: false, why: 'a TRAIN year has no parent sharpe to compare against' };
+  }
+
+  const failed = years.filter(y => !y.beats);
+  return {
+    ok: true,
+    years,
+    failed,
+    beats: failed.length === 0,
+    // The per-year winners, so a report can say whether one parent dominated or they split.
+    parentsByYear: years.map(y => `${y.year}:${y.bestParent}`),
+    perMember,
+  };
+}
+
 function check(c) {
   const harness = require('./harness-config');
   const members = c.members || [];
@@ -303,9 +384,36 @@ function check(c) {
 
   // Against the CHAMPIONS, not the legs the caller merged — the bar is the alternative the
   // universe would otherwise ship.
-  if (bar.basis === 'worstTrainYear') rule1 = worstYearRule(c, barMembers);
+  if (bar.basis === 'perYearSharpe') rule1 = perYearSharpeRule(c, barMembers);
+  else if (bar.basis === 'worstTrainYear') rule1 = worstYearRule(c, barMembers);
 
-  if (rule1 && rule1.ok) {
+  if (rule1 && rule1.ok && bar.basis === 'perYearSharpe') {
+    // ── epoch 8: per-year sharpe domination ──────────────────────────────────
+    flags.push('bar=perYearSharpe');
+    for (const y of rule1.years) {
+      reasons.push(`${y.year}: candidate sharpe ${y.candidateSharpe} vs best parent ` +
+                   `${y.bestParent} ${y.bestParentSharpe} -> ${y.beats ? 'beats' : 'FAILS'} ` +
+                   `(margin ${y.margin >= 0 ? '+' : ''}${y.margin})`);
+    }
+    // A split means the candidate is up against a composite no single parent matches. Accepted
+    // under epoch 8, but it is the thing a reader most needs told.
+    const winners = new Set(rule1.years.map(y => y.bestParent));
+    if (winners.size > 1) {
+      flags.push('parents-split-by-year');
+      reasons.push(`⚠ the best parent DIFFERS by year (${rule1.parentsByYear.join(', ')}), so the ` +
+                   'bar is a composite no single parent achieves — deliberate under epoch 8, and ' +
+                   'strictly harder than beating any one family');
+    }
+    if (!rule1.beats) {
+      verdict = 'reject';
+      reasons.push(`fails per-year sharpe domination in ${rule1.failed.length} of ` +
+                   `${rule1.years.length} TRAIN year(s): ` +
+                   rule1.failed.map(y => `${y.year} (${y.candidateSharpe} <= ${y.bestParentSharpe} ` +
+                                          `${y.bestParent})`).join(', ') +
+                   ' — every year must beat its own best parent');
+    }
+  } else if (rule1 && rule1.ok) {
+    // ── epoch 7: worst-year objective maximin (kept so an old epoch judges by its own rule) ──
     flags.push('bar=worstTrainYear');
     reasons.push(`worst TRAIN year: candidate ${rule1.candWorst.year} at ` +
                  `${rule1.candWorst.objective} (annual ${rule1.candWorst.annualPct}%, maxDD ` +
@@ -316,6 +424,8 @@ function check(c) {
       reasons.push(`worst-year objective ${rule1.candWorst.objective} does not beat ` +
                    `${rule1.bestMember} at ${rule1.bestWorst.objective}`);
     }
+  }
+  if (rule1 && rule1.ok) {
     // The pooled comparison stays VISIBLE but no longer vetoes: it is almost purely annual
     // return (r=0.9698) and annual return over TRAIN is substantially a 2022 measurement
     // (2022 supplies a median 62% of log-growth), so a merge that buys consistency rather
@@ -332,7 +442,7 @@ function check(c) {
     // because a file was missing is worse than one that is simply strict.
     flags.push('bar=pooled-fallback');
     if (rule1 && rule1.why) {
-      reasons.push(`⚠ could not apply the epoch-${harness.config().epoch} worst-year bar — ` +
+      reasons.push(`⚠ could not apply the epoch-${harness.config().epoch} ${bar.basis} bar — ` +
                    `${rule1.why}; falling back to the pooled objective. Capture the missing ` +
                    'curve (node utils/series-backfill.js --dry) and re-run before trusting this.');
     }
@@ -410,9 +520,14 @@ function check(c) {
     verdict, reasons, flags,
     stageGate: { min: gateMin, candidate: candSharpe, passes: harness.stageGate('integrate', cand.sharpe) },
     bar: bar.basis,
-    barApplied: rule1 && rule1.ok ? 'worstTrainYear' : 'pooled',
-    // The binding comparison under the active epoch, when it could be made.
-    worstYear: rule1 && rule1.ok ? {
+    barApplied: rule1 && rule1.ok ? bar.basis : 'pooled',
+    // epoch 8: the binding per-year sharpe comparison, when it could be made.
+    perYearSharpe: rule1 && rule1.ok && bar.basis === 'perYearSharpe' ? {
+      years: rule1.years, failed: rule1.failed.map(y => y.year), beats: rule1.beats,
+      parentsByYear: rule1.parentsByYear,
+    } : null,
+    // epoch 7: the worst-year objective maximin, kept so an older epoch judges by its own rule.
+    worstYear: rule1 && rule1.ok && bar.basis === 'worstTrainYear' ? {
       candidate: rule1.candWorst, member: rule1.bestMember, memberWorst: rule1.bestWorst,
       uplift: Number((rule1.candWorst.objective - rule1.bestWorst.objective).toFixed(4)),
       perMember: rule1.perMember,
@@ -433,6 +548,15 @@ if (require.main === module) {
   console.log(`  stage gate       : sharpe ${r.stageGate.candidate} vs ${r.stageGate.min} -> ` +
               `${r.stageGate.passes ? 'pass' : 'FAIL (necessary, not sufficient)'}`);
   console.log(`  bar applied      : ${r.barApplied}${r.barApplied === r.bar ? '' : `  (epoch asks for ${r.bar})`}`);
+  if (r.perYearSharpe) {
+    console.log('  per-year sharpe  : every TRAIN year must beat its own best parent');
+    for (const y of r.perYearSharpe.years) {
+      console.log(`      ${y.year}  candidate ${String(y.candidateSharpe).padStart(6)}  vs  ` +
+                  `${y.bestParent} ${String(y.bestParentSharpe).padStart(6)}   ` +
+                  `${y.beats ? 'beats' : 'FAILS'}  (${y.margin >= 0 ? '+' : ''}${y.margin})`);
+    }
+    console.log(`  domination       : ${r.perYearSharpe.beats ? 'YES — all years' : `NO — fails ${r.perYearSharpe.failed.join(', ')}`}`);
+  }
   if (r.worstYear) {
     const w = r.worstYear;
     console.log(`  worst TRAIN year : candidate ${w.candidate.year} ${w.candidate.objective} ` +
