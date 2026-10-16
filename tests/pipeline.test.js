@@ -145,6 +145,57 @@ test('type integration guard', async t => {
   await t.test('needs at least two members to be an integration at all', () => {
     assert.strictEqual(check({ candidate: {}, members: [member({})] }).verdict, 'invalid');
   });
+
+  // ── rule 0: the stage gate ──────────────────────────────────────────────────
+  //
+  // ⚠⚠ The guard did not check it. On the ETF round-2 candidates (2026-10-16) it returned
+  // KEEP for sharpe 0.94 and 0.91 against a threshold of 1.5, because it applied rules 1-4
+  // and never asked whether the candidate cleared the gate at all. Only the agent's own
+  // reading caught it. "Beat the best MEMBER, not the gate" exists to stop a gate PASS being
+  // mistaken for success; it was never a licence to skip the gate.
+
+  await t.test('rejects a candidate below the integrate stage gate, however good the bar looks', () => {
+    const r = check({
+      weights: 'equal',
+      // Beats both members on objective, and still unshippable.
+      candidate: { annual: 20, sharpe: 0.94, maxdd: 10, objective: 0.95 },
+      members: [member({ family: 'A', sharpe: 1.41, objective: 0.38 }),
+                member({ family: 'B', sharpe: 1.21, objective: 0.33 })],
+    });
+    assert.strictEqual(r.verdict, 'reject');
+    assert.ok(r.flags.includes('below-stage-gate'));
+    assert.ok(r.reasons.some(x => /below the integrate stage gate/.test(x)));
+    assert.strictEqual(r.stageGate.passes, false);
+    assert.strictEqual(r.stageGate.min, harness.stageThreshold('integrate'));
+  });
+
+  await t.test('says so when EVERY parent is below the gate — but does not veto on it', () => {
+    // Not a veto, deliberately: a blend can mechanically exceed both parents' sharpe whenever
+    // their correlation is below 1, which is the trap rule 2 exists for. So "both parents fail"
+    // does not imply the candidate must. It is still worth saying out loud, because a round
+    // whose every parent fails is spending backtest minutes on a ceiling it cannot clear.
+    const r = check({
+      weights: 'equal',
+      candidate: { annual: 62, sharpe: 3.0, maxdd: 10, objective: 0.52 },
+      members: [member({ family: 'A', sharpe: 1.41, objective: 0.38 }),
+                member({ family: 'B', sharpe: 1.21, objective: 0.33 })],
+    });
+    assert.ok(r.flags.includes('all-parents-below-gate'));
+    assert.ok(!r.flags.includes('below-stage-gate'), 'the candidate itself clears the gate');
+    assert.notStrictEqual(r.verdict, 'reject', 'the parents failing must not veto the candidate');
+  });
+
+  await t.test('a passing candidate with passing parents raises neither flag', () => {
+    const r = check({
+      weights: 'equal',
+      candidate: { annual: 62, sharpe: 3.0, maxdd: 10, objective: 0.52 },
+      members: [member({ family: 'A', sharpe: 2.6, objective: 0.38 }),
+                member({ family: 'B', sharpe: 2.4, objective: 0.33 })],
+    });
+    assert.ok(!r.flags.includes('below-stage-gate'));
+    assert.ok(!r.flags.includes('all-parents-below-gate'));
+    assert.strictEqual(r.stageGate.passes, true);
+  });
 });
 
 // ── consumption ledger ───────────────────────────────────────────────────────

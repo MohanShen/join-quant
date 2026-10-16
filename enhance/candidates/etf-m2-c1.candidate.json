@@ -1,0 +1,32 @@
+{
+  "type": "ETF",
+  "expId": "etf-m2-c1",
+  "weights": "equal",
+  "candidate": {
+    "annual": 24.76,
+    "sharpe": 0.94,
+    "maxdd": 20.51,
+    "objective": 0.0425,
+    "sourceFile": "enhance/candidates/etf-m2-c1.py"
+  },
+  "members": [
+    {
+      "family": "ETF动量",
+      "sourceFile": "study/ETF动量/baseline-e6.py",
+      "annual": 36.15,
+      "sharpe": 1.41,
+      "maxdd": 17.47,
+      "objective": 0.1868,
+      "realizability": 2
+    },
+    {
+      "family": "七星高照",
+      "sourceFile": "study/七星高照/baseline-e6.py",
+      "annual": 28.79,
+      "sharpe": 1.21,
+      "maxdd": 16.27,
+      "objective": 0.1252,
+      "realizability": 2
+    }
+  ]
+}

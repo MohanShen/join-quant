@@ -13,8 +13,19 @@
  *
  * So an integration round with no guard produces gate passes at will and adds no edge.
  *
- * The four rules, applied here:
- *   1. BEAT THE BEST MEMBER, not the gate. Clearing sharpe 2.5 is necessary and meaningless.
+ * The rules, applied here:
+ *   0. THE STAGE GATE. `harness.stageGate('integrate', sharpe)` — necessary, never sufficient.
+ *      ⚠⚠ This was MISSING. The guard applied rules 1-4 and never asked whether the candidate
+ *      cleared the gate, so on the ETF round-2 candidates (2026-10-16) it returned `keep` at
+ *      sharpe 0.94 and 0.91 against a threshold of 1.5 — only the agent's own reading caught it.
+ *      Rule 1's slogan ("beat the MEMBER, not the gate") exists to stop a gate PASS being
+ *      mistaken for success; it was never a licence to skip the gate. A companion flag,
+ *      `all-parents-below-gate`, says when no parent clears it — a warning and NOT a veto,
+ *      because a blend can mechanically exceed both parents whenever correlation < 1.
+ *   1. BEAT THE BEST MEMBER, not the gate. Clearing the gate is necessary and meaningless.
+ *      ⚠ Since harness epoch 7 this is a PER-YEAR comparison — the candidate's worst TRAIN
+ *      calendar year against the most consistent member's worst TRAIN year (`harness.md` §4.1).
+ *      It needs stored curves; without them it falls back to the pooled rule and SAYS SO.
  *   2. DECLARE THE DIVERSIFICATION SHARE. If the candidate's return does not exceed its
  *      members' while its Sharpe does, the gain is risk-side — that is diversification, not edge.
  *   3. EQUAL WEIGHT FIRST. An optimised weight must beat equal weight by more than measurement
@@ -140,6 +151,37 @@ function check(c) {
   const flags = [];
   let verdict = 'keep';
 
+  // Rule 0 — the STAGE GATE. Necessary, never sufficient.
+  //
+  // ⚠⚠ The guard never checked this. It applied rules 1-4 and returned `keep` for a candidate
+  // whose sharpe was nowhere near the bar: measured on the ETF round-2 candidates (2026-10-16),
+  // etf-m2-c1 and c2 were returned as KEEP at sharpe 0.94 and 0.91 against a threshold of 1.5.
+  // Only the agent's own reading caught it. The doctrine "beat the best MEMBER, not the gate"
+  // was written to stop a gate pass being mistaken for success — it was never a licence to skip
+  // the gate, and the guard is the one place that cannot be relied on to remember that.
+  const gateMin = harness.stageThreshold('integrate');
+  const candSharpe = num(cand.sharpe);
+  if (!harness.stageGate('integrate', cand.sharpe)) {
+    verdict = 'reject';
+    flags.push('below-stage-gate');
+    reasons.push(`sharpe ${cand.sharpe} is below the integrate stage gate of ${gateMin} — ` +
+                 'a candidate that fails the gate is not shippable whatever it does to the bar');
+  }
+
+  // Whether the PARENTS could ever produce a usable merge. Not a veto: a blend can mechanically
+  // exceed both parents' sharpe whenever their correlation is below 1 — that is the exact trap
+  // rule 2 exists for — so "both parents fail" does not imply the candidate must. But a round
+  // whose every parent fails the gate is spending backtest minutes on a ceiling it cannot clear,
+  // and it should see that said out loud rather than infer it from three rejections.
+  const membersBelowGate = members.filter(m => !harness.stageGate('integrate', m.sharpe));
+  if (membersBelowGate.length === members.length) {
+    flags.push('all-parents-below-gate');
+    reasons.push(`⚠ every member is below the ${gateMin} gate ` +
+                 `(${members.map(m => `${m.family} ${m.sharpe}`).join(', ')}) — no merge of these ` +
+                 'parents is usable unless it clears a bar neither parent reaches, which is ' +
+                 'precisely the pattern rule 2 treats as risk-side rather than edge');
+  }
+
   // Rule 1 — beat the best member. WHAT "beat" means is the active epoch's call.
   const bar = harness.integrateBar();
   const beatsPooled = (num(cand.objective) ?? -Infinity) > (num(bestMember.objective) ?? -Infinity);
@@ -247,6 +289,7 @@ function check(c) {
 
   return {
     verdict, reasons, flags,
+    stageGate: { min: gateMin, candidate: candSharpe, passes: harness.stageGate('integrate', cand.sharpe) },
     bar: bar.basis,
     barApplied: rule1 && rule1.ok ? 'worstTrainYear' : 'pooled',
     // The binding comparison under the active epoch, when it could be made.
@@ -268,6 +311,8 @@ if (require.main === module) {
   const c = JSON.parse(fs.readFileSync(f, 'utf8'));
   const r = check(c);
   console.log(`[integrate] ${c.type || '?'} ${c.expId || ''} -> ${r.verdict.toUpperCase()}`);
+  console.log(`  stage gate       : sharpe ${r.stageGate.candidate} vs ${r.stageGate.min} -> ` +
+              `${r.stageGate.passes ? 'pass' : 'FAIL (necessary, not sufficient)'}`);
   console.log(`  bar applied      : ${r.barApplied}${r.barApplied === r.bar ? '' : `  (epoch asks for ${r.bar})`}`);
   if (r.worstYear) {
     const w = r.worstYear;

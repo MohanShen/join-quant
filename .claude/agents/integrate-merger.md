@@ -138,6 +138,7 @@ Under a merge the guard changes shape rather than relaxing:
 
 | rule | status |
 |---|---|
+| 0. the stage gate (`sharpe >= 1.5`) | **binds** — necessary, never sufficient |
 | 1. beat the best MEMBER, not the gate | **binds** — on the WORST TRAIN YEAR, see below |
 | 2. diversification share | inert — there is no blend to attribute |
 | 3. optimised vs equal weight | inert — there are no weights across books |
@@ -146,6 +147,20 @@ Under a merge the guard changes shape rather than relaxing:
 Rule 4 is the one that bites: a merged candidate inherits the worse realism of its parents. If
 either page declares its headline unrealizable (`不可实现`), say so in the verdict — the result is a
 TRAIN comparison, not a tradeable claim.
+
+### Rule 0 — check the gate BEFORE you build
+
+⚠⚠ The guard used to skip it: on the ETF round-2 candidates it returned **KEEP** at sharpe 0.94
+and 0.91 against a threshold of 1.5, because it applied rules 1–4 and never asked whether the
+candidate cleared the gate. It now rejects on it. Do not rely on that fix to find out late.
+
+**Before declaring a candidate set, check both parents with
+`node -e "console.log(require('./utils/harness-config').stageGate('integrate', <sharpe>))"`.**
+If *neither* parent clears 1.5, say so in your plan: the only way a merge of them becomes usable
+is by clearing a bar neither parent reaches, which is exactly the pattern rule 2 treats as
+risk-side rather than edge. That is a reason to report the ceiling, not to spend three backtests
+discovering it. The guard flags this case as `all-parents-below-gate` — a warning, not a veto,
+since a blend *can* mechanically exceed both parents when correlation < 1.
 
 ### Rule 1 is a PER-YEAR comparison (epoch 7)
 

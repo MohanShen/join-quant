@@ -290,6 +290,15 @@ Only the directories whose contents aren't self-evident:
   Sharpe mechanically whenever correlation < 1 and the gate IS a Sharpe threshold — 七星高照's
   blend scores sharpe 3.17 against legs of 2.85/1.60 and still loses to its own small-cap leg
   (0.4814 vs 0.5984). Beat the best MEMBER, not the gate.
+- ⚠⚠ **`type-integrate-check.js` never checked the stage gate.** It applied rules 1–4 and returned
+  **`keep`** for ETF round-2 candidates at sharpe **0.94 and 0.91** against a threshold of 1.5;
+  only the merge agent's own reading caught it. Rule 1's slogan — "beat the MEMBER, not the gate" —
+  exists to stop a gate PASS being mistaken for success, and had been read as licence to skip the
+  gate entirely. Now **rule 0** rejects on `harness.stageGate('integrate', …)`, and the result
+  object carries `stageGate: {min, candidate, passes}`. A companion flag `all-parents-below-gate`
+  fires when no parent clears the bar — deliberately a **warning, not a veto**, because a blend can
+  mechanically exceed both parents whenever correlation < 1, which is the trap rule 2 exists for.
+  The agent contract now says to check both parents **before** declaring a candidate set.
 - **The ledger stores scalars, which cannot rank INGREDIENTS.** A sleeve scoring 0.1 that is
   uncorrelated with a type's leader can beat one scoring 0.8 that moves with it — correlation is
   not a function of annual/sharpe/maxdd, so filtering integration candidates by standalone score
