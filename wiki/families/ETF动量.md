@@ -28,7 +28,7 @@ realism: "⚠ epoch-6 base objective 0.1868 / sharpe 1.41（epoch 2 的 0.2965 �
 realizability: 2
 realizabilityBasis: "etf-m2 round 2 candidate.json (ETF merge, 2026-10-16)"
 status: active
-updatedAt: 2026-10-15
+updatedAt: 2026-10-16
 bestObjectiveEpoch: 6
 ---
 
@@ -96,7 +96,7 @@ bestObjectiveEpoch: 6
 | 28 | [[48187f0c_ETF轮动大A行情判断]] | DQ/— | — | — | — | — | — |
 | 29 | [[77cabc3c_纳指增强]] | DQ/— | — | — | — | — | — |
 
-*6 gate-pass / 29 members. 快照 2026-10-15（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*6 gate-pass / 29 members. 快照 2026-10-16（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 - **[已答 — 前置条件已跑，未通过] 点时池** → [[study-pit-pool]]：objective 0.1868→**−0.0313** / sharpe 1.41→**0.42**，损失全在 2022。`动量` 因此转 `refuted`。**本族任何 TRAIN/VAL 水平数字不得再作机制证据引用，VAL 也不该花**；且 epoch-6 的 VAL 其实已用（etfmom-005 误记在 `enhance` 阶段，`val-budget` 已修正为 BLOCKED）。
