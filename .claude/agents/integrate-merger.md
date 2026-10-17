@@ -219,14 +219,26 @@ in 2022 **and** 1.67 in 2023". Check this **before** declaring a candidate set: 
 is set by a book whose realism declares it unrealizable, say so in your plan rather than spending
 three backtests on it.
 
-⚠ **4 of 11 champions have no stored curve** (七星高照, 五福闹新春, 大小盘轮动, 小市值), and without
-one for the candidate *and every* parent the bar drops to the pooled rule. Run
-`node utils/series-backfill.js` first — it is free.
+⚠ **Check curve coverage before trusting the bar** — without one for the candidate *and every*
+parent it drops to the pooled rule and flags `bar=pooled-fallback`.
+Coverage was **11 of 11 champions** as of 2026-10-17. This line used to warn that four were
+missing (七星高照, 五福闹新春, 大小盘轮动, 小市值) — those are the exact four that
+`utils/series-rekey.js` recovered: their curves had been on disk the whole time under a hidden
+`.._.._.._tmp_jq-normalize_<tag>` key that no reader could build and no `ls` would show.
+⚠ **So do not read a zero-match backfill as "unrecoverable".** `node utils/series-backfill.js`
+is free and is still the right first step for a NEW row, but it found zero matches for all four of
+those and a re-run was started on that basis, costing ~23 backtest minutes for curves that already
+existed. `ls -a data/series/` and `node utils/series-rekey.js --dry` come first.
 
 Why you need to know rather than just read the verdict: **it changes which member you are up
-against, often drastically.** In the 全A round the pooled leader 打板短线 scores 0.9668 — and its
-own worst year is **−0.3591**, so under the real bar the member to beat is 红利低频 at **0.1224**.
-Aiming at 0.9668 was aiming at a number that exists only because of 2022.
+against, often drastically.** In the 全A round the pooled leader 打板短线 scores 0.9668 while its
+own worst year is **−0.3591** — so aiming at 0.9668 was aiming at a number that exists only
+because of 2022.
+⚠ The figures in that example are the **epoch-7** reading (worst-year objective, which put the
+member to beat at 红利低频's 0.1224). Epoch 7's maximin is **invalidated** — under epoch 8 the bar
+is per-year sharpe domination, so compute it from `integrateBar()` and never carry 0.1224 forward
+as "the bar". The point the example makes survives the change intact: the pooled leader is usually
+not the right target.
 
 ⚠ **The guard needs curves, or it silently falls back.** Put a `sourceFile` on the **candidate**
 block as well as on **every** member — partial coverage also falls back, because a bar computed

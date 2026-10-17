@@ -339,3 +339,88 @@ test('run-family dispatches its five roles', async (t) => {
     }
   });
 });
+
+/**
+ * Contract/step consistency — the review of 2026-10-17.
+ *
+ * Making /run-family dispatch its five roles exposed four things the contracts said that the code
+ * did not do, plus one silent substitution in the planner.
+ */
+test('agent contracts match what each step actually does', async (t) => {
+  const AG = path.join(ROOT, '.claude/agents');
+  const read = f => fs.readFileSync(path.join(AG, f), 'utf8');
+
+  await t.test('no subagent claims it can dispatch another subagent', () => {
+    // family-gatekeeper said "hand it to the executor", which a subagent cannot do. It NAMES the
+    // next entry; the orchestrator spawns it.
+    for (const f of fs.readdirSync(AG).filter(x => x.endsWith('.md'))) {
+      const s = read(f);
+      if (/RETIRED/.test(s.slice(0, 1200))) continue;          // history, not live
+      // Line-by-line, skipping the line that QUOTES the old wording to explain why it is wrong —
+      // family-gatekeeper says: 'this line used to read "hand it to the executor"'. A test that
+      // cannot tell an instruction from a citation of a retracted one is not measuring anything.
+      const offending = s.split('\n').filter(l =>
+        /hand it to the (executor|recorder|gatekeeper)/i.test(l) &&
+        !/used to read|cannot|is not a thing|instead of/i.test(l));
+      assert.deepStrictEqual(offending, [],
+        `${f}: a subagent cannot dispatch a subagent — return to the orchestrator instead`);
+    }
+  });
+
+  await t.test('the executor does not teach the superseded "log is unreadable" rule', () => {
+    // /algorithm/backtest/log fails only in its BARE form; utils/backtest-log.js reads it.
+    const s = read('family-executor.md');
+    assert.ok(!/backtest log is not retrievable/.test(s));
+    assert.match(s, /backtest log IS retrievable/);
+    assert.ok(fs.existsSync(path.join(ROOT, 'utils/backtest-log.js')),
+      'the correction depends on this wrapper existing');
+  });
+
+  await t.test('integrate-merger teaches the ACTIVE bar, not epoch 7\'s', () => {
+    const s = read('integrate-merger.md');
+    const basis = require('../utils/harness-config').integrateBar().basis;   // e.g. perYearSharpe
+    // The contract states it as prose ("PER-YEAR SHARPE DOMINATION"), not as the config
+    // identifier, so compare letters-only and case-insensitively.
+    const flat = x => x.toLowerCase().replace(/[^a-z]/g, '');
+    assert.ok(flat(s).includes(flat(basis)),
+      `the contract must name the active basis (${basis}) — it teaches the bar an agent applies`);
+    // Epoch 7's maximin may be cited as history, but must be labelled invalidated.
+    if (/worst[- ]year/i.test(s)) {
+      assert.match(s, /invalidated/i, 'a worst-year figure must be marked as the epoch-7 reading');
+    }
+  });
+
+  await t.test('a read-only generator is never told to write', () => {
+    for (const f of ['family-understand.md', 'family-improve.md']) {
+      const s = read(f);
+      const tools = (s.match(/^tools:\s*(.*)$/m) || [])[1] || '';
+      assert.ok(!/\bWrite\b|\bEdit\b/.test(tools), `${f} should stay read-only`);
+    }
+  });
+
+  await t.test('the retired stages are refused, not silently substituted', () => {
+    const src = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
+    // The refusal...
+    assert.match(src, /RETIRED stage/, 'enhance/study invoke skills that no longer exist');
+    // ...and the bug that made it unreachable: indexOf(-1) + slice(-1) === ['discover'], so
+    // `--stage enhance` printed "-> ENHANCE" and ran DISCOVER.
+    assert.match(src, /const i = PRIORITY\.indexOf\(p\.stage\)/);
+    assert.match(src, /i >= 0 \? PRIORITY\.slice\(i\) : \[p\.stage, \.\.\.PRIORITY\]/);
+    for (const skill of ['run-enhance', 'run-study']) {
+      assert.ok(!fs.existsSync(path.join(ROOT, '.claude/skills', skill)),
+        `${skill} exists again — then the refusal above is now wrong`);
+    }
+  });
+
+  await t.test('every orphaned contract is marked RETIRED', () => {
+    const live = new Set(['family-understand', 'family-improve', 'family-gatekeeper',
+                          'family-executor', 'family-recorder', 'family-assign',
+                          'integrate-merger', 'post-screener']);
+    for (const f of fs.readdirSync(AG).filter(x => x.endsWith('.md'))) {
+      const name = f.replace(/\.md$/, '');
+      if (live.has(name)) continue;
+      assert.match(read(f).slice(0, 1500), /RETIRED/,
+        `${name} is referenced by nothing — mark it, so its stale epoch facts are not read as current`);
+    }
+  });
+});

@@ -4,12 +4,21 @@ Small, strategy-free backtests that answer a **platform data question** with a m
 instead of an argument. Written 2026-09-18 to test lookahead claims that the post screener
 surfaced from the community (see `screen/verdicts.json`).
 
-## Why they encode the answer in the result
+## Why the probes below encode the answer in the result
 
-The backtest **log is not retrievable** through the API this repo uses — `/algorithm/backtest/log`
-returns empty and the sibling endpoints refuse. So a probe cannot simply print. Instead each
-probe places **exactly one marker trade if and only if its condition is ever true**, and the
-answer is read off the `SUMMARY` line: `completed` = condition observed, `no-trades` = never.
+⚠ **Because of a claim that turned out to be wrong.** Every probe here was built when the backtest
+log was believed unreadable, so each one smuggles its answer out as a marker trade: **exactly one
+trade if and only if its condition is ever true**, read off the `SUMMARY` line — `completed` =
+condition observed, `no-trades` = never.
+
+**The log is retrievable.** `/algorithm/backtest/log` fails only in its BARE form; with
+`&offset=0&limit=2000&ajax=1` it returns the full 日志 tab, and `/algorithm/backtest/error` returns
+the 错误 tab where a Python traceback lands. `utils/backtest-log.js` wraps both and resolves the
+re-minted backtestId (`--algorithm <id>`). Whoever probed the endpoint once probed the short form,
+and the finding hardened into a rule that shaped this whole directory.
+
+So a NEW probe may simply `log.info` what it learns. The results below are unaffected — a marker
+trade measures what it measured — but do not copy the pattern just because it is here.
 
 **Every probe needs a control.** `no-trades` is ambiguous on its own: it also happens when the
 code path never runs, an API returns empty, or the order fails. Each condition probe below is

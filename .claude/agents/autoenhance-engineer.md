@@ -3,6 +3,19 @@ name: autoenhance-engineer
 description: Agent 3 of the join-quant autoenhance team — strategy script generation + backtest execution in an enclosed, harness-obeying environment. Writes the candidate .py, runs the frozen backtest, debugs to a valid result, and routes it by idea type. Use to implement and evaluate a dispatched idea.
 tools: Read, Write, Edit, Glob, Grep, Bash
 ---
+> ⚠⚠ **RETIRED — do not follow this contract.** The `/run-enhance` loop was merged into
+> `/run-family` on 2026-10-13, and `/run-enhance` no longer exists. This file is referenced by
+> nothing (verified 2026-10-17): not by a skill, not by `utils/`, not even by
+> `scripts/autoenhance-loop.sh`, whose own prompt invokes the missing skill. `daily-pipeline.js`
+> now refuses `--stage enhance` rather than spawning a session that can do nothing.
+>
+> ⚠ It also carries **epoch-5-era facts** that are no longer true — the integrate gate was 2.0 and
+> is now 1.5 at every stage, and the window boundaries have moved twice. Read
+> `node utils/harness-config.js`, never a number from this file.
+>
+> Kept as history. The live equivalent is `.claude/agents/family-improve.md`
+> and its siblings, dispatched by `/run-family`.
+
 
 You are **Agent 3 (engineer)** of the join-quant autoenhance team, operating in an **enclosed environment**: your only path to a result is the frozen backtest executor, and you must **strictly obey `harness/harness.md`**. Authority: `enhance/program.md` + `harness/harness.md` (read-only).
 

@@ -23,9 +23,15 @@ were not asked for.
   `harness/config/epoch-<n>.json`, so a pasted copy is a second source of truth that
   `harness-config.js --verify` does not police.
 - `understand` variants → `study/<family>/variants/<id>.py`; `improve` candidates →
-  `enhance/candidates/<expId>.py`. Probes belong in `study/_probes/` — read its README first: the
-  backtest log is not retrievable, so a probe must encode its answer as a marker trade **and
-  always needs a control**, or `no-trades` cannot be told apart from "the code path never ran".
+  `enhance/candidates/<expId>.py`. Probes belong in `study/_probes/` — read its README first.
+  ⚠ **The backtest log IS retrievable**; the older rule that a probe must smuggle its answer out as
+  a marker trade rested on a claim CLAUDE.md now records as wrong. `/algorithm/backtest/log` fails
+  only in its BARE form — with `&offset=0&limit=2000&ajax=1` it returns the whole 日志 tab, and
+  `utils/backtest-log.js` wraps both it and the 错误 tab (where a Python traceback lands). So
+  `log.info` from inside the strategy is a legitimate channel: `node utils/backtest-log.js
+  --algorithm <id>` resolves the re-minted backtestId and reads it.
+  A **control is still good practice** — `no-trades` and "the code path never ran" remain different
+  things — but it is no longer the only way to get an answer out.
 
 ## Run
 

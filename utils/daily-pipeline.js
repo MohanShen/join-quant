@@ -386,7 +386,29 @@ function runAgentLoop(stage, target, { dry }) {
   // (data/research-sessions/<family>.txt): a family in progress resumes its own session, a family
   // never studied gets a clean one.
   //
-  // agent-loop.sh remains for the two legacy stages, whose pins are per-stage by design.
+  // ⚠⚠ The two LEGACY stages are DEAD, not merely demoted (verified 2026-10-17).
+  // `scripts/autoenhance-loop.sh` dispatches `/run-enhance` and `autostudy-loop.sh` dispatches
+  // `/run-study`, and **neither skill exists** — both were merged into `/run-family`. So a
+  // `--stage enhance` run would spawn a Claude session, tell it to invoke a missing slash command,
+  // and exit 0 having done nothing: precisely the silent-no-op shape this file's header warns
+  // about three times. Their 8 agent contracts are orphaned too, and still carry epoch-5-era
+  // facts (integrate gate 2.0, VAL ending 2025-12-31).
+  //
+  // Refused here rather than in the wrapper, because the planner is what a human reaches through
+  // `--stage`. Not deleted: the wrappers and pins are the fallback path's history, and re-pointing
+  // them at /run-family would resurrect the per-STAGE pin bug that made a resumed enhance session
+  // keep working ETF动量 after its queue had moved to ETF溢价.
+  if (stage === 'enhance' || stage === 'study') {
+    return {
+      outcome: 'blocked',
+      note: `${stage} is a RETIRED stage: scripts/auto${stage}-loop.sh invokes ` +
+            `/run-${stage === 'enhance' ? 'enhance' : 'study'}, a skill that no longer exists ` +
+            '(both merged into /run-family). Dispatching would start a session that can do ' +
+            'nothing and exit 0. Use --stage research, or /run-family <family>.',
+    };
+  }
+  // agent-loop.sh remains wired for them so the path's history is intact, but the guard above
+  // means it is never reached.
   const PER_UNIT_SCRIPT = {
     research: 'scripts/run-family.sh',
     integrate: 'scripts/run-integrate.sh',
@@ -484,7 +506,14 @@ function runStage(stage, q, dry) {
  * stages are returned in `cededFrom` and reported, so the blockage stays loud.
  */
 function execute(p, { dry = false } = {}) {
-  const order = PRIORITY.slice(PRIORITY.indexOf(p.stage));
+  // ⚠⚠ A `--stage` override for a stage that is NOT in PRIORITY used to run something else
+  // entirely, silently. `PRIORITY.indexOf('enhance')` is -1 and `slice(-1)` is `['discover']`, so
+  // `--stage enhance` printed "-> ENHANCE" and then ran DISCOVER with no mention of the
+  // substitution. Measured 2026-10-17 while checking that the retired stages refuse properly: the
+  // refusal never fired because the stage was never attempted. A silent substitution is worse than
+  // either outcome it replaced.
+  const i = PRIORITY.indexOf(p.stage);
+  const order = i >= 0 ? PRIORITY.slice(i) : [p.stage, ...PRIORITY];
   const cededFrom = [];
 
   for (const stage of order) {
@@ -661,7 +690,8 @@ function printPlan(p) {
   console.log(`   assign    ${String(q.assign.length).padStart(4)}   normalized but no family: (invisible to the queue)`);
   console.log(`   normalize ${String(q.normalize.total).padStart(4)}   ${q.normalize.pending.length} pending + ${q.normalize.retry.length} deferred-retry`);
   console.log(`   discover  ${String(q.discover.uncopied).padStart(4)}   uncopied of ${q.discover.total} in queue`);
-  console.log(`   (legacy: enhance ${q.enhance.length}, study ${q.study.length} — --stage only)`);
+  console.log(`   (RETIRED: enhance ${q.enhance.length}, study ${q.study.length} — their skills ` +
+              'are gone; --stage refuses both and points at /run-family)');
 
   // ⚠ OOS is the one stage the cron must never run, so it is reported and never dispatched. It
   // was invisible until 2026-10-16 — the planner would report "research 0" and look finished

@@ -40,10 +40,16 @@ node utils/research-queue.js <family> --lint
 6. **Budget-aware** — a multi-hour strategy burns the day for one number. `etfprem-000` spent 19
    minutes and slow-skipped at 45 without producing a result. Flag the cost in `why`.
 
-## Dispatch
-Mark the top entry `active`, hand it to the executor with the minimal context, and record the
-ranking reason. Queue empty and no valid idea → hand back to the generator that is furthest
-behind, saying which axis is exhausted.
+## Dispatch — you NAME the next entry; the orchestrator dispatches it
+
+⚠ **You cannot spawn the executor.** A subagent does not dispatch another subagent, and this line
+used to read "hand it to the executor", which is not a thing you can do. Mark the top entry
+`active` in `study/<family>/queue.json`, record the ranking reason, and **return the entry to the
+orchestrator** with the minimal context the executor will need (the id, the base to mutate from,
+and the falsification test). The orchestrator spawns `family-executor` with it.
+
+Queue empty and no valid idea → say which axis is exhausted and which generator is furthest
+behind, so the orchestrator knows which one to re-dispatch.
 
 **Both kinds exhausted** → report that to the orchestrator; that is the loop's exit into VAL
 finalization, which is the orchestrator's decision, not yours.

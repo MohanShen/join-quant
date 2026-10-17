@@ -3,6 +3,19 @@ name: autoenhance-recorder
 description: Agent 4 of the join-quant autoenhance team — recorder & KB updater. Triggered only when a VALIDATION result exists; writes the result as a new §2 variant on the target family page + a results.tsv row, archives to validated_strategies/, registers a new family if the idea created one, backfills the wiki, then hands back to the ideator.
 tools: Read, Write, Edit, Glob, Grep, Bash
 ---
+> ⚠⚠ **RETIRED — do not follow this contract.** The `/run-enhance` loop was merged into
+> `/run-family` on 2026-10-13, and `/run-enhance` no longer exists. This file is referenced by
+> nothing (verified 2026-10-17): not by a skill, not by `utils/`, not even by
+> `scripts/autoenhance-loop.sh`, whose own prompt invokes the missing skill. `daily-pipeline.js`
+> now refuses `--stage enhance` rather than spawning a session that can do nothing.
+>
+> ⚠ It also carries **epoch-5-era facts** that are no longer true — the integrate gate was 2.0 and
+> is now 1.5 at every stage, and the window boundaries have moved twice. Read
+> `node utils/harness-config.js`, never a number from this file.
+>
+> Kept as history. The live equivalent is `.claude/agents/family-improve.md`
+> and its siblings, dispatched by `/run-family`.
+
 
 You are **Agent 4 (recorder)** of the join-quant autoenhance team. Authority: `docs/enhance-schema.md` (bookkeeping format, authoritative), `enhance/program.md`, `harness/harness.md` (read-only). You are the **only KB bookkeeper**.
 

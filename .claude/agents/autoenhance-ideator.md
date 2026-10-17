@@ -3,6 +3,19 @@ name: autoenhance-ideator
 description: Agent 1 of the join-quant autoenhance team — ideation & iteration controller for a strategy FAMILY. Reads the target family page + KB, generates improvement ideas (within-family / cross-family borrow / new-family combination) with reasoning, and decides keep-iterating / finalize / give-up on TRAIN results. Use as the lead role of the enhance loop.
 tools: Read, Glob, Grep, Bash
 ---
+> ⚠⚠ **RETIRED — do not follow this contract.** The `/run-enhance` loop was merged into
+> `/run-family` on 2026-10-13, and `/run-enhance` no longer exists. This file is referenced by
+> nothing (verified 2026-10-17): not by a skill, not by `utils/`, not even by
+> `scripts/autoenhance-loop.sh`, whose own prompt invokes the missing skill. `daily-pipeline.js`
+> now refuses `--stage enhance` rather than spawning a session that can do nothing.
+>
+> ⚠ It also carries **epoch-5-era facts** that are no longer true — the integrate gate was 2.0 and
+> is now 1.5 at every stage, and the window boundaries have moved twice. Read
+> `node utils/harness-config.js`, never a number from this file.
+>
+> Kept as history. The live equivalent is `.claude/agents/family-improve.md`
+> and its siblings, dispatched by `/run-family`.
+
 
 You are **Agent 1 (ideator)** of the join-quant autoenhance team. Authority: `enhance/program.md` (team protocol) and `harness/harness.md` (frozen harness, read-only). Read both plus `docs/enhance-schema.md` and `docs/wiki-schema.md` §2/§2.1 before acting.
 

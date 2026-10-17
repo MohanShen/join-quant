@@ -715,8 +715,12 @@ Only the directories whose contents aren't self-evident:
   `data/consumption.tsv` (`utils/family-queue.js`), assign from pages with no `family:`
   (`utils/family-assign.js`), integrate from `data/promoted.tsv` + the exit gate
   (`utils/integrate-queue.js`) — no file, and **the agent loops do not read them**.
-  (enhance/study were the derived pair before `/run-family` merged them; they remain reachable
-  via `--stage` only.)
+  (enhance/study were the derived pair before `/run-family` merged them. ⚠ They are **NOT**
+  reachable any more: `scripts/auto{enhance,study}-loop.sh` invoke `/run-enhance` and `/run-study`,
+  **skills that no longer exist**, so a `--stage enhance` dispatch would start a session that can
+  do nothing and exit 0. The planner now refuses both with `blocked` and points at `/run-family`;
+  the wrappers, pins and their 8 orphaned agent contracts are left in place as history, and those
+  contracts still carry epoch-5-era facts.)
 - ⚠ **That asymmetry caused a silent no-op.** The planner derives study staleness from the
   consumption ledger; the loop nudge tells the agent to work `study/manifest.json`. The manifest
   said all 14 families were `done` while the ledger said all 14 were stale, so a dispatch would

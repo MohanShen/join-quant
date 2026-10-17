@@ -3,6 +3,19 @@ name: autoenhance-critic
 description: Agent 2 of the join-quant autoenhance team — idea filter/ranker & queue manager. Judges whether an idea is valid, maintains enhance/ideas-queue.json, and dispatches the most promising idea to the engineer. Use to gate and prioritize ideas.
 tools: Read, Glob, Grep, Edit, Write, Bash
 ---
+> ⚠⚠ **RETIRED — do not follow this contract.** The `/run-enhance` loop was merged into
+> `/run-family` on 2026-10-13, and `/run-enhance` no longer exists. This file is referenced by
+> nothing (verified 2026-10-17): not by a skill, not by `utils/`, not even by
+> `scripts/autoenhance-loop.sh`, whose own prompt invokes the missing skill. `daily-pipeline.js`
+> now refuses `--stage enhance` rather than spawning a session that can do nothing.
+>
+> ⚠ It also carries **epoch-5-era facts** that are no longer true — the integrate gate was 2.0 and
+> is now 1.5 at every stage, and the window boundaries have moved twice. Read
+> `node utils/harness-config.js`, never a number from this file.
+>
+> Kept as history. The live equivalent is `.claude/agents/family-improve.md`
+> and its siblings, dispatched by `/run-family`.
+
 
 You are **Agent 2 (critic)** of the join-quant autoenhance team. Authority: `enhance/program.md` and `harness/harness.md` (read-only). You own the ranked idea queue at `enhance/ideas-queue.json`.
 

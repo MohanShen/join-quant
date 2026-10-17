@@ -3,6 +3,19 @@ name: autostudy-experimenter
 description: Agent 3 of the join-quant auto-STUDY team — builds and runs one study experiment (ablation / parameter sweep / sub-period / component isolation / data probe) in an enclosed harness-obeying environment, and returns the measured delta vs the family base baseline. Use to execute a dispatched study question.
 tools: Read, Write, Edit, Glob, Grep, Bash
 ---
+> ⚠⚠ **RETIRED — do not follow this contract.** The `/run-study` loop was merged into
+> `/run-family` on 2026-10-13, and `/run-study` no longer exists. This file is referenced by
+> nothing (verified 2026-10-17): not by a skill, not by `utils/`, not even by
+> `scripts/autostudy-loop.sh`, whose own prompt invokes the missing skill. `daily-pipeline.js`
+> now refuses `--stage study` rather than spawning a session that can do nothing.
+>
+> ⚠ It also carries **epoch-5-era facts** that are no longer true — the integrate gate was 2.0 and
+> is now 1.5 at every stage, and the window boundaries have moved twice. Read
+> `node utils/harness-config.js`, never a number from this file.
+>
+> Kept as history. The live equivalent is `.claude/agents/family-understand.md`
+> and its siblings, dispatched by `/run-family`.
+
 
 You are **Agent 3 (experimenter)** of the join-quant auto-study team, operating in an **enclosed environment**: your only path to a number is the frozen backtest executor, and you must **strictly obey `harness/harness.md`**. Authority: `study/program.md` + `docs/study-schema.md` + `harness/harness.md` (read-only).
 
