@@ -233,3 +233,57 @@ test('the daily commit is scoped to pipeline output', async (t) => {
     assert.match(src, /Left uncommitted \(not pipeline output/);
   });
 });
+
+/**
+ * ⚠⚠⚠ "No VAL row" is not "nobody has done this step yet".
+ *
+ * The `integrate-blocked` reopening (2026-10-17) treated it as a research to-do and reopened four
+ * families. Checked against what those families had recorded, it was wrong for 4 of 4 — every one
+ * had already declined to spend its one validation, with the reason in §4. A dispatch would have
+ * told a session to "finalize on VAL — one run" and spent an irreversible per-(family, epoch)
+ * resource on a book its own round judged unworthy. Caught with the run live; nothing was spent.
+ */
+test('a reasoned VAL decline is not reopened', async (t) => {
+  const el = require('../utils/integrate-eligible');
+  const harness = require('../utils/harness-config');
+  const rows = el.all();
+
+  await t.test('a candidate below the validate gate is never a research to-do', () => {
+    // Derived, so it needs no field and cannot fall out of sync.
+    for (const r of rows) {
+      if (r.eligible || r.val?.has) continue;
+      const s = r.candidate?.sharpe;
+      if (s == null || harness.stageGate('validate', s)) continue;
+      assert.strictEqual(r.owner, 'none',
+        `${r.family}: candidate sharpe ${s} fails the validate gate — there is nothing worth ` +
+        'the family\'s one validation, so this must not be dispatched');
+    }
+  });
+
+  await t.test('a declared valDeclined blocks with owner none, and carries a basis', () => {
+    const dir = process.env.JQ_FAMILIES_DIR || path.join(ROOT, 'wiki/families');
+    const { field } = require('../utils/frontmatter');
+    let declared = 0;
+    for (const f of fs.readdirSync(dir).filter(x => x.endsWith('.md'))) {
+      const t2 = fs.readFileSync(path.join(dir, f), 'utf8');
+      if (!field(t2, 'valDeclined')) continue;
+      declared++;
+      const fam = f.replace(/\.md$/, '');
+      assert.ok(field(t2, 'valDeclinedBasis').length > 40,
+        `${fam}: valDeclined needs a basis saying WHY and what would change it`);
+      const r = el.assess(fam);
+      if (r.val && r.val.has) continue;   // a later VAL makes the field moot
+      assert.strictEqual(r.owner, 'none', `${fam}: a declared decline must not be reopened`);
+    }
+    assert.ok(declared >= 1, 'expected at least one recorded decline');
+  });
+
+  await t.test('family-queue reopens nothing whose block is a decision', () => {
+    const q = require('../utils/family-queue').build();
+    const reopened = q.due.filter(f => f.reason === 'integrate-blocked').map(f => f.family);
+    for (const fam of reopened) {
+      assert.strictEqual(el.assess(fam).owner, 'research',
+        `${fam} was reopened but its block is not research-owned`);
+    }
+  });
+});

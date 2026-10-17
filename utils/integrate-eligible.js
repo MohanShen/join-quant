@@ -231,6 +231,13 @@ function assess(family) {
   const candidate = product || member;
   const val = validationOf(family);
   const realizabilityScope = fmField(t, 'realizabilityScope') || null;
+  // A round that decides NOT to spend the family's one validation records it here. `valDeclined`
+  // is the epoch it was decided under (provenance only — see the gate below for why it does not
+  // expire); `valDeclinedBasis` is the reason, and a decline without one is reported as such
+  // rather than silently trusted.
+  const valDeclinedAt = fmField(t, 'valDeclined') || null;
+  const valDeclinedBasis = fmField(t, 'valDeclinedBasis') || null;
+  const valDeclined = !!valDeclinedAt;
 
   /**
    * ⚠ `owner` — WHICH STAGE can clear this block. Not decoration: `utils/family-queue.js` reopens
@@ -268,6 +275,58 @@ function assess(family) {
       're-measure the product or re-finalise the family', 'research');
   }
   if (!val.has) {
+    // ⚠⚠⚠ "No VAL row" does NOT mean "nobody has done this step yet".
+    //
+    // The `owner: 'research'` reopening added 2026-10-17 treated it as a to-do, and
+    // `family-queue` duly reopened four families. Checked against what those families had
+    // actually recorded, it was wrong for **4 of 4** — every one had already decided not to spend
+    // its one validation, with the reason written down:
+    //
+    //   七星高照   「BLOCKED 是正确状态，不是待办」 — champion is a cross-family blend whose
+    //              realizability does not transfer, and the pit-pool precondition FAILED, so no
+    //              level number including VAL can be read as mechanism evidence
+    //   五福闹新春  「不配花家族唯一一次验证」 — every built candidate is dominated by member
+    //              73b13d92, and the weak-period pool post-dates the VAL window
+    //   多因子ML   「没有 improve 候选…留给未来的候选」 — and VAL 2024–25 is probably IN-sample
+    //              for the author (post dated 2026-02, ETF pool assembled in hindsight)
+    //   趋势技术   「没有候选过 1.5 闸门…留给下一个能过闸的候选」
+    //
+    // A dispatch would have told a session to "finalize on VAL — one run" and spent an
+    // irreversible per-(family, epoch) resource on a book that family's own round judged unworthy.
+    // It was caught with the run already live and the session already briefed; nothing was spent.
+    //
+    // Two defences, in order of how much they can be trusted:
+
+    // 1. DERIVED. A candidate that does not clear the validate gate on TRAIN is never worth a
+    //    validation, whatever anyone recorded. No field needed and nothing to keep in sync.
+    //    (Catches 趋势技术, whose candidate is sharpe -0.63.)
+    if (candidate.sharpe == null || !harness.stageGate('validate', candidate.sharpe)) {
+      return fail('blocked',
+        `never validated, and its candidate ${candidate.sourceFile} ` +
+        `(sharpe ${candidate.sharpe ?? 'unknown'}) does not clear the ` +
+        `${harness.stageThreshold('validate')} validate gate — so there is nothing worth the ` +
+        'family\'s one validation. Not a research to-do: the loop would have to produce a ' +
+        'gate-clearing candidate first, and THAT reopens via new-members.', 'none');
+    }
+
+    // 2. DECLARED. The other three declined for reasons about the DATA, not the ledger — a
+    //    hindsight-selected pool, a VAL window that is the author's own sample, a candidate
+    //    dominated by an existing member. None of that is derivable, so the round that decides
+    //    records it and this gate honours it.
+    //    ⚠ Deliberately NOT epoch-scoped. Three of the four reasons do not change when the bench
+    //    changes, so expiring the decline on an epoch bump would re-dispatch a session to
+    //    re-derive the same answer — the non-convergence this whole clause exists to stop. What
+    //    DOES reopen the family is a new member (`family-queue`'s own `new-members` reason, which
+    //    does not consult this gate), because a new member can change the champion. Clearing it
+    //    otherwise is a deliberate edit.
+    if (valDeclined) {
+      return fail('blocked',
+        `never validated, and the research loop DECLINED to spend it${valDeclinedAt ? ` (epoch ${valDeclinedAt})` : ''}: ` +
+        `${valDeclinedBasis || 'no basis recorded ⚠'}. A reasoned decision, not a missing step — ` +
+        'reopening it would ask the loop to spend an irreversible validation on a book it already ' +
+        'judged unworthy. A new member reopens the family on its own.', 'none');
+    }
+
     return fail('blocked', 'never validated — /run-family must finalize on VAL first', 'research');
   }
   if (!val.comparable) {

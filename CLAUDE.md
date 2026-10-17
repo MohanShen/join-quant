@@ -842,6 +842,36 @@ Only the directories whose contents aren't self-evident:
   ⚠ Whether a non-comparable VAL is `research` or `human` is **the VAL budget's answer**, not
   re-derived: `sameBench` false ⇒ a fresh VAL is allowed ⇒ research; an unrecorded epoch is
   UNKNOWN, and unknown blocks ⇒ human.
+- ⚠⚠⚠ **"No VAL row" is NOT "nobody has done this step yet" — and reading it that way nearly spent
+  a validation.** The `integrate-blocked` reopening (2026-10-17, the bullet above) treated
+  `never validated` as a research to-do and reopened four families. Checked against what those
+  families had actually recorded, it was wrong for **4 of 4** — every one had already decided not
+  to spend its one validation, with the reason in §4:
+  七星高照 「BLOCKED 是正确状态，不是待办」 (champion is a cross-family blend whose R=2 was scored
+  for the pure rotation, and the pit-pool precondition RAN AND FAILED, so no level number including
+  VAL is mechanism evidence); 五福闹新春 「不配花家族唯一一次验证」 (every built candidate is
+  dominated by member 73b13d92); 多因子ML 「VAL 2024–25 对作者而言很可能是样本内」; 趋势技术
+  「没有候选过 1.5 闸门」. The dispatch was live and the session already briefed with
+  "finalize on VAL — one run" when this was caught; **nothing was spent** (VAL still `ALLOWED`,
+  `used` unchanged, no backtest started). Beyond the VAL risk it was **non-convergent**: a Claude
+  session dispatched at each family every day, forever, to re-derive the same answer.
+  **Two defences, in order of trust:**
+  1. **DERIVED** — a candidate that does not clear `stageGate('validate')` on TRAIN is never worth
+     a validation, whatever anyone recorded. No field, nothing to keep in sync. Catches 趋势技术
+     (sharpe −0.63), which is why that page needs no declaration.
+  2. **DECLARED** — `valDeclined: <epoch>` + `valDeclinedBasis:` in family-page frontmatter, for
+     the three whose reasons are about the **data** (a hindsight-selected pool, a VAL window inside
+     the author's own sample, a candidate dominated by an existing member). None of that is
+     derivable. A basis is REQUIRED and should name the clearing condition; three of the four do.
+  ⚠ **The decline does NOT expire on an epoch bump** — most such reasons do not change when fills
+  and fees do, and expiring it would re-dispatch a session to re-derive the same answer, which is
+  the non-convergence being fixed. What reopens the family is a **new member** (`family-queue`'s
+  own `new-members` reason, which does not consult this gate), because a new member can change the
+  champion. Clearing it otherwise is a deliberate edit.
+  ⚠ The four bases were **transcribed from each page's own §4 prose, not written fresh** — the repo
+  has already paid for one guess-based rule that permanently discarded 287 of 549 strategies.
+  `/run-family` step 0b now tells a session how to record a decline, which is the half that makes
+  the loop converge instead of being re-dispatched.
 - **`slow-skipped` stays TERMINAL in the normalizer** (making it retriable re-bills it every
   batch — the `no-trades` bug). The retry path is a separate **deferred pool**,
   `data/deferred.json`, drained only by the daily pipeline and only at a **higher cap than the

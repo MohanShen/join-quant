@@ -87,6 +87,33 @@ not a clean exit, is what says the block is gone.
 validated a different book), **stop and report it**. Those are owned by `human`, so they should
 never have reached you; never set `JQ_ALLOW_REVAL` to get past one.
 
+#### ⚠⚠ If the right answer is NOT to do the step, RECORD that — or tomorrow re-dispatches
+
+`never validated` is a *to-do only if the family has a candidate worth its one validation*. Often
+it does not, and the honest answer is that **BLOCKED is the correct terminal state, not a task**.
+Measured 2026-10-17: the first four families this reason reopened had **all four** already decided
+exactly that, each with the reason in §4 — and the dispatch was about to tell a session to
+"finalize on VAL" anyway. Nothing was spent, but only because it was caught mid-run.
+
+So if you conclude the validation should not be spent, write the decision into the family page
+frontmatter and exit. The gate then reports `owner: none` and the planner stops reopening it:
+
+```yaml
+valDeclined: 8                      # the epoch you decided under (provenance)
+valDeclinedBasis: "why — REQUIRED, and name the clearing condition"
+```
+
+- **A basis is required.** The next round must read *why*, not merely *that*. Quote your own §4
+  finding rather than paraphrasing it.
+- **Name what would change your mind** — "a built candidate not dominated by member X", "a
+  point-in-time pool truncated to its own N". Three of the four real cases state one.
+- **It does not expire on an epoch bump**, because most such reasons are about the DATA (a
+  hindsight-selected pool, a VAL window inside the author's own sample) and do not change when
+  fills and fees do. What reopens the family is a **new member**, which can change the champion —
+  that path does not consult this field.
+- You do **not** need to declare it when your candidate simply fails the 1.5 gate: the gate
+  derives that case on its own and already reports `owner: none`.
+
 ### Stopping and resuming
 
 The run stops when the family is done **or** the budget runs out. Either way the state is on disk
