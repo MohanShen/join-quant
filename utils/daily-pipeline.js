@@ -713,7 +713,43 @@ function execute(p, { dry = false } = {}) {
  * Stops on: budget spent, nothing runnable, an error, or `maxStages` — the last a guard
  * against a stage that returns instantly and would otherwise spin.
  */
-function runChain({ dry = false, maxStages = 6, stageOverride = null } = {}) {
+/**
+ * ⚠⚠ THE CHAIN STOPS WHEN THE BUDGET IS GONE — user decision, 2026-10-17.
+ *
+ * It used to stop on five other things as well, and each one could end a day with minutes unspent:
+ *
+ *   `maxStages = 6`                     six EXECUTIONS, with six stages in PRIORITY — so a stage
+ *                                       that legitimately needs several passes (normalize takes 40
+ *                                       files at a time) could not get them
+ *   `outcome: 'empty'`                  a stage found nothing -> whole chain over
+ *   `outcome: 'error'`                  one stage failed -> whole chain over
+ *   `outcome: 'blocked'`                every stage from the planned one down was blocked
+ *
+ * `empty` / `error` / `blocked` now CEDE, exactly as `no-progress` already did. That is safe
+ * because the no-progress guard is what prevents a retry loop: a stage whose queue did not drain is
+ * re-planned once, caught by `depth >= before`, added to `stalled`, and skipped for the rest of the
+ * chain. So a failing stage costs one wasted re-plan, not an infinite loop.
+ *
+ * ⚠ `held` STILL breaks, and must. It means `state.beginRun` refused because another run holds the
+ * in-flight claim — a lock, not a stall. Proceeding would let two runs spend the same budget.
+ *
+ * ⚠ `exhausted` still breaks: every queue is empty, so there is nothing for the remaining minutes
+ * to buy. That is not stopping early.
+ *
+ * ⚠⚠ **`discover` runs at most ONCE per chain**, which is the one place "run until the budget is
+ * gone" needed a brake. It is the stage that ADMITS work rather than consuming it, its own
+ * `strategy-daily.js` limit is **3 fetches per day** by design, and it costs no backtest minutes —
+ * so an unbounded chain would re-run it until `maxStages`, fetching 120 strategies against a
+ * designed cadence of 3 and inflating the normalize queue it was supposed to feed gently. The
+ * consuming stages may run as long as the budget allows; the admitting stage may not.
+ *
+ * ⚠ **What the budget gate CANNOT see**: an agent stage that spends no backtest minutes. A research
+ * round taking the Step-0 early exit costs ZERO minutes (measured today: 小市值, `logged-only`), so
+ * the budget will never stop it — only its queue draining will. That is token spend, not JQ spend,
+ * and `maxStages` is now the only bound on it. If that becomes a problem the right fix is a
+ * separate cap on agent dispatches, not a smaller `maxStages`.
+ */
+function runChain({ dry = false, maxStages = 40, stageOverride = null } = {}) {
   const log = [];
   let last = null;
   // ⚠ A stage that ran without draining its queue must not be picked again in the same chain.
@@ -765,9 +801,16 @@ function runChain({ dry = false, maxStages = 6, stageOverride = null } = {}) {
     log.push({ stage: r.stage, outcome: r.outcome, note: r.note, cededFrom: r.cededFrom });
     last = r;
 
-    // A stage that could not start, errored, or found nothing will not start next time
-    // either — the inputs have not changed. Stopping beats spinning.
-    if (['blocked', 'error', 'empty', 'held'].includes(r.outcome)) break;
+    // ⚠ Only a HELD claim ends the chain: another run owns the in-flight slot, and proceeding
+    // would let two runs spend the same budget. `blocked` / `error` / `empty` cede instead — the
+    // no-progress guard above catches a stage whose queue did not drain, so a failing stage costs
+    // one re-plan rather than the rest of the day. (This list used to break on all four, which is
+    // how 2026-10-04 ended with 124 unspent minutes.)
+    if (r.outcome === 'held') break;
+
+    // ⚠ `discover` ADMITS work; it does not consume it. Its own limit is 3 fetches/day by design
+    // and it spends no backtest minutes, so without this it would re-run until maxStages.
+    if (r.stage === 'discover') stalled.add('discover');
     // In dry mode nothing actually changed, so a second pass would replan identically.
     if (dry) break;
   }

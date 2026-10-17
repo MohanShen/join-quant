@@ -914,6 +914,29 @@ Only the directories whose contents aren't self-evident:
   `--plan` prints every queue's depth so it is visible; `--stage <name>` overrides for one run.
   A stage that runs without draining its queue **cedes its turn** to the next stage rather than
   ending the day (it used to `break`, which cost 2026-10-04 its remaining 124 minutes).
+- ⚠⚠ **THE CHAIN STOPS WHEN THE BUDGET IS GONE** (user decision, 2026-10-17). It used to stop on
+  five other things, each able to end a day with minutes unspent: `maxStages = 6` (six EXECUTIONS,
+  with six stages in PRIORITY — so a stage needing several passes could not get them; normalize
+  takes 40 files an invocation), and `outcome` in `empty` / `error` / `blocked`.
+  Those three now **cede**, exactly as `no-progress` already did, and `maxStages` is **40** — a
+  backstop, not the bound.
+  ⚠ **Ceding is safe because of the no-progress guard**, which is the load-bearing part: a stage
+  whose queue did not drain is re-planned once, caught by `depth >= before`, added to `stalled`, and
+  skipped for the rest of the chain. A failing stage therefore costs ONE wasted re-plan, not an
+  infinite loop.
+  ⚠ **`held` still breaks and must**: it means `state.beginRun` refused because another run owns the
+  in-flight claim. That is a lock, and proceeding would let two runs spend the same budget.
+  `exhausted` still breaks too — every queue empty means there is nothing for the minutes to buy.
+  ⚠⚠ **`discover` runs at most ONCE per chain.** It is the stage that ADMITS work rather than
+  consuming it, `strategy-daily.js`'s own limit is **3 fetches/day by design**, and it costs no
+  backtest minutes — so an unbounded chain would re-run it to `maxStages`, fetching ~120 against a
+  cadence of 3 and flooding the normalize queue it is meant to feed gently. Consuming stages may run
+  as long as the budget allows; the admitting stage may not.
+  ⚠⚠ **What the budget gate CANNOT see**: an agent stage that spends no backtest minutes. A research
+  round taking the Step-0 early exit costs **zero** (measured 2026-10-17: 小市值 → `logged-only`), so
+  the budget will never stop it — only its queue draining will, and `maxStages` is now the only
+  bound. That is token spend, not JQ spend. If it bites, the fix is a **separate cap on agent
+  dispatches**; shrinking `maxStages` would re-break the thing this change fixed.
 - ⚠ **Some stages cost NO backtest minutes, and the day's budget stop now says so.** `discover`
   was always exempt; `assign` and a SEED-headed `integrate` round were not, so a universe could
   ship nothing all day for want of minutes it was never going to use. A seed reads the champion's

@@ -897,3 +897,51 @@ test('realizability flags are precise, and advisory', async (t) => {
     assert.match(src, /never a veto/);
   });
 });
+
+/**
+ * ⚠⚠ The chain stops when the BUDGET is gone — not on the first stage that has a bad day.
+ *
+ * It used to break on `empty`, `error` and `blocked` as well, and at `maxStages = 6` with six
+ * stages in PRIORITY. Each of those could end a day with minutes unspent; 2026-10-04 ended with
+ * 124 unspent because a stalled stage broke the chain.
+ */
+test('the daily chain stops only for the budget, a lock, or an empty board', async (t) => {
+  const src = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
+
+  await t.test('only a HELD claim ends the chain', () => {
+    assert.ok(!/\['blocked', 'error', 'empty', 'held'\]\.includes\(r\.outcome\)\) break/.test(src),
+      'empty/error/blocked must CEDE, as no-progress already does');
+    assert.match(src, /if \(r\.outcome === 'held'\) break;/,
+      'held is a lock — another run owns the in-flight claim, so proceeding double-spends');
+  });
+
+  await t.test('the retry loop is prevented by the no-progress guard, not by breaking', () => {
+    // This is what makes ceding safe: a stage whose queue did not drain is re-planned once,
+    // caught by depth >= before, added to `stalled`, and skipped for the rest of the chain.
+    assert.match(src, /depth\(p\.stage, p\.q\) >= before\[p\.stage\]/);
+    assert.match(src, /stalled\.add\(p\.stage\)/);
+  });
+
+  await t.test('maxStages is a backstop, not the real bound', () => {
+    const m = src.match(/function runChain\(\{ dry = false, maxStages = (\d+)/);
+    assert.ok(m, 'runChain must declare maxStages');
+    assert.ok(Number(m[1]) >= 20,
+      `maxStages=${m[1]} is too low to let a draining stage finish — normalize takes 40 files a pass`);
+  });
+
+  await t.test('DISCOVER runs at most once per chain', () => {
+    // It ADMITS work rather than consuming it, its own strategy-daily limit is 3 fetches/day by
+    // design, and it costs no backtest minutes — so an unbounded chain would re-run it to
+    // maxStages, fetching ~120 against a designed cadence of 3.
+    assert.match(src, /if \(r\.stage === 'discover'\) stalled\.add\('discover'\)/);
+  });
+
+  await t.test('the budget gate is still the one that matters, and still exempts free stages', () => {
+    assert.match(src, /used >= ceiling && !isFreeStage\(p\)/);
+    assert.match(src, /outcome: 'budget-spent'/);
+  });
+
+  await t.test('an empty board still stops — that is not stopping early', () => {
+    assert.match(src, /outcome: 'exhausted'/);
+  });
+});
