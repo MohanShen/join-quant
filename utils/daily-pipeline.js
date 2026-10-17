@@ -178,7 +178,7 @@ function normalizeQueue() {
   const list = Array.isArray(pending) ? pending : [];
   const retry = state.dueForRetry(SLOW_SKIP_MIN);
 
-  let runnable = [];
+  let runnable = [], dead = [];
   try {
     const harness = require('./harness-config');
     const ledger = require('./ledger');
@@ -197,11 +197,22 @@ function normalizeQueue() {
       const r = row[b];
       return !(r && TERMINAL.has(r.status) && harness.measurementValid(r.epoch));
     };
-    runnable = [...new Set([...retry.map(r => r.file), ...list])].filter(isWork);
+    const all = [...new Set([...retry.map(r => r.file), ...list])];
+    runnable = all.filter(isWork);
+    // ⚠ Of the rest, separate DEAD from merely not-runnable-at-this-cap. A `slow-skipped` row in
+    // the deferred pool is real work waiting for a bigger cap, not a leak — calling it
+    // "unresolvable" would repeat the conflation this whole change exists to remove.
+    dead = all.filter(e => {
+      if (runnable.includes(e)) return false;
+      const b = String(e).replace(/^strategies\//, '');
+      if (!onDisk.has(b)) return true;                     // resolves to no file
+      const r = row[b];
+      return !!(r && r.status !== 'slow-skipped');          // finished some other way
+    });
   } catch {
     runnable = [...list, ...retry.map(r => r.file)];     // cannot judge — report it all
   }
-  return { pending: list, retry, runnable, total: runnable.length,
+  return { pending: list, retry, runnable, dead, total: runnable.length,
            listed: list.length + retry.length };
 }
 
@@ -759,8 +770,11 @@ function printPlan(p) {
   console.log(`   assign    ${String(q.assign.length).padStart(4)}   normalized but no family: (invisible to the queue)`);
   console.log(`   normalize ${String(q.normalize.total).padStart(4)}   runnable; ${q.normalize.listed} listed ` +
               `(${q.normalize.pending.length} pending + ${q.normalize.retry.length} deferred-retry)` +
-              `${q.normalize.listed > q.normalize.total
-                  ? `  ⚠ ${q.normalize.listed - q.normalize.total} finished/unresolvable — normalize-sync cleans them`
+              `${(q.normalize.dead || []).length
+                  ? `  ⚠ ${q.normalize.dead.length} finished/unresolvable — normalize-sync cleans them`
+                  : ''}` +
+              `${q.normalize.listed - q.normalize.total - (q.normalize.dead || []).length > 0
+                  ? `  (${q.normalize.listed - q.normalize.total - (q.normalize.dead || []).length} waiting for a higher cap)`
                   : ''}`);
   console.log(`   discover  ${String(q.discover.uncopied).padStart(4)}   uncopied of ${q.discover.total} in queue`);
   console.log(`   (RETIRED: enhance ${q.enhance.length}, study ${q.study.length} — their skills ` +
