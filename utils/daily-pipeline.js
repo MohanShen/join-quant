@@ -114,11 +114,21 @@ const STAGE_TIMEOUT_MIN = (() => {
  * Its SEED action costs no backtest at all (`scripts/run-integrate.sh` skips the budget and CDP
  * preflights for it), so leading with it cannot starve anything of minutes.
  *
- * `oos` is deliberately NOT here and never will be. It spends an irreversible test on the only
- * clean surface left (2/bench, 1/candidate — `utils/oos-budget.js`), which is a decision, not a
- * queue to drain. It stays human-invoked via `/run-oos`.
+ * ⚠⚠ `oos` LEADS, as of 2026-10-17 — **user decision, reversing the recommendation in this file.**
+ * It was excluded because it spends an irreversible test on the only clean surface left, and that
+ * reasoning has not changed. What makes automating it defensible is that the ceiling lives in
+ * CODE, not in the absence of a queue:
+ *   - `utils/oos-budget.js` refuses past 1/candidate or 2/bench, before the browser opens;
+ *   - `OOS-READINESS` refuses a family `integrate-eligible` does not call eligible;
+ *   - `utils/oos-queue.js` reports `ready` only for a candidate that is untested, within budget,
+ *     AND has a pinned runnable artifact.
+ * So when the bench's tests are gone the queue is empty, depth is 0, and the stage never runs
+ * again until a bench change. That is the stop — not a human remembering. (It happened the same
+ * day: both tests spent, 大小盘轮动 −0.21 and 红利低频 −0.51, and the queue went to 0 ready.)
+ * ⚠ The two PROTECTION overrides stay human-only env vars: `JQ_ALLOW_OOS_OVERBUDGET`,
+ * `JQ_ALLOW_OOS_UNREADY`. Nothing here sets them.
  */
-const PRIORITY = ['integrate', 'research', 'assign', 'normalize', 'discover'];
+const PRIORITY = ['oos', 'integrate', 'research', 'assign', 'normalize', 'discover'];
 
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
 
@@ -249,6 +259,9 @@ function queues() {
     // Universes with something to do: `seed` (free — promote a first candidate) or `integrate`
     // (a merge round). `idle` universes are excluded, because an idle universe's blocker is
     // upstream in /run-family and a round here would only re-litigate eligibility.
+    // The candidate a universe ships, waiting on the held-out window. `ready` already means
+    // untested + within budget + has a pinned artifact, so depth 0 is the budget's own stop.
+    oos: (() => { try { return require('./oos-queue').ready(); } catch { return []; } })(),
     // ⚠ Seeds lead, which is what `integrate-queue.next()` also does — so the universe the
     // planner reports and the one the wrapper would pick unprompted are the same one. A seed is
     // free and unblocks every later arrival in that universe (it defines the incumbent they must
@@ -372,7 +385,8 @@ function sessionPinned(stage, target = null) {
   // `integrate` is the same arrangement one level up: run-integrate.sh pins per UNIVERSE
   // (data/integrate-sessions/<universe>.txt) and cold-starts a universe that has never had a
   // round. Both are "pinned per unit of work", so neither is gated on a per-stage file.
-  const PER_UNIT = { research: 'data/research-sessions', integrate: 'data/integrate-sessions' };
+  const PER_UNIT = { research: 'data/research-sessions', integrate: 'data/integrate-sessions',
+                     oos: 'data/oos-sessions' };
   if (PER_UNIT[stage]) {
     const pin = target && path.join(ROOT, PER_UNIT[stage], `${target}.txt`);
     const has = pin && fs.existsSync(pin);
@@ -489,6 +503,7 @@ function runAgentLoop(stage, target, { dry }) {
   const PER_UNIT_SCRIPT = {
     research: 'scripts/run-family.sh',
     integrate: 'scripts/run-integrate.sh',
+    oos: 'scripts/run-oos.sh',
   };
   const script = PER_UNIT_SCRIPT[stage]
     ? path.join(ROOT, PER_UNIT_SCRIPT[stage])
@@ -576,6 +591,7 @@ function runStage(stage, q, dry) {
   // head. For the legacy stages the agent still picks its own order, which is why those targets
   // are reported and not passed.
   const target = stage === 'research' ? (q.research[0] || {}).family
+    : stage === 'oos' ? ((q.oos[0] || {}).members || [])[0]
     : stage === 'integrate' ? (q.integrate[0] || {}).universe
     : stage === 'enhance' ? (q.enhance[0] || {}).family
     : stage === 'study' ? (q.study[0] || {}).family : null;
@@ -588,7 +604,8 @@ function runStage(stage, q, dry) {
                                 note: `family assignment over ${q.assign.length} pending`,
                                 tail: x.out.split('\n').filter(Boolean).slice(-4).join('\n') }; })();
   }
-  else if (stage === 'integrate' || stage === 'research' || stage === 'enhance' || stage === 'study') {
+  else if (stage === 'oos' || stage === 'integrate' || stage === 'research'
+           || stage === 'enhance' || stage === 'study') {
     r = runAgentLoop(stage, target, { dry });
   } else r = runDiscover({ dry });
   return { ...r, stage, target };
@@ -619,7 +636,8 @@ function execute(p, { dry = false } = {}) {
 
     // Recorded on the run claim so the day's log says WHICH unit was worked, not just which
     // stage. `runStage` recomputes it from the same queue; this is the same value.
-    const target = stage === 'integrate' ? (p.q.integrate[0] || {}).universe
+    const target = stage === 'oos' ? ((p.q.oos[0] || {}).members || [])[0]
+      : stage === 'integrate' ? (p.q.integrate[0] || {}).universe
       : stage === 'research' ? (p.q.research[0] || {}).family
       : stage === 'enhance' ? (p.q.enhance[0] || {}).family
       : stage === 'study' ? (p.q.study[0] || {}).family : null;
@@ -778,6 +796,31 @@ function printPlan(p) {
   console.log(`[daily] budget: ${p.budget.ok ? `used ${p.budget.used} / free ${p.budget.free}` : `UNAVAILABLE (${p.budget.raw})`}`);
   console.log(`[daily] slow-skip cap ${SLOW_SKIP_MIN} min/backtest, usage limit ${USAGE_LIMIT} min/day`);
   console.log('[daily] queues (funnel order — drain the end before widening the mouth):');
+  // ⚠ `oos` is a DISPATCHABLE stage since 2026-10-17 (user decision) and leads PRIORITY, so it is
+  // printed with the funnel rather than beneath it. Depth is the number of READY candidates, which
+  // already accounts for the budget — when the bench's tests are spent this reads 0 and the stage
+  // cannot be picked. The candidates are named because a bare count ("1 test left") never said
+  // WHICH book was waiting.
+  try {
+    const oos = require('./oos-budget');
+    const used = oos.testsOnThisBench().length;
+    const cap = oos.policy().maxTestsPerEpoch;
+    const rows = require('./oos-queue').build();
+    const byState = st => rows.filter(r => r.state === st);
+    console.log(`   oos       ${String(q.oos.length).padStart(4)}   ready; ${cap - used} of ${cap} ` +
+                `test(s) left on this bench (1/candidate, ABSOLUTE)`);
+    for (const r of byState('ready')) {
+      console.log(`             READY  ${r.universe} ${r.candidateId}` +
+                  (r.flags && r.flags.length ? `  ⚠ ${r.flags.join('; ')}` : ''));
+    }
+    for (const st of ['unrunnable', 'blocked']) {
+      for (const r of byState(st)) console.log(`             ${st.toUpperCase()}  ${r.universe} — ${r.why.slice(0, 90)}`);
+    }
+    const t = byState('tested');
+    if (t.length) console.log(`             (${t.length} already tested: ${t.map(r => `${r.universe} ${r.why.match(/-> (.*)$/)?.[1] || ''}`).join(', ')})`);
+  } catch (e) {
+    console.log(`   oos         ?   (could not read: ${String(e.message).slice(0, 60)})`);
+  }
   const ihead = q.integrate.slice(0, 3)
     .map(x => `${x.universe}(${x.action})`).join(', ')
     || 'every universe idle — the gate is upstream (/run-family)';
@@ -803,26 +846,6 @@ function printPlan(p) {
   // while candidates sat waiting — and the fix for `integrate` was to put it IN the funnel
   // above (2026-10-17). OOS gets no such promotion: spending the last clean surface is a
   // decision with no undo, not a queue to drain.
-  try {
-    const oos = require('./oos-budget');
-    const used = oos.testsOnThisBench().length;
-    const cap = oos.policy().maxTestsPerEpoch;
-    // ⚠ Name the CANDIDATES, not just the budget. This printed only "N test(s) left", a count of
-    // remaining budget, so "integrate shipped something new" and "something is waiting for the
-    // final surface" were facts a human had to join by hand out of an append-only register.
-    // `utils/oos-queue.js` derives the join; it reports and never dispatches.
-    const rows = require('./oos-queue').build();
-    const rdy = rows.filter(r => r.state === 'ready');
-    console.log(`   oos       ${String(cap - used).padStart(4)}   test(s) left on this bench — HUMAN ONLY (/run-oos)`);
-    for (const r of rdy) {
-      console.log(`             READY  ${r.universe} ${r.candidateId}` +
-                  (r.flags && r.flags.length ? `  ⚠ ${r.flags.join('; ')}` : ''));
-    }
-    const other = rows.length - rdy.length;
-    if (other) console.log(`             (${other} promoted candidate(s) already tested or blocked)`);
-  } catch (e) {
-    console.log(`   oos         ?   (could not read: ${String(e.message).slice(0, 60)})`);
-  }
   console.log(`[daily] -> ${p.stage.toUpperCase()}   (${p.why})`);
 }
 

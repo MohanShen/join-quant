@@ -46,7 +46,7 @@ node utils/tutorial-ingest.js --catalog               # catalog only
 # One-off: re-key the stores from postId to uniqueKey (idempotent, backs up)
 node utils/migrate-unique-key.js --dry
 
-# Daily cron pipeline — one stage per fire, by queue priority (integrate > research > assign > norm > discover)
+# Daily cron pipeline — one stage per fire, by queue priority (oos > integrate > research > assign > norm > discover)
 node utils/daily-pipeline.js --plan            # decide and explain, run nothing
 node utils/daily-pipeline.js --status          # queues, budget, deferred pool, last runs
 node utils/daily-pipeline.js                   # decide and run
@@ -56,6 +56,8 @@ node utils/daily-pipeline.js --sync-manifest   # reconcile study/manifest.json w
 node utils/daily-pipeline.js --seed-deferred   # park stranded slow-skipped rows in the pool
 node utils/daily-summary.js --dry              # preview today's summary markdown
 node utils/daily-summary.js --commit           # write docs/daily/<date>.md, commit, push
+node utils/oos-queue.js                        # promoted candidates: ready / tested / unrunnable
+scripts/run-oos.sh --list                      # the OOS queue + each session's state
 node utils/integrate-queue.js --next            # the next universe round (seed / integrate / idle)
 node utils/integrate-eligible.js               # the /run-family exit gate, with each block's OWNER
 scripts/run-integrate.sh --list                # the integrate queue + each universe's session state
@@ -772,6 +774,40 @@ Only the directories whose contents aren't self-evident:
   *permitted*, never that the candidate deserves one — and `integrate-eligible` checks the VAL
   sharpe, not the champion's TRAIN sharpe. Live: 红利低频 is promoted and OOS-ready at TRAIN sharpe
   **1.46** against a 1.5 gate.
+- ⚠⚠⚠ **A promoted RAW member cannot be OOS-tested as itself — `strategies/` carries no pins.**
+  Found preparing 红利低频's test, and it would have made the new OOS stage dispatch a session that
+  could not run. A universe may promote a raw ingested member (that is what `integrate-eligible`
+  names when a family has no shelf product), but `strategies/` is the immutable raw layer:
+  93379f98 is missing `order_volume_ratio`, so the executor refuses with **UNPINNED-STOP** before
+  spending anything. It does not inject pins — only `strategy-normalize.js` (into a temp copy) and
+  `enhance/strategy_template.py` supply them — and the normalizer never passes `--allow-oos`, so
+  there is no route to the holdout window through it either. 大小盘轮动's OOS worked because its
+  candidate was a BUILT product (`validated_strategies/dxp-imp-1.py`), which carries all three.
+  **The runnable form is the family's pinned baseline** (`study/<family>/baseline.py`), which is
+  also the artifact its VAL ran — the stored curve `study_红利低频_baseline__val__e6` is the proof.
+  Run that and pass **`--source-file <candidateId>`** so the budget, the promoted register and the
+  stored curve all key on the BOOK rather than the copy (verified: the charge landed on
+  `strategies/…93379f98.py` and the curve on `…93379f98__holdout__e8`).
+  `utils/oos-queue.js` resolves this per row (`runFile`, `runVia`) and reports `unrunnable` when
+  no pinned form exists, so the stage never dispatches into a refusal.
+- ⚠⚠⚠ **BOTH OOS tests on epoch 8's bench are spent, and BOTH products FAILED out of sample.**
+  | family | TRAIN | VAL | OOS |
+  |---|---|---|---|
+  | 大小盘轮动 | 3.51 | 1.88 | **−0.21** |
+  | 红利低频 | 1.46 | 2.05 | **−0.51** |
+  红利低频 (`hlld-oos-1`, 2026-01-01..2026-10-16, 188 trading days): total **−2.47%**, annual
+  −3.12%, sharpe **−0.51**, maxDD 16.20%, objective −0.1932.
+  ⚠ **This one is NEW INFORMATION, not a confirmed caveat** — the distinction declared before the
+  number existed. 大小盘轮动's product header already said「no evidence this beats the base out of
+  sample」and its pool was hindsight-selected, so a weak result confirmed a stated caveat. 红利低频
+  declared no such caveat: it screens 股息率 top-25% + 营收>1e8 + profitability rather than a
+  hand-written list, its realizability is **3** (the best measured), the 2e6 liquidity floor is
+  **inert** on it, and its per-year sharpe is positive in BOTH train years (1.18 / 1.67). So the
+  negative cannot be explained away as pool selection: the dividend edge itself did not hold in
+  2026.
+  ⚠ Two of two is not a sample, but it is the only out-of-sample evidence the repo has, and it
+  points at the selection process rather than at either family. The reserve is exhausted until a
+  bench change; nothing is left to test with.
 - **Are the DERIVED queues reliable?** Measured: `queues()` is **deterministic** across calls and
   costs **~292ms**. Their strength is structural — recomputed from the wiki and the ledgers every
   time, so they cannot go STALE. ⚠ They can still be WRONG in their LOGIC, and were twice on
@@ -844,15 +880,26 @@ Only the directories whose contents aren't self-evident:
   in the deterministic planner because it is arithmetic with one right answer, and the skill
   handles only what needs judgement (a blocked stage, a loop that exits 0 having done nothing).
 - **The daily cron picks ONE stage by queue priority — later stages outrank earlier ones**:
-  `integrate > research > assign > normalize > discover` (`PRIORITY` in `utils/daily-pipeline.js`).
+  `oos > integrate > research > assign > normalize > discover` (`PRIORITY` in
+  `utils/daily-pipeline.js`).
   ⚠ `integrate` was added 2026-10-17; before that the funnel ended one step short of its own
   product — a family that cleared `/run-family` and VAL had nowhere to go, so the exit gate
   accumulated candidates while the cron spent every minute admitting more raw strategies.
   Its wrapper is `scripts/run-integrate.sh`, pinned per UNIVERSE in
   `data/integrate-sessions/<universe>.txt`, and it CAN cold-start a universe that has never had a
-  round (same arrangement as `run-family.sh`, one level up). **`oos` is deliberately NOT in
-  PRIORITY and never will be** — it spends an irreversible test on the last clean surface, which
-  is a decision, not a queue; `--plan` reports its remaining count and marks it HUMAN ONLY.
+  round (same arrangement as `run-family.sh`, one level up).
+  ⚠⚠ **`oos` now LEADS PRIORITY (user decision, 2026-10-17), reversing the earlier design.** It
+  was excluded because it spends an irreversible test on the last clean surface, and that reasoning
+  has not changed. What makes automating it defensible is that the ceiling lives in CODE rather
+  than in the absence of a queue: `oos-budget` refuses past 1/candidate or 2/bench before the
+  browser opens, `OOS-READINESS` refuses an ineligible family, and `oos-queue.ready()` reports a
+  candidate only if it is untested AND within budget AND has a **pinned runnable artifact**. So
+  when the bench's tests are gone the queue is empty, depth is 0, and the stage cannot be picked
+  until a bench change — that is the stop, not a human remembering. It proved itself the same day:
+  both tests were spent and the queue went to `0 ready`.
+  ⚠ The two PROTECTION overrides stay human-only env vars and the wrapper never sets them:
+  `JQ_ALLOW_OOS_OVERBUDGET`, `JQ_ALLOW_OOS_UNREADY`. `scripts/run-oos.sh` is pinned per FAMILY in
+  `data/oos-sessions/<family>.txt`.
   A pull
   system: finish what is in the pipe before admitting more, because the backtest minutes/day are
   the binding constraint and an idle research-ready family is a worse use of them than a raw

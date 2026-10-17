@@ -51,11 +51,12 @@ test('queue priority', async t => {
     // later stages outrank earlier ones — until it was added, a family that cleared /run-family
     // and VAL had nowhere to go while the cron spent the day admitting more raw strategies.
     assert.deepStrictEqual(daily.PRIORITY,
-      ['integrate', 'research', 'assign', 'normalize', 'discover']);
-    // `oos` is deliberately absent: it spends an irreversible test, which is a decision, not a
-    // queue to drain. It must stay human-invoked.
-    assert.ok(!daily.PRIORITY.includes('oos'),
-      'OOS must never be dispatchable by the cron');
+      ['oos', 'integrate', 'research', 'assign', 'normalize', 'discover']);
+    // ⚠ `oos` LEADS as of 2026-10-17 — user decision, reversing the earlier design in which it was
+    // deliberately excluded. This assertion used to read "OOS must never be dispatchable by the
+    // cron". What replaces it is not nothing: the ceiling moved from "there is no queue" to code,
+    // and THAT is what must hold. See the oos-safety test below.
+    assert.strictEqual(daily.PRIORITY[0], 'oos', 'the last stage outranks the earlier ones');
   });
 
   await t.test('normalize only runs when no family is due; discover only when nothing is pending', () => {
@@ -939,8 +940,14 @@ test('integrate is wired into the funnel', async (t) => {
   const src = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
   const sh = fs.readFileSync(path.join(ROOT, 'scripts/run-integrate.sh'), 'utf8');
 
-  await t.test('it leads PRIORITY, because later stages outrank earlier ones', () => {
-    assert.strictEqual(daily.PRIORITY[0], 'integrate');
+  await t.test('it outranks every stage that feeds it', () => {
+    // It led PRIORITY until `oos` was added above it on 2026-10-17; what matters is the ordering
+    // relative to the stages whose output it consumes, not the absolute index.
+    const i = daily.PRIORITY.indexOf('integrate');
+    for (const earlier of ['research', 'assign', 'normalize', 'discover']) {
+      assert.ok(i < daily.PRIORITY.indexOf(earlier), `integrate must outrank ${earlier}`);
+    }
+    assert.ok(i > daily.PRIORITY.indexOf('oos'), 'oos consumes integrate\'s output, so it leads');
   });
 
   await t.test('the queue carries universes with work, and seeds lead', () => {

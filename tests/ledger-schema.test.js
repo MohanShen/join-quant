@@ -735,10 +735,45 @@ test('each stage reopens the next', async (t) => {
     }
   });
 
-  await t.test('oos is reported by the planner and NEVER dispatchable', () => {
+  await t.test('oos is dispatchable, and the CEILING is what holds it', () => {
+    // ⚠ Changed 2026-10-17 by user decision. This asserted that `oos` was absent from PRIORITY —
+    // "spending the last clean surface is a decision, not a queue to drain". It is now a stage, so
+    // the thing that must hold is no longer the absence of a queue but the ceiling in code:
+    //   - `ready` requires untested AND within budget AND a pinned runnable artifact;
+    //   - so when the bench's tests are spent, depth is 0 and the stage cannot be picked.
+    const daily = require('../utils/daily-pipeline');
     const src = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
-    assert.match(src, /require\('\.\/oos-queue'\)\.build\(\)/, 'the planner must name candidates');
-    assert.ok(!require('../utils/daily-pipeline').PRIORITY.includes('oos'),
-      'spending the last clean surface is a decision, not a queue to drain');
+    assert.match(src, /require\('\.\/oos-queue'\)/, 'the planner must name candidates');
+    assert.strictEqual(daily.PRIORITY[0], 'oos');
+
+    const rows = require('../utils/oos-queue').build();
+    const budget = require('../utils/oos-budget');
+    const spent = budget.testsOnThisBench().length;
+    const cap = budget.policy().maxTestsPerEpoch;
+    if (spent >= cap) {
+      assert.strictEqual(daily.queues().oos.length, 0,
+        'with the bench spent, the queue MUST be empty — that is the stop');
+    }
+    // No ready row may be one that was already tested, or that has no pinned artifact to run.
+    for (const r of rows.filter(x => x.state === 'ready')) {
+      assert.ok(r.runFile, `${r.candidateId} is ready with no pinned artifact — UNPINNED-STOP`);
+      assert.ok(budget.check(r.candidateId).allowed, `${r.candidateId} is ready but over budget`);
+    }
+  });
+
+  await t.test('the wrapper never sets a protection override', () => {
+    const sh = fs.readFileSync(path.join(ROOT, 'scripts/run-oos.sh'), 'utf8');
+    for (const env of ['JQ_ALLOW_OOS_OVERBUDGET=1', 'JQ_ALLOW_OOS_UNREADY=1']) {
+      assert.ok(!new RegExp(`^\\s*(export\\s+)?${env.replace(/[=]/g, '=')}`, 'm').test(sh),
+        `run-oos.sh must never set ${env} — overriding a protection stays the human's`);
+    }
+    // ⚠ It must NOT carry `--allow-oos` either: the wrapper dispatches a session that invokes
+    // /run-oos, and the SKILL's step 3 owns the command. Asserting the flag here was asserting
+    // something false about the design. What the wrapper owns is the hand-over — the candidate,
+    // the pinned file to execute, and the --source-file that keeps the budget charging the book.
+    assert.match(sh, /--source-file \$CANDIDATE/, 'the budget must charge the book, not the copy');
+    assert.match(sh, /run this   : \$RUNFILE/, 'the session must be told which pinned file to run');
+    assert.match(sh, /DECLARE THE EXPECTATION BEFORE THE NUMBER EXISTS/,
+      'step 2 is the one step that cannot be recovered if skipped');
   });
 });
