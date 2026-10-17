@@ -36,13 +36,14 @@ const fs = require('fs');
 const path = require('path');
 const series = require('./backtest-series');
 const harness = require('./harness-config');
+const ledger = require('./ledger');
 
 const ROOT = path.resolve(__dirname, '..');
 const PAGES_DIR = path.join(ROOT, 'wiki/strategies');
 const TYPE_DIR = path.join(ROOT, 'wiki/types');
 const LEDGER = path.join(ROOT, 'harness/normalize-train.tsv');
 
-const fmField = (t, k) => (t.match(new RegExp(`^${k}:\\s*(.*)$`, 'm')) || [])[1] || '';
+const { field: fmField } = require('./frontmatter');
 const daysBetween = (a, b) => Math.abs((new Date(a) - new Date(b)) / 86400000);
 
 /**
@@ -274,26 +275,26 @@ function members({ allEpochs = false } = {}) {
   const skipped = { staleEpoch: 0, noSeries: 0, superseded: 0 };
   if (!fs.existsSync(LEDGER)) return Object.assign([], { skipped });
 
-  for (const line of fs.readFileSync(LEDGER, 'utf8').split('\n').slice(1)) {
-    if (!line.trim()) continue;
-    const c = line.split('\t');
-    if (c[3] !== 'normalized') continue;
-    const epoch = c[13] || '2';
+  // ⚠ Columns come from `utils/ledger.js`. This read c[0]..c[13] directly, as seven other files
+  // did, so a column inserted into normalize-*.tsv would have silently swapped the fields the
+  // whole component ranking is built on.
+  for (const r of ledger.normalized()) {
+    const epoch = r.epoch || '2';
     if (!allEpochs && !harness.measurementValid(epoch)) { skipped.staleEpoch++; continue; }
-    const key = series.seriesKey(c[0], 'train', epoch);
+    const key = series.seriesKey(r.sourceFile, 'train', epoch);
     const rec = series.load(key);
     if (!rec) { skipped.noSeries++; continue; }
-    const family = (idx[c[0]] || {}).family || '';
+    const family = (idx[r.sourceFile] || {}).family || '';
     const row = {
-      sourceFile: c[0], title: c[2], family, type: f2t[family] || '(untyped)',
-      days: parseInt(c[6], 10) || null,
-      annual: parseFloat(c[8]), sharpe: parseFloat(c[9]), maxdd: parseFloat(c[10]),
-      objective: c[11] === 'DQ' ? null : parseFloat(c[11]), gate: c[12], epoch,
+      sourceFile: r.sourceFile, title: r.title, family, type: f2t[family] || '(untyped)',
+      days: r.days,
+      annual: r.annual_pct, sharpe: r.sharpe, maxdd: r.maxdd_pct,
+      objective: typeof r.objective === 'number' ? r.objective : null, gate: r.gate, epoch,
       seriesKey: key, rec,
     };
-    const prev = best.get(c[0]);
+    const prev = best.get(r.sourceFile);
     if (prev) { skipped.superseded++; if (Number(epoch) < Number(prev.epoch)) continue; }
-    best.set(c[0], row);
+    best.set(r.sourceFile, row);
   }
   const out = [...best.values()];
   out.skipped = skipped;

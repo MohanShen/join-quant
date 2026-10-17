@@ -20,7 +20,7 @@
  */
 
 const { chromium } = require('playwright');
-const https = require('node:https');
+const jq = require('./jq-http');
 const fs = require('fs');
 const path = require('path');
 
@@ -32,47 +32,22 @@ const COPY_QUEUE_FILE = path.join(DATA_DIR, 'copy-queue.json');
 // Threshold for stopping (VIP max strategies)
 const ACCESS_LIMIT_KEYWORDS = ['策略数已达上限', '访问受限', 'maximum strategies', '10001'];
 
-// ── HTTP helper ──────────────────────────────────────────────────────────────
+// ── HTTP ─────────────────────────────────────────────────────────────────────
+//
+// ⚠ These were two hand-rolled `https` helpers (2026-10-17: replaced). CLAUDE.md states the rule
+// twice: **all HTTP goes through `utils/jq-http.js`, never raw `https.get`/`curl`.** JQ geo-blocks
+// requests from outside mainland China with an **HTTP 200 HTML** page
+// (「当前地区暂不支持访问」), so `JSON.parse(data)` on the raw body throws a SyntaxError that this
+// file's own `catch` turned into "source fetch failed" — the same shape of silent miss that killed
+// Pipeline 1 for two months. The old GET also sent **no cookies at all**, so it was unauthenticated
+// even in-region.
+//
+// jq-http runs `fetch()` inside the CDP Chrome (right region, logged-in session), falls back to
+// direct https only when CDP is down, and **throws** `GeoBlockedError` rather than returning
+// something that parses as empty.
 
-function httpGet(url) {
-  return new Promise((resolve, reject) => {
-    https.get(url, {
-      headers: {
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-      },
-    }, res => {
-      let data = '';
-      res.on('data', c => data += c);
-      res.on('end', () => resolve(JSON.parse(data)));
-    }).on('error', reject);
-  });
-}
-
-function httpPost(url, data) {
-  return new Promise((resolve, reject) => {
-    const postData = JSON.stringify(data);
-    const urlObj = new URL(url);
-    const opts = {
-      hostname: urlObj.hostname,
-      path: urlObj.pathname + urlObj.search,
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-        'Content-Length': Buffer.byteLength(postData),
-      },
-    };
-    https.request(opts, res => {
-      let body = '';
-      res.on('data', c => body += c);
-      res.on('end', () => resolve(JSON.parse(body)));
-    }).on('error', reject).end(postData);
-  });
-}
+const httpGet = url => jq.jqJson(url);
+const httpPost = (url, data) => jq.jqPostJson(url, data);
 
 // ── Data helpers ─────────────────────────────────────────────────────────────
 

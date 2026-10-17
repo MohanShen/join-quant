@@ -30,6 +30,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
+const ledger = require('./ledger');
 const STRAT = path.join(ROOT, 'strategies');
 const PENDING = path.join(ROOT, 'data/pending-normalize.json');
 
@@ -85,14 +86,10 @@ function classify() {
 
 /** Normalized rows, so the report can say how many affected strategies are actually measured. */
 function normalizedSet() {
-  const f = path.join(ROOT, 'harness/normalize-train.tsv');
+  // Columns via `utils/ledger.js` — `normalized()` already filters the status and tolerates a
+  // missing ledger (it is gitignored and may be absent on a fresh clone).
   const s = new Set();
-  try {
-    for (const l of fs.readFileSync(f, 'utf8').split('\n').slice(1)) {
-      const c = l.split('\t');
-      if (c[0] && c[3] === 'normalized') s.add(c[0].replace('strategies/', ''));
-    }
-  } catch { /* ledger is gitignored and may be absent */ }
+  for (const r of ledger.normalized()) s.add(r.sourceFile.replace('strategies/', ''));
   return s;
 }
 

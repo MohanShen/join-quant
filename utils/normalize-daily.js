@@ -26,6 +26,8 @@ function cdpAlive() {
   return ensureCdpSync().ok;
 }
 
+const PID = require('./ledger').IDX.postId;
+
 // postId8 -> latest ledger row (any status)
 function ledgerByPid8() {
   const map = {};
@@ -33,9 +35,11 @@ function ledgerByPid8() {
   for (const line of fs.readFileSync(LEDGER, 'utf8').trim().split('\n').slice(1)) {
     const c = line.split('\t');
     // Forward loop, so the LAST row for a pid8 wins — the ledger is append-only, so that is
-    // the strategy's current state. c[13] is `epoch`, added when the bench gained one; this
-    // comment used to stop at `gate` and the column was simply not read.
-    if (c[1]) map[c[1].slice(0, 8)] = c;   // [sourceFile,postId,title,status,start,end,days,total,annual,sharpe,maxdd,obj,gate,epoch]
+    // the strategy's current state.
+    // ⚠ The RAW ARRAY is the value here on purpose: callers index it positionally. The column
+    // names and order live in `utils/ledger.js` (`ledger.COLS` / `ledger.IDX`) — this file used to
+    // carry its own copy of the header as a comment, which is the drift this removes.
+    if (c[PID]) map[c[PID].slice(0, 8)] = c;
   }
   return map;
 }

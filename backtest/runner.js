@@ -311,48 +311,45 @@ class BacktestRunner {
       } catch {}
     }
 
-    // Fallback: try via curl with fresh login
-    return await this._fetchStatsViaCurl(backtestId);
+    // Fallback: the same request from this process, through the one HTTP path.
+    return await this._fetchStatsViaHttp(backtestId);
   }
 
   /**
-   * Fallback: fetch stats via curl (fresh login each time for fresh cookies).
+   * Fallback stats fetch via `utils/jq-http.js`.
+   *
+   * ⚠⚠ Rewritten 2026-10-17. This was `_fetchStatsViaCurl`, and it was wrong four ways:
+   *
+   *   1. **Raw `curl` to joinquant.com** — the call CLAUDE.md forbids by name. JQ geo-blocks
+   *      out-of-region requests with an **HTTP 200 HTML** page (「当前地区暂不支持访问」), so
+   *      `JSON.parse(output)` threw and the catch below logged "curl fallback failed" — the same
+   *      shape of silent miss that killed Pipeline 1 for two months.
+   *   2. **A fresh password login on every call**, with the password interpolated into a shell
+   *      command line (readable by any local user via `ps`) and a hard-coded phone number as the
+   *      default username.
+   *   3. **Session cookies written to a predictable `/tmp/jq-stats-cookies.txt`.**
+   *   4. **It could never settle.** The body was a `new Promise(...)` whose catch did
+   *      `return null` — inside the executor, so neither `resolve` nor `reject` ran and an
+   *      `await` on it hung forever. A fallback that hangs is worse than no fallback.
+   *
+   * jq-http reuses the logged-in CDP session (no credentials at all), falls back to direct https
+   * only when CDP is down, and throws `GeoBlockedError` rather than returning something that
+   * parses as empty.
+   *
    * @private
    */
-  async _fetchStatsViaCurl(backtestId) {
-    return new Promise((resolve, reject) => {
-      const { execSync } = require('child_process');
-      
-      try {
-        // Fresh login
-        const loginCmd = `curl -s -c /tmp/jq-stats-cookies.txt -X POST https://www.joinquant.com/user/login -d "username=${this.loginManager?.username || '15656096430'}&password=${this.loginManager?.password || ''}" -L -A "Mozilla/5.0"`;
-        execSync(loginCmd, { stdio: 'pipe' });
-        
-        const cookies = fs.readFileSync('/tmp/jq-stats-cookies.txt', 'utf8');
-        const uidMatch = cookies.match(/uid\t([^\t]+)/);
-        const phpsessidMatch = cookies.match(/PHPSESSID\t([^\t]+)/);
-        const tokenMatch = cookies.match(/token\t([^\t]+)/);
-        
-        if (!uidMatch || !phpsessidMatch) {
-          throw new Error('Login failed for stats fetch');
-        }
-        
-        const uid = uidMatch[1];
-        const phpsessid = phpsessidMatch[1];
-        const token = tokenMatch ? tokenMatch[1] : '';
-        
-        const curlCmd = `curl -s "https://www.joinquant.com/algorithm/backtest/stats?backtestId=${backtestId}&ajax=1" -X POST -H "X-Requested-With: XMLHttpRequest" --cookie "uid=${uid}; PHPSESSID=${phpsessid}; token=${token}"`;
-        const output = execSync(curlCmd, { encoding: 'utf8', timeout: 15000 });
-        
-        const parsed = JSON.parse(output);
-        resolve(parsed);
-        
-      } catch (error) {
-        // If curl login fails, return null (will retry)
-        console.warn(`[runner] curl fallback failed: ${error.message}`);
-        return null;
-      }
-    });
+  async _fetchStatsViaHttp(backtestId) {
+    const jq = require('../utils/jq-http');
+    const url = `https://www.joinquant.com/algorithm/backtest/stats?backtestId=${backtestId}&ajax=1`;
+    try {
+      return await jq.jqPostJson(url, {});
+    } catch (error) {
+      // Returning null keeps the caller's retry loop intact. ⚠ The message is logged rather than
+      // swallowed: a GeoBlockedError here means every later attempt will fail the same way, and a
+      // reader needs to see that rather than a generic timeout.
+      console.warn(`[runner] stats fallback failed (${error.constructor.name}): ${error.message}`);
+      return null;
+    }
   }
 
   _activeContext = null;

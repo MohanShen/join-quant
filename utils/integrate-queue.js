@@ -54,10 +54,7 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const FAM_DIR = () => process.env.JQ_FAMILIES_DIR || path.join(ROOT, 'wiki/families');
 
-const fmField = (t, k) => {
-  const m = t.match(new RegExp(`^${k}:\\s*(.*)$`, 'm'));
-  return m ? m[1].trim() : '';
-};
+const { field: fmField } = require('./frontmatter');
 
 /**
  * ALL of a family's edge claims, not just the first.

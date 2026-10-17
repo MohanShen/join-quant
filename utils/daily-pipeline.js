@@ -144,7 +144,7 @@ const familyNames = () => {
   return fs.existsSync(d) ? fs.readdirSync(d).filter(f => f.endsWith('.md')).map(f => f.replace(/\.md$/, '')) : [];
 };
 
-const fmField = (t, k) => (t.match(new RegExp(`^${k}:\\s*(.*)$`, 'm')) || [])[1] || '';
+const { field: fmField } = require('./frontmatter');
 
 /** Families whose membership changed since the stage last consumed them (or never did). */
 function staleFamilies(stage, { requireBest = false } = {}) {
@@ -631,17 +631,15 @@ function syncStudyManifest({ dry = false } = {}) {
 
 /** Park the slow-skipped rows already in the ledger, which are otherwise stranded forever. */
 function seedDeferred({ dry = false } = {}) {
-  const ledger = path.join(ROOT, 'harness/normalize-train.tsv');
-  if (!fs.existsSync(ledger)) return { added: 0, rows: [] };
+  // Columns via `utils/ledger.js` — `rows()` returns [] when the ledger is absent.
   const seen = new Set();
   const rows = [];
-  for (const line of fs.readFileSync(ledger, 'utf8').split('\n').slice(1)) {
-    const c = line.split('\t');
-    if (c[3] !== 'slow-skipped' || !c[0] || seen.has(c[0])) continue;
-    seen.add(c[0]);
-    rows.push(c[0]);
+  for (const r of require('./ledger').rows()) {
+    if (r.status !== 'slow-skipped' || seen.has(r.sourceFile)) continue;
+    seen.add(r.sourceFile);
+    rows.push(r.sourceFile);
     // The ledger does not record the cap those runs used; the default was 20.
-    if (!dry) state.defer(c[0], { reason: 'slow-skipped (seeded from ledger)', capMin: 20 });
+    if (!dry) state.defer(r.sourceFile, { reason: 'slow-skipped (seeded from ledger)', capMin: 20 });
   }
   return { added: rows.length, rows };
 }

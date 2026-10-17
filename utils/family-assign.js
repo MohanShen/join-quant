@@ -48,7 +48,7 @@ const FAMS = path.join(ROOT, 'wiki/families');
 const LEDGER = path.join(ROOT, 'data/family-assignments.tsv');
 const COLUMNS = ['at', 'sourceFile', 'page', 'family', 'confidence', 'decidedBy', 'why', 'topScore', 'runnerUp'];
 
-const fm = (t, k) => ((t.match(new RegExp(`^${k}:\\s*(.*)$`, 'm')) || [])[1] || '').trim();
+const { field: fm } = require('./frontmatter');
 const clean = v => String(v == null ? '' : v).replace(/[\t\r\n]/g, ' ').trim();
 
 // wiki-schema §2.2 registers one family that has NO page by rule: `其他`, the singleton bucket for

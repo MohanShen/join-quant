@@ -32,6 +32,7 @@
 const fs = require('fs');
 const path = require('path');
 const harness = require('./harness-config');
+const ledger = require('./ledger');
 
 const ROOT = path.resolve(__dirname, '..');
 const FAM_DIR = () => process.env.JQ_FAMILIES_DIR || path.join(ROOT, 'wiki/families');
@@ -42,10 +43,7 @@ const SHELF = () => process.env.JQ_VALIDATED_DIR || path.join(ROOT, 'validated_s
 /** Minimum agent-scored realizability. 1 == fills a daily bar cannot honour. */
 const MIN_REALIZABILITY = 2;
 
-const fmField = (t, k) => {
-  const m = t.match(new RegExp(`^${k}:\\s*(.*)$`, 'm'));
-  return m ? m[1].trim() : '';
-};
+const { field: fmField } = require('./frontmatter');
 
 /** sourceFile -> family, from the strategy pages (the only place the assignment lives). */
 function familyIndex() {
@@ -62,20 +60,18 @@ function familyIndex() {
 
 /** The family's best-objective row measured under a comparable epoch. */
 function championOf(family, idx) {
-  let text;
-  try { text = fs.readFileSync(LEDGER(), 'utf8'); } catch { return null; }
   let best = null;
-  for (const line of text.split('\n').slice(1)) {
-    if (!line.trim()) continue;
-    const c = line.split('\t');
-    if (c[3] !== 'normalized') continue;
-    if ((idx[c[0]] || null) !== family) continue;
-    if (!harness.measurementValid(c[13] || null)) continue;
-    const obj = c[11] === 'DQ' ? null : parseFloat(c[11]);
-    if (!Number.isFinite(obj)) continue;
-    if (!best || obj > best.objective) {
-      best = { sourceFile: c[0], objective: obj, annual: parseFloat(c[8]),
-               sharpe: parseFloat(c[9]), maxdd: parseFloat(c[10]), epoch: c[13] || null };
+  // ⚠ Columns come from `utils/ledger.js`, not from numeric indices. This loop read c[8]..c[13]
+  // directly, as seven other files did, so a column inserted into normalize-*.tsv would have
+  // silently turned `sharpe` into `annual_pct` here — in the function that decides what a
+  // universe would otherwise ship.
+  for (const r of ledger.normalized()) {
+    if ((idx[r.sourceFile] || null) !== family) continue;
+    if (!harness.measurementValid(r.epoch)) continue;
+    if (typeof r.objective !== 'number') continue;   // null, or the literal 'DQ'
+    if (!best || r.objective > best.objective) {
+      best = { sourceFile: r.sourceFile, objective: r.objective, annual: r.annual_pct,
+               sharpe: r.sharpe, maxdd: r.maxdd_pct, epoch: r.epoch };
     }
   }
   return best;

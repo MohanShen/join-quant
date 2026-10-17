@@ -33,7 +33,8 @@ const PAGES_DIR = path.join(ROOT, 'wiki/strategies');
 const TYPE_DIR = path.join(ROOT, 'wiki/types');
 const LEDGER = path.join(ROOT, 'harness/normalize-train.tsv');
 
-const fmField = (t, k) => (t.match(new RegExp(`^${k}:\\s*(.*)$`, 'm')) || [])[1] || '';
+const { field: fmField } = require('./frontmatter');
+const ledger = require('./ledger');
 
 /**
  * Universe signals. Each regex is counted (global), not first-match: a defensive 511880
@@ -122,14 +123,10 @@ function pageIndex() {
 /** Measured turnover per family: median over its normalized members that report one. */
 function familyTurnover(idx) {
   const byFam = {};
-  let text;
-  try { text = fs.readFileSync(LEDGER, 'utf8'); } catch { return byFam; }
-  for (const line of text.split('\n').slice(1)) {
-    const c = line.split('\t');
-    if (!c[0] || c[3] !== 'normalized') continue;
-    const fam = (idx[c[0]] || {}).family;
+  for (const r of ledger.normalized()) {
+    const fam = (idx[r.sourceFile] || {}).family;
     if (!fam) continue;
-    (byFam[fam] = byFam[fam] || []).push(c[0]);
+    (byFam[fam] = byFam[fam] || []).push(r.sourceFile);
   }
   return byFam;
 }

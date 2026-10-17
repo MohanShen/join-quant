@@ -21,7 +21,8 @@ const FAM_DIR = path.join(ROOT, 'wiki/families');
 const PAGES_DIR = path.join(ROOT, 'wiki/strategies');
 
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
-const fm = (text, key) => (text.match(new RegExp(`^${key}:\\s*(.*)$`, 'm')) || [])[1] || '';
+const { field: fm } = require('./frontmatter');
+const ledger = require('./ledger');
 
 /** Families with their base, best objective and member count. */
 function families() {
@@ -41,11 +42,13 @@ function families() {
 
 /** Measured strategies, and whether each is assigned to a family page. */
 function measured() {
-  const rows = [];
-  for (const line of fs.readFileSync(path.join(ROOT, 'harness/normalize-train.tsv'), 'utf8').split('\n').slice(1)) {
-    const col = line.split('\t');
-    if (col[0] && col[3] === 'normalized') rows.push({ file: col[0], objective: col[11], gate: col[12] });
-  }
+  // Columns via `utils/ledger.js`. `objective` stays the RAW STRING here because this report
+  // prints it verbatim beside the gate verdict.
+  const rows = ledger.normalized().map(r => ({
+    file: r.sourceFile,
+    objective: r.raw[ledger.IDX.objective],
+    gate: r.gate,
+  }));
   const famOf = {};
   if (fs.existsSync(PAGES_DIR)) {
     for (const p of fs.readdirSync(PAGES_DIR).filter(f => f.endsWith('.md'))) {

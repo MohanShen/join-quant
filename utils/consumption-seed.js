@@ -1,16 +1,45 @@
 /**
  * consumption-seed.js — backfill data/consumption.tsv from evidence already on disk.
  *
- * One-off (idempotent). Everything here is reconstructed from a durable artefact, never
- * guessed: the normalize ledger, study/manifest.json, the validated_strategies/ headers and
- * wiki/experiments/. Where a date is unknown the artefact's own timestamp is used and the
- * note says so, so a reconstructed event is never mistaken for a live one.
+ * One-off. Everything here is reconstructed from a durable artefact, never guessed: the normalize
+ * ledger, study/manifest.json, the validated_strategies/ headers and wiki/experiments/. Where a
+ * date is unknown the artefact's own timestamp is used and the note says so, so a reconstructed
+ * event is never mistaken for a live one.
+ *
+ * ## ⚠⚠ It is NOT idempotent, and it has no business being require()d
+ *
+ * The header used to claim "idempotent". It is not, and both halves of that went wrong together on
+ * 2026-10-17: a bare `require('./utils/consumption-seed')` — typed to check the module loads after
+ * a refactor — **appended 82 duplicate rows to `data/consumption.tsv`**, which is tracked,
+ * append-only, and the ledger the VAL and OOS budgets are computed from. (The budgets were
+ * unharmed: every row was `stage: normalize`, which neither reads. The write was uncommitted and
+ * was reverted.)
+ *
+ * **Why dedup cannot work here.** `consumption.record()` de-duplicates on `(stage, key, runId)`,
+ * and `runId` is the constant `seed-ledger-train` — but the KEY comes from
+ * `data/copy-queue.json`'s `copied` map, and that map is rebuilt from scratch by every discovery
+ * run while **JoinQuant re-mints `postId` on every request**. So the same strategy gets a
+ * different key on a later run and the dedup has nothing to match. This is precisely the failure
+ * CLAUDE.md names: *"Never key a store, a dedup or a join on an id."* The already-written rows
+ * live under their original keys, so re-keying this seeder now would not make it idempotent
+ * either — it is finished work, and the fix is to stop it running by accident.
+ *
+ * ⚠ ENTRY-POINT GUARD below. CLAUDE.md: "every entry point in `utils/` needs one" — the audit that
+ * produced that rule looked for files reading `process.argv`, and this one takes no arguments, so
+ * it was missed. The hazard is the same shape as the missing guard on `strategy-normalize.js`,
+ * which spent 42 backtest minutes on a bare require.
  */
 const fs = require('fs');
 const path = require('path');
 const c = require('./consumption');
 
 const ROOT = path.resolve(__dirname, '..');
+
+// Written as an early return rather than a main() wrapper, the same way dq-finalize.js does it:
+// the body is top-level script code and indenting it into a function would be a larger edit than
+// the fix warrants. `return` at CommonJS module top level is legal — the module body is already
+// inside a function wrapper.
+if (require.main !== module) { module.exports = {}; return; }
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
 
 let n = 0;
@@ -21,14 +50,15 @@ const copied = readJson(path.join(ROOT, 'data/copy-queue.json'), {}).copied || {
 const keyOf = {};
 for (const [k, v] of Object.entries(copied)) if (v && v.sourceFile) keyOf[v.sourceFile] = k;
 
-for (const line of fs.readFileSync(path.join(ROOT, 'harness/normalize-train.tsv'), 'utf8').split('\n').slice(1)) {
-  const col = line.split('\t');
-  if (!col[0]) continue;
-  const base = col[0].replace('strategies/', '');
+// Columns via `utils/ledger.js`; `objective`/`gate` are printed verbatim into the note, so the
+// RAW STRINGS are used rather than parsed numbers.
+for (const row of require('./ledger').rows()) {
+  const base = row.sourceFile.replace('strategies/', '');
   add({
-    key: keyOf[base] || keyOf[base.replace(/^\d{4}-\d{2}-\d{2}_/, '')] || col[0],
+    key: keyOf[base] || keyOf[base.replace(/^\d{4}-\d{2}-\d{2}_/, '')] || row.sourceFile,
     kind: 'strategy', stage: 'normalize', runId: 'seed-ledger-train',
-    outcome: col[3], note: `objective=${col[11] || '-'} gate=${col[12] || '-'} file=${base}`,
+    outcome: row.status,
+    note: `objective=${row.raw[11] || '-'} gate=${row.gate || '-'} file=${base}`,
   });
 }
 

@@ -37,7 +37,7 @@ const MIN_SCORE = 0.35;
 /** …and beat the runner-up by this much, so two near-identical families abstain instead. */
 const MIN_MARGIN = 0.05;
 
-const fmField = (t, k) => (t.match(new RegExp(`^${k}:\\s*(.*)$`, 'm')) || [])[1] || '';
+const { field: fmField } = require('./frontmatter');
 
 /**
  * Reduce source to the lines that carry logic. Comments are dropped here (unlike

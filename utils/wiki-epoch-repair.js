@@ -76,7 +76,7 @@ function ledgerEpochs(window = 'train') {
   return m;
 }
 
-const fmField = (t, k) => (t.match(new RegExp(`^${k}:\\s*(.*)$`, 'm')) || [])[1] || '';
+const { field: fmField } = require('./frontmatter');
 
 const CANONICAL = ['epoch', 'window', 'annualReturn', 'sharpe', 'maxDrawdown', 'objective', 'gate'];
 

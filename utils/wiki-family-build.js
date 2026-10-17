@@ -56,23 +56,30 @@ const TODAY = new Date().toISOString().slice(0, 10);
 // (`bestObjectiveEpoch`), the way kb-stub stamps its `normalized:` block, so a stale number is
 // visible as stale rather than silently passing for current.
 const harness = require('./harness-config');
+const ledger = require('./ledger');
 
 function loadLedger() {
   const by = {};
-  const rows = fs.readFileSync(LEDGER, 'utf8').split('\n').slice(1);
-  for (const r of rows) {
-    const c = r.split('\t');
-    if (c[3] !== 'normalized') continue;
-    const src = c[0];
-    const obj = parseFloat(c[11]);
-    const epoch = c[13] || null;
+  // ⚠ Columns come from `utils/ledger.js`. This read c[0]..c[13] directly, as seven other files
+  // did, so a column inserted into normalize-*.tsv would have silently relabelled every §3 table
+  // in the wiki.
+  // ⚠ sharpe/annual/maxdd stay the RAW STRINGS (`raw[IDX.…]`), because they are rendered straight
+  // into §3 — parsing and re-stringifying them would reformat a stored "1.460" to "1.46" and show
+  // up as a spurious wiki diff.
+  for (const row of ledger.normalized()) {
+    const c = row.raw;
+    const src = row.sourceFile;
+    const obj = typeof row.objective === 'number' ? row.objective : NaN;
+    const epoch = row.epoch;
     const valid = harness.measurementValid(epoch);
     // A RECONSTRUCTED row carries no total_pct: normalize-ledger-rebuild.js rebuilds the ledger
     // from the wiki's `normalized:` blocks, which do not store it. That is how a measured row is
     // told from a reconstructed one (CLAUDE.md).
-    const measured = (c[7] || '').trim() !== '';
-    const rec = { obj: isNaN(obj) ? null : obj, sharpe: c[9], annual: c[8], maxdd: c[10],
-                  gate: c[12], epoch, valid, measured };
+    const measured = (c[ledger.IDX.total_pct] || '').trim() !== '';
+    const rec = { obj: isNaN(obj) ? null : obj,
+                  sharpe: c[ledger.IDX.sharpe], annual: c[ledger.IDX.annual_pct],
+                  maxdd: c[ledger.IDX.maxdd_pct],
+                  gate: c[ledger.IDX.gate], epoch, valid, measured };
     const cur = by[src];
     if (!cur) { by[src] = rec; continue; }
 

@@ -43,11 +43,12 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
+const ledger = require('./ledger');
 const FAM_DIR = path.join(ROOT, 'wiki/families');
 const STRAT_PAGES = path.join(ROOT, 'wiki/strategies');
 const LEDGER = path.join(ROOT, 'harness/normalize-train.tsv');
 
-const fm = (t, k) => ((t.match(new RegExp(`^${k}:\\s*(.*)$`, 'm')) || [])[1] || '').trim();
+const { field: fm } = require('./frontmatter');
 
 /** sourceFile -> { family, page } for every strategy page that declares one. */
 function assignments() {
@@ -64,26 +65,28 @@ function assignments() {
   return out;
 }
 
-/** Normalized rows at a measurement-valid epoch, newest epoch per file. */
+/**
+ * Normalized rows at a measurement-valid epoch, newest epoch per file.
+ *
+ * ⚠ Columns come from `utils/ledger.js`. This read `c[0]`..`c[13]` directly, as seven other files
+ * did, so a column inserted into normalize-*.tsv would have silently relabelled every field.
+ */
 function normalized() {
   const harness = require('./harness-config');
   const best = new Map();
-  let text;
-  try { text = fs.readFileSync(LEDGER, 'utf8'); } catch { return []; }
-  for (const line of text.split('\n').slice(1)) {
-    if (!line.trim()) continue;
-    const c = line.split('\t');
-    if (c[3] !== 'normalized') continue;
-    const epoch = c[13] || '2';
+  for (const r of ledger.normalized()) {
+    // ⚠ An unstamped row is treated as epoch 2 HERE and only here: that is this queue's policy
+    // (the oldest bench still in the ledger), not the ledger's, which reports it as null.
+    const epoch = r.epoch || '2';
     const row = {
-      sourceFile: c[0], title: c[2], epoch,
-      objective: c[11] === 'DQ' ? null : parseFloat(c[11]), gate: c[12],
+      sourceFile: r.sourceFile, title: r.title, epoch,
+      objective: typeof r.objective === 'number' ? r.objective : null, gate: r.gate,
       // sharpe is the /run-family ORDER key since 2026-10-16 — see the sort below.
-      sharpe: Number.isFinite(parseFloat(c[9])) ? parseFloat(c[9]) : null,
+      sharpe: r.sharpe,
       valid: harness.measurementValid(epoch),
     };
-    const prev = best.get(c[0]);
-    if (!prev || Number(epoch) >= Number(prev.epoch)) best.set(c[0], row);
+    const prev = best.get(r.sourceFile);
+    if (!prev || Number(epoch) >= Number(prev.epoch)) best.set(r.sourceFile, row);
   }
   return [...best.values()];
 }

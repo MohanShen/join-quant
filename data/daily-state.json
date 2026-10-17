@@ -1,14 +1,14 @@
 {
   "inFlight": null,
   "lastRun": {
-    "stage": "discover",
+    "stage": "research",
     "target": null,
-    "budget": 16,
-    "at": "2026-10-16T18:10:31.620Z",
-    "outcome": "error",
-    "note": "discover + fetch",
+    "budget": 56,
+    "at": "2026-10-17T07:58:29.579Z",
+    "outcome": "budget-spent",
+    "note": "used 56 >= 55; research not started",
     "minutesUsed": null,
-    "endedAt": "2026-10-16T22:25:31.810Z"
+    "endedAt": "2026-10-17T07:58:29.581Z"
   },
   "runs": [
     {
@@ -940,6 +940,16 @@
       "note": "discover + fetch",
       "minutesUsed": null,
       "endedAt": "2026-10-16T22:25:31.810Z"
+    },
+    {
+      "stage": "research",
+      "target": null,
+      "budget": 56,
+      "at": "2026-10-17T07:58:29.579Z",
+      "outcome": "budget-spent",
+      "note": "used 56 >= 55; research not started",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T07:58:29.581Z"
     }
   ]
 }

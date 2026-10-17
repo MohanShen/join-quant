@@ -29,6 +29,7 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
+const ledger = require('./ledger');
 const OUT_DIR = path.join(ROOT, 'docs/daily');
 
 const state = require('./daily-state');
@@ -43,14 +44,10 @@ const today = () => new Date().toISOString().slice(0, 10);
 
 /** Rows the ledger holds right now, by status. */
 function ledgerCounts() {
-  const f = path.join(ROOT, 'harness/normalize-train.tsv');
+  // Columns via `utils/ledger.js`; `rows()` tolerates a missing ledger (gitignored, may be
+  // absent on a fresh clone) and is reported as unknown by the caller.
   const out = {};
-  try {
-    for (const l of fs.readFileSync(f, 'utf8').split('\n').slice(1)) {
-      const c = l.split('\t');
-      if (c[0]) out[c[3]] = (out[c[3]] || 0) + 1;
-    }
-  } catch { /* gitignored and may be absent — reported as unknown */ }
+  for (const r of ledger.rows()) out[r.status] = (out[r.status] || 0) + 1;
   return out;
 }
 
