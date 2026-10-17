@@ -184,3 +184,58 @@ test('the executor enforces the OOS budget, not just the window', async (t) => {
       'a bookkeeping failure must shout — the reserve would look less spent than it is');
   });
 });
+
+test('--allow-oos unlocks the WINDOW only, and readiness moved into code', async (t) => {
+  // ⚠ Context (user decision, 2026-10-16). OOS used to require JQ_ALLOW_OOS=1, an env prefix that
+  // does not match .claude/settings.json (rules match by startsWith) and therefore forced an
+  // approval prompt. `--allow-oos` is the CLI form and the executor is already allowlisted, so an
+  // OOS run is now unattended. The human checkpoint is gone, so the question it used to ask —
+  // "is this candidate actually ready?" — has to be asked in code.
+  const fs2 = require('fs');
+  const path2 = require('path');
+  const src = fs2.readFileSync(path2.join(__dirname, '..', 'utils/strategy-post-backtest.js'), 'utf8');
+
+  await t.test('the flag is parsed as a BOOLEAN, not a value-taking option', () => {
+    // `--allow-oos` followed by the next arg would otherwise swallow it: the generic branch is
+    // `opt[a.slice(2)] = argv[++i]`, which would eat the following flag silently.
+    assert.match(src, /if \(a === '--allow-oos'\) opt\.allowOos = true;/);
+  });
+
+  await t.test('it unlocks the window and nothing else', () => {
+    assert.match(src, /function oosWindowAllowed\(opt\)/);
+    assert.match(src, /JQ_ALLOW_OOS === '1' \|\| !!\(opt && opt\.allowOos\)/);
+    // The budget and readiness overrides must NOT consult the flag.
+    const budgetBlock = src.slice(src.indexOf('── OOS budget'), src.indexOf('new StrategyLoader()'));
+    assert.ok(!/allowOos/.test(budgetBlock),
+      'the window flag must not grant budget — that is a separate, env-gated switch');
+  });
+
+  await t.test('the protections that remain are ENV vars, so they still cost a prompt', () => {
+    assert.match(src, /JQ_ALLOW_OOS_UNREADY/);
+    const oosb = fs2.readFileSync(path2.join(__dirname, '..', 'utils/oos-budget.js'), 'utf8');
+    assert.match(oosb, /JQ_ALLOW_OOS_OVERBUDGET/);
+    // Neither may be readable as a CLI flag, or the distinction collapses.
+    assert.ok(!/--allow-oos-unready|--allow-oos-overbudget/.test(src + oosb));
+  });
+
+  await t.test('an OOS run requires --family, and refuses an ineligible one', () => {
+    assert.match(src, /--family is required for an OOS run/);
+    assert.match(src, /integrate-eligible'\)\.assess\(family\)/);
+    assert.match(src, /is not ready for the final surface/);
+    assert.match(src, /OOS-READINESS\\t/, 'the verdict must be machine-readable on stdout');
+  });
+
+  await t.test('readiness is checked BEFORE the budget and before the browser', () => {
+    const ready = src.indexOf('── OOS readiness');
+    const budget = src.indexOf('── OOS budget');
+    const loader = src.indexOf('new StrategyLoader()');
+    assert.ok(ready > 0 && ready < budget && budget < loader,
+      `expected readiness -> budget -> loader, got ${ready}/${budget}/${loader}`);
+  });
+
+  await t.test('it warns when the file run is not the family\'s own candidate', () => {
+    // integrate-eligible validates the FAMILY, not the argument, so a mismatched file would pass
+    // the gate and spend the reserve on a book the pipeline will not ship.
+    assert.match(src, /but \$\{family\}'s candidate is/);
+  });
+});

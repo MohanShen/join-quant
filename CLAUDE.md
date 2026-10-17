@@ -883,7 +883,29 @@ Only the directories whose contents aren't self-evident:
 - **`/run-oos` is the entry point for spending an OOS test** (`.claude/skills/run-oos/`). It
   pre-flights the candidate, declares the expectation BEFORE the number exists, hands the human the
   one gated command, then records the result.
-- ⚠⚠ **The escape hatches are env vars BY DESIGN, and that is what forces the approval prompt.**
+- **`--allow-oos` replaced `JQ_ALLOW_OOS=1` as the window override** (user decision, 2026-10-16),
+  so an **OOS run is now unattended** — the executor is already allowlisted as
+  `Bash(node utils/strategy-post-backtest.js:*)`. The env form still works.
+  ⚠ **Two protections deliberately stayed env vars**, so overriding a protection still costs a
+  prompt: `JQ_ALLOW_OOS_OVERBUDGET=1` (the 1/candidate, 2/bench ceiling) and
+  `JQ_ALLOW_OOS_UNREADY=1` (readiness). Agents set neither.
+  ⚠⚠ **The compensating control: readiness moved from prose into code.** With no prompt, nothing
+  was left to ask "is this candidate actually ready?" — so an OOS run now **requires `--family`**
+  and is refused unless that family is `eligible` (`integrate-eligible.assess`), checked
+  **before** the budget and before the browser, printing `OOS-READINESS`. The executor also
+  **warns when the file passed is not the family's own candidate**, because eligibility validates
+  the FAMILY, not the argument.
+  This matters because the budget **counts tests without judging them**: all three of
+  2026-10-16's near-misses (a VAL that validated a different book, a candidate that was the wrong
+  artifact, a realizability score measured on another book) would have passed it and spent the test.
+- ⚠ **The escape-hatch/flag split, now partially broken on purpose.** Before this change all 6
+  hatches (`JQ_ALLOW_OOS`, `_REVAL`, `_CONCURRENT`, `_UNPINNED`, `_CREDITS`, `_OOS_OVERBUDGET`)
+  were env vars and **0 of 86** allowlist rules carried an env prefix — because `--usage-limit`
+  and `--max-poll-min` were *converted* to flags precisely to run unattended
+  (`strategy-post-backtest.js`: "avoids the `JQ_MAX_POLL_MS=…` env prefix, which breaks the
+  allowlist and forces approval"). OOS is now the first hatch on the flag side of that line; the
+  rest, including the two OOS protections above, remain env vars. **Keep it that way** — the form
+  is the mechanism, so a new hatch should be an env var unless someone decides otherwise.
   Measured 2026-10-16: all **6** of `JQ_ALLOW_OOS` / `_REVAL` / `_CONCURRENT` / `_UNPINNED` /
   `_CREDITS` / `_OOS_OVERBUDGET` are environment variables, and **0 of 86** allowlist rules carry an
   env prefix. That split is not an accident — `--usage-limit` and `--max-poll-min` were *converted*

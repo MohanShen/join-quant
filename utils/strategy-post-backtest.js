@@ -81,8 +81,26 @@ function touchesOOS(window) {
   return (window.start && window.start >= OOS_CUTOFF) || (window.end && window.end >= OOS_CUTOFF);
 }
 
-function assertNotOOS(window) {
-  if (!window || process.env.JQ_ALLOW_OOS === '1') return;
+/**
+ * ⚠⚠ `--allow-oos` is the CLI form of `JQ_ALLOW_OOS=1` (user decision, 2026-10-16).
+ *
+ * Until then every escape hatch in this repo was an environment variable, and that was the
+ * mechanism: an env prefix does not match `.claude/settings.json` (whose rules are matched by
+ * `startsWith`), so it forced an approval prompt — which is exactly why `--usage-limit` and
+ * `--max-poll-min` were converted to flags and these were not. Making it a flag therefore makes
+ * OOS runnable unattended, because `Bash(node utils/strategy-post-backtest.js:*)` is already
+ * allowlisted.
+ *
+ * The compensating control is below: with the human checkpoint gone, READINESS moves from prose in
+ * `.claude/skills/run-oos/` into code (`assertOosCandidateReady`). `JQ_ALLOW_OOS_OVERBUDGET`
+ * deliberately stays an env var, so the budget CEILING keeps its prompt.
+ */
+function oosWindowAllowed(opt) {
+  return process.env.JQ_ALLOW_OOS === '1' || !!(opt && opt.allowOos);
+}
+
+function assertNotOOS(window, opt) {
+  if (!window || oosWindowAllowed(opt)) return;
   if (touchesOOS(window)) {
     throw new Error(
       // Message built from the active config: it used to hardcode epoch-2 dates and went
@@ -91,7 +109,7 @@ function assertNotOOS(window) {
       `out-of-sample period (>= ${OOS_CUTOFF}). Harness epoch ${harness.config().epoch} allows only ` +
       `train (${harness.window('train').start}..${harness.window('train').end}) and ` +
       `val (${harness.window('val').start}..${harness.window('val').end}). ` +
-      `(User-only override for a private final test: JQ_ALLOW_OOS=1.)`
+      `(Override for a private final test: --allow-oos, or JQ_ALLOW_OOS=1.)`
     );
   }
 }
@@ -106,7 +124,8 @@ function parseArgs(argv) {
   const opt = {};
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
-    if (a.startsWith('--')) opt[a.slice(2)] = argv[++i];
+    if (a === '--allow-oos') opt.allowOos = true;        // boolean, takes no value
+    else if (a.startsWith('--')) opt[a.slice(2)] = argv[++i];
     else positional.push(a);
   }
   const baseCapital = parseInt(opt.capital || DEFAULT_CAPITAL, 10);
@@ -129,10 +148,11 @@ function parseArgs(argv) {
     if (!w) throw new Error(`Unknown --window "${opt.window}". Use train|val|holdout or --start/--end.`);
     window = { name: opt.window, start: w.start, end: w.end };
   }
-  assertNotOOS(window);   // hard-block 2025+ OOS unless JQ_ALLOW_OOS=1
+  assertNotOOS(window, opt);   // hard-block 2026+ OOS unless --allow-oos / JQ_ALLOW_OOS=1
   assertValWindowNamesFamily(window, opt.family);
   return { strategyPath: positional[0], title: positional[1] || null, window, baseCapital,
            family: opt.family || null,
+           allowOos: !!opt.allowOos,
            // --source-file: the LOGICAL identity to key the stored curve by, when the file being
            // run is not it. See captureSeries for what went wrong without this.
            sourceFile: opt['source-file'] || null };
@@ -1308,6 +1328,57 @@ async function main() {
       process.exit(3);
     }
     if (v.reason === 'human-override') console.log(`[post] ⚠ ${v.why}`);
+  }
+
+  // ── OOS readiness ─────────────────────────────────────────────────────────
+  //
+  // ⚠⚠ This exists because the approval prompt no longer does. While OOS needed an env prefix, a
+  // human saw every run and could ask "is this candidate actually ready?". With `--allow-oos` the
+  // run is unattended, so the question has to be asked in code.
+  //
+  // It is not theoretical. On 2026-10-16 three separate defects would each have spent an
+  // irreversible test on the wrong book, and the BUDGET would have permitted all three because it
+  // counts tests without judging them:
+  //   - a family's one VAL had validated a DIFFERENT book (大小盘轮动: champion was the base, the
+  //     VAL ran on enhance/candidates/dxp-imp-1.py);
+  //   - the CANDIDATE was the wrong artifact (championOf reads the ledger, which holds only
+  //     INGESTED strategies, while the family's product lives on validated_strategies/);
+  //   - realizability had been measured on another book and did not transfer.
+  //
+  // So: an OOS run must name a family, and that family must be `eligible`. Human-only override
+  // `JQ_ALLOW_OOS_UNREADY=1` stays an ENV var on purpose — like the budget ceiling, overriding a
+  // protection should still cost a prompt.
+  if (touchesOOS(window) && process.env.JQ_ALLOW_OOS_UNREADY !== '1') {
+    if (!family) {
+      console.error('[post] OOS-BLOCKED: --family is required for an OOS run. Readiness is checked ' +
+                    'per family, and an unnamed run cannot be checked or charged to anything.');
+      process.exit(3);
+    }
+    let ready = null;
+    try { ready = require('./integrate-eligible').assess(family); } catch (e) {
+      console.log(`[post] ⚠ could not assess ${family}'s readiness (${String(e.message).slice(0, 80)})`);
+    }
+    if (ready && !ready.eligible) {
+      console.log(`OOS-READINESS\tfamily=${family}\t${ready.status}`);
+      console.error(`[post] OOS-BLOCKED: ${family} is not ready for the final surface ` +
+                    `(${ready.status}): ${ready.why}`);
+      console.error('[post] The budget would have allowed this — it counts tests, it does not judge ' +
+                    'whether the candidate is the right book. Fix the readiness problem, or override ' +
+                    'with JQ_ALLOW_OOS_UNREADY=1 if you know better.');
+      process.exit(3);
+    }
+    if (ready && ready.eligible) {
+      console.log(`OOS-READINESS\tfamily=${family}\teligible\tcandidate=${ready.candidate && ready.candidate.sourceFile}`);
+      // ⚠ Warn when the file being run is not the family's own candidate — a near-miss that the
+      // eligibility check alone cannot catch, because it validates the FAMILY, not the argument.
+      const cand = ready.candidate && ready.candidate.sourceFile;
+      const rel = path.relative(path.resolve(__dirname, '..'), strategyPath);
+      if (cand && rel !== cand) {
+        console.log(`[post] ⚠⚠ you are running ${rel}, but ${family}'s candidate is ${cand}. ` +
+                    'An OOS test on a book that is not the family\'s candidate spends the reserve ' +
+                    'on something the pipeline will not ship.');
+      }
+    }
   }
 
   // ── OOS budget ────────────────────────────────────────────────────────────

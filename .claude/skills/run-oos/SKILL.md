@@ -1,6 +1,6 @@
 ---
 name: run-oos
-description: Spend one test on the 2026+ out-of-sample reserve — pre-flight the candidate, hand the human the one gated command, then record the result. Use when asked to run an OOS or holdout backtest, or to take a finalised candidate to the final surface.
+description: Spend one test on the 2026+ out-of-sample reserve — pre-flight the candidate's readiness and budget, declare the expectation before the number exists, run it, then record the result. Use when asked to run an OOS or holdout backtest, or to take a finalised candidate to the final surface.
 ---
 
 # Spend one OOS test
@@ -12,18 +12,29 @@ more calendar.** No re-run, re-scoring or epoch bump un-sees it.
 **Authority**: `harness/harness.md` §1 (windows) and §4.1, `utils/oos-budget.js` (the accounting),
 `utils/integrate-eligible.js` (what makes a candidate ready). This skill is the entry point.
 
-## ⚠ You cannot start the run. That is the design, not a gap.
+## You CAN start the run — and that is why the checks below are in code
 
-`JQ_ALLOW_OOS=1` is an **environment variable**, and every repo command that needs an env prefix
-falls outside `.claude/settings.json` — which is why `--usage-limit` and `--max-poll-min` were
-converted to CLI flags in the first place (`strategy-post-backtest.js`: *"avoids the
-`JQ_MAX_POLL_MS=…` env prefix, which breaks the allowlist and forces approval"*).
+⚠ **Changed 2026-10-16 (user decision).** OOS used to need `JQ_ALLOW_OOS=1`, an env prefix, which
+does not match `.claude/settings.json` (rules are matched by `startsWith`) and therefore forced an
+approval prompt on every run. `--allow-oos` is now the CLI form, and
+`Bash(node utils/strategy-post-backtest.js:*)` is already allowlisted, so **an OOS run is
+unattended.**
 
-Measured: **6 escape hatches** (`JQ_ALLOW_OOS`, `_REVAL`, `_CONCURRENT`, `_UNPINNED`, `_CREDITS`,
-`_OOS_OVERBUDGET`) are **all env vars**, and **0 of 86 allowlist rules** carry an env prefix. The
-split is consistent: operational knobs are flags so they run unattended; escape hatches are env
-vars so they cannot. Your job is to make the human's one keystroke *safe and informed*, not to
-remove it.
+Two switches deliberately stayed environment variables, so overriding a *protection* still costs a
+prompt:
+
+| switch | form | what it overrides |
+|---|---|---|
+| `--allow-oos` | **flag** | the window block only |
+| `JQ_ALLOW_OOS_OVERBUDGET=1` | env | the budget ceiling (1/candidate, 2/bench) |
+| `JQ_ALLOW_OOS_UNREADY=1` | env | the readiness gate below |
+
+**Never set either env var.** If a run is refused, the refusal is the answer — and report it rather than working around it.
+
+Because the human no longer sees every run, the readiness question moved from this prose into
+`strategy-post-backtest.js`: an OOS run **requires `--family`** and refuses unless that family is
+`eligible`. You should still run step 1 — a refusal after the command is a worse place to learn it
+than before.
 
 ## Step 1 — is the candidate ready? (this is the whole value of the skill)
 
@@ -59,15 +70,19 @@ a caveat the family already declared**. Example from 大小盘轮动: its produc
 「there is no evidence this candidate beats the base out of sample」 and its VAL drew 36.37% where
 the base drew 18.23% — so a weak OOS result confirms a known caveat and is not a surprise.
 
-## Step 3 — hand over the command
+## Step 3 — run it
 
-Print it as a single line for the human to run with the `!` prefix, filled in — never a template
-they have to edit:
+Report the command you are about to run, filled in, so the choice of candidate and window is
+visible in the transcript before the number exists:
 
+```bash
+node utils/strategy-post-backtest.js <candidate file> "<expId>" \
+    --window holdout --family <family> --allow-oos --usage-limit free --max-poll-min <N>
 ```
-! JQ_ALLOW_OOS=1 node utils/strategy-post-backtest.js <candidate file> "<expId>" \
-    --window holdout --family <family> --usage-limit free --max-poll-min <N>
-```
+
+⚠ **The file you pass must be the family's own candidate** — `integrate-eligible` validates the
+FAMILY, not the argument, so running some other book passes the gate and spends the reserve on
+something the pipeline will not ship. The executor warns when they differ; do not ignore it.
 
 - `--window holdout` — read the dates from `node utils/harness-config.js`, never hardcode them;
   the reserve is **rolling** (`holdout.end: "today"`), so it lengthens with the calendar.
@@ -109,8 +124,9 @@ well — what a universe ships should carry its out-of-sample number.
 
 ## Do not
 
-- **Set `JQ_ALLOW_OOS` yourself**, or suggest converting it to a CLI flag to get around the
-  prompt. The prompt is the mechanism.
+- **Set `JQ_ALLOW_OOS_OVERBUDGET` or `JQ_ALLOW_OOS_UNREADY`.** They are the human's, for the same
+  reason `--allow-oos` used to be: they override a protection rather than unlock a surface.
+- **Run an OOS test the human did not ask for.** The flag removes the prompt, not the decision.
 - **Re-pick a candidate because its OOS disappointed.** That is selection on the last clean
   surface, one look at a time, and it is the one thing nothing can undo. Report it and stop.
 - Spend a test on a family that `integrate-eligible` does not call `eligible`.
