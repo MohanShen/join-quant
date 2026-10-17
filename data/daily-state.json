@@ -1,14 +1,19 @@
 {
-  "inFlight": null,
+  "inFlight": {
+    "stage": "assign",
+    "target": null,
+    "budget": 17,
+    "at": "2026-10-17T21:41:23.983Z"
+  },
   "lastRun": {
-    "stage": "discover",
+    "stage": "normalize",
     "target": null,
     "budget": 2,
-    "at": "2026-10-17T18:06:59.906Z",
+    "at": "2026-10-17T21:22:44.962Z",
     "outcome": "ran",
-    "note": "discover + fetch (normalize is its own stage)",
+    "note": "0 retry(--redo) + 3 fresh, 0 newly deferred at 45min",
     "minutesUsed": null,
-    "endedAt": "2026-10-17T18:07:13.762Z"
+    "endedAt": "2026-10-17T21:41:20.313Z"
   },
   "runs": [
     {
@@ -1100,6 +1105,36 @@
       "note": "discover + fetch (normalize is its own stage)",
       "minutesUsed": null,
       "endedAt": "2026-10-17T18:07:13.762Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 2,
+      "at": "2026-10-17T21:12:34.415Z",
+      "outcome": "ran",
+      "note": "family assignment over 2 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T21:13:45.161Z"
+    },
+    {
+      "stage": "research",
+      "target": "七星高照",
+      "budget": 2,
+      "at": "2026-10-17T21:13:48.361Z",
+      "outcome": "ran",
+      "note": "resumed research session 5e6c9c72 (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T21:22:41.591Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 2,
+      "at": "2026-10-17T21:22:44.962Z",
+      "outcome": "ran",
+      "note": "0 retry(--redo) + 3 fresh, 0 newly deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T21:41:20.313Z"
     }
   ]
 }
