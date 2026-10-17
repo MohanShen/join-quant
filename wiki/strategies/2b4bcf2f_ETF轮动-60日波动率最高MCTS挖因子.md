@@ -2,6 +2,7 @@
 postId: 2b4bcf2f2ddbe2094f1c21976ec6f953
 title: ETF轮动-60日波动率最高 MCTS挖因子
 sourceFile: strategies/2026-10-17_ETF轮动-60日波动率最高_MCTS挖因子-2b4bcf2f.py
+family: 其他
 concepts: [ETF轮动]
 factors:
   选股: [ETF动量]

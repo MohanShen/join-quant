@@ -2,6 +2,7 @@
 postId: 4da8f69689131ea8117e500e6be84621
 title: 带收益预测的Markowitz动态平衡策略
 sourceFile: strategies/2026-10-17_带收益预测的Markowitz动态平衡策略-4da8f696.py
+family: 其他
 concepts: [未分类]
 factors:
   选股: [未分类]

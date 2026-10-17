@@ -2,6 +2,7 @@
 postId: 4ac4bd9a05f0a3bb565bcfa888ae2fac
 title: 低相关ETF组合：回撤11.72%
 sourceFile: strategies/2026-10-17_低相关ETF组合_回撤11_72-4ac4bd9a.py
+family: 其他
 concepts: [ETF轮动, 动量与趋势]
 factors:
   选股: [ETF动量, 动量]

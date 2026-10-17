@@ -2,6 +2,7 @@
 postId: e8c95a82ebd96f2f66c23b1f544df593
 title: 【配对交易】基于zscore的配对交易策略（胜率88.2%）
 sourceFile: strategies/2026-10-17_配对交易_基于zscore的配对交易策略_胜率88_2-e8c95a82.py
+family: 其他
 concepts: [未分类]
 factors:
   选股: [未分类]
