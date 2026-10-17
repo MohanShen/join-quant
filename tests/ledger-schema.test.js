@@ -209,7 +209,9 @@ test('the daily commit is scoped to pipeline output', async (t) => {
   await t.test('git add -u is bounded by a pathspec, never bare', () => {
     assert.ok(!/sh\('git', \['add', '-u'\]\)/.test(src),
       "a bare `git add -u` stages the whole working tree — pass `--` and the SAFE_ADD paths");
-    assert.match(src, /\['add', '-u', '--', \.\.\.paths\]/);
+    // `...tracked`, not `...paths`: the pathspec is filtered to what git knows, because
+    // `git add -u` on an unknown path is fatal. See the pathspec test below.
+    assert.match(src, /\['add', '-u', '--', \.\.\.tracked\]/);
   });
 
   await t.test('SAFE_ADD covers what a run produces and nothing a human edits', () => {
@@ -421,6 +423,74 @@ test('agent contracts match what each step actually does', async (t) => {
       if (live.has(name)) continue;
       assert.match(read(f).slice(0, 1500), /RETIRED/,
         `${name} is referenced by nothing — mark it, so its stale epoch facts are not read as current`);
+    }
+  });
+});
+
+/**
+ * ⚠⚠ A hang spends wall clock, not backtest minutes — so no budget gate can see it.
+ *
+ * `jq-http`'s direct transport had a 30s `req.setTimeout` from the start; the CDP transport,
+ * which is the DEFAULT, had none. `page.evaluate` is not an action with a Playwright timeout, so a
+ * `fetch()` inside the page that never settled hung the call forever. Measured: the discover stage
+ * sat for 4h25m on 2026-10-16 and was killed only by STAGE_TIMEOUT_MIN=255, losing the day's
+ * remaining budget; it repeated on 2026-10-17 and was 61 minutes in when this was found.
+ */
+test('both HTTP transports are bounded', async (t) => {
+  const src = fs.readFileSync(path.join(ROOT, 'utils/jq-http.js'), 'utf8');
+
+  await t.test('the CDP path aborts in-page AND races outside it', () => {
+    assert.match(src, /AbortController/, 'the browser must stop its own request');
+    assert.match(src, /Promise\.race/,
+      'an evaluate can hang for reasons the page cannot abort — a wedged renderer, a closed tab');
+    assert.match(src, /CDP_TIMEOUT_MS/);
+  });
+
+  await t.test('the two transports agree on how long is too long', () => {
+    const cdp = (src.match(/JQ_HTTP_TIMEOUT_MS[\s\S]{0,120}?:\s*(\d+)/) || [])[1];
+    const direct = (src.match(/req\.setTimeout\((\d+)/) || [])[1];
+    assert.ok(cdp && direct, 'both transports must state a timeout');
+    assert.strictEqual(cdp, direct,
+      'a default that differs by transport means the bound depends on which one happened to run');
+  });
+
+  await t.test('a timeout REJECTS, so jqText can fall back to the bounded transport', () => {
+    // jqText drops the tab and retries direct when an evaluate throws. Returning a sentinel
+    // instead would make a hang look like an empty result — the Pipeline-1 failure shape.
+    assert.match(src, /reject\(new Error\(`timeout after/);
+    assert.match(src, /catch \{[\s\S]{0,200}viaDirect/);
+  });
+});
+
+/**
+ * Two bugs the FIRST real run of the scoped commit exposed.
+ */
+test('the scoped daily commit survives its own pathspec', async (t) => {
+  const src = fs.readFileSync(path.join(ROOT, 'utils/daily-summary.js'), 'utf8');
+
+  await t.test('git add -u is filtered to paths git actually knows', () => {
+    // `git add -u -- <path>` is FATAL when the pathspec matches nothing in the index, and takes
+    // the whole commit with it. data/integrate-sessions is in SAFE_ADD and is an empty directory
+    // until a universe has had a round, so the first scoped run wrote no commit at all.
+    // fs.existsSync is not the test — an empty dir passes it and is still unknown to git.
+    assert.match(src, /ls-files/, 'filter the -u pathspec by what is tracked');
+    assert.match(src, /tracked\.length \? sh\('git', \['add', '-u', '--', \.\.\.tracked\]\)/);
+  });
+
+  await t.test('discover/fetch state is committed, not just named as left behind', () => {
+    const list = require('../utils/daily-summary').SAFE_ADD;
+    for (const f of ['data/content-hashes.json', 'data/fetch-manifest.json',
+                     'data/notifications.json']) {
+      assert.ok(list.includes(f), `${f} is pipeline output — the unscoped add was carrying it`);
+    }
+  });
+
+  await t.test('every SAFE_ADD entry that exists is either tracked or creatable', () => {
+    // A guard against the next empty-directory entry: if a path exists but git knows nothing in
+    // it, the -u filter must be what saves the commit, not luck.
+    const list = require('../utils/daily-summary').SAFE_ADD;
+    for (const p2 of list) {
+      assert.ok(!p2.startsWith('/') && !p2.includes('..'), `${p2} must be repo-relative`);
     }
   });
 });

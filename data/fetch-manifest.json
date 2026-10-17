@@ -1,52 +1,52 @@
 {
-  "fetchedAt": "2026-10-16T18:10:41.551Z",
+  "fetchedAt": "2026-10-17T08:27:21.456Z",
   "entries": [
     {
-      "postId": "d0a149b1e1d7834b137a11e50accd999",
-      "backtestId": "2402bd332e2754120041a30f21c5c125",
-      "title": "年化14%回撤16%—对标美股SCHD的A股红利股息策略月频",
-      "url": "https://www.joinquant.com/view/community/detail/d0a149b1e1d7834b137a11e50accd999",
-      "sourceFile": "2026-10-17_年化14_回撤16_对标美股SCHD的A股红利股息策略月频-d0a149b1.py",
+      "postId": "2b4bcf2f2ddbe2094f1c21976ec6f953",
+      "backtestId": "bc6e9a5d2790fe7def6e667c51b35dcc",
+      "title": "ETF轮动-60日波动率最高 MCTS挖因子",
+      "url": "https://www.joinquant.com/view/community/detail/2b4bcf2f2ddbe2094f1c21976ec6f953",
+      "sourceFile": "2026-10-17_ETF轮动-60日波动率最高_MCTS挖因子-2b4bcf2f.py",
       "stats": {
-        "annualReturn": 0.13795078638384,
-        "cumulativeReturn": 1.303208150255,
-        "maxDrawdown": 0.15507769359246,
-        "sharpe": 0.5893125664324,
-        "winRatio": 0.61793767418292,
-        "tradingDays": 1614,
-        "periodLabel": "2026-08"
+        "annualReturn": 0.22599521994645,
+        "cumulativeReturn": 3.266189,
+        "maxDrawdown": 0.24430367648179,
+        "sharpe": 0.81681239040845,
+        "winRatio": 0.76146788990826,
+        "tradingDays": 1780,
+        "periodLabel": "2026-05"
       }
     },
     {
-      "postId": "8e8861f0c4c759472dee046ec006b8d3",
-      "backtestId": "3932ee250e33c2787da0fb67c2f80b60",
-      "title": "【市场仪表盘】重大升级！从 7 维到 13 维的宏观风险模型",
-      "url": "https://www.joinquant.com/view/community/detail/8e8861f0c4c759472dee046ec006b8d3",
-      "sourceFile": "2026-10-17_市场仪表盘_重大升级_从_7_维到_13_维的宏观风险模型-8e8861f0.py",
+      "postId": "4ac4bd9a05f0a3bb565bcfa888ae2fac",
+      "backtestId": "f5d52eedb33c8ac26ebc39b57665e71a",
+      "title": "低相关ETF组合：回撤11.72%",
+      "url": "https://www.joinquant.com/view/community/detail/4ac4bd9a05f0a3bb565bcfa888ae2fac",
+      "sourceFile": "2026-10-17_低相关ETF组合_回撤11_72-4ac4bd9a.py",
       "stats": {
-        "annualReturn": 0.74520362292822,
-        "cumulativeReturn": 13.875443450897,
-        "maxDrawdown": 0.12723603050957,
-        "sharpe": 3.1498823251742,
-        "winRatio": 0.57178217821782,
-        "tradingDays": 1212,
-        "periodLabel": "2024-12"
+        "annualReturn": 0.1147144958592,
+        "cumulativeReturn": 1.202794857246,
+        "maxDrawdown": 0.11724596659735,
+        "sharpe": 0.6574391223007,
+        "winRatio": 0.72631578947368,
+        "tradingDays": 1818,
+        "periodLabel": "2026-07"
       }
     },
     {
-      "postId": "e7c95ca1f1e6363e12c45a0f8554eec4",
-      "backtestId": "d02db35a2c97481a0448b416147109bf",
-      "title": "六因子选股版破净策略 附PT迁移版在各时期的回测截图",
-      "url": "https://www.joinquant.com/view/community/detail/e7c95ca1f1e6363e12c45a0f8554eec4",
-      "sourceFile": "2026-10-17_六因子选股版破净策略_附PT迁移版在各时期的回测截图-e7c95ca1.py",
+      "postId": "4730554eac007c4bfe89dbf2c96781e5",
+      "backtestId": "1307176eae7a9d979bb5c07ea3c3e5fe",
+      "title": "全天候风险平价策略的一点回测观察",
+      "url": "https://www.joinquant.com/view/community/detail/4730554eac007c4bfe89dbf2c96781e5",
+      "sourceFile": "2026-10-17_全天候风险平价策略的一点回测观察-4730554e.py",
       "stats": {
-        "annualReturn": 0.22146447191977,
-        "cumulativeReturn": 3.42635173625,
-        "maxDrawdown": 0.20369837432523,
-        "sharpe": 1.039415818473,
-        "winRatio": 0.6078431372549,
-        "tradingDays": 1859,
-        "periodLabel": "2026-08"
+        "annualReturn": 0.17999329384284,
+        "cumulativeReturn": 2.2686617578,
+        "maxDrawdown": 0.15108912109597,
+        "sharpe": 1.141110694921,
+        "winRatio": 0.97777777777778,
+        "tradingDays": 1789,
+        "periodLabel": "2026-05"
       }
     }
   ]

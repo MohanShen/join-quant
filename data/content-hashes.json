@@ -1326,5 +1326,20 @@
     "postId": "e7c95ca1f1e6363e12c45a0f8554eec4",
     "sourceFile": "2026-10-17_六因子选股版破净策略_附PT迁移版在各时期的回测截图-e7c95ca1.py",
     "registeredAt": "2026-10-16T18:10:41.536Z"
+  },
+  "21776742ea5c048fad3dd13ceecda509a4f6e8eaa562922d93fbf883072ad388": {
+    "postId": "2b4bcf2f2ddbe2094f1c21976ec6f953",
+    "sourceFile": "2026-10-17_ETF轮动-60日波动率最高_MCTS挖因子-2b4bcf2f.py",
+    "registeredAt": "2026-10-17T08:27:16.225Z"
+  },
+  "30dec4cb414c4eec666ba09521b86b3a6f68e4c9c04aed4dd773f28597c776b8": {
+    "postId": "4ac4bd9a05f0a3bb565bcfa888ae2fac",
+    "sourceFile": "2026-10-17_低相关ETF组合_回撤11_72-4ac4bd9a.py",
+    "registeredAt": "2026-10-17T08:27:18.833Z"
+  },
+  "9fb2d4ad36acfc622ae37b1c93a6bc47256228705701129d9587fc8878d799d8": {
+    "postId": "4730554eac007c4bfe89dbf2c96781e5",
+    "sourceFile": "2026-10-17_全天候风险平价策略的一点回测观察-4730554e.py",
+    "registeredAt": "2026-10-17T08:27:21.439Z"
   }
 }

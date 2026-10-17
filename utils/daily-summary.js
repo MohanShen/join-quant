@@ -215,6 +215,11 @@ const SAFE_ADD = [
   // research round writes — the two most important things a run produces.
   'harness', 'study', 'screen', 'data/pending-normalize.json', 'data/copy-queue.json',
   'data/discovered.json', 'data/resources.json', 'data/post-bodies.json',
+  // ⚠ Three more the scoped add missed on its first real run, which named them under
+  // "Left uncommitted" and is how they were found: discover/fetch state written by
+  // strategy-fetch.js (content-hashes, notifications) and strategy-manifest.js (fetch-manifest).
+  // They had only ever been committed by the unscoped `git add -u`.
+  'data/content-hashes.json', 'data/fetch-manifest.json', 'data/notifications.json',
   // Session pins. These are tracked on purpose (.gitignore says so) but a pin for a family or
   // universe worked for the FIRST time is a new file, which `git add -u` does not see — so the
   // handoff that lets tomorrow resume the same session existed only on this machine.
@@ -241,7 +246,19 @@ function commitAndPush(file, { day, moved }) {
   // A pipeline run may commit only what a pipeline run PRODUCES. Everything else — utils/, tests/,
   // scripts/, .claude/, CLAUDE.md — is someone's working copy, and is now reported as left behind
   // rather than silently absorbed.
-  const add1 = paths.length ? sh('git', ['add', '-u', '--', ...paths]) : '';
+  // ⚠ `git add -u -- <path>` is FATAL when the pathspec matches nothing in the index, and it
+  // takes the whole commit with it. Introduced 2026-10-17 by scoping the add: `data/
+  // integrate-sessions` is in SAFE_ADD but is an empty directory until some universe has had a
+  // round, so the first run after the change died with
+  //   error: pathspec 'data/integrate-sessions' did not match any file(s) known to git
+  // and wrote no commit at all. `fs.existsSync` is not the right test — an empty directory passes
+  // it and is still unknown to git. The plain `git add` below tolerates such a path fine; only
+  // `-u` is strict, because it operates on the index.
+  const tracked = paths.filter(p2 => {
+    const out = sh('git', ['ls-files', '--', p2]);
+    return ok(out) && out.trim() !== '';
+  });
+  const add1 = tracked.length ? sh('git', ['add', '-u', '--', ...tracked]) : '';
   const add2 = paths.length ? sh('git', ['add', '--', ...paths]) : '';
   const add3 = sh('git', ['add', '--', rel]);
   if (!ok(add1) || !ok(add2) || !ok(add3)) {

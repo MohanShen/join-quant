@@ -113,21 +113,71 @@ async function getPage() {
 }
 
 /**
+ * Per-request ceiling on the CDP path, in ms. Matches `viaDirect`'s 30s so the two transports
+ * cannot disagree about how long is too long.
+ */
+const CDP_TIMEOUT_MS = (() => {
+  const n = parseInt(process.env.JQ_HTTP_TIMEOUT_MS || '', 10);
+  return Number.isFinite(n) && n > 0 ? n : 30000;
+})();
+
+/**
  * Run one fetch() inside the browser tab.
- * @returns {Promise<{status:number, body:string}>}
+ *
+ * ⚠⚠ BOUNDED since 2026-10-17. `page.evaluate` is not an action with a Playwright timeout, so a
+ * `fetch()` inside the page that never settles hung this call **forever** — while `viaDirect`
+ * right below had a 30s `req.setTimeout` all along. The two transports disagreed about how long is
+ * too long, and the unbounded one is the default.
+ *
+ * Measured cost: the `discover` stage sat in `SN` for **4h25m on 2026-10-16** and was killed only
+ * by `STAGE_TIMEOUT_MIN=255`, losing the whole day's remaining budget; it did it again on
+ * 2026-10-17 and was 61 minutes in when this was found. `used` never moved, so nothing flagged it
+ * — a hang spends wall clock, not backtest minutes, and the budget gate cannot see it.
+ *
+ * Two layers, because either alone leaks:
+ *   - an `AbortController` INSIDE the page, so the browser stops the request rather than leaving a
+ *     dangling one that still holds the tab;
+ *   - a `Promise.race` OUTSIDE it, because an evaluate can also hang for reasons the page cannot
+ *     abort (a wedged renderer, a closed tab). The race is what guarantees the call returns.
+ *
+ * A timeout REJECTS. `jqText` already drops the tab and retries direct on a thrown evaluate, so a
+ * wedged browser degrades to the bounded transport instead of stopping the pipeline.
  */
 async function viaCdp(page, url, { method = 'GET', body = null, json = false } = {}) {
-  return page.evaluate(async ({ url, method, body, json }) => {
+  const evaluation = page.evaluate(async ({ url, method, body, json, ms }) => {
     const headers = { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json, text/plain, */*' };
     if (json) headers['Content-Type'] = 'application/json';
-    const res = await fetch(url, {
-      method,
-      credentials: 'include',
-      headers,
-      body: body == null ? undefined : (json ? JSON.stringify(body) : body),
-    });
-    return { status: res.status, body: await res.text() };
-  }, { url, method, body, json });
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), ms);
+    try {
+      const res = await fetch(url, {
+        method,
+        credentials: 'include',
+        headers,
+        signal: ctl.signal,
+        body: body == null ? undefined : (json ? JSON.stringify(body) : body),
+      });
+      return { status: res.status, body: await res.text() };
+    } finally {
+      clearTimeout(t);
+    }
+  }, { url, method, body, json, ms: CDP_TIMEOUT_MS });
+
+  let timer;
+  try {
+    return await Promise.race([
+      evaluation,
+      new Promise((_, reject) => {
+        // Slightly longer than the in-page abort, so a clean abort reports as itself rather than
+        // as this outer guard — the two messages mean different things to a reader.
+        timer = setTimeout(
+          () => reject(new Error(`timeout after ${CDP_TIMEOUT_MS}ms (cdp): ${url}`)),
+          CDP_TIMEOUT_MS + 5000);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 /** Raw https from this process. Used only when CDP is unavailable. */
