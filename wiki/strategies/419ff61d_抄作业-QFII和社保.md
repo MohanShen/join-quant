@@ -2,6 +2,7 @@
 postId: 419ff61d0e78854276e25a82a83ab497
 title: 抄作业-QFII和社保
 sourceFile: strategies/2026-10-17_抄作业-QFII和社保-419ff61d.py
+family: 其他
 concepts: [动量与趋势, 多因子模型]
 factors:
   选股: [动量]
