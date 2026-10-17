@@ -1363,6 +1363,48 @@ Only the directories whose contents aren't self-evident:
   `#code` before reading. **A sharpe that cannot coexist with its annual/maxDD (implied vol
   > ~150%) is a scrape artefact until the stats endpoint says otherwise**; 289177df's epoch-2
   row (maxDD 10.68 = its header comment) is still unchecked.
+- ⚠⚠⚠ **A 100× UNIT ERROR inflated 小市值's headline by ~8.6×, and it is LINEAGE-WIDE.** Found by
+  the research loop (`study/小市值/findings.tsv` q-e6-13 … q-e6-19), verified independently
+  2026-10-17. `get_current_tick`'s `a1_v`/`b1_v` is in **SHARES**, and three books multiply by 100
+  as if it were **lots**:
+  `money = a1_p * a1_v * 100`. So the advertised gate 「买一档金额 > 5万」 actually means
+  `money > 500` and rejects almost nothing.
+  **Corroboration (not inference)**: two unrelated authors in the same corpus compute depth money
+  with no `*100` — `61c9c428.py:568  seal_amount = tick['b1_v'] * tick['b1_p']` and
+  `c18c86c5.py:1206  df['a1_p'] * df['a1_v'] + df['b1_p'] * df['b1_v']`. The loop's own a-priori
+  argument also holds: a bid-1 volume of 100/200/300 is only sensible as shares (1 lot = 100
+  shares is the minimum), and 47,200 lots would be ≈¥34.9M resting on a micro-cap bid.
+  **Measured cost on the base 7a1c225f** (epoch 6): objective **1.3861 → 0.6539** when only the
+  units are fixed (annual 150.24 → 78.20), and **→ 0.1606** with §1's position discipline added —
+  i.e. the honest level is about **1/8.6 of the headline**, sharpe ~2.6 not 6.07.
+  ⚠ **The gate was nearly INERT while broken** (q-e6-14: turning it off entirely moved objective
+  +0.0107, daily-return correlation 0.9986, 2022 bit-identical). So the 0.73 is **entirely return
+  contributed by untradeable names the broken gate admitted**, not screening value lost.
+  ⚠ **Both edges SURVIVE the fix** — this is the important negative guarantee. On the corrected
+  base, removing 低开反转 still costs half the annual (q-e6-16, 51% retained) and switching to
+  market-cap ranks 1001–2000 leaves only **5%** (q-e6-17, vs 40% on the broken base), so 规模 is
+  *stronger* once the gate works. The mechanism is real; only the MAGNITUDE was fiction.
+  ⚠⚠ **It retroactively invalidated a spent VAL.** imp-5's advantage came almost entirely from the
+  broken gate (imp-6: the same change is worth +0.009 on the fixed base vs +0.13 on the broken
+  one), so the 2026-09-22 validation of `xsz-imp-5` (1.4274) confirmed a candidate whose edge is
+  untradeable. The next epoch's VAL candidate is `q-13`/`q-18`, never a ranking tweak.
+  **Exactly three raw files carry it** (audited repo-wide; the other 63 hits are study copies of
+  the base):
+  `7a1c225f:216` (base, §3 #1 — measured fixed), `8dbd994c:212` (§3 **#2**, obj 1.2810) and
+  `5e874b5b:123` (§3 **#5**, obj 0.9411). The two siblings read the **ask** side while the base
+  reads the **bid** (variables still named `a1_*`) — opposite directions, `×100` on both.
+  ⚠ **So §3's top-five ordering is not a mechanism ranking** until #2 and #5 are re-measured with
+  correct units.
+  ✅ Not currently contaminating live tables: all three rows are **epoch 2**, which
+  `measurementValid()` rejects under epoch 8, and none is queued for re-measurement. The family's
+  current headline `a30641fb` (bestObjective 1.0258, epoch 8) calls `get_current_tick` **zero
+  times** and is clean of this bug — its R=1 has other causes (min-500 market cap, 9:26 auction
+  entry, ~100% daily turnover).
+  ⚠⚠ **FORWARD RISK — the one thing to not get wrong.** `strategies/` is immutable, so
+  re-measuring 8dbd994c or 5e874b5b as-is under epoch 8 would mint **inflated epoch-8 rows** that
+  WOULD feed §3, `wiki/types/` and the champion. Measure a units-fixed VARIANT, the way q-13 did;
+  never the raw file. Realizability for this branch should be scored **per branch**, not per
+  member, since all three share the defect.
 - ⚠ **A run JQ refuses to cancel at the slow-skip cap (「在此状态不能取消」) is not necessarily lost.**
   打板短线's jy-u-2 hit the 50-min cap, five cancel attempts failed, the executor reported
   `slow-skipped` — and the run completed server-side two minutes later. The algorithm's buildList
