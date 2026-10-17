@@ -122,6 +122,24 @@ const PRIORITY = ['integrate', 'research', 'assign', 'normalize', 'discover'];
 
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
 
+/**
+ * Does this planned stage cost BACKTEST MINUTES?
+ *
+ * ⚠ Shared by both budget gates on purpose. There are two — one in `runChain` for a mid-chain
+ * stage, one in the CLI for a single stage — and they disagreed: the CLI exempted
+ * `discover`/`assign`/seed-`integrate` while runChain exempted only `discover`. So a free stage
+ * reached mid-chain was stopped by a budget it was never going to spend, which is the same bug the
+ * CLI exemption was added to fix (2026-10-17), surviving in the other copy of the rule.
+ *
+ * Free stages: `discover` (HTTP only), `assign` (judgement, no bench), and an `integrate` round
+ * whose head action is `seed` — a seed reads the champion's figures out of the ledger and writes
+ * one `promoted.tsv` row, with no browser and no backtest.
+ */
+const isFreeStage = p =>
+  p.stage === 'discover'
+  || p.stage === 'assign'
+  || (p.stage === 'integrate' && ((p.q.integrate || [])[0] || {}).action === 'seed');
+
 // ── budget ──────────────────────────────────────────────────────────────────
 
 /** @returns {{used:number|null, free:number|null, ok:boolean, raw:string}} */
@@ -680,7 +698,7 @@ function runChain({ dry = false, maxStages = 6, stageOverride = null } = {}) {
     i++;
 
     const ceiling = usageLimit.resolve(USAGE_LIMIT_SPEC, p.budget.free);
-    if (p.budget.ok && p.budget.used >= ceiling && p.stage !== 'discover') {
+    if (p.budget.ok && p.budget.used >= ceiling && !isFreeStage(p)) {
       log.push({ stage: p.stage, outcome: 'budget-spent',
                  note: `used ${p.budget.used} >= ${ceiling}` });
       break;
@@ -871,9 +889,7 @@ if (require.main === module) {
   // The exemption is narrow on purpose. It is the PLANNED stage that must be free, and a free
   // stage on a spent budget runs ALONE (`freeOnly` below forces `--once`) rather than chaining
   // into normalize, whose first act would be to ask for minutes that are gone.
-  const free = p.stage === 'discover'
-    || p.stage === 'assign'
-    || (p.stage === 'integrate' && (p.q.integrate[0] || {}).action === 'seed');
+  const free = isFreeStage(p);
   const budgetSpent = p.budget.ok &&
     p.budget.used >= usageLimit.resolve(USAGE_LIMIT_SPEC, p.budget.free) && !free;
   const freeOnly = p.budget.ok && !budgetSpent && free &&

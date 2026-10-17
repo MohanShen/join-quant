@@ -978,7 +978,14 @@ test('integrate is wired into the funnel', async (t) => {
   });
 
   await t.test('the planner exempts a free stage from the budget stop', () => {
-    assert.match(src, /const free = p\.stage === 'discover'[\s\S]{0,300}action === 'seed'/);
+    // ⚠ ONE definition, shared by BOTH gates. There are two — runChain's mid-chain gate and the
+    // CLI's single-stage gate — and they disagreed until 2026-10-17: the CLI exempted `assign` and
+    // a seed-`integrate` round while runChain exempted only `discover`, so a free stage reached
+    // mid-chain was stopped by a budget it was never going to spend. Same bug the CLI exemption
+    // was added to fix, surviving in the other copy of the rule.
+    assert.match(src, /const isFreeStage = p =>[\s\S]{0,400}action === 'seed'/);
+    assert.match(src, /used >= ceiling && !isFreeStage\(p\)/, 'runChain must use it');
+    assert.match(src, /const free = isFreeStage\(p\)/, 'the CLI must use the same one');
     assert.match(src, /const once = argv\.includes\('--once'\) \|\| freeOnly/,
       'a free stage on a spent budget must run ALONE — chaining into normalize would ask for ' +
       'minutes that are gone');
