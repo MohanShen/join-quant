@@ -15,14 +15,6 @@
     "maxCapTried": 45,
     "lastDeferredAt": "2026-09-23T18:09:21.606Z"
   },
-  "strategies/2026-05-20_四择时高息低价小市值和白马大市值轮动-2f5bc859.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-09-20T11:56:57.522Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-09-20T11:56:57.522Z"
-  },
   "strategies/2026-05-23_三马105-五福35-修复版-11年收益677倍回撤14-bf30eb36.py": {
     "attempts": 2,
     "firstDeferredAt": "2026-09-20T11:56:57.522Z",
@@ -38,30 +30,6 @@
     "lastCapMin": 45,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-09-26T17:28:51.754Z"
-  },
-  "strategies/2026-06-28_高质量稳定上涨策略-d02cde29.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-09-20T18:56:10.013Z",
-    "reason": "slow-skipped (epoch-6 re-measure)",
-    "lastCapMin": 30,
-    "maxCapTried": 30,
-    "lastDeferredAt": "2026-09-20T18:56:10.013Z"
-  },
-  "strategies/2026-07-02_首板放量次日高开买入_--_24年至今3088_53-7ddf9b79.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-09-20T18:56:10.014Z",
-    "reason": "slow-skipped (epoch-6 re-measure)",
-    "lastCapMin": 30,
-    "maxCapTried": 30,
-    "lastDeferredAt": "2026-09-20T18:56:10.014Z"
-  },
-  "strategies/2026-07-18_多策略-题材概念-35ce65d2.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-09-20T18:56:10.014Z",
-    "reason": "slow-skipped (epoch-6 re-measure)",
-    "lastCapMin": 30,
-    "maxCapTried": 30,
-    "lastDeferredAt": "2026-09-20T18:56:10.014Z"
   },
   "strategies/2026-06-02_挑战纳指增强_更新-77cabc3c.py": {
     "attempts": 1,

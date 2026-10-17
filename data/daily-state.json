@@ -1,19 +1,14 @@
 {
-  "inFlight": {
+  "inFlight": null,
+  "lastRun": {
     "stage": "normalize",
     "target": null,
     "budget": 92,
-    "at": "2026-10-17T14:47:50.852Z"
-  },
-  "lastRun": {
-    "stage": "discover",
-    "target": null,
-    "budget": 80,
-    "at": "2026-10-17T11:43:18.914Z",
-    "outcome": "ran",
-    "note": "discover + fetch (normalize is its own stage)",
+    "at": "2026-10-17T14:47:50.852Z",
+    "outcome": "killed",
+    "note": "normalize stage stopped deliberately: JQ listed a running entry (algorithm 2bbd06f3883888b56516caa5df8ad589, 34min elapsed) with NO backtest in its buildList, duration.used frozen at 120 throughout, and the user confirmed nothing running on the server UI — the same phantom signature as the 121-min entry earlier today. Stopped rather than let it burn to the 45min cap and then block the chain for 120min on the stale threshold. 4 strategies WERE measured this run (3 of them previously-unretriable deferred entries) before the phantom.",
     "minutesUsed": null,
-    "endedAt": "2026-10-17T11:43:39.269Z"
+    "endedAt": "2026-10-17T15:57:52.032Z"
   },
   "runs": [
     {
@@ -1065,6 +1060,16 @@
       "note": "discover + fetch (normalize is its own stage)",
       "minutesUsed": null,
       "endedAt": "2026-10-17T11:43:39.269Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 92,
+      "at": "2026-10-17T14:47:50.852Z",
+      "outcome": "killed",
+      "note": "normalize stage stopped deliberately: JQ listed a running entry (algorithm 2bbd06f3883888b56516caa5df8ad589, 34min elapsed) with NO backtest in its buildList, duration.used frozen at 120 throughout, and the user confirmed nothing running on the server UI — the same phantom signature as the 121-min entry earlier today. Stopped rather than let it burn to the 45min cap and then block the chain for 120min on the stale threshold. 4 strategies WERE measured this run (3 of them previously-unretriable deferred entries) before the phantom.",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T15:57:52.032Z"
     }
   ]
 }
