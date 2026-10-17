@@ -679,6 +679,30 @@ Only the directories whose contents aren't self-evident:
   schedule caught the first usable window instead. If that bites, add hours to the array and
   gate on "no successful run today" (`data/daily-state.json` already records it) rather than
   widening the UTC gate.
+- ⚠⚠⚠ **The research → integrate handoff was SEVERED by the loop merge.**
+  `integrate-eligible` takes a family's CANDIDATE from the product shelf (`validated_strategies/`),
+  and the retired `autoenhance-recorder` had archiving there as its step 4 — but `family-recorder`,
+  the merged loop's recorder, never inherited it. So a family researched by `/run-family` never
+  reaches the shelf, falls back to its best INGESTED ledger member (usually not the book its VAL
+  validated), and reads `blocked` forever. The seven artifacts on the shelf today were each put
+  there by a one-off `study/<family>/archive*.js` — eleven such scripts exist, which is the symptom.
+  Restored in `family-recorder` + `/run-family`, with the header fields the gate actually parses
+  (`family`, `expId`, `harness_epoch`, `train_objective` whose gloss must contain `sharpe <n>`,
+  `sharpe_val`, `gate_val`). ⚠ A FAILED VAL is archived too, with `gate_val: fail` — the shelf
+  records what reached validation, and the gate filters on that field.
+- ⚠⚠ **The cron cannot reach the last two stages.** `PRIORITY = ['research','assign','normalize',
+  'discover']` — integrate and OOS are not in it and have no session-pin wrapper, so the automated
+  chain stops after research. That is deliberate (integration spends an agent-driven round, OOS an
+  irreversible test), but it was *invisible*: `--plan` reported `research 0` and looked finished
+  while candidates waited. The planner now prints both depths, marked **HUMAN ONLY**.
+- **OOS readiness accepts a PROMOTED candidate with no `--family`.** Integration's primary success
+  (outcome 2) is a MERGED candidate spanning two families, so a family-keyed check made the one
+  artifact a round exists to produce untestable on the final surface. The register is consulted
+  first; `--family` is demanded only when the candidate is not promoted anywhere.
+  ⚠ That path was briefly dead on arrival: `oosCandidateId` was declared in the budget block
+  *below* the readiness block, so it hit a temporal dead zone — and a bare `catch` **swallowed the
+  ReferenceError**, making every promoted candidate read as "not promoted" while the code looked
+  like it worked. Hoisted, and the catch now reports.
 - **Two of the four queues are FILES, two are DERIVED.** `data/pending-normalize.json` and
   `data/copy-queue.json` are real files the normalize/fetch pipelines themselves read. The
   research and assign queues are **derived** — research from `wiki/families/*.md` +

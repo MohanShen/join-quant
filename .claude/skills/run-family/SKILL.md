@@ -171,6 +171,17 @@ like `JQ_ALLOW_OOS`.
 executor will not refuse an OOS run on its own — passing it is the whole barrier. OOS belongs to
 `/run-oos`, which pre-flights readiness and charges the budget.
 
+## After a VAL completes: ARCHIVE the validated book
+
+⚠⚠ The loop is not finished when VAL returns. `integrate-eligible` takes a family's CANDIDATE from
+the product shelf (`validated_strategies/`), so **a family whose product never reaches the shelf
+can never supply one** — it falls back to the best ingested ledger member, which is usually not the
+book the VAL validated, and the family reads `blocked` forever.
+
+The `family-recorder` contract owns the step and its header format. It was lost when
+`/run-study` + `/run-enhance` merged into this loop, which is why the shelf's existing artifacts
+were each archived by a one-off `study/<family>/archive*.js`.
+
 ## The EXIT GATE — what this loop has to deliver for the next phase
 
 ⚠ **Finishing the loop is not the same as producing a candidate.** Integration takes only the best

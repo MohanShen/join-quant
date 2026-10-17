@@ -1329,6 +1329,8 @@ async function main() {
     if (v.reason === 'human-override') console.log(`[post] ⚠ ${v.why}`);
   }
 
+  const oosCandidateId = parsed.sourceFile
+    || path.relative(path.resolve(__dirname, '..'), strategyPath);
   // ── OOS readiness ─────────────────────────────────────────────────────────
   //
   // ⚠⚠ This exists because the approval prompt no longer does. While OOS needed an env prefix, a
@@ -1348,11 +1350,33 @@ async function main() {
   // `JQ_ALLOW_OOS_UNREADY=1` stays an ENV var on purpose — like the budget ceiling, overriding a
   // protection should still cost a prompt.
   if (touchesOOS(window) && process.env.JQ_ALLOW_OOS_UNREADY !== '1') {
-    if (!family) {
-      console.error('[post] OOS-BLOCKED: --family is required for an OOS run. Readiness is checked ' +
-                    'per family, and an unnamed run cannot be checked or charged to anything.');
+    // A PROMOTED candidate is ready by construction — it is what a universe currently ships, and
+    // it already cleared the gate on the way in. This path matters because integration's primary
+    // success (outcome 2) is a MERGED candidate spanning two families: there is no single family
+    // to assess, so a family-only check made the one artifact the round exists to produce
+    // untestable on the final surface. Checked first, so a merged book needs no --family at all.
+    let promotedAs = null;
+    try {
+      const pr = require('./promoted');
+      for (const u of pr.universes()) {
+        if (pr.current(u).some(c => c.candidateId === oosCandidateId)) { promotedAs = u; break; }
+      }
+    } catch (e) {
+      // ⚠ Never silent. A bare catch here swallowed a ReferenceError when `oosCandidateId` was
+      // still declared below this block, so every promoted candidate read as "not promoted" and
+      // the path looked like it worked while doing nothing.
+      console.log(`[post] ⚠ could not read the promoted register (${String(e.message).slice(0, 80)})`);
+    }
+
+    if (promotedAs) {
+      console.log(`OOS-READINESS\tuniverse=${promotedAs}\tpromoted\tcandidate=${oosCandidateId}`);
+    } else if (!family) {
+      console.error('[post] OOS-BLOCKED: this candidate is not a promoted candidate of any ' +
+                    'universe, so --family is required. Readiness is checked per family, and an ' +
+                    'unnamed run cannot be checked or charged to anything.');
       process.exit(3);
     }
+    if (!promotedAs) {
     let ready = null;
     try { ready = require('./integrate-eligible').assess(family); } catch (e) {
       console.log(`[post] ⚠ could not assess ${family}'s readiness (${String(e.message).slice(0, 80)})`);
@@ -1378,6 +1402,7 @@ async function main() {
                     'on something the pipeline will not ship.');
       }
     }
+    }
   }
 
   // ── OOS budget ────────────────────────────────────────────────────────────
@@ -1386,8 +1411,6 @@ async function main() {
   // from epoch 3 until 2026-10-16: oosPolicy was printed by harness-config and counted nowhere,
   // so the ~9-month reserve could be spent repeatedly with no record — while VAL, the less scarce
   // surface, had val-budget.js watching it. Checked before the browser, like VAL.
-  const oosCandidateId = parsed.sourceFile
-    || path.relative(path.resolve(__dirname, '..'), strategyPath);
   if (touchesOOS(window)) {
     const oosBudget = require('./oos-budget');
     const o = oosBudget.check(oosCandidateId, { family });

@@ -220,7 +220,7 @@ test('--allow-oos unlocks the WINDOW only, and readiness moved into code', async
   });
 
   await t.test('an OOS run requires --family, and refuses an ineligible one', () => {
-    assert.match(src, /--family is required for an OOS run/);
+    assert.match(src, /--family is required\. Readiness is checked per family/);
     assert.match(src, /integrate-eligible'\)\.assess\(family\)/);
     assert.match(src, /is not ready for the final surface/);
     assert.match(src, /OOS-READINESS\\t/, 'the verdict must be machine-readable on stdout');
@@ -273,5 +273,37 @@ test('a NOTE about an OOS test must not count as one', async (t) => {
     // stage: 'oos' is authoritative on its own — that is what catches an outcome nobody foresaw.
     write([row('cand', 'oos', 'something nobody predicted')]);
     assert.strictEqual(oos.testsOnThisBench().length, 1);
+  });
+});
+
+test('OOS readiness: a promoted candidate needs no family', async (t) => {
+  const fs2 = require('fs');
+  const path2 = require('path');
+  const src = fs2.readFileSync(path2.join(__dirname, '..', 'utils/strategy-post-backtest.js'), 'utf8');
+
+  await t.test('the promoted-register path exists and runs FIRST', () => {
+    // ⚠ Why it matters: integration's primary success (outcome 2) is a MERGED candidate spanning
+    // two families. A family-only readiness check made the one artifact the round exists to
+    // produce untestable on the final surface.
+    const promoted = src.indexOf("require('./promoted')");
+    const famCheck = src.indexOf('so --family is required');
+    assert.ok(promoted > 0 && promoted < famCheck,
+      'a merged book has no family, so the register must be consulted before --family is demanded');
+  });
+
+  await t.test('oosCandidateId is declared BEFORE the readiness block that uses it', () => {
+    // ⚠ The live bug: it was declared in the budget block below, so the readiness block hit a
+    // temporal dead zone — and a bare `catch` swallowed the ReferenceError, so every promoted
+    // candidate silently read as "not promoted" while the path looked like it worked.
+    const decl = src.indexOf('const oosCandidateId');
+    const ready = src.indexOf('── OOS readiness');
+    const budget = src.indexOf('── OOS budget');
+    assert.ok(decl > 0 && decl < ready && ready < budget,
+      `expected decl -> readiness -> budget, got ${decl}/${ready}/${budget}`);
+  });
+
+  await t.test('the register read reports failure instead of swallowing it', () => {
+    assert.match(src, /could not read the promoted register/,
+      'a silent catch here hides exactly the bug above');
   });
 });

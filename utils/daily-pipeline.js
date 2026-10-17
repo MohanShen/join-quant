@@ -618,6 +618,26 @@ function printPlan(p) {
   console.log(`   normalize ${String(q.normalize.total).padStart(4)}   ${q.normalize.pending.length} pending + ${q.normalize.retry.length} deferred-retry`);
   console.log(`   discover  ${String(q.discover.uncopied).padStart(4)}   uncopied of ${q.discover.total} in queue`);
   console.log(`   (legacy: enhance ${q.enhance.length}, study ${q.study.length} — --stage only)`);
+
+  // ⚠ The two stages AFTER research are not in PRIORITY and the cron cannot run them, so without
+  // this they were invisible: the planner would report "research 0" and look finished while
+  // candidates sat waiting to be integrated and tested. They are reported, never dispatched —
+  // integration spends backtest minutes on an agent-driven round and OOS spends an irreversible
+  // test, so both stay human-invoked (`/run-integrate`, `/run-oos`).
+  try {
+    const iq = require('./integrate-queue').build();
+    const act = iq.filter(r => r.action !== 'idle');
+    const seeds = act.filter(r => r.action === 'seed').length;
+    console.log(`   integrate ${String(act.length).padStart(4)}   ${act.length
+      ? `${seeds} seed + ${act.length - seeds} merge — HUMAN ONLY (/run-integrate)`
+      : 'every universe idle — the gate is upstream (/run-family)'}`);
+    const oos = require('./oos-budget');
+    const used = oos.testsOnThisBench().length;
+    const cap = oos.policy().maxTestsPerEpoch;
+    console.log(`   oos       ${String(cap - used).padStart(4)}   test(s) left on this bench — HUMAN ONLY (/run-oos)`);
+  } catch (e) {
+    console.log(`   integrate   ?   (could not read: ${String(e.message).slice(0, 60)})`);
+  }
   console.log(`[daily] -> ${p.stage.toUpperCase()}   (${p.why})`);
 }
 
