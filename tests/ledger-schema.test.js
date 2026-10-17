@@ -976,7 +976,46 @@ test('the poller detects a phantom instead of burning to the cap', async (t) => 
     assert.match(post, /\+\+phantomStreak >= 2/, 'one bad render must not cancel a run');
     assert.match(post, /has === true[\s\S]{0,80}phantomStreak = 0/, 'never latch');
     // algorithmHasBacktest returns null on a failed read, and null is neither true nor false here.
-    assert.match(post, /null = the read failed/);
+    assert.match(post, /`null` is never treated as a phantom/);
+  });
+
+  /**
+   * ⚠⚠ The verdict is THREE-VALUED, and this is the test that would have caught the bug.
+   *
+   * The first probe tested `/backtestId[=":\s]+[a-f0-9]{32}/` over the response body. Measured
+   * against the live endpoint on 2026-10-17, that is right on the two pages that render and
+   * DANGEROUSLY wrong on the third: `buildList` answers an algorithm it cannot read with a
+   * 60-byte JSON error carrying no 32-hex id, which read as `false` = phantom. Two of those 30s
+   * apart would have cancelled a healthy backtest — worse than the phantom it was built for.
+   *
+   * The fixtures below are reduced from real responses, each verified live:
+   *   fresh algorithm, never run  22,883 bytes, 0 rows, shell field present but blank
+   *   algorithm with >= 1 run     26,199 bytes, >= 1 `backtest-tr` row
+   *   not readable                     60 bytes, `{"status":"2","code":"20000","msg":"系统繁忙…"}`
+   */
+  await t.test('an unreadable buildList is null, not "no backtest"', () => {
+    const { classifyBuildList } = require(path.join(ROOT, 'utils/strategy-post-backtest.js'));
+
+    const SHELL = '<form name="AlgorithmModel"><input type="hidden" id="backtestId" value="';
+    const fresh = `${SHELL}" /><tbody></tbody>`;                    // blank value: no run yet
+    const withRun = `${SHELL}10d73b95cdb8f1713f502ed28d622464" />` +
+      '<tbody><tr _backtestId="de544f9667e7d284ae6cf3b368ca014e" class="backtest-tr"></tr></tbody>';
+    const busy = '{"status":"2","code":"20000","msg":"系统繁忙，请稍后重试","reason":""}';
+
+    assert.equal(classifyBuildList(withRun), true, 'a rendered page with a row has a backtest');
+    assert.equal(classifyBuildList(fresh), false, 'a rendered page with no row IS the phantom');
+    assert.equal(classifyBuildList(busy), null,
+      'the 系统繁忙 error must never read as "no backtest" — it would cancel a healthy run');
+
+    // Everything that is not a rendered buildList is unknown, never a verdict.
+    for (const other of ['', null, undefined, '<html><body>登录</body></html>',
+                         '当前地区暂不支持访问', '{"data":{}}']) {
+      assert.equal(classifyBuildList(other), null, `must be unknown: ${String(other).slice(0, 24)}`);
+    }
+
+    // And the rule may not move back inside page.evaluate, where it cannot be tested at all.
+    assert.match(post, /function classifyBuildList/);
+    assert.match(post, /classifyBuildList\(body\)/);
   });
 
   await t.test('the grace period is long enough to beat registration lag', () => {

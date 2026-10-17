@@ -830,16 +830,64 @@ function completionStep(st, { runningCount, baseline, rendered }) {
  * The buildList is, and it is free — `backtest-log.forAlgorithm` found "no backtest found for
  * algorithm 2bbd06f3…" in one call, which is what finally identified it.
  *
- * @returns {Promise<boolean|null>} true = a backtest exists, false = none, null = the read failed
- *   (never treated as a phantom — an unreadable probe must not cancel a healthy run).
+ * ## ⚠⚠ Why this is a ROW count and a THREE-valued answer, not a boolean regex
+ *
+ * The first version tested `/backtestId[=":\s]+[a-f0-9]{32}/` over the response body and returned
+ * a plain boolean. Measured against the live endpoint on 2026-10-17, three response shapes exist:
+ *
+ * | algorithm | bytes | `backtest-tr` rows | old regex | this |
+ * |---|---|---|---|---|
+ * | fresh, never run | 22,883 | 0 | false | **false** |
+ * | has ≥1 run | 26,199–26,202 | ≥1 | true | **true** |
+ * | not readable | 60 | 0 | **false** ⚠ | **null** |
+ *
+ * So the old regex got the first two right, by luck rather than by design: the page carries a
+ * shell field `<input type="hidden" id="backtestId" value="…">` whose value is populated only once
+ * a run exists, and blank on an empty algorithm. (On a page WITH runs the loose regex therefore
+ * finds **2** ids where there is 1 row — sampled across 8 algorithms, all 2/1.)
+ *
+ * **The third row is the bug this fixes.** `/algorithm/backtest/buildList` answers an algorithm it
+ * cannot read with a 60-byte JSON error — `{"status":"2","code":"20000","msg":"系统繁忙，请稍后重试"}`
+ * — which carries no 32-hex id and so read as `false` = phantom. Two of those 30s apart would have
+ * **cancelled a healthy backtest**, which is the one failure mode worse than the phantom itself.
+ * Observed live, and not transient: four consecutive reads 4s apart all returned it.
+ *
+ * Hence: the signal is the table body — `<tr _backtestId="…" class="backtest-tr">`, one row per
+ * run, present from submission (the same table `fetchRunState` reads 完成 out of) — and "the page
+ * did not render" is kept distinct from "the page rendered and the table is empty":
+ *
+ *   `true`  — ≥1 `backtest-tr` row.
+ *   `false` — the page RENDERED (it carries the shell field) and has no row. The phantom.
+ *   `null`  — anything else: the JSON error above, a login redirect, a geo-block page, a throw.
+ *
+ * ⚠ The earlier "no backtest found for algorithm 2bbd06f3…" verdict was therefore NOT the empty-
+ * table signal: that algorithm answered `系统繁忙`. Unreadable is informative to a human reading
+ * one line, but as an unattended trigger it is exactly the false-positive path above.
+ *
+ * @returns {Promise<boolean|null>} see above; `null` is never treated as a phantom.
  */
+function classifyBuildList(body) {
+  const t = String(body || '');
+  if (/class="backtest-tr"/.test(t)) return true;
+  // The shell field proves the page RENDERED. Require it before daring to answer "no backtest" —
+  // this is the whole guard against the 60-byte 系统繁忙 error reading as a phantom.
+  if (/<input[^>]+id="backtestId"/.test(t)) return false;
+  return null;                                       // unreadable — not a verdict
+}
+
 async function algorithmHasBacktest(page, algorithmId) {
   try {
-    return await page.evaluate(async (alg) => {
-      const t = await (await fetch(`/algorithm/backtest/buildList?algorithmId=${alg}`,
-        { credentials: 'include' })).text();
-      return /backtestId[=":\s]+[a-f0-9]{32}/.test(t);
+    // ⚠ The page only FETCHES; classification happens in Node. A rule living inside
+    // `page.evaluate` cannot be unit-tested (the function is serialized into the browser and can
+    // reference nothing outside itself), and the version of this that got the 系统繁忙 case wrong
+    // was untestable for exactly that reason.
+    const body = await page.evaluate(async (alg) => {
+      try {
+        return await (await fetch(`/algorithm/backtest/buildList?algorithmId=${alg}`,
+          { credentials: 'include' })).text();
+      } catch { return null; }
     }, algorithmId);
+    return classifyBuildList(body);
   } catch { return null; }
 }
 
@@ -1694,5 +1742,5 @@ if (require.main === module) {
 }
 
 module.exports = { parseArgs, concurrencyGate, usageGate, parseCnDuration,
-                   completionStep, pickOurRun, isNoTradeRun,
+                   completionStep, pickOurRun, isNoTradeRun, classifyBuildList,
                    cancelBacktest, readRunning, WINDOWS };

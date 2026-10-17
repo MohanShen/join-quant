@@ -1520,6 +1520,22 @@ Only the directories whose contents aren't self-evident:
   strategy** — six CONCURRENT-STOP refusals did exactly that on 2026-09-23 — and
   `tests/normalize.test.js` enforces that coverage for every marker the executor prints. It caught
   this one.
+  ⚠⚠ **The verdict must be THREE-valued, and the first version was not.** `buildList` has three
+  measured response shapes (2026-10-17, live): a **fresh** algorithm renders 22,883 bytes with
+  **0** `class="backtest-tr"` rows; one with runs renders ~26,200 with **≥1**; and one the account
+  **cannot read** answers a 60-byte `{"status":"2","code":"20000","msg":"系统繁忙，请稍后重试"}`.
+  A boolean regex over the body (`/backtestId[=":\s]+[a-f0-9]{32}/`) gets the first two right only
+  **by luck** — the shell field `<input type="hidden" id="backtestId" value="…">` is blank until a
+  run exists, which is also why a page with 1 row matches **2** ids (sampled: 2/1 on all 8) — and
+  reads the third as `false` = phantom. Two of those 30s apart would **cancel a healthy backtest**,
+  the one failure worse than the phantom. Not transient either: four reads 4s apart all returned it.
+  So `classifyBuildList()` returns `true` (≥1 row) / `false` (**rendered** and no row) /
+  **`null`** (anything else — never a phantom), and it lives in **Node, not `page.evaluate`**: a
+  rule inside the evaluated function cannot be unit-tested, which is why the broken version shipped.
+  ⚠ Do **not** probe with `running[].id` — that is a **backtestId**, not an algorithmId, so
+  `buildList` answers 系统繁忙 for it no matter what. The poller probes the algorithmId it created.
+  This also means the earlier "no backtest found for algorithm 2bbd06f3…" verdict was the
+  *unreadable* shape, not the empty-table one.
 - ⚠ **A run JQ refuses to cancel at the slow-skip cap (「在此状态不能取消」) is not necessarily lost.**
   打板短线's jy-u-2 hit the 50-min cap, five cancel attempts failed, the executor reported
   `slow-skipped` — and the run completed server-side two minutes later. The algorithm's buildList
