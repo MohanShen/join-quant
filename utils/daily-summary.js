@@ -131,7 +131,10 @@ function build() {
   L.push(`| integrate | ${iq.length}${iq.length ? ` (${seeds} seed + ${iq.length - seeds} merge)` : ''} |`);
   L.push(`| research | ${q.research.length} |`);
   L.push(`| assign | ${q.assign.length} |`);
-  L.push(`| normalize | ${q.normalize.total} (${q.normalize.pending.length} pending + ${q.normalize.retry.length} deferred-retry) |`);
+  // `total` is RUNNABLE work; `listed` is how many entries sit in the files. They diverged by
+  // 24 vs 9 on 2026-10-17 and the summary reported the larger one.
+  L.push(`| normalize | ${q.normalize.total} runnable of ${q.normalize.listed} listed ` +
+         `(${q.normalize.pending.length} pending + ${q.normalize.retry.length} deferred-retry) |`);
   L.push(`| discover | ${q.discover.uncopied} uncopied of ${q.discover.total} |`);
   L.push(`| _legacy_ | enhance ${q.enhance.length}, study ${q.study.length} (--stage only) |`);
   L.push('');

@@ -86,16 +86,68 @@ function sync({ window = 'train', dry = false } = {}) {
   if (stubbed.length && !dry) regenConceptTables();
 
   // 2. queue entries the ledger says are finished — the leak that left 11 stale entries
+  //
+  // ⚠⚠ The lookup was `entry.endsWith('.py') ? 'strategies/'+entry : null`, which could not prune
+  // exactly the entries that most needed it. A bare id (`lk_c985985e…`, a re-minted postId that
+  // matches no file) yielded `null`, so `r` was null and the entry was KEPT — forever. An entry
+  // already carrying the `strategies/` prefix became `strategies/strategies/x.py`, matched
+  // nothing, and was also kept. Measured 2026-10-17: 5 immortal entries (1 prefixed, 4 bare ids)
+  // inflating the queue that drives stage selection.
+  //
+  // Normalise to a basename first, then prune on two grounds: the ledger says it is finished, OR
+  // it resolves to no file on disk at all. The second is the one that was missing — an entry
+  // nothing can ever run is not a queue item, it is noise, and CLAUDE.md's rule says why it
+  // accumulated: never key a store on an id.
   const pending = readJson(PENDING, []);
+  const onDisk = (() => {
+    try { return new Set(fs.readdirSync(path.join(ROOT, 'strategies')).filter(f => f.endsWith('.py'))); }
+    catch { return new Set(); }
+  })();
+  const basenameOf = e => {
+    const b = String(e).replace(/^strategies\//, '');
+    if (onDisk.has(b)) return b;
+    // A legacy id: match the 8-char suffix saveStrategyFile puts in the filename. Same rule as
+    // normalize-daily.pidToFile, so the two agree about what an entry means.
+    if (!b.endsWith('.py')) return [...onDisk].find(f => f.includes('-' + b.slice(0, 8) + '.py')) || null;
+    return null;
+  };
+  const unresolvable = [];
   const keep = pending.filter(entry => {
-    const key = entry.endsWith('.py') ? `strategies/${entry}` : null;
-    const r = key ? rows.get(key) : null;
+    const base = basenameOf(entry);
+    if (!base) { unresolvable.push(entry); return false; }
+    const r = rows.get(`strategies/${base}`);
     return !(r && TERMINAL.has(r.status));
   });
   const pruned = pending.filter(e => !keep.includes(e));
   if (pruned.length && !dry) fs.writeFileSync(PENDING, JSON.stringify(keep, null, 1));
 
-  return { stubbed, pruned, missingSource };
+  // 3. deferred-pool entries the ledger says are FINISHED.
+  //
+  // ⚠⚠ `dueForRetry()` filters on attempts and cap only, never on whether the strategy has since
+  // succeeded. Measured 2026-10-17: 9 of the 10 pooled entries carry `normalized` at epoch 6 —
+  // which epoch 8 accepts, so they are done — and the pool re-offered all 10 every single day,
+  // the normalizer skipped every one as terminal, and the planner reported them as queue depth.
+  // The pool was seeded from the ledger's slow-skipped rows and nothing ever resolved an entry
+  // when that strategy later measured cleanly.
+  //
+  // Only a CAP-related status stays retriable: a bigger cap can change `slow-skipped` or a crash,
+  // and cannot change `normalized`, `compile-error`, `no-trades` or `incompatible-*`.
+  const RETRIABLE = new Set(['slow-skipped', 'crash']);
+  const resolvedDeferred = [];
+  try {
+    const state = require('./daily-state');
+    for (const [file, v] of Object.entries(state.deferred())) {
+      const base = basenameOf(file);
+      const r = base ? rows.get(`strategies/${base}`) : null;
+      const finished = !base || (r && !RETRIABLE.has(r.status));
+      if (!finished) continue;
+      resolvedDeferred.push({ file, why: !base ? 'resolves to no file' : `ledger says ${r.status}`,
+                              attempts: v.attempts });
+      if (!dry) state.resolve(file, 'ledger-finished');
+    }
+  } catch { /* state module unavailable — reported as none */ }
+
+  return { stubbed, pruned, unresolvable, resolvedDeferred, missingSource };
 }
 
 /**

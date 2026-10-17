@@ -607,3 +607,77 @@ test('an entry point that opens jq-http closes it', async (t) => {
       'process.exit in the catch bypasses the finally — set process.exitCode instead');
   });
 });
+
+/**
+ * ⚠⚠⚠ The normalize queue's depth was fiction, and the funnel decides on it.
+ *
+ * Measured 2026-10-17: the queue reported **24** while **9** entries were runnable. 5 could never
+ * resolve (1 carried a `strategies/` prefix, 4 were re-minted ids matching no file) and 10 were
+ * already finished — 9 of them `normalized` at epoch 6, which epoch 8 accepts. So the planner
+ * picked `normalize` twice on an empty queue, the normalizer exited in 6 seconds having started no
+ * backtest, and it was recorded as `RAN  21 queued`. The stage itself was never broken: given real
+ * work it measured 9 strategies and moved `used`.
+ */
+test('the normalize queue reports runnable work', async (t) => {
+  const daily = require('../utils/daily-pipeline');
+  const pipeSrc = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
+
+  await t.test('total counts runnable; listed counts entries', () => {
+    const q = daily.queues().normalize;
+    assert.strictEqual(typeof q.total, 'number');
+    assert.strictEqual(typeof q.listed, 'number');
+    assert.ok(Array.isArray(q.runnable));
+    assert.strictEqual(q.total, q.runnable.length);
+    assert.ok(q.total <= q.listed, 'runnable can never exceed listed');
+  });
+
+  await t.test('depth() — what picks the stage — uses the runnable count', () => {
+    // `depth(stage, q)` returns q.normalize.total for normalize. If that were `listed`, the
+    // funnel would spend its turn on entries nothing can run.
+    assert.match(pipeSrc, /stage === 'normalize' \? q\.normalize\.total/);
+  });
+
+  await t.test('a prefixed PENDING entry is stripped, not silently dropped', () => {
+    // strategy-normalize --files matches bare basenames against the directory listing
+    // (`asked.filter(f => onDisk.has(f))`), so `strategies/x.py` matched nothing. Only the retry
+    // list was being stripped.
+    assert.match(pipeSrc, /\.\.\.q\.normalize\.pending\.map\(base\)/);
+  });
+
+  await t.test('nothing runnable is reported as such, with the listed count', () => {
+    assert.match(pipeSrc, /nothing runnable \(\$\{q\.normalize\.listed\} listed/);
+    assert.match(pipeSrc, /normalize-sync/, 'the note must say what cleans them');
+  });
+});
+
+test('normalize-sync can clean what it could not reach', async (t) => {
+  const sync = require('../utils/normalize-sync');
+  const src = fs.readFileSync(path.join(ROOT, 'utils/normalize-sync.js'), 'utf8');
+
+  await t.test('the prune resolves an entry to a basename before looking it up', () => {
+    // It was `entry.endsWith('.py') ? 'strategies/'+entry : null` — a bare id gave null and the
+    // entry was KEPT forever; a prefixed entry became strategies/strategies/x.py and was also
+    // kept. Those are exactly the entries that most needed pruning.
+    assert.ok(!/entry\.endsWith\('\.py'\) \? `strategies\/\$\{entry\}` : null/.test(src));
+    assert.match(src, /basenameOf/);
+  });
+
+  await t.test('an entry that resolves to no file is reported, not kept', () => {
+    const r = sync.sync({ dry: true });
+    assert.ok(Array.isArray(r.unresolvable),
+      'unresolvable entries must be surfaced — they inflate the depth that picks the stage');
+  });
+
+  await t.test('the deferred pool drops entries the ledger says are finished', () => {
+    // dueForRetry filters on attempts and cap only, never on whether the strategy has since
+    // succeeded, so the pool re-offered 9 `normalized` strategies every day forever.
+    const r = sync.sync({ dry: true });
+    assert.ok(Array.isArray(r.resolvedDeferred));
+    assert.match(src, /RETRIABLE/,
+      'only a cap-related status stays retriable — a bigger cap cannot change compile-error');
+    for (const bad of ['normalized', 'compile-error', 'no-trades']) {
+      assert.ok(!new RegExp(`RETRIABLE = new Set\\(\\[[^\\]]*'${bad}'`).test(src),
+        `${bad} must not be treated as retriable`);
+    }
+  });
+});

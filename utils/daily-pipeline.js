@@ -160,11 +160,49 @@ function staleFamilies(stage, { requireBest = false } = {}) {
   return out;
 }
 
+/**
+ * ⚠⚠ `total` is REAL WORK, not queue length — and the difference drove stage selection.
+ *
+ * Measured 2026-10-17: the queue reported **24** while only **9** entries were runnable. 5 could
+ * never resolve (1 carried a `strategies/` prefix, 4 were re-minted ids matching no file) and 10
+ * were already finished — 9 of them `normalized` at epoch 6, which epoch 8 accepts. So the planner
+ * picked `normalize` twice on a queue with nothing in it, the normalizer exited in 6 seconds
+ * having started no backtest, and the run was recorded as `RAN  21 queued`. A depth that counts
+ * entries nothing can run is fiction, and this is the number the funnel decides on.
+ *
+ * `pending`/`retry` keep every entry so a human can still see them; `total` counts what would
+ * actually be measured. `utils/normalize-sync.js` is what REMOVES the dead ones.
+ */
 function normalizeQueue() {
   const pending = readJson(path.join(ROOT, 'data/pending-normalize.json'), []);
   const list = Array.isArray(pending) ? pending : [];
   const retry = state.dueForRetry(SLOW_SKIP_MIN);
-  return { pending: list, retry, total: list.length + retry.length };
+
+  let runnable = [];
+  try {
+    const harness = require('./harness-config');
+    const ledger = require('./ledger');
+    const onDisk = new Set(fs.readdirSync(path.join(ROOT, 'strategies')).filter(f => f.endsWith('.py')));
+    const row = {};
+    for (const r of ledger.rows()) row[r.sourceFile.replace(/^strategies\//, '')] = r;
+    // A file is work if it resolves to something on disk AND does not already carry a terminal
+    // row this bench accepts. `slow-skipped` counts as terminal here for the same reason the
+    // normalizer does: re-running it at the SAME cap learns nothing (the retry path below raises
+    // the cap explicitly).
+    const TERMINAL = new Set(['normalized', 'compile-error', 'slow-skipped', 'no-trades',
+                              'incompatible-futures', 'incompatible-notrunnable', 'failed-final']);
+    const isWork = e => {
+      const b = String(e).replace(/^strategies\//, '');
+      if (!onDisk.has(b)) return false;
+      const r = row[b];
+      return !(r && TERMINAL.has(r.status) && harness.measurementValid(r.epoch));
+    };
+    runnable = [...new Set([...retry.map(r => r.file), ...list])].filter(isWork);
+  } catch {
+    runnable = [...list, ...retry.map(r => r.file)];     // cannot judge — report it all
+  }
+  return { pending: list, retry, runnable, total: runnable.length,
+           listed: list.length + retry.length };
 }
 
 function discoverQueue() {
@@ -341,10 +379,20 @@ function runNormalize(q, { dry }) {
   // identical ledger rows. That happened on 2026-09-26 (5511f8f0, `normalized epoch=6` twice) and
   // a ledger-integrity test caught it. Retry entries come first, so keeping the first occurrence
   // preserves their priority.
+  // ⚠ Strip the `strategies/` prefix from PENDING as well as from retry. Only retry was stripped,
+  // and `strategy-normalize --files` matches bare basenames against the directory listing — so a
+  // prefixed pending entry was silently dropped by `asked.filter(f => onDisk.has(f))`.
+  const base = e => String(e).replace(/^strategies\//, '');
   const files = [...new Set([
-    ...q.normalize.retry.map(r => r.file.replace(/^strategies\//, '')),
-    ...q.normalize.pending,
+    ...q.normalize.retry.map(r => base(r.file)),
+    ...q.normalize.pending.map(base),
   ])];
+  // Nothing RUNNABLE is not the same as nothing listed — see normalizeQueue.
+  if (!q.normalize.total) {
+    return { outcome: 'empty',
+             note: `nothing runnable (${q.normalize.listed} listed, all finished or unresolvable ` +
+                   '— run node utils/normalize-sync.js to clean them)' };
+  }
   if (!files.length) return { outcome: 'empty', note: 'nothing pending' };
   const list = files.slice(0, 40).join(',');
   const args = ['utils/strategy-normalize.js', '--window', 'train',
@@ -709,7 +757,11 @@ function printPlan(p) {
     .map(x => `${x.family}(${x.score ?? '—'}/${x.reason})`).join(', ') || '—';
   console.log(`   research  ${String(q.research.length).padStart(4)}   ${head}`);
   console.log(`   assign    ${String(q.assign.length).padStart(4)}   normalized but no family: (invisible to the queue)`);
-  console.log(`   normalize ${String(q.normalize.total).padStart(4)}   ${q.normalize.pending.length} pending + ${q.normalize.retry.length} deferred-retry`);
+  console.log(`   normalize ${String(q.normalize.total).padStart(4)}   runnable; ${q.normalize.listed} listed ` +
+              `(${q.normalize.pending.length} pending + ${q.normalize.retry.length} deferred-retry)` +
+              `${q.normalize.listed > q.normalize.total
+                  ? `  ⚠ ${q.normalize.listed - q.normalize.total} finished/unresolvable — normalize-sync cleans them`
+                  : ''}`);
   console.log(`   discover  ${String(q.discover.uncopied).padStart(4)}   uncopied of ${q.discover.total} in queue`);
   console.log(`   (RETIRED: enhance ${q.enhance.length}, study ${q.study.length} — their skills ` +
               'are gone; --stage refuses both and points at /run-family)');

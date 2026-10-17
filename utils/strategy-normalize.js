@@ -557,9 +557,17 @@ function main() {
   try {
     const { sync } = require('./normalize-sync');
     const r = sync({ window: opt.window });
-    if (r.stubbed.length || r.pruned.length) {
-      console.log(`[normalize] sync: +${r.stubbed.length} wiki page(s), -${r.pruned.length} queue entr(ies)`);
-    }
+    // ⚠ Report the two cleanups added 2026-10-17 as well, or the queue self-heals in silence and
+    // nobody learns that 17 of 24 entries were never work. `unresolvable` = resolves to no file on
+    // disk (a re-minted id); `resolvedDeferred` = the pool was re-offering a strategy the ledger
+    // says has since finished.
+    const bits = [
+      r.stubbed.length && `+${r.stubbed.length} wiki page(s)`,
+      r.pruned.length && `-${r.pruned.length} queue entr(ies)`,
+      (r.unresolvable || []).length && `-${r.unresolvable.length} unresolvable`,
+      (r.resolvedDeferred || []).length && `-${r.resolvedDeferred.length} dead deferred`,
+    ].filter(Boolean);
+    if (bits.length) console.log(`[normalize] sync: ${bits.join(', ')}`);
   } catch (e) {
     console.error(`[normalize] ⚠ post-batch sync failed (results are safe in the ledger): ${e.message}`);
   }
