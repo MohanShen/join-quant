@@ -111,7 +111,7 @@ function sync({ window = 'train', dry = false } = {}) {
  * effect and let its `process.exit()` take this process down with it. That is the same trap
  * that once made a bare `require()` of strategy-normalize.js spend 42 backtest minutes.
  *
- * A non-zero exit means BLOCKED (regenerating would delete metric rows the gitignored ledger
+ * A non-zero exit means BLOCKED (regenerating would delete metric rows the ledger
  * no longer has) or stale — informational here, never a failure of the sync. It is reported
  * and deliberately not escalated, and `--force` is never passed.
  */

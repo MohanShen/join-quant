@@ -87,7 +87,7 @@ function classify() {
 /** Normalized rows, so the report can say how many affected strategies are actually measured. */
 function normalizedSet() {
   // Columns via `utils/ledger.js` — `normalized()` already filters the status and tolerates a
-  // missing ledger (it is gitignored and may be absent on a fresh clone).
+  // missing ledger (it is tracked, but a regression must not crash the classifier).
   const s = new Set();
   for (const r of ledger.normalized()) s.add(r.sourceFile.replace('strategies/', ''));
   return s;

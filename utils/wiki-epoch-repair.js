@@ -7,7 +7,7 @@
  * superseded four times — 120 of them, while the ledger says epoch 2 (122 rows) and epoch 4 (2).
  *
  * That block is not decoration. CLAUDE.md designates it the DURABLE BACKUP of
- * `harness/normalize-*.tsv`, which is gitignored and has already regressed once from ~119 rows
+ * `harness/normalize-*.tsv`, which has already regressed once from ~119 rows
  * to 18. `normalize-ledger-rebuild.js` reconstructs the ledger from these pages — so a rebuild
  * would have produced a ledger that said "epoch 1" everywhere, and the normalizer's
  * epoch-aware done-check would then have judged the entire library unmeasured and re-run all
@@ -36,7 +36,7 @@ const SDIR = path.join(ROOT, 'wiki/strategies');
  * `kb-stub.createStub` returns early when a page already exists, so a re-measured strategy
  * kept its old numbers forever. An epoch rollout re-measures in bulk, so the durable backup
  * went stale in bulk — and the backup is what `normalize-ledger-rebuild.js` reconstructs the
- * gitignored ledger from.
+ * ledger from.
  *
  * Measured consequence: three different 打板 strategies (4cce4058, 69ca427f, a7f60565) all
  * carried the identical block annual 0.0910 / sharpe 0.16 / maxdd 0.2368. Fresh epoch-6 runs

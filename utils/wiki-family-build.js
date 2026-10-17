@@ -275,7 +275,7 @@ if (require.main === module) {
   if (normalizedRows === 0 && !FORCE) {
     console.error(
       `REFUSING TO RUN: ${path.relative(ROOT, LEDGER)} has 0 \`normalized\` rows.\n` +
-      `  §3 is generated from that ledger, and it is gitignored — so the family pages\n` +
+      `  §3 is generated from that ledger — so if it has regressed, the family pages\n` +
       `  are currently the ONLY copy of the normalization results. Running now would\n` +
       `  erase them. Rebuild the ledger first (utils/strategy-normalize.js).\n` +
       `  Override with --force only if you intend to publish empty tables.`);

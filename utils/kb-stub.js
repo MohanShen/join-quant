@@ -84,7 +84,7 @@ function normalizedLine(metrics) {
  *
  * ⚠ createStub used to `return { existed: true }` and write nothing at all. So any strategy that
  * already had a page — one from /ingest-strategy, or an earlier pass — never received a
- * `normalized:` block when it was measured, and its measurement lived ONLY in the gitignored
+ * `normalized:` block when it was measured, and its measurement lived ONLY in the then-gitignored
  * ledger. Measured 2026-10-05: 16 of 136 normalized rows were in that state, unrecoverable by
  * `normalize-ledger-rebuild.js` if the ledger regressed again.
  *
@@ -121,7 +121,7 @@ function createStub(srcFile, fullSrc, metrics) {
   const existing = fs.readdirSync(SDIR).find(f => f.startsWith(pid8 + '_'));
   if (existing) {
     // Existing page: still record the measurement. Returning early here is what left 16
-    // measurements with no durable copy outside the gitignored ledger.
+    // measurements with no durable copy outside the ledger.
     const full = path.join(SDIR, existing);
     const stamped = stampNormalized(full, metrics);
     return { path: full, existed: true, concepts: null, stamped };
@@ -131,7 +131,7 @@ function createStub(srcFile, fullSrc, metrics) {
   const a = metrics.annual / 100, m = metrics.maxdd / 100;
   // ⚠ Both of these used to be hard-coded (`epoch: 1`, `夏普<2.5`) and had gone stale.
   // The stamped epoch matters far more than it looks: CLAUDE.md designates this `normalized:`
-  // block the DURABLE BACKUP of harness/normalize-*.tsv (which is gitignored and has already
+  // block the DURABLE BACKUP of harness/normalize-*.tsv (which has already
   // regressed from ~119 rows to 18 once). Every one of the 120 existing pages claimed epoch 1
   // while the ledger said 2 or 4, so a rebuild would have reconstructed a mislabelled ledger.
   const harness = require('./harness-config');

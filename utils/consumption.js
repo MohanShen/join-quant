@@ -14,7 +14,7 @@
  *   - "what has never been touched" is one scan, not a walk over every page.
  * Same reasoning that made harness/normalize-*.tsv a ledger.
  *
- * ⚠ Tracked in git on purpose. The normalize ledger was gitignored, silently regressed from
+ * ⚠ Tracked in git on purpose. The normalize ledger used to be gitignored, silently regressed from
  * ~119 rows to 18, and blocked every family page from regenerating until it was rebuilt.
  *
  * Usage:

@@ -44,8 +44,9 @@ const today = () => new Date().toISOString().slice(0, 10);
 
 /** Rows the ledger holds right now, by status. */
 function ledgerCounts() {
-  // Columns via `utils/ledger.js`; `rows()` tolerates a missing ledger (gitignored, may be
-  // absent on a fresh clone) and is reported as unknown by the caller.
+  // Columns via `utils/ledger.js`; `rows()` tolerates a missing ledger (it is tracked, so a
+  // fresh clone has it — but a regression or a partial checkout must not crash the summary) and
+  // the caller reports that as unknown.
   const out = {};
   for (const r of ledger.rows()) out[r.status] = (out[r.status] || 0) + 1;
   return out;
@@ -208,6 +209,12 @@ const SAFE_ADD = [
   // `integrate-refusals.tsv` is why a pair was refused — both already tracked, so `git add -u`
   // catches edits; they are named here so a run that CREATES them still commits them.
   'data/promoted.tsv', 'data/integrate-refusals.tsv',
+  // ⚠ Added 2026-10-17 when `git add -u` was SCOPED to this list (see commitAndPush). These were
+  // committed only because the unscoped add swept the whole working tree, so leaving them out
+  // would have stopped committing the ledger a normalize pass appends to and the findings a
+  // research round writes — the two most important things a run produces.
+  'harness', 'study', 'screen', 'data/pending-normalize.json', 'data/copy-queue.json',
+  'data/discovered.json', 'data/resources.json', 'data/post-bodies.json',
   // Session pins. These are tracked on purpose (.gitignore says so) but a pin for a family or
   // universe worked for the FIRST time is a new file, which `git add -u` does not see — so the
   // handoff that lets tomorrow resume the same session existed only on this machine.
@@ -222,8 +229,19 @@ const SAFE_ADD = [
  */
 function commitAndPush(file, { day, moved }) {
   const rel = path.relative(ROOT, file);
-  const add1 = sh('git', ['add', '-u']);
   const paths = SAFE_ADD.filter(p => fs.existsSync(path.join(ROOT, p)));
+
+  // ⚠⚠ SCOPED to SAFE_ADD (2026-10-17). This was a bare `git add -u`, which stages EVERY modified
+  // tracked file in the working tree — so an automated run commits whatever a human happens to
+  // have in progress. It did exactly that: a run whose only stage reported `budget-spent` (it
+  // started nothing) swept up **19 mid-edit source files** across utils/ and backtest/, plus
+  // CLAUDE.md, and pushed them as "daily: 2026-10-17 pipeline run". The content was fine by luck;
+  // the commit message described none of it, and the work was not finished.
+  //
+  // A pipeline run may commit only what a pipeline run PRODUCES. Everything else — utils/, tests/,
+  // scripts/, .claude/, CLAUDE.md — is someone's working copy, and is now reported as left behind
+  // rather than silently absorbed.
+  const add1 = paths.length ? sh('git', ['add', '-u', '--', ...paths]) : '';
   const add2 = paths.length ? sh('git', ['add', '--', ...paths]) : '';
   const add3 = sh('git', ['add', '--', rel]);
   if (!ok(add1) || !ok(add2) || !ok(add3)) {
@@ -233,11 +251,19 @@ function commitAndPush(file, { day, moved }) {
   const staged = sh('git', ['diff', '--cached', '--name-only']);
   if (!ok(staged) || !staged) return { ok: true, skipped: true, why: 'nothing staged' };
 
+  // Modified-but-not-staged tracked files: a human's work, deliberately left alone. Surfaced in
+  // the commit body so a reader can see the run chose not to take them.
+  const left = sh('git', ['diff', '--name-only']).split('\n').filter(Boolean);
+
   const subject = moved
     ? `daily: ${day} pipeline run`
     : `daily: ${day} pipeline run (no-op)`;
   const body = `Automated summary from utils/daily-summary.js.\n\n`
     + `Files in this commit: ${staged.split('\n').length}.\n`
+    + (left.length
+        ? `Left uncommitted (not pipeline output, ${left.length}): ${left.slice(0, 8).join(', ')}`
+          + `${left.length > 8 ? ', …' : ''}\n`
+        : '')
     + `See ${rel} for stages, queues and anything needing a human.\n`;
   const msg = `${subject}\n\n${body}`;
 
@@ -276,4 +302,7 @@ if (require.main === module) {
   }
 }
 
-module.exports = { build, write, commitAndPush, ledgerCounts, changedFiles, parseStatusLine };
+// SAFE_ADD is exported so a test can assert on the REAL array. It used to be read by
+// regex out of the source text, which an apostrophe in one of its own comments broke.
+module.exports = { build, write, commitAndPush, ledgerCounts, changedFiles, parseStatusLine,
+                   SAFE_ADD };
