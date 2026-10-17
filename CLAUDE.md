@@ -513,7 +513,32 @@ Only the directories whose contents aren't self-evident:
   this family has a new best variant", so the key is the champion's `sourceFile` (or a merged
   candidate's `expId`). A new best variant is a new `candidateId` and therefore a new attempt, with
   no expiry rule to get wrong — and one failed merge can never silently retire a lineage.
-- ⚠⚠⚠ **A passing VAL does not mean the CHAMPION was validated.** The exit gate checked "has a
+- ⚠⚠⚠ **The ledger cannot hold the family's own best work, so "champion" was the wrong word.**
+  `championOf` reads `harness/normalize-train.tsv`, which tracks only **ingested** community
+  strategies (`strategies/*.py`). A book the research loop **built** can never appear there — so
+  for a family whose best work is a constructed candidate, the "champion" was the best ingested
+  **member**, a different thing. `validated_strategies/` is the real registry: CLAUDE.md already
+  called it "the product shelf", and its artifacts carry structured provenance
+  (`# family:`, `# expId:`, `# harness_epoch:`, `# gate_val:`).
+  So the gate now takes a family's **CANDIDATE** = its validated product when the shelf has a
+  usable one (comparable epoch + `gate_val: pass`), else its best ingested member.
+  ⚠ Measured: 大小盘轮动's shelf holds `dxp-imp-1.py` at `train_objective 0.6623` against the base's
+  0.4567, `sharpe_val 1.88`, `gate_val pass`. **The family was settled all along**; I had promoted
+  the base, then saw the VAL did not match it and wrongly concluded there was no agreed candidate.
+  Re-measured on this bench, imp-1 reproduces exactly (226.83 / 80.93 / 3.51 / 14.70 ⇒ 0.6623) and
+  **dominates the base in both TRAIN years** (3.02/3.86 vs 2.38/2.82), so TRAIN selects it with no
+  appeal to VAL. `bestVariant` names the best *member*; it is not the family's product.
+  Two parsing traps found doing this: the shelf header **pads and appends a gloss**
+  (`# family:  大小盘轮动   (source base: …)`) so a naive capture never matches and the shelf reads
+  empty; and the VAL `runId` convention is **not one shape** — `dxp-imp-1-val` suffixes the token
+  while `pt-val-base-e6` and `dbdx-VAL-base-e6` **infix** it, so a plain `includes(expId)` falsely
+  rejected two correctly-recorded VALs. Both are normalised now.
+- ⚠⚠ **Realizability is a property of a BOOK, and the page carries one number.** When the candidate
+  is a product rather than the base, the page's score was measured on a different book. 大小盘轮动's
+  R=2 came from `liq-1` on the **base**, while its product is always-small — which the family's own
+  realism calls worse on capacity. `realizabilityScope:` names the book the score describes;
+  absent, it is taken to describe the base, and a product candidate **blocks** until scored.
+- ⚠⚠⚠ **A passing VAL does not mean the CANDIDATE was validated.** The exit gate checked "has a
   champion" and "has a passing VAL" **independently**, and a family can satisfy each with a
   DIFFERENT book. Caught 2026-10-16 while preparing an OOS run: 大小盘轮动's champion is the base
   `2f5bc859` (objective 0.4567) while its one VAL — `dxp-imp-1-val`, sharpe 1.88 — ran on

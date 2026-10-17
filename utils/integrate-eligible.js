@@ -37,6 +37,7 @@ const ROOT = path.resolve(__dirname, '..');
 const FAM_DIR = () => process.env.JQ_FAMILIES_DIR || path.join(ROOT, 'wiki/families');
 const PAGES = () => process.env.JQ_STRATEGY_PAGES || path.join(ROOT, 'wiki/strategies');
 const LEDGER = () => process.env.JQ_LEDGER || path.join(ROOT, 'harness/normalize-train.tsv');
+const SHELF = () => process.env.JQ_VALIDATED_DIR || path.join(ROOT, 'validated_strategies');
 
 /** Minimum agent-scored realizability. 1 == fills a daily bar cannot honour. */
 const MIN_REALIZABILITY = 2;
@@ -111,36 +112,99 @@ function validationOf(family) {
  * from running the champion. When it is absent, the VAL-window curves that DO exist usually name
  * the book that was validated instead, which is the more useful half of the message.
  */
-function championValidated(family, pageText) {
+/**
+ * The family's VALIDATED PRODUCT, read off the product shelf (`validated_strategies/`).
+ *
+ * ⚠⚠ Why this exists, and the bug it fixes. `championOf` reads the normalize LEDGER, which tracks
+ * only INGESTED community strategies (`strategies/*.py`). A book the research loop BUILT can
+ * therefore never appear there — so for a family whose best work is a constructed candidate, the
+ * "champion" was the best ingested MEMBER, which is a different thing entirely.
+ *
+ * Measured 2026-10-16: 大小盘轮动's shelf holds `dxp-imp-1.py` with
+ * `train_objective: 0.6623` against the base's 0.4567, `sharpe_val: 1.88`, `gate_val: pass` —
+ * i.e. the family WAS settled, on TRAIN, validated and archived with full provenance. I had
+ * promoted the base instead, then saw the VAL did not match it and wrongly concluded the family
+ * had no agreed candidate. The family was fine; the champion definition was wrong.
+ *
+ * Re-measured on this bench 2026-10-16, imp-1 reproduces its claim exactly (total 226.83%,
+ * annual 80.93%, sharpe 3.51, maxDD 14.70% ⇒ objective 0.6623) and dominates the base in BOTH
+ * TRAIN years (3.02/3.86 against 2.38/2.82), so TRAIN selects it with no appeal to VAL.
+ *
+ * The shelf's own header is the link: `# family:`, `# expId:`, `# harness_epoch:`, `# gate_val:`.
+ * Only an artifact measured on a comparable bench AND recorded `gate_val: pass` is usable.
+ */
+function shelfProductOf(family) {
+  let names = [];
+  try { names = fs.readdirSync(SHELF()).filter(f => f.endsWith('.py')); } catch { return null; }
+  const found = [];
+  for (const n of names) {
+    const src = fs.readFileSync(path.join(SHELF(), n), 'utf8');
+    // ⚠ The header pads its values and often appends a parenthetical gloss, e.g.
+    //   `# family:   大小盘轮动   (source base: strategies/…)`
+    // so the captured text is the WHOLE rest of the line. Take the first field — up to a run of
+    // two spaces or an opening paren — or the comparison never matches and the shelf reads empty.
+    const raw = k => ((src.match(new RegExp(`^#\\s*${k}:\\s*(.+)$`, 'm')) || [])[1] || '').trim();
+    const g = k => raw(k).split(/\s{2,}|\s*\(/)[0].trim();
+    if (g('family') !== family) continue;
+    found.push({
+      kind: 'product',
+      sourceFile: `validated_strategies/${n}`,
+      expId: g('expId') || n.replace(/\.py$/, ''),
+      epoch: g('harness_epoch') || null,
+      gateVal: g('gate_val').split(/\s+/)[0],
+      objective: parseFloat(g('train_objective')),
+      sharpeVal: parseFloat(g('sharpe_val')),
+    });
+  }
+  if (!found.length) return null;
+  const usable = found.filter(x => harness.measurementValid(x.epoch) && x.gateVal === 'pass');
+  if (!usable.length) return { unusable: found };
+  // Best TRAIN objective among usable products.
+  return usable.sort((a, b) => (b.objective || -Infinity) - (a.objective || -Infinity))[0];
+}
+
+/**
+ * Did the recorded VAL validate THIS candidate?
+ *
+ * Two shapes, because a candidate can be a shelf PRODUCT or a ledger MEMBER:
+ *   - product: the VAL's `runId` must reference the product's `expId` (dxp-imp-1 -> dxp-imp-1-val).
+ *   - member: the VAL must have run on the family's study baseline AND `base == bestVariant`, so
+ *     that the validated book IS the champion. A VAL on an `enhance/candidates/*` book never
+ *     validates a ledger member, because a constructed candidate is never a ledger row.
+ *
+ * ⚠ An exact series-key match can never confirm a MEMBER: a VAL runs on a pinned
+ * `study/<fam>/baseline*.py`, never on the raw `strategies/*.py` the ledger keys on.
+ */
+function candidateValidated(family, pageText, candidate, val) {
+  if (candidate && candidate.kind === 'product') {
+    // ⚠ The runId convention is not one shape. Observed: `dxp-imp-1-val` and `xsz-imp-5-val`
+    // SUFFIX the token, while `pt-val-base-e6` and `dbdx-VAL-base-e6` INFIX it, and `etfmom-005`
+    // omits it entirely. A plain `includes(expId)` therefore missed two products whose VAL was
+    // perfectly well recorded. Normalise by deleting the `val` token and collapsing separators,
+    // so pt-val-base-e6 -> pt-base-e6 and dxp-imp-1-val -> dxp-imp-1.
+    const norm = x => String(x || '').toLowerCase()
+      .replace(/[-_]?val[-_]?/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    const ok = norm(val.runId) === norm(candidate.expId)
+      || String(val.runId || '').includes(candidate.expId);
+    return ok
+      ? { confirmed: true, why: `VAL ${val.runId} references the product's expId ${candidate.expId}` }
+      : { confirmed: false, why: `VAL ${val.runId} does not reference the product's expId ` +
+                                 `${candidate.expId}, so it validated some other book` };
+  }
   let series;
   try { series = require('./backtest-series'); } catch { return { confirmed: false, why: 'no series module' }; }
-
   const base = (pageText.match(/^base:\s*\[\[([^\]]+)\]\]/m) || [])[1] || null;
   const best = (pageText.match(/^bestVariant:\s*\[\[([^\]]+)\]\]/m) || [])[1] || null;
-
-  // Which book did the VAL actually run? The series key encodes it.
   const valKeys = series.list().filter(k => /__val__/.test(k));
-  const mine = valKeys.filter(k => k.includes(`_${family}_`) || k.startsWith(`study_${family}_`));
-  const onBase = mine.some(k => /^study_.+_baseline/.test(k));
-  const onCandidate = valKeys.filter(k => /^enhance_candidates_/.test(k));
-
+  const onBase = valKeys.some(k => new RegExp(`^study_${family}_baseline`).test(k));
   if (onBase && base && best && base === best) {
-    return { confirmed: true, ranOn: mine.join(', '),
-             why: `the VAL ran on this family's study baseline, and base == bestVariant (${base}), ` +
-                  'so the book that met the held-out window IS the champion' };
+    return { confirmed: true, why: `the VAL ran on this family's study baseline and base == bestVariant (${base})` };
   }
   if (onBase && base && best && base !== best) {
-    return { confirmed: false, ranOn: mine.join(', '),
-             why: `the VAL ran on this family's BASE (${base}) but the champion is a different ` +
-                  `member (${best}) — the base's held-out number says nothing about the champion` };
+    return { confirmed: false, why: `the VAL ran on this family's BASE (${base}) but the champion is ` +
+                                    `a different member (${best})` };
   }
-  if (!mine.length && onCandidate.length) {
-    return { confirmed: false, ranOn: onCandidate.join(', '),
-             why: 'the only VAL-window curves are CONSTRUCTED candidates under enhance/candidates/, ' +
-                  'which are never ledger rows and therefore never the champion' };
-  }
-  return { confirmed: false, ranOn: mine.join(', ') || null,
-           why: 'no VAL-window curve can be tied to this champion' };
+  return { confirmed: false, why: 'no VAL-window curve can be tied to this candidate' };
 }
 
 function assess(family) {
@@ -150,16 +214,31 @@ function assess(family) {
   const universe = fmField(t, 'universe') || null;
   const rRaw = fmField(t, 'realizability');
   const realizability = rRaw === '' ? null : parseInt(rRaw, 10);
-  const champion = championOf(family, familyIndex());
+  const member = championOf(family, familyIndex());
+  const shelf = shelfProductOf(family);
+  const product = shelf && !shelf.unusable ? shelf : null;
+  // The family's CANDIDATE is its validated product when it has one; otherwise its best ingested
+  // member. A product is the thing the research loop finalised, so it outranks a member even when
+  // the member's ledger objective is lower — the ledger simply cannot hold a constructed book.
+  const candidate = product || member;
   const val = validationOf(family);
+  const realizabilityScope = fmField(t, 'realizabilityScope') || null;
 
   const fail = (status, why) => ({ family, universe, status, eligible: false, why,
-                                   champion, val, realizability });
+                                   candidate, member, product, val, realizability,
+                                   champion: candidate });
 
   if (!universe) return fail('blocked', 'no universe: on the family page');
-  if (!champion) {
+  if (!candidate) {
     return fail('blocked',
-      `no champion measured under epoch ${harness.config().epoch} — re-measure before integrating`);
+      `no candidate: nothing on the product shelf for this family, and no member measured under ` +
+      `epoch ${harness.config().epoch}`);
+  }
+  if (!product && shelf && shelf.unusable) {
+    return fail('blocked',
+      `its shelf product(s) (${shelf.unusable.map(x => `${x.expId} epoch ${x.epoch} gate ${x.gateVal}`).join('; ')}) ` +
+      'are not usable on this bench, and the best ingested member is not the finalised book — ' +
+      're-measure the product or re-finalise the family');
   }
   if (!val.has) return fail('blocked', 'never validated — /run-family must finalize on VAL first');
   if (!val.comparable) {
@@ -187,13 +266,13 @@ function assess(family) {
   // ⚠ Absence is treated as BLOCKING, not as permission — consistent with the unknown-blocks rule
   // the VAL budget uses. A human clears it in one command; permitting silently pairs a number with
   // a book that never produced it.
-  const vc = championValidated(family, t);
+  const vc = candidateValidated(family, t, candidate, val);
   if (!vc.confirmed) {
     return fail('blocked',
-      `its one VAL (${val.runId}) did not validate the CHAMPION: ${vc.why}. A validation of a ` +
-      'different book is not a validation of this one, so the family has no agreed candidate to ' +
-      'carry forward. Settle it on ONE book, or re-validate the champion (which needs the human ' +
-      'VAL override, since the budget is spent).');
+      `its one VAL (${val.runId}) did not validate the CANDIDATE ${candidate.sourceFile}: ${vc.why}. ` +
+      'A validation of a different book is not a validation of this one. Settle the family on ONE ' +
+      'book, or re-validate the candidate (which needs the human VAL override, since the budget ' +
+      'is spent).');
   }
   if (realizability == null || Number.isNaN(realizability)) {
     // Unknown blocks rather than permits — see the header.
@@ -204,10 +283,29 @@ function assess(family) {
     return fail('rejected', `realizability ${realizability} < ${MIN_REALIZABILITY} — a book whose ` +
                             'fills a daily bar cannot honour must not enter the shipping set');
   }
+
+  // ⚠ Realizability is a property of a BOOK, and the page carries one number. When the candidate
+  // is a PRODUCT rather than the family's base, that number was scored on a different book and
+  // does not automatically transfer. Measured case: 大小盘轮动's R=2 was established by liq-1 on
+  // the BASE, while its product is always-small — and the family's own realism says always-small
+  // is WORSE on capacity (「always-small 与去股息闸门 更甚」). `realizabilityScope:` names the book
+  // the score applies to; absent, the score is taken to describe the base.
+  if (candidate.kind === 'product') {
+    const scopeOk = realizabilityScope
+      && (realizabilityScope === candidate.expId || realizabilityScope === candidate.sourceFile);
+    if (!scopeOk) {
+      return fail('blocked',
+        `realizability ${realizability} was scored for this family's BASE, but the candidate is the ` +
+        `product ${candidate.expId} — a different book, so the score does not transfer. Score the ` +
+        `product and set realizabilityScope: ${candidate.expId} on the family page (or show the ` +
+        'product is capacity-equivalent to the base).');
+    }
+  }
   return { family, universe, status: 'eligible', eligible: true,
-           why: `champion ${champion.sourceFile} (sharpe ${champion.sharpe}), VAL ${val.runId} ` +
+           why: `${candidate.kind === 'product' ? 'product' : 'member'} ${candidate.sourceFile}` +
+                `${candidate.sharpe != null ? ` (sharpe ${candidate.sharpe})` : ''}, VAL ${val.runId} ` +
                 `sharpe ${val.sharpe}, realizability ${realizability}`,
-           champion, val, realizability };
+           candidate, member, product, champion: candidate, val, realizability };
 }
 
 /** Every family, assessed. Eligible ones first, ordered by CHAMPION TRAIN SHARPE (the run order). */
@@ -241,5 +339,5 @@ if (require.main === module) {
   }
 }
 
-module.exports = { assess, all, championOf, validationOf, championValidated,
-                   familyIndex, MIN_REALIZABILITY };
+module.exports = { assess, all, championOf, validationOf, shelfProductOf,
+                   candidateValidated, familyIndex, MIN_REALIZABILITY };

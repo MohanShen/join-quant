@@ -60,7 +60,11 @@ function world(families) {
                    f.championEpoch ?? ep].join('\t'));
     }
     if (f.val != null) {
-      consumption.push([name, 'family', 'validate', `${name}-val`, '2026-10-01T00:00:00Z',
+      // ⚠ Mirror the real convention: a product's VAL is recorded as `<expId>-val`. Without this
+      // a fixture with a product blocks at the VAL/candidate match and never reaches the check
+      // the test is actually about.
+      const runId = f.product ? `${f.product.expId}-val` : `${name}-val`;
+      consumption.push([name, 'family', 'validate', runId, '2026-10-01T00:00:00Z',
                         `sharpe ${f.val}`, '', '', '', f.valEpoch ?? ep].join('\t'));
     }
   }
@@ -70,13 +74,29 @@ function world(families) {
   // VAL-window curves. `valOn: 'base'` writes study_<fam>_baseline__val__eN (the family's own
   // base met the window); `valOn: 'candidate'` writes enhance_candidates_<fam>-imp-1__val__eN
   // (a CONSTRUCTED book met it, which is never a ledger row and so never the champion).
+  // ⚠ The product shelf MUST be redirected too. Without this the gate reads the real
+  // validated_strategies/, so a fixture family named like a real one would silently inherit its
+  // product — and a test would pass or fail for reasons outside the fixture.
+  const shelfDir = path.join(d, 'shelf'); fs.mkdirSync(shelfDir);
+  for (const [name, f] of Object.entries(families)) {
+    if (!f.product) continue;
+    const pr = f.product;
+    fs.writeFileSync(path.join(shelfDir, `${pr.expId}.py`),
+      `# family:           ${name}   (source base: strategies/${name}.py)\n` +
+      `# expId:            ${pr.expId}\n` +
+      `# harness_epoch:    ${pr.epoch ?? harness.config().epoch}\n` +
+      `# train_objective:  ${pr.obj}\n` +
+      `# sharpe_val:       ${pr.sharpeVal ?? 2.0}\n` +
+      `# gate_val:         ${pr.gateVal ?? 'pass'}     (asserted by the fixture)\n`);
+  }
+
   const sdir = path.join(d, 'series'); fs.mkdirSync(sdir);
   const curve = JSON.stringify({ dates: ['2024-01-02'], cum: [1], benchCum: [0], points: 1 });
   for (const [name, f] of Object.entries(families)) {
     if (f.valOn === 'base') fs.writeFileSync(path.join(sdir, `study_${name}_baseline__val__e${ep}.json`), curve);
     if (f.valOn === 'candidate') fs.writeFileSync(path.join(sdir, `enhance_candidates_${name}-imp-1__val__e${ep}.json`), curve);
   }
-  return { dir: d, famDir, pageDir, series: sdir,
+  return { dir: d, famDir, pageDir, series: sdir, shelf: shelfDir,
            ledger: path.join(d, 'ledger.tsv'),
            consumption: path.join(d, 'consumption.tsv'),
            promoted: path.join(d, 'promoted.tsv') };
@@ -90,6 +110,7 @@ function inWorld(w, fn) {
   const envs = {
     JQ_FAMILIES_DIR: w.famDir, JQ_STRATEGY_PAGES: w.pageDir, JQ_LEDGER: w.ledger,
     JQ_CONSUMPTION_FILE: w.consumption, JQ_PROMOTED_FILE: w.promoted, JQ_SERIES_DIR: w.series,
+    JQ_VALIDATED_DIR: w.shelf,
     JQ_REFUSALS_FILE: path.join(w.dir, 'refusals.tsv'),
   };
   const prev = {};
@@ -173,7 +194,7 @@ test('the /run-family exit gate', async t => {
   await t.test('a champion on a superseded bench blocks', () => {
     const w = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, championEpoch: 2, valOn: 'base' } });
     inWorld(w, ({ eligible }) => {
-      assert.match(eligible.assess('A').why, /no champion measured under epoch/);
+      assert.match(eligible.assess('A').why, /no candidate: nothing on the product shelf/);
     });
   });
 
@@ -188,9 +209,80 @@ test('the /run-family exit gate', async t => {
     inWorld(w, ({ eligible }) => {
       const a = eligible.assess('A');
       assert.strictEqual(a.status, 'blocked');
-      assert.match(a.why, /did not validate the CHAMPION/);
-      assert.match(a.why, /enhance\/candidates\/|CONSTRUCTED candidates/);
+      assert.match(a.why, /did not validate the CANDIDATE/);
+      });
+  });
+
+  await t.test('the CANDIDATE is the validated PRODUCT when the shelf has one', () => {
+    // ⚠⚠ The bug this fixes. `championOf` reads the normalize LEDGER, which tracks only INGESTED
+    // strategies/*.py — so a book the research loop BUILT can never appear there. For 大小盘轮动
+    // the shelf holds dxp-imp-1 at train_objective 0.6623 against the base's 0.4567, validated and
+    // archived; the gate promoted the BASE instead and then reported the family as unsettled.
+    const w = world({
+      A: { u: 'U', obj: 0.4567, sharpe: 2.68, val: 1.88, R: 3, valOn: 'base',
+           product: { expId: 'A-imp-1', obj: 0.6623, sharpeVal: 1.88 } },
     });
+    inWorld(w, ({ eligible }) => {
+      const a = eligible.assess('A');
+      assert.ok(a.product, 'the shelf product must be found');
+      assert.strictEqual(a.candidate.kind, 'product');
+      assert.strictEqual(a.candidate.expId, 'A-imp-1');
+      assert.notStrictEqual(a.candidate.sourceFile, a.member.sourceFile,
+        'the product outranks the best ingested member');
+    });
+  });
+
+  await t.test('a product on a stale bench, or one whose VAL failed, is not usable', () => {
+    const stale = [1, 2, 3, 4, 5].find(e => !harness.measurementValid(e));
+    const w = world({
+      A: { u: 'U', obj: 0.45, sharpe: 2.6, val: 1.88, R: 3, valOn: 'base',
+           product: { expId: 'A-old', obj: 0.9, epoch: stale ?? 2 } },
+    });
+    inWorld(w, ({ eligible }) => {
+      assert.match(eligible.assess('A').why, /not usable on this bench/);
+    });
+    const failed = world({
+      A: { u: 'U', obj: 0.45, sharpe: 2.6, val: 1.88, R: 3, valOn: 'base',
+           product: { expId: 'A-bad', obj: 0.9, gateVal: 'fail' } },
+    });
+    inWorld(failed, ({ eligible }) => {
+      assert.match(eligible.assess('A').why, /not usable on this bench/);
+    });
+  });
+
+  await t.test('realizability scored on the BASE does not transfer to a product', () => {
+    // Measured case: 大小盘轮动's R=2 came from liq-1 on the BASE, while its product is
+    // always-small — which the family's own realism calls worse on capacity. One number on the
+    // page cannot describe two books, so the scope has to be named.
+    const w = world({
+      A: { u: 'U', obj: 0.45, sharpe: 2.6, val: 1.88, R: 2, valOn: 'base',
+           product: { expId: 'A-imp-1', obj: 0.66 } },
+    });
+    inWorld(w, ({ eligible }) => {
+      const a = eligible.assess('A');
+      assert.strictEqual(a.status, 'blocked');
+      assert.match(a.why, /scored for this family's BASE/);
+      assert.match(a.why, /realizabilityScope: A-imp-1/);
+    });
+  });
+
+  await t.test('a VAL runId that INFIXES the val token still matches its product', () => {
+    // Observed conventions: dxp-imp-1-val (suffix), pt-val-base-e6 and dbdx-VAL-base-e6 (infix).
+    // A plain includes(expId) falsely rejected two correctly-recorded VALs.
+    const norm = { u: 'U', obj: 0.45, sharpe: 2.6, R: 3, valOn: 'base' };
+    for (const [runId, expId] of [['pt-val-base-e6', 'pt-base-e6'], ['dbdx-VAL-base-e6', 'dbdx-base-e6']]) {
+      const w = world({ A: { ...norm, val: 2.0, product: { expId, obj: 0.9 } } });
+      // rewrite the fixture's VAL runId to the observed shape
+      const f = w.consumption;
+      fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(`${expId}-val`, runId));
+      fs.writeFileSync(path.join(w.famDir, 'A.md'),
+        fs.readFileSync(path.join(w.famDir, 'A.md'), 'utf8')
+          .replace('realizability: 3', `realizability: 3\nrealizabilityScope: ${expId}`));
+      inWorld(w, ({ eligible }) => {
+        const a = eligible.assess('A');
+        assert.strictEqual(a.status, 'eligible', `${runId} should match ${expId}: ${a.why}`);
+      });
+    }
   });
 
   await t.test('a VAL on the base validates the champion only when base == bestVariant', () => {
