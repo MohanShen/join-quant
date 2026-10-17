@@ -7,14 +7,6 @@
     "maxCapTried": 999,
     "lastDeferredAt": "2026-09-23T18:09:21.606Z"
   },
-  "strategies/2026-06-22_中证500增强_优化版_24年至今收益252_4-914d5724.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-09-20T11:56:57.522Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-09-20T11:56:57.522Z"
-  },
   "strategies/2026-05-14_年化64_的市值选股策略_有止损模块-fa9c8c9e.py": {
     "attempts": 2,
     "firstDeferredAt": "2026-09-20T11:56:57.522Z",
@@ -23,31 +15,7 @@
     "maxCapTried": 45,
     "lastDeferredAt": "2026-09-23T18:09:21.606Z"
   },
-  "strategies/2026-05-15_连板龙头策略-b518f737.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-09-20T11:56:57.522Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-09-20T11:56:57.522Z"
-  },
-  "strategies/2026-05-20_双均线择时优化_考虑均线低于一定比例进行卖出判断-a67b6f26.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-09-20T11:56:57.522Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-09-20T11:56:57.522Z"
-  },
   "strategies/2026-05-20_四择时高息低价小市值和白马大市值轮动-2f5bc859.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-09-20T11:56:57.522Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-09-20T11:56:57.522Z"
-  },
-  "strategies/2026-05-21_行业热点资金流入小市值策略2_0-9cba5a29.py": {
     "attempts": 1,
     "firstDeferredAt": "2026-09-20T11:56:57.522Z",
     "reason": "slow-skipped (seeded from ledger)",
@@ -70,46 +38,6 @@
     "lastCapMin": 45,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-09-26T17:28:51.754Z"
-  },
-  "strategies/2026-07-17_七星1_72_全行业_A股弱势播报-275daac9.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-09-20T11:56:57.522Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-09-20T11:56:57.522Z"
-  },
-  "strategies/2026-07-04_选股策略-c777b7b2.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-09-20T11:56:57.522Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-09-20T11:56:57.523Z"
-  },
-  "strategies/2026-07-01_穿越牛熊周期-多策略组合-20至今年化103_20-5511f8f0.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-09-20T11:56:57.523Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-09-20T11:56:57.523Z"
-  },
-  "strategies/2026-07-04_年化60_的龙头首板低开战法-6ada2917.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-09-20T11:56:57.523Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-09-20T11:56:57.523Z"
-  },
-  "strategies/2026-06-30_手搓自用_涨停优选后再买入-b3751277.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-09-20T11:56:57.523Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-09-20T11:56:57.523Z"
   },
   "strategies/2026-06-28_高质量稳定上涨策略-d02cde29.py": {
     "attempts": 1,
