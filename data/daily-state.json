@@ -1,14 +1,14 @@
 {
   "inFlight": null,
   "lastRun": {
-    "stage": "research",
+    "stage": "discover",
     "target": null,
     "budget": 56,
-    "at": "2026-10-17T07:58:29.579Z",
-    "outcome": "budget-spent",
-    "note": "used 56 >= 55; research not started",
+    "at": "2026-10-17T08:27:07.125Z",
+    "outcome": "error",
+    "note": "discover + fetch",
     "minutesUsed": null,
-    "endedAt": "2026-10-17T07:58:29.581Z"
+    "endedAt": "2026-10-17T09:28:32.138Z"
   },
   "runs": [
     {
@@ -950,6 +950,56 @@
       "note": "used 56 >= 55; research not started",
       "minutesUsed": null,
       "endedAt": "2026-10-17T07:58:29.581Z"
+    },
+    {
+      "stage": "research",
+      "target": "七星高照",
+      "budget": 56,
+      "at": "2026-10-17T08:19:26.709Z",
+      "outcome": "killed",
+      "note": "research dispatch on 七星高照 stopped deliberately: the integrate-blocked reopening was about to tell the session to spend the family's one VAL, which its own prior round had declined on record (「BLOCKED 是正确状态，不是待办」). No backtest started, VAL unspent. Gate now honours a declared valDeclined:.",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T08:25:34.031Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 56,
+      "at": "2026-10-17T08:25:55.224Z",
+      "outcome": "ran",
+      "note": "family assignment over 2 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T08:26:39.183Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 56,
+      "at": "2026-10-17T08:26:47.781Z",
+      "outcome": "ran",
+      "note": "21 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T08:26:47.852Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 56,
+      "at": "2026-10-17T08:26:53.058Z",
+      "outcome": "ran",
+      "note": "18 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T08:26:53.134Z"
+    },
+    {
+      "stage": "discover",
+      "target": null,
+      "budget": 56,
+      "at": "2026-10-17T08:27:07.125Z",
+      "outcome": "error",
+      "note": "discover + fetch",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T09:28:32.138Z"
     }
   ]
 }
