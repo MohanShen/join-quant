@@ -30,6 +30,21 @@ with (§Why the agent).
 Revision 2's rule still holds inside a merge: a shared edge is **not** a refusal — two families
 earning the same way are exactly the ones whose entry, exit and risk steps are worth comparing.
 
+## How a round starts
+
+Either a human invokes this skill, or the **daily cron** does: `integrate` leads `PRIORITY` in
+`utils/daily-pipeline.js` (later stages outrank earlier ones), and `scripts/run-integrate.sh`
+dispatches one round pinned per UNIVERSE at `data/integrate-sessions/<universe>.txt`. A universe
+mid-round resumes its own session; one that has never had a round gets a clean one. ⚠ A **seed**
+costs no backtest, so the wrapper skips its CDP and budget preflights and the planner exempts it
+from the day's budget stop — a universe must never ship nothing for want of minutes it was not
+going to use.
+
+```bash
+scripts/run-integrate.sh --list         # the queue plus each universe's session state
+DRY=1 scripts/run-integrate.sh          # what the next round would be, nothing run
+```
+
 ## Start here
 
 ```bash
@@ -75,6 +90,12 @@ The queue returns one of three actions per universe:
 
 Requirement 3 is why the judge's rule 4 never has to bind. ⚠ **Unknown realizability BLOCKS** —
 it is not inferable from the `不可实现` regex, and an unscored family is reported, not assumed.
+
+⚠ `integrate-eligible` now names the **owner** of every block — which stage can clear it
+(`research` / `normalize` / `human` / `none`). `utils/family-queue.js` reopens the
+`research`-owned ones with `reason: integrate-blocked`, so an `IDLE` universe feeds back into
+`/run-family` automatically instead of waiting for a human to notice. Before that, 8 of 13
+families were blocked here while the research queue read **0 due**.
 
 ⚠ Measured 2026-10-16: **1 of 13 families** currently clears this gate. Four are rejected on
 realizability and eight blocked (seven never validated). `IDLE … the gate is upstream` is the

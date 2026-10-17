@@ -65,6 +65,28 @@ Pick the family from `node utils/family-queue.js` (highest score first) unless t
 
 `reason: never-researched` skips step 0 and goes straight to the loop.
 
+### Step 0b — `reason: integrate-blocked` is a NARROW job, not a round
+
+The family is researched; it is stuck at the **exit gate** on a step only this loop performs, and
+the queue's `note` is the gate's own sentence (`node utils/integrate-eligible.js <family>` prints
+it with its owner). This reason only ever appears when that owner is `research`, so the work is
+bounded and almost always one of three things:
+
+| gate says | do this |
+|---|---|
+| `never validated` | finalize the existing champion on VAL — **one** run. The selection is already made; do not re-open TRAIN to look for a better candidate first |
+| `no realizability:` / `realizabilityScope` mismatch | score it with evidence and write `realizability:` (+ `realizabilityScope:` when the candidate is a shelf product). **Costs no backtest** |
+| `no universe:` | fill the field from §1. Free |
+
+**Do the named step, record it, and EXIT.** Do not enter the generator loop: the family was
+already worked to a stop, and a reopened round would re-buy findings it holds. Then re-run
+`node utils/integrate-eligible.js <family>` and report whether it now reads `eligible` — that,
+not a clean exit, is what says the block is gone.
+
+⚠ If the gate's sentence names something you cannot clear (a VAL budget that is spent, a VAL that
+validated a different book), **stop and report it**. Those are owned by `human`, so they should
+never have reached you; never set `JQ_ALLOW_REVAL` to get past one.
+
 ### Stopping and resuming
 
 The run stops when the family is done **or** the budget runs out. Either way the state is on disk

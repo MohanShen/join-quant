@@ -113,9 +113,17 @@ function registered() {
 /**
  * The queue.
  *
- * `reason` is the field the daily pipeline acts on, and it is deliberately three-valued rather
+ * `reason` is the field the daily pipeline acts on, and it is deliberately FOUR-valued rather
  * than a boolean "due": a family with new members is NOT the same work as a family that has
  * never been researched, and /run-family's early exit depends on telling them apart.
+ *
+ *   never-researched  | nothing has ever run on it
+ *   new-members       | members arrived since the last round
+ *   integrate-blocked | done, but stuck at the NEXT stage's gate on a step this loop performs
+ *   done              | nothing to do
+ *
+ * `integrate-blocked` carries the gate's own sentence in `note` and the family's `gateStatus` /
+ * `gateOwner`. It only ever appears for `gateOwner === 'research'` — see the comment on it.
  */
 function build() {
   const asg = assignments();
@@ -152,8 +160,27 @@ function build() {
     const stale = consumption.staleForResearch(family);
     const everRun = !!consumption.lastConsumption(family);
 
+    // ⚠⚠ A family can be `done` here and still be STUCK at the next stage's gate.
+    //
+    // Measured 2026-10-17: 8 of 13 families were `blocked` in `integrate-eligible` while this
+    // queue read **0 due**. A family researched to exhaustion but never finalised on VAL has no
+    // new members and a consumption row, so it reads `done` — yet integration cannot take it, and
+    // the only thing that can perform the missing step is this loop. Nothing in the pipeline could
+    // notice: the funnel's last stage was waiting on its predecessor, and its predecessor thought
+    // it was finished. Four families (七星高照, 五福闹新春, 多因子ML, 趋势技术) sat there silently.
+    //
+    // So the gate's own verdict reopens them — but ONLY where it names `research` as the owner.
+    // `human` (needs JQ_ALLOW_REVAL) and `none` (a measured rejection, e.g. realizability 1) are
+    // left alone: a family the loop cannot clear would be dispatched every day to do nothing,
+    // which is this repo's recurring failure shape, and an R=1 family would spin forever on a
+    // decision already taken. `normalize`-owned blocks belong to the normalize queue.
+    let gate = null;
+    try { gate = require('./integrate-eligible').assess(family); } catch { gate = null; }
+    const gateBlocked = gate && !gate.eligible && gate.owner === 'research';
+
     const reason = !everRun ? 'never-researched'
       : stale.stale ? 'new-members'
+      : gateBlocked ? 'integrate-blocked'
       : 'done';
 
     out.push({
@@ -182,7 +209,12 @@ function build() {
         return valid.reduce((a, b) => (b.objective > a.objective ? b : a)).sharpe;
       })(),
       reason,
-      note: stale && stale.reason ? stale.reason : '',
+      // The note is what the dispatched session reads to know WHY it was woken. For a gate block
+      // that is the gate's own sentence, which names the missing step exactly.
+      note: gateBlocked ? gate.why
+          : stale && stale.reason ? stale.reason : '',
+      gateStatus: gate ? gate.status : null,
+      gateOwner: gate ? gate.owner : null,
     });
   }
 

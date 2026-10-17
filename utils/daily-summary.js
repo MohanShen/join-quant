@@ -124,10 +124,18 @@ function build() {
 
   L.push('## Queues after the run', '');
   L.push('| queue | depth |', '|---|---|');
-  L.push(`| enhance | ${q.enhance.length} |`);
-  L.push(`| study | ${q.study.length} |`);
+  // ⚠ In FUNNEL order, and the stages the cron actually runs. This table listed `enhance` and
+  // `study` — the two LEGACY queues, out of the automatic order since the merged loop landed —
+  // and omitted research, assign and integrate entirely. So the day's durable record showed the
+  // depth of two queues nothing drains and none of the three that decide what runs tomorrow.
+  const iq = q.integrate || [];
+  const seeds = iq.filter(r => r.action === 'seed').length;
+  L.push(`| integrate | ${iq.length}${iq.length ? ` (${seeds} seed + ${iq.length - seeds} merge)` : ''} |`);
+  L.push(`| research | ${q.research.length} |`);
+  L.push(`| assign | ${q.assign.length} |`);
   L.push(`| normalize | ${q.normalize.total} (${q.normalize.pending.length} pending + ${q.normalize.retry.length} deferred-retry) |`);
   L.push(`| discover | ${q.discover.uncopied} uncopied of ${q.discover.total} |`);
+  L.push(`| _legacy_ | enhance ${q.enhance.length}, study ${q.study.length} (--stage only) |`);
   L.push('');
 
   if (Object.keys(counts).length) {
@@ -199,6 +207,14 @@ const SAFE_ADD = [
   // causes the normalizer had just worked out were discarded on each fresh clone. Both are
   // append-only and a few lines per day.
   'data/normalize-compile-errors.log', 'data/normalize-crashes.log',
+  // The INTEGRATE layer's durable state. `promoted.tsv` is the register a universe ships from and
+  // `integrate-refusals.tsv` is why a pair was refused — both already tracked, so `git add -u`
+  // catches edits; they are named here so a run that CREATES them still commits them.
+  'data/promoted.tsv', 'data/integrate-refusals.tsv',
+  // Session pins. These are tracked on purpose (.gitignore says so) but a pin for a family or
+  // universe worked for the FIRST time is a new file, which `git add -u` does not see — so the
+  // handoff that lets tomorrow resume the same session existed only on this machine.
+  'data/research-sessions', 'data/integrate-sessions',
 ];
 
 /**

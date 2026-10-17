@@ -4,7 +4,7 @@
   launchd agent: the one-a-day pipeline.
 
   Fires scripts/daily-pipeline.sh, which picks ONE stage by queue priority
-  (research > assign > normalize > discover), CHAINING stages while budget remains, and
+  (integrate > research > assign > normalize > discover), CHAINING stages while budget remains, and
   records enough state to resume tomorrow.
 
   Starts once a day at 18:00 UTC.

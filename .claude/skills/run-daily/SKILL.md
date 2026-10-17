@@ -1,6 +1,6 @@
 ---
 name: run-daily
-description: Run one day of the join-quant pipeline — pick the stage by queue priority (research > assign > normalize > discover), spend the backtest budget on it, chain to the next stage while minutes remain, write a dated markdown summary to docs/daily/, and commit and push it. Use when asked to run the daily pipeline, move strategies forward, drain the queues, or decide what today's backtest budget should be spent on.
+description: Run one day of the join-quant pipeline — pick the stage by queue priority (integrate > research > assign > normalize > discover), spend the backtest budget on it, chain to the next stage while minutes remain, write a dated markdown summary to docs/daily/, and commit and push it. Use when asked to run the daily pipeline, move strategies forward, drain the queues, or decide what today's backtest budget should be spent on.
 ---
 
 # Run one day of the pipeline
@@ -14,7 +14,7 @@ bench. This skill is the entry point and the judgement layer, not a second plann
 
 ## Division of labour — read this before overriding anything
 
-**Stage selection is arithmetic, and it is already written.** `plan()` compares four queue
+**Stage selection is arithmetic, and it is already written.** `plan()` compares five queue
 depths against a fixed priority. There is one right answer and it costs no tokens to compute:
 
 ```bash
@@ -35,7 +35,11 @@ budget spent on the wrong stage. Your job starts where the arithmetic runs out.
 
 ## Steps
 
-1. **Plan.** `node utils/daily-pipeline.js --plan`. Report the four queue depths and the pick.
+1. **Plan.** `node utils/daily-pipeline.js --plan`. Report the five queue depths and the pick.
+   The order is `integrate > research > assign > normalize > discover` — later stages outrank
+   earlier ones, so the pipeline finishes what is in the pipe before admitting more. `oos` is
+   printed too and is **never dispatched**: it spends an irreversible test, which is a decision
+   rather than a queue (`/run-oos`, human-invoked).
 2. **Check the board is honest.** `node utils/daily-pipeline.js --sync-manifest --dry`.
    ⚠ The planner and the study agent read *different* queues — the planner derives staleness
    from `data/consumption.tsv` (member-aware), the agent is told to work `study/manifest.json`.

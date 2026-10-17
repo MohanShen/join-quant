@@ -47,7 +47,15 @@ test('queue priority', async t => {
     // The unit of work is a FAMILY. `enhance` and `study` were two queues over the same 14
     // families, competing for the same minutes and each able to starve the other, with no route
     // from a newly normalized strategy into research except a human noticing.
-    assert.deepStrictEqual(daily.PRIORITY, ['research', 'assign', 'normalize', 'discover']);
+    // ⚠ `integrate` leads (2026-10-17). It is the LAST stage of the funnel, and the rule is that
+    // later stages outrank earlier ones — until it was added, a family that cleared /run-family
+    // and VAL had nowhere to go while the cron spent the day admitting more raw strategies.
+    assert.deepStrictEqual(daily.PRIORITY,
+      ['integrate', 'research', 'assign', 'normalize', 'discover']);
+    // `oos` is deliberately absent: it spends an irreversible test, which is a decision, not a
+    // queue to drain. It must stay human-invoked.
+    assert.ok(!daily.PRIORITY.includes('oos'),
+      'OOS must never be dispatchable by the cron');
   });
 
   await t.test('normalize only runs when no family is due; discover only when nothing is pending', () => {
@@ -674,12 +682,19 @@ test('utils entry points are inert on require', async (t) => {
 test('research dispatches per family, not per stage', async (t) => {
   const src = fs.readFileSync(path.join(__dirname, '../utils/daily-pipeline.js'), 'utf8');
 
-  await t.test('the stage runs run-family.sh', () => {
-    assert.match(src, /stage === 'research'\s*\n?\s*\?\s*path\.join\(ROOT, 'scripts\/run-family\.sh'\)/);
+  // Both per-unit stages route through one table (2026-10-17), so the two of them cannot drift:
+  // research -> run-family.sh (per FAMILY), integrate -> run-integrate.sh (per UNIVERSE).
+  await t.test('the stage runs run-family.sh, and integrate runs run-integrate.sh', () => {
+    assert.match(src, /PER_UNIT_SCRIPT = \{[\s\S]{0,200}research: 'scripts\/run-family\.sh'/);
+    assert.match(src, /PER_UNIT_SCRIPT = \{[\s\S]{0,200}integrate: 'scripts\/run-integrate\.sh'/);
+    assert.match(src, /PER_UNIT_SCRIPT\[stage\][\s\S]{0,120}auto\$\{stage\}-loop\.sh/,
+      'the legacy per-stage loops stay on agent-loop.sh');
   });
 
   await t.test('and passes the planned family, so dispatch and log agree', () => {
-    assert.match(src, /stage === 'research' \? \[script, target\]/);
+    assert.match(src, /PER_UNIT_SCRIPT\[stage\] \? \[script, target\]/);
+    assert.match(src, /stage === 'integrate' \? \(q\.integrate\[0\] \|\| \{\}\)\.universe/,
+      'the planned universe must be computed, or the dispatch would pass undefined');
   });
 
   await t.test('run-family pins per family; agent-loop pins per stage', () => {
@@ -716,9 +731,12 @@ test('research is never blocked for want of a per-stage pin', async (t) => {
 
   await t.test('the source no longer routes research through the per-stage pin check', () => {
     const src = fs.readFileSync(path.join(__dirname, '../utils/daily-pipeline.js'), 'utf8');
-    assert.match(src, /if \(stage === 'research'\) \{[\s\S]{0,400}coldStart/,
-      'sessionPinned must special-case research');
-    assert.match(src, /research-sessions/, 'it must look at the per-family pins');
+    assert.match(src, /PER_UNIT = \{[\s\S]{0,200}research: 'data\/research-sessions'/,
+      'sessionPinned must treat research as pinned per unit of work');
+    assert.match(src, /PER_UNIT = \{[\s\S]{0,200}integrate: 'data\/integrate-sessions'/,
+      'integrate is the same arrangement one level up, pinned per universe');
+    assert.match(src, /if \(PER_UNIT\[stage\]\) \{[\s\S]{0,400}coldStart/,
+      'both must report coldStart rather than blocked');
   });
 
   await t.test('the dry note tells the truth about which contract applies', () => {
@@ -726,7 +744,7 @@ test('research is never blocked for want of a per-stage pin', async (t) => {
     // the family and a never-studied one gets a clean session.
     const src = fs.readFileSync(path.join(__dirname, '../utils/daily-pipeline.js'), 'utf8');
     assert.match(src, /START a CLEAN session for/);
-    assert.match(src, /stage === 'research'[\s\S]{0,200}pin\.coldStart/);
+    assert.match(src, /PER_UNIT_SCRIPT\[stage\][\s\S]{0,200}pin\.coldStart/);
   });
 });
 
@@ -906,5 +924,68 @@ ult('the usage ceiling follows the tier', async (t) => {
   await t.test('the schedule actually carries the new value', () => {
     const plist = ulfs.readFileSync(ulpath.join(__dirname, '../scripts/com.mohanshen.join-quant-daily.plist'), 'utf8');
     ula.match(plist, /<key>USAGE_LIMIT<\/key>\s*<string>free<\/string>/);
+  });
+});
+
+/**
+ * `integrate` is the LAST stage of the funnel and was the last one the cron could not reach.
+ *
+ * Until 2026-10-17 it had no wrapper: `/run-integrate` could only be invoked by a human in a TUI,
+ * so a family that cleared `/run-family` and VAL had nowhere to go — the exit gate accumulated
+ * candidates while the pipeline spent every minute admitting more raw strategies. The funnel ended
+ * one step short of its own product.
+ */
+test('integrate is wired into the funnel', async (t) => {
+  const src = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
+  const sh = fs.readFileSync(path.join(ROOT, 'scripts/run-integrate.sh'), 'utf8');
+
+  await t.test('it leads PRIORITY, because later stages outrank earlier ones', () => {
+    assert.strictEqual(daily.PRIORITY[0], 'integrate');
+  });
+
+  await t.test('the queue carries universes with work, and seeds lead', () => {
+    const q = daily.queues();
+    assert.ok(Array.isArray(q.integrate), 'the plan must carry an integrate queue');
+    for (const r of q.integrate) {
+      assert.notStrictEqual(r.action, 'idle',
+        'an idle universe is blocked upstream in /run-family; a round here would re-litigate it');
+    }
+    // Seeds first, which is also what integrate-queue.next() picks — so the universe the planner
+    // reports and the one the wrapper would take unprompted are the same one.
+    const firstMerge = q.integrate.findIndex(r => r.action !== 'seed');
+    const lastSeed = q.integrate.map(r => r.action).lastIndexOf('seed');
+    if (firstMerge >= 0 && lastSeed >= 0) assert.ok(lastSeed < firstMerge, 'seeds must lead');
+  });
+
+  await t.test('the wrapper pins per UNIVERSE and never pins on a dry run', () => {
+    assert.match(sh, /PIN="\$PIN_DIR\/\$UNIVERSE\.txt"/, 'the pin follows the unit of work');
+    assert.match(sh, /integrate-sessions/);
+    assert.match(sh, /DRY:-0.*=.*"1".*\|\|.*printf/s,
+      'a DRY=1 preview that pins makes the next real run resume a session that never existed');
+    assert.match(sh, /--session-id "\$SID"/, 'a never-integrated universe needs a fresh session');
+    assert.match(sh, /--resume "\$SID"/, 'a universe mid-round resumes its own session');
+  });
+
+  await t.test('a SEED skips the browser, the minutes and the shared lock', () => {
+    // A seed reads the champion's figures out of the ledger and writes one register row. Gating
+    // that behind a spent budget is how a universe ships nothing all day for want of minutes it
+    // was never going to use.
+    assert.match(sh, /if \[ "\$ACTION" = "integrate" \]; then[\s\S]{0,900}jq-budget\.js/,
+      'the budget preflight must be inside the integrate-only branch');
+    assert.match(sh, /action=seed — no backtest, no browser/);
+    assert.match(sh, /if \[ "\$ACTION" = "integrate" \]; then[\s\S]{0,400}jq-cancel\.js/,
+      'the orphan sweep only matters for a round that could start a backtest');
+  });
+
+  await t.test('the planner exempts a free stage from the budget stop', () => {
+    assert.match(src, /const free = p\.stage === 'discover'[\s\S]{0,300}action === 'seed'/);
+    assert.match(src, /const once = argv\.includes\('--once'\) \|\| freeOnly/,
+      'a free stage on a spent budget must run ALONE — chaining into normalize would ask for ' +
+      'minutes that are gone');
+  });
+
+  await t.test('the wrapper refuses an idle or unknown universe instead of arguing', () => {
+    assert.match(sh, /idle\)[\s\S]{0,120}exit 0/, 'idle is a clean stop, not an error');
+    assert.match(sh, /no-such-universe\)[\s\S]{0,160}exit 1/, 'a typo must fail loudly');
   });
 });

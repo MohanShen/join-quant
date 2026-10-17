@@ -46,7 +46,7 @@ node utils/tutorial-ingest.js --catalog               # catalog only
 # One-off: re-key the stores from postId to uniqueKey (idempotent, backs up)
 node utils/migrate-unique-key.js --dry
 
-# Daily cron pipeline — one stage per fire, by queue priority (research > assign > norm > discover)
+# Daily cron pipeline — one stage per fire, by queue priority (integrate > research > assign > norm > discover)
 node utils/daily-pipeline.js --plan            # decide and explain, run nothing
 node utils/daily-pipeline.js --status          # queues, budget, deferred pool, last runs
 node utils/daily-pipeline.js                   # decide and run
@@ -56,6 +56,11 @@ node utils/daily-pipeline.js --sync-manifest   # reconcile study/manifest.json w
 node utils/daily-pipeline.js --seed-deferred   # park stranded slow-skipped rows in the pool
 node utils/daily-summary.js --dry              # preview today's summary markdown
 node utils/daily-summary.js --commit           # write docs/daily/<date>.md, commit, push
+node utils/integrate-queue.js --next            # the next universe round (seed / integrate / idle)
+node utils/integrate-eligible.js               # the /run-family exit gate, with each block's OWNER
+scripts/run-integrate.sh --list                # the integrate queue + each universe's session state
+DRY=1 scripts/run-integrate.sh                 # what the next round would be, nothing run
+scripts/run-family.sh --list                   # the research queue + each family's session state
 DRY=1 bash scripts/daily-pipeline.sh           # the cron wrapper, plan only
 FORCE=1 bash scripts/daily-pipeline.sh         # bypass the scheduled-hour gate
 
@@ -690,11 +695,10 @@ Only the directories whose contents aren't self-evident:
   (`family`, `expId`, `harness_epoch`, `train_objective` whose gloss must contain `sharpe <n>`,
   `sharpe_val`, `gate_val`). ⚠ A FAILED VAL is archived too, with `gate_val: fail` — the shelf
   records what reached validation, and the gate filters on that field.
-- ⚠⚠ **The cron cannot reach the last two stages.** `PRIORITY = ['research','assign','normalize',
-  'discover']` — integrate and OOS are not in it and have no session-pin wrapper, so the automated
-  chain stops after research. That is deliberate (integration spends an agent-driven round, OOS an
-  irreversible test), but it was *invisible*: `--plan` reported `research 0` and looked finished
-  while candidates waited. The planner now prints both depths, marked **HUMAN ONLY**.
+- ⚠ **The cron used to be unable to reach the last two stages**, and `--plan` reported
+  `research 0` and looked finished while candidates waited. **Integrate was fixed 2026-10-17**
+  (`scripts/run-integrate.sh` + first in `PRIORITY`); **OOS stays HUMAN ONLY by design** — it
+  spends an irreversible test, so `--plan` prints its remaining count and never dispatches it.
 - **OOS readiness accepts a PROMOTED candidate with no `--family`.** Integration's primary success
   (outcome 2) is a MERGED candidate spanning two families, so a family-keyed check made the one
   artifact a round exists to produce untestable on the final surface. The register is consulted
@@ -703,11 +707,12 @@ Only the directories whose contents aren't self-evident:
   *below* the readiness block, so it hit a temporal dead zone — and a bare `catch` **swallowed the
   ReferenceError**, making every promoted candidate read as "not promoted" while the code looked
   like it worked. Hoisted, and the catch now reports.
-- **Two of the four queues are FILES, two are DERIVED.** `data/pending-normalize.json` and
+- **Two of the five queues are FILES, three are DERIVED.** `data/pending-normalize.json` and
   `data/copy-queue.json` are real files the normalize/fetch pipelines themselves read. The
-  research and assign queues are **derived** — research from `wiki/families/*.md` +
+  research, assign and integrate queues are **derived** — research from `wiki/families/*.md` +
   `data/consumption.tsv` (`utils/family-queue.js`), assign from pages with no `family:`
-  (`utils/family-assign.js`) — no file, and **the agent loops do not read them**.
+  (`utils/family-assign.js`), integrate from `data/promoted.tsv` + the exit gate
+  (`utils/integrate-queue.js`) — no file, and **the agent loops do not read them**.
   (enhance/study were the derived pair before `/run-family` merged them; they remain reachable
   via `--stage` only.)
 - ⚠ **That asymmetry caused a silent no-op.** The planner derives study staleness from the
@@ -729,7 +734,16 @@ Only the directories whose contents aren't self-evident:
   in the deterministic planner because it is arithmetic with one right answer, and the skill
   handles only what needs judgement (a blocked stage, a loop that exits 0 having done nothing).
 - **The daily cron picks ONE stage by queue priority — later stages outrank earlier ones**:
-  `research > assign > normalize > discover` (`PRIORITY` in `utils/daily-pipeline.js`). A pull
+  `integrate > research > assign > normalize > discover` (`PRIORITY` in `utils/daily-pipeline.js`).
+  ⚠ `integrate` was added 2026-10-17; before that the funnel ended one step short of its own
+  product — a family that cleared `/run-family` and VAL had nowhere to go, so the exit gate
+  accumulated candidates while the cron spent every minute admitting more raw strategies.
+  Its wrapper is `scripts/run-integrate.sh`, pinned per UNIVERSE in
+  `data/integrate-sessions/<universe>.txt`, and it CAN cold-start a universe that has never had a
+  round (same arrangement as `run-family.sh`, one level up). **`oos` is deliberately NOT in
+  PRIORITY and never will be** — it spends an irreversible test on the last clean surface, which
+  is a decision, not a queue; `--plan` reports its remaining count and marks it HUMAN ONLY.
+  A pull
   system: finish what is in the pipe before admitting more, because the backtest minutes/day are
   the binding constraint and an idle research-ready family is a worse use of them than a raw
   strategy nothing can act on yet.
@@ -741,6 +755,13 @@ Only the directories whose contents aren't self-evident:
   `--plan` prints every queue's depth so it is visible; `--stage <name>` overrides for one run.
   A stage that runs without draining its queue **cedes its turn** to the next stage rather than
   ending the day (it used to `break`, which cost 2026-10-04 its remaining 124 minutes).
+- ⚠ **Some stages cost NO backtest minutes, and the day's budget stop now says so.** `discover`
+  was always exempt; `assign` and a SEED-headed `integrate` round were not, so a universe could
+  ship nothing all day for want of minutes it was never going to use. A seed reads the champion's
+  figures out of the ledger and writes one `promoted.tsv` row — no browser, no backtest. The
+  exemption is narrow: it is the PLANNED stage that must be free, and a free stage on a spent
+  budget runs **alone** (forced `--once`) rather than chaining into normalize, whose first act
+  would be to ask for minutes that are gone.
 - ⚠ **The cron can RESUME study/enhance but never cold-start them.** They are Claude agent
   loops; their wrappers resume a session pinned by a human
   (`data/auto{study,enhance}-session.txt`, format `<branch>\t<uuid>`). The loop script refuses
@@ -750,6 +771,25 @@ Only the directories whose contents aren't self-evident:
   visible. ⚠ This applies to the LEGACY `--stage enhance|study` paths; the automatic order
   runs `research`, whose wrapper pins per FAMILY in `data/research-sessions/<family>.txt` and
   CAN cold-start one that has never been researched.
+- ⚠⚠ **A family can be `done` to the research queue and STUCK at integration's gate.** Measured
+  2026-10-17: 8 of 13 families read `blocked` in `utils/integrate-eligible.js` while
+  `family-queue` reported **0 due** — a family researched to exhaustion but never finalised on VAL
+  has no new members and a consumption row, so it reads `done`, yet the only thing that can
+  perform the missing step is `/run-family`. The funnel's last stage was waiting on its
+  predecessor and its predecessor thought it was finished; four families (七星高照, 五福闹新春,
+  多因子ML, 趋势技术) sat there with nothing able to notice.
+  The fix is an **`owner`** on every gate verdict — which stage can clear it:
+  `research` (the loop clears it unattended) / `normalize` (needs a measurement at the active
+  epoch) / `human` (needs `JQ_ALLOW_REVAL` or a judgement) / `none` (a measured REJECTION).
+  `family-queue` reopens **only** `research`-owned blocks, as `reason: integrate-blocked`, and
+  `run-family.sh` tells the session it is a NARROW job (skill step 0b: do the one named step,
+  re-check the gate, exit — do not reopen the generator loop).
+  ⚠ `none` and `human` must never be reopened: an R=1 family re-entered daily would spin forever
+  on a decision already taken, and a block the loop cannot clear makes every run exit having done
+  nothing — this repo's recurring failure shape.
+  ⚠ Whether a non-comparable VAL is `research` or `human` is **the VAL budget's answer**, not
+  re-derived: `sameBench` false ⇒ a fresh VAL is allowed ⇒ research; an unrecorded epoch is
+  UNKNOWN, and unknown blocks ⇒ human.
 - **`slow-skipped` stays TERMINAL in the normalizer** (making it retriable re-bills it every
   batch — the `no-trades` bug). The retry path is a separate **deferred pool**,
   `data/deferred.json`, drained only by the daily pipeline and only at a **higher cap than the

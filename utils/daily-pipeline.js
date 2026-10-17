@@ -100,13 +100,25 @@ const STAGE_TIMEOUT_MIN = (() => {
  * queues over the same 14 families, competing for the same minutes and each able to starve the
  * other; `research` is the merged loop (/run-family) over one family queue. The funnel is
  *
- *     research (drain the family queue) -> normalize (refill it) -> discover (refill THAT)
+ *     integrate (ship it) -> research (drain the family queue) -> normalize (refill it)
+ *                         -> discover (refill THAT)
  *
  * so normalize only runs when no family is due, and discover only when nothing is left to
  * normalize. `enhance`/`study` remain dispatchable via --stage for fallback while their pinned
  * sessions still exist, but they are out of the automatic order.
+ *
+ * ⚠ `integrate` leads because it is the LAST stage, and the rule is that later stages outrank
+ * earlier ones. It was absent until 2026-10-17, which made the funnel end one step short of its
+ * own product: a family that cleared `/run-family` and VAL had nowhere to go, so the exit gate
+ * accumulated candidates while the cron spent every minute admitting more raw strategies.
+ * Its SEED action costs no backtest at all (`scripts/run-integrate.sh` skips the budget and CDP
+ * preflights for it), so leading with it cannot starve anything of minutes.
+ *
+ * `oos` is deliberately NOT here and never will be. It spends an irreversible test on the only
+ * clean surface left (2/bench, 1/candidate — `utils/oos-budget.js`), which is a decision, not a
+ * queue to drain. It stays human-invoked via `/run-oos`.
  */
-const PRIORITY = ['research', 'assign', 'normalize', 'discover'];
+const PRIORITY = ['integrate', 'research', 'assign', 'normalize', 'discover'];
 
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
 
@@ -167,6 +179,19 @@ function queues() {
   try { research = require('./family-queue').build().due; }
   catch (e) { research = []; }
   return {
+    // Universes with something to do: `seed` (free — promote a first candidate) or `integrate`
+    // (a merge round). `idle` universes are excluded, because an idle universe's blocker is
+    // upstream in /run-family and a round here would only re-litigate eligibility.
+    // ⚠ Seeds lead, which is what `integrate-queue.next()` also does — so the universe the
+    // planner reports and the one the wrapper would pick unprompted are the same one. A seed is
+    // free and unblocks every later arrival in that universe (it defines the incumbent they must
+    // beat), so doing it before spending minutes on a merge is strictly right.
+    integrate: (() => {
+      try {
+        const rows = require('./integrate-queue').build().filter(r => r.action !== 'idle');
+        return [...rows.filter(r => r.action === 'seed'), ...rows.filter(r => r.action !== 'seed')];
+      } catch { return []; }
+    })(),
     research,
     // A normalized strategy with no family: is invisible to the family queue — wiki-family-build
     // skips pages without one. Assigning costs no backtest minutes, so it sits AHEAD of normalize:
@@ -276,8 +301,13 @@ function sessionPinned(stage, target = null) {
   // file (data/autoresearch-session.txt, which nothing writes any more), research reported
   // BLOCKED every single time and ceded the entire budget to assign/normalize — a funnel whose
   // first stage can never run.
-  if (stage === 'research') {
-    const pin = target && path.join(ROOT, 'data/research-sessions', `${target}.txt`);
+  //
+  // `integrate` is the same arrangement one level up: run-integrate.sh pins per UNIVERSE
+  // (data/integrate-sessions/<universe>.txt) and cold-starts a universe that has never had a
+  // round. Both are "pinned per unit of work", so neither is gated on a per-stage file.
+  const PER_UNIT = { research: 'data/research-sessions', integrate: 'data/integrate-sessions' };
+  if (PER_UNIT[stage]) {
+    const pin = target && path.join(ROOT, PER_UNIT[stage], `${target}.txt`);
     const has = pin && fs.existsSync(pin);
     return { pinned: true, coldStart: !has,
              detail: has ? fs.readFileSync(pin, 'utf8').trim().split('\t')[1].slice(0, 8) : 'new' };
@@ -357,11 +387,17 @@ function runAgentLoop(stage, target, { dry }) {
   // never studied gets a clean one.
   //
   // agent-loop.sh remains for the two legacy stages, whose pins are per-stage by design.
-  const script = stage === 'research'
-    ? path.join(ROOT, 'scripts/run-family.sh')
+  const PER_UNIT_SCRIPT = {
+    research: 'scripts/run-family.sh',
+    integrate: 'scripts/run-integrate.sh',
+  };
+  const script = PER_UNIT_SCRIPT[stage]
+    ? path.join(ROOT, PER_UNIT_SCRIPT[stage])
     : path.join(ROOT, `scripts/auto${stage}-loop.sh`);
-  // The planner picked the family; pass it so the dispatch and the log agree on which one ran.
-  const args = stage === 'research' ? [script, target].filter(Boolean) : [script];
+  // The planner picked the family/universe; pass it so the dispatch and the log agree on which
+  // one ran. ⚠ run-integrate.sh re-reads the ACTION from the queue even when named — an `idle`
+  // universe is skipped there rather than argued with here.
+  const args = PER_UNIT_SCRIPT[stage] ? [script, target].filter(Boolean) : [script];
   if (!fs.existsSync(script)) return { outcome: 'error', note: `missing ${path.relative(ROOT, script)}` };
   // ⚠ `target` is the head of OUR queue, reported for the log only — it is not passed to the
   // agent and does not steer it. The study nudge tells the agent to take "the next pending
@@ -374,7 +410,7 @@ function runAgentLoop(stage, target, { dry }) {
     // does choose the family and run-family.sh cold-starts one that has never been studied;
     // for the legacy stages the target is reported for the log only and the agent picks its own
     // order. Saying "resume ... agent picks its own order" for research would be a fiction.
-    const note = stage === 'research'
+    const note = PER_UNIT_SCRIPT[stage]
       ? `would ${pin.coldStart ? 'START a CLEAN session for' : `resume session ${pin.detail} on`} ` +
         `${target || '(queue head)'} via ${path.relative(ROOT, script)}`
       : `would resume session ${pin.detail} via ${path.relative(ROOT, script)}` +
@@ -415,10 +451,12 @@ function runDiscover({ dry }) {
 }
 
 function runStage(stage, q, dry) {
-  // For `research` the target is REAL, not decorative: the queue is ordered by max post-screen
-  // priority and the loop is told to take the head. For the legacy stages the agent still picks
-  // its own order, which is why those targets are reported and not passed.
+  // For `research` and `integrate` the target is REAL, not decorative: the queue is ordered (by
+  // max post-screen priority / by action then arrival sharpe) and the loop is told to take the
+  // head. For the legacy stages the agent still picks its own order, which is why those targets
+  // are reported and not passed.
   const target = stage === 'research' ? (q.research[0] || {}).family
+    : stage === 'integrate' ? (q.integrate[0] || {}).universe
     : stage === 'enhance' ? (q.enhance[0] || {}).family
     : stage === 'study' ? (q.study[0] || {}).family : null;
   let r;
@@ -430,7 +468,7 @@ function runStage(stage, q, dry) {
                                 note: `family assignment over ${q.assign.length} pending`,
                                 tail: x.out.split('\n').filter(Boolean).slice(-4).join('\n') }; })();
   }
-  else if (stage === 'research' || stage === 'enhance' || stage === 'study') {
+  else if (stage === 'integrate' || stage === 'research' || stage === 'enhance' || stage === 'study') {
     r = runAgentLoop(stage, target, { dry });
   } else r = runDiscover({ dry });
   return { ...r, stage, target };
@@ -452,7 +490,11 @@ function execute(p, { dry = false } = {}) {
   for (const stage of order) {
     if (stage !== p.stage && stage !== 'discover' && depth(stage, p.q) === 0) continue;
 
-    const target = stage === 'enhance' ? (p.q.enhance[0] || {}).family
+    // Recorded on the run claim so the day's log says WHICH unit was worked, not just which
+    // stage. `runStage` recomputes it from the same queue; this is the same value.
+    const target = stage === 'integrate' ? (p.q.integrate[0] || {}).universe
+      : stage === 'research' ? (p.q.research[0] || {}).family
+      : stage === 'enhance' ? (p.q.enhance[0] || {}).family
       : stage === 'study' ? (p.q.study[0] || {}).family : null;
 
     if (!dry && !state.beginRun({ stage, target, budget: p.budget.used })) {
@@ -611,6 +653,10 @@ function printPlan(p) {
   console.log(`[daily] budget: ${p.budget.ok ? `used ${p.budget.used} / free ${p.budget.free}` : `UNAVAILABLE (${p.budget.raw})`}`);
   console.log(`[daily] slow-skip cap ${SLOW_SKIP_MIN} min/backtest, usage limit ${USAGE_LIMIT} min/day`);
   console.log('[daily] queues (funnel order — drain the end before widening the mouth):');
+  const ihead = q.integrate.slice(0, 3)
+    .map(x => `${x.universe}(${x.action})`).join(', ')
+    || 'every universe idle — the gate is upstream (/run-family)';
+  console.log(`   integrate ${String(q.integrate.length).padStart(4)}   ${ihead}`);
   const head = q.research.slice(0, 3)
     .map(x => `${x.family}(${x.score ?? '—'}/${x.reason})`).join(', ') || '—';
   console.log(`   research  ${String(q.research.length).padStart(4)}   ${head}`);
@@ -619,24 +665,18 @@ function printPlan(p) {
   console.log(`   discover  ${String(q.discover.uncopied).padStart(4)}   uncopied of ${q.discover.total} in queue`);
   console.log(`   (legacy: enhance ${q.enhance.length}, study ${q.study.length} — --stage only)`);
 
-  // ⚠ The two stages AFTER research are not in PRIORITY and the cron cannot run them, so without
-  // this they were invisible: the planner would report "research 0" and look finished while
-  // candidates sat waiting to be integrated and tested. They are reported, never dispatched —
-  // integration spends backtest minutes on an agent-driven round and OOS spends an irreversible
-  // test, so both stay human-invoked (`/run-integrate`, `/run-oos`).
+  // ⚠ OOS is the one stage the cron must never run, so it is reported and never dispatched. It
+  // was invisible until 2026-10-16 — the planner would report "research 0" and look finished
+  // while candidates sat waiting — and the fix for `integrate` was to put it IN the funnel
+  // above (2026-10-17). OOS gets no such promotion: spending the last clean surface is a
+  // decision with no undo, not a queue to drain.
   try {
-    const iq = require('./integrate-queue').build();
-    const act = iq.filter(r => r.action !== 'idle');
-    const seeds = act.filter(r => r.action === 'seed').length;
-    console.log(`   integrate ${String(act.length).padStart(4)}   ${act.length
-      ? `${seeds} seed + ${act.length - seeds} merge — HUMAN ONLY (/run-integrate)`
-      : 'every universe idle — the gate is upstream (/run-family)'}`);
     const oos = require('./oos-budget');
     const used = oos.testsOnThisBench().length;
     const cap = oos.policy().maxTestsPerEpoch;
     console.log(`   oos       ${String(cap - used).padStart(4)}   test(s) left on this bench — HUMAN ONLY (/run-oos)`);
   } catch (e) {
-    console.log(`   integrate   ?   (could not read: ${String(e.message).slice(0, 60)})`);
+    console.log(`   oos         ?   (could not read: ${String(e.message).slice(0, 60)})`);
   }
   console.log(`[daily] -> ${p.stage.toUpperCase()}   (${p.why})`);
 }
@@ -705,8 +745,24 @@ if (require.main === module) {
   // correctly stood down left NO trace at all, indistinguishable from a day the cron never
   // fired. "Correctly did nothing" is a result, and on a 60-minute budget it will be the most
   // common one; it has to be visible or the record only covers the days work happened.
+  //
+  // ⚠ Some stages cost NO backtest minutes, and stopping those on a spent budget throws away
+  // free progress. `discover` was always exempt (HTTP only); `assign` and a SEED-headed
+  // `integrate` round belong in the same class and were not, which meant a universe could sit
+  // shipping nothing all day for want of minutes it was never going to use. A seed is a record:
+  // read the champion's figures out of the ledger and promote it, no browser, no backtest —
+  // `scripts/run-integrate.sh` skips its own CDP and budget preflights for exactly this.
+  //
+  // The exemption is narrow on purpose. It is the PLANNED stage that must be free, and a free
+  // stage on a spent budget runs ALONE (`freeOnly` below forces `--once`) rather than chaining
+  // into normalize, whose first act would be to ask for minutes that are gone.
+  const free = p.stage === 'discover'
+    || p.stage === 'assign'
+    || (p.stage === 'integrate' && (p.q.integrate[0] || {}).action === 'seed');
   const budgetSpent = p.budget.ok &&
-    p.budget.used >= usageLimit.resolve(USAGE_LIMIT_SPEC, p.budget.free) && p.stage !== 'discover';
+    p.budget.used >= usageLimit.resolve(USAGE_LIMIT_SPEC, p.budget.free) && !free;
+  const freeOnly = p.budget.ok && !budgetSpent && free &&
+    p.budget.used >= usageLimit.resolve(USAGE_LIMIT_SPEC, p.budget.free);
   let log = [], last = null;
 
   if (budgetSpent) {
@@ -724,7 +780,11 @@ if (require.main === module) {
       console.log(`[daily] study manifest: reopened ${sync.changed.length} family(ies) the ledger calls stale`);
       sync.changed.slice(0, 4).forEach(c => console.log(`         ${c.family}  (${c.why})`));
     }
-    const once = argv.includes('--once');
+    if (freeOnly) {
+      console.log(`[daily] budget spent (${p.budget.used} >= ${USAGE_LIMIT}) but ${p.stage.toUpperCase()}` +
+                  ' costs no backtest minutes — running it alone, no chain');
+    }
+    const once = argv.includes('--once') || freeOnly;
     ({ log, last } = once
       ? (() => { const r = execute(p, { dry }); return { log: [r], last: r }; })()
       : runChain({ dry, stageOverride: arg('--stage') }));

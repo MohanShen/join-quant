@@ -28,6 +28,7 @@ data/daily-logs/
 data/autoenhance-logs/
 data/autostudy-logs/
 data/autoresearch-logs/
+data/autointegrate-logs/
 
 # ── Backups, not history ────────────────────────────────────────────────────
 harness/normalize-*.bak
@@ -52,6 +53,8 @@ data/*.pre-uniquekey.bak
 #   enhance/results.tsv          screen/candidates.json  screen/batches/
 #   data/series/                 data/series-scan.json   data/consumption.tsv
 #   data/daily-state.json        data/deferred.json      data/research-sessions/
+#   data/promoted.tsv            data/integrate-refusals.tsv
+#   data/integrate-sessions/
 #
 # They churn, and that is the point: a diff on them is the record of what the
 # pipeline did. If one becomes genuinely too large, prune it — do not ignore it.

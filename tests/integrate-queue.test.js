@@ -471,3 +471,71 @@ test('the incremental round', async t => {
     });
   });
 });
+
+/**
+ * The gate must say WHO can clear a block, or the funnel's last stage waits in silence.
+ *
+ * Measured 2026-10-17: 8 of 13 families were `blocked` in `integrate-eligible` while
+ * `family-queue` reported **0 due**. A family researched to exhaustion but never finalised on VAL
+ * has no new members and a consumption row, so it reads `done` — and the only thing that can
+ * perform the missing step is the research loop. Four families sat there with nothing in the
+ * pipeline able to notice.
+ */
+test('the exit gate names the owner of every block', async (t) => {
+  const el = require('../utils/integrate-eligible');
+  const rows = el.all();
+
+  await t.test('every non-eligible row carries an owner from the fixed set', () => {
+    const OWNERS = new Set(['research', 'normalize', 'human', 'none']);
+    for (const r of rows) {
+      if (r.eligible) continue;
+      assert.ok(OWNERS.has(r.owner),
+        `${r.family}: owner "${r.owner}" is not one of ${[...OWNERS].join('/')}`);
+    }
+  });
+
+  await t.test('a measured REJECTION is owned by nobody, so nothing reopens it', () => {
+    // An R=1 family re-entered every day would spin the loop forever on a decision already taken.
+    for (const r of rows.filter(x => x.status === 'rejected')) {
+      assert.strictEqual(r.owner, 'none', `${r.family}: a rejection must not be reopened`);
+    }
+  });
+
+  await t.test('a VAL on a bench the active epoch rejects asks the BUDGET who owns it', () => {
+    // sameBench(valEpoch, active) false => a fresh VAL is allowed => research can clear it.
+    // An unrecorded epoch is UNKNOWN, unknown blocks, so only a human override moves it. Keeping
+    // that rule in val-budget rather than re-deriving it here is what stops the two drifting.
+    const src = fs.readFileSync(path.join(__dirname, '../utils/integrate-eligible.js'), 'utf8');
+    assert.match(src, /require\('\.\/val-budget'\)\.check\(family\)\.allowed/);
+  });
+
+  await t.test('family-queue reopens research-owned blocks and nothing else', () => {
+    const q = require('../utils/family-queue').build();
+    const reopened = q.due.filter(f => f.reason === 'integrate-blocked').map(f => f.family);
+    const researchOwned = rows.filter(r => !r.eligible && r.owner === 'research').map(r => r.family);
+    for (const f of researchOwned) {
+      assert.ok(reopened.includes(f), `${f} is research-owned and must be reopened`);
+    }
+    for (const f of reopened) {
+      assert.ok(researchOwned.includes(f),
+        `${f} was reopened but its block is not research-owned — the loop would do nothing`);
+    }
+  });
+
+  await t.test('a reopened family carries the gate sentence, not a staleness note', () => {
+    const q = require('../utils/family-queue').build();
+    for (const f of q.due.filter(x => x.reason === 'integrate-blocked')) {
+      assert.ok(f.note && f.note.length > 10, `${f.family}: the dispatched session needs the why`);
+      assert.strictEqual(f.gateOwner, 'research');
+    }
+  });
+
+  await t.test('the wrapper tells the session a gate block is a NARROW job', () => {
+    // A resumed session told only "continuing after a budget stop" would reopen the generator
+    // loop and re-buy findings the family already holds.
+    const sh = fs.readFileSync(path.join(__dirname, '../scripts/run-family.sh'), 'utf8');
+    assert.match(sh, /FQ_REASON" = "integrate-blocked"/);
+    assert.match(sh, /Do NOT open the generator loop/);
+    assert.match(sh, /\$GATE_NOTE/, 'the note has to reach both the new and resumed prompts');
+  });
+});

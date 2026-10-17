@@ -79,6 +79,18 @@ fi
 
 [ -f "$REPO/wiki/families/$FAMILY.md" ] || { log "FATAL: no such family page: wiki/families/$FAMILY.md"; exit 1; }
 
+# Why was this family woken? `integrate-blocked` is a NARROW job (/run-family skill step 0b) —
+# the family is researched and stuck at the exit gate on one step this loop performs. A resumed
+# session told only "continuing after a budget stop" would reopen the generator loop and re-buy
+# findings the family already holds, so the reason is stated rather than left to be inferred.
+REASON="$(node -e '
+  const q = require("./utils/family-queue").build();
+  const r = q.all.find(f => f.family === process.argv[1]);
+  process.stdout.write(r ? [r.reason, (r.note || "").replace(/\s+/g, " ")].join("\t") : "");
+' "$FAMILY" 2>/dev/null)"
+FQ_REASON="$(printf '%s' "$REASON" | cut -f1)"
+FQ_NOTE="$(printf '%s' "$REASON" | cut -f2)"
+
 # ── one fire at a time ──────────────────────────────────────────────────────
 if [ -e "$LOCK" ]; then
   lp="$(cat "$LOCK" 2>/dev/null)"
@@ -167,6 +179,20 @@ RUN_LOG="$LOG_DIR/$FAMILY-$(date '+%Y%m%d-%H%M%S').log"
 PERM_FLAG="--permission-mode acceptEdits"
 [ "${USE_BYPASS:-0}" = "1" ] && PERM_FLAG="--dangerously-skip-permissions"
 
+GATE_NOTE=""
+if [ "$FQ_REASON" = "integrate-blocked" ]; then
+  GATE_NOTE="
+WHY THIS FAMILY: reason=integrate-blocked. It is researched and is stuck at the /run-family EXIT
+GATE, which reads: \"$FQ_NOTE\"
+Follow the skill's step 0b — do the ONE named step (finalize on VAL / score realizability / fill a
+missing field), record it, re-run 'node utils/integrate-eligible.js $FAMILY' and report whether it
+now reads eligible, then EXIT. Do NOT open the generator loop: this family was already worked to a
+stop, and a reopened round re-buys findings it holds."
+elif [ -n "$FQ_REASON" ]; then
+  GATE_NOTE="
+WHY THIS FAMILY: reason=$FQ_REASON${FQ_NOTE:+ ($FQ_NOTE)}."
+fi
+
 SCRATCH_NOTE=""
 if [ "$FROM_SCRATCH" = "1" ]; then
   SCRATCH_NOTE="
@@ -188,14 +214,14 @@ whole handoff — wiki/families/$FAMILY.md, study/$FAMILY/queue.json, study/$FAM
 Start by running 'node utils/research-queue.js $FAMILY' and reading the family page, exactly as the
 skill requires. Work ONLY this family and stop when it is done. Backtest cap: pass
 --usage-limit $USAGE_LIMIT, foreground/blocking, ONE backtest at a time. Stop at a clean git state
-with a one-line status naming what is still queued.$SCRATCH_NOTE"
+with a one-line status naming what is still queued.$GATE_NOTE$SCRATCH_NOTE"
 else
   PROMPT="/run-family $FAMILY
 
 Continuing this family's own session after a budget stop. Re-read
 'node utils/research-queue.js $FAMILY' FIRST and trust the on-disk queue over your memory: ideas may
 have been answered, closed, or re-ranked since. Same caps: --usage-limit $USAGE_LIMIT, foreground,
-one backtest at a time. Stop at a clean git state with a one-line status."
+one backtest at a time. Stop at a clean git state with a one-line status.$GATE_NOTE"
 fi
 
 log "$MODE session ${SID:0:8} for family $FAMILY (branch $BRANCH, budget ${USED:-?}/${USAGE_LIMIT}min) -> $RUN_LOG"

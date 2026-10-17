@@ -219,7 +219,9 @@ function candidateValidated(family, pageText, candidate, val) {
 
 function assess(family) {
   const p = path.join(FAM_DIR(), `${family}.md`);
-  if (!fs.existsSync(p)) return { family, eligible: false, status: 'unknown-family', why: 'no family page' };
+  if (!fs.existsSync(p)) {
+    return { family, eligible: false, status: 'unknown-family', why: 'no family page', owner: 'none' };
+  }
   const t = fs.readFileSync(p, 'utf8');
   const universe = fmField(t, 'universe') || null;
   const rRaw = fmField(t, 'realizability');
@@ -234,30 +236,62 @@ function assess(family) {
   const val = validationOf(family);
   const realizabilityScope = fmField(t, 'realizabilityScope') || null;
 
-  const fail = (status, why) => ({ family, universe, status, eligible: false, why,
-                                   candidate, member, product, val, realizability,
-                                   champion: candidate });
+  /**
+   * ⚠ `owner` — WHICH STAGE can clear this block. Not decoration: `utils/family-queue.js` reopens
+   * a family for research when its gate block is owned by `research`, and without it those
+   * families were stranded in silence. Measured 2026-10-17: 8 of 13 families were `blocked` here
+   * while the research queue read **0 due** — a family researched to exhaustion but never
+   * validated reads `done` to the research queue, and nothing in the pipeline could ever notice
+   * that integration was waiting on a step only `/run-family` performs.
+   *
+   * | owner | meaning |
+   * |---|---|
+   * | `research` | `/run-family` clears it unattended — a missing field, a VAL it may still spend |
+   * | `normalize` | needs a measurement under the active epoch; the family itself is fine |
+   * | `human` | needs a protected override (`JQ_ALLOW_REVAL`) or a judgement call |
+   * | `none` | nothing to clear — a measured REJECTION, not a missing step |
+   *
+   * ⚠ `none` and `human` must never be reopened. An R=1 family re-entered every day would spin
+   * the loop forever on a decision already taken, and a block the loop cannot clear would make
+   * every run exit having done nothing — this repo's recurring failure shape.
+   */
+  const fail = (status, why, owner) => ({ family, universe, status, eligible: false, why, owner,
+                                          candidate, member, product, val, realizability,
+                                          champion: candidate });
 
-  if (!universe) return fail('blocked', 'no universe: on the family page');
+  if (!universe) return fail('blocked', 'no universe: on the family page', 'research');
   if (!candidate) {
     return fail('blocked',
       `no candidate: nothing on the product shelf for this family, and no member measured under ` +
-      `epoch ${harness.config().epoch}`);
+      `epoch ${harness.config().epoch}`, 'normalize');
   }
   if (!product && shelf && shelf.unusable) {
     return fail('blocked',
       `its shelf product(s) (${shelf.unusable.map(x => `${x.expId} epoch ${x.epoch} gate ${x.gateVal}`).join('; ')}) ` +
       'are not usable on this bench, and the best ingested member is not the finalised book — ' +
-      're-measure the product or re-finalise the family');
+      're-measure the product or re-finalise the family', 'research');
   }
-  if (!val.has) return fail('blocked', 'never validated — /run-family must finalize on VAL first');
+  if (!val.has) {
+    return fail('blocked', 'never validated — /run-family must finalize on VAL first', 'research');
+  }
   if (!val.comparable) {
+    // ⚠ Whether the loop can fix this is the VAL BUDGET's answer, not ours. A VAL on a bench the
+    // active epoch rejects does NOT block a fresh one (`sameBench` is false), so research can
+    // simply re-validate — but a VAL with no recorded epoch is UNKNOWN, and unknown blocks, so
+    // only a human with JQ_ALLOW_REVAL can move it. Asking the budget keeps that rule in one
+    // place instead of re-deriving it here and drifting.
+    let canReval = false;
+    try { canReval = !!require('./val-budget').check(family).allowed; } catch { canReval = false; }
     return fail('blocked', `its VAL (${val.runId}) was measured at epoch ${val.epoch}, which the ` +
-                           'active epoch does not accept');
+                           'active epoch does not accept' +
+                           (canReval ? ' — the VAL budget allows a fresh one'
+                                     : ' — and the VAL budget refuses a fresh one, so this needs ' +
+                                       'the human override'),
+                canReval ? 'research' : 'human');
   }
   if (!val.passed) {
     return fail('rejected', `VAL ${val.runId} did not pass the ${harness.stageThreshold('validate')} ` +
-                            `threshold (outcome: ${val.outcome})`);
+                            `threshold (outcome: ${val.outcome})`, 'none');
   }
 
   // ⚠⚠ Did the VAL validate THIS champion, or a different book?
@@ -282,16 +316,18 @@ function assess(family) {
       `its one VAL (${val.runId}) did not validate the CANDIDATE ${candidate.sourceFile}: ${vc.why}. ` +
       'A validation of a different book is not a validation of this one. Settle the family on ONE ' +
       'book, or re-validate the candidate (which needs the human VAL override, since the budget ' +
-      'is spent).');
+      'is spent).', 'human');
   }
   if (realizability == null || Number.isNaN(realizability)) {
     // Unknown blocks rather than permits — see the header.
     return fail('blocked', 'no realizability: on the family page. An agent must score it with ' +
-                           'evidence; unknown blocks so that it is visible rather than assumed');
+                           'evidence; unknown blocks so that it is visible rather than assumed',
+                'research');
   }
   if (realizability < MIN_REALIZABILITY) {
     return fail('rejected', `realizability ${realizability} < ${MIN_REALIZABILITY} — a book whose ` +
-                            'fills a daily bar cannot honour must not enter the shipping set');
+                            'fills a daily bar cannot honour must not enter the shipping set',
+                'none');
   }
 
   // ⚠ Realizability is a property of a BOOK, and the page carries one number. When the candidate
@@ -308,10 +344,10 @@ function assess(family) {
         `realizability ${realizability} was scored for this family's BASE, but the candidate is the ` +
         `product ${candidate.expId} — a different book, so the score does not transfer. Score the ` +
         `product and set realizabilityScope: ${candidate.expId} on the family page (or show the ` +
-        'product is capacity-equivalent to the base).');
+        'product is capacity-equivalent to the base).', 'research');
     }
   }
-  return { family, universe, status: 'eligible', eligible: true,
+  return { family, universe, status: 'eligible', eligible: true, owner: null,
            why: `${candidate.kind === 'product' ? 'product' : 'member'} ${candidate.sourceFile}` +
                 `${candidate.sharpe != null ? ` (sharpe ${candidate.sharpe})` : ''}, VAL ${val.runId} ` +
                 `sharpe ${val.sharpe}, realizability ${realizability}`,
@@ -345,7 +381,20 @@ if (require.main === module) {
   for (const k of ['rejected', 'blocked', 'unknown-family']) {
     if (!groups[k] || !groups[k].length) continue;
     console.log(`\n■ ${k.toUpperCase()} (${groups[k].length})`);
-    for (const r of groups[k]) console.log(`   ${r.family.padEnd(12)} ${r.why}`);
+    for (const r of groups[k]) {
+      console.log(`   ${r.family.padEnd(12)} [${String(r.owner).padEnd(9)}] ${r.why}`);
+    }
+  }
+  // ⚠ The owner column is what connects this gate back to the pipeline. A `research`-owned block
+  // is a step /run-family performs; `utils/family-queue.js` reopens those families so the daily
+  // cron reaches them. `human` and `none` are deliberately NOT reopened — see `fail()`.
+  const byOwner = o => rows.filter(r => !r.eligible && r.owner === o).map(r => r.family);
+  const reopened = byOwner('research');
+  console.log(`\n[eligible] owners: research ${reopened.length}  normalize ${byOwner('normalize').length}` +
+              `  human ${byOwner('human').length}  none ${byOwner('none').length}`);
+  if (reopened.length) {
+    console.log(`[eligible] /run-family can clear: ${reopened.join(', ')}`);
+    console.log('[eligible] those are reopened in the research queue (node utils/family-queue.js)');
   }
 }
 
