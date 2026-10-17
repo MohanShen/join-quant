@@ -1406,5 +1406,30 @@
     "postId": "4da8f69689131ea8117e500e6be84621",
     "sourceFile": "2026-10-17_带收益预测的Markowitz动态平衡策略-4da8f696.py",
     "registeredAt": "2026-10-17T09:45:54.214Z"
+  },
+  "31cd43fb2d8261f2280a3559772596978481eb5281d22ae70eed88550384d9a7": {
+    "postId": "54fe6f38a242b0e0c9198c7dd4bd6e7c",
+    "sourceFile": "2026-10-17_行业上下游预测策略的多行业实现_止损-54fe6f38.py",
+    "registeredAt": "2026-10-17T11:29:02.155Z"
+  },
+  "bcf036066f7818db03c692dbf0d4229fb0374e729e7c8d59dce3faf1158e54b0": {
+    "postId": "3a0d2c5e148fd7551c69d69f10cbf5aa",
+    "sourceFile": "2026-10-17_小市值初筛_反转打分_市场状态门控_风控卖出-3a0d2c5e.py",
+    "registeredAt": "2026-10-17T11:29:04.822Z"
+  },
+  "4f0ed473fe710f8c927be2c63a4452575aed7896334178678dc26f5b9f364e05": {
+    "postId": "f0ac613f00a1b80d261d2fad1c4138db",
+    "sourceFile": "2026-10-17_rsrs止损真的有效吗_社区公开的rsrs长期跑都是亏钱-f0ac613f.py",
+    "registeredAt": "2026-10-17T11:43:33.001Z"
+  },
+  "7282f826535a07e0c5c8dc585dfcc669c82147a7c1d7fec33fc3d62ba7b7616c": {
+    "postId": "83f5b2005791326d669c6f0a5bef03ba",
+    "sourceFile": "2026-10-17_向_拒绝臃肿缝合怪_极简ETF轮动-83f5b200.py",
+    "registeredAt": "2026-10-17T11:43:35.606Z"
+  },
+  "bc1f5d946589c42b966691aae4616985ad0268e5eb41a435ac1a1b5ed918f2bc": {
+    "postId": "419ff61d0e78854276e25a82a83ab497",
+    "sourceFile": "2026-10-17_抄作业-QFII和社保-419ff61d.py",
+    "registeredAt": "2026-10-17T11:43:38.886Z"
   }
 }

@@ -3,12 +3,12 @@
   "lastRun": {
     "stage": "discover",
     "target": null,
-    "budget": 56,
-    "at": "2026-10-17T08:27:07.125Z",
-    "outcome": "error",
-    "note": "discover + fetch",
+    "budget": 80,
+    "at": "2026-10-17T11:43:18.914Z",
+    "outcome": "ran",
+    "note": "discover + fetch (normalize is its own stage)",
     "minutesUsed": null,
-    "endedAt": "2026-10-17T09:28:32.138Z"
+    "endedAt": "2026-10-17T11:43:39.269Z"
   },
   "runs": [
     {
@@ -1000,6 +1000,66 @@
       "note": "discover + fetch",
       "minutesUsed": null,
       "endedAt": "2026-10-17T09:28:32.138Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 77,
+      "at": "2026-10-17T11:24:39.143Z",
+      "outcome": "ran",
+      "note": "family assignment over 10 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T11:28:42.522Z"
+    },
+    {
+      "stage": "discover",
+      "target": null,
+      "budget": 77,
+      "at": "2026-10-17T11:28:51.322Z",
+      "outcome": "ran",
+      "note": "discover + fetch (normalize is its own stage)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T11:29:05.215Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 77,
+      "at": "2026-10-17T11:29:10.394Z",
+      "outcome": "ran",
+      "note": "7 queued, 0 deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T11:33:42.381Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 80,
+      "at": "2026-10-17T11:33:48.971Z",
+      "outcome": "ran",
+      "note": "family assignment over 1 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T11:35:40.940Z"
+    },
+    {
+      "stage": "research",
+      "target": "小市值",
+      "budget": 80,
+      "at": "2026-10-17T11:35:49.032Z",
+      "outcome": "ran",
+      "note": "resumed research session ce45da2b (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T11:43:13.252Z"
+    },
+    {
+      "stage": "discover",
+      "target": null,
+      "budget": 80,
+      "at": "2026-10-17T11:43:18.914Z",
+      "outcome": "ran",
+      "note": "discover + fetch (normalize is its own stage)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-17T11:43:39.269Z"
     }
   ]
 }

@@ -1,52 +1,52 @@
 {
-  "fetchedAt": "2026-10-17T09:45:54.232Z",
+  "fetchedAt": "2026-10-17T11:43:38.899Z",
   "entries": [
     {
-      "postId": "7cdab207c42c80c7e5b7d7fbfdd918b6",
-      "backtestId": "a533c3180d501ce57f433f53c81a6bfb",
-      "title": "医疗行业多因子模型及单行业多因子测试代码模板",
-      "url": "https://www.joinquant.com/view/community/detail/7cdab207c42c80c7e5b7d7fbfdd918b6",
-      "sourceFile": "2026-10-17_医疗行业多因子模型及单行业多因子测试代码模板-7cdab207.py",
+      "postId": "f0ac613f00a1b80d261d2fad1c4138db",
+      "backtestId": "66e386b091cd0c534dcc5da0728c919f",
+      "title": "rsrs止损真的有效吗？社区公开的rsrs长期跑都是亏钱？",
+      "url": "https://www.joinquant.com/view/community/detail/f0ac613f00a1b80d261d2fad1c4138db",
+      "sourceFile": "2026-10-17_rsrs止损真的有效吗_社区公开的rsrs长期跑都是亏钱-f0ac613f.py",
       "stats": {
-        "annualReturn": 0.28187628307044,
-        "cumulativeReturn": 6.9408677276,
-        "maxDrawdown": 0.26559202791976,
-        "sharpe": 1.0990015921381,
-        "winRatio": 0.64380165289256,
-        "tradingDays": 2086,
-        "periodLabel": "2018-08"
+        "annualReturn": -0.21255452801213,
+        "cumulativeReturn": -0.1865431823,
+        "maxDrawdown": 0.25411991131628,
+        "sharpe": -1.7697769629811,
+        "winRatio": 0.25,
+        "tradingDays": 216,
+        "periodLabel": "2023-11"
       }
     },
     {
-      "postId": "e8c95a82ebd96f2f66c23b1f544df593",
-      "backtestId": "0f6fd7e96d85cb55f6df4f9f3c7f2c2b",
-      "title": "【配对交易】基于zscore的配对交易策略（胜率88.2%）",
-      "url": "https://www.joinquant.com/view/community/detail/e8c95a82ebd96f2f66c23b1f544df593",
-      "sourceFile": "2026-10-17_配对交易_基于zscore的配对交易策略_胜率88_2-e8c95a82.py",
+      "postId": "83f5b2005791326d669c6f0a5bef03ba",
+      "backtestId": "f5c5aab2db9be65a00c34834250bd702",
+      "title": "******向】拒绝臃肿缝合怪！极简ETF轮动",
+      "url": "https://www.joinquant.com/view/community/detail/83f5b2005791326d669c6f0a5bef03ba",
+      "sourceFile": "2026-10-17_向_拒绝臃肿缝合怪_极简ETF轮动-83f5b200.py",
       "stats": {
-        "annualReturn": 0.45378877335238,
-        "cumulativeReturn": 12.500788,
-        "maxDrawdown": 0.53753691170972,
-        "sharpe": 1.1691037197617,
-        "winRatio": 0.88235294117647,
-        "tradingDays": 1739,
-        "periodLabel": "2019-03"
+        "annualReturn": 0.71013547405697,
+        "cumulativeReturn": 2.3623968163,
+        "maxDrawdown": 0.20864748759583,
+        "sharpe": 1.9196730061689,
+        "winRatio": 0.51626016260163,
+        "tradingDays": 565,
+        "periodLabel": "2026-05"
       }
     },
     {
-      "postId": "4da8f69689131ea8117e500e6be84621",
-      "backtestId": "e1e1c2bca62ac877e736b4943671c730",
-      "title": "带收益预测的Markowitz动态平衡策略",
-      "url": "https://www.joinquant.com/view/community/detail/4da8f69689131ea8117e500e6be84621",
-      "sourceFile": "2026-10-17_带收益预测的Markowitz动态平衡策略-4da8f696.py",
+      "postId": "419ff61d0e78854276e25a82a83ab497",
+      "backtestId": "749107acab59e9300cf6ebc7607133fe",
+      "title": "抄作业-QFII和社保",
+      "url": "https://www.joinquant.com/view/community/detail/419ff61d0e78854276e25a82a83ab497",
+      "sourceFile": "2026-10-17_抄作业-QFII和社保-419ff61d.py",
       "stats": {
-        "annualReturn": null,
-        "cumulativeReturn": 1.6355833,
-        "maxDrawdown": 0.42127918927323,
-        "sharpe": 1.582172016002,
-        "winRatio": null,
-        "tradingDays": 489,
-        "periodLabel": "2015-12"
+        "annualReturn": 0.73323207375955,
+        "cumulativeReturn": 2.751556988,
+        "maxDrawdown": 0.17590556661353,
+        "sharpe": 2.5290641275546,
+        "winRatio": 0.56934306569343,
+        "tradingDays": 601,
+        "periodLabel": "2026-06"
       }
     }
   ]
