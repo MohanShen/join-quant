@@ -814,6 +814,46 @@ function completionStep(st, { runningCount, baseline, rendered }) {
   return { ...st, renderedStreak, finished: renderedStreak >= 2 };
 }
 
+/**
+ * Does this algorithm actually HAVE a backtest? The phantom test.
+ *
+ * ⚠⚠ Added 2026-10-17 after this cost two sessions ~2 hours each. JQ's
+ * `/algorithm/index/statistics` can list an entry in `running[]` — with an incrementing
+ * `usedSec` — for a backtest that does not exist. `pollUntilComplete` watches only that count, so
+ * the count never returns to baseline, `emptyStreak` never accumulates, and the run spins to
+ * MAX_POLL_MS and is reported as a slow-skip. Measured both times: `duration.used` frozen
+ * throughout (JQ bills nothing), the entry released only at the 120-min
+ * `JQ_CONCURRENT_STALE_MIN`, and the second time the human noticed the server showed nothing
+ * running while we had been polling for 34 minutes.
+ *
+ * ⚠ The elapsed counter is NOT a signal: the confirmed phantom incremented for 121 minutes.
+ * The buildList is, and it is free — `backtest-log.forAlgorithm` found "no backtest found for
+ * algorithm 2bbd06f3…" in one call, which is what finally identified it.
+ *
+ * @returns {Promise<boolean|null>} true = a backtest exists, false = none, null = the read failed
+ *   (never treated as a phantom — an unreadable probe must not cancel a healthy run).
+ */
+async function algorithmHasBacktest(page, algorithmId) {
+  try {
+    return await page.evaluate(async (alg) => {
+      const t = await (await fetch(`/algorithm/backtest/buildList?algorithmId=${alg}`,
+        { credentials: 'include' })).text();
+      return /backtestId[=":\s]+[a-f0-9]{32}/.test(t);
+    }, algorithmId);
+  } catch { return null; }
+}
+
+/**
+ * Grace before the phantom probe may fire, and how often it runs.
+ *
+ * ⚠ A real submission takes a moment to appear in the buildList, so an early probe would cancel
+ * healthy runs — the one failure mode worse than the phantom itself. 3 minutes is far beyond the
+ * observed registration lag (the poller's own settle is 8s) and still turns a 45-minute burn plus a
+ * 120-minute block into ~3 minutes.
+ */
+const PHANTOM_GRACE_MS = parseInt(process.env.JQ_PHANTOM_GRACE_MS || String(3 * 60 * 1000), 10);
+const PHANTOM_PROBE_EVERY = 6;          // polls; the loop sleeps 5s, so ~every 30s after the grace
+
 async function pollUntilComplete(page, algorithmId, { baseline = 0 } = {}) {
   const start = Date.now();
 
@@ -865,6 +905,7 @@ async function pollUntilComplete(page, algorithmId, { baseline = 0 } = {}) {
   // branch only engages in the situation that is 100% broken today, so it cannot regress a
   // working run.
   let seenRunning = false, emptyStreak = 0, renderedStreak = 0, finished = false;
+  let probeTick = 0, phantomStreak = 0;
   while (Date.now() - start < MAX_POLL_MS) {
     const st = await page.evaluate(async () => {
       try {
@@ -883,6 +924,40 @@ async function pollUntilComplete(page, algorithmId, { baseline = 0 } = {}) {
                                   { runningCount: st.runningCount, baseline, rendered });
       ({ seenRunning, emptyStreak, renderedStreak } = next);
       if (next.finished) { finished = true; break; }
+
+      // ── Phantom probe ───────────────────────────────────────────────────────────────────
+      // Precise signature, all three required: past the grace period, JQ still claims a run
+      // ABOVE our baseline, and the algorithm has NO backtest. Confirmed twice, like every other
+      // signal in this loop, so a single bad render cannot cancel a healthy run.
+      if (Date.now() - start > PHANTOM_GRACE_MS
+          && st.runningCount > baseline
+          && ++probeTick % PHANTOM_PROBE_EVERY === 0) {
+        const has = await algorithmHasBacktest(page, algorithmId);
+        if (has === false) {
+          if (++phantomStreak >= 2) {
+            const mins = Math.round((Date.now() - start) / 60000);
+            // ⚠ Bare marker at line start, like USAGE-STOP / CONCURRENT-STOP. A `[post] ` prefix
+            // would break the normalizer's startsWith detection, and an unrecognised -STOP marker
+            // is recorded as a `crash` against the strategy — which is what six CONCURRENT-STOP
+            // refusals did on 2026-09-23.
+            console.log('');
+            console.log(`PHANTOM-STOP\talgorithm=${algorithmId}\trunning=${st.runningCount}` +
+                        `\tbaseline=${baseline}\twaited=${mins}min`);
+            console.log('[post] ✋ JQ lists a running entry but this algorithm has NO backtest, twice');
+            console.log('[post]    over ~30s. Nothing is computing, so waiting for the cap would');
+            console.log('[post]    burn the rest of the window and then block the batch until the');
+            console.log('[post]    120-min stale threshold. Measured twice on 2026-10-17: the');
+            console.log('[post]    entry billed NOTHING (duration.used never moved).');
+            // Try the cancel anyway — harmless, and reports "already stopped" when there is
+            // nothing there. A phantom has nothing to cancel, which is the point.
+            await cancelBacktest(page);
+            return { success: false, phantom: true,
+                     error: `phantom: JQ listed a run with no backtest after ${mins}min` };
+          }
+        } else if (has === true) {
+          phantomStreak = 0;            // a real backtest exists — reset, never latch
+        }
+      }
     }
 
     // Editor-surfaced compile/runtime error → fast-fail (page stays on the editor, no nav).
@@ -1004,7 +1079,7 @@ function numPct(s) {
 // can grep (single line, tab-separated):
 //   SUMMARY\t<window>\t<start>\t<end>\t<days>\t<total%>\t<annual%>\t<sharpe>\t<maxdd%>\t<status>
 // annual% is computed from total% over the actual window (JQ gives only total).
-// status ∈ completed | window-mismatch | no-trades | scrape-zero | failed
+// status ∈ completed | window-mismatch | no-trades | scrape-zero | phantom | failed
 //
 // A backtest that placed NO orders returns 策略收益 0.00% and 最大回撤 0.00%.
 // Because 0 is not null, this used to be logged as a perfectly good `completed`
@@ -1083,8 +1158,15 @@ function reportResult(title, algorithmId, result, requestedWindow) {
       }
     }
   } else {
+    // ⚠ `phantom` is checked BEFORE `stopped` and is deliberately NOT `slow-skipped`.
+    // A slow-skip means "it ran and we gave up", which is terminal and is parked in the deferred
+    // pool to be retried at a HIGHER cap. A phantom means the backtest never existed: nothing was
+    // learned about the strategy, nothing was billed, and a bigger cap would change nothing. Its
+    // semantics match `scrape-zero` — retriable at the same cap — and `strategy-normalize.js`
+    // keeps it out of TERMINAL for exactly that reason.
     status = (result && result.rateLimited)  ? 'rate-limited'
            : (result && result.compileError) ? 'compile-error'
+           : (result && result.phantom)      ? 'phantom'
            : (result && result.stopped)      ? 'slow-skipped'
            : 'failed';
     console.log(`Status:      ❌ ${result ? result.error : 'unknown'} [${status}]`);

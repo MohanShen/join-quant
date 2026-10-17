@@ -1500,6 +1500,26 @@ Only the directories whose contents aren't self-evident:
   ⚠ `jq-cancel.js --cap-min N` doubles as "how old may a run be and still count as ours", so a run
   that outlives the cap reads as someone else's and is skipped; `--cap-min 180` got past that, and
   JQ still refused. The cap is not the obstacle — JQ's state is.
+  ✅ **The poller now detects this in ~3 minutes instead of burning 45 + blocking 120.**
+  `pollUntilComplete` watches only `statistics.running.length`, which a phantom keeps above
+  baseline forever, so `emptyStreak` never accumulates. The distinguishing signal is the
+  **buildList**: `/algorithm/backtest/buildList?algorithmId=X` has **no backtest at all** for a
+  phantom, and that is what finally identified both. The probe requires ALL THREE —
+  past `JQ_PHANTOM_GRACE_MS` (default **3 min**, far beyond the 8s registration settle), JQ still
+  claiming a run above baseline, and no backtest — confirmed on **two** consecutive probes, with an
+  unreadable probe never counting as a phantom. Cancelling a healthy run is the one failure worse
+  than the phantom.
+  ⚠⚠ **`phantom` is RETRIABLE, never `slow-skipped`.** A slow-skip means "it ran and we gave up" —
+  terminal, parked in the deferred pool at a HIGHER cap. A phantom means the backtest never
+  existed: nothing was learned about the strategy, nothing was billed, and a bigger cap changes
+  nothing. Same class as `scrape-zero`, and kept out of `TERMINAL` for the same reason. The
+  normalizer records nothing and **stops the batch**, because an account that just phantomed will
+  most likely phantom the next strategy too.
+  ⚠ The marker is printed BARE at line start (`PHANTOM-STOP\t…`), not behind `[post] `. A
+  `*-STOP` marker the normalizer does not string-match is recorded as a **crash against the
+  strategy** — six CONCURRENT-STOP refusals did exactly that on 2026-09-23 — and
+  `tests/normalize.test.js` enforces that coverage for every marker the executor prints. It caught
+  this one.
 - ⚠ **A run JQ refuses to cancel at the slow-skip cap (「在此状态不能取消」) is not necessarily lost.**
   打板短线's jy-u-2 hit the 50-min cap, five cancel attempts failed, the executor reported
   `slow-skipped` — and the run completed server-side two minutes later. The algorithm's buildList

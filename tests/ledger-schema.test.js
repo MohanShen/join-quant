@@ -945,3 +945,73 @@ test('the daily chain stops only for the budget, a lock, or an empty board', asy
     assert.match(src, /outcome: 'exhausted'/);
   });
 });
+
+/**
+ * ⚠⚠ The phantom probe: JQ lists a running entry with no backtest behind it.
+ *
+ * Cost two sessions ~2 hours each on 2026-10-17. `pollUntilComplete` watches only
+ * `statistics.running.length`, so a phantom keeps the count above baseline forever, `emptyStreak`
+ * never accumulates, and the run spins to MAX_POLL_MS and reports a slow-skip. Both times
+ * `duration.used` never moved (JQ bills nothing) and the entry released only at the 120-minute
+ * stale threshold. The elapsed counter is no signal — the confirmed phantom incremented for 121
+ * minutes. The buildList is, and it is free.
+ */
+test('the poller detects a phantom instead of burning to the cap', async (t) => {
+  const post = fs.readFileSync(path.join(ROOT, 'utils/strategy-post-backtest.js'), 'utf8');
+  const norm = fs.readFileSync(path.join(ROOT, 'utils/strategy-normalize.js'), 'utf8');
+
+  await t.test('the probe asks the buildList, which is what distinguishes it', () => {
+    assert.match(post, /algorithmHasBacktest/);
+    assert.match(post, /backtest\/buildList\?algorithmId=/);
+  });
+
+  await t.test('all three conditions are required, so a healthy run is never cancelled', () => {
+    // past the grace period AND JQ still claims a run above baseline AND no backtest exists.
+    assert.match(post, /Date\.now\(\) - start > PHANTOM_GRACE_MS/);
+    assert.match(post, /st\.runningCount > baseline/);
+    assert.match(post, /has === false/);
+  });
+
+  await t.test('it is confirmed twice and an unreadable probe is never a phantom', () => {
+    assert.match(post, /\+\+phantomStreak >= 2/, 'one bad render must not cancel a run');
+    assert.match(post, /has === true[\s\S]{0,80}phantomStreak = 0/, 'never latch');
+    // algorithmHasBacktest returns null on a failed read, and null is neither true nor false here.
+    assert.match(post, /null = the read failed/);
+  });
+
+  await t.test('the grace period is long enough to beat registration lag', () => {
+    const m = post.match(/PHANTOM_GRACE_MS = parseInt\([^)]*String\((\d+) \* 60 \* 1000\)/);
+    assert.ok(m, 'the grace must be declared');
+    assert.ok(Number(m[1]) >= 3,
+      `grace ${m[1]}min is too short — cancelling a healthy run is worse than the phantom`);
+  });
+
+  await t.test('phantom is a RETRIABLE status, never slow-skipped', () => {
+    // slow-skipped = "it ran and we gave up" -> terminal, parked in the deferred pool at a higher
+    // cap. phantom = "the backtest never existed" -> nothing learned, nothing billed, a bigger cap
+    // changes nothing. Same class as scrape-zero.
+    assert.match(post, /result && result\.phantom\)\s*\? 'phantom'/);
+    const i = post.indexOf("result.phantom"), j = post.indexOf("result.stopped");
+    assert.ok(i > 0 && i < j, 'phantom must be checked BEFORE stopped or it reads as a slow-skip');
+    const terminal = norm.match(/const TERMINAL = new Set\(\[(.*?)\]\)/)[1];
+    assert.ok(!/phantom/.test(terminal), 'phantom must never join TERMINAL');
+  });
+
+  await t.test('the normalizer records nothing and stops the batch', () => {
+    // Detected by STATUS or by the bare marker — the marker path matters because an
+    // unrecognised `*-STOP` line is recorded as a `crash` against the strategy, which is what six
+    // CONCURRENT-STOP refusals did on 2026-09-23. tests/normalize.test.js enforces that coverage
+    // for every marker the executor prints, and it caught this one.
+    assert.match(norm, /status === 'phantom' \|\| out\.split/);
+    assert.match(norm, /startsWith\('PHANTOM-STOP\\t'\)/);
+    // ⚠ Anchor on the condition's STABLE prefix. Anchoring on `if (status === 'phantom')` broke
+    // the moment the condition was widened to also match the bare marker — indexOf returned -1
+    // and slice(-1) silently tested the last character of the file.
+    const at = norm.indexOf("status === 'phantom'");
+    assert.ok(at > 0, 'the phantom branch must exist');
+    const block = norm.slice(at);
+    assert.match(block.slice(0, 1200), /break;/, 'the account just phantomed — stop, do not spend');
+    assert.ok(!/state\.defer/.test(block.slice(0, 800)),
+      'a phantom must not be parked in the deferred pool — nothing was learned about the cap');
+  });
+});

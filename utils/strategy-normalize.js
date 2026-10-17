@@ -524,6 +524,29 @@ function main() {
       if (msg) console.log(`          └─ ${msg.slice(0, 160)}`);
       sleepSync(COOLDOWN_S); continue;
     }
+    // ⚠⚠ `phantom`: JQ listed a running entry with NO backtest behind it. Record NOTHING and stop
+    // the batch.
+    //
+    // Not terminal, and NOT deferred. A slow-skip is "it ran and we gave up", so the deferred pool
+    // re-offers it at a higher cap; a phantom is "the backtest never existed", so nothing was
+    // learned about this strategy, nothing was billed (measured twice on 2026-10-17:
+    // duration.used never moved), and a bigger cap changes nothing. Same class as `scrape-zero` —
+    // the right answer is to run it again unchanged.
+    //
+    // The BATCH stops because the account is in a state that produced a phantom, so the next
+    // strategy would very likely phantom too — burning the window one grace period at a time.
+    // Handled like CONCURRENT-STOP: stop, write no row, so the file stays pending for the next run.
+    if (status === 'phantom' || out.split('\n').some(l => l.startsWith('PHANTOM-STOP\t'))) {
+      const line = out.split('\n').find(l => l.startsWith('PHANTOM-STOP\t')) || '';
+      console.log(`[normalize] ⚠ PHANTOM — JQ listed a run with no backtest. ${line.trim().slice(0, 140)}`);
+      console.log('[normalize]   Nothing recorded for this strategy; it stays pending and is retried');
+      console.log('[normalize]   unchanged. Stopping the batch: the account just produced a phantom,');
+      console.log('[normalize]   so the next strategy would most likely do the same.');
+      console.log('[normalize]   ⚠ JQ may keep listing the ghost entry until JQ_CONCURRENT_STALE_MIN');
+      console.log('[normalize]     (120 min). It bills nothing — check duration.used, not the list.');
+      break;
+    }
+
     if (status === 'slow-skipped') {                    // hit the MAX_POLL safety cap → cancelled via API; terminal
       appendRow(ledgerPath, [srcFile, postId, title, 'slow-skipped', start, end, days, total, annual, sharpe, maxdd, '', '']);
       console.log(`[${n}/${slice.length}] slow-skipped (safety cap, cancelled)  ${f}`);

@@ -166,14 +166,32 @@ test('the deferred pool', async t => {
     assert.ok(!state.deferred()[PROBE]);
   });
 
-  await t.test('the 14 originally-stranded rows are in the REAL pool', () => {
-    // slow-skipped is TERMINAL in strategy-normalize (correctly — otherwise every batch
-    // re-bills them), so without the pool they could never be retried at all.
+  await t.test('every pool entry is cap-retriable and not already finished', () => {
+    // ⚠ This asserted "at least one `seeded from ledger` row is in the pool" — true when the 14
+    // originally-stranded rows were parked, and legitimately FALSE from 2026-10-17, when the
+    // pipeline finally worked through them: three were measured by the --redo retry path
+    // (d02cde29 0.4403, 35ce65d2 0.4955, 7ddf9b79 -0.2116) and the rest were resolved by
+    // normalize-sync as already finished. Asserting the historical state made success look like
+    // failure, so this asserts the INVARIANT the reconciliation maintains instead.
     const real = path.join(ROOT, 'data/deferred.json');
-    if (!fs.existsSync(real)) return;   // not seeded yet on a fresh clone
+    if (!fs.existsSync(real)) return;                       // fresh clone
     const pool = JSON.parse(fs.readFileSync(real, 'utf8'));
-    const seeded = Object.values(pool).filter(v => /seeded from ledger/.test(v.reason || ''));
-    assert.ok(seeded.length > 0, 'run: node utils/daily-pipeline.js --seed-deferred');
+    const harness = require('../utils/harness-config');
+    const ledger = require('../utils/ledger');
+    const row = {};
+    for (const r of ledger.rows()) row[r.sourceFile.replace(/^strategies\//, '')] = r;
+    const RETRIABLE = new Set(['slow-skipped', 'crash']);
+    for (const [file, v] of Object.entries(pool)) {
+      const b = String(file).replace(/^strategies\//, '');
+      const r = row[b];
+      // A bigger cap can change slow-skipped or a crash. It cannot change `normalized`,
+      // `compile-error`, `no-trades` or `incompatible-*` — those must have been resolved.
+      if (r && harness.measurementValid(r.epoch)) {
+        assert.ok(RETRIABLE.has(r.status),
+          `${b} is pooled but the ledger says ${r.status} — normalize-sync should have resolved it`);
+      }
+      assert.ok(v.reason, `${b} is pooled with no reason`);
+    }
   });
 
   await t.test('slow-skipped is still terminal for the normalizer itself', () => {
