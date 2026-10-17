@@ -777,3 +777,49 @@ test('each stage reopens the next', async (t) => {
       'step 2 is the one step that cannot be recovered if skipped');
   });
 });
+
+/**
+ * ⚠⚠⚠ The deferred pool re-offered entries the normalizer would always skip.
+ *
+ * A `slow-skipped` row is TERMINAL to `strategy-normalize.js`, so handing a deferred entry to
+ * `--files` alone makes it skip the entry as already-done — at ANY cap. So the pool never retried
+ * anything: it re-offered, the normalizer skipped, and `runNormalize` reported "0 deferred" because
+ * it only counts newly-PARKED files. Visible in the 2026-10-17 log as
+ * `normalize 0 runnable; 4 listed … (4 waiting for a higher cap)` — a higher cap would not have
+ * helped, which made that line's wording wrong too.
+ */
+test('a deferred retry can actually run', async (t) => {
+  const src = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
+
+  await t.test('a DUE retry counts as runnable work', () => {
+    // dueForRetry(cap) already filtered on maxCapTried < cap, which is the right judge for a
+    // retry; the ledger-terminal test is the right judge for a PENDING entry. Mixing them made
+    // the pool permanently unrunnable.
+    assert.match(src, /const dueRetry = new Set\(retry\.map\(r => r\.file\)\)/);
+    assert.match(src, /runnable = all\.filter\(e => dueRetry\.has\(e\) \|\| isWork\(e\)\)/);
+  });
+
+  await t.test('the retry list gets --redo and the fresh list does NOT', () => {
+    assert.match(src, /argsFor\(retryFiles, true\)/, 'retries need --redo to re-measure');
+    assert.match(src, /argsFor\(freshFiles, false\)/,
+      '--redo on a file with a current measurement re-bills a backtest to learn the same thing');
+    assert.match(src, /\.\.\.\(redo \? \['--redo'\] : \[\]\)/);
+  });
+
+  await t.test('--redo stays scoped to an explicit --files list', () => {
+    // strategy-normalize exits 2 on a bare --redo, because without the guard it re-bills the whole
+    // 215-strategy library. Both invocations pass --files, so the guard is satisfied by shape.
+    const n = fs.readFileSync(path.join(ROOT, 'utils/strategy-normalize.js'), 'utf8');
+    assert.match(n, /--redo requires an explicit --files list/);
+    assert.match(src, /'--files', list\.slice\(0, 40\)\.join\(','\)/);
+  });
+
+  await t.test('a due retry is never reported as dead', () => {
+    assert.match(src, /if \(runnable\.includes\(e\) \|\| dueRetry\.has\(e\)\) return false;/);
+    const q = require('../utils/daily-pipeline').queues().normalize;
+    for (const r of q.retry) {
+      assert.ok(!(q.dead || []).includes(r.file),
+        `${r.file} is due for retry and must not be called dead`);
+    }
+  });
+});

@@ -226,12 +226,18 @@ function normalizeQueue() {
       return !(r && TERMINAL.has(r.status) && harness.measurementValid(r.epoch));
     };
     const all = [...new Set([...retry.map(r => r.file), ...list])];
-    runnable = all.filter(isWork);
+    // ⚠ A DUE deferred-retry entry IS work, even though its ledger row is `slow-skipped` and so
+    // terminal. `dueForRetry(cap)` already filtered on `maxCapTried < cap`, which is the right
+    // judge for a retry — the ledger-terminal test is the right judge for a PENDING entry. Mixing
+    // them made the pool permanently unrunnable: 4 entries read "waiting for a higher cap" at the
+    // cron's cap of 45 while `runnable` stayed 0, so a higher cap would never have helped.
+    const dueRetry = new Set(retry.map(r => r.file));
+    runnable = all.filter(e => dueRetry.has(e) || isWork(e));
     // ⚠ Of the rest, separate DEAD from merely not-runnable-at-this-cap. A `slow-skipped` row in
     // the deferred pool is real work waiting for a bigger cap, not a leak — calling it
     // "unresolvable" would repeat the conflation this whole change exists to remove.
     dead = all.filter(e => {
-      if (runnable.includes(e)) return false;
+      if (runnable.includes(e) || dueRetry.has(e)) return false;
       const b = String(e).replace(/^strategies\//, '');
       if (!onDisk.has(b)) return true;                     // resolves to no file
       const r = row[b];
@@ -437,14 +443,47 @@ function runNormalize(q, { dry }) {
                    '— run node utils/normalize-sync.js to clean them)' };
   }
   if (!files.length) return { outcome: 'empty', note: 'nothing pending' };
-  const list = files.slice(0, 40).join(',');
-  const args = ['utils/strategy-normalize.js', '--window', 'train',
-                '--files', list,
-                '--usage-limit', USAGE_LIMIT_SPEC,
-                '--max-poll-min', String(SLOW_SKIP_MIN)];
-  if (dry) return { outcome: 'dry', note: `would run: node ${args.join(' ')}`.slice(0, 300) };
 
-  const r = sh('node', args);
+  // ⚠⚠ TWO invocations, because a retry needs `--redo` and a fresh file must not get it.
+  //
+  // A `slow-skipped` row is TERMINAL to the normalizer, so handing a deferred entry to `--files`
+  // alone makes it skip the entry as already-done — at ANY cap. The deferred pool therefore never
+  // retried anything: it re-offered, the normalizer skipped, and `runNormalize` reported
+  // "0 deferred" because it only counts newly-parked files. `--redo` is what re-measures a file
+  // that already carries a terminal row, and it is guarded to an explicit `--files` list precisely
+  // so it can be used this way.
+  //
+  // Retries go FIRST (they are the pool's priority) and are the only ones that get `--redo`,
+  // scoped to exactly those names. A fresh pending file must never see it: `--redo` on a file with
+  // a current measurement re-bills a backtest to learn the same thing.
+  const retryFiles = q.normalize.retry.map(r => base(r.file))
+    .filter(f => files.includes(f));
+  const freshFiles = files.filter(f => !retryFiles.includes(f));
+
+  const argsFor = (list, redo) => [
+    'utils/strategy-normalize.js', '--window', 'train',
+    '--files', list.slice(0, 40).join(','),
+    '--usage-limit', USAGE_LIMIT_SPEC,
+    '--max-poll-min', String(SLOW_SKIP_MIN),
+    ...(redo ? ['--redo'] : []),
+  ];
+
+  if (dry) {
+    const parts = [];
+    if (retryFiles.length) parts.push(`node ${argsFor(retryFiles, true).join(' ')}`);
+    if (freshFiles.length) parts.push(`node ${argsFor(freshFiles, false).join(' ')}`);
+    return { outcome: 'dry', note: `would run: ${parts.join('  THEN  ')}`.slice(0, 400) };
+  }
+
+  const runs = [];
+  if (retryFiles.length) runs.push({ label: 'retry', r: sh('node', argsFor(retryFiles, true)) });
+  if (freshFiles.length) runs.push({ label: 'fresh', r: sh('node', argsFor(freshFiles, false)) });
+  // One combined view for the parking scan and the outcome below.
+  const r = {
+    ok: runs.every(x => x.r.ok),
+    out: runs.map(x => `--- ${x.label} ---\n${x.r.out}`).join('\n'),
+    timedOut: runs.some(x => x.r.timedOut),
+  };
   // Park whatever blew the cap, so it is not stranded the way the first 14 were.
   const parked = [];
   for (const line of r.out.split('\n')) {
@@ -453,7 +492,8 @@ function runNormalize(q, { dry }) {
   }
   return {
     outcome: r.ok ? 'ran' : 'error',
-    note: `${files.length} queued, ${parked.length} deferred at ${SLOW_SKIP_MIN}min`,
+    note: `${retryFiles.length} retry(--redo) + ${freshFiles.length} fresh, ` +
+          `${parked.length} newly deferred at ${SLOW_SKIP_MIN}min`,
     tail: r.out.split('\n').filter(Boolean).slice(-6).join('\n'),
   };
 }
