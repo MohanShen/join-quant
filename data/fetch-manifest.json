@@ -1,52 +1,52 @@
 {
-  "fetchedAt": "2026-10-17T11:43:38.899Z",
+  "fetchedAt": "2026-10-17T18:07:13.363Z",
   "entries": [
     {
-      "postId": "f0ac613f00a1b80d261d2fad1c4138db",
-      "backtestId": "66e386b091cd0c534dcc5da0728c919f",
-      "title": "rsrs止损真的有效吗？社区公开的rsrs长期跑都是亏钱？",
-      "url": "https://www.joinquant.com/view/community/detail/f0ac613f00a1b80d261d2fad1c4138db",
-      "sourceFile": "2026-10-17_rsrs止损真的有效吗_社区公开的rsrs长期跑都是亏钱-f0ac613f.py",
+      "postId": "aaee30357ddba224573a58a447f65aba",
+      "backtestId": "b33926c8633b80309f131d72f15ab204",
+      "title": "五福闹新春V5.2动态池优化",
+      "url": "https://www.joinquant.com/view/community/detail/aaee30357ddba224573a58a447f65aba",
+      "sourceFile": "2026-10-18_五福闹新春V5_2动态池优化-aaee3035.py",
       "stats": {
-        "annualReturn": -0.21255452801213,
-        "cumulativeReturn": -0.1865431823,
-        "maxDrawdown": 0.25411991131628,
-        "sharpe": -1.7697769629811,
-        "winRatio": 0.25,
-        "tradingDays": 216,
-        "periodLabel": "2023-11"
+        "annualReturn": 0.74503656611362,
+        "cumulativeReturn": 18.380604859043,
+        "maxDrawdown": 0.22964098798646,
+        "sharpe": 2.2022777979692,
+        "winRatio": 0.53082706766917,
+        "tradingDays": 1331,
+        "periodLabel": "2026-07"
       }
     },
     {
-      "postId": "83f5b2005791326d669c6f0a5bef03ba",
-      "backtestId": "f5c5aab2db9be65a00c34834250bd702",
-      "title": "******向】拒绝臃肿缝合怪！极简ETF轮动",
-      "url": "https://www.joinquant.com/view/community/detail/83f5b2005791326d669c6f0a5bef03ba",
-      "sourceFile": "2026-10-17_向_拒绝臃肿缝合怪_极简ETF轮动-83f5b200.py",
+      "postId": "d1679937d4cb53cd990346dd1230ea2e",
+      "backtestId": "6a41a87e69e75a9ec98b4a90b2349882",
+      "title": "机器学习线性回归小市值-滚动训练版",
+      "url": "https://www.joinquant.com/view/community/detail/d1679937d4cb53cd990346dd1230ea2e",
+      "sourceFile": "2026-10-18_机器学习线性回归小市值-滚动训练版-d1679937.py",
       "stats": {
-        "annualReturn": 0.71013547405697,
-        "cumulativeReturn": 2.3623968163,
-        "maxDrawdown": 0.20864748759583,
-        "sharpe": 1.9196730061689,
-        "winRatio": 0.51626016260163,
-        "tradingDays": 565,
+        "annualReturn": 0.35406892434534,
+        "cumulativeReturn": 0.9766439781,
+        "maxDrawdown": 0.42069874274347,
+        "sharpe": 0.86412581697588,
+        "winRatio": 0.51704545454545,
+        "tradingDays": 562,
+        "periodLabel": "2026-04"
+      }
+    },
+    {
+      "postId": "5ac906ea399afcf548b6336e6980e65f",
+      "backtestId": "1eaa982f213e7789a06431c1a1e07081",
+      "title": "五福闹新春策略分时回测 探寻最优交易入场时点",
+      "url": "https://www.joinquant.com/view/community/detail/5ac906ea399afcf548b6336e6980e65f",
+      "sourceFile": "2026-10-18_五福闹新春策略分时回测_探寻最优交易入场时点-5ac906ea.py",
+      "stats": {
+        "annualReturn": 1.3058088466205,
+        "cumulativeReturn": 33.3137521675,
+        "maxDrawdown": 0.16919536468373,
+        "sharpe": 4.0744345732243,
+        "winRatio": 0.5140712945591,
+        "tradingDays": 1058,
         "periodLabel": "2026-05"
-      }
-    },
-    {
-      "postId": "419ff61d0e78854276e25a82a83ab497",
-      "backtestId": "749107acab59e9300cf6ebc7607133fe",
-      "title": "抄作业-QFII和社保",
-      "url": "https://www.joinquant.com/view/community/detail/419ff61d0e78854276e25a82a83ab497",
-      "sourceFile": "2026-10-17_抄作业-QFII和社保-419ff61d.py",
-      "stats": {
-        "annualReturn": 0.73323207375955,
-        "cumulativeReturn": 2.751556988,
-        "maxDrawdown": 0.17590556661353,
-        "sharpe": 2.5290641275546,
-        "winRatio": 0.56934306569343,
-        "tradingDays": 601,
-        "periodLabel": "2026-06"
       }
     }
   ]

@@ -1431,5 +1431,20 @@
     "postId": "419ff61d0e78854276e25a82a83ab497",
     "sourceFile": "2026-10-17_抄作业-QFII和社保-419ff61d.py",
     "registeredAt": "2026-10-17T11:43:38.886Z"
+  },
+  "a1f622c6a376f278f34b26df442ebe84ec166364e1d56f90967805a19a4e0e18": {
+    "postId": "aaee30357ddba224573a58a447f65aba",
+    "sourceFile": "2026-10-18_五福闹新春V5_2动态池优化-aaee3035.py",
+    "registeredAt": "2026-10-17T18:07:07.102Z"
+  },
+  "5cc42b5469e3024257b01f7aef5fcf2aa545ac9cfc729d9c6c6ebe9d49844143": {
+    "postId": "d1679937d4cb53cd990346dd1230ea2e",
+    "sourceFile": "2026-10-18_机器学习线性回归小市值-滚动训练版-d1679937.py",
+    "registeredAt": "2026-10-17T18:07:09.748Z"
+  },
+  "fb3b92139aad9488e5022bd46d61a0d28a5824c1876546b5b15b1a7ec5dd8bdd": {
+    "postId": "5ac906ea399afcf548b6336e6980e65f",
+    "sourceFile": "2026-10-18_五福闹新春策略分时回测_探寻最优交易入场时点-5ac906ea.py",
+    "registeredAt": "2026-10-17T18:07:13.345Z"
   }
 }
