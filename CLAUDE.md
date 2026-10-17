@@ -1486,6 +1486,20 @@ Only the directories whose contents aren't self-evident:
   including the row that mattered. It needs an AST walk or a probe, not a third regex.
   ⚠ Nothing in the pipeline consults the lint; a test asserts that `daily-pipeline`,
   `strategy-normalize` and `integrate-eligible` do not import it.
+- ⚠⚠ **A capped run that JQ refuses to cancel may be a PHANTOM that bills nothing** — and the
+  difference is only visible in `duration.used`. Measured 2026-10-17: a liquidity-floor run hit the
+  45-min cap, JQ refused cancellation five times (`在此状态不能取消`) across two attempts, the entry
+  stayed listed for **121 minutes**, and `used` sat at **92 before, during and after**. It released
+  at `JQ_CONCURRENT_STALE_MIN` (default **120 min**), which is exactly the case `jq-running.js`
+  documents: *"a phantom that JQ will never reap — one reached 701 minutes while billing nothing —
+  must not make this block forever."*
+  ⚠ **So do not charge wall clock to the budget.** I projected "~169 of 180 used, ~11 min left" twice
+  while that run was listed; the real figure was 92 and the pipeline had **88 minutes**. `used` is
+  the only authority, and it does not move until a run TERMINATES — which an unreaped phantom never
+  does. A listed run is not a billed run.
+  ⚠ `jq-cancel.js --cap-min N` doubles as "how old may a run be and still count as ours", so a run
+  that outlives the cap reads as someone else's and is skipped; `--cap-min 180` got past that, and
+  JQ still refused. The cap is not the obstacle — JQ's state is.
 - ⚠ **A run JQ refuses to cancel at the slow-skip cap (「在此状态不能取消」) is not necessarily lost.**
   打板短线's jy-u-2 hit the 50-min cap, five cancel attempts failed, the executor reported
   `slow-skipped` — and the run completed server-side two minutes later. The algorithm's buildList

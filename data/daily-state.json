@@ -1,5 +1,10 @@
 {
-  "inFlight": null,
+  "inFlight": {
+    "stage": "normalize",
+    "target": null,
+    "budget": 92,
+    "at": "2026-10-17T14:47:50.852Z"
+  },
   "lastRun": {
     "stage": "discover",
     "target": null,
