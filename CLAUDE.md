@@ -605,6 +605,17 @@ Only the directories whose contents aren't self-evident:
   **2–20M CNY/day**. ⚠ Honest bound on that reading: the floor models a manager who *declines* a
   name he cannot fill, whereas a real ¥5M book would take **partial fills** — it is the disciplined
   version of the capacity question, not a literal capital sweep.
+  ⚠⚠ **Also measured on the PRODUCT** (dxp-imp-1, always-small — the family's actual candidate):
+  2e6 is inert there too (bit-identical, 40 `LIQFLOOR` lines `in==out`, `slots=10`, 0 errors), and
+  1e7 keeps objective **0.5403 / sharpe 3.02** with both years above the gate (2.31/3.72) — still
+  better than the **base unfloored** (0.4568). But it loses **more** sharpe at 1e7 than the base
+  (−0.49 vs −0.45), because always-small holds the thin sleeve on strictly more days. So the product
+  is scored **2, not 3**: capacity is what a book can ABSORB, not how much sharpe it has spare, and
+  its bigger headroom to the gate is a level effect. The 2e7 point on the product is **unmeasured**
+  (projection ≈2.1, so 3 is not ruled out, merely not earned).
+  ⚠ **Correcting an overstatement made earlier in this file**: "capacity ~¥1–2M" conflated two
+  quantities. **Unimpaired** capacity ≈ ¥1M (the 2e6 feasibility floor bites nothing there);
+  **gate-passing** capacity is between ¥5M and ¥10M for the base and ≥¥5M for the product.
   ⚠⚠ **Why it was inert is incidental, not designed**: the 股息 top-25% + 营收>1e8 + 盈利/ROE/ROA
   chain happens to exclude illiquid names. So any variant loosening that chain (u-6-style dividend
   gate removal, u-7/u-8-style price-cap widening) **re-opens the axis** and must re-run liq-1 before

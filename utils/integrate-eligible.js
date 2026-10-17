@@ -154,6 +154,16 @@ function shelfProductOf(family) {
       gateVal: g('gate_val').split(/\s+/)[0],
       objective: parseFloat(g('train_objective')),
       sharpeVal: parseFloat(g('sharpe_val')),
+      // ⚠ The shelf has no dedicated TRAIN-sharpe field; it sits inside the train_objective
+      // gloss, e.g. `0.6623   (TRAIN …: total 226.83% / annual 80.93% / maxDD 14.70% / sharpe 3.51…)`.
+      // Without it a product sorts with `sharpe: undefined`, and arrival ORDER is the load-bearing
+      // part of the incremental model — the first arrival defines what everything after must beat.
+      // Falls back to the objective so an unparseable gloss can never sort a product FIRST by
+      // accident; it sorts low and is visible.
+      sharpe: (() => {
+        const m = raw('train_objective').match(/sharpe\s+(-?\d+(?:\.\d+)?)/i);
+        return m ? parseFloat(m[1]) : null;
+      })(),
     });
   }
   if (!found.length) return null;
