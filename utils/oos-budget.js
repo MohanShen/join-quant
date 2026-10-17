@@ -39,10 +39,14 @@
  * ## Recording
  *
  * Append-only in `data/consumption.tsv` under `stage: 'oos'`, so the account is the same tracked
- * ledger every other stage writes to. ⚠ `priorTests` counts an event whose `outcome` matches
- * `/^oos-/` wherever it was filed, not only rows whose stage is right — a VAL recorded under
- * `stage: enhance` was invisible to the VAL budget for weeks, and the same mis-filing must not
- * hide an OOS test.
+ * ledger every other stage writes to. ⚠ `priorTests` also counts a row whose OUTCOME carries an
+ * oos verdict wherever it was filed — a VAL recorded under `stage: enhance` was invisible to the
+ * VAL budget for weeks, and the same mis-filing must not hide an OOS test. ⚠⚠ But that pattern is
+ * narrow by necessity: see `priorTests`, where a bookkeeping NOTE reading `oos-recorded` once
+ * counted as a second test and falsely exhausted the reserve.
+ *
+ * ⚠ **Never record a note whose `outcome` begins with an oos verdict.** Write the research side
+ * under `stage: 'research'` with a neutral outcome; the budget has already written the real row.
  *
  * Usage:
  *   const oos = require('./oos-budget');
@@ -62,10 +66,25 @@ const OVERRIDE = () => process.env.JQ_ALLOW_OOS_OVERBUDGET === '1';
 const activeEpoch = () => harness.config().epoch;
 const policy = () => harness.config().oosPolicy || {};
 
-/** Every recorded OOS test, however it was filed. */
+/**
+ * Every recorded OOS test, however it was filed.
+ *
+ * ⚠⚠ The outcome pattern is NARROW on purpose, and the reason is a mistake made on 2026-10-17:
+ * a bookkeeping note recorded as `stage: 'research'` with `outcome: 'oos-recorded'` matched a bare
+ * `/^oos-/` and pushed the bench to a false 2 of 2 — i.e. a NOTE about a test read as a second
+ * test and appeared to exhaust the reserve. `consumption.tsv` is append-only, so the row cannot be
+ * withdrawn; the reading is what gets corrected.
+ *
+ * So the match is on the VERDICT SHAPES `oos-budget.record()` actually emits — `oos-sharpe …`,
+ * `oos-completed`, and `oos-pass`/`oos-fail` for safety — rather than on any string beginning
+ * "oos-". A properly filed row (`stage: 'oos'`) is still counted whatever its outcome says, which
+ * is what catches the mis-staged case this clause exists for (the VAL budget lost a spent
+ * validation to exactly that, `etfmom-005` under `stage: enhance`).
+ */
 function priorTests() {
+  const VERDICT = /^oos-(sharpe|completed|pass|fail)\b/i;
   return consumption.events({})
-    .filter(e => e.stage === 'oos' || /^oos-/i.test(String(e.outcome || '').trim()));
+    .filter(e => e.stage === 'oos' || VERDICT.test(String(e.outcome || '').trim()));
 }
 
 /** Tests charged against the CURRENT bench (a scoring-only bump does not restore the reserve). */

@@ -880,6 +880,38 @@ Only the directories whose contents aren't self-evident:
   ⚠ The data was **not** rewritten: `consumption.tsv` is append-only and `record()` stamps the live
   epoch on purpose, so no truthful epoch-6 row can be appended today. Fixing the READER fixes the
   class, and the blank epoch then blocks via the unknown-epoch rule, which is the right answer.
+- **First OOS test spent, 2026-10-17: 大小盘轮动's product FAILED out of sample.** `dxp-oos-1`,
+  holdout 2026-01-01..2026-10-16 (288 calendar / 188 trading days): total **−1.18%**, annual −1.49%,
+  sharpe **−0.21**, maxDD **25.78%**, objective **−0.2727**. Curve reproduces the scrape exactly.
+  **Not a crash but a stall** — roughly zero return over 9.5 months with a 26% round-trip drawdown —
+  and the drawdown is **smaller** than VAL's 36.37%, so a 2024-02-style stampede did **not** recur.
+  TRAIN → VAL → OOS is monotone: **3.51 → 1.88 → −0.21**. This converts the product header's own
+  warning (「There is NO evidence this candidate beats the base out of sample. Adopted on TRAIN
+  only.」) into a measurement: it does not beat the base, and does not beat zero.
+  ⚠⚠ **Not a basis for re-picking the base.** The base was never tested on 2026; choosing between
+  them on OOS is selection on the last clean surface; and the base is ineligible anyway (its VAL
+  validated imp-1). Budget: candidate **absolutely** spent, bench **1 of 2**.
+- ⚠⚠ **The rolling `holdout.end: "today"` was unrunnable by construction.** JQ refuses
+  「结束时间不能大于前一个交易日」 — the end may not be later than the previous trading day — so the
+  first OOS attempt compile-failed on a Saturday. It **charged nothing**, which is `oos-budget`'s
+  "only a COMPLETED run is charged" rule proving itself on first use; had that been wrong, a
+  syntax-level refusal would have burned half the epoch's reserve.
+  `window()` now resolves `"today"` via `previousWeekdayISO()`. ⚠ Weekends only — there is no
+  holiday calendar and there cannot be one, since `harness-config.js` is read outside any JQ
+  session; a run adjacent to a long closure will be refused again, which is safe (loud, free) and
+  fixed by stepping back a day.
+  ⚠ Consequence of a rolling end: **two OOS tests on different days do not cover the same window**,
+  so their numbers are comparable only to their own stated spans. Record the resolved dates.
+  Also removed a dead second `todayISO()` in `strategy-post-backtest.js` — a second resolution of
+  "today" beside the harness's is how the window logic drifted across seven files before.
+- ⚠⚠ **A NOTE about an OOS test must not look like one.** `priorTests()` matched a bare `/^oos-/`,
+  so a bookkeeping row (`stage: 'research'`, `outcome: 'oos-recorded'`) counted as a second test and
+  pushed the bench to a false **2 of 2** — written one message after the skill warned against
+  exactly that. `consumption.tsv` is append-only, so the READING was corrected, not the row: the
+  outcome pattern is now the verdict shapes `record()` actually emits
+  (`oos-sharpe` / `oos-completed` / `oos-pass` / `oos-fail`), while `stage: 'oos'` still counts
+  whatever its outcome says. Record the research side under `stage: 'research'` with a neutral
+  outcome.
 - **`/run-oos` is the entry point for spending an OOS test** (`.claude/skills/run-oos/`). It
   pre-flights the candidate, declares the expectation BEFORE the number exists, hands the human the
   one gated command, then records the result.

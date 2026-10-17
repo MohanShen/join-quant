@@ -239,3 +239,38 @@ test('--allow-oos unlocks the WINDOW only, and readiness moved into code', async
     assert.match(src, /but \$\{family\}'s candidate is/);
   });
 });
+
+test('a NOTE about an OOS test must not count as one', async (t) => {
+  // ⚠⚠ Made this mistake for real on 2026-10-17, one message after writing the skill that warned
+  // against it: a bookkeeping row `stage: 'research'`, `outcome: 'oos-recorded'` matched a bare
+  // /^oos-/ and pushed the bench to a false 2 of 2 — a NOTE about a test reading as a second test
+  // and appearing to exhaust the reserve. consumption.tsv is append-only, so the READING had to be
+  // corrected rather than the row withdrawn.
+  const fs2 = require('fs');
+  const ep = String(harness.config().epoch);
+  const HEAD = 'key\tkind\tstage\trunId\tat\toutcome\tnote\tmembers\tmemberHash\tepoch';
+  const write = rows => fs2.writeFileSync(process.env.JQ_CONSUMPTION_FILE,
+    [HEAD, ...rows].join('\n') + '\n');
+  const row = (key, stage, outcome) =>
+    [key, 'family', stage, 'r1', '2026-10-17T00:00:00Z', outcome, '', '', '', ep].join('\t');
+
+  await t.test('oos-recorded is a note, not a verdict', () => {
+    write([row('大小盘轮动', 'research', 'oos-recorded')]);
+    assert.strictEqual(oos.testsOnThisBench().length, 0,
+      'a research-stage note must not be charged to the reserve');
+  });
+
+  await t.test('the real verdict shapes DO count, wherever they are filed', () => {
+    for (const outcome of ['oos-sharpe -0.21', 'oos-completed', 'oos-pass', 'oos-fail']) {
+      write([row('cand', 'enhance', outcome)]);   // deliberately mis-staged
+      assert.strictEqual(oos.testsOnThisBench().length, 1,
+        `${outcome} is a spent test however it was filed`);
+    }
+  });
+
+  await t.test("a properly staged row counts whatever its outcome says", () => {
+    // stage: 'oos' is authoritative on its own — that is what catches an outcome nobody foresaw.
+    write([row('cand', 'oos', 'something nobody predicted')]);
+    assert.strictEqual(oos.testsOnThisBench().length, 1);
+  });
+});

@@ -55,7 +55,6 @@ const DEFAULT_CAPITAL = parseInt(process.env.JQ_BASE_CAPITAL || '1000000', 10);
 
 // Frozen backtest windows — MUST match harness/harness.md (current epoch).
 // HOLDOUT end rolls forward to "today" (true out-of-sample).
-function todayISO() { return new Date().toISOString().slice(0, 10); }
 // Windows come from harness/config/epoch-<n>.json via utils/harness-config.js — never
 // hardcoded here. They used to live in seven files and had already drifted apart.
 const harness = require('./harness-config');
@@ -63,11 +62,11 @@ const WINDOWS = Object.fromEntries(
   Object.keys(harness.config().windows).map(n => [n, harness.window(n)])
 );
 
-// Enclosed-environment guard: the 2025-01-01→now window is a reserved OUT-OF-SAMPLE set
-// that the autoenhance pipeline must NEVER backtest (harness/harness.md). This hard-block
-// makes it a code guarantee, not an instruction — no agent can touch OOS even via custom
-// --start/--end that overlaps 2025+. Only the user, for a private final test, may override
-// with JQ_ALLOW_OOS=1.
+// Enclosed-environment guard: the reserve starting at `windows.holdout.start` (2026-01-01 under
+// epoch 8 — read it, never hardcode it) is a held-out OUT-OF-SAMPLE set. This hard-block makes it
+// a code guarantee, not an instruction: no custom --start/--end that overlaps the reserve gets
+// through either. Overridable with `--allow-oos` (or the older JQ_ALLOW_OOS=1), after which the
+// READINESS and BUDGET gates in main() still apply — see utils/oos-budget.js.
 const OOS_CUTOFF = harness.oosCutoff();
 /**
  * Does this window reach into the reserved out-of-sample period? Shared by the window gate and

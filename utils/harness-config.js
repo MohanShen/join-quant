@@ -48,11 +48,40 @@ function config() {
   return _cfg;
 }
 
-/** A named window with `today` resolved. Unknown name -> null, so callers can error properly. */
+/**
+ * The most recent WEEKDAY strictly before today, as JQ requires.
+ *
+ * ⚠⚠ Why this is not just `todayISO()`. A window whose `end` is `"today"` was resolved to today's
+ * date and handed to JoinQuant, which refuses it outright:
+ *   「编译失败:结束时间不能大于前一个交易日」 — the end may not be LATER than the previous trading day.
+ * Measured 2026-10-17 (a Saturday): the first real OOS run compile-failed on exactly this, so the
+ * rolling holdout end was unrunnable by construction. It cost nothing — a failed run produces no
+ * number and `oos-budget` charges only a COMPLETED one, which is the rule working as designed —
+ * but it would have failed on every weekend and every Monday too.
+ *
+ * ⚠ Weekends only; this has no holiday calendar, and it cannot have one — `harness-config.js` is
+ * read outside any JQ session. In a run adjacent to a long closure (Spring Festival, National Day)
+ * the previous weekday may itself be a holiday and JQ will refuse again. That is safe rather than
+ * silent: the refusal is loud, it charges nothing, and the fix is to step back another day.
+ */
+function previousWeekdayISO() {
+  const d = new Date(`${todayISO()}T00:00:00Z`);
+  do { d.setUTCDate(d.getUTCDate() - 1); } while (d.getUTCDay() === 0 || d.getUTCDay() === 6);
+  return d.toISOString().slice(0, 10);
+}
+
+/**
+ * A named window with `today` resolved. Unknown name -> null, so callers can error properly.
+ *
+ * ⚠ `end: "today"` means "as much of the reserve as exists", so the holdout window LENGTHENS with
+ * the calendar. Consequence worth knowing: two OOS tests taken on different days in the same epoch
+ * do NOT cover the same window, so their numbers are not strictly comparable to each other — only
+ * each to its own stated span. Record the resolved dates with any OOS result.
+ */
 function window(name) {
   const w = config().windows[name];
   if (!w) return null;
-  return { name, start: w.start, end: w.end === 'today' ? todayISO() : w.end };
+  return { name, start: w.start, end: w.end === 'today' ? previousWeekdayISO() : w.end };
 }
 
 /** First date of the reserved out-of-sample period — the code guard's cutoff. */
@@ -297,7 +326,7 @@ if (require.main === module) {
   }
 }
 
-module.exports = { config, window, windowYears, oosCutoff, gate, objective, score,
+module.exports = { config, window, windowYears, previousWeekdayISO, oosCutoff, gate, objective, score,
                    stageGate, stageThreshold, integrateBar,
                    comparableEpochs, sameBench, measurementValid,
                    pythonLiterals, verify, todayISO };

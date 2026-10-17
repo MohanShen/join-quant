@@ -112,12 +112,18 @@ node utils/backtest-series.js --list | grep holdout
 
 ## Step 5 — record
 
-Report the number as measured, then write it to the family page (§2 row, `类型: raw`) and record
-the event:
+Report the number as measured, then write it to the family page (§2 row, `类型: raw`).
+
+⚠⚠ **Do NOT append a second `stage: 'oos'` row.** `oos-budget.record()` already wrote one, keyed on
+the CANDIDATE, and `priorTests()` counts every row whose stage is `oos` *or* whose outcome starts
+`oos-`. A family-keyed duplicate would make the bench read 2 of 2 and falsely exhaust the reserve.
+Record the research side under `stage: 'research'` instead:
 
 ```bash
-node -e "require('./utils/consumption').record({key:'<family>',kind:'family',stage:'oos',runId:'<expId>',outcome:'<sharpe …>',note:'…'})"
+node -e "require('./utils/consumption').record({key:'<family>',kind:'family',stage:'research',runId:'<expId>',outcome:'oos-recorded',note:'…'})"
 ```
+
+⚠ And keep `outcome` clear of a leading `oos-` on that row, for the same reason.
 
 If the candidate is a universe's promoted candidate, note the result in `data/promoted.tsv` as
 well — what a universe ships should carry its out-of-sample number.
