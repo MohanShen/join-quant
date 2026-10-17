@@ -20,8 +20,8 @@ universe: 小盘
 universeBasis: "111 literal small-cap signals (小市值/中证1000); the ETF tickers are a satellite sleeve"
 universeSecondOpinion: 小盘
 universeAt: 2026-10-07
-bestVariant: [[ef10ee67_保守版低回撤因子]]
-bestObjective: 0.2139
+bestVariant: [[d02cde29_高质量稳定上涨]]
+bestObjective: 0.4403
 memberCount: 21
 sources: { normalized: 20, study: 0, enhance: 0 }
 realism: "epoch-6 头条 52.58% 年化 / 8.55% 回撤不可当作可实现水平：(a) 台仍零滑点，而最大单一收益来源是 6 只微盘周度轮换（q-e6-1）；(b) etf 腿收益全在 2022 且池为事后组装，2023 净拖累 −8.43pp（q-e6-2, q-audit）；(c) 日线台把盘中止损坍缩成收盘检查、隐藏盘中回撤（q-audit）；(d) 约 3.8pp 回撤保护挂在 n=4 的 1/4 月日历规则上（q-3, epoch 2）。源码审计未发现确证的未来函数——是不可实现，不是造假"
@@ -31,7 +31,7 @@ valDeclined: 8
 valDeclinedBasis: "「没有 improve 候选；base 的 VAL 2024-25 对作者而言很可能是样本内（帖子 2026-02、ETF 池为事后组装）。epoch 6 的一次 VAL 预算留给未来的候选」(§4). The window is probably IN-sample for the author, so spending the family's one validation on it would buy a number that is not out-of-sample. Clearing condition: an improve candidate of our own."
 status: active
 updatedAt: 2026-10-17
-bestObjectiveEpoch: 6
+bestObjectiveEpoch: 8
 ---
 
 # 多因子ML — strategy family
@@ -62,8 +62,8 @@ bestObjectiveEpoch: 6
 
 | 排名 | 变体 | obj | sharpe | annual% | maxDD% | gate | epoch |
 |---|---|---|---|---|---|---|---|
-| 1 | [[d02cde29_高质量稳定上涨]] | 0.4737 | 3.21 | 56.98 | 9.61 | ✅ | 2⚠ |
-| **2** | **[[ef10ee67_保守版低回撤因子]]** | 0.2139 | 1.76 | 30.10 | 8.71 | ✅ | 6 |
+| **1** | **[[d02cde29_高质量稳定上涨]]** | 0.4403 | 3.01 | 52.58 | 8.55 | ✅ | 8 |
+| 2 | [[ef10ee67_保守版低回撤因子]] | 0.2139 | 1.76 | 30.10 | 8.71 | ✅ | 6 |
 | 3 | [[f1253042_10万本金低频风控]] | 0.0449 | 0.65 | 9.56 | 5.07 | ❌ | 2⚠ |
 | 4 | [[6ad90252_巴菲特价值量化]] | 0.0000 | 0.00 | 0.00 | 0.00 | ❌ | 2⚠ |
 | 5 | [[775faa4e_信息熵策略]] | -0.0011 | 0.47 | 12.16 | 12.27 | ❌ | 2⚠ |
