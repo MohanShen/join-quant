@@ -807,7 +807,19 @@ function printPlan(p) {
     const oos = require('./oos-budget');
     const used = oos.testsOnThisBench().length;
     const cap = oos.policy().maxTestsPerEpoch;
+    // ⚠ Name the CANDIDATES, not just the budget. This printed only "N test(s) left", a count of
+    // remaining budget, so "integrate shipped something new" and "something is waiting for the
+    // final surface" were facts a human had to join by hand out of an append-only register.
+    // `utils/oos-queue.js` derives the join; it reports and never dispatches.
+    const rows = require('./oos-queue').build();
+    const rdy = rows.filter(r => r.state === 'ready');
     console.log(`   oos       ${String(cap - used).padStart(4)}   test(s) left on this bench — HUMAN ONLY (/run-oos)`);
+    for (const r of rdy) {
+      console.log(`             READY  ${r.universe} ${r.candidateId}` +
+                  (r.flags && r.flags.length ? `  ⚠ ${r.flags.join('; ')}` : ''));
+    }
+    const other = rows.length - rdy.length;
+    if (other) console.log(`             (${other} promoted candidate(s) already tested or blocked)`);
   } catch (e) {
     console.log(`   oos         ?   (could not read: ${String(e.message).slice(0, 60)})`);
   }

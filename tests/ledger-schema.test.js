@@ -681,3 +681,64 @@ test('normalize-sync can clean what it could not reach', async (t) => {
     }
   });
 });
+
+/**
+ * The three hand-offs the funnel depends on, asserted as behaviour rather than as prose.
+ *
+ *   new member assigned   -> research reopens
+ *   new best variant      -> integrate reopens
+ *   new promoted candidate-> surfaces as OOS-ready (reported, NEVER dispatched)
+ */
+test('each stage reopens the next', async (t) => {
+  await t.test('a new member changes the family hash, which is what reopens research', () => {
+    // staleFor compares the stamped memberHash with the current one. memberState hashes the
+    // sorted `family:` members read from wiki/strategies/*.md, so ASSIGNING a strategy changes
+    // the hash — that is the whole trigger, and it is why `assign` ranks above `normalize`.
+    const c = require('../utils/consumption');
+    const src = fs.readFileSync(path.join(ROOT, 'utils/consumption.js'), 'utf8');
+    assert.match(src, /last\.memberHash !== now\.hash/, 'staleness must compare membership');
+    assert.match(src, /new member\(s\) since last/);
+    const st = c.staleForResearch('红利低频');
+    assert.ok(typeof st.stale === 'boolean' && st.now && typeof st.now.hash === 'string');
+  });
+
+  await t.test('integrate dispositions on the CANDIDATE, so a new best variant reopens it', () => {
+    // Keyed by family, one failed merge would retire a lineage forever.
+    const src = fs.readFileSync(path.join(ROOT, 'utils/integrate-queue.js'), 'utf8');
+    assert.match(src, /const id = a\.champion\.sourceFile/);
+    assert.match(src, /promoted\.isRejected\(universe, id\)/);
+    assert.match(src, /a NEW best variant reopens it/);
+  });
+
+  await t.test('a promoted candidate surfaces as OOS-ready, with its state', () => {
+    const rows = require('../utils/oos-queue').build();
+    assert.ok(Array.isArray(rows));
+    for (const r of rows) {
+      assert.ok(['ready', 'tested', 'blocked'].includes(r.state), `bad state ${r.state}`);
+      assert.ok(r.candidateId, 'a row with no candidate cannot be acted on');
+      assert.ok(r.why && r.why.length > 5, 'every state must say why');
+    }
+    // Ready first — it is the only actionable state.
+    const idx = rows.map(r => r.state === 'ready' ? 0 : 1);
+    assert.deepStrictEqual(idx, [...idx].sort(), 'ready rows must lead');
+  });
+
+  await t.test('a candidate below the stage gate is FLAGGED, not silently offered', () => {
+    // The budget says a test is PERMITTED; it never says the candidate deserves one. And
+    // integrate-eligible checks the VAL sharpe, not the champion's TRAIN sharpe — so a promoted
+    // candidate can sit at 1.46 against a 1.5 gate (红利低频, live).
+    const harness = require('../utils/harness-config');
+    for (const r of require('../utils/oos-queue').build()) {
+      if (r.sharpe == null || harness.stageGate('validate', r.sharpe)) continue;
+      assert.ok((r.flags || []).some(f => /below the .* gate/.test(f)),
+        `${r.candidateId} is sub-gate at sharpe ${r.sharpe} and carries no flag`);
+    }
+  });
+
+  await t.test('oos is reported by the planner and NEVER dispatchable', () => {
+    const src = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
+    assert.match(src, /require\('\.\/oos-queue'\)\.build\(\)/, 'the planner must name candidates');
+    assert.ok(!require('../utils/daily-pipeline').PRIORITY.includes('oos'),
+      'spending the last clean surface is a decision, not a queue to drain');
+  });
+});

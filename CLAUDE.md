@@ -754,6 +754,35 @@ Only the directories whose contents aren't self-evident:
   *below* the readiness block, so it hit a temporal dead zone — and a bare `catch` **swallowed the
   ReferenceError**, making every promoted candidate read as "not promoted" while the code looked
   like it worked. Hoisted, and the catch now reports.
+- **The three stage hand-offs, and the one that was missing** (verified 2026-10-17):
+  | new fact | what reopens | mechanism |
+  |---|---|---|
+  | a member is ASSIGNED to a family | `research` | `consumption.staleFor` compares the stamped `memberHash` with `memberState(family)`, which hashes the sorted `family:` members read from `wiki/strategies/*.md` — so an assignment changes the hash. This is why `assign` outranks `normalize`. |
+  | a family gets a NEW BEST VARIANT | `integrate` | `integrate-queue` dispositions on `candidateId` (`a.champion.sourceFile`), never on the family — a new best variant is a new id, so it is neither promoted nor rejected and becomes an arrival. ⚠ It only becomes a new id once the variant reaches the **product shelf**, which is `family-recorder`'s archive step. |
+  | integrate PROMOTES a candidate | — | **nothing, before `utils/oos-queue.js`.** `--plan` printed only `oos N test(s) left`, a count of BUDGET, so "integrate shipped something" and "something awaits the final surface" were facts a human joined by hand out of an append-only register. |
+  `node utils/oos-queue.js` derives the join: each universe's CURRENT promoted candidate with
+  `state: ready | tested | blocked`, and the planner now names the ready ones.
+  ⚠⚠ **It reports and never dispatches, by design.** The reserve is 2 tests per bench and 1 per
+  candidate ABSOLUTE. When integrate supersedes a candidate with a slightly-changed one, testing
+  the new one is a SECOND look at the same held-out window — the exact failure the VAL budget and
+  `harness.md` both name: selection on the last clean surface, one look at a time. So a superseding
+  candidate shows as `ready` and whether that is worth one of two tests stays a human judgement.
+  `oos` is absent from `PRIORITY` and stays absent.
+  ⚠ The queue also **flags a candidate below the stage gate**, because the budget says a test is
+  *permitted*, never that the candidate deserves one — and `integrate-eligible` checks the VAL
+  sharpe, not the champion's TRAIN sharpe. Live: 红利低频 is promoted and OOS-ready at TRAIN sharpe
+  **1.46** against a 1.5 gate.
+- **Are the DERIVED queues reliable?** Measured: `queues()` is **deterministic** across calls and
+  costs **~292ms**. Their strength is structural — recomputed from the wiki and the ledgers every
+  time, so they cannot go STALE. ⚠ They can still be WRONG in their LOGIC, and were twice on
+  2026-10-17 (research reopening families that had declined their VAL; normalize counting
+  non-work as depth) — but a logic bug is fixed in one place, whereas the FILE-backed queue's
+  contents went wrong and needed `normalize-sync` to exist purely to reconcile them, and still
+  accumulated 4 immortal entries for weeks. **So do not add a file for the derived three**: a
+  second copy is what the `study/manifest.json` trap was (manifest said 14 done, ledger said 14
+  stale, a dispatch would have found nothing and exited 0). What files give that derivation does
+  not is a RECORD of what the queue said and whether dispatch acted on it — that is
+  `data/daily-state.json`, and it is the thing to extend if this bites again.
 - **Two of the five queues are FILES, three are DERIVED.** `data/pending-normalize.json` and
   `data/copy-queue.json` are real files the normalize/fetch pipelines themselves read. The
   research, assign and integrate queues are **derived** — research from `wiki/families/*.md` +
