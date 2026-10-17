@@ -221,7 +221,29 @@ async function main() {
 
 // CLI
 if (require.main === module) {
-  main().catch(e => { console.error(e); process.exit(1); });
+  // ⚠⚠⚠ `jq.close()` is MANDATORY here, and its absence made this stage never exit.
+  //
+  // `jq-http` holds a Playwright CDP connection to the logged-in Chrome. Eight modules call
+  // `jq.close()` — but each does so in its own `require.main === module` CLI block. This file
+  // requires `strategy-discover` and `strategy-fetch` as MODULES, so those blocks never run, and
+  // nothing closed the connection. The open socket
+  // (`localhost:* -> localhost:9225 ESTABLISHED`) kept Node's event loop alive, so the process sat
+  // idle forever after finishing its work.
+  //
+  // Measured 2026-10-17: all output written by 02:40:31, process still alive and idle at 02:45
+  // (1.59s CPU, 1 open socket), and it would have sat until `STAGE_TIMEOUT_MIN=255` killed it.
+  // ⚠ This is a SECOND, INDEPENDENT cause of the discover stage running for hours — the first was
+  // the normalize sub-phase (see runDiscover). Either alone takes the stage to the timeout, which
+  // is why fixing one did not fix the symptom: the work completed in ~3 minutes and the PROCESS
+  // did not exit.
+  //
+  // `main()` must therefore be the only thing that opens jq-http in this process, and the close
+  // must run on both paths — hence `finally`, not a trailing call.
+  main()
+    .catch(e => { console.error(e); process.exitCode = 1; })
+    .finally(async () => {
+      try { await require('./jq-http').close(); } catch { /* already gone */ }
+    });
 }
 
 module.exports = { main, discoveryPhase, buildCopyQueue };

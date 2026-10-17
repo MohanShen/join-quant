@@ -298,7 +298,15 @@ if (require.main === module) {
       console.log(`=== Strategy Copy (max=${max || 'unlimited'}) ===`);
       const { processed, limitHit } = await processQueue(max);
       console.log(`Processed: ${processed}, Limit hit: ${limitHit}`);
-    })().catch(e => { console.error(e); process.exit(1); });
+    })()
+      // ⚠ `jq.close()` or this process never exits. jq-http holds a CDP connection to Chrome, and
+      // an open socket keeps Node's event loop alive — strategy-daily.js sat idle for minutes
+      // after finishing its work for exactly this reason, and would have run to
+      // STAGE_TIMEOUT_MIN=255. This file acquired the hazard on 2026-10-17 when its hand-rolled
+      // `https` helpers were replaced with jq-http delegates and the close was not added with them.
+      // `process.exitCode` rather than `process.exit()`: the latter skips the finally.
+      .catch(e => { console.error(e); process.exitCode = 1; })
+      .finally(async () => { try { await jq.close(); } catch { /* already gone */ } });
   }
 }
 

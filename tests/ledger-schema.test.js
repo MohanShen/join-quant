@@ -545,3 +545,65 @@ test('discover fetches; normalize measures', async (t) => {
       "the notifier's stderr must not be inherited into our log");
   });
 });
+
+/**
+ * ⚠⚠⚠ An entry point that opens jq-http and never closes it NEVER EXITS.
+ *
+ * jq-http holds a Playwright CDP connection to the logged-in Chrome. Eight modules call
+ * `jq.close()` — each inside its OWN `require.main === module` block. `strategy-daily.js` requires
+ * `strategy-discover` and `strategy-fetch` as MODULES, so those blocks never ran and nothing closed
+ * the socket; the open `localhost:*->localhost:9225` kept Node's event loop alive and the process
+ * sat idle after finishing its work, until STAGE_TIMEOUT_MIN=255 killed it.
+ *
+ * This was the SECOND independent cause of the discover stage running for hours. Fixing only the
+ * first (the normalize sub-phase) did not fix the symptom: the work completed in ~3 minutes and the
+ * process did not exit. With both fixed, the stage exits 0 in 14 seconds.
+ */
+test('an entry point that opens jq-http closes it', async (t) => {
+  const dir = path.join(ROOT, 'utils');
+  const files = fs.readdirSync(dir).filter(f => f.endsWith('.js'));
+  const srcOf = {};
+  for (const f of files) srcOf[f] = fs.readFileSync(path.join(dir, f), 'utf8');
+
+  const requiresJq = f => /require\('\.\/jq-http'\)/.test(srcOf[f] || '');
+  const localRequires = f =>
+    [...(srcOf[f] || '').matchAll(/require\('\.\/([a-z0-9-]+)'\)/g)].map(m => `${m[1]}.js`);
+
+  await t.test('every CLI that CALLS jq-http closes it', () => {
+    // ⚠ Narrowed deliberately. A "requires it, one level deep" rule flagged nine files and four
+    // were false positives — integrate-eligible, component-scan, type-integrate-check and
+    // series-rekey require backtest-series only to read local JSON, open no connection, and were
+    // verified to exit 0 in under a second. "Could reach jq-http" is not statically decidable;
+    // "makes a call itself" is, and it is the precise form of the hazard.
+    const CALLS = /\b(jqJson|jqText|jqPostJson)\s*\(/;
+    const offenders = [];
+    for (const f of files) {
+      const src = srcOf[f];
+      if (!/require\.main\s*===\s*module/.test(src)) continue;      // not an entry point
+      if (!CALLS.test(src)) continue;                                // makes no call of its own
+      if (/jq-http'\)\.close\(\)|jq\.close\(\)/.test(src)) continue;
+      offenders.push(f);
+    }
+    assert.deepStrictEqual(offenders, [],
+      'these call jq-http and never close it, so the process hangs at exit after doing all its ' +
+      'work — add `.finally(() => require("./jq-http").close())` to the CLI block');
+  });
+
+  await t.test('the TRANSITIVE case is named, because no static rule catches it', () => {
+    // strategy-daily opens nothing itself: it requires strategy-discover and strategy-fetch as
+    // MODULES, so their own CLI close-blocks never run. That is the shape that cost 4h25m, and it
+    // is invisible to the check above — so it is asserted by name.
+    assert.match(srcOf['strategy-daily.js'], /require\('\.\/jq-http'\)\.close\(\)/,
+      'an orchestrator must close what its callees opened');
+  });
+
+  await t.test('strategy-daily specifically closes it, on both paths', () => {
+    const src = srcOf['strategy-daily.js'];
+    assert.match(src, /\.finally\(/, 'must close on the error path too, not just on success');
+    assert.match(src, /require\('\.\/jq-http'\)\.close\(\)/);
+    // A `process.exit()` in the catch would skip the finally and re-introduce the hang... or
+    // rather mask it by killing the process. Either way the close must be reachable.
+    assert.ok(!/catch\(e => \{ console\.error\(e\); process\.exit\(1\); \}\)/.test(src),
+      'process.exit in the catch bypasses the finally — set process.exitCode instead');
+  });
+});

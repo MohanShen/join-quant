@@ -1391,5 +1391,20 @@
     "postId": "c913387f8d6cdb8096b29e839f5675fa",
     "sourceFile": "2026-10-17_哈利-布朗永久投资组合-平均年化11_最大回撤11-c913387f.py",
     "registeredAt": "2026-10-17T09:40:31.820Z"
+  },
+  "5daf0b93f27f56903880bae5d5d186e13141577471333e5a01030a7b3c772cc1": {
+    "postId": "7cdab207c42c80c7e5b7d7fbfdd918b6",
+    "sourceFile": "2026-10-17_医疗行业多因子模型及单行业多因子测试代码模板-7cdab207.py",
+    "registeredAt": "2026-10-17T09:45:48.230Z"
+  },
+  "f63b67758b84271ddb23b4a799c0680acada3d119f786591d23cc7546811e5d4": {
+    "postId": "e8c95a82ebd96f2f66c23b1f544df593",
+    "sourceFile": "2026-10-17_配对交易_基于zscore的配对交易策略_胜率88_2-e8c95a82.py",
+    "registeredAt": "2026-10-17T09:45:51.600Z"
+  },
+  "5eca9c40361d63add5618f57a375d0975f54aa1af9cab5c5f2c437af66c722fe": {
+    "postId": "4da8f69689131ea8117e500e6be84621",
+    "sourceFile": "2026-10-17_带收益预测的Markowitz动态平衡策略-4da8f696.py",
+    "registeredAt": "2026-10-17T09:45:54.214Z"
   }
 }

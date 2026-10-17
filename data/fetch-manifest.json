@@ -1,52 +1,52 @@
 {
-  "fetchedAt": "2026-10-17T09:40:31.831Z",
+  "fetchedAt": "2026-10-17T09:45:54.232Z",
   "entries": [
     {
-      "postId": "4a8bcfd5092334a3a73493475f007f7a",
-      "backtestId": "bb63d032b576af1c71febb6ad20a157a",
-      "title": "【量化分享】ETF低波海龟法则与复利增强的验证",
-      "url": "https://www.joinquant.com/view/community/detail/4a8bcfd5092334a3a73493475f007f7a",
-      "sourceFile": "2026-10-17_量化分享_ETF低波海龟法则与复利增强的验证-4a8bcfd5.py",
+      "postId": "7cdab207c42c80c7e5b7d7fbfdd918b6",
+      "backtestId": "a533c3180d501ce57f433f53c81a6bfb",
+      "title": "医疗行业多因子模型及单行业多因子测试代码模板",
+      "url": "https://www.joinquant.com/view/community/detail/7cdab207c42c80c7e5b7d7fbfdd918b6",
+      "sourceFile": "2026-10-17_医疗行业多因子模型及单行业多因子测试代码模板-7cdab207.py",
       "stats": {
-        "annualReturn": 0.18926088640543,
-        "cumulativeReturn": 4.762357228476,
-        "maxDrawdown": 0.14393316188352,
-        "sharpe": 1.1363688010874,
-        "winRatio": 0.6875,
-        "tradingDays": 2526,
-        "periodLabel": "2026-06"
+        "annualReturn": 0.28187628307044,
+        "cumulativeReturn": 6.9408677276,
+        "maxDrawdown": 0.26559202791976,
+        "sharpe": 1.0990015921381,
+        "winRatio": 0.64380165289256,
+        "tradingDays": 2086,
+        "periodLabel": "2018-08"
       }
     },
     {
-      "postId": "9f286ad2417f802d05eaddfa002d9a3b",
-      "backtestId": "d1bddf67efb855b9139e68660997e618",
-      "title": "冰点分批买入持有思路必定赚钱对吗？",
-      "url": "https://www.joinquant.com/view/community/detail/9f286ad2417f802d05eaddfa002d9a3b",
-      "sourceFile": "2026-10-17_冰点分批买入持有思路必定赚钱对吗-9f286ad2.py",
+      "postId": "e8c95a82ebd96f2f66c23b1f544df593",
+      "backtestId": "0f6fd7e96d85cb55f6df4f9f3c7f2c2b",
+      "title": "【配对交易】基于zscore的配对交易策略（胜率88.2%）",
+      "url": "https://www.joinquant.com/view/community/detail/e8c95a82ebd96f2f66c23b1f544df593",
+      "sourceFile": "2026-10-17_配对交易_基于zscore的配对交易策略_胜率88_2-e8c95a82.py",
       "stats": {
-        "annualReturn": 0.049248829117639,
-        "cumulativeReturn": 0.30316300000001,
-        "maxDrawdown": 0.45428106711199,
-        "sharpe": 0.032619563407872,
+        "annualReturn": 0.45378877335238,
+        "cumulativeReturn": 12.500788,
+        "maxDrawdown": 0.53753691170972,
+        "sharpe": 1.1691037197617,
+        "winRatio": 0.88235294117647,
+        "tradingDays": 1739,
+        "periodLabel": "2019-03"
+      }
+    },
+    {
+      "postId": "4da8f69689131ea8117e500e6be84621",
+      "backtestId": "e1e1c2bca62ac877e736b4943671c730",
+      "title": "带收益预测的Markowitz动态平衡策略",
+      "url": "https://www.joinquant.com/view/community/detail/4da8f69689131ea8117e500e6be84621",
+      "sourceFile": "2026-10-17_带收益预测的Markowitz动态平衡策略-4da8f696.py",
+      "stats": {
+        "annualReturn": null,
+        "cumulativeReturn": 1.6355833,
+        "maxDrawdown": 0.42127918927323,
+        "sharpe": 1.582172016002,
         "winRatio": null,
-        "tradingDays": 1377,
-        "periodLabel": "2026-09"
-      }
-    },
-    {
-      "postId": "c913387f8d6cdb8096b29e839f5675fa",
-      "backtestId": "47daf74fa7d82f051de5292ebf38ddec",
-      "title": "哈利-布朗永久投资组合-平均年化11%，最大回撤11%",
-      "url": "https://www.joinquant.com/view/community/detail/c913387f8d6cdb8096b29e839f5675fa",
-      "sourceFile": "2026-10-17_哈利-布朗永久投资组合-平均年化11_最大回撤11-c913387f.py",
-      "stats": {
-        "annualReturn": 0.11371389291037,
-        "cumulativeReturn": 1.85848890273,
-        "maxDrawdown": 0.11611923073387,
-        "sharpe": 0.74506864439734,
-        "winRatio": 0.96666666666667,
-        "tradingDays": 2438,
-        "periodLabel": "2026-05"
+        "tradingDays": 489,
+        "periodLabel": "2015-12"
       }
     }
   ]

@@ -691,8 +691,24 @@ Only the directories whose contents aren't self-evident:
   in-flight backtest is invisible to every budget gate, and a hang spends wall clock rather than
   minutes. Two monitors expired in silence while it sat there; I read the first expiry as a
   wrong-file mistake, which was one expiry too late.
-  **Fix**: `runDiscover` passes `--no-normalize`, and the same stage then completes in ~3 min
-  (measured: discover → cookie refresh → fetch 3 → done).
+  **Fix (part 1 of 2)**: `runDiscover` passes `--no-normalize`.
+  ⚠⚠ **That alone did NOT fix the symptom, and the "~3 min" first claimed here was wrong** — it was
+  the WORK finishing, read off the log, while the process sat idle. There was a **second,
+  independent cause**: `strategy-daily.js` never called `jq.close()`.
+  `jq-http` holds a Playwright CDP connection; eight modules close it, but each inside its own
+  `require.main === module` block, and `strategy-daily` requires `strategy-discover` /
+  `strategy-fetch` as **modules**, so none of those blocks ever ran. The open socket
+  (`localhost:* → localhost:9225 ESTABLISHED`) kept Node's event loop alive. Measured: all output
+  written by 02:40:31, process still alive and idle at 02:45 (1.59s CPU, 1 open socket), bound for
+  the 255-minute timeout. **Either cause alone takes the stage to the timeout**, which is why
+  fixing one left the symptom unchanged.
+  **With both fixed the stage exits 0 in 14 seconds.**
+  ⚠ **Rule: an entry point that opens jq-http — including transitively, through a callee whose own
+  CLI block will not run — must `.finally(() => jq.close())`.** Use `process.exitCode`, not
+  `process.exit()`, or the finally is skipped. A test enforces this for any CLI that calls
+  jq-http itself and names `strategy-daily` for the transitive case, which no static rule catches.
+  ⚠ `strategy-copy.js` acquired the same leak on 2026-10-17 when its hand-rolled `https` helpers
+  were replaced with jq-http delegates and the close was not added with them. Fixed.
   ⚠⚠ **`--no-normalize` now means "ENQUEUE but do not measure", not "skip"** — this is why it was a
   three-file change. `normalizeNew()` is the ONLY thing that appends a day's fetches to
   `data/pending-normalize.json` (the enqueue is its first two lines, the backtests follow in the
