@@ -727,6 +727,36 @@ Only the directories whose contents aren't self-evident:
 - The planner controls **which stage runs** and (via the sync) **which families are eligible** —
   NOT which family the agent picks. The study nudge orders by `bestObjective`; the planner
   reports its own queue head for the log only, and says so.
+- **The agent topology has THREE patterns, not one** (mapped 2026-10-17). Five process layers run
+  before any LLM does: `launchd` → `scripts/daily-pipeline.sh` (DST gate, shared lock) →
+  `utils/daily-pipeline.js` (**deterministic — picks the stage, no LLM**) →
+  `scripts/run-<unit>.sh` (session pin, CDP + budget preflight, orphan sweep) → `claude -p`
+  (**the main agent, running one skill**) → `Agent`-tool subagents.
+  | step | main agent | subagents |
+  |---|---|---|
+  | discover / normalize | — | pure Node, no LLM |
+  | assign | session via `run-assign.sh` | none — reads `.claude/agents/family-assign.md` as a RULEBOOK |
+  | research `/run-family` | session via `run-family.sh`, pinned per family | **5**: understand + improve (concurrent) → gatekeeper → executor → recorder |
+  | integrate `/run-integrate` | session via `run-integrate.sh`, pinned per universe | `integrate-merger` ×1 |
+  | screen `/run-screen` | interactive | `post-screener` × N batches of ~40, concurrent |
+  | oos `/run-oos`, daily `/run-daily` | interactive | none — `/run-daily` orchestrates PROCESSES |
+  ⚠⚠ **`/run-family` drew its five roles and then played them itself.** The skill's loop diagram
+  (generator A/B → gatekeeper → executor → recorder) was written as a dispatch spec and read as a
+  phase description, so a session did the reading, the experiment and the write-up in one context
+  and **5 of 16 agent contracts were referenced from nowhere** — only `post-screener`,
+  `integrate-merger` and `family-assign` were reachable at all. Fixed by making the skill name each
+  `subagent_type`; a test now fails if a role loses its dispatch or its contract.
+  ⚠ **What the orchestrator never delegates**: loop control, the backtest budget, that only ONE
+  executor runs at a time (the completion signal is the account-wide running count, and concurrent
+  runs have returned identical metrics for different strategies), **VAL** and the `valDeclined:`
+  decision. The generators are the only safe fan-out — they are read-only (`tools:` has no Write).
+  ⚠ Subagents are **ephemeral** and never message each other; the handoff is on disk
+  (`study/<family>/queue.json`, `findings.tsv`, the family page), which is what makes a round
+  survive a budget stop. A subagent's return is a REPORT — if it disagrees with the ledger, the
+  ledger wins.
+  ⚠ The 8 `autostudy-*` / `autoenhance-*` contracts are **orphaned**: superseded when the two
+  loops merged, and referenced by nothing, not even their own wrapper scripts, which still exist
+  and are `--stage`-reachable. Left in place, not deleted.
 - **Sessions are headless under cron, interactive for humans**: `auto*-loop.sh` runs
   `claude -p --resume <uuid>`; `auto*-interactive.sh` runs `claude --resume` / `--session-id`
   in a TUI. The cron **resumes** rather than cold-starting, so the agents keep context.

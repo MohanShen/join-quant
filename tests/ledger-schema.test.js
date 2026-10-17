@@ -287,3 +287,55 @@ test('a reasoned VAL decline is not reopened', async (t) => {
     }
   });
 });
+
+/**
+ * /run-family is an ORCHESTRATOR, and until 2026-10-17 it did not say so.
+ *
+ * The skill drew the five roles (generator A/B -> gatekeeper -> executor -> recorder) in its loop
+ * diagram but never told the session to dispatch them, so a session played all five itself and
+ * 5 of the 16 agent contracts in .claude/agents/ were referenced from nowhere. Measured that day:
+ * only post-screener, integrate-merger and family-assign were reachable at all.
+ */
+test('run-family dispatches its five roles', async (t) => {
+  const skill = fs.readFileSync(path.join(ROOT, '.claude/skills/run-family/SKILL.md'), 'utf8');
+  const ROLES = ['family-understand', 'family-improve', 'family-gatekeeper',
+                 'family-executor', 'family-recorder'];
+
+  await t.test('every role is named as a subagent_type in the skill', () => {
+    for (const r of ROLES) {
+      assert.ok(skill.includes(r), `${r} must be dispatched by name, not merely implied`);
+    }
+    assert.match(skill, /subagent_type/, 'the skill has to say how to dispatch them');
+  });
+
+  await t.test('each role has a contract on disk', () => {
+    for (const r of ROLES) {
+      const f = path.join(ROOT, '.claude/agents', `${r}.md`);
+      assert.ok(fs.existsSync(f), `${r} is dispatched but has no contract`);
+      const c = fs.readFileSync(f, 'utf8');
+      assert.match(c, /ephemeral subagent/i,
+        `${r} must state that it is spawned fresh and returns — the handoff is on disk`);
+    }
+  });
+
+  await t.test('exactly one executor at a time, stated as a rule', () => {
+    // The completion signal is the account-wide running count; concurrent runs have returned
+    // identical metrics for different strategies.
+    assert.match(skill, /one at a time, never parallel|ONE executor|one backtest at a time/i);
+    assert.match(skill, /CONCURRENT-STOP/);
+  });
+
+  await t.test('the generators are the only fan-out, and are marked as such', () => {
+    assert.match(skill, /Dispatch 1 and 2 in the same message|run concurrently/i);
+  });
+
+  await t.test('VAL and the budget are NOT delegated', () => {
+    assert.match(skill, /Delegate VAL/);
+    assert.match(skill, /valDeclined/, 'declining the VAL is the orchestrator\'s call too');
+    for (const r of ROLES) {
+      const c = fs.readFileSync(path.join(ROOT, '.claude/agents', `${r}.md`), 'utf8');
+      assert.ok(!/--window val\b/.test(c),
+        `${r} must not carry VAL authority — one validation per (family, epoch)`);
+    }
+  });
+});

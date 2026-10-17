@@ -133,16 +133,56 @@ lives only in the session — report where you stopped and what is still `queued
         borrow / new-family combo)                     kinds)                             │
                                                                                           │
    both queues empty ──► finalize ONCE on VAL ──► done ◄──────────────────────────────────┘
+          (generators run CONCURRENTLY; exactly ONE executor at a time, ever)
 ```
 
-1. **Generate.** Both generators propose into one queue with `kind: understand|improve`. Every
-   entry carries `from: [...]` — the prior results that prompted it. An empty `from` is allowed
-   but **ungrounded**, and ranks last.
-2. **Gate + rank.** Falsifiable? Answerable by one experiment? Worth the minutes? Rank, dispatch
-   the top entry.
-3. **Execute** on the frozen bench, `--window train`, one backtest at a time.
-4. **Record** — the step that makes this a loop, see below.
-5. **Repeat** until both kinds are exhausted, then VAL **once**.
+### You are the ORCHESTRATOR. Dispatch the five roles; do not play them.
+
+Each role is an `Agent`-tool subagent with its own contract in `.claude/agents/`. They are
+**ephemeral** — spawned for one task, returning concisely, never messaging each other. The handoff
+between them is **on disk** (`study/<family>/queue.json`, `findings.tsv`, the family page), which
+is why a round survives a budget stop.
+
+⚠ Until 2026-10-17 this skill described the five roles in the diagram above but never told you to
+dispatch them, so a session played all five itself and the five contracts sat unreferenced. The
+diagram was read as a phase description. It is a dispatch spec.
+
+| # | subagent_type | when | may write |
+|---|---|---|---|
+| 1 | `family-understand` | generate, if the understand kind is not exhausted | nothing (read-only) |
+| 2 | `family-improve` | generate, if the improve kind is not exhausted | nothing (read-only) |
+| 3 | `family-gatekeeper` | after either generator returns ideas | `study/<family>/queue.json` |
+| 4 | `family-executor` | one dispatched idea, **one at a time, never parallel** | the variant `.py` |
+| 5 | `family-recorder` | after every completed execution | `findings.tsv`, §2/§6, the KB |
+
+**Dispatch 1 and 2 in the same message** when both kinds are live — they only read, so they run
+concurrently and that is the one safe fan-out in this loop. Give each the family name and point it
+at `node utils/research-queue.js <family>`; it reads its own context, you do not paste it in.
+
+**Never dispatch two `family-executor`s at once.** The completion signal is the account-wide
+running count, concurrent runs have returned identical metrics for different strategies, and the
+executor refuses with `CONCURRENT-STOP`. One executor, foreground, then the recorder.
+
+Then loop: gatekeeper → executor → recorder → back to the gatekeeper, generating again only when
+the queue runs dry. Stop when both kinds are exhausted or the budget is gone.
+
+### What stays YOURS and is never delegated
+
+| yours | why |
+|---|---|
+| the **loop control** and when to stop | a subagent cannot see the budget or the other roles |
+| the **backtest budget** (`--usage-limit`), and that only one executor runs | account-wide, and a subagent cannot observe it |
+| **VAL** — whether to spend the family's one validation, and the `--family` flag | one per (family, epoch), irreversible |
+| **`valDeclined:`** — deciding the VAL should NOT be spent, and recording it | a decision about the family, not about one experiment |
+| the **report** at the end | only you saw the whole round |
+
+⚠ **Do not let the executor finalize on VAL.** Its contract is TRAIN deltas; it returns
+`VAL-BLOCKED` as a failure kind precisely because the decision is not its. The recorder writes
+findings, not validations.
+
+⚠ **A subagent's return is a report, not a result.** The executor hands you a delta; the ledger
+and the stored curve are what make it true. If a returned number and the ledger disagree, the
+ledger wins — and say so rather than passing the report through.
 
 ## Recording: the finding is half the job
 
@@ -259,6 +299,16 @@ clear this gate in a universe becomes what every later arrival must beat.
 
 ## Do not
 
+- **Play one of the five roles yourself.** You are the orchestrator: dispatch
+  `family-understand` / `family-improve` / `family-gatekeeper` / `family-executor` /
+  `family-recorder` and keep the budget, the VAL decision and the loop control. A session that
+  does the reading, the experiment and the write-up itself is what this skill looked like before
+  2026-10-17, and it left five written contracts unused.
+- **Run two `family-executor`s at once**, or dispatch one while another is in flight. One backtest
+  at a time, account-wide.
+- **Delegate VAL**, or let a subagent set `--window val`. One validation per (family, epoch) is
+  yours to spend or to decline (`valDeclined:`).
+- Pass a subagent's returned number through as a result without the ledger agreeing.
 - Put an improvement gate in front of an `understand` experiment.
 - Discard a measured `improve` variant without a §2 row — code reverts, understanding does not.
 - Run two backtests at once. The completion signal is the account-wide running count; concurrent
