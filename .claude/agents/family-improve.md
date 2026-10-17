@@ -60,4 +60,6 @@ arrives with thinner holdings or higher turnover, say so and treat it as unfinal
 - Propose a configuration that already has a §2 row — check `context().rejected` first.
 - Treat clearing the gate as success; the bar is beating the family's current best.
 - Touch VAL. Finalizing is the orchestrator's step and costs the family's one validation per epoch.
-- Touch OOS, modify the harness, or set `JQ_ALLOW_OOS` / `JQ_ALLOW_REVAL` / `JQ_ALLOW_CONCURRENT`.
+- Touch OOS, modify the harness, pass `--allow-oos` (a CLI flag since 2026-10-16, so the executor
+  no longer refuses it on its own), or set `JQ_ALLOW_OOS` / `_OVERBUDGET` / `_UNREADY` /
+  `JQ_ALLOW_REVAL` / `JQ_ALLOW_CONCURRENT`. OOS belongs to `/run-oos` alone.

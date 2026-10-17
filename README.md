@@ -51,7 +51,7 @@ node utils/strategy-daily.js --discover-only  # Discovery only (~5s)
 ```bash
 node utils/strategy-post-backtest.js <path-to-strategy.py> [title] [--window train|val] [--start YYYY-MM-DD --end YYYY-MM-DD] [--capital N]
 ```
-The backtest window is parameterized (`--window train` = 2022-01-01→2023-12-31, `--window val` = 2024). Any window reaching into **2025+ is hard-blocked** (`OOS-BLOCKED`, reserved out-of-sample) unless `JQ_ALLOW_OOS=1`. With no window flag, JQ's default range is used (ad-hoc mode).
+The backtest window is parameterized by `--window train|val|holdout`. ⚠ The dates move with the harness epoch and are deliberately not repeated here — read them with `node utils/harness-config.js` (epoch 8: TRAIN 2022-01-01→2023-12-31, VAL 2024-01-01→2025-12-31, the reserve from 2026-01-01). Any window reaching into the reserve is **hard-blocked** (`OOS-BLOCKED`) unless `--allow-oos` is passed, and an OOS run additionally has to clear a readiness gate and a budget (`utils/oos-budget.js`). With no window flag, JQ's default range is used (ad-hoc mode).
 
 **Step-by-step technical implementation:**
 
@@ -257,7 +257,7 @@ npm test
 
 ## Known Limitations
 
-- **Backtest date range**: Pipeline 2's window is set via `--window train|val` or `--start/--end`. The **2025-01-01→now out-of-sample window is hard-blocked** (`OOS-BLOCKED`) unless `JQ_ALLOW_OOS=1` — see `harness/harness.md`. With no flag, JQ's default range applies (ad-hoc, not valid for logging experiments).
+- **Backtest date range**: Pipeline 2's window is set via `--window train|val|holdout` or `--start/--end`. The reserved out-of-sample window (from `windows.holdout.start` — **2026-01-01** under epoch 8; read it, never hardcode it) is **hard-blocked** (`OOS-BLOCKED`) unless `--allow-oos` is passed, after which a readiness gate and the budget in `utils/oos-budget.js` still apply — see `harness/harness.md` and `/run-oos`. With no flag, JQ's default range applies (ad-hoc, not valid for logging experiments).
 - **Chrome session persistence**: Pipeline 2 relies on a running Chrome process. Closing it invalidates the session and requires re-login. Keep the Chrome process running (see Chrome Setup above).
 - **Headless mode**: JoinQuant shows CAPTCHA ("拼图验证") in headless Playwright browsers. Pipeline 2 uses CDP connection to an existing headed Chrome session to bypass this.
 

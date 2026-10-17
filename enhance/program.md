@@ -125,7 +125,9 @@
 
 ## 红线与约束（`enhance-schema.md` §10 / `harness.md`）
 
-- **严格窗口**：迭代只 TRAIN、定稿才 VAL、**2025+ 永不碰**（代码硬阻断，agent 绝不设 `JQ_ALLOW_OOS`）。
+- **严格窗口**：迭代只 TRAIN、定稿才 VAL、**保留样本外窗口永不碰**（边界随纪元移动，读 `node utils/harness-config.js`，
+  epoch 8 起为 2026-01-01）。⚠ 2026-10-16 起 `--allow-oos` 是普通 CLI flag，执行器**不再**自行拒绝——
+  agent 绝不传 `--allow-oos`，也绝不设 `JQ_ALLOW_OOS` / `_OVERBUDGET` / `_UNREADY`。OOS 只属于 `/run-oos`。
 - **评测台冻结**：objective、门槛、窗口区间、费率滑点、执行器窗口参数——全部只读，改动即新纪元。
   ⚠ **门槛查 `harness.stageGate(stage, sharpe)`，不要写死**（本条原文写「2.5」；epoch 5 起 normalize/study/
   enhance/validate 是 1.5，type 整合是 2.0）。

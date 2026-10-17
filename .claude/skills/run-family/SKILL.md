@@ -167,6 +167,10 @@ because "the last VAL disappointed so make a new candidate" is selection on VAL 
 Report back and keep iterating on TRAIN. Never set `JQ_ALLOW_REVAL` — that is the human's switch,
 like `JQ_ALLOW_OOS`.
 
+⚠ And do not reach OOS from this loop. Since 2026-10-16 `--allow-oos` is a plain CLI flag, so the
+executor will not refuse an OOS run on its own — passing it is the whole barrier. OOS belongs to
+`/run-oos`, which pre-flights readiness and charges the budget.
+
 ## The EXIT GATE — what this loop has to deliver for the next phase
 
 ⚠ **Finishing the loop is not the same as producing a candidate.** Integration takes only the best

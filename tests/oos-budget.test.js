@@ -4,9 +4,10 @@
  * ⚠⚠ Why this file exists. `oosPolicy: { maxTestsPerCandidate: 1, maxTestsPerEpoch: 2 }` was
  * declared in epoch 3 and enforced NOWHERE until 2026-10-16. It appeared in harness-config's
  * console output and in one test asserting the per-epoch figure had gone down, and that was all.
- * `assertNotOOS` guards the WINDOW — nothing may reach past the cutoff without JQ_ALLOW_OOS=1 —
- * but once that flag was set, nothing counted the tests. The repo's least recoverable surface was
- * the only one with no budget, while VAL had val-budget.js watching it.
+ * `assertNotOOS` guards the WINDOW — nothing reaches past the cutoff without `--allow-oos` (or the
+ * older `JQ_ALLOW_OOS=1`) — but once that override was given, nothing counted the tests. The
+ * repo's least recoverable surface was the only one with no budget, while VAL had val-budget.js
+ * watching it.
  */
 const test = require('node:test');
 const assert = require('node:assert');

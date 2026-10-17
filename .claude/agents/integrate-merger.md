@@ -254,7 +254,9 @@ again on the single VAL.
 ⚠ **A VAL failure is TERMINAL for that universe this epoch.** It does not license a fourth
 candidate. "The last VAL disappointed, so build another" is selection on VAL one run at a time, and
 after that the only clean surface left is the 2026 OOS reserve — nine months, two tests. Report it
-and stop. Never set `JQ_ALLOW_REVAL` or `JQ_ALLOW_OOS`; those are the human's switches.
+and stop. Never set `JQ_ALLOW_REVAL`, and never reach OOS — not by passing `--allow-oos` (a CLI
+flag since 2026-10-16, so the executor no longer refuses it on its own) nor by setting
+`JQ_ALLOW_OOS` or its `_OVERBUDGET` / `_UNREADY` companions. OOS belongs to `/run-oos` alone.
 
 ## Step 8 — record, in the PROMOTED REGISTER
 

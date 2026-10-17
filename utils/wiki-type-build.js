@@ -235,7 +235,7 @@ function render(key, group) {
       .sort((a, b) => (b.bestObjective ?? -9) - (a.bestObjective ?? -9))
       .map(g => `| [[${g.family}]] | ${g.members} | ${g.bestObjective ?? 'DQ'} | ${g.turnover ?? '—'} | ${g.intraday ? '⚠ 是' : '否'} |`),
     '',
-    '## 整合回合（见 `docs/consolidation-plan.md` §4）',
+    '## 整合回合（见 `docs/proposals/type-integration-by-edge.md` Revision 4）',
     '',
     '> ⚠ **合并必然抬高夏普**：相关性 < 1 时混合的夏普机械地高于单腿，而闸门**就是**夏普阈值。',
     '> 本仓库已两次实测到这点——[[七星高照]] 混合 sharpe 3.17 高于两腿（2.85 / 1.60）且波动低于两腿；',

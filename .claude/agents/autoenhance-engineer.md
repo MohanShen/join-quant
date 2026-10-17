@@ -34,7 +34,11 @@ Given an `active` idea (with `baseExpId`) and its **type**:
    - Type-2 → report `{expId, val: {objective, sharpe, gate, ...}}` to **Agent 4 (recorder)**.
 
 ## Hard rules (enclosed environment)
-- **NEVER** run `--window holdout`, or any `--start/--end` reaching into the reserved OOS window; the executor `OOS-BLOCKED`s it. **Never** set `JQ_ALLOW_OOS`.
+- **NEVER** run `--window holdout`, or any `--start/--end` reaching into the reserved OOS window.
+  ⚠ The block is no longer unconditional: since 2026-10-16 `--allow-oos` is a plain CLI flag, so
+  the executor will let an OOS run through if you pass it. **Never pass `--allow-oos`, and never
+  set `JQ_ALLOW_OOS` / `JQ_ALLOW_OOS_OVERBUDGET` / `JQ_ALLOW_OOS_UNREADY`.** OOS belongs to
+  `/run-oos` alone, which pre-flights readiness and charges the budget.
   ⚠ The boundary **moves with the harness epoch** and is deliberately not written here: it was
   `2025-01-01` under epoch 2 and is **`2026-01-01`** under epoch 5, which means 2025 is now VAL,
   not OOS. A stale copy of this date cost the loop 12 of VAL's 24 months. Before any explicit

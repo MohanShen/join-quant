@@ -172,24 +172,24 @@
     <h1>Pipeline &amp; Skill Coverage</h1>
     <p class="sub">Sixteen stages from community crawl to out-of-sample reserve, which skill drives each one,
       and where the chain still breaks. Derived from the repo, not from memory.</p>
-    <p class="stamp">harness epoch 6 &nbsp;·&nbsp; TRAIN 2022-01-01 → 2023-12-31 &nbsp;·&nbsp; VAL 2024-01-01 → 2025-12-31
-      &nbsp;·&nbsp; OOS reserve 2026-01-01+ (hard-blocked) &nbsp;·&nbsp; 180 free backtest-min/day (USAGE_LIMIT 170)</p>
+    <p class="stamp">harness epoch 8 &nbsp;·&nbsp; TRAIN 2022-01-01 → 2023-12-31 &nbsp;·&nbsp; VAL 2024-01-01 → 2025-12-31 &nbsp;·&nbsp; reserve from 2026-01-01
+      &nbsp;·&nbsp; OOS reserve 2026-01-01+ (budgeted: 1/candidate, 2/bench; 1 spent) &nbsp;·&nbsp; 180 free backtest-min/day (USAGE_LIMIT=free, SLOW_SKIP_MIN=45)</p>
   </header>
 
   <section>
     <h2>Where the library stands</h2>
     <div class="counts">
-      <div><b>215</b><span>raw strategies</span></div>
-      <div><b>135</b><span>normalized rows</span></div>
-      <div><b>197</b><span>wiki pages</span></div>
+      <div><b>238</b><span>raw strategies</span></div>
+      <div><b>190</b><span>normalized rows</span></div>
+      <div><b>212</b><span>wiki pages</span></div>
       <div><b>13</b><span>families</span></div>
-      <div><b>2</b><span>types</span></div>
-      <div><b>294</b><span>return series</span></div>
-      <div><b>21</b><span>pending normalize</span></div>
+      <div><b>6</b><span>universes</span></div>
+      <div><b>369</b><span>return series</span></div>
+      <div><b>8</b><span>pending normalize</span></div>
       <div><b>90<span style="font-size:.75rem;font-weight:400;color:var(--ink-3)">/1408</span></b><span>resources fetched</span></div>
     </div>
-    <p class="note">Ledger tail beyond the 135: 22 compile-error, 16 slow-skipped, 6 incompatible,
-      3 no-trades. Next up is whatever the PLANNER picks, not this report: <code>utils/daily-pipeline.js</code> reads <code>family-queue</code> (research) and <code>family-assign</code> (assign), both empty right now, so the next fire falls through to <strong>normalize</strong> with 21 pending. <code>consumption-report --next</code> still names study/enhance and is the legacy reporter — it does not drive the cron.</p>
+    <p class="note">Ledger tail beyond the 190: 22 compile-error, 16 slow-skipped, 6 incompatible,
+      3 no-trades. Next up is whatever the PLANNER picks, not this report: <code>utils/daily-pipeline.js</code> reads <code>family-queue</code> (research) and <code>family-assign</code> (assign), both empty right now, so the next fire falls through to <strong>normalize</strong> with 8 pending. <code>consumption-report --next</code> still names study/enhance and is the legacy reporter — it does not drive the cron.</p>
   </section>
 
   <section>
@@ -308,7 +308,7 @@
         <div class="stage-body">
           <div class="nodes">
             <span class="node">backtest-series</span><span class="arrow">→</span>
-            <span class="node store">data/series · 294</span><span class="arrow">→</span>
+            <span class="node store">data/series · 369</span><span class="arrow">→</span>
             <span class="node">component-scan</span><span class="arrow">→</span>
             <span class="node store">components.tsv</span>
             <span class="skill has">research · integrate</span>
@@ -328,8 +328,10 @@
             <span class="node store">整合回合</span>
             <span class="skill has">/run-integrate</span>
           </div>
-          <p class="note">Bar is sharpe 2.0, above the 1.5 used elsewhere. Beat the best <em>member</em>, not the
-            gate. 全A-H-low ran at 0.1731 (keep-with-caveat); 全A-H-high was vetoed before spending a minute.</p>
+          <p class="note">Gate is sharpe 1.5, the same as every other stage since epoch 7. The bar that actually
+          binds is <strong>per-year sharpe domination</strong> (epoch 8): the candidate must beat the best parent
+          CHAMPION's sharpe in <em>every</em> TRAIN year. Beat the best <em>member</em>, not the
+            gate. Six rounds run; the two universes with an eligible family are SEEDED (全A, 混合) and no merge has beaten its parents yet — 小盘 and 全A both REJECT.</p>
         </div>
       </div>
 
@@ -337,13 +339,14 @@
         <div class="stage-key"><span class="n">08</span><span class="nm">Out-of-sample</span></div>
         <div class="stage-body">
           <div class="nodes">
-            <span class="node store" style="border-color:var(--gap); color:var(--gap)">2026-01-01+ reserve</span>
+            <span class="node store">2026-01-01+ reserve</span>
             <span class="arrow">→</span>
-            <span class="node store" style="border-color:var(--gap); color:var(--gap)">nothing built</span>
-            <span class="skill none">missing entirely</span>
+            <span class="node">oos-budget</span><span class="arrow">→</span>
+            <span class="node">readiness gate</span>
+            <span class="skill has">/run-oos</span>
           </div>
-          <p class="note">The chain's terminal hole. Integration produces a candidate and there is nowhere for it
-            to go. Code hard-blocks the window; <code>JQ_ALLOW_OOS</code> is user-only.</p>
+          <p class="note">Built 2026-10-16; the chain's terminal hole is closed. 1 of 2 tests spent on this bench
+            (大小盘轮动's product: sharpe −0.21, recorded). Code blocks the window unless <code>--allow-oos</code> is passed (a CLI flag since 2026-10-16), after which a READINESS gate and <code>utils/oos-budget.js</code> still apply. <code>JQ_ALLOW_OOS_OVERBUDGET</code> / <code>_UNREADY</code> stay env-only.</p>
         </div>
       </div>
 
@@ -374,11 +377,11 @@
           <tr><td>8</td><td>KB · families</td><td class="driver">wiki-family-build</td><td class="driver">/run-family</td><td><span class="dot ok"></span>13 families</td></tr>
           <tr><td>9</td><td>KB · types</td><td class="driver">wiki-type-build</td><td class="driver">—</td><td><span class="dot gap"></span>no skill</td></tr>
           <tr><td>10</td><td>KB · concepts</td><td class="driver">wiki-concept-lint</td><td class="driver">query-wiki</td><td><span class="dot part"></span>lints, never rewrites prose</td></tr>
-          <tr><td>11</td><td>Family assignment</td><td class="driver">family-match · family-assign</td><td class="driver">run-assign.sh + agent</td><td><span class="dot part"></span>proposes only · 0 pending</td></tr>
+          <tr><td>11</td><td>Family assignment</td><td class="driver">family-match · family-assign</td><td class="driver">run-assign.sh + agent</td><td><span class="dot ok"></span>proposes only · 0 pending</td></tr>
           <tr><td>12</td><td>Research (one family)</td><td class="driver">5 agents</td><td class="driver">/run-family</td><td><span class="dot ok"></span>covered · member-aware · edge-aware</td></tr>
-          <tr><td>13</td><td>Series &amp; components</td><td class="driver">backtest-series · series-backfill · component-scan</td><td class="driver">research · integrate</td><td><span class="dot ok"></span>294 series stored</td></tr>
-          <tr><td>14</td><td>Integrate (one type)</td><td class="driver">type-integrate-check</td><td class="driver">/run-integrate</td><td><span class="dot ok"></span>1 round run, 1 vetoed</td></tr>
-          <tr><td>15</td><td>OOS / final validation</td><td class="driver">—</td><td class="driver">—</td><td><span class="dot gap"></span>not built</td></tr>
+          <tr><td>13</td><td>Series &amp; components</td><td class="driver">backtest-series · series-backfill · component-scan</td><td class="driver">research · integrate</td><td><span class="dot ok"></span>369 series stored</td></tr>
+          <tr><td>14</td><td>Integrate (one universe)</td><td class="driver">integrate-queue · promoted · type-integrate-check</td><td class="driver">/run-integrate</td><td><span class="dot ok"></span>incremental; 6 rounds, 2 universes seeded</td></tr>
+          <tr><td>15</td><td>OOS / final test</td><td class="driver">oos-budget · integrate-eligible readiness</td><td class="driver">/run-oos</td><td><span class="dot ok"></span>built 2026-10-16 · 1 of 2 spent</td></tr>
           <tr><td>16</td><td>Query</td><td class="driver">wiki read path</td><td class="driver">/query-wiki</td><td><span class="dot ok"></span>covered</td></tr>
         </tbody>
       </table>
@@ -389,21 +392,18 @@
     <h2>What still breaks</h2>
     <div class="gaps">
       <article>
-        <h3>Out-of-sample is the terminal hole <span class="sev block">blocking</span></h3>
-        <p>Everything upstream now connects. <code>/run-integrate</code> produces a candidate and there is no
-          protocol, runner or ledger to receive it — so nothing can ever be declared production-ready. This is the
-          one gap that caps the whole pipeline's output at "interesting".</p>
+        <h3>Eligibility, not integration, is now the binding constraint <span class="sev">throughput</span></h3>
+        <p>The OOS hole closed on 2026-10-16 (<code>/run-oos</code> + <code>oos-budget</code> + a readiness gate),
+          so the chain reaches production. What binds now is the <code>/run-family</code> EXIT GATE: a champion on
+          the live bench, a VAL that validated <em>that</em> book, and realizability &ge; 2. Only <strong>2 of 13</strong>
+          families clear it — four are rejected on realizability and seven never validated — so most universes
+          read <code>IDLE … the gate is upstream</code>. The fix is VAL coverage and realizability scoring, not
+          more integration.</p>
       </article>
       <article>
         <h3>Discovery never triggers screening <span class="sev soft">manual seam</span></h3>
         <p><code>strategy-daily</code> and <code>/run-screen</code> share <code>copy-queue.json</code>, but nothing
-          hands over. A human decides when to screen, and 21 strategies sit pending normalization behind that.</p>
-      </article>
-      <article>
-        <h3>Four family pages refuse to regenerate <span class="sev soft">data guard</span></h3>
-        <p>打板短线 / 小市值 / 五福闹新春 / ETF溢价 would drop 32 metric values, because the gitignored ledger no
-          longer holds rows the pages do. The guard is correct — the ledger is incomplete, not the pages. Never
-          <code>--force</code>.</p>
+          hands over. A human decides when to screen, and 8 strategies sit pending normalization behind that.</p>
       </article>
       <article>
         <h3>Family assignment stays human <span class="sev soft">precision floor</span></h3>
@@ -424,7 +424,7 @@
   </section>
 
   <footer>
-    Derived from the working tree at commit 84bcc40 · 530 tests passing · figures read from
+    Derived from the working tree at commit e138a0c · 629 tests passing · figures read from
     normalize-train.tsv, consumption.tsv, data/series and wiki/ at time of writing.
   </footer>
 

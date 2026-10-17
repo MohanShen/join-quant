@@ -296,11 +296,10 @@ Only the directories whose contents aren't self-evident:
   `perYearSharpe`**. In **every** TRAIN calendar year, the candidate's sharpe computed *within* that
   year must exceed the highest sharpe any **parent champion** achieves in that **same** year —
   domination, on sharpe, not a maximin on objective.
-  Why sharpe: objective is almost purely annual return (r = 0.9698), so an objective bar is a
-  return-LEVEL bar and a merge whose payoff is risk-adjusted quality clears or misses it for
-  unrelated reasons. Why every year: the maximin let a candidate win by being least-bad in one year
-  while giving up the other, and TRAIN's two years are very different (2022 supplies a median 62% of
-  log-growth), so "both years" is "survive the regime change rather than ride one side of it".
+  **Why sharpe, not objective, and why every year rather than the worst**: both follow from the two
+  measurements recorded under the epoch-7 note below (objective is almost purely annual return; and
+  annual return over TRAIN is substantially a 2022 measurement). An objective bar is a return-LEVEL
+  bar, and a maximin let a candidate win by being least-bad in one year while giving up the other.
   ⚠ **An epoch-7 verdict does not carry forward.** The guard dispatches on `integrateBar.basis`, so
   an old epoch still judges by its own rule — but claiming an epoch-8 conclusion requires re-judging
   (re-judging, not re-measuring).
@@ -1028,9 +1027,10 @@ Only the directories whose contents aren't self-evident:
 - `enhance/strategy_template.py` and the normalizer's injected OVERRIDE run on JoinQuant's
   servers and **cannot read the JSON** — they hold literal Python. `harness-config.js --verify`
   is what keeps them honest; run it after any cost change.
-- Pipeline 2's backtest window is parameterized via `--window train|val` (or `--start/--end`),
-  set through the `newStrategy` URL params. The **2026+ OOS window is hard-blocked** (`OOS-BLOCKED`)
-  unless `JQ_ALLOW_OOS=1` — see `harness/harness.md`. No flag = JQ default range (ad-hoc).
+- Pipeline 2's backtest window is parameterized via `--window train|val|holdout` (or
+  `--start/--end`), set through the `newStrategy` URL params. The reserve is hard-blocked
+  (`OOS-BLOCKED`) unless `--allow-oos` is passed — see the OOS notes above and `/run-oos`. No
+  window flag = JQ default range (ad-hoc).
 - Do not close the CDP Chrome process — it invalidates the JQ session and forces re-login.
 - ⚠ **The result scrape used to read the page's innerText INCLUDING the Ace editor's visible source
   lines.** Authors paste their own results into header comments (`# 回测2025-01-01到2026-04-27，策略收益

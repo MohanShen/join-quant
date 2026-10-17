@@ -1,7 +1,8 @@
 /**
  * type-integrate-check.js — the guard on a type-level integration candidate.
  *
- * Why a guard exists at all (docs/consolidation-plan.md §4.1). Blending raises Sharpe
+ * Why a guard exists at all (docs/consolidation-plan.md §4.1 for the rationale; the ROUND itself
+ * is docs/proposals/type-integration-by-edge.md Revision 4). Blending raises Sharpe
  * mechanically whenever member correlation is below one, and the harness gate IS a Sharpe
  * threshold. This repo has measured it twice:
  *
@@ -63,68 +64,6 @@ const ROOT = path.resolve(__dirname, '..');
 const LEDGER = () => process.env.JQ_LEDGER || path.join(ROOT, 'harness/normalize-train.tsv');
 const PAGES = () => process.env.JQ_STRATEGY_PAGES || path.join(ROOT, 'wiki/strategies');
 
-/**
- * sourceFile -> family. The assignment lives only on the strategy pages (`family:`), never in the
- * ledger, and is never auto-written — see CLAUDE.md on `family-match.js`.
- */
-function familyIndex() {
-  const idx = {};
-  let names = [];
-  try { names = fs.readdirSync(PAGES()).filter(f => f.endsWith('.md')); } catch { return idx; }
-  for (const f of names) {
-    const t = fs.readFileSync(path.join(PAGES(), f), 'utf8');
-    const fam = (t.match(/^family:\s*(.*)$/m) || [])[1];
-    const src = (t.match(/^sourceFile:\s*(.*)$/m) || [])[1];
-    if (fam && src) idx[src.trim()] = fam.trim();
-  }
-  return idx;
-}
-
-/**
- * A family's CHAMPION: its best-objective row measured under an epoch the active one accepts.
- *
- * ⚠⚠ Why the guard derives this instead of trusting `members[].objective`. The bar is NOT a
- * caller input — rule 1 asks whether the merge beats what the universe would otherwise ship, and
- * what a universe otherwise ships is its best family's CHAMPION (that is literally what PROMOTE
- * does). The ETF round-2 agent supplied each family's study BASELINE as the member, which is the
- * right thing to DECOMPOSE a pipeline from and the wrong thing to be judged against:
- *
- *     ETF动量   base obj 0.1868 sharpe 1.41 worst-year -0.0072
- *               CHAMPION 0.4725 sharpe 2.23 worst-year +0.3673
- *     七星高照   base obj 0.1252 sharpe 1.21 worst-year -0.0651
- *               CHAMPION 0.3365 sharpe 2.54
- *
- * So the round ran against a bar of -0.0072 when the real alternative was +0.3673, and its
- * candidates were reported as +0.0274 uplift when against the champion they lose by ~0.35. It
- * also made both parents look like gate failures (1.41 / 1.21) when every ETF champion clears
- * 1.5. Same shape as the missing rule 0: the guard believed whatever it was handed.
- *
- * Deliberately reads the LEDGER and not `component-scan.members()`, which skips rows that have no
- * stored curve — that would have silently picked a lesser row as 七星高照's champion (its real one
- * has no curve) and understated the bar all over again, which is the very bug being fixed.
- */
-function championOf(family, idx) {
-  const harness = require('./harness-config');
-  let text;
-  try { text = fs.readFileSync(LEDGER(), 'utf8'); } catch { return null; }
-  let best = null;
-  for (const line of text.split('\n').slice(1)) {
-    if (!line.trim()) continue;
-    const c = line.split('\t');
-    if (c[3] !== 'normalized') continue;
-    if ((idx[c[0]] || null) !== family) continue;
-    if (!harness.measurementValid(c[13] || null)) continue;
-    const obj = c[11] === 'DQ' ? null : parseFloat(c[11]);
-    if (!Number.isFinite(obj)) continue;
-    if (!best || obj > best.objective) {
-      best = { family, sourceFile: c[0], objective: obj,
-               annual: parseFloat(c[8]), sharpe: parseFloat(c[9]), maxdd: parseFloat(c[10]),
-               epoch: c[13] || null };
-    }
-  }
-  return best;
-}
-
 /** Measured re-run noise in this repo: the same file shifted annual return by ~0.15pp. */
 const NOISE_PP = 1.0;
 
@@ -137,13 +76,15 @@ const NOISE_PP = 1.0;
  */
 function decomposeMembers(members) {
   try {
-    const series = require('./backtest-series');
     const { diversification } = require('./component-scan');
+    // ⚠ Resolves through `curveOf`, which goes via `loadComparable`. This used to build the key
+    // from `config().epoch` directly, so after a SCORING-ONLY bump it asked for `__e8` while every
+    // stored curve was `__e6` — rule 2 would then silently fall back to the signature test with no
+    // indication that the real decomposition had been skipped. Same bug `curveOf` was written to
+    // fix; it survived here because the two resolvers were separate.
     const loaded = [];
     for (const m of members) {
-      if (!m.sourceFile) continue;
-      const rec = series.load(m.seriesKey
-        || series.seriesKey(m.sourceFile, m.window || 'train', m.epoch || require('./harness-config').config().epoch));
+      const rec = curveOf({ ...m, window: m.window || 'train' });
       if (rec) loaded.push(rec);
     }
     if (loaded.length < 2) return null;
@@ -297,6 +238,10 @@ function check(c) {
   // Resolve the BAR from each family's champion, keeping the caller's realizability call (that
   // one IS a reading of the family page, not a ledger fact). The caller's figures are kept for
   // reporting so an understated bar is visible rather than quietly corrected.
+  // ⚠ Owned by integrate-eligible.js. Both were duplicated here with DIVERGING
+  // implementations (371 vs 433 and 739 vs 809 chars) — two answers to "who is this
+  // family's champion" is strictly worse than one, since they can disagree silently.
+  const { familyIndex, championOf } = require('./integrate-eligible');
   const idx = familyIndex();
   const resolved = members.map(m => {
     // ⚠ A PROMOTED INCUMBENT is not a family and must not be champion-resolved. Under the

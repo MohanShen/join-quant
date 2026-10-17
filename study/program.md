@@ -13,7 +13,7 @@
 ## 必读（每次开始前）
 
 1. `docs/study-schema.md` —— 结构与规则（**权威**）。
-2. `harness/harness.md` —— 冻结评测台（成本/滑点/真实性过滤；窗口 2022–2024，2025 OOS 硬阻断）。**只读**。
+2. `harness/harness.md` —— 冻结评测台（成本/滑点/真实性过滤；窗口与 OOS 边界随纪元移动，读 `node utils/harness-config.js`）。**只读**。
 3. **目标家族页** `wiki/families/<family>.md`（§1 基类、§2 变体、§3 横评、§4 待研究、§5 沿革）+ 其 `base:`/成员策略的 `wiki/strategies/<...>.md` 页 + 相关 `wiki/concepts/*.md`。
 4. `docs/wiki-schema.md` §2.1/§2.2 —— 受控因子/家族词表（描述组件与家族时用统一命名）。
 
@@ -81,7 +81,7 @@
    │                          │
    │                          ▼
    └────── 下一轮 ◀──── analyst：解读成发现 → 记 findings.tsv → 写回家族页 §2/§6 → 反哺概念页
-                        2025+ OOS：任何 agent 永不触碰（代码硬阻断）
+                        保留 OOS 窗口：任何 agent 永不触碰（边界见 harness-config）
 ```
 
 **逐步**：
@@ -112,7 +112,7 @@ node utils/strategy-post-backtest.js study/<family>/variants/<qId>.py "<family>-
 
 ## 红线（见 `study-schema.md` §10）
 
-- 评测台冻结、**2025+ OOS 绝不触碰**、`baseline.py` 快照不可变、**一次一处**（干净归因）、真实性红线（零滑点高估必标 ⚠）。
+- 评测台冻结、**保留 OOS 窗口绝不触碰**（⚠ 2026-10-16 起 `--allow-oos` 是普通 flag，执行器不再自行拒绝；不传它就是全部屏障）、`baseline.py` 快照不可变、**一次一处**（干净归因）、真实性红线（零滑点高估必标 ⚠）。
 - **无选择压力**：不 keep/discard、不挑「最优变体」当产物；产物是**理解**（家族页 §1/§2/§6），不是新策略。启发出的可优化新策略 → 交 auto-enhance 另起。
 - **家族页写回规则**：§2 变体表与 §6 研究问答**追加优先、不覆盖既有行**；§3 横评只由 `wiki-family-build.js` 生成勿手写；矛盾只标不裁决；受控命名（§2.2）。
 - 不 `git commit` `wiki/` 或账本，除非人类明确要求。

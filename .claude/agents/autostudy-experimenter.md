@@ -28,7 +28,9 @@ Then compute the result **relative to the family base baseline** (Δobjective, �
 
 ## Hard rules (enclosed environment)
 - **NEVER** run `--window holdout`, or any `--start/--end` reaching into the reserved OOS window;
-  the executor `OOS-BLOCKED`s it. **Never** set `JQ_ALLOW_OOS`. The boundary moves with the epoch
+  the executor `OOS-BLOCKED`s it — but only until someone passes `--allow-oos`, which since
+  2026-10-16 is a plain CLI flag. **Never pass `--allow-oos`, and never set `JQ_ALLOW_OOS` or its
+  `_OVERBUDGET` / `_UNREADY` companions.** OOS belongs to `/run-oos` alone. The boundary moves with the epoch
   (epoch 5: `2026-01-01`) — check `node utils/harness-config.js`, never a date copied from a prompt.
 - **NEVER** modify `harness/harness.md`, the executor's window params, the objective/gate, the frozen cost/slippage/filter block, or the immutable `baseline.py` snapshot.
 - **One thing per experiment** — clean attribution; if a question needs two changes, it was mis-scoped (report back).

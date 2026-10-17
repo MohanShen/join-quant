@@ -40,6 +40,9 @@ node utils/strategy-post-backtest.js <file>.py "<id>" --window train --usage-lim
   `CONCURRENT-STOP`. Do not set `JQ_ALLOW_CONCURRENT`; wait.
 - `--window train` only. VAL finalization is the orchestrator's step and spends the family's one
   validation for the epoch. Never `--window holdout` or any 2026+ range.
+  ⚠ Since 2026-10-16 `--allow-oos` is a plain CLI flag, so the executor no longer refuses an OOS
+  run on its own — not passing it is the whole barrier. Never pass it, and never set
+  `JQ_ALLOW_OOS` / `_OVERBUDGET` / `_UNREADY`. OOS belongs to `/run-oos`.
 - Check the budget first (`node utils/jq-budget.js`). A multi-hour strategy can burn the day and
   return nothing — `etfprem-000` spent 19 minutes and slow-skipped at 45.
 

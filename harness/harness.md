@@ -18,9 +18,13 @@
 
 ## Epoch
 
-- **epoch**: 5
-- **setAt**: 2026-09-20
-- **note**: **只改计分，不改测量台**（成本/钉死项/窗口与 epoch 4 完全相同）。两点：
+- **epoch**: 8 ｜ **setAt**: 2026-10-16 ｜ ⚠ 权威在 `harness/config/active.json` + `epoch-<n>.json`，
+  本节只是导读；**代码一律读 `node utils/harness-config.js`，不要抄这里的数字**。
+- **epoch 8**（只改计分）：整合 BAR 由 epoch 7 的「最差年 objective maximin」改为
+  **逐年 sharpe 支配**（每个 TRAIN 自然年都要赢过最佳 parent champion），见 §4.1。
+- **epoch 7**（只改计分）：整合门槛 2.0 → 1.5；BAR 由汇总 objective 改为逐年。**已被 epoch 8 取代**。
+- **epoch 6**：钉死**股票**撮合成本（`set_order_cost(..., type='stock')`）——测量台改变，pre-6 行不可比。
+- **epoch 5**（只改计分，台与 epoch 4 完全相同）。两点：
   ①**门槛 2.5 → 1.5**；②**未过闸也保留分数**。理由：124 个实测策略的夏普中位数是 **1.02**，2.5 约在
   **88 百分位**，且在 2.5 下 **14 个家族里有 5 个全员 DQ**（三进兵/红利低频/网格/趋势技术/套利），
   objective 全为 −inf、**不承载任何比较信息**——红利低频页自己写着「永不报 Δobjective」。把 2.5 换算成
@@ -117,7 +121,7 @@ gate(w)      = ( sharpe(w) >= 1.5 )                    # 标签，不再抹掉�
 # 分阶段标准（epoch 7 起统一）：
 #   normalize / study / enhance / validate / type integration : sharpe >= 1.5
 # 整合回合另有 BAR（不是闸门），见 §4.1：
-#   bar = worstTrainYear   # 候选最差年 objective 必须赢过「最稳健成员」的最差年
+#   bar = perYearSharpe    # epoch 8：每个 TRAIN 自然年的 sharpe 都要赢过最佳 parent champion
 ```
 
 - **选择指标 = `objective(TRAIN)`**：Agent 1 迭代中的 keep/继续/定稿全看它。一个变异算「正向改进」当且仅当 `gate(TRAIN)` 为真且 `objective(TRAIN) > 当前定稿中最优`。
@@ -181,9 +185,10 @@ TRAIN = 2022-01-01..2023-12-31，2022 是小盘行情年。所以**用 2022 的�
 按构造必输**——2026-10 的 全A 回合原话：「combining relocates WHICH YEAR earns; it does not add」。
 同理，**以稳健性为收益的合并**（小盘：同一 edge 的两种实现）在汇总指标里**根本没有表达通道**。
 
-**为什么是 maximin 而不是「每年都赢」。** 逐年支配允许一个成员占住 2022、另一个占住 2023，于是候选
-会因为输给一个**没有任何单一成员能匹配的组合**而被拒——那不是与任何真实替代方案的比较。maximin 比的
-是同类：最稳健的那个成员，对候选自己最弱的那一年。
+⚠ 上面这段「为什么用汇总 objective 不行」仍然成立，但 **epoch 7 当时据此选的 maximin 已被 epoch 8
+反转为逐年支配**：epoch 7 认为「逐年支配会让候选输给一个没有单一成员能匹配的组合」是拒绝它的理由，
+epoch 8 把同一件事当作 domination 的**代价**接受下来。本节保留 epoch-7 的论证是为了让旧结论能按产生
+它的规则被读懂；现行判据一律以上文 basis = `perYearSharpe` 为准。
 
 **成员 = 家族 CHAMPION，不是你拆解的 base。** rule 1 问的是「这次合并是否打败了本 universe 本来
 就会交付的东西」，而 universe 交付的是最好家族的 champion（PROMOTE 就是这么做的）。拆解当然从

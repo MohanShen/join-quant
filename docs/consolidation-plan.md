@@ -1,6 +1,13 @@
 # docs/consolidation-plan.md — closing the pipeline, and the type layer
 
-Status: **proposal, nothing built**. Written 2026-09-19 against measured repo state.
+Status: **§1–§4 BUILT** (covered by `tests/pipeline.test.js`); written 2026-09-19 against measured
+repo state and kept for its sequencing and rationale.
+⚠ **§4's integration model is SUPERSEDED** by `docs/proposals/type-integration-by-edge.md`
+— Revision 2 replaced composition with merge, Revision 3 made rule 1 a per-year comparison, and
+Revision 4 (2026-10-16) replaced all-pairs with the INCREMENTAL model (a universe holds promoted
+candidates; families arrive one at a time). The type axis is also one dimension now (universe),
+not the universe × horizon grid described here. Read §4 for why the guard exists, never for how a
+round is run.
 Authority once accepted: this file for sequencing only. `harness/harness.md` (evaluation),
 `screen/screen.md` (screening) and `docs/wiki-schema.md` (knowledge base) stay authoritative
 for their own constants.
