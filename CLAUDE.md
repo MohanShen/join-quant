@@ -880,6 +880,21 @@ Only the directories whose contents aren't self-evident:
   ⚠ The data was **not** rewritten: `consumption.tsv` is append-only and `record()` stamps the live
   epoch on purpose, so no truthful epoch-6 row can be appended today. Fixing the READER fixes the
   class, and the blank epoch then blocks via the unknown-epoch rule, which is the right answer.
+- **`/run-oos` is the entry point for spending an OOS test** (`.claude/skills/run-oos/`). It
+  pre-flights the candidate, declares the expectation BEFORE the number exists, hands the human the
+  one gated command, then records the result.
+- ⚠⚠ **The escape hatches are env vars BY DESIGN, and that is what forces the approval prompt.**
+  Measured 2026-10-16: all **6** of `JQ_ALLOW_OOS` / `_REVAL` / `_CONCURRENT` / `_UNPINNED` /
+  `_CREDITS` / `_OOS_OVERBUDGET` are environment variables, and **0 of 86** allowlist rules carry an
+  env prefix. That split is not an accident — `--usage-limit` and `--max-poll-min` were *converted*
+  from env vars to CLI flags precisely so they would run unattended
+  (`strategy-post-backtest.js`: "avoids the `JQ_MAX_POLL_MS=…` env prefix, which breaks the
+  allowlist and forces approval"). So operational knobs are flags; escape hatches stayed env vars.
+  **Allowlisting `JQ_ALLOW_OOS=1`, or converting it to a `--allow-oos` flag, would invert the one
+  mechanism that distinguishes the two** — and the budget cannot substitute, because it COUNTS
+  tests without judging whether the candidate is ready. All three of 2026-10-16's near-misses (a
+  VAL that validated a different book, a candidate that was the wrong artifact, a realizability
+  score measured on another book) would have passed the budget and spent the test.
 - ⚠⚠ **The OOS budget was PRINTED and never ENFORCED, from epoch 3 until 2026-10-16.**
   `oosPolicy.maxTestsPerCandidate: 1` / `maxTestsPerEpoch: 2` existed only in
   `harness-config.js`'s console output and one test asserting the number went down. `assertNotOOS`
