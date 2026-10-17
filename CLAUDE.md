@@ -56,6 +56,8 @@ node utils/daily-pipeline.js --sync-manifest   # reconcile study/manifest.json w
 node utils/daily-pipeline.js --seed-deferred   # park stranded slow-skipped rows in the pool
 node utils/daily-summary.js --dry              # preview today's summary markdown
 node utils/daily-summary.js --commit           # write docs/daily/<date>.md, commit, push
+node utils/realizability-lint.js               # free static flags for KNOWN unrealizability
+node utils/realizability-lint.js strategies/x.py
 node utils/oos-queue.js                        # promoted candidates: ready / tested / unrunnable
 scripts/run-oos.sh --list                      # the OOS queue + each session's state
 node utils/integrate-queue.js --next            # the next universe round (seed / integrate / idle)
@@ -1429,6 +1431,38 @@ Only the directories whose contents aren't self-evident:
   (1.2637 / 0.8577) and must never be committed as a ledger row without the correction beside them.
   Measure a units-fixed VARIANT, the way q-13 and q-e8-1/2 did. Realizability for this branch is
   scored **per branch**, not per member, since all three share the defect.
+- **The 100× unit bug is CONFINED to those three books** (audited repo-wide 2026-10-17). Only **8**
+  raw strategies read tick depth at all; only the three 小市值 books scale it by 100. The other five
+  (打板短线 ×2, 其他, 多因子ML, one unassigned) compute depth money correctly.
+  ⚠ Widening to the share/lot CLASS found 51 lines matching "quantity × 100" and all but the known
+  one are the **correct board-lot idiom** (`int(value/price/100)*100` — JQ requires multiples of 100
+  for A-share buys). So authors generally do know a lot is 100 shares, which makes this branch's
+  error a misreading of what `a1_v` RETURNS rather than ignorance of lots.
+- **Realizability: a FREE STATIC FLAG at normalize time — `utils/realizability-lint.js` — and
+  deliberately NOT a gate.** The question "should we check realizability before normalize?" has a
+  three-part answer:
+  1. **It cannot be scored from source.** 大小盘轮动's R=2 took `liq-1` across three declared floors
+     (31 JQ min) and the answer was counter-intuitive: the floor removed **zero** names on 31/31
+     rebalances, curve bit-identical. A static rule would have guessed the opposite.
+  2. **A pre-measurement reject must be a known fact, never a guess** — the rule that already cost
+     this repo 287 of 549 strategies.
+  3. **The measurement is what EXPOSES the problem.** 7a1c225f's unit bug was found by studying a
+     book that had already been measured; a pre-filter would have hidden it, and with it the fact
+     that two of §3's top five shared it.
+  So the WARNING moves earlier, not the decision: `kb-stub` stamps `realizabilityFlags:` beside the
+  `normalized:` block, because that line is what feeds §3, `wiki/types/` and champion resolution —
+  the reader who needs the caveat is the one looking at the table, not someone who later finds §4.
+  Measured: **18 of 259** files flagged — `uncapped-position-size` 14, `tick-depth-x100` 3,
+  `depth-gated` 3, `call-auction-entry` 2. A test fails if that ratio balloons.
+  ⚠⚠ **A pattern was REMOVED for imprecision, and that bar matters more than coverage.**
+  `limit-up-entry` was tried twice — 37 files, then **140** after "narrowing" — and both times the
+  hits were dominated by code that AVOIDS limit-ups (`s not in g.high_limit_list`,
+  `day_open == high_limit` as a 一字板 *detector*). "Buys them" and "screens them out" both read
+  `high_limit` with an equality and the difference lives in control flow a line regex cannot see.
+  A flag that fires on the opposite of what it claims teaches the reader to skip the column —
+  including the row that mattered. It needs an AST walk or a probe, not a third regex.
+  ⚠ Nothing in the pipeline consults the lint; a test asserts that `daily-pipeline`,
+  `strategy-normalize` and `integrate-eligible` do not import it.
 - ⚠ **A run JQ refuses to cancel at the slow-skip cap (「在此状态不能取消」) is not necessarily lost.**
   打板短线's jy-u-2 hit the 50-min cap, five cancel attempts failed, the executor reported
   `slow-skipped` — and the run completed server-side two minutes later. The algorithm's buildList

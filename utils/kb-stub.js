@@ -70,6 +70,31 @@ const safe = t => t.replace(/[\\/:*?"<>|#\[\]]/g, '').replace(/\s+/g, '').slice(
  * gitignored and has already regressed from ~119 rows to 18 once. Two copies of its format would
  * be free to drift, and `normalize-ledger-rebuild.js` parses it.
  */
+/**
+ * Free static flags for KNOWN unrealizability patterns, stamped BESIDE the measurement.
+ *
+ * ⚠⚠ This is the answer to "should realizability be checked before normalize?" — and the answer is
+ * a FLAG, never a gate. Realizability needs measurement (大小盘轮动's R=2 took `liq-1` across three
+ * floors, 31 JQ minutes, and the counter-intuitive answer was that the floor removed ZERO names),
+ * and a pre-measurement reject must be a known fact, never a guess — one guess-based screening
+ * rule discarded 287 of 549 strategies. Worse, the measurement is what EXPOSES the problem:
+ * 7a1c225f's 100× unit bug was found by studying a book that had already been measured, and a
+ * pre-filter would have hidden it along with the two siblings it turned out to share it with.
+ *
+ * So what moves earlier is the WARNING, not the decision. It lands here because this line is what
+ * feeds §3, `wiki/types/` and champion resolution — the reader who needs the caveat is the one
+ * looking at the table, not someone who later finds §4.
+ */
+function realizabilityLine(sourceFile) {
+  if (!sourceFile) return null;
+  let flags = [];
+  try { flags = require('./realizability-lint').lintFile(sourceFile); } catch { return null; }
+  if (!flags.length) return null;
+  const fmt = f => `${f.id}${f.severity === 'measured' ? '!' : ''}`;
+  return `realizabilityFlags: [${flags.map(fmt).join(', ')}]   # static, FREE, never a veto — ` +
+         `node utils/realizability-lint.js ${sourceFile}`;
+}
+
 function normalizedLine(metrics) {
   const harness = require('./harness-config');
   const a = metrics.annual / 100, m = metrics.maxdd / 100;

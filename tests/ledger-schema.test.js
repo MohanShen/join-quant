@@ -823,3 +823,77 @@ test('a deferred retry can actually run', async (t) => {
     }
   });
 });
+
+/**
+ * Realizability: a FREE static flag at normalize time, never a gate.
+ *
+ * The question was whether to check realizability before normalize. It cannot be scored from
+ * source — 大小盘轮动's R=2 took `liq-1` across three floors (31 JQ min) and the floor turned out to
+ * remove ZERO names — and a pre-measurement reject must be a known fact, never a guess: one
+ * guess-based screening rule discarded 287 of 549 strategies. Worse, the measurement is what
+ * EXPOSES the problem: 7a1c225f's 100× unit bug was found by studying an already-measured book.
+ * So the WARNING moves earlier; the decision does not.
+ */
+test('realizability flags are precise, and advisory', async (t) => {
+  const rl = require('../utils/realizability-lint');
+  const strategies = fs.readdirSync(path.join(ROOT, 'strategies')).filter(f => f.endsWith('.py'));
+
+  await t.test('the three known unit-bug books are flagged, and only those', () => {
+    const KNOWN = ['7a1c225f', '8dbd994c', '5e874b5b'];
+    const flagged = strategies.filter(f =>
+      rl.lintFile(`strategies/${f}`).some(r => r.id === 'tick-depth-x100'));
+    assert.strictEqual(flagged.length, KNOWN.length,
+      `expected exactly ${KNOWN.length} tick-depth-x100 files, got ${flagged.length}`);
+    for (const k of KNOWN) {
+      assert.ok(flagged.some(f => f.includes(k)), `${k} must be flagged`);
+    }
+  });
+
+  await t.test('every pattern states a severity and a why', () => {
+    for (const p of rl.PATTERNS) {
+      assert.ok(['measured', 'info'].includes(p.severity), `${p.id}: bad severity`);
+      assert.ok(p.why && p.why.length > 60, `${p.id}: a flag without a why is noise`);
+      if (p.severity === 'measured') {
+        assert.match(p.why, /MEASURED|q-e6|q-e8/,
+          `${p.id}: 'measured' must cite the experiment that measured the cost`);
+      }
+    }
+  });
+
+  await t.test('it stays PRECISE — a noisy flag teaches readers to skip the column', () => {
+    // Measured 2026-10-17: 18 of 259 files. Two earlier attempts at a limit-up pattern hit 37 and
+    // then 140, both dominated by code that AVOIDS limit-ups, and it was removed rather than
+    // tuned a third time. If this ratio balloons, a pattern has gone loose.
+    const n = strategies.filter(f => rl.lintFile(`strategies/${f}`).length).length;
+    assert.ok(n / strategies.length < 0.25,
+      `${n}/${strategies.length} flagged — too many for a "known pattern" signal to be trusted`);
+  });
+
+  await t.test('the removed pattern is documented, not silently dropped', () => {
+    const src = fs.readFileSync(path.join(ROOT, 'utils/realizability-lint.js'), 'utf8');
+    assert.match(src, /REMOVED: `limit-up-entry`/);
+    assert.match(src, /140/, 'the second attempt\'s count is the evidence for dropping it');
+    assert.ok(!rl.PATTERNS.some(p => p.id === 'limit-up-entry'));
+  });
+
+  await t.test('it is a reporter: no throw on junk, and NOT a gate', () => {
+    assert.deepStrictEqual(rl.lint(''), []);
+    assert.deepStrictEqual(rl.lint(null), []);
+    assert.deepStrictEqual(rl.lintFile('does/not/exist.py'), []);
+    // Nothing in the pipeline may consult it as a veto.
+    for (const f of ['utils/daily-pipeline.js', 'utils/strategy-normalize.js',
+                     'utils/integrate-eligible.js']) {
+      const src = fs.readFileSync(path.join(ROOT, f), 'utf8');
+      assert.ok(!/realizability-lint/.test(src),
+        `${f} must not consult the lint — it reports, it does not decide`);
+    }
+  });
+
+  await t.test('the flag is stamped where the NUMBER is created', () => {
+    // Beside `normalized:` in the wiki stub, because that line feeds §3, wiki/types and champion
+    // resolution — the reader who needs the caveat is looking at the table.
+    const src = fs.readFileSync(path.join(ROOT, 'utils/kb-stub.js'), 'utf8');
+    assert.match(src, /realizabilityFlags/);
+    assert.match(src, /never a veto/);
+  });
+});
