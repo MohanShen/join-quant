@@ -757,6 +757,28 @@ function runChain({ dry = false, maxStages = 40, stageOverride = null } = {}) {
   // event), so the planner immediately picked enhance again — each repeat resuming a Claude
   // session to redo the same thing. Depth is the honest completion signal here, because the
   // stage's own exit code is not one.
+  //
+  // ⚠⚠ But the comparison must be LOCAL TO THE STAGE'S OWN RUN, measured the moment it returns.
+  // It used to be deferred to the stage's NEXT pick, comparing against the depth at its previous
+  // pick — which in a funnel spans other stages that legitimately ADD to that queue. Measured
+  // 2026-10-17 (the 18:00Z cron, `data/daily-logs/2026-10-17_110009.log`):
+  //
+  //   assign    picked at 1 → assigned it → 0.   normalize then measured 2 strategies, which
+  //             have no `family:` yet, so assign's queue became 2 and its next pick read
+  //             "queue still 2 after running" → STALLED, having in fact drained it.
+  //   normalize picked at 2 → measured both → 0. discover then admitted 3 fetches (its job), so
+  //             normalize's next pick read "queue still 3" → STALLED, having in fact drained it.
+  //
+  // Both stages did exactly what they exist to do and both were recorded as stalled; the chain
+  // then reported EXHAUSTED and the day ended at **used=2 of 180 minutes** with 3 runnable
+  // strategies queued. A downstream stage's queue growing because an upstream stage fed it is the
+  // funnel WORKING — it is the single thing this pipeline is built to do.
+  //
+  // So `stalled` is now decided from (depth before execute → depth immediately after), and a
+  // stage that moved its own queue stays eligible however much later work arrives.
+  // ⚠ Termination no longer rests on `stalled` growing to PRIORITY.length: a productive stage can
+  // be re-picked indefinitely, which is the intent ("stop when the budget is gone"). The bounds
+  // are the budget gate, the queue draining, and `maxStages` as a backstop.
   const before = {};
   // ⚠ A stalled stage CEDES ITS TURN; it does not end the day. This `break`ed the whole chain,
   // which contradicted its own note ("not repeating IT this chain") and the comment above.
@@ -781,13 +803,6 @@ function runChain({ dry = false, maxStages = 40, stageOverride = null } = {}) {
       break;
     }
 
-    if (before[p.stage] != null && depth(p.stage, p.q) >= before[p.stage]) {
-      log.push({ stage: p.stage, outcome: 'no-progress',
-                 note: `queue still ${depth(p.stage, p.q)} after running — ceding its turn ` +
-                       `to the next stage (not repeated this chain)` });
-      stalled.add(p.stage);
-      continue;                        // no i++ — see the counter note above
-    }
     before[p.stage] = depth(p.stage, p.q);
     i++;
 
@@ -803,10 +818,22 @@ function runChain({ dry = false, maxStages = 40, stageOverride = null } = {}) {
 
     // ⚠ Only a HELD claim ends the chain: another run owns the in-flight slot, and proceeding
     // would let two runs spend the same budget. `blocked` / `error` / `empty` cede instead — the
-    // no-progress guard above catches a stage whose queue did not drain, so a failing stage costs
+    // no-progress guard below catches a stage whose queue did not drain, so a failing stage costs
     // one re-plan rather than the rest of the day. (This list used to break on all four, which is
     // how 2026-10-04 ended with 124 unspent minutes.)
     if (r.outcome === 'held') break;
+
+    // ── did THIS run move THIS stage's own queue? Asked now, while nothing else has run.
+    // `dry` executes nothing, so its depth cannot move and asking would stall every stage.
+    if (!dry) {
+      const after = depth(p.stage, queues());
+      if (after >= before[p.stage]) {
+        log.push({ stage: p.stage, outcome: 'no-progress',
+                   note: `queue ${before[p.stage]} -> ${after} across its own run — ceding its ` +
+                         `turn to the next stage (not repeated this chain)` });
+        stalled.add(p.stage);
+      }
+    }
 
     // ⚠ `discover` ADMITS work; it does not consume it. Its own limit is 3 fetches/day by design
     // and it spends no backtest minutes, so without this it would re-run until maxStages.

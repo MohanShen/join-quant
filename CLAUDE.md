@@ -921,9 +921,26 @@ Only the directories whose contents aren't self-evident:
   Those three now **cede**, exactly as `no-progress` already did, and `maxStages` is **40** — a
   backstop, not the bound.
   ⚠ **Ceding is safe because of the no-progress guard**, which is the load-bearing part: a stage
-  whose queue did not drain is re-planned once, caught by `depth >= before`, added to `stalled`, and
-  skipped for the rest of the chain. A failing stage therefore costs ONE wasted re-plan, not an
-  infinite loop.
+  whose own run did not move its own queue is added to `stalled` and skipped for the rest of the
+  chain. A failing stage therefore costs ONE wasted re-plan, not an infinite loop.
+  ⚠⚠⚠ **That guard measured the WRONG INTERVAL and threw away a whole day.** It compared the depth
+  at a stage's NEXT pick against the depth at its PREVIOUS pick — an interval spanning other
+  stages, which in a funnel is precisely where a downstream queue gets REFILLED. Measured on the
+  2026-10-17 18:00Z cron (`data/daily-logs/2026-10-17_110009.log`):
+  `assign` drained 1→0, then normalize produced two strategies with no `family:`, so assign's next
+  pick read 「queue still 2 after running」and stalled it; `normalize` drained 2→0, then discover
+  admitted its 3 daily fetches, so normalize read 「queue still 3」and stalled too. Both stages had
+  done exactly their job. With assign/normalize/discover all "stalled" the chain reported
+  **EXHAUSTED after 7 minutes at used=2 of 180**, leaving 3 runnable strategies and 178 minutes.
+  **A downstream queue growing because an upstream stage fed it is the funnel WORKING** — it is the
+  one thing this pipeline exists to do, and the guard was reading it as failure.
+  Now the verdict is the stage's **own** delta, sampled the moment it returns
+  (`const after = depth(p.stage, queues())`), before anything else can run; a stage that moved its
+  own queue stays eligible however much later work arrives.
+  ⚠ Consequence: termination no longer rests on `stalled` growing to `PRIORITY.length` — a
+  productive stage can be re-picked indefinitely, which is the intent. The bounds are the budget
+  gate, the queue draining, and `maxStages` as a backstop.
+  ⚠ `dry` is exempt: it executes nothing, so no depth can move and every stage would stall.
   ⚠ **`held` still breaks and must**: it means `state.beginRun` refused because another run owns the
   in-flight claim. That is a lock, and proceeding would let two runs spend the same budget.
   `exhausted` still breaks too — every queue empty means there is nothing for the minutes to buy.

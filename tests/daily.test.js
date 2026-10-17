@@ -790,16 +790,22 @@ dpt('a stalled stage cedes its turn rather than ending the chain', async (t) => 
   const dp = require('../utils/daily-pipeline');
 
   await t.test('the no-progress branch cedes instead of breaking', () => {
-    // Anchor on the branch's own note, not on the `no-progress` token — the defensive
-    // planner-loop guard above it legitimately DOES break, and anchoring on the token found
-    // that one instead and passed a broken implementation.
-    const at = src.indexOf('ceding its turn');
+    // ⚠ Anchor on the branch's own note, not on the `no-progress` token — the defensive
+    // planner-loop guard legitimately DOES break, and anchoring on the token found that one
+    // instead and passed a broken implementation.
+    // ⚠⚠ And bound the slice by a LENGTH, not by a second indexOf. This used to slice to
+    // `indexOf('before[p.stage] = depth', at)`, which returned -1 the moment that assignment
+    // moved above the branch — `slice(at, -1)` then tested the whole rest of the file and the
+    // `doesNotMatch(/break;/)` below failed on unrelated code pages away.
+    const at = src.indexOf('ceding its');
     dpa.ok(at > 0, 'the no-progress guard no longer cedes its turn');
-    const branch = src.slice(at, src.indexOf('before[p.stage] = depth', at));
+    const branch = src.slice(at, at + 400);
     dpa.match(branch, /stalled\.add\(p\.stage\)/, 'it must record the stage as stalled');
-    dpa.match(branch, /continue;/, 'it must try the next stage');
     dpa.doesNotMatch(branch, /\bbreak;/,
       'breaking here ends the day — that is the bug this test exists for');
+    // The stage has already run by this point, so there is nothing to `continue` past: the loop
+    // simply comes round and plan() skips the now-stalled stage. What matters is that the chain
+    // keeps going, which the absence of `break` above is what asserts.
   });
 
   await t.test('an exclusion does not consume a maxStages slot', () => {

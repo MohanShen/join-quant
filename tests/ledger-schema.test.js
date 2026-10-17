@@ -916,10 +916,38 @@ test('the daily chain stops only for the budget, a lock, or an empty board', asy
   });
 
   await t.test('the retry loop is prevented by the no-progress guard, not by breaking', () => {
-    // This is what makes ceding safe: a stage whose queue did not drain is re-planned once,
-    // caught by depth >= before, added to `stalled`, and skipped for the rest of the chain.
-    assert.match(src, /depth\(p\.stage, p\.q\) >= before\[p\.stage\]/);
+    // This is what makes ceding safe: a stage whose own run did not move its own queue is added
+    // to `stalled` and skipped for the rest of the chain.
+    assert.match(src, /const after = depth\(p\.stage, queues\(\)\)/);
+    assert.match(src, /after >= before\[p\.stage\]/);
     assert.match(src, /stalled\.add\(p\.stage\)/);
+  });
+
+  /**
+   * ⚠⚠ Progress is the stage's OWN delta, measured the moment it returns.
+   *
+   * It used to be deferred to the stage's NEXT pick and compared against the depth at its
+   * previous pick — an interval that spans other stages, which in a FUNNEL legitimately add to
+   * that queue. Measured on the 2026-10-17 18:00Z cron: assign drained 1→0 and was then read as
+   * "queue still 2" because normalize had meanwhile produced two unassigned strategies; normalize
+   * drained 2→0 and was read as "queue still 3" because discover had meanwhile admitted its 3
+   * daily fetches. Both had done exactly their job, both were marked stalled, the chain reported
+   * EXHAUSTED, and the day ended at **used=2 of 180 minutes** with 3 runnable strategies queued.
+   */
+  await t.test('a queue refilled by ANOTHER stage is not this stage failing', () => {
+    const at = src.indexOf('const after = depth(p.stage, queues())');
+    assert.ok(at > 0, 'the after-depth must be sampled');
+    // It must be sampled AFTER execute() and BEFORE the loop comes round again, so that no other
+    // stage can run in between. Those two anchors bracket it.
+    const exec = src.indexOf('const r = execute(p, { dry })');
+    assert.ok(exec > 0 && exec < at, 'the after-depth must be read AFTER the stage ran');
+    // ...and the pre-depth must be the one recorded for THIS execution, not a prior pick.
+    const pre = src.lastIndexOf('before[p.stage] = depth(p.stage, p.q)', exec);
+    assert.ok(pre > 0 && pre < exec, 'the before-depth must be recorded just before execute');
+    // The old deferred comparison must be gone, or both forms would coexist and the stale one
+    // would keep stalling productive stages.
+    assert.doesNotMatch(src, /depth\(p\.stage, p\.q\) >= before\[p\.stage\]/,
+      'the next-pick comparison is the bug — it spans other stages feeding this queue');
   });
 
   await t.test('maxStages is a backstop, not the real bound', () => {
