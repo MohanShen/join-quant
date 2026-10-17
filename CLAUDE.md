@@ -1393,18 +1393,42 @@ Only the directories whose contents aren't self-evident:
   `7a1c225f:216` (base, §3 #1 — measured fixed), `8dbd994c:212` (§3 **#2**, obj 1.2810) and
   `5e874b5b:123` (§3 **#5**, obj 0.9411). The two siblings read the **ask** side while the base
   reads the **bid** (variables still named `a1_*`) — opposite directions, `×100` on both.
-  ⚠ **So §3's top-five ordering is not a mechanism ranking** until #2 and #5 are re-measured with
-  correct units.
+  ⚠ **§3's top-five ordering is not a mechanism ranking.** Both siblings were re-measured
+  2026-10-17 (8 backtest minutes), each paired with its OWN control — the same book as written, at
+  epoch 8 — because their only prior rows were epoch 2, which epoch 8 rejects, so the old rows are
+  not comparables:
+  | book | control | fixed | retained | maxDD |
+  |---|---|---|---|---|
+  | base `7a1c225f` | 1.3861 | 0.6539 | 47.2% | 11.63 → 12.81 |
+  | `8dbd994c` (#2) | 1.2637 | **0.2867** | 22.7% | 12.61 → 14.61 |
+  | `5e874b5b` (#5) | 0.8577 | **0.2858** | 33.3% | 9.75 → **19.55** |
+  ⚠⚠ **THE TWO SIBLINGS CONVERGE TO WITHIN 0.0009** (0.2867 / 0.2858) from controls that differ by
+  47%. Once the gate means what it says the two books are the same book — so this branch has **one**
+  performance level, about **0.286**, not three. The 1.37 / 1.28 / 0.94 spread in §3 was produced
+  almost entirely by how much untradeable volume each broken gate admitted, not by stock selection.
+  That is q-e6-17's prose conjecture promoted to a measurement, and it means **§3 must GROUP this
+  branch, never rank its members**.
+  ⚠ **Drawdown worsens on all three** (+1.2 / +2.0 / **+9.8pp**, the last a doubling), so the
+  broken gate was suppressing risk as well as inflating return. An honest version of these books is
+  both lower-returning and riskier.
+  ⚠ The fixed books keep sharpe **1.67 / 2.43** — still above the 1.5 gate, so the mechanism
+  survives at a tradeable size; it is the magnitude that was fiction.
+  ✅ Built by `study/小市值/build-siblings.js` — `py2to3` + ONE asserted edit + `OVERRIDE`, never an
+  edit to `strategies/`. ⚠ Its stray-`*100` guard initially rejected a CORRECT build by matching
+  its own explanatory comment; it now tests the code side of the line only. A check that reads
+  prose as code fails precisely on the right answer.
   ✅ Not currently contaminating live tables: all three rows are **epoch 2**, which
   `measurementValid()` rejects under epoch 8, and none is queued for re-measurement. The family's
   current headline `a30641fb` (bestObjective 1.0258, epoch 8) calls `get_current_tick` **zero
   times** and is clean of this bug — its R=1 has other causes (min-500 market cap, 9:26 auction
   entry, ~100% daily turnover).
-  ⚠⚠ **FORWARD RISK — the one thing to not get wrong.** `strategies/` is immutable, so
-  re-measuring 8dbd994c or 5e874b5b as-is under epoch 8 would mint **inflated epoch-8 rows** that
-  WOULD feed §3, `wiki/types/` and the champion. Measure a units-fixed VARIANT, the way q-13 did;
-  never the raw file. Realizability for this branch should be scored **per branch**, not per
-  member, since all three share the defect.
+  ⚠⚠ **FORWARD RISK — still live.** `strategies/` is immutable, so the corrected numbers above live
+  in `study/小市值/variants/`, NOT in the ledger: the ledger still holds only each book's epoch-2
+  row. Re-measuring either sibling as-is under epoch 8 would mint an **inflated epoch-8 row** that
+  WOULD feed §3, `wiki/types/` and the champion — the control runs above are exactly that number
+  (1.2637 / 0.8577) and must never be committed as a ledger row without the correction beside them.
+  Measure a units-fixed VARIANT, the way q-13 and q-e8-1/2 did. Realizability for this branch is
+  scored **per branch**, not per member, since all three share the defect.
 - ⚠ **A run JQ refuses to cancel at the slow-skip cap (「在此状态不能取消」) is not necessarily lost.**
   打板短线's jy-u-2 hit the 50-min cap, five cancel attempts failed, the executor reported
   `slow-skipped` — and the run completed server-side two minutes later. The algorithm's buildList
