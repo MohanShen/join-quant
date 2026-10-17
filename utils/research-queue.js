@@ -222,7 +222,11 @@ function context(family) {
     open: q.filter(e => e.status === 'queued' || e.status === 'active'),
     findings: fnd,
     implications: fnd.filter(f => f.implication).map(f => ({ qId: f.qId, implication: f.implication })),
-    closedDirections: fnd.filter(f => /closed|关闭|已闭|不再|封闭/.test(f.implication || ''))
+    // ⚠ 关掉 was missing until 2026-10-17 and it is the verb a recorder reaches for most naturally
+    // ("关掉这个方向"). 五福闹新春's q-e8-2 closed two directions with it and was invisible here, i.e.
+    // the next generator's REQUIRED reading would not have seen the round's most durable closure —
+    // exactly the re-propose-finished-work failure this field exists to prevent.
+    closedDirections: fnd.filter(f => /closed|关闭|关掉|已闭|不再|封闭/.test(f.implication || ''))
       .map(f => ({ qId: f.qId, implication: f.implication })),
     rejected: rejectedVariants(family),
     ungrounded: q.filter(e => !(e.from || []).length).map(e => e.id),
