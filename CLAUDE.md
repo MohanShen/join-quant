@@ -681,6 +681,35 @@ Only the directories whose contents aren't self-evident:
   `DAILY_RUN_HOUR_UTC`. Change the hour in that one variable and re-bracket the two local hours.
   The gate applies only to scheduled fires (`DAILY_SCHEDULED=1`); a manual run is never blocked,
   and `FORCE=1` bypasses it.
+- ⚠⚠⚠ **The `discover` STAGE was running the `normalize` stage's work, for hours.**
+  `utils/strategy-daily.js` ends by calling `normalize-daily.normalizeNew()`, which runs
+  **backtests**, and `runDiscover` invoked it bare. So discover measured strategies outside the
+  budget accounting, the deferred pool and the retry-at-a-higher-cap rule, bounded only by
+  `STAGE_TIMEOUT_MIN=255`. Measured: **4h25m on 2026-10-16**, killed by that timeout and taking the
+  day's remaining budget with it; **61 min on 2026-10-17** before it was killed by hand.
+  ⚠ **Neither run moved `used`** — JQ settles `duration.used` only when a run TERMINATES, so an
+  in-flight backtest is invisible to every budget gate, and a hang spends wall clock rather than
+  minutes. Two monitors expired in silence while it sat there; I read the first expiry as a
+  wrong-file mistake, which was one expiry too late.
+  **Fix**: `runDiscover` passes `--no-normalize`, and the same stage then completes in ~3 min
+  (measured: discover → cookie refresh → fetch 3 → done).
+  ⚠⚠ **`--no-normalize` now means "ENQUEUE but do not measure", not "skip"** — this is why it was a
+  three-file change. `normalizeNew()` is the ONLY thing that appends a day's fetches to
+  `data/pending-normalize.json` (the enqueue is its first two lines, the backtests follow in the
+  same call), so the old skip-entirely behaviour would have stranded every strategy fetched that
+  day. `normalize-daily.enqueueOnly()` is the queue-write half, and a test asserts it cannot reach
+  `execFileSync` / `strategy-normalize` / `cdpAlive`.
+  ⚠ Verified: 3 fetches enqueued (queue 8 → 11), measurement left to the normalize stage.
+- ⚠ **The `notify` binary is absent on this machine, and its stack trace was read as the cause of
+  the discover failure.** `~/.local/bin/notify` (WeChat via Server酱) does not exist; the call was
+  always caught and queued to `data/notifications.json`, but it ran with `stdio: 'inherit'`, so a
+  full `Cannot find module` trace landed in the daily log — and `daily-pipeline.js`'s
+  cause-extractor greps the tail for `/error|Error|failed/` and reported that trace as **the reason
+  the stage failed**. It cost real diagnosis time: a module-resolution error looked like the
+  discover bug while the actual cause was the normalize sub-phase above. Now `existsSync` is checked
+  first and the child's stderr is piped, not inherited.
+  ⚠ Consequence to keep in mind: **the cause-extractor reports the loudest-looking line, not the
+  cause.** Treat it as a pointer, not a diagnosis.
 - ⚠ **A single daily slot means a missed slot is a missed day** — if CDP is down or the budget
   is already spent at 18:00 UTC, the wrapper exits 0 and does not retry. The earlier 4-hourly
   schedule caught the first usable window instead. If that bites, add hours to the array and

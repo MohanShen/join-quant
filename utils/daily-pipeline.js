@@ -465,10 +465,31 @@ function runAgentLoop(stage, target, { dry }) {
   };
 }
 
+/**
+ * Discover + fetch. ⚠ **`--no-normalize` is required**, and it is the fix for the longest-running
+ * silent failure in this pipeline.
+ *
+ * `strategy-daily.js` ends by calling `normalize-daily.normalizeNew()`, which runs BACKTESTS. So
+ * the `discover` stage was quietly doing the `normalize` stage's work — outside the budget
+ * accounting, outside the deferred pool, outside the retry-at-a-higher-cap rule — bounded only by
+ * `STAGE_TIMEOUT_MIN`. Measured: **4h25m on 2026-10-16**, killed by that timeout, taking the day's
+ * remaining budget with it; and 61 minutes on 2026-10-17 before it was killed by hand. Neither run
+ * moved `used`, because JQ settles `duration.used` only when a run TERMINATES — so a budget gate
+ * could never see it, and two monitors expired in silence while it sat there.
+ *
+ * With the flag, the same stage completes in ~3 minutes (measured: discover -> cookie refresh ->
+ * fetch 3 -> done).
+ *
+ * ⚠ The flag now means "enqueue but do not measure", NOT "skip". `normalizeNew()` is the only
+ * thing that appends a day's fetches to `data/pending-normalize.json`, so the old skip-entirely
+ * behaviour would have stranded every strategy fetched that day — which is why this is a
+ * three-file change and not a one-word one.
+ */
 function runDiscover({ dry }) {
-  if (dry) return { outcome: 'dry', note: 'would run: node utils/strategy-daily.js' };
-  const r = sh('node', ['utils/strategy-daily.js']);
-  return { outcome: r.ok ? 'ran' : 'error', note: 'discover + fetch',
+  const args = ['utils/strategy-daily.js', '--no-normalize'];
+  if (dry) return { outcome: 'dry', note: `would run: node ${args.join(' ')}` };
+  const r = sh('node', args);
+  return { outcome: r.ok ? 'ran' : 'error', note: 'discover + fetch (normalize is its own stage)',
            tail: r.out.split('\n').filter(Boolean).slice(-6).join('\n') };
 }
 

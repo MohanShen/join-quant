@@ -44,6 +44,26 @@ function ledgerByPid8() {
   return map;
 }
 
+/**
+ * Append fetches to `data/pending-normalize.json` and measure NOTHING.
+ *
+ * ⚠⚠ This exists because `normalizeNew()` is the ONLY thing that enqueues a day's new fetches —
+ * the enqueue is the first two lines of it and the backtests follow in the same call. So telling
+ * `strategy-daily.js --no-normalize` to skip it stranded every strategy fetched that day: nothing
+ * else writes that file except the backfill and the sync.
+ *
+ * Which matters because the daily pipeline has a **normalize STAGE** that owns measurement, with
+ * the budget, the deferred pool and the retry-at-a-higher-cap rule. `discover` running backtests
+ * too was a silent second path around all of that (see runDiscover).
+ */
+function enqueueOnly(postIds) {
+  const pending = [...new Set([...loadPending(), ...(postIds || [])])];
+  savePending(pending);
+  const n = (postIds || []).length;
+  return { enqueued: n, pending: pending.length,
+           lines: [`归一化：已入队 ${n} 个今日抓取（队列 ${pending.length}），测量留给 normalize 阶段`] };
+}
+
 function normalizeNew(postIds, { usageLimit = 55 } = {}) {
   const lines = [];
   // Pending = anything queued for normalization. Today's new fetches are appended to
@@ -146,4 +166,4 @@ function normalizeNew(postIds, { usageLimit = 55 } = {}) {
   return { results, lines };
 }
 
-module.exports = { normalizeNew };
+module.exports = { normalizeNew, enqueueOnly };

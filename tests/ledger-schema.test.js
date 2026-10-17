@@ -494,3 +494,54 @@ test('the scoped daily commit survives its own pathspec', async (t) => {
     }
   });
 });
+
+/**
+ * ⚠⚠⚠ The `discover` stage was running the `normalize` stage's work.
+ *
+ * `strategy-daily.js` ends by calling `normalize-daily.normalizeNew()`, which runs BACKTESTS, and
+ * `runDiscover` invoked it bare. So discover measured strategies outside the budget accounting,
+ * the deferred pool and the retry-at-a-higher-cap rule, bounded only by STAGE_TIMEOUT_MIN:
+ * **4h25m on 2026-10-16** (killed by that timeout, losing the day's remaining budget) and 61
+ * minutes on 2026-10-17. Neither moved `used`, because JQ settles duration.used only when a run
+ * TERMINATES — so no budget gate could see it.
+ */
+test('discover fetches; normalize measures', async (t) => {
+  const pipeline = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
+  const daily = fs.readFileSync(path.join(ROOT, 'utils/strategy-daily.js'), 'utf8');
+
+  await t.test('the discover stage never runs backtests', () => {
+    assert.match(pipeline, /'utils\/strategy-daily\.js', '--no-normalize'/,
+      'without the flag, discover calls normalizeNew() and spends hours measuring');
+  });
+
+  await t.test('--no-normalize still ENQUEUES, or the day\'s fetches are stranded', () => {
+    // normalizeNew() is the only thing that appends a day's fetches to pending-normalize.json —
+    // the enqueue is its first two lines and the backtests follow in the same call. Skipping it
+    // entirely loses them: nothing else writes that file except the backfill and the sync.
+    assert.match(daily, /enqueueOnly/,
+      'the flag must mean "enqueue but do not measure", never "skip"');
+    const nd = require('../utils/normalize-daily');
+    assert.strictEqual(typeof nd.enqueueOnly, 'function');
+    assert.strictEqual(typeof nd.normalizeNew, 'function');
+  });
+
+  await t.test('enqueueOnly is a pure queue write — it cannot reach a backtest', () => {
+    const src = fs.readFileSync(path.join(ROOT, 'utils/normalize-daily.js'), 'utf8');
+    const body = (src.match(/function enqueueOnly\([\s\S]*?\n\}/) || [''])[0];
+    assert.ok(body, 'enqueueOnly must exist');
+    for (const forbidden of ['execFileSync', 'strategy-normalize', 'post-backtest', 'cdpAlive']) {
+      assert.ok(!body.includes(forbidden),
+        `enqueueOnly must not reach ${forbidden} — measuring is the normalize stage's job`);
+    }
+    assert.match(body, /savePending/);
+  });
+
+  await t.test('the absent notifier is checked, not stack-traced into the log', () => {
+    // The binary is missing on this machine, and `stdio: 'inherit'` printed a full
+    // `Cannot find module` trace into the daily log — which daily-pipeline's cause-extractor then
+    // reported as the REASON discover failed, while the real cause was the normalize sub-phase.
+    assert.match(daily, /fs\.existsSync\(NOTIFY_BIN\)/);
+    assert.ok(!/stdio: \['pipe', 'inherit', 'inherit'\]/.test(daily),
+      "the notifier's stderr must not be inherited into our log");
+  });
+});

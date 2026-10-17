@@ -1341,5 +1341,55 @@
     "postId": "4730554eac007c4bfe89dbf2c96781e5",
     "sourceFile": "2026-10-17_全天候风险平价策略的一点回测观察-4730554e.py",
     "registeredAt": "2026-10-17T08:27:21.439Z"
+  },
+  "41911e438a53b5a51e94af6f77aa78740261a694ac035c7278292cd95f932e10": {
+    "postId": "92dbf9aafae2d1952f104b02f969dc33",
+    "sourceFile": "2026-10-17_小市值-白马-ETF组合_挺火的_模拟运行了半年多-92dbf9aa.py",
+    "registeredAt": "2026-10-17T09:35:24.338Z"
+  },
+  "f6c7559b9b4a852a8fdda91e9ce8994bc21b9afed4bcf063f53bc9ef27cabf44": {
+    "postId": "a658ef560be8bdf7f3012ce60c721f35",
+    "sourceFile": "2026-10-17_小市值策略优化后回测不佳_求各位大佬指点迷津-a658ef56.py",
+    "registeredAt": "2026-10-17T09:36:11.580Z"
+  },
+  "ed7726ec6dee44ff34d7ddc0c35ed958dc6206b587b62309ba7e7eb26816167e": {
+    "postId": "9383ab66c14a9027978f4f2528f58ade",
+    "sourceFile": "2026-10-17_北上资金_北向资金_港资_外资_因子分析与策略分享-9383ab66.py",
+    "registeredAt": "2026-10-17T09:36:14.562Z"
+  },
+  "cca6431c45cd00e420df527e1493a7caa11849f4c8493d5c87fe6b3e658c8e0e": {
+    "postId": "f602058b9be982aac4490d5fc69ab39f",
+    "sourceFile": "2026-10-17_RSRS模型深入研究3-二八轮动策略及其探究分析-f602058b.py",
+    "registeredAt": "2026-10-17T09:36:17.165Z"
+  },
+  "a067224b4cb8ee39992c94f8c4ef2f05fb6843e8a8df4b35c129570a05fcece7": {
+    "postId": "5a46c42e797d6154eafd56fdad12415c",
+    "sourceFile": "2026-10-17_因子中性化探讨_以pb_ratio为例-5a46c42e.py",
+    "registeredAt": "2026-10-17T09:38:32.224Z"
+  },
+  "fd400f150106a246034225853db3121327c2109f41017799d080eca69114b5e2": {
+    "postId": "715633a027e584deb9c166193b81852f",
+    "sourceFile": "2026-10-17_2023年11月开始运行_记录一下这套小市值策略的表现-715633a0.py",
+    "registeredAt": "2026-10-17T09:38:35.504Z"
+  },
+  "4de9bf7002830e27af567d35621ef4a8d32df98582cec7ea418427893cae32ac": {
+    "postId": "091e1822b2816a02153f9c91298c6134",
+    "sourceFile": "2026-10-17_单吊还是分散_ETF轮动1至5只黄金分仓实测分享-091e1822.py",
+    "registeredAt": "2026-10-17T09:38:38.704Z"
+  },
+  "d4b7171981448a52636df3a08e82434637f6211e2c0761763fcb7a568c2517b0": {
+    "postId": "4a8bcfd5092334a3a73493475f007f7a",
+    "sourceFile": "2026-10-17_量化分享_ETF低波海龟法则与复利增强的验证-4a8bcfd5.py",
+    "registeredAt": "2026-10-17T09:40:26.668Z"
+  },
+  "48373a0fc69d61ad7e57274b649459f9c18b399424c3fb27c635126bfd1cb011": {
+    "postId": "9f286ad2417f802d05eaddfa002d9a3b",
+    "sourceFile": "2026-10-17_冰点分批买入持有思路必定赚钱对吗-9f286ad2.py",
+    "registeredAt": "2026-10-17T09:40:29.196Z"
+  },
+  "514da433367cfba7ed9b3a685eedc0ca74a1140f935e805a287444754607d816": {
+    "postId": "c913387f8d6cdb8096b29e839f5675fa",
+    "sourceFile": "2026-10-17_哈利-布朗永久投资组合-平均年化11_最大回撤11-c913387f.py",
+    "registeredAt": "2026-10-17T09:40:31.820Z"
   }
 }

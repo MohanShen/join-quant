@@ -96,14 +96,27 @@ async function sendWeChatAlert(lines) {
 
   // Deliver to WeChat via the global notifier (immediate). Uses the same node running this
   // script so PATH doesn't matter; body is piped on stdin so multi-line text needs no escaping.
-  try {
-    const title = (lines[0] || '📡 join-quant 每日').replace(/\s+/g, ' ').slice(0, 60);
-    execFileSync(process.execPath,
-      [NOTIFY_BIN, '--source', 'join-quant-daily', '--level', 'info', '--title', title, '--now'],
-      { input: msg, stdio: ['pipe', 'inherit', 'inherit'] });
-    console.log('[daily] WeChat alert delivered via notify');
-  } catch (e) {
-    console.warn(`[daily] notify delivery failed (${e.message}) — queued in notifications.json`);
+  // ⚠ Check the notifier exists before invoking it, and keep its stderr out of our log.
+  //
+  // This was `execFileSync(node, [NOTIFY_BIN, ...])` with `stdio: 'inherit'`. The binary is absent
+  // on this machine, so every run printed a full `Cannot find module` stack trace into the daily
+  // log — and `daily-pipeline.js`'s cause-extractor greps the tail for /error|Error|failed/, so it
+  // reported that stack as the REASON the discover stage failed. The delivery was always caught
+  // and queued; the misleading part was the noise. It cost real diagnosis time: a module-resolution
+  // error looked like the discover bug while the actual cause was a 4-hour normalize sub-phase.
+  if (!fs.existsSync(NOTIFY_BIN)) {
+    console.log(`[daily] notify not installed (${NOTIFY_BIN}) — queued in notifications.json`);
+  } else {
+    try {
+      const title = (lines[0] || '📡 join-quant 每日').replace(/\s+/g, ' ').slice(0, 60);
+      execFileSync(process.execPath,
+        [NOTIFY_BIN, '--source', 'join-quant-daily', '--level', 'info', '--title', title, '--now'],
+        { input: msg, stdio: ['pipe', 'inherit', 'pipe'] });
+      console.log('[daily] WeChat alert delivered via notify');
+    } catch (e) {
+      console.warn(`[daily] notify delivery failed (${String(e.message).split('\n')[0]}) — ` +
+                   'queued in notifications.json');
+    }
   }
 }
 
@@ -180,12 +193,19 @@ async function main() {
     .map(k => (copiedNow[k] && copiedNow[k].sourceFile) || k)   // filename when we have it
     .filter(Boolean);
   let normLines = [];
-  if (mode !== '--no-normalize') {
-    try {
-      const { normalizeNew } = require('./normalize-daily');
-      normLines = normalizeNew(newPostIds, { usageLimit: 55 }).lines;
-    } catch (e) { normLines = [`⚠ 归一化阶段异常：${(e.message || '').slice(0, 60)}`]; }
-  }
+  // ⚠⚠ `--no-normalize` ENQUEUES but does not measure — it does not skip the step entirely.
+  //
+  // It used to skip it, and the enqueue lives inside `normalizeNew()`, so every strategy fetched
+  // that day was stranded: nothing else appends to `data/pending-normalize.json`. Meanwhile the
+  // default path ran backtests here, which is how the `discover` STAGE came to spend hours
+  // measuring — 4h25m on 2026-10-16, killed only by STAGE_TIMEOUT_MIN=255 — outside the
+  // `normalize` stage that owns the budget and the deferred pool.
+  try {
+    const nd = require('./normalize-daily');
+    normLines = mode === '--no-normalize'
+      ? nd.enqueueOnly(newPostIds).lines
+      : nd.normalizeNew(newPostIds, { usageLimit: 55 }).lines;
+  } catch (e) { normLines = [`⚠ 归一化阶段异常：${(e.message || '').slice(0, 60)}`]; }
 
   // Final summary
   const queueFinal = loadQueue();
