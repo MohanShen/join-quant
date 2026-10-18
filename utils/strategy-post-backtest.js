@@ -983,13 +983,15 @@ async function pollUntilComplete(page, algorithmId, { baseline = 0 } = {}) {
   // branch only engages in the situation that is 100% broken today, so it cannot regress a
   // working run.
   let seenRunning = false, emptyStreak = 0, renderedStreak = 0, finished = false;
-  let probeTick = 0, phantomStreak = 0, doneStreak = 0;
+  let probeTick = 0, phantomStreak = 0, doneStreak = 0, loggedLiveState = false;
   while (Date.now() - start < MAX_POLL_MS) {
     const st = await page.evaluate(async () => {
       try {
         const j = await (await fetch('/algorithm/index/statistics', { credentials: 'include' })).json();
         const running = (j && j.data && j.data.running) || [];
-        return { runningCount: running.length };
+        // `ids` is DIAGNOSTIC ONLY — see the log-state probe below. No decision reads it, because
+        // running[].id is a backtestId that cannot be attributed to our algorithm.
+        return { runningCount: running.length, ids: running.map(r => r.id).slice(0, 2) };
       } catch (e) { return null; }
     });
 
@@ -1027,6 +1029,43 @@ async function pollUntilComplete(page, algorithmId, { baseline = 0 } = {}) {
       // The buildList row IS attributable — we pass our own algorithmId — so `_status` answers the
       // question the count cannot. Two confirmations, ~30s apart, for the same reason as every
       // other signal here; 60s of lag against a 45-minute burn.
+      // ── ONE-TIME DIAGNOSTIC, no decision depends on it ──────────────────────────────────
+      //
+      // `jq-running.js` has the same blind spot the poller had — it judges a blocker only by AGE
+      // (`--cap-min`), so a FINISHED run JQ keeps listing reads as a live blocker and the waiter
+      // sits on it. Measured 2026-10-18: the normalizer burned 34 of 50 wait-minutes at 0.21s CPU
+      // on 这是一个简单的策略-1251, whose buildList row read `_status=2`.
+      //
+      // It is NOT patched, deliberately: that waiter is what prevents two concurrent backtests, and
+      // concurrent runs have returned IDENTICAL metrics for different strategies on this account.
+      // A false "not blocking" silently corrupts results; a false "blocking" only wastes time. And
+      // the waiter cannot use the poller's fix — it sees only `running[].id`, a backtestId it
+      // cannot attribute to one of our algorithms.
+      //
+      // The one signal that IS attributable to a listed entry is that entry's own log, keyed by the
+      // very id the list gave us. But every `state` ever observed has been **2**, and all those
+      // observations were on runs now believed to have already finished — so there is NO
+      // observation of a genuinely in-flight run, and 2 may mean "has output" rather than "done".
+      // Building a concurrency gate on an unverified code is the guess this repo has paid for
+      // before, so instead: record the state while we KNOW a run is live (we submitted it, the
+      // buildList says it has a row, and it is not yet done). One line, once per run. If an
+      // in-flight run reports anything other than 2, `jq-running.js` can safely use this.
+      if (probe && probe.rows > 0 && probe.done === false && !loggedLiveState && st.ids && st.ids[0]) {
+        loggedLiveState = true;
+        try {
+          const ls = await page.evaluate(async (bt) => {
+            try {
+              const r = await (await fetch(`/algorithm/backtest/log?backtestId=${bt}&offset=0&limit=1&ajax=1`,
+                { credentials: 'include' })).json();
+              return (r && r.data) ? String(r.data.state) : null;
+            } catch { return null; }
+          }, st.ids[0]);
+          console.log(`[post] LIVE-RUN-STATE\tlog.state=${ls}\tbuildList._status=in-progress` +
+                      `\telapsed=${Math.round((Date.now() - start) / 1000)}s` +
+                      `  ← settles whether log.state distinguishes running from 完成 (2)`);
+        } catch { /* diagnostic only — never affect the run */ }
+      }
+
       if (probe && probe.done === true) {
         if (++doneStreak >= 2) {
           console.log(`[post] buildList reports 完成 for this algorithm while JQ still lists a run` +

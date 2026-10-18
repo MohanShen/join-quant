@@ -1595,8 +1595,53 @@ Only the directories whose contents aren't self-evident:
   `ledger.COLS.length` cells, and the newest row really is `slow-skipped`. The recovered row
   APPENDS, so newest-row-wins makes it authoritative (c5d20393: 41.39% / annual 19.59 / sharpe
   1.29 / maxDD 6.52 ⇒ objective 0.1307, gate fail).
-  ⚠ **Open**: the earlier slow-skip `c083c109` reported `log state: 2` at 33 minutes — the same
-  code that means 完成 — so it may be the same false negative with a recoverable result.
+  ⚠⚠ **Second-order consequence: it also BLOCKS THE BATCH through the concurrency gate**, not just
+  its own poll. Measured 2026-10-18: the normalizer hit `CONCURRENT STOP` and sat in
+  `jq-running.js --wait` for **34 of 50 minutes at 0.21s CPU** on 这是一个简单的策略-1251, whose
+  buildList row read `_status=2`. The wait cannot succeed — at 36 min the entry is UNDER the 45-min
+  cap, so it reads as a LIVE blocker rather than the "past the cap, hopeless" case that IS handled,
+  and JQ may hold it far longer (one reached 701 min).
+  ⚠⚠ **`jq-running.js` is deliberately NOT patched.** It is what prevents two concurrent backtests,
+  and concurrent runs have returned **identical metrics for different strategies** on this account:
+  a false "not blocking" silently corrupts results, where a false "blocking" only wastes time. It
+  also cannot use the poller's fix — it sees only `running[].id`, a backtestId it cannot attribute
+  to one of our algorithms.
+  The one attributable signal for a LISTED entry is that entry's own log (`/algorithm/backtest/log`
+  keyed by the id the list gave us) — but **every `state` ever observed is 2, and every one of those
+  observations was on a run now believed already finished**, so there is no evidence 2 means "done"
+  rather than "has output". Settling it costs nothing and is now INSTRUMENTED: the executor prints
+  `LIVE-RUN-STATE log.state=<n>` once per run at a moment when the run is known live (we submitted
+  it, the buildList has a row, and `_status` is not yet 2). If an in-flight run reports anything but
+  2, `jq-running.js` can safely use it. Until then the waiter stays strict.
+  ⚠ **`utils/recover-completed.js` generalises the recovery** (`--scan` lists which slow-skipped
+  rows are recoverable). **THREE rows recovered, and the bug predates today**:
+  | tag | run | recovered result |
+  |---|---|---|
+  | c5d20393 | 2026-10-18 | 41.39% / annual 19.59 / sharpe 1.29 / maxDD 6.52 ⇒ **0.1307** |
+  | c083c109 | 2026-10-18 | −2.79% / annual −1.45 / sharpe −0.50 / maxDD 12.39 ⇒ **−0.1384** |
+  | 223a137e | **2026-10-16** | −18.54% / annual −10.05 / sharpe −1.00 / maxDD 24.70 ⇒ **−0.3475** |
+  Each cost its run's full cap (~45 min) waiting on a result already on the server. Two are gate
+  failures, which is the point: a `slow-skipped` row carries NO number, so the pipeline could not
+  tell a book that fails from one it never measured.
+  ⚠ Its limit is `/tmp`: the submitted copy `/tmp/jq-normalize/<tag>.py` is the only link back to
+  what was submitted, so **20** older slow-skipped rows cannot be matched by content and are
+  reported as such rather than guessed at. (An earlier note here said "7 of 9" — that was my own
+  `tail` truncating the scan, not a measurement.)
+  ⚠ Narrow with `--near "<YYYY-MM-DD[ HH:MM]>"`. The first version fetched the SOURCE of every
+  candidate and **wedged for 18 minutes at 2.6s CPU with no output** — no progress logging, no
+  bound. One cheap buildList call per algorithm now yields
+  `name | createdAt | window | state | return`, and the date prefix cuts the expensive source check
+  to the few rows created that day (223a137e needed 12 pages back).
+  ⚠ **`days` is the window's EXCLUSIVE calendar span (729 for TRAIN), never blank and never the
+  curve's 484 trading days.** A slow-skipped row carries no `days`, so copying it through left the
+  cell empty — caught in the c083c109 dry run. The ledger annualizes over this column, and
+  `component-scan --validate` reads it. Inclusive counting gives 730; the tool now refuses to write
+  a row whose day count disagrees with every existing row in that ledger.
+  ⚠ **Recovery is not finished at the ledger row.** `tests/daily.test.js`'s pool invariant failed on
+  the tool's FIRST use: the chain had already DEFERRED c5d20393 as a slow-skip, so after recovery it
+  sat in the retry pool as finished work and would have been re-measured at a higher cap. The tool
+  now ends by calling `normalize-sync`, which OWNS that reconciliation — the same rule that puts it
+  at the end of every normalize batch.
   ⚠ **And this undercuts the "a cancelled run bills nothing" reading** recorded above: if those
   runs COMPLETED, their minutes were charged normally. Do not treat the slow-skip overshoot as free
   on that evidence.

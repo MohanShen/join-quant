@@ -158,21 +158,5 @@
     "lastCapMin": 45,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-10-07T22:05:28.845Z"
-  },
-  "strategies/2026-10-18_头寸调整策略_波动性百分比调仓-c083c109.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-10-18T06:10:26.533Z",
-    "reason": "slow-skipped",
-    "lastCapMin": 45,
-    "maxCapTried": 45,
-    "lastDeferredAt": "2026-10-18T06:10:26.533Z"
-  },
-  "strategies/2026-10-18_优化了半个月的ETF动量轮动策略-c5d20393.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-10-18T08:25:50.069Z",
-    "reason": "slow-skipped",
-    "lastCapMin": 45,
-    "maxCapTried": 45,
-    "lastDeferredAt": "2026-10-18T08:25:50.069Z"
   }
 }
