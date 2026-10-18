@@ -322,3 +322,30 @@ strategies/2026-10-18_五福闹新春策略分时回测_探寻最优交易入场
 strategies/2026-10-18_五福5_2修改by_Claude_V4版本-7c2e9238.py	7c2e9238dbe7a060538364bec63af675	五福5.2修改by Claude V4版本	normalized	2022-01-01	2023-12-31	729	98.10	40.81	1.67	15.67	0.2514	pass	8
 strategies/2026-10-18_关于退市股的回测风险-d864895d.py	d864895d870621e468175ee1c07ffd26	关于退市股的回测风险	normalized	2022-01-01	2023-12-31	729	-39.23	-22.07	-0.73	48.67	-0.7074	fail	8
 strategies/2026-10-18_大类ETF轮动回测-0593c701.py	0593c701415e4d04ec0761be9dfe2114	大类ETF轮动回测	normalized	2022-01-01	2023-12-31	729	58.48	25.93	1.42	11.50	0.1443	fail	8
+strategies/2026-10-18_基于机器学习的多因子选股策略-db3ad342.py	db3ad342a1283d9b4634c59f03a27fee	基于机器学习的多因子选股策略	normalized	2022-01-01	2023-12-31	729	2.37	1.18	-0.08	51.04	-0.4986	fail	8
+strategies/2026-10-18_滚动复利策略_的量化实现-改进v1_0-27bd5e8c.py	27bd5e8c72182cae7f327e61fb7bb979	【滚动复利策略】的量化实现-改进v1.0	compile-error										8
+strategies/2026-10-18_仓位控制_风险价值法_VaR_算法有变更-b5631f9b.py	b5631f9b9fd67940fce0e03238bc298e	仓位控制：风险价值法（VaR）（算法有变更）	compile-error										8
+strategies/2026-10-18_商品期货_多品种日频双均线模型_作为给入门者的小礼物-7875d545.py	7875d5458c8d8198f438fe2cde55cbaf	商品期货 多品种日频双均线模型 作为给入门者的小礼物	incompatible-futures										8
+strategies/2026-10-18_小市值20只组合不择时不止损IC对冲_股指期货对冲研究成果应用-99d4a037.py	99d4a0378dd55d61fe5ce19581ee81c0	小市值20只组合不择时不止损IC对冲——股指期货对冲研究成果应用	incompatible-futures										8
+strategies/2026-10-18_商品期货多因子_全市场对冲模型-9c5a9546.py	9c5a9546d5be543dcba1d6fca84d46b3	商品期货多因子 全市场对冲模型	incompatible-futures										8
+strategies/2026-10-18_魔法公式选股_由其构建的指数进行MACD控制买卖-54310d81.py	54310d8174afda8ef9097fe480788912	魔法公式选股+由其构建的指数进行MACD控制买卖	compile-error										8
+strategies/2026-10-18_扒一扒常见技术指标的大盘择时效果-d2aa7399.py	d2aa73992810721e6aa2bc814474bb6a	扒一扒常见技术指标的大盘择时效果	normalized	2022-01-01	2023-12-31	729	-16.68	-8.73	-1.40	18.80	-0.2753	fail	8
+strategies/2026-10-18_头寸调整策略_波动性百分比调仓-c083c109.py	c083c1097dac0349b367aa4662deb203	头寸调整策略 —— 波动性百分比调仓	slow-skipped										8
+strategies/2026-10-18_一个偏重防守的低波动策略_根据MACD底背离策略改写-fcc8c3ef.py	fcc8c3efa95ff565f60bb1d1d609c5a7	一个偏重防守的低波动策略，根据MACD底背离策略改写	compile-error										8
+strategies/2026-10-18_基于阻力的市场投资策略_--_国泰君安量化报告的代码实现-65f61366.py	65f61366dfac86711f8159133355fc4f	基于阻力的市场投资策略 -- 国泰君安量化报告的代码实现	normalized	2022-01-01	2023-12-31	729	-10.66	-5.49	-1.39	13.23	-0.1872	fail	8
+strategies/2026-10-18_质量因子选股策略_感觉挺特别的_质量_因子-b1dc366f.py	b1dc366fa1833e452009afb11e2018b0	质量因子选股策略~（感觉挺特别的“质量”因子）	compile-error										8
+strategies/2026-10-18_投资学_CAPM单因子回归模型_ROE股票池_含止损-cf81afce.py	cf81afce54f18e3692026c0d31046d9a	【投资学】CAPM单因子回归模型+ROE股票池（含止损）	normalized	2022-01-01	2023-12-31	729	-21.34	-11.32	-0.69	30.74	-0.4206	fail	8
+strategies/2026-10-18_FollowBB与RideMood策略研究-decbc72d.py	decbc72d1336448862dd04f33a09591c	FollowBB与RideMood策略研究	normalized	2022-01-01	2023-12-31	729	94.06	39.37	0.89	30.64	0.0873	fail	8
+strategies/2026-10-18_因子拥挤度择时策略-性能优化-e646ca1e.py	e646ca1e6aedf533ad6d36ad685f81b3	因子拥挤度择时策略-性能优化	normalized	2022-01-01	2023-12-31	729	204.06	74.51	3.19	14.33	0.6018	pass	8
+strategies/2026-10-18_贰章_量化交易_估值因子分析-63f0c9b9.py	63f0c9b9401722f24ef0a9aebfd9b9a6	贰章｜量化交易：估值因子分析	compile-error										8
+strategies/2026-10-18_市场大小盘风格切换多因子轮动策略-8d6831d4.py	8d6831d4d62ad02f8dde8df00bf3cf12	市场大小盘风格切换多因子轮动策略	normalized	2022-01-01	2023-12-31	729	146.51	57.10	2.43	15.58	0.4152	pass	8
+strategies/2026-10-18_RSRS模型深入研究2-对右偏态样本处理的质疑与分析-4e0feefc.py	4e0feefc054353e9e82552e0bba6d3a9	RSRS模型深入研究2-对右偏态样本处理的质疑与分析	normalized	2022-01-01	2023-12-31	729	-35.60	-19.77	-1.49	38.10	-0.5787	fail	8
+strategies/2026-10-18_美股全细分板块_A股ETF_隔夜轮动_求优化-861a8b7c.py	861a8b7c03bbec6fe0f29b60afaa178a	美股全细分板块 → A股ETF 隔夜轮动。求优化	compile-error										8
+strategies/2026-10-18_基金筛选与轮动策略_V2_0-814e303a.py	814e303a5eac7e9f4e41d52dc8062744	基金筛选与轮动策略 V2.0	normalized	2022-01-01	2023-12-31	729	-24.76	-13.28	-0.95	24.76	-0.3804	fail	8
+strategies/2026-10-18_模拟近一年的打板策略_ST策略_半年的小市值策略-d29621b6.py	d29621b64a60cb1a1fb651a33dae37f4	模拟近一年的打板策略/ST策略/半年的小市值策略	normalized	2022-01-01	2023-12-31	729	112.41	45.82	1.77	16.12	0.297	pass	8
+strategies/2026-10-18_股东数小市值-69c34d01.py	69c34d01214f050d116d7b4fa4c07b31	股东数小市值	normalized	2022-01-01	2023-12-31	729	54.49	24.33	0.82	23.13	0.012	fail	8
+strategies/2026-10-18_趋势捕捉加点低关联的ETF_烧token搞的换点分回测-5f2f36a9.py	5f2f36a917c700fa7f8c7954a46761e0	趋势捕捉加点低关联的ETF，烧token搞的换点分回测	normalized	2022-01-01	2023-12-31	729	-10.57	-5.44	-0.63	25.35	-0.3079	fail	8
+strategies/2026-10-18_经典三马-五福-改版-6f04114c.py	6f04114cfc47b655b141b1de61faf509	经典三马-五福-改版	normalized	2022-01-01	2023-12-31	729	81.50	34.78	1.54	13.38	0.214	pass	8
+strategies/2026-10-18_优化了半个月的ETF动量轮动策略-c5d20393.py	c5d203933cd8f1060d77cfe93312eb36	优化了半个月的ETF动量轮动策略	slow-skipped										8
+strategies/2026-10-18_固定资产投资增速也不错-02c9133b.py	02c9133be60d8641e60d5eee07f7e44e	固定资产投资增速也不错	normalized	2022-01-01	2023-12-31	729	41.88	19.14	0.67	24.46	-0.0532	fail	8
+strategies/2026-10-18_优化了半个月的ETF动量轮动策略-c5d20393.py	c5d203933cd8f1060d77cfe93312eb36	优化了半个月的ETF动量轮动策略	normalized	2022-01-01	2023-12-31	729	41.39	19.59	1.29	6.52	0.1307	fail	8

@@ -1564,6 +1564,42 @@ Only the directories whose contents aren't self-evident:
   `buildList` answers 系统繁忙 for it no matter what. The poller probes the algorithmId it created.
   This also means the earlier "no backtest found for algorithm 2bbd06f3…" verdict was the
   *unreadable* shape, not the empty-table one.
+- ⚠⚠⚠ **THE INVERSE OF THE PHANTOM: a run that FINISHED while JQ kept listing it as running.**
+  Found 2026-10-18 **by the human**, who saw 「完成」 on the server while the poller was 33 minutes
+  into polling. Measured: all five newest algorithms (1245..1249) read 完成 while
+  `statistics.running` still listed one entry.
+  `pollUntilComplete`'s primary signal is the account-wide `running` **COUNT**, and
+  `running[].id` is a **backtestId that never matches our algorithmId** — so the count cannot be
+  attributed to our run. A finished run JQ leaves in the list pins the count above baseline
+  forever: `emptyStreak` never accumulates, the run burns to `MAX_POLL_MS` and is written
+  `slow-skipped` **while its completed result sits on the server**. Cost: ~45 min on
+  `c5d20393`.
+  ⚠ The loop's SECOND signal could not save it either — `resultsRendered()` is forced to `false`
+  whenever `runningCount > baseline`, which is exactly this case. Two signals, both blind to it.
+  **Fix**: the buildList row IS attributable (we pass our own algorithmId), so `parseBuildList()`
+  answers both questions from ONE fetch — `_status="2"` ⇒ **complete** (2 confirmations ~30s
+  apart), `rows === 0` ⇒ phantom, unreadable ⇒ keep polling.
+  ⚠ `_status="2"` ⇔ 「完成」 verified across the 10 newest rows on the account; the visible word is
+  corroboration only, because it is localized and the attribute is not. `DONE_STATUS` is a
+  **whitelist of one**: no live run was available to observe the in-progress code, so anything else
+  keeps polling (the old behaviour), whereas guessing a code wrong would scrape a PARTIAL result as
+  final.
+  ⚠ The 系统繁忙 error body literally contains `"status":"2"`. Requiring the **row attribute**
+  (`class="backtest-tr" … _status=`) is what stops a server error reading as a finished run — the
+  same false-positive shape the phantom probe had, waiting in a different place.
+  ⚠ **Recovery is free and is by SOURCE HASH, never by id.** `study/_recover/recover-c5d20393.js`
+  hashes the normalized source JQ serves against the exact temp copy the normalizer submitted
+  (`/tmp/jq-normalize/<tag>.py`). It matched **three different id pairs** across three calls
+  minutes apart — the same run each time. It aborts before writing unless the curve's final
+  cumulative return agrees with the stats endpoint (±0.05pp), the row has exactly
+  `ledger.COLS.length` cells, and the newest row really is `slow-skipped`. The recovered row
+  APPENDS, so newest-row-wins makes it authoritative (c5d20393: 41.39% / annual 19.59 / sharpe
+  1.29 / maxDD 6.52 ⇒ objective 0.1307, gate fail).
+  ⚠ **Open**: the earlier slow-skip `c083c109` reported `log state: 2` at 33 minutes — the same
+  code that means 完成 — so it may be the same false negative with a recoverable result.
+  ⚠ **And this undercuts the "a cancelled run bills nothing" reading** recorded above: if those
+  runs COMPLETED, their minutes were charged normally. Do not treat the slow-skip overshoot as free
+  on that evidence.
 - ⚠ **A run JQ refuses to cancel at the slow-skip cap (「在此状态不能取消」) is not necessarily lost.**
   打板短线's jy-u-2 hit the 50-min cap, five cancel attempts failed, the executor reported
   `slow-skipped` — and the run completed server-side two minutes later. The algorithm's buildList

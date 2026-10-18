@@ -866,29 +866,59 @@ function completionStep(st, { runningCount, baseline, rendered }) {
  *
  * @returns {Promise<boolean|null>} see above; `null` is never treated as a phantom.
  */
-function classifyBuildList(body) {
+/**
+ * Parse one buildList body into the two facts the poller needs.
+ *
+ * `rows`     how many `backtest-tr` rows the table has. The executor creates a FRESH algorithm per
+ *            run and submits exactly one backtest, so 0 means nothing was ever submitted (the
+ *            phantom) and >=1 means our run is there.
+ * `done`     whether the newest row is TERMINAL, read from its structured `_status` attribute.
+ * `rendered` whether the page rendered at all — see the three-shape table above.
+ *
+ * ⚠ `_status` is the row attribute, not the visible word. Measured 2026-10-18 over the 10 newest
+ * rows on the account: `_status="2"` co-occurs with 「完成」 in every one. The word is kept as
+ * corroboration only, because it is a localized label and the attribute is not.
+ * ⚠ `DONE_STATUS` is deliberately a WHITELIST of one. No live run was available to observe the
+ * in-progress code, so anything that is not 2 reads as "keep polling" — which is merely the old
+ * behaviour, whereas guessing a code wrong would scrape a partial result as if it were final.
+ */
+const DONE_STATUS = new Set(['2']);
+
+function parseBuildList(body) {
   const t = String(body || '');
-  if (/class="backtest-tr"/.test(t)) return true;
-  // The shell field proves the page RENDERED. Require it before daring to answer "no backtest" —
-  // this is the whole guard against the 60-byte 系统繁忙 error reading as a phantom.
-  if (/<input[^>]+id="backtestId"/.test(t)) return false;
-  return null;                                       // unreadable — not a verdict
+  const rendered = /class="backtest-tr"/.test(t) || /<input[^>]+id="backtestId"/.test(t);
+  if (!rendered) return { rendered: false, rows: 0, done: null };
+  const rows = (t.match(/class="backtest-tr"/g) || []).length;
+  // The newest row is the first in the tbody (_idx="0").
+  const m = t.match(/class="backtest-tr"[^>]*_status="(\d+)"/);
+  const done = rows === 0 ? null
+             : (m ? DONE_STATUS.has(m[1]) : (/完成/.test(t) || null));
+  return { rendered: true, rows, done };
 }
 
-async function algorithmHasBacktest(page, algorithmId) {
+function classifyBuildList(body) {
+  const s = parseBuildList(body);
+  if (!s.rendered) return null;                      // unreadable — not a verdict
+  return s.rows > 0;
+}
+
+async function fetchBuildList(page, algorithmId) {
   try {
-    // ⚠ The page only FETCHES; classification happens in Node. A rule living inside
-    // `page.evaluate` cannot be unit-tested (the function is serialized into the browser and can
-    // reference nothing outside itself), and the version of this that got the 系统繁忙 case wrong
-    // was untestable for exactly that reason.
-    const body = await page.evaluate(async (alg) => {
+    // ⚠ The page only FETCHES; parsing happens in Node. A rule living inside `page.evaluate`
+    // cannot be unit-tested (the function is serialized into the browser and can reference nothing
+    // outside itself), and the version of this that got the 系统繁忙 case wrong was untestable for
+    // exactly that reason.
+    return await page.evaluate(async (alg) => {
       try {
         return await (await fetch(`/algorithm/backtest/buildList?algorithmId=${alg}`,
           { credentials: 'include' })).text();
       } catch { return null; }
     }, algorithmId);
-    return classifyBuildList(body);
   } catch { return null; }
+}
+
+async function algorithmHasBacktest(page, algorithmId) {
+  return classifyBuildList(await fetchBuildList(page, algorithmId));
 }
 
 /**
@@ -953,7 +983,7 @@ async function pollUntilComplete(page, algorithmId, { baseline = 0 } = {}) {
   // branch only engages in the situation that is 100% broken today, so it cannot regress a
   // working run.
   let seenRunning = false, emptyStreak = 0, renderedStreak = 0, finished = false;
-  let probeTick = 0, phantomStreak = 0;
+  let probeTick = 0, phantomStreak = 0, doneStreak = 0;
   while (Date.now() - start < MAX_POLL_MS) {
     const st = await page.evaluate(async () => {
       try {
@@ -973,14 +1003,47 @@ async function pollUntilComplete(page, algorithmId, { baseline = 0 } = {}) {
       ({ seenRunning, emptyStreak, renderedStreak } = next);
       if (next.finished) { finished = true; break; }
 
-      // ── Phantom probe ───────────────────────────────────────────────────────────────────
+      // ── One buildList read, two questions ───────────────────────────────────────────────
+      // Asked only while JQ still claims a run above baseline, which is the only situation either
+      // question matters in, and only every PHANTOM_PROBE_EVERY polls (~30s) so this costs one
+      // fetch a minute rather than one every 5s.
+      const probe = st.runningCount > baseline && ++probeTick % PHANTOM_PROBE_EVERY === 0
+        ? parseBuildList(await fetchBuildList(page, algorithmId))
+        : null;
+
+      // ⚠⚠ QUESTION 1: has OUR run already finished while JQ keeps listing it?
+      //
+      // Found 2026-10-18, by the human noticing the server showed 「完成」 while this loop was 33
+      // minutes into polling. The loop's primary signal is the account-wide `running` COUNT, and
+      // `running[].id` is a backtestId that never matches our algorithmId — so the count cannot be
+      // attributed to us, and a finished run that JQ leaves in the list pins it above baseline
+      // forever. `emptyStreak` never accumulates and the run burns to MAX_POLL_MS and is reported
+      // `slow-skipped`, with its completed result sitting on the server. Measured: all five of the
+      // newest algorithms (1245..1249) read 完成 while `statistics.running` still listed one.
+      //
+      // The second existing signal could not save it either: `resultsRendered()` is forced to
+      // false whenever `runningCount > baseline` (the line above), which is exactly this case.
+      //
+      // The buildList row IS attributable — we pass our own algorithmId — so `_status` answers the
+      // question the count cannot. Two confirmations, ~30s apart, for the same reason as every
+      // other signal here; 60s of lag against a 45-minute burn.
+      if (probe && probe.done === true) {
+        if (++doneStreak >= 2) {
+          console.log(`[post] buildList reports 完成 for this algorithm while JQ still lists a run` +
+                      ` (count ${st.runningCount} > baseline ${baseline}) — treating as COMPLETE.`);
+          finished = true;
+          break;
+        }
+      } else if (probe) {
+        doneStreak = 0;                 // never latch
+      }
+
+      // ── QUESTION 2: the phantom ─────────────────────────────────────────────────────────
       // Precise signature, all three required: past the grace period, JQ still claims a run
       // ABOVE our baseline, and the algorithm has NO backtest. Confirmed twice, like every other
       // signal in this loop, so a single bad render cannot cancel a healthy run.
-      if (Date.now() - start > PHANTOM_GRACE_MS
-          && st.runningCount > baseline
-          && ++probeTick % PHANTOM_PROBE_EVERY === 0) {
-        const has = await algorithmHasBacktest(page, algorithmId);
+      if (probe && Date.now() - start > PHANTOM_GRACE_MS) {
+        const has = probe.rendered ? probe.rows > 0 : null;
         if (has === false) {
           if (++phantomStreak >= 2) {
             const mins = Math.round((Date.now() - start) / 60000);
@@ -1742,5 +1805,5 @@ if (require.main === module) {
 }
 
 module.exports = { parseArgs, concurrencyGate, usageGate, parseCnDuration,
-                   completionStep, pickOurRun, isNoTradeRun, classifyBuildList,
+                   completionStep, pickOurRun, isNoTradeRun, classifyBuildList, parseBuildList,
                    cancelBacktest, readRunning, WINDOWS };

@@ -1047,6 +1047,61 @@ test('the poller detects a phantom instead of burning to the cap', async (t) => 
     assert.match(post, /classifyBuildList\(body\)/);
   });
 
+  /**
+   * ⚠⚠ The INVERSE of the phantom: our run has FINISHED and JQ keeps listing it.
+   *
+   * Found 2026-10-18 by the human noticing the server showed 「完成」 while the poller was 33
+   * minutes into polling. `pollUntilComplete`'s primary signal is the account-wide `running`
+   * COUNT, and `running[].id` is a backtestId that never matches our algorithmId — so the count
+   * cannot be attributed to us. A finished run JQ leaves in the list pins the count above baseline
+   * forever: `emptyStreak` never accumulates, the run burns to MAX_POLL_MS and is reported
+   * `slow-skipped`, while its completed result sits on the server. Measured: all five newest
+   * algorithms (1245..1249) read 完成 while `statistics.running` still listed one.
+   *
+   * The other existing signal could not save it: `resultsRendered()` is forced to false whenever
+   * `runningCount > baseline`, which is precisely this case.
+   */
+  await t.test('a finished run JQ still lists is detected via the buildList row state', () => {
+    const { parseBuildList } = require(path.join(ROOT, 'utils/strategy-post-backtest.js'));
+    const SHELL = '<form name="AlgorithmModel"><input type="hidden" id="backtestId" value="';
+
+    // Reduced from the real response for 这是一个简单的策略-1249, the run this was found on.
+    const doneRow = `${SHELL}4fbd66d5" /><tbody>` +
+      '<tr _backtestId="4fbd66d56a8970a63024aa8962b8d425" _idx="0" class="backtest-tr" _status="2" >' +
+      '<td><span class="dot-clamp">这是一个简单的策略-1249</span></td><td>完成</td></tr></tbody>';
+    const s1 = parseBuildList(doneRow);
+    assert.equal(s1.rendered, true);
+    assert.equal(s1.rows, 1);
+    assert.equal(s1.done, true, '_status="2" is 完成 — measured on all 10 newest rows');
+
+    // An in-progress row must NOT read as done. DONE_STATUS is a whitelist of one precisely
+    // because no live run was available to observe the in-progress code: anything else keeps
+    // polling (the old behaviour), whereas guessing wrong would scrape a partial result as final.
+    for (const st of ['0', '1', '3', '4']) {
+      const s = parseBuildList(doneRow.replace('_status="2"', `_status="${st}"`).replace('完成', '运行中'));
+      assert.equal(s.done, false, `_status="${st}" must not read as finished`);
+    }
+
+    // A fresh algorithm: rendered, no row — the phantom, and `done` is unknown, not false-y-done.
+    const fresh = parseBuildList(`${SHELL}" /><tbody></tbody>`);
+    assert.deepStrictEqual({ ...fresh }, { rendered: true, rows: 0, done: null });
+
+    // Unreadable stays unreadable for BOTH questions — the 系统繁忙 shape.
+    const busy = parseBuildList('{"status":"2","code":"20000","msg":"系统繁忙，请稍后重试"}');
+    assert.deepStrictEqual({ ...busy }, { rendered: false, rows: 0, done: null });
+    // ⚠ Note that error body literally contains `"status":"2"`. Requiring the row ATTRIBUTE
+    // (`class="backtest-tr" … _status=`) is what stops it reading as a finished run.
+    assert.notEqual(busy.done, true);
+
+    // Wiring: one fetch answers both questions, and completion does not consult the count.
+    const post = fs.readFileSync(path.join(ROOT, 'utils/strategy-post-backtest.js'), 'utf8');
+    assert.match(post, /probe\.done === true/);
+    assert.match(post, /\+\+doneStreak >= 2/, 'confirm twice, like every other signal here');
+    assert.match(post, /doneStreak = 0/, 'never latch');
+    assert.match(post, /const probe = st\.runningCount > baseline/,
+      'the probe is only worth making while JQ claims a run above baseline');
+  });
+
   await t.test('the grace period is long enough to beat registration lag', () => {
     const m = post.match(/PHANTOM_GRACE_MS = parseInt\([^)]*String\((\d+) \* 60 \* 1000\)/);
     assert.ok(m, 'the grace must be declared');
