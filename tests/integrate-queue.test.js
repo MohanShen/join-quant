@@ -513,7 +513,28 @@ test('the exit gate names the owner of every block', async (t) => {
     const q = require('../utils/family-queue').build();
     const reopened = q.due.filter(f => f.reason === 'integrate-blocked').map(f => f.family);
     const researchOwned = rows.filter(r => !r.eligible && r.owner === 'research').map(r => r.family);
+    // ⚠⚠ PRECEDENCE, added 2026-10-18: the COVERAGE GUARD outranks this reopening.
+    //
+    // Two invariants meet here. This one exists because a research-owned block that nothing
+    // reopens strands a family in silence (8 of 13 were blocked while the queue read 0 due). The
+    // guard exists because epoch 9 invalidated every row and the chain picked 小市值 with 37
+    // members and ONE measured — a 1-of-37 champion.
+    //
+    // The guard wins, for a reason specific to the two failure shapes: the stranding it replaced
+    // was PERMANENT and INVISIBLE, whereas this hold is TEMPORARY (only the normalize stage can
+    // satisfy it, and it always can) and REPORTED. So the assertion below demands that the hold
+    // be visible — if it ever became silent, it would be the very failure this test was written
+    // for, and that is what must not happen.
+    const held = new Map(q.all.filter(f => f.reason === 'awaiting-measurement').map(f => [f.family, f]));
     for (const f of researchOwned) {
+      if (held.has(f)) {
+        const h = held.get(f);
+        assert.ok(h.awaitingMeasurement > h.validMembers,
+          `${f} is held but its coverage does not justify it`);
+        assert.match(h.note, /awaiting measurement/,
+          `${f} is held and MUST say so — a silent hold is the stranding this test exists for`);
+        continue;
+      }
       assert.ok(reopened.includes(f), `${f} is research-owned and must be reopened`);
     }
     for (const f of reopened) {

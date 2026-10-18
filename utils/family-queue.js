@@ -155,6 +155,43 @@ function build() {
     assignedCount.set(a.family, (assignedCount.get(a.family) || 0) + 1);
   }
 
+  // ── How many of each family's members are QUEUED for measurement right now ────────────────
+  //
+  // ⚠⚠ This is the coverage guard, and it exists because of a measured near-miss on 2026-10-18.
+  // Epoch 9 moved TRAIN to 2024, which invalidated every row, and the daily chain re-planned to
+  // `research` after its first normalize batch — research outranks normalize by design ("finish
+  // what is in the pipe before admitting more"). The family it picked was 小市值 with
+  // **37 members, exactly ONE measured on the active bench**, so `championSharpe` 5.77 was a
+  // 1-of-37 sample presented as the family's champion. At the next budget rollover the whole
+  // fresh tier would have gone to experiments built on it.
+  //
+  // ⚠ A FIXED FRACTION would be the wrong rule. Partial coverage is NORMAL in steady state — the
+  // note above records 打板短线 at 9 measured of 25 assigned, because 15 have no ledger row at all
+  // and two are terminal failures. A 50% bar would block that family permanently.
+  //
+  // What distinguishes the bad state is not the ratio but what is ACTIONABLE: after a
+  // measurement-breaking bump a family has dozens of members sitting in the normalize queue,
+  // where in steady state it has one or two. So the rule is a comparison, with no magic number:
+  //
+  //     more members awaiting measurement than measured  =>  the champion is PROVISIONAL, wait
+  //
+  // Measured the day it was written — 小市值 36 pending vs 1 measured, 五福闹新春 23 vs 2,
+  // 多因子ML 21 vs 0 — against 打板短线's steady state of 1 vs 9.
+  //
+  // It is self-clearing (the normalize stage drains the queue) and it cannot deadlock on
+  // permanently unrunnable members: a compile-error or incompatible row is TERMINAL, so those
+  // members leave the pending queue and never count toward the block.
+  const pendingCount = new Map();
+  try {
+    const raw = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/pending-normalize.json'), 'utf8'));
+    const pend = new Set((Array.isArray(raw) ? raw : [])
+      .map(x => `strategies/${String(x).replace(/^strategies\//, '')}`));
+    for (const [sourceFile, a] of asg) {
+      if (!a.family || !pend.has(sourceFile)) continue;
+      pendingCount.set(a.family, (pendingCount.get(a.family) || 0) + 1);
+    }
+  } catch { /* no queue file -> nothing is awaiting measurement */ }
+
   const out = [];
   for (const family of reg) {
     const mem = members.get(family) || [];
@@ -181,7 +218,15 @@ function build() {
     try { gate = require('./integrate-eligible').assess(family); } catch { gate = null; }
     const gateBlocked = gate && !gate.eligible && gate.owner === 'research';
 
-    const reason = !everRun ? 'never-researched'
+    // The guard OVERRIDES every due-making reason, including `never-researched`: dispatching a
+    // never-researched family whose members are nearly all unmeasured is the worst case, not an
+    // exception to it.
+    const validCount = mem.filter(m => m.valid).length;
+    const awaiting = pendingCount.get(family) || 0;
+    const provisional = awaiting > validCount;
+
+    const reason = provisional ? 'awaiting-measurement'
+      : !everRun ? 'never-researched'
       : stale.stale ? 'new-members'
       : gateBlocked ? 'integrate-blocked'
       : 'done';
@@ -196,7 +241,10 @@ function build() {
       members: mem.length,
       assigned: assignedCount.get(family) || 0,
       unmeasured: Math.max(0, (assignedCount.get(family) || 0) - mem.length),
-      validMembers: mem.filter(m => m.valid).length,
+      validMembers: validCount,
+      // Members queued for measurement right now, and whether that makes the champion provisional.
+      awaitingMeasurement: awaiting,
+      championProvisional: provisional,
       // ⚠ Epoch-aware, like the family pages and wiki-family-build. Reducing over EVERY member
       // regardless of epoch reported 小市值 at 1.3738 while its page said 1.0258 and ETF溢价 at
       // 1.5642 against 0.7767 — numbers measured on a superseded bench, presented beside
@@ -214,7 +262,10 @@ function build() {
       reason,
       // The note is what the dispatched session reads to know WHY it was woken. For a gate block
       // that is the gate's own sentence, which names the missing step exactly.
-      note: gateBlocked ? gate.why
+      note: provisional
+            ? `${awaiting} member(s) awaiting measurement against ${validCount} measured — the ` +
+              'champion would rest on a minority of the family, so research waits for normalize'
+          : gateBlocked ? gate.why
           : stale && stale.reason ? stale.reason : '',
       gateStatus: gate ? gate.status : null,
       gateOwner: gate ? gate.owner : null,
@@ -230,7 +281,7 @@ function build() {
   //
   // The screen score — which ranks what is worth FETCHING — drops to a tiebreak. It answers a
   // different question and should not decide which already-held family is worked first.
-  const due = out.filter(f => f.reason !== 'done')
+  const due = out.filter(f => f.reason !== 'done' && f.reason !== 'awaiting-measurement')
     .sort((a, b) => (b.championSharpe ?? -Infinity) - (a.championSharpe ?? -Infinity)
                  || (b.score ?? -1) - (a.score ?? -1)
                  || (b.bestObjective ?? -99) - (a.bestObjective ?? -99));

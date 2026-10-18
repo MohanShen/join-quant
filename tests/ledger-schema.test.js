@@ -245,6 +245,72 @@ test('the daily commit is scoped to pipeline output', async (t) => {
  * told a session to "finalize on VAL — one run" and spent an irreversible per-(family, epoch)
  * resource on a book its own round judged unworthy. Caught with the run live; nothing was spent.
  */
+/**
+ * ⚠⚠ The COVERAGE GUARD: a champion resting on a minority of a family is not a champion.
+ *
+ * Measured near-miss, 2026-10-18. Epoch 9 moved TRAIN to 2024, invalidating every row, and the
+ * daily chain re-planned to `research` after its first normalize batch — research outranks
+ * normalize by design. The family it picked was 小市值 with **37 members, exactly ONE measured on
+ * the active bench**, so championSharpe 5.77 was a 1-of-37 sample presented as the family's
+ * champion, and the next budget rollover would have gone to experiments built on it.
+ *
+ * ⚠ A fixed fraction would be the WRONG rule: partial coverage is normal (打板短线 runs at 9
+ * measured of 25 assigned, because 15 have no row and two are terminal failures), so a 50% bar
+ * would block that family forever. The rule is a comparison with no magic number — more members
+ * awaiting measurement than measured means the champion is provisional.
+ */
+test('family-queue holds a family whose champion rests on a minority', async (t) => {
+  const fq = require('../utils/family-queue');
+  const src = fs.readFileSync(path.join(ROOT, 'utils/family-queue.js'), 'utf8');
+
+  await t.test('the rule is a comparison, not a hard-coded fraction', () => {
+    assert.match(src, /awaiting > validCount/, 'the guard must compare pending against measured');
+    // A literal threshold is what this guard exists to avoid.
+    assert.doesNotMatch(src, /awaiting\s*\/\s*(validCount|assigned)\s*[<>]/,
+      'a ratio test would block families whose partial coverage is normal and permanent');
+    assert.doesNotMatch(src, /MIN_COVERAGE|COVERAGE_PCT|0\.5\s*\*\s*assigned/,
+      'no coverage constant — the comparison is the rule');
+  });
+
+  await t.test('a held family is excluded from `due` but still visible in `all`', () => {
+    const q = fq.build();
+    const held = q.all.filter(f => f.reason === 'awaiting-measurement');
+    for (const f of held) {
+      assert.ok(f.awaitingMeasurement > f.validMembers,
+        `${f.family} is held but ${f.awaitingMeasurement} awaiting is not > ${f.validMembers} measured`);
+      assert.strictEqual(f.championProvisional, true);
+      assert.match(f.note, /awaiting measurement/, 'a held family must say why');
+      assert.ok(!q.due.some(d => d.family === f.family),
+        `${f.family} is provisional and must not be dispatched`);
+    }
+    // ...and the guard must not simply hide everything: a family with no pending members at all
+    // can never be held by it.
+    for (const f of q.all) {
+      if ((f.awaitingMeasurement || 0) === 0) {
+        assert.notStrictEqual(f.reason, 'awaiting-measurement',
+          `${f.family} has nothing pending, so it cannot be awaiting measurement`);
+      }
+    }
+  });
+
+  await t.test('it overrides every due-making reason, never-researched included', () => {
+    // Dispatching a never-researched family whose members are all unmeasured is the worst case,
+    // not an exception to it — so the guard is first in the reason chain.
+    const chain = src.slice(src.indexOf('const reason = provisional'), src.indexOf("      : 'done';") + 20);
+    assert.match(chain, /provisional \? 'awaiting-measurement'/);
+    assert.ok(chain.indexOf('awaiting-measurement') < chain.indexOf('never-researched'),
+      'the guard must precede never-researched in the chain');
+  });
+
+  await t.test('it cannot deadlock on permanently unrunnable members', () => {
+    // A compile-error / incompatible row is TERMINAL, so such a member leaves the pending queue
+    // and never counts toward the block. The guard is therefore self-clearing: only the normalize
+    // stage can satisfy it, and it always can.
+    assert.match(src, /TERMINAL, so those\n  \/\/ members leave the pending queue/,
+      'the self-clearing property must be stated where it can be read');
+  });
+});
+
 test('a reasoned VAL decline is not reopened', async (t) => {
   const el = require('../utils/integrate-eligible');
   const harness = require('../utils/harness-config');

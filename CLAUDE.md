@@ -851,6 +851,28 @@ Only the directories whose contents aren't self-evident:
   stale, a dispatch would have found nothing and exited 0). What files give that derivation does
   not is a RECORD of what the queue said and whether dispatch acted on it — that is
   `data/daily-state.json`, and it is the thing to extend if this bites again.
+- ⚠⚠ **`family-queue` holds a family whose CHAMPION RESTS ON A MINORITY of its members.** Added
+  2026-10-18 after a measured near-miss: epoch 9 invalidated every row, the chain re-planned to
+  `research` after its first normalize batch (research outranks normalize by design), and the
+  family it picked was **小市值 with 37 members and exactly ONE measured** — so `championSharpe`
+  5.77 was a 1-of-37 sample presented as the family's champion, and the next budget rollover would
+  have gone to experiments built on it.
+  ⚠ **A fixed FRACTION would be the wrong rule.** Partial coverage is normal and permanent —
+  打板短线 runs at 9 measured of 25 assigned, because 15 have no ledger row and two are terminal
+  failures — so a 50% bar would block it forever. What distinguishes the bad state is what is
+  ACTIONABLE, so the rule is a comparison with **no magic number**:
+  **more members awaiting measurement than measured ⇒ the champion is PROVISIONAL, research waits**
+  (`reason: 'awaiting-measurement'`, excluded from `due`, still reported in `all` with the
+  arithmetic in its `note`). Measured the day it was written: 小市值 36 vs 1, 五福闹新春 23 vs 2,
+  多因子ML 21 vs 0, against 打板短线's steady state of 1 vs 9.
+  ⚠ It is **self-clearing and cannot deadlock**: a compile-error or incompatible row is TERMINAL,
+  so a permanently unrunnable member leaves the pending queue and never counts toward the hold.
+  Only `normalize` can satisfy it, and it always can.
+  ⚠⚠ **It OVERRIDES the `integrate-blocked` reopening, including `never-researched`** — dispatching
+  a never-researched family whose members are all unmeasured is the worst case, not an exception.
+  The precedence is deliberate and the test states why: the stranding the reopening replaced was
+  **permanent and invisible**, whereas this hold is **temporary and reported**. A test asserts the
+  hold is visible, because a silent hold would recreate the very failure the reopening exists for.
 - **Two of the five queues are FILES, three are DERIVED.** `data/pending-normalize.json` and
   `data/copy-queue.json` are real files the normalize/fetch pipelines themselves read. The
   research, assign and integrate queues are **derived** — research from `wiki/families/*.md` +

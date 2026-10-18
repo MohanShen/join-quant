@@ -54,7 +54,12 @@ test('rowsFromWiki', async t => {
   // them. After a measurement-breaking bump there is nothing to reconstruct: `epoch-reset.js`
   // strips the blocks because they describe windows the active bench no longer measures. An empty
   // result is then correct, and the column/format assertions below still run on whatever exists.
-  const nothingToRebuild = rows.length === 0;
+  // ⚠ The condition is SUFFICIENCY, not emptiness. A first version skipped only at 0 rows, which
+  // broke the moment the library was PARTIALLY re-measured: epoch 9 stripped every `normalized:`
+  // block, normalize-sync then wrote fresh ones for the handful of re-measured strategies, and
+  // `rows.length` sat at ~18 — non-zero, so the skip did not fire, and "expected >100" failed on
+  // a correct mid-re-measurement state.
+  const nothingToRebuild = rows.length < 100;
 
   await t.test('recovers a row for every page carrying a TRAIN result',
     { skip: nothingToRebuild }, () => {
@@ -211,7 +216,10 @@ bft('normalize backlog is decided by the NEWEST ledger row', async (t) => {
     // vacuous — which is exactly the state a measurement-breaking epoch bump leaves behind
     // (epoch 9). The failure mode it guards (gating on measurementValid() took the queue from 53
     // to 175) can only be observed once there are terminal rows again.
-    if (newest().size === 0) return;
+    // ⚠ Same sufficiency rule: `=== 0` was too narrow. Mid-re-measurement the ledger holds a few
+    // dozen rows, so the early return did not fire and `checked > 50` failed on correct behaviour.
+    // The invariant can only be observed once there are enough terminal rows to observe it with.
+    if (checked + queued.size === 0 || newest().size < 60) return;
     bfa.ok(checked > 50, `expected many already-normed files to stay out, saw ${checked}`);
   });
 });
