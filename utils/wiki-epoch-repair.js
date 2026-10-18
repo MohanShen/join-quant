@@ -142,8 +142,20 @@ function repair({ dry = false, window = 'train' } = {}) {
 
     const have = (line.match(/epoch:\s*(\d+)/) || [])[1];
     const haveAnnual = (line.match(/annualReturn:\s*(-?[\d.]+)/) || [])[1];
+    const haveWindow = (line.match(/window:\s*"([^"]*)"/) || [])[1];
+    const nextWindow = (next.match(/window:\s*"([^"]*)"/) || [])[1];
+    // ⚠ `kind` exists because the block carries THREE things the epoch does not determine: the
+    // window LABEL and the gate text are both derived from the active harness, so a bump that
+    // changes a window or a threshold makes every page need a rewrite while NO page needs an
+    // epoch change. Reporting those as "epoch X -> X" made 193 no-ops look like repairs under
+    // epoch 9 and broke the invariant that a proposed change must actually change the epoch.
+    const kind = String(have) !== String(rec.epoch) ? 'epoch'
+               : haveAnnual !== (rec.annual / 100).toFixed(4) ? 'metrics'
+               : haveWindow !== nextWindow ? 'window-label'
+               : 'restamp';
     changed.push({
-      file: f, from: have, to: rec.epoch,
+      file: f, from: have, to: rec.epoch, kind,
+      fromWindow: haveWindow, toWindow: nextWindow,
       fromAnnual: haveAnnual, toAnnual: (rec.annual / 100).toFixed(4),
       metricsChanged: haveAnnual !== (rec.annual / 100).toFixed(4),
     });
@@ -156,8 +168,11 @@ if (require.main === module) {
   const dry = process.argv.includes('--dry');
   const r = repair({ dry });
   console.log(`[epoch-repair] ${dry ? 'would correct' : 'corrected'} ${r.changed.length} page(s)`);
+  const byKind = {};
+  for (const c of r.changed) byKind[c.kind] = (byKind[c.kind] || 0) + 1;
+  for (const [k, n] of Object.entries(byKind)) console.log(`   ${k.padEnd(14)} ${n} page(s)`);
   const byMove = {};
-  for (const c of r.changed) byMove[`${c.from} -> ${c.to}`] = (byMove[`${c.from} -> ${c.to}`] || 0) + 1;
+  for (const c of r.changed.filter(c => c.kind === 'epoch')) byMove[`${c.from} -> ${c.to}`] = (byMove[`${c.from} -> ${c.to}`] || 0) + 1;
   for (const [k, v] of Object.entries(byMove)) console.log(`   epoch ${k.padEnd(10)} ${v} page(s)`);
   console.log(`[epoch-repair] already correct : ${r.already.length}`);
   console.log(`[epoch-repair] no ledger row   : ${r.noRow.length}  (left alone — the ledger is authoritative)`);

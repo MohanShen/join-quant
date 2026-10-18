@@ -1,0 +1,120 @@
+{
+  "epoch": 9,
+  "setAt": "2026-10-18",
+  "status": "active",
+  "note": "MEASUREMENT CHANGE — the windows move and the gate drops. User decision, 2026-10-18. TRAIN 2022-2023 -> 2024 only; VAL 2024-2025 -> 2025 only; the OOS reserve is UNCHANGED (2026-01-01..today). Every stage threshold and the gate itself drop from sharpe 1.5 to 1.0. ⚠ This is NOT a scoring-only bump: the windows define the measurement, so measurementPreservedFromPrevious is FALSE and NO pre-9 row is a current result. The whole library must be re-measured, and every family's VAL is granted afresh. Rationale (user's): requiring a strategy to work across a five-year span is too strict and not necessary — recent behaviour is what matters, and realistically an edge does not have a long life because everyone crowds into the same trade. So the bench now asks 'did this work in the most recent full year, and does it hold up in the next one', not 'did it survive 2022 through 2025'.",
+  "changedFromPreviousEpoch": [
+    "windows.train 2022-01-01..2023-12-31 -> 2024-01-01..2024-12-31 (two years -> one)",
+    "windows.val 2024-01-01..2025-12-31 -> 2025-01-01..2025-12-31 (two years -> one)",
+    "windows.holdout UNCHANGED at 2026-01-01..today",
+    "objective.gateMin 1.5 -> 1.0",
+    "objective.stageThresholds.* 1.5 -> 1.0 (normalize, study, enhance, integrate, validate)",
+    "costs, pins, slippage, capital, frequency, benchmark: all UNCHANGED, so the frozen Python literals and enhance/strategy_template.py need no edit"
+  ],
+  "comparability": {
+    "trainResultsFromEarlierEpochs": "NOT comparable. TRAIN moves from 2022-2023 to 2024 and VAL from 2024-2025 to 2025, so a pre-9 row measures a different period and is not a result for this bench — `measurementValid()` rejects every epoch <= 8 row. This is the first measurement-breaking bump since epoch 6. Costs and pins are untouched, so the difference is purely WHICH DAYS were traded; nothing about a pre-9 number is wrong, it simply answers a question this epoch no longer asks.",
+    "unchangedFromEpoch8": [
+      "costs",
+      "pins",
+      "slippage",
+      "orderVolumeRatio",
+      "avoidFutureData",
+      "capital",
+      "frequency",
+      "benchmark",
+      "fundOrderCost",
+      "stockOrderCost",
+      "score",
+      "keepScoreOnGateFail",
+      "windows.holdout",
+      "oosPolicy"
+    ],
+    "measurementPreservedFromPrevious": false,
+    "measurementPreservedNote": "FALSE, and deliberately so. The windows ARE the measurement. ⚠ Do not read `unchangedFromEpoch8` as an equivalence — it lists what stayed the same, which is a different question (epoch 4 made exactly that mistake). Costs being identical does not make a 2024 measurement comparable to a 2022-2023 one."
+  },
+  "windows": {
+    "train": {
+      "start": "2024-01-01",
+      "end": "2024-12-31"
+    },
+    "val": {
+      "start": "2025-01-01",
+      "end": "2025-12-31"
+    },
+    "holdout": {
+      "start": "2026-01-01",
+      "end": "today"
+    }
+  },
+  "costs": {
+    "capital": 1000000,
+    "frequency": "daily",
+    "useRealPrice": true,
+    "benchmark": "000300.XSHG",
+    "avoidFutureData": true,
+    "orderVolumeRatio": 0.05,
+    "slippage": {
+      "kind": "FixedSlippage",
+      "value": 0
+    },
+    "commission": {
+      "kind": "PerTrade",
+      "buy": 0.0003,
+      "sell": 0.0013,
+      "minCost": 5
+    },
+    "fundOrderCost": {
+      "openCommission": 0.0003,
+      "closeCommission": 0.0003,
+      "closeTax": 0,
+      "minCommission": 5
+    },
+    "stockOrderCost": {
+      "openCommission": 0.0003,
+      "closeCommission": 0.0003,
+      "closeTax": 0.001,
+      "minCommission": 5
+    }
+  },
+  "objective": {
+    "gateMetric": "sharpe",
+    "gateMin": 1.0,
+    "score": "annualReturn - maxDrawdown",
+    "keepScoreOnGateFail": true,
+    "stageThresholds": {
+      "normalize": 1.0,
+      "study": 1.0,
+      "enhance": 1.0,
+      "integrate": 1.0,
+      "validate": 1.0
+    },
+    "integrateBar": {
+      "basis": "perYearSharpe",
+      "metric": "sharpe",
+      "aggregation": "domination",
+      "barMember": "familyChampion",
+      "pooledIsVeto": false,
+      "fallback": "pooled",
+      "note": "In EVERY TRAIN calendar year, the candidate's sharpe computed WITHIN that year must exceed the highest sharpe any parent achieves in that SAME year. Parents are the family CHAMPIONS (what the universe would otherwise ship), not the baselines a merge was decomposed from. ⚠⚠ TRAIN NOW SPANS ONE CALENDAR YEAR (2024), so 'every year' is a single year and this rule is arithmetically IDENTICAL to a pooled sharpe comparison. The basis is kept unchanged so the guard's code path, its curve requirement and its fallback reporting all stay the same — but epoch 8's REASON for per-year domination is gone with the second year: there is no longer a regime trade-off to forbid, because there is no other year to trade against. Read a passing bar as 'better in 2024', not as 'survives a regime change'. Needs the stored daily curve of the candidate and of EVERY parent; partial coverage falls back to pooled and must SAY SO."
+    }
+  },
+  "oosPolicy": {
+    "maxTestsPerCandidate": 1,
+    "maxTestsPerEpoch": 2,
+    "note": "Unchanged in form, but READ THE WARNING. `utils/oos-budget.js` counts per BENCH, and epoch 9 is a new bench, so the two tests are granted again — while `windows.holdout` is the SAME 2026 data that epochs 3-8 already looked at TWICE (大小盘轮动 -0.21, 红利低频 -0.51). The per-candidate limit of 1 is ABSOLUTE across epochs and still protects an individual book from a second look. What resets is the per-bench count, i.e. the number of DISTINCT candidates that may touch 2026. That is defensible here only because the candidates themselves will be different books — selection now happens on 2024 instead of 2022-2023 — and it is not free: every look at the reserve leaks a little, and the reserve only genuinely grows as calendar time passes (the rolling `today` end). Spend them as if they were the last two, because for this data they nearly are."
+  },
+  "rationale": {
+    "windows": "User decision, 2026-10-18, in their words: requiring a strategy to work throughout a five-year period is too strict and not necessary, because what is working recently is more important; and realistically a working strategy will not have a long life, since everyone is trying to run the same strategy. So the bench stops asking for multi-regime survival and asks for recent, consecutive performance instead: fit on the most recent complete year, confirm on the next, hold 2026 back.",
+    "whyContiguous": "TRAIN 2024 -> VAL 2025 -> OOS 2026+ are adjacent and in order, with no overlap. The old layout had TRAIN end 2023-12-31 and VAL start 2024-01-01, which was also contiguous; what changes is that each stage is now one year instead of two, and the whole evaluation sits inside the most recent three years rather than spanning five.",
+    "costOfOneTrainYear": "A single TRAIN year is less data to fit on, so the same number of candidate variants searches a smaller sample and overfits more readily per unit of evidence. The epoch-7/8 analysis that motivated per-year domination — 2022 supplying a median 62% of log-growth, a candidate able to trade one year off against the other — simply has no analogue now. The compensating structure is that VAL is a full adjacent year and the OOS reserve is untouched, so a 2024 fit still has to survive 2025 before it can be shipped.",
+    "orderVolumeRatio": "Unset, an order can absorb an implausible share of a bar. That is the mechanism behind the two highest-scoring strategies in the library: the ETF-discount study measured sharpe falling 8.44 -> 1.10 as the volume floor rose, because the edge is constructed from the thinnest instruments. At 1,000,000 CNY, 5% of bar volume keeps a position inside what a real book could absorb.",
+    "fundOrderCost": "The override patches set_commission, which does not govern type='fund'. 170 held strategies set their own fund costs, so every ETF result was running on the author's numbers rather than the bench's.",
+    "avoidFutureData": "A lookahead guard left to the author means 71 of 215 strategies ran without it.",
+    "stockOrderCost": "Economically identical to what set_commission(PerTrade(buy=0.0003, sell=0.0013, min=5)) was meant to express: 0.03% each way plus 0.1% stamp duty on the sell. Unchanged from epoch 6."
+  },
+  "rationaleForGate": {
+    "decision": "User decision, 2026-10-18: lower the sharpe bar from 1.5 to 1.0 at EVERY stage, for the same reason the windows moved. A high bar over a long window selects for strategies that look robust across regimes; this bench is deliberately not asking for that.",
+    "distribution": "On the epoch-6/8 corpus the median measured sharpe was 1.02, so 1.5 kept roughly the top third (41 of 124) and 1.0 keeps about half. The distribution on the NEW windows is unmeasured — nothing has been run on 2024 yet — so this is a decision about the standard, not a fit to an observed distribution, and the first re-measured batch is what will show where 1.0 actually sits.",
+    "whatItDoesNotChange": "`keepScoreOnGateFail` stays true, so a gate failure still records its score and remains comparable; the epoch-5 lesson (a hard gate turned five of fourteen families into -inf and destroyed all comparative information) is unaffected. Realizability is a separate axis and is NOT relaxed: a sharpe-1.0 book that cannot be filled is still rejected by rule 4 and by the /run-family exit gate."
+  }
+}

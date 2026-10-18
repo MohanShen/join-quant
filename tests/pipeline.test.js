@@ -177,10 +177,15 @@ test('type integration guard', async t => {
     const r = check({
       weights: 'equal',
       candidate: { annual: 62, sharpe: 3.0, maxdd: 10, objective: 0.52 },
-      members: [member({ family: 'A', sharpe: 1.41, objective: 0.38 }),
-                member({ family: 'B', sharpe: 1.21, objective: 0.33 })],
+      // ⚠ Parent sharpes must sit below the ACTIVE gate, not below a remembered 1.5. These were
+      // 1.41 and 1.21 — real ETF figures that failed at 1.5 and now CLEAR 1.0, so the fixture
+      // stopped expressing "every parent fails" without saying anything had changed.
+      members: [member({ family: 'A', sharpe: 0.94, objective: 0.38 }),
+                member({ family: 'B', sharpe: 0.91, objective: 0.33 })],
     });
-    assert.ok(r.flags.includes('all-parents-below-gate'));
+    assert.ok(r.flags.includes('all-parents-below-gate'),
+      `expected all-parents-below-gate at threshold ${harness.stageThreshold('integrate')}, ` +
+      `got ${r.flags.join(', ')}`);
     assert.ok(!r.flags.includes('below-stage-gate'), 'the candidate itself clears the gate');
     assert.notStrictEqual(r.verdict, 'reject', 'the parents failing must not veto the candidate');
   });
@@ -283,23 +288,33 @@ test('type integration guard', async t => {
     const series = path.join(d, 'series'); fs.mkdirSync(series);
     const ep = harness.config().epoch;
 
-    // A curve whose 2022 and 2023 each compound at a constant daily rate, so the per-year
-    // sharpe is controlled by construction (constant returns -> tiny sd -> large sharpe; the
-    // ORDERING is what the test asserts, never the absolute value).
-    const curve = (a, b) => {
+    // A curve where each TRAIN calendar year compounds at its own constant daily rate, so the
+    // per-year sharpe is controlled by construction (constant returns -> tiny sd -> large sharpe;
+    // the ORDERING is what the tests assert, never the absolute value).
+    //
+    // ⚠ The years come from `harness.windowYears('train')`, NOT from literal 2022/2023. The
+    // fixture used to hardcode them, so epoch 9 (TRAIN = 2024 alone) produced curves entirely
+    // OUTSIDE the window: yearlySplit found no overlap, the bar fell back to pooled, and three
+    // tests failed for a reason that had nothing to do with what they were testing. A fixture
+    // pinned to one epoch's calendar silently stops exercising the thing it names.
+    const TRAIN_YEARS = harness.windowYears('train').map(y => y.year);
+    const curve = (...rates) => {
       const dates = [], cum = []; let eq = 1;
-      for (const [y, r] of [[2022, a], [2023, b]]) {
+      TRAIN_YEARS.forEach((y, idx) => {
+        // Fewer declared rates than TRAIN years reuses the last — so a caller written for a
+        // two-year bench still produces a valid single-year curve.
+        const r = rates[Math.min(idx, rates.length - 1)];
         for (let i = 0; i < 240; i++) {
           const day = new Date(Date.UTC(y, 0, 3) + i * 86400000);
           if (day.getUTCFullYear() !== y) break;
           eq *= 1 + r / 100;
           dates.push(day.toISOString().slice(0, 10)); cum.push((eq - 1) * 100);
         }
-      }
+      });
       return { dates, cum, benchCum: cum.map(() => 0), points: dates.length };
     };
     const put = (name, c) => fs.writeFileSync(
-      path.join(series, `${name}__train__e${ep}.json`), JSON.stringify(curve(c[0], c[1])));
+      path.join(series, `${name}__train__e${ep}.json`), JSON.stringify(curve(...c)));
     // ⚠ seriesKey() strips the `strategies/` prefix and the `.py`, so the stored name is the
     // bare slug — writing `strategies_cand__train__eN` leaves the lookup empty.
     const series_ = require('../utils/backtest-series');
@@ -350,16 +365,52 @@ test('type integration guard', async t => {
     assert.strictEqual(bar.barMember, 'familyChampion');
   });
 
-  await t.test('rejects a candidate that wins one TRAIN year and loses the other', () => {
-    // The exact case a maximin would have let through: strong 2022, weak 2023.
-    const fx = perYearFixture({ cand: [0.60, 0.02], p1: [0.30, 0.30], p2: [0.10, 0.10] });
+  await t.test('rejects a candidate that loses a TRAIN year to the best parent', () => {
+    // Under a TWO-year TRAIN this was "wins one year and loses the other" — the exact case a
+    // maximin would have let through, and the reason epoch 8 moved to domination. Epoch 9's TRAIN
+    // is ONE year, so that shape cannot be built; what survives, and is the part that still binds,
+    // is that losing ANY train year rejects.
+    const fx = perYearFixture({ cand: [0.02], p1: [0.30], p2: [0.10] });
     const r = runPerYear(fx, { annual: 120, sharpe: 3.0, maxdd: 5, objective: 1.15 });
     assert.strictEqual(r.barApplied, 'perYearSharpe',
       `the per-year bar must actually apply, got ${r.barApplied}: ${r.reasons.join(' | ')}`);
     assert.strictEqual(r.perYearSharpe.beats, false);
-    assert.deepStrictEqual(r.perYearSharpe.failed, [2023]);
+    assert.deepStrictEqual(r.perYearSharpe.failed, harness.windowYears('train').map(y => y.year));
     assert.strictEqual(r.verdict, 'reject');
     assert.ok(r.reasons.some(x => /fails per-year sharpe domination/.test(x)));
+  });
+
+  /**
+   * ⚠⚠ Epoch 9 made the per-year bar DEGENERATE, and that has to be asserted rather than left
+   * implicit. TRAIN is one calendar year (2024), so "beat the best parent in every year" is
+   * arithmetically a single pooled sharpe comparison: there is one year, therefore one best
+   * parent, therefore `parents-split-by-year` can never fire. epoch-9.json records the same thing
+   * in prose. A reader who sees `basis: perYearSharpe` would otherwise assume the epoch-8
+   * regime-change semantics, which no longer exist.
+   */
+  await t.test('with a one-year TRAIN the bar collapses to a single comparison', () => {
+    const years = harness.windowYears('train');
+    assert.strictEqual(years.length, 1, 'this test describes the single-year case only');
+    const fx = perYearFixture({ cand: [0.50], p1: [0.30], p2: [0.10] });
+    const r = runPerYear(fx, { annual: 200, sharpe: 4.0, maxdd: 5, objective: 1.95 });
+    assert.strictEqual(r.barApplied, 'perYearSharpe');
+    assert.strictEqual(r.perYearSharpe.years.length, 1);
+    assert.strictEqual(new Set(r.perYearSharpe.years.map(y => y.bestParent)).size, 1,
+      'one year admits exactly one best parent');
+    assert.ok(!r.flags.includes('parents-split-by-year'),
+      'a split bar is unreachable with one year — it must not be reported');
+  });
+
+  await t.test('the MULTI-year logic survives for a future widening of TRAIN', () => {
+    // The two cases epoch 9 cannot express — a candidate winning one year and losing another,
+    // and a bar set by a different parent in each year — are properties of the GUARD, not of the
+    // window. If TRAIN ever widens again they must come back, so assert the code still generalises
+    // over the year list instead of having been simplified away while no test could see it.
+    const src = fs.readFileSync(path.join(ROOT, 'utils/type-integrate-check.js'), 'utf8');
+    assert.match(src, /parents-split-by-year/, 'the split-bar flag must still exist');
+    assert.match(src, /windowYears|yearlySplit/, 'the bar must still be computed per window-year');
+    // `failed` is a LIST of years, not a boolean — that is what makes multi-year reporting work.
+    assert.match(src, /failed/);
   });
 
   await t.test('keeps a candidate that beats the best parent in BOTH years', () => {
@@ -369,17 +420,6 @@ test('type integration guard', async t => {
     assert.strictEqual(r.perYearSharpe.beats, true);
     assert.deepStrictEqual(r.perYearSharpe.failed, []);
     assert.notStrictEqual(r.verdict, 'reject');
-  });
-
-  await t.test('flags a bar set by a DIFFERENT parent in each year', () => {
-    // P1 owns 2022, P2 owns 2023 — so the candidate is up against a composite neither achieves.
-    // Accepted under epoch 8, but it is the thing a reader most needs told.
-    const fx = perYearFixture({ cand: [0.05, 0.05], p1: [0.90, 0.01], p2: [0.01, 0.90] });
-    const r = runPerYear(fx, { annual: 20, sharpe: 2.0, maxdd: 5, objective: 0.15 });
-    assert.strictEqual(r.barApplied, 'perYearSharpe', `got ${r.barApplied}`);
-    assert.ok(r.flags.includes('parents-split-by-year'),
-      `expected parents-split-by-year, got ${r.flags.join(', ')}`);
-    assert.strictEqual(new Set(r.perYearSharpe.years.map(y => y.bestParent)).size, 2);
   });
 
   await t.test('a passing candidate with passing parents raises neither flag', () => {
@@ -508,15 +548,20 @@ test('harness config', async t => {
     assert.ok(va.end < ho.start, 'val must end before the reserve starts');
   });
 
-  await t.test('epoch 3 extends val to two years and moves the reserve', () => {
-    assert.strictEqual(harness.window('val').start, '2024-01-01');
+  await t.test('epoch 9 narrows VAL to 2025 and leaves the reserve where it was', () => {
+    // Epoch 3 had widened VAL to 2024-2025; epoch 9 narrows it to the single year AFTER the new
+    // TRAIN. The OOS cutoff is deliberately untouched, so the held-out data is the same 2026.
+    assert.strictEqual(harness.window('val').start, '2025-01-01');
     assert.strictEqual(harness.window('val').end, '2025-12-31');
     assert.strictEqual(harness.oosCutoff(), '2026-01-01');
   });
 
-  await t.test('train is unchanged, so epoch-2 TRAIN results stay comparable', () => {
-    assert.strictEqual(harness.window('train').start, '2022-01-01');
-    assert.strictEqual(harness.window('train').end, '2023-12-31');
+  await t.test('epoch 9 moves TRAIN to 2024 alone, which is a MEASUREMENT change', () => {
+    // ⚠ The inverse of what this test asserted for epochs 2-8, when TRAIN was frozen at
+    // 2022-2023 and the point was that rows stayed comparable. The windows ARE the measurement,
+    // so moving TRAIN invalidates every earlier row — see the comparability test below.
+    assert.strictEqual(harness.window('train').start, '2024-01-01');
+    assert.strictEqual(harness.window('train').end, '2024-12-31');
   });
 
   await t.test('the rolling end resolves to a real date, not the literal "today"', () => {
@@ -533,28 +578,37 @@ test('harness config', async t => {
     assert.strictEqual(harness.gate(3.21), true);
   });
 
-  await t.test('epoch 5 keeps the score when the gate fails', () => {
-    // 网格交易策略, sharpe 1.19: used to be erased to DQ, which threw away the difference
-    // between a near-miss and a disaster and left five families with no number at all.
-    assert.strictEqual(harness.objective(33.79, 19.68, 1.19), 0.1411);
-    assert.strictEqual(harness.gate(1.19), false);
+  await t.test('the score is kept when the gate fails', () => {
+    // The epoch-5 lesson, and it outlives every threshold change: erasing a failing row to DQ
+    // threw away the difference between a near-miss and a disaster and left five of fourteen
+    // families with no number at all. ⚠ The sharpe here had to MOVE with the gate — 1.19 used to
+    // fail at 1.5 and now passes at 1.0, so expressing "the gate failed" needs a sub-1.0 sharpe.
+    assert.strictEqual(harness.objective(33.79, 19.68, 0.80), 0.1411);
+    assert.strictEqual(harness.gate(0.80), false);
+    // ...and the same row at its real sharpe now CLEARS the lowered gate, which is the change.
+    assert.strictEqual(harness.gate(1.19), true);
   });
 
-  await t.test('the gate is 1.5 and still rejects unusable input', () => {
-    assert.strictEqual(harness.gate(1.5), true);
-    assert.strictEqual(harness.gate(1.49), false);
+  await t.test('the gate is 1.0 and still rejects unusable input', () => {
+    assert.strictEqual(harness.gate(1.0), true);
+    assert.strictEqual(harness.gate(0.99), false);
     assert.strictEqual(harness.gate('not a number'), false);
   });
 
-  await t.test('every stage holds the same sharpe bar since epoch 7', () => {
-    // Epoch 7 dropped integration's 2.0 to 1.5. The 2.0 bar never bound on anything that could
-    // win: across the 60 epoch-6 rows, Spearman(objective, sharpe) = 0.9836, 0 of the top-16 by
-    // objective failed it, and the only 3 rows between 1.5 and 2.0 scored objective <= 0.2970.
-    // Integration's real bar is now the per-year comparison, not a different sharpe number.
-    assert.strictEqual(harness.stageThreshold('study'), 1.5);
-    assert.strictEqual(harness.stageThreshold('integrate'), 1.5);
-    assert.strictEqual(harness.stageGate('integrate', 1.8), true);
-    assert.strictEqual(harness.stageGate('integrate', 1.49), false);
+  await t.test('every stage holds the same sharpe bar, now 1.0', () => {
+    // Epoch 7 dropped integration's 2.0 to 1.5 (that 2.0 never bound on anything that could win:
+    // Spearman(objective, sharpe) = 0.9836 over the 60 epoch-6 rows, 0 of the top-16 failed it).
+    // Epoch 9 drops every stage to 1.0 — user decision, same reasoning as the windows: a high bar
+    // over a long window selects for cross-regime robustness, which this bench stopped asking for.
+    assert.strictEqual(harness.stageThreshold('study'), 1.0);
+    assert.strictEqual(harness.stageThreshold('integrate'), 1.0);
+    assert.strictEqual(harness.stageGate('integrate', 1.2), true);
+    assert.strictEqual(harness.stageGate('integrate', 0.99), false);
+    // One bar everywhere is the invariant that matters: the measurement is identical at every
+    // stage, so only the DECISION differs, and it must not differ by stage.
+    for (const st of ['normalize', 'study', 'enhance', 'integrate', 'validate']) {
+      assert.strictEqual(harness.stageThreshold(st), 1.0, `${st} must hold the common bar`);
+    }
   });
 
   await t.test('the integration bar is read from the epoch, not hard-coded', () => {
@@ -573,24 +627,39 @@ test('harness config', async t => {
     assert.strictEqual(e7.objective.integrateBar.basis, 'worstTrainYear');
   });
 
-  await t.test('a scoring-only bump preserves measurement, so no earlier row is re-run', () => {
-    // A scoring-only bump that invalidated the ledger would re-measure the whole library at
-    // the daily backtest budget — the most expensive silent bug this repo can have.
-    assert.ok(harness.measurementValid(6), 'epoch-6 rows must survive a scoring-only bump');
-    assert.ok(harness.measurementValid(7));
-    assert.ok(harness.measurementValid(8));
-    assert.ok(!harness.measurementValid(5), 'epoch 6 changed stock fees; 5 is not comparable');
+  await t.test('a MEASUREMENT bump invalidates every earlier row', () => {
+    // Epoch 9 moved TRAIN and VAL, so nothing measured before it is a result for this bench.
+    assert.ok(harness.measurementValid(9));
+    for (const e of [2, 4, 5, 6, 7, 8]) {
+      assert.ok(!harness.measurementValid(e), `epoch-${e} rows cannot survive a window change`);
+    }
   });
 
-  await t.test('windowYears splits TRAIN on calendar years with window-derived day counts', () => {
+  await t.test('...but the scoring-only chain still works, measured on epochs 6-8', () => {
+    // The mechanism this protects is unchanged and still load-bearing: a scoring-only bump that
+    // invalidated the ledger would re-measure the whole library at the daily backtest budget,
+    // the most expensive silent bug this repo can have. Epochs 7 and 8 changed only how a result
+    // is JUDGED, so they remain one bench with 6 — asked order-independently, away from the
+    // active epoch, which is exactly what the VAL budget needs.
+    assert.ok(harness.sameBench(6, 8), 'epochs 7 and 8 were scoring-only');
+    assert.ok(harness.sameBench(8, 6), 'and the question is order-independent');
+    assert.ok(!harness.sameBench(5, 6), 'epoch 6 changed stock fees');
+    assert.ok(!harness.sameBench(8, 9), 'epoch 9 changed the windows');
+  });
+
+  await t.test('windowYears now yields the single TRAIN year, clipped to the window', () => {
     const ys = harness.windowYears('train');
-    assert.strictEqual(ys.length, 2);
-    assert.deepStrictEqual(ys.map(y => y.year), [2022, 2023]);
-    assert.strictEqual(ys[0].start, '2022-01-01');
-    assert.strictEqual(ys[0].end, '2022-12-31');
-    // 365, not the count of trading days that happened to occur — the ledger's convention.
-    assert.strictEqual(ys[0].days, 365);
-    assert.strictEqual(ys[1].days, 365);
+    assert.strictEqual(ys.length, 1, 'epoch 9 TRAIN is one calendar year');
+    assert.deepStrictEqual(ys.map(y => y.year), [2024]);
+    assert.strictEqual(ys[0].start, '2024-01-01');
+    assert.strictEqual(ys[0].end, '2024-12-31');
+    // Calendar days of the window, not the trading days that happened to occur — the ledger's
+    // convention. 2024 is a leap year, so 366.
+    assert.strictEqual(ys[0].days, 366);
+    // ⚠ The consequence for the integration bar: 'every TRAIN year' is ONE year, so per-year
+    // domination is arithmetically a pooled sharpe comparison. epoch-9.json says so, and the
+    // epoch-8 rationale (a candidate trading 2022 off against 2023) no longer has an analogue.
+    assert.strictEqual(harness.integrateBar().basis, 'perYearSharpe');
   });
 
   await t.test('the Python literals still match — they cannot read the JSON', () => {
@@ -824,9 +893,13 @@ test('epoch 6 pins the stock order cost', async t => {
   });
 
   await t.test('epoch-5 rows are no longer valid measurements', () => {
-    // Costs changed, so this bump is explicitly NOT measurement-preserving.
+    // Costs changed at 6, so that bump was explicitly NOT measurement-preserving.
     assert.strictEqual(h.measurementValid('5'), false);
-    assert.strictEqual(h.measurementValid('6'), true);
+    // ⚠ Nor is epoch 6 valid any more — epoch 9 moved TRAIN and VAL, so the chain is broken a
+    // second time and for a different reason. Asked away from the active epoch, 6 and 8 are
+    // still one bench, which is what keeps the scoring-only mechanism honest.
+    assert.strictEqual(h.measurementValid('6'), false);
+    assert.strictEqual(h.sameBench('6', '8'), true);
   });
 });
 

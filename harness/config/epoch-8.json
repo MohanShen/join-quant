@@ -1,7 +1,7 @@
 {
   "epoch": 8,
   "setAt": "2026-10-16",
-  "status": "active",
+  "status": "superseded",
   "note": "Scoring change only — the measurement bench (windows, costs, pins) is IDENTICAL to epochs 6 and 7, byte-for-byte, so measurementPreservedFromPrevious holds and no row is re-measured. Replaces epoch 7's integration bar. Epoch 7 compared the candidate's WORST TRAIN year objective against the most consistent parent's worst TRAIN year (a maximin on annual-minus-drawdown). Epoch 8 requires the candidate to beat the BEST PARENT'S SHARPE IN EVERY TRAIN YEAR — per-year domination, on sharpe rather than objective. User decision, 2026-10-16.",
   "changedFromPreviousEpoch": [
     "objective.integrateBar.basis \"worstTrainYear\" -> \"perYearSharpe\"",
@@ -117,5 +117,7 @@
     "whyEveryYearNotTheWorst": "Epoch 7's maximin let a candidate win by being least-bad in one year while giving up the other. Domination asks the harder and more honest question: is this merge better than its parents whenever the market changed regime? TRAIN spans exactly two years and they are very different (2022 supplies a median 62% of log-growth across the stored curves, 63-71% for the top books), so requiring both years is requiring the merge to survive the regime change rather than ride one side of it.",
     "acceptedCost": "The per-year best parent may differ by year, so the candidate can be rejected for losing to a composite no single parent matches. Under epoch 7 that was treated as a reason to prefer a maximin; under epoch 8 it is accepted as the price of domination.",
     "unchanged": "The stage gate (sharpe >= 1.5), the realizability floor (rule 4), the VAL budget (one per universe per epoch) and the pooled comparison as non-vetoing evidence are all unchanged from epoch 7."
-  }
+  },
+  "supersededBy": 9,
+  "supersededNote": "Superseded 2026-10-18 by epoch 9, which moved TRAIN to 2024 and VAL to 2025 and dropped every threshold to sharpe 1.0. Epoch-8 rows remain correct measurements of 2022-2023; they are simply not results for the active bench."
 }

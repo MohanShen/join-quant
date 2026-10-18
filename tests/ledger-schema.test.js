@@ -256,7 +256,10 @@ test('a reasoned VAL decline is not reopened', async (t) => {
       if (r.eligible || r.val?.has) continue;
       const s = r.candidate?.sharpe;
       if (s == null || harness.stageGate('validate', s)) continue;
-      assert.strictEqual(r.owner, 'none',
+      // Same refinement as below: what must never happen is a RESEARCH dispatch to spend a
+      // validation on a candidate that cannot clear the gate. A `normalize` block is a different
+      // statement — it says the candidate has no current measurement at all.
+      assert.notStrictEqual(r.owner, 'research',
         `${r.family}: candidate sharpe ${s} fails the validate gate — there is nothing worth ` +
         'the family\'s one validation, so this must not be dispatched');
     }
@@ -275,7 +278,16 @@ test('a reasoned VAL decline is not reopened', async (t) => {
         `${fam}: valDeclined needs a basis saying WHY and what would change it`);
       const r = el.assess(fam);
       if (r.val && r.val.has) continue;   // a later VAL makes the field moot
-      assert.strictEqual(r.owner, 'none', `${fam}: a declared decline must not be reopened`);
+      // ⚠ The invariant is that the RESEARCH LOOP is not re-dispatched to spend a validation the
+      // family already declined — `family-queue` reopens only `research`-owned blocks, so that is
+      // the owner that must never appear. It is NOT "owner is always none": epoch 9 moved the
+      // windows, so these families now block one gate EARLIER, at `normalize`, for want of any
+      // member measured on the active bench. That block is both correct and more fundamental, and
+      // it is not a VAL dispatch.
+      assert.notStrictEqual(r.owner, 'research',
+        `${fam}: a declared decline must never be reopened for research (owner ${r.owner})`);
+      assert.ok(['none', 'normalize', 'human'].includes(r.owner),
+        `${fam}: unexpected owner ${r.owner} for a declared decline`);
     }
     assert.ok(declared >= 1, 'expected at least one recorded decline');
   });

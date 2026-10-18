@@ -95,11 +95,29 @@ function realizabilityLine(sourceFile) {
          `node utils/realizability-lint.js ${sourceFile}`;
 }
 
+/**
+ * The window LABEL stamped into the block, derived from the harness.
+ *
+ * ⚠ This was the literal string "TRAIN 2022-2023". It survived five epoch bumps because none of
+ * them moved the windows — and epoch 9 moves TRAIN to 2024, at which point the hard-coded label
+ * would have stamped "TRAIN 2022-2023" onto a 2024 measurement in the one block CLAUDE.md
+ * designates as the ledger's DURABLE BACKUP. `normalize-ledger-rebuild.js` reads this label back
+ * to recover a row's window, so a wrong label would have been reconstructed as fact.
+ * Exactly the class of bug the epoch config exists to prevent: a constant duplicated outside it.
+ */
+function windowLabel(windowName = 'train') {
+  const harness = require('./harness-config');
+  const ys = harness.windowYears(windowName).map(y => y.year);
+  const tag = windowName.toUpperCase();
+  if (!ys.length) return tag;
+  return ys.length === 1 ? `${tag} ${ys[0]}` : `${tag} ${ys[0]}-${ys[ys.length - 1]}`;
+}
+
 function normalizedLine(metrics) {
   const harness = require('./harness-config');
   const a = metrics.annual / 100, m = metrics.maxdd / 100;
   const epoch = metrics.epoch != null ? metrics.epoch : harness.config().epoch;
-  return `normalized: { epoch: ${epoch}, window: "TRAIN 2022-2023", annualReturn: ${a.toFixed(4)}` +
+  return `normalized: { epoch: ${epoch}, window: "${windowLabel('train')}", annualReturn: ${a.toFixed(4)}` +
          `, sharpe: ${metrics.sharpe}, maxDrawdown: ${m.toFixed(4)}, objective: ${metrics.obj}` +
          `, gate: ${metrics.gate} }`;
 }
@@ -246,4 +264,4 @@ function regenConceptTables() {
   return n;
 }
 
-module.exports = { stampNormalized, normalizedLine, classify, createStub, regenConceptTables, headerField };
+module.exports = { stampNormalized, normalizedLine, classify, createStub, regenConceptTables, headerField, windowLabel };

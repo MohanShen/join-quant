@@ -570,10 +570,24 @@ dbt('an existing page gets its measurement, without losing anything', async (t) 
   });
 
   await t.test('one builder serves both the create and the stamp path', () => {
-    // Two copies of this format would drift, and normalize-ledger-rebuild.js parses it.
+    // Two copies of this format would drift, and normalize-ledger-rebuild.js parses it back.
+    // ⚠ This used to enforce single-sourcing by COUNTING the literal `window: "TRAIN 2022-2023"`
+    // and requiring exactly one occurrence. Epoch 9 moved TRAIN to 2024 and the label became
+    // DERIVED, so the literal is gone entirely — a strictly stronger form of the same guarantee,
+    // but it took the old assertion to 0 !== 1. Assert the property instead of a spelling:
+    // exactly one place builds the block, and the window in it comes from the harness.
     const src = dbfs.readFileSync(dbpath.join(__dirname, '../utils/kb-stub.js'), 'utf8');
-    dba.strictEqual((src.match(/window: "TRAIN 2022-2023"/g) || []).length, 1,
-      'the literal must appear exactly once — in normalizedLine');
+    dba.strictEqual((src.match(/`normalized: \{ epoch:/g) || []).length, 1,
+      'exactly one builder may construct the normalized: block');
+    dba.ok(!/window: "TRAIN \d/.test(src),
+      'the window label must be derived from the harness, never written down here');
+    dba.match(src, /windowLabel\('train'\)/, 'and normalizedLine must use it');
+    // The label tracks the active epoch, whatever its windows are.
+    const { windowLabel } = require('../utils/kb-stub');
+    const years = require('../utils/harness-config').windowYears('train').map(y => y.year);
+    dba.strictEqual(windowLabel('train'),
+      years.length === 1 ? `TRAIN ${years[0]}` : `TRAIN ${years[0]}-${years[years.length - 1]}`);
+    dba.match(normalizedLine(M), new RegExp(`window: "${windowLabel('train')}"`));
     dba.match(normalizedLine(M), /epoch: 6.*sharpe: -0\.48.*gate: fail/);
   });
 });

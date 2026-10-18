@@ -163,9 +163,24 @@ test('no wiki page still claims the superseded epoch 1', async t => {
     const r = epochRepair.repair({ dry: true });
     for (const c of r.changed) {
       assert.ok(c.to, 'a proposed change must name a target epoch');
-      assert.notStrictEqual(c.from, c.to, 'a no-op should not be proposed');
-      assert.ok([...ledger.values()].includes(c.to),
-        `proposed epoch ${c.to} for ${c.file} is not any ledger row's epoch`);
+      assert.ok(c.kind, 'a proposed change must say WHAT it changes');
+      // ⚠ The invariant is "never a no-op", not "always an epoch move". The block also carries
+      // the window LABEL and the gate text, both derived from the ACTIVE harness — so a bump that
+      // moves a window or a threshold makes every page need a rewrite while no page needs an
+      // epoch change. Epoch 9 moved both windows and produced 187 label-only rewrites; asserting
+      // from !== to failed on correct behaviour, the same way this test's predecessor did when
+      // epoch-6 rows started landing.
+      if (c.kind === 'epoch') {
+        assert.notStrictEqual(String(c.from), String(c.to), 'an epoch change must change the epoch');
+        assert.ok([...ledger.values()].map(String).includes(String(c.to)),
+          `proposed epoch ${c.to} for ${c.file} is not any ledger row's epoch`);
+      } else {
+        // Any other kind must still be a real difference somewhere in the block.
+        assert.ok(c.kind === 'metrics' || c.kind === 'window-label' || c.kind === 'restamp',
+          `unknown change kind ${c.kind}`);
+        if (c.kind === 'window-label') assert.notStrictEqual(c.fromWindow, c.toWindow);
+        if (c.kind === 'metrics') assert.notStrictEqual(c.fromAnnual, c.toAnnual);
+      }
     }
     for (const f of r.noRow) assert.ok(typeof f === 'string');
   });

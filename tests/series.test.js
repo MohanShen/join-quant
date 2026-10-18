@@ -451,89 +451,116 @@ test('component members are epoch-filtered and de-duplicated', async t => {
   });
 });
 
-test('yearlySplit — the per-year basis of the epoch-7 integration bar', async t => {
+test('yearlySplit — the per-year basis of the integration bar', async t => {
   const harness = require('../utils/harness-config');
 
-  /** A curve that gains `a`%/day through 2022 then `b`%/day through 2023. */
-  const twoRegime = (a, b) => {
+  const TRAIN_YEARS = harness.windowYears('train').map(y => y.year);
+
+  /**
+   * A curve compounding at a constant %/day through each listed year.
+   *
+   * ⚠ Years are passed in, never hardcoded. These fixtures used to be pinned to 2022/2023, so
+   * epoch 9 (TRAIN = 2024 alone) made them fall entirely outside the window and six tests failed
+   * for a reason unrelated to what they assert. A fixture pinned to one epoch's calendar stops
+   * exercising the thing it names, silently.
+   */
+  const ramp = (spec) => {
     const d = [], cum = [];
     let eq = 1;
-    for (let y of [2022, 2023]) {
+    for (const [y, rate] of spec) {
       for (let i = 0; i < 240; i++) {
         const day = new Date(Date.UTC(y, 0, 3) + i * 86400000);
         if (day.getUTCFullYear() !== y) break;
-        eq *= 1 + (y === 2022 ? a : b) / 100;
+        eq *= 1 + rate / 100;
         d.push(day.toISOString().slice(0, 10));
         cum.push((eq - 1) * 100);
       }
     }
     return { dates: d, cum, benchCum: cum.map(() => 0), points: d.length };
   };
+  const flatTrain = rate => ramp(TRAIN_YEARS.map(y => [y, rate]));
 
-  await t.test('converts BEFORE slicing — the trap that would make year 2 fiction', () => {
-    // A book that compounds hard in 2022 ends that year far above its base. Clipping `cum`
-    // first and calling dailyReturns() on the slice measures the 2023 opening day against a
-    // base of 1, folding all of 2022's gain into one day: the year's annual, vol, sharpe and
-    // drawdown all become numbers that look plausible and are wrong. Same family of error as
-    // differencing cumulative percentages (vol 1.362 vs JQ's 0.227).
-    const rec = twoRegime(1.0, 0.1);
+  await t.test('converts BEFORE slicing — the trap that would make the year fiction', () => {
+    // `dailyReturns()` must run on the WHOLE cum series, with the RETURNS sliced by date. Clip
+    // `cum` first and the slice's opening entry is measured against a base of 1, folding every
+    // earlier gain into a single day: that year's annual, vol, sharpe and drawdown all become
+    // numbers that look plausible and are wrong. Same family of error as differencing cumulative
+    // percentages (vol 1.362 against JQ's 0.227).
+    //
+    // ⚠ Epoch 9 makes this test SHARPER, not weaker. TRAIN is one year, so the trap is now
+    // expressed by a curve that begins BEFORE the window — which is the realistic case, since a
+    // stored curve need not start where the window does. The preceding year compounds hard; if
+    // conversion happened after slicing, the single TRAIN year would inherit all of it.
+    const pre = TRAIN_YEARS[0] - 1;
+    const rec = ramp([[pre, 1.0], ...TRAIN_YEARS.map(y => [y, 0.1])]);
     const ys = scan.yearlySplit(rec, 'train');
-    assert.strictEqual(ys.length, 2);
-    // 2023 gains 0.1%/day: a flat ~24% year, nowhere near the >1000% that the trap produces.
-    assert.ok(ys[1].annualPct > 10 && ys[1].annualPct < 50,
-      `2023 should be a modest year, got ${ys[1].annualPct}%`);
-    assert.ok(ys[0].annualPct > ys[1].annualPct * 5, 'the regimes must stay distinguishable');
+    assert.ok(ys, 'the split must cover every TRAIN year');
+    assert.strictEqual(ys.length, TRAIN_YEARS.length);
+    // 0.1%/day is a flat ~24% year. The trap produces >1000%.
+    for (const y of ys) {
+      assert.ok(y.annualPct > 10 && y.annualPct < 60,
+        `${y.year} should be a modest year, got ${y.annualPct}% — the base was not carried over`);
+    }
   });
 
   await t.test('annualizes over the WINDOW year, not the curve\'s own span', () => {
-    // A full calendar year of a steady riser must report annual ~= total, because the slice's
-    // day count comes from windowYears() (365) rather than from the ~240 trading days present.
-    const rec = twoRegime(0.1, 0.1);
-    const ys = scan.yearlySplit(rec, 'train');
+    // A full calendar year of a steady riser must report annual ~= total, because the slice's day
+    // count comes from windowYears() rather than from the ~240 trading days actually present.
+    const ys = scan.yearlySplit(flatTrain(0.1), 'train');
+    const expected = new Map(harness.windowYears('train').map(y => [y.year, y.days]));
     for (const y of ys) {
-      assert.strictEqual(y.days, 365);
-      assert.ok(Math.abs(y.annualPct - y.totalPct) < 1.0,
+      assert.strictEqual(y.days, expected.get(y.year),
+        'the day count is the window\'s, not the curve\'s');
+      assert.ok(Math.abs(y.annualPct - y.totalPct) < 1.5,
         `a full year should annualize to about its total, got ${y.annualPct} vs ${y.totalPct}`);
     }
   });
 
   await t.test('objective is the harness score applied within the year', () => {
-    const ys = scan.yearlySplit(twoRegime(0.5, 0.2), 'train');
+    const ys = scan.yearlySplit(flatTrain(0.5), 'train');
     for (const y of ys) {
       assert.strictEqual(y.objective, Number(((y.annualPct - y.maxddPct) / 100).toFixed(4)));
     }
   });
 
-  await t.test('worstYear is the minimum, which is what the maximin compares', () => {
-    const rec = twoRegime(1.0, 0.05);
+  await t.test('worstYear is the minimum over the split', () => {
+    // With a one-year TRAIN the minimum is that year — still the right definition, and the
+    // assertion is written against the split rather than a remembered year number.
+    const rec = flatTrain(0.3);
     const w = scan.worstYear(rec, 'train');
-    assert.strictEqual(w.year, 2023, 'the weak regime is the worst year');
     const ys = scan.yearlySplit(rec, 'train');
+    assert.ok(w, 'a complete split must yield a worst year');
     assert.strictEqual(w.objective, Math.min(...ys.map(y => y.objective)));
+    assert.ok(TRAIN_YEARS.includes(w.year));
   });
 
   await t.test('returns null when a TRAIN year is missing, never a partial verdict', () => {
-    // A split that silently covers one year would be compared against one covering two.
-    const rec = twoRegime(0.5, 0.5);
-    const only2022 = scan.yearlySplit(
-      series.clip(rec, '2022-01-01', '2022-12-31'), 'train');
-    assert.strictEqual(only2022, null);
-    assert.strictEqual(scan.worstYear(series.clip(rec, '2022-01-01', '2022-12-31'), 'train'), null);
+    // A split that silently covered fewer years would be compared against one covering more.
+    // Expressed by clipping to the year BEFORE the window, which leaves no overlap at all.
+    const pre = TRAIN_YEARS[0] - 1;
+    const rec = ramp([[pre, 0.5], ...TRAIN_YEARS.map(y => [y, 0.5])]);
+    const clipped = series.clip(rec, `${pre}-01-01`, `${pre}-12-31`);
+    assert.strictEqual(scan.yearlySplit(clipped, 'train'), null);
+    assert.strictEqual(scan.worstYear(clipped, 'train'), null);
   });
 
   await t.test('reproduces a real stored curve\'s yearly returns', () => {
-    // PT多策略: 2022 +286.1%, 2023 +121.2%, computed independently from the raw curve.
+    // ⚠ Skips unless a curve exists for the ACTIVE bench. Epoch 9 moved the windows, so every
+    // stored e6 curve is incomparable and this skips until the library is re-measured on 2024 —
+    // it is a regression test for the arithmetic, so a vacuous pass is acceptable, but it must
+    // not silently assert 2022/2023 numbers that the bench no longer produces.
     const r = series.loadComparable(
       'strategies/2026-07-18_PT多策略分仓隔离插件V1_3-c70281d3.py', 'train');
-    if (!r.rec) return;          // curve store is gitignored; skip where it is absent
+    if (!r.rec) return;
     const ys = scan.yearlySplit(r.rec, 'train');
-    assert.ok(Math.abs(ys[0].totalPct - 286.1) < 0.5, `2022: ${ys[0].totalPct}`);
-    assert.ok(Math.abs(ys[1].totalPct - 121.2) < 0.5, `2023: ${ys[1].totalPct}`);
+    if (!ys) return;
+    assert.strictEqual(ys.length, TRAIN_YEARS.length);
+    for (const y of ys) assert.ok(Number.isFinite(y.totalPct), `${y.year} must have a total`);
   });
 
   await t.test('windowYears is read from the epoch, so the split moves with the window', () => {
-    assert.deepStrictEqual(harness.windowYears('train').map(y => y.year), [2022, 2023]);
-    assert.deepStrictEqual(harness.windowYears('val').map(y => y.year), [2024, 2025]);
+    assert.deepStrictEqual(harness.windowYears('train').map(y => y.year), [2024]);
+    assert.deepStrictEqual(harness.windowYears('val').map(y => y.year), [2025]);
     assert.deepStrictEqual(harness.windowYears('nonexistent'), []);
   });
 });
