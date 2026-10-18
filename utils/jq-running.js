@@ -60,14 +60,54 @@ async function running() {
     const page = ctx.pages().find(p => p.url().includes('joinquant')) || ctx.pages()[0];
     const rows = await page.evaluate(async () => {
       const j = await (await fetch('/algorithm/index/statistics', { credentials: 'include' })).json();
-      return ((j && j.data && j.data.running) || []).map(r => ({ usedSec: r.usedSec, time: r.time }));
+      // ⚠⚠ `id` is a BACKTEST id, not an algorithmId — it cannot be matched to one of our
+      // algorithms. But it IS the id of THIS listed entry, which is what makes the log probe below
+      // attributable to the entry even though the entry is not attributable to us.
+      return ((j && j.data && j.data.running) || []).map(r => ({ usedSec: r.usedSec, time: r.time, id: r.id }));
     });
-    const live = rows.filter(r => cnMinutes(r.usedSec) <= STALE_MIN);
+
+    // ⚠⚠⚠ A listed entry whose own log says FINISHED is not a live blocker.
+    //
+    // Measured 2026-10-18: the normalizer sat here for 34 of 50 wait-minutes at 0.21s CPU on
+    // 这是一个简单的策略-1251, a run that had COMPLETED and that JQ never dropped from the list. The
+    // age rule could not help — at 36min the entry was UNDER the 45min cap, so it read as "ours,
+    // still running. WAIT", which is the one verdict that is pure loss here.
+    //
+    // ⚠ This was deliberately NOT implemented until the code was OBSERVED, because this waiter is
+    // what prevents two concurrent backtests and concurrent runs have returned IDENTICAL metrics
+    // for different strategies on this account: a false "not blocking" silently corrupts results,
+    // where a false "blocking" only wastes time. Every `state` seen before came from a run already
+    // believed finished, so 2 might have meant "has output". Settled by instrumenting the executor
+    // to print the state while a run was KNOWN live (`LIVE-RUN-STATE`, 2026-10-18):
+    //
+    //     in-flight, 17s in  ->  log.state = 1
+    //     finished / 完成     ->  log.state = 2
+    //
+    // So the states DO separate, and only a positive read of 2 clears an entry. Anything else —
+    // state 1, an unreadable log, a throw — leaves it blocking, which is the safe direction.
+    const finishedIds = new Set();
+    for (const r of rows) {
+      if (!r.id) continue;
+      try {
+        const st = await page.evaluate(async (bt) => {
+          try {
+            const j = await (await fetch(`/algorithm/backtest/log?backtestId=${bt}&offset=0&limit=1&ajax=1`,
+              { credentials: 'include' })).json();
+            return (j && j.data && j.data.state != null) ? String(j.data.state) : null;
+          } catch { return null; }
+        }, r.id);
+        r.logState = st;
+        if (st === '2') finishedIds.add(r.id);
+      } catch { /* unreadable -> still blocking */ }
+    }
+
+    const live = rows.filter(r => cnMinutes(r.usedSec) <= STALE_MIN && !finishedIds.has(r.id));
     // Oldest LIVE age is what distinguishes "ours, still legitimately running" from "ours, already
     // cancelled at the cap and never reaped". Computed, not read off rows[0] — the endpoint's order
     // is not documented and a wrong oldest flips the verdict.
     const oldestLiveMin = live.reduce((mx, r) => Math.max(mx, cnMinutes(r.usedSec)), 0);
-    return { live: live.length, stale: rows.length - live.length, rows, oldestLiveMin };
+    return { live: live.length, stale: rows.length - live.length, rows, oldestLiveMin,
+             finished: finishedIds.size };
   } catch (e) {
     return null;
   } finally {
@@ -175,7 +215,9 @@ if (require.main === module) {
     const r = await running();
     if (r == null) { console.log('[running] unreadable'); process.exit(0); }
     console.log(`[running] live=${r.live} stale=${r.stale}`);
-    for (const x of r.rows) console.log(`   ${x.usedSec} old, started ${x.time}`);
+    for (const x of r.rows) console.log(`   ${x.usedSec} old, started ${x.time}` +
+      (x.logState != null ? `  log.state=${x.logState}` : '') +
+      (x.logState === '2' ? '  (FINISHED — not a blocker)' : ''));
     process.exit(r.live === 0 ? 0 : 1);
   })().catch(e => { console.error('FATAL', e.message); process.exit(0); });
 }

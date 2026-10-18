@@ -1009,7 +1009,16 @@ async function pollUntilComplete(page, algorithmId, { baseline = 0 } = {}) {
       // Asked only while JQ still claims a run above baseline, which is the only situation either
       // question matters in, and only every PHANTOM_PROBE_EVERY polls (~30s) so this costs one
       // fetch a minute rather than one every 5s.
-      const probe = st.runningCount > baseline && ++probeTick % PHANTOM_PROBE_EVERY === 0
+      //
+      // ⚠ Plus ONE early probe (tick 2, ~10s in). Measured on the 2026-10-18 verification batch:
+      // most of this corpus finishes inside 30s, so with the 6-tick interval alone the probe never
+      // ran at all on a normal strategy — which means both the completion check and the
+      // LIVE-RUN-STATE diagnostic were only ever exercised by SLOW runs, the rare case. One extra
+      // fetch per run buys coverage of the common one. The phantom verdict is unaffected: it is
+      // separately gated behind PHANTOM_GRACE_MS (3 min).
+      ++probeTick;
+      const probeDue = probeTick === 2 || probeTick % PHANTOM_PROBE_EVERY === 0;
+      const probe = st.runningCount > baseline && probeDue
         ? parseBuildList(await fetchBuildList(page, algorithmId))
         : null;
 
@@ -1134,10 +1143,34 @@ async function pollUntilComplete(page, algorithmId, { baseline = 0 } = {}) {
   }
 
   if (!finished) {
-    // Safety net only — a truly stuck run (> MAX_POLL_MS). Cancel via the API so a hung run
-    // can't block the batch forever. Normal slow backtests leave running[] well before this.
-    await cancelBacktest(page);
-    return { success: false, stopped: true, error: `safety-cap (>${Math.round(MAX_POLL_MS/1000)}s)` };
+    // ⚠⚠⚠ LAST-CHANCE CAPTURE — never give up on a run that actually finished.
+    //
+    // THREE runs were written off as `slow-skipped` while their completed results sat on the
+    // server (c5d20393 and c083c109 on 2026-10-18, 223a137e on 2026-10-16 — so the bug ran for at
+    // least three days before anyone noticed). Each burned its full cap, and a `slow-skipped` row
+    // carries NO number, so nothing downstream could tell a book that FAILS from one never
+    // measured: the two recovered negatives score -0.1384 and -0.3475.
+    //
+    // The in-loop `_status` probe now catches this case while polling, but it only runs while JQ
+    // claims a run above baseline. This is the backstop for every other way of arriving here —
+    // a probe that was never readable, a count that behaved oddly, a future change to the loop.
+    // ONE free call on the path where we were about to discard the result anyway.
+    //
+    // ⚠ Deliberately asked BEFORE `cancelBacktest`: cancelling first would race a run that is
+    // complete but not yet listed as such, and the whole point is to prefer a real measurement
+    // over a null row.
+    const last = parseBuildList(await fetchBuildList(page, algorithmId));
+    if (last.done === true) {
+      console.log(`[post] ⚠ safety cap reached, but this algorithm's buildList reads 完成 — the run`);
+      console.log(`[post]   FINISHED and JQ never dropped it from running[]. Capturing the result`);
+      console.log(`[post]   instead of recording a slow-skip (three such rows were lost this way).`);
+      finished = true;                  // fall through to the scrape below
+    } else {
+      // Safety net only — a truly stuck run (> MAX_POLL_MS). Cancel via the API so a hung run
+      // can't block the batch forever. Normal slow backtests leave running[] well before this.
+      await cancelBacktest(page);
+      return { success: false, stopped: true, error: `safety-cap (>${Math.round(MAX_POLL_MS/1000)}s)` };
+    }
   }
 
   // ── Phase 2: scrape metrics from the editor's own result panel on the ALREADY-OPEN hub tab.

@@ -1606,13 +1606,39 @@ Only the directories whose contents aren't self-evident:
   a false "not blocking" silently corrupts results, where a false "blocking" only wastes time. It
   also cannot use the poller's fix — it sees only `running[].id`, a backtestId it cannot attribute
   to one of our algorithms.
-  The one attributable signal for a LISTED entry is that entry's own log (`/algorithm/backtest/log`
-  keyed by the id the list gave us) — but **every `state` ever observed is 2, and every one of those
-  observations was on a run now believed already finished**, so there is no evidence 2 means "done"
-  rather than "has output". Settling it costs nothing and is now INSTRUMENTED: the executor prints
-  `LIVE-RUN-STATE log.state=<n>` once per run at a moment when the run is known live (we submitted
-  it, the buildList has a row, and `_status` is not yet 2). If an in-flight run reports anything but
-  2, `jq-running.js` can safely use it. Until then the waiter stays strict.
+  ✅ **SETTLED 2026-10-18, and `jq-running.js` now uses it.** The one attributable signal for a
+  LISTED entry is that entry's own log (`/algorithm/backtest/log` keyed by the id the list gave us —
+  attributable to the ENTRY even though the entry is not attributable to one of our algorithms).
+  Every `state` seen before came from a run already believed finished, so 2 might have meant "has
+  output". The executor was instrumented to print `LIVE-RUN-STATE log.state=<n>` once per run at a
+  moment when the run is KNOWN live, and the measurement is unambiguous:
+  | run | `log.state` |
+  |---|---|
+  | **in-flight** (measured 17s in) | **1** |
+  | finished / 完成 | **2** |
+  So the states DO separate, and `running()` now excludes an entry whose log reads `2`.
+  ⚠ **Only an exact `'2'` clears an entry** — state 1, an unreadable log and a throw all leave it
+  blocking, because a false "not blocking" silently corrupts results while a false "blocking" only
+  wastes time. Never infer finished from "not 1".
+  ⚠ Live-checked right after: two **CANCELLED-but-unreaped** entries both reported `1` and correctly
+  kept blocking. The check fires only on runs that actually FINISHED — which are exactly the ones
+  with a result to capture. The age-vs-cap rule still owns the cancelled corpses.
+  ⚠ The observation cost **one HTTP call on a run that was happening anyway**, and it needed two
+  other fixes to be visible at all: the probe fired only every 6 polls (~30s) so it never ran on a
+  normal strategy — most of this corpus finishes inside 30s, and the observation came at **17s** —
+  and the normalizer **captures** the child's stdout, so a verification batch produced **zero
+  `[post]` lines** and the diagnostic went to a stream nobody reads. Both fixed; the normalizer now
+  echoes any `LIVE-RUN-STATE` line.
+- ⚠⚠⚠ **A COMPLETED BACKTEST IS NOW ALWAYS CAPTURED — three layers.** (1) the count returns to
+  baseline (normal); (2) during polling, our algorithm's `_status="2"` (2 confirmations ~30s apart);
+  (3) **at the safety cap, one last `_status` read before giving up** — if it reads 完成 the run
+  falls through to the scrape instead of recording `slow-skipped`. Layer 3 is the guarantee: it
+  covers every route to abandoning a run, not just the one that was found.
+  ⚠ The check runs **before `cancelBacktest`**: cancelling first races a run that is complete but
+  not yet delisted, and the point is to prefer a real measurement over a null row. Verified live on
+  2026-10-18 — two runs hit the cap genuinely unfinished, the capture declined on both, and they
+  recorded `slow-skipped` correctly. A false capture would scrape a partial result, so the
+  declining direction is the one that had to be tested.
   ⚠ **`utils/recover-completed.js` generalises the recovery** (`--scan` lists which slow-skipped
   rows are recoverable). **THREE rows recovered, and the bug predates today**:
   | tag | run | recovered result |

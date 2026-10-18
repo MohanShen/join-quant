@@ -1102,6 +1102,39 @@ test('the poller detects a phantom instead of burning to the cap', async (t) => 
       'the probe is only worth making while JQ claims a run above baseline');
   });
 
+  /**
+   * ⚠⚠⚠ A COMPLETED BACKTEST MUST ALWAYS BE CAPTURED.
+   *
+   * Three runs were written off as `slow-skipped` with their results sitting on the server
+   * (c5d20393, c083c109 on 2026-10-18; 223a137e on 2026-10-16 — three days undetected). A
+   * `slow-skipped` row carries NO number, so nothing downstream could tell a book that FAILS from
+   * one never measured: the recovered negatives score -0.1384 and -0.3475.
+   *
+   * The in-loop `_status` probe catches this while polling, but it only runs while JQ claims a run
+   * above baseline. This asserts the BACKSTOP on the give-up path, which covers every other route
+   * to abandoning a run.
+   */
+  await t.test('the safety cap checks 完成 before discarding the run', () => {
+    const at = post.indexOf('LAST-CHANCE CAPTURE');
+    assert.ok(at > 0, 'the give-up path must make one last attributable check');
+    const block = post.slice(at, at + 2200);
+    assert.match(block, /parseBuildList\(await fetchBuildList\(page, algorithmId\)\)/,
+      'it must ask the buildList, which is attributable, not the running count, which is not');
+    assert.match(block, /last\.done === true/);
+    assert.match(block, /finished = true/, 'a finished run must fall through to the scrape');
+
+    // ⚠ Order matters: the check must come BEFORE cancelBacktest, or cancelling races a run that
+    // is complete but not yet delisted — and the whole point is to prefer a real measurement over
+    // a null row.
+    const check = post.indexOf('parseBuildList(await fetchBuildList(page, algorithmId))', at);
+    const cancel = post.indexOf('cancelBacktest(page)', at);
+    assert.ok(check > 0 && cancel > check,
+      'the 完成 check must precede the cancel on the give-up path');
+
+    // And the slow-skip must still be reachable when the run genuinely did not finish.
+    assert.match(block, /stopped: true/, 'a genuinely stuck run must still slow-skip');
+  });
+
   await t.test('the grace period is long enough to beat registration lag', () => {
     const m = post.match(/PHANTOM_GRACE_MS = parseInt\([^)]*String\((\d+) \* 60 \* 1000\)/);
     assert.ok(m, 'the grace must be declared');

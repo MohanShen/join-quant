@@ -361,6 +361,15 @@ function main() {
       out = (e.stdout || '') + (e.stderr || '');
     }
 
+    // ⚠ Surface the executor's DIAGNOSTIC lines. The child's stdout is CAPTURED, not inherited, so
+    // nothing it prints reaches this log unless echoed here — measured 2026-10-18: a verification
+    // run produced **zero** `[post]` lines, so the `LIVE-RUN-STATE` probe wrote its one-per-run
+    // observation to a stream nobody reads. The marker lines below are string-MATCHED for control
+    // flow; these are echoed purely so a human (and the daily log) can see them.
+    for (const l of out.split('\n')) {
+      if (/\bLIVE-RUN-STATE\b/.test(l)) console.log(`[normalize] ${l.trim()}`);
+    }
+
     // Pre-start usage gate tripped in the child (didn't run) → stop the batch.
     const us = out.split('\n').find(l => l.startsWith('USAGE-STOP\t'));
     if (us) {

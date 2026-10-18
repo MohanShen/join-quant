@@ -362,6 +362,37 @@ cwt('a concurrent backtest is waited out', async (t) => {
     cwa.match(src, /cnMinutes\(r\.usedSec\) <= STALE_MIN/);
   });
 
+  /**
+   * ⚠⚠⚠ A listed entry whose own log says FINISHED is not a live blocker.
+   *
+   * Measured 2026-10-18: the normalizer sat in the waiter for 34 of 50 minutes at 0.21s CPU on
+   * 这是一个简单的策略-1251, a COMPLETED run JQ never dropped from `running`. The age rule cannot
+   * help — at 36min the entry was UNDER the 45min cap, so it read as "ours, still running. WAIT",
+   * the one verdict that is pure loss here.
+   *
+   * ⚠ This was withheld until the state code was OBSERVED, because this waiter is what prevents
+   * two concurrent backtests and concurrent runs have returned IDENTICAL metrics for different
+   * strategies on this account. Settled by instrumenting the executor to print the state while a
+   * run was KNOWN live (`LIVE-RUN-STATE`): in-flight = 1, finished = 2. Live-checked afterwards:
+   * two CANCELLED-but-unreaped entries both reported 1 and correctly kept blocking — the check
+   * fires only on runs that actually finished, which are the ones with a result to capture.
+   */
+  await t.test('a FINISHED entry stops blocking, but only on a positive read', () => {
+    const src = cwfs.readFileSync(cwpath.join(__dirname, '../utils/jq-running.js'), 'utf8');
+    // The probe is keyed by the entry's OWN id, which is what makes it attributable to that entry
+    // even though the entry is not attributable to one of our algorithms.
+    cwa.match(src, /algorithm\/backtest\/log\?backtestId=\$\{bt\}/);
+    cwa.match(src, /finishedIds\.add\(r\.id\)/);
+    cwa.match(src, /!finishedIds\.has\(r\.id\)/, 'the live filter must exclude finished entries');
+
+    // ⚠ ONLY an exact '2' clears an entry. state 1, null (unreadable) and a throw must all leave
+    // it blocking — a false "not blocking" corrupts results, a false "blocking" only wastes time.
+    cwa.match(src, /st === '2'/, "clearing must require a positive read, not a truthy one");
+    cwa.doesNotMatch(src, /st\s*!==?\s*'1'/, 'never infer finished from "not 1"');
+    // The age rule stays — a cancelled-but-unreaped run reports 1 and is still handled by age.
+    cwa.match(src, /cnMinutes\(r\.usedSec\) <= STALE_MIN/);
+  });
+
   await t.test('an unreadable account is treated as clear, not as blocked', () => {
     // A transient CDP failure must not wedge the batch; the executor's own gate re-checks anyway.
     const src = cwfs.readFileSync(cwpath.join(__dirname, '../utils/jq-running.js'), 'utf8');
