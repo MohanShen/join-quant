@@ -1,36 +1,21 @@
 {
-  "inFlight": null,
-  "lastRun": {
+  "inFlight": {
     "stage": "normalize",
     "target": null,
-    "budget": 77,
-    "at": "2026-10-18T06:11:49.124Z",
+    "budget": 179,
+    "at": "2026-10-18T14:21:44.335Z"
+  },
+  "lastRun": {
+    "stage": "research",
+    "target": "小市值",
+    "budget": 170,
+    "at": "2026-10-18T13:45:13.664Z",
     "outcome": "error",
-    "note": "0 retry(--redo) + 20 fresh, 1 newly deferred at 45min",
+    "note": "research loop FAILED: Command failed: bash /Users/mshen/join-quant/scripts/with-timeout.sh 230 bash /Users/mshen/join-quant/scripts/run-family.sh 小市值",
     "minutesUsed": null,
-    "endedAt": "2026-10-18T08:25:50.069Z"
+    "endedAt": "2026-10-18T13:48:42.154Z"
   },
   "runs": [
-    {
-      "stage": "enhance",
-      "target": null,
-      "budget": 63,
-      "at": "2026-09-20T18:00:07.618Z",
-      "outcome": "budget-spent",
-      "note": "used 63 >= 55; enhance not started",
-      "minutesUsed": null,
-      "endedAt": "2026-09-20T18:00:07.620Z"
-    },
-    {
-      "stage": "enhance",
-      "target": "ETF动量",
-      "budget": 80,
-      "at": "2026-09-21T00:44:55.283Z",
-      "outcome": "error",
-      "note": "enhance loop FAILED: spawnSync bash ETIMEDOUT",
-      "minutesUsed": null,
-      "endedAt": "2026-09-21T01:44:55.399Z"
-    },
     {
       "stage": "enhance",
       "target": "ETF动量",
@@ -1210,6 +1195,26 @@
       "note": "0 retry(--redo) + 20 fresh, 1 newly deferred at 45min",
       "minutesUsed": null,
       "endedAt": "2026-10-18T08:25:50.069Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 123,
+      "at": "2026-10-18T12:19:17.288Z",
+      "outcome": "ran",
+      "note": "0 retry(--redo) + 287 fresh, 1 newly deferred at 20min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-18T13:45:07.523Z"
+    },
+    {
+      "stage": "research",
+      "target": "小市值",
+      "budget": 170,
+      "at": "2026-10-18T13:45:13.664Z",
+      "outcome": "error",
+      "note": "research loop FAILED: Command failed: bash /Users/mshen/join-quant/scripts/with-timeout.sh 230 bash /Users/mshen/join-quant/scripts/run-family.sh 小市值",
+      "minutesUsed": null,
+      "endedAt": "2026-10-18T13:48:42.154Z"
     }
   ]
 }

@@ -661,6 +661,36 @@ Only the directories whose contents aren't self-evident:
   pool scores **−0.27**; 七星高照's pool is 「事后选择且不可替换」 and the source's own 38-ETF pool
   scores **0.0016**. So the measured 动量 edge is the POOL, not the ranking — and `趋势择时` is
   **refuted** on all three momentum families.
+- ⚠⚠⚠ **EPOCH 9'S VAL WINDOW IS CONTAMINATED BY CONSTRUCTION FOR THE ETF BOOKS.** Found
+  2026-10-18 while auditing the two strongest epoch-9 rows (both ETF momentum: 73b13d92 objective
+  **1.4926**/sharpe 5.22, 1cc495be **0.9954**/4.59). Those books carry **~114 active ETFs**, not the
+  17 of the earlier round, and **17 of them list after 2024-01-01**:
+  | listed | count | consequence |
+  |---|---|---|
+  | during TRAIN 2024 | **10** | tradeable only from their listing day, and selected in 2026 knowing 2024 |
+  | during **2025** | **7** | untradeable in TRAIN at all — but **tradeable in VAL (2025)** |
+  The seven 2025 listings are the serious half: `159323` 2025-01-08, `159206` 2025-03-14, `588170`
+  2025-04-08, `159218` 2025-05-22, `159227` 2025-05-16, `588790` 2025-01-09, `159256` 2025-08-04.
+  A pool assembled in **2026** that contains names which listed **during 2025** has
+  selection-on-VAL built into the source — so a validation of these books is contaminated no
+  matter how the TRAIN test comes out.
+  ⚠⚠ **VAL is one shot per (family, bench) and epoch 9 granted 五福闹新春 a fresh one.** Reaching
+  VAL on these books unexamined would spend the family's only validation on a pool picked with
+  knowledge of the validation year. **A VAL on any of these books needs at least a pre-2025 pool
+  cutoff**; the TRAIN test settles only half the question.
+  ⚠ Epoch 9 does not relieve the pool problem, it reshapes it: the *availability* half improves
+  (most of the 2026 pool existed by 2024, where 8 of 17 postdated the old 2022 TRAIN) while the
+  *selection* half worsens (the window now sits ~2 years from the authoring date instead of 4).
+- **The point-in-time pool test is `study/五福闹新春/build-e9-pit.js`** — `pool ∩ { 上市日期 < train
+  start }`, cutoff READ FROM THE HARNESS so it survives the next window move. Both inputs are
+  pre-run facts from the book itself (names from its source, dates from the author's own inline
+  comments; a listing date is a security attribute, not performance data), so the rule cites no
+  price, return, volume or ranking from the window. Excluded names are **commented out in place**
+  — the smallest auditable edit, leaving the author's own date visible beside each exclusion — and
+  the builder **asserts the changed lines are exactly the exclusions**, refusing otherwise. Nothing
+  else moves: ranking, momentum window, timing, thresholds, liquidity and the cost block are
+  verbatim. Same rule as q-e8-7, which under the old window CLEARED ETF动量 (0.3962 vs base 0.3755,
+  both TRAIN years ≥ base) — so it is not a test that only ever rejects.
 - ⚠⚠ **Factor-board numbers may never enter our tables.** zz500 / 3y / JQ's cost model is a
   different bench, and a result belongs to the bench that produced it (that is what the ledger's
   `epoch` column enforces). A factor earns a ledger row by being built and measured on OUR bench;

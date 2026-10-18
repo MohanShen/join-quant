@@ -1,1 +1,10 @@
-{}
+{
+  "strategies/2026-07-01_穿越牛熊周期-多策略组合-20至今年化103_20-5511f8f0.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-18T13:45:07.523Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 20,
+    "maxCapTried": 20,
+    "lastDeferredAt": "2026-10-18T13:45:07.523Z"
+  }
+}
