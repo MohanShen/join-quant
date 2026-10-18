@@ -18,7 +18,6 @@ factors:
 ingestedAt: 2026-06-27
 codeLines: 374
 stats: { annualReturn: 1.253, sharpe: 4.37, maxDrawdown: 0.110, periodLabel: 2024-04 }
-normalized: { epoch: 6, window: "TRAIN 2022-2023", annualReturn: 1.0010, sharpe: 4.02, maxDrawdown: 0.1144, objective: 0.8866, gate: pass, ranAt: 2026-09-20 }
 ---
 
 # 小市值排除3个bug版，22年至今收益506%回撤11%

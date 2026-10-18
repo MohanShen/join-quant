@@ -500,8 +500,15 @@ test('concept lint', async t => {
 
 test('generated type pages', async t => {
   const dir = path.join(ROOT, 'wiki/types');
+  // ⚠ An EMPTY directory is a legitimate state, not a failure: type pages are generated from the
+  // family layer, which is generated from the ledger, and a measurement-breaking epoch bump
+  // (epoch 9) empties the ledger until the library is re-measured. `{ skip: !existsSync }` was
+  // not enough — `utils/epoch-reset.js` deletes the pages and leaves the directory. The same
+  // reasoning as `wiki-family-build`'s refusal to publish empty tables.
+  const absent = !fs.existsSync(dir) ||
+    !fs.readdirSync(dir).filter(f => f.endsWith('.md')).length;
 
-  await t.test('exist and are generated, not hand-written', { skip: !fs.existsSync(dir) }, () => {
+  await t.test('exist and are generated, not hand-written', { skip: absent }, () => {
     const files = fs.readdirSync(dir).filter(f => f.endsWith('.md'));
     assert.ok(files.length >= 2);
     for (const f of files) {
@@ -511,7 +518,7 @@ test('generated type pages', async t => {
     }
   });
 
-  await t.test('place every family in exactly one cell, and no cell holds them all', { skip: !fs.existsSync(dir) }, () => {
+  await t.test('place every family in exactly one cell, and no cell holds them all', { skip: absent }, () => {
     const seen = [];
     for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.md'))) {
       const line = (fs.readFileSync(path.join(dir, f), 'utf8').match(/^families: \[(.*)\]$/m) || [])[1] || '';

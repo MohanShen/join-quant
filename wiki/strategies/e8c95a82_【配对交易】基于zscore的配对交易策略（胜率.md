@@ -11,7 +11,6 @@ familyProposalNote: below MIN_SCORE
 ingestedAt: 2026-10-17
 codeLines: 60
 stats: { 绩效未公开: true }
-normalized: { epoch: 8, window: "TRAIN 2022-2023", annualReturn: -0.1285, sharpe: -0.54, maxDrawdown: 0.4283, objective: -0.5568, gate: fail }
 autoStub: true
 ---
 

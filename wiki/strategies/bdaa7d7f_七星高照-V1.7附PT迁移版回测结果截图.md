@@ -13,7 +13,6 @@ familyProposalScore: 0.7476
 ingestedAt: 2026-10-08
 codeLines: 649
 stats: { 绩效未公开: true }
-normalized: { epoch: 6, window: "TRAIN 2022-2023", annualReturn: 0.2879, sharpe: 1.21, maxDrawdown: 0.1627, objective: 0.1252, gate: fail }
 autoStub: true
 ---
 
