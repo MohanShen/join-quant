@@ -1183,6 +1183,72 @@ Only the directories whose contents aren't self-evident:
   author's setting wins outright. Same class of bug as epoch 4's fund-cost gap, on the stock leg.
   The pinned values are economically identical to what `PerTrade(0.0003/0.0013/5)` was meant to
   express — the bench's INTENT is unchanged, epoch 6 only makes it apply.
+- **Epoch 9 (2026-10-18)**: ⚠⚠⚠ **MEASUREMENT CHANGE — the first since epoch 6.** User decision.
+  **TRAIN 2022-01-01..2023-12-31 → 2024-01-01..2024-12-31**; **VAL 2024-2025 → 2025 only**;
+  **OOS unchanged** (2026-01-01..today); **gate and every `stageThreshold` 1.5 → 1.0**.
+  Costs, pins, slippage, capital, frequency and benchmark are **untouched**, so the frozen Python
+  literals need no edit and `--verify` passes.
+  **Rationale (user's)**: requiring a strategy to work across a five-year span is too strict and not
+  necessary — what is working recently matters more, and realistically an edge has a short life
+  because everyone crowds into the same trade. So the bench asks for recent consecutive
+  performance (fit 2024, confirm 2025, hold 2026) instead of multi-regime survival.
+  ⚠ `measurementPreservedFromPrevious: false` ⇒ `measurementValid()` rejects **every** row at
+  epoch ≤ 8 and the whole library needs re-measuring. `sameBench(8,9)` is false, so **every family
+  is granted a fresh VAL**.
+- ⚠⚠ **Epoch 9 made the per-year integration bar DEGENERATE.** TRAIN is one calendar year, so
+  「beat the best parent in EVERY train year」 is arithmetically a single **pooled sharpe
+  comparison**: one year ⇒ one best parent ⇒ `parents-split-by-year` is unreachable. The basis
+  stays `perYearSharpe` so the guard's code path, curve requirement and fallback reporting are
+  unchanged — but **epoch 8's REASON is gone with the second year**. Read a pass as 「better in
+  2024」, never as 「survives a regime change」. The two cases epoch 9 cannot express (win one year
+  / lose the other; a bar split between parents) are replaced in the tests by the degeneracy plus
+  a guard that the multi-year logic survives in code for a future widening.
+- ⚠⚠ **The OOS reserve RESETS while the data does not.** `oos-budget` counts per BENCH, so epoch 9
+  grants 2 tests again over the **same 2026 window** epochs 3–8 already looked at twice (大小盘轮动
+  −0.21, 红利低频 −0.51). The **per-candidate limit of 1 is absolute across epochs** and still
+  protects an individual book; what resets is how many DISTINCT candidates may touch 2026.
+  Defensible only because selection now happens on 2024 so the candidates will be different books.
+  The tool says it out loud: `2 test(s) charged to EARLIER benches (not restored)` — and that line
+  exists **only because `data/consumption.tsv` was kept**.
+- ⚠ **A one-year TRAIN overfits faster per unit of evidence.** The compensation is that VAL is a
+  full adjacent year and the OOS reserve is untouched, so a 2024 fit must still survive 2025.
+  The epoch-7/8 analysis that motivated per-year domination (2022 supplying a median 62% of
+  log-growth; a candidate trading one year off against the other) has **no analogue** now.
+- ⚠⚠ **Two hardcoded copies of the window were found by the suite going red**, both the class the
+  epoch config exists to prevent. `kb-stub.js` stamped the literal `window: "TRAIN 2022-2023"` into
+  the `normalized:` block — the ledger's **durable backup**, and what `normalize-ledger-rebuild.js`
+  reads back to recover a row's window — so it would have labelled 2024 measurements as 2022-2023
+  and had them reconstructed as fact. Now derived via `kb-stub.windowLabel()` (`TRAIN 2024`), and
+  `WINDOW_SPEC` derives the ACTIVE labels while **keeping the historical literals**, because old
+  pages are a rebuild's input and must still decode. Two test fixtures also generated curves pinned
+  to 2022/2023, so under epoch 9 they fell entirely outside the window, `yearlySplit` found no
+  overlap, the bar fell back to pooled, and **nine tests failed for reasons unrelated to what they
+  assert** — a fixture pinned to one epoch's calendar silently stops exercising the thing it names.
+- ⚠ **`wiki-epoch-repair` reported 193 restamps as `epoch X -> X` no-ops.** The block carries the
+  window label and the gate text as well as the epoch, both derived from the ACTIVE harness, so a
+  bump that moves a window or a threshold makes every page need a rewrite while NO page needs an
+  epoch change. Changes now carry a `kind` (`epoch` / `metrics` / `window-label` / `restamp`) and
+  only an `epoch` kind must move the epoch. Honest output: **187 label rewrites, 6 real epoch
+  changes**.
+- **`utils/epoch-reset.js --dry` clears what a measurement-breaking bump invalidated** — and the
+  distinction that decides everything is **GENERATED vs HAND-WRITTEN**, measured before deleting:
+  | kept | why |
+  |---|---|
+  | `wiki/strategies/*.md` | 248 pages, **228 carry a HAND-ASSIGNED `family:`**; the matcher abstains on 82% by design, so the label is human work and the family→member mapping is NOT regenerable. Only the `normalized:` line is stripped. |
+  | `wiki/families/*.md` | 13 pages, 656K, 78 sections of mechanism/realism/edge/§4 analysis. The numbers are stale, the understanding is not. |
+  | `data/consumption.tsv` | append-only audit trail — the only record that 2 OOS tests were spent. |
+  | `validated_strategies/*.py` | source, re-measurable, already ignored on a stale epoch. |
+  | `strategies/`, `screen/`, discovery | the input and the bench-independent layers. |
+  Cleared: the ledgers (truncated to the header, so `ledger.COLS` survives), 419 curves, the 6
+  generated type pages, `promoted.tsv`, `integrate-refusals.tsv`, the deferred pool.
+  ⚠ `wiki-family-build` **REFUSED** to regenerate §3 on the empty ledger and was right to — it
+  cannot distinguish a deliberate reset from the regression it exists to catch. **Do not `--force`
+  it**; §3 regenerates on the first normalize batch via `normalize-sync`.
+  ⚠ Six tests asserted the PRESENCE of generated artifacts. `{ skip: !existsSync(dir) }` was not
+  enough for the type pages — the reset deletes the pages and leaves the directory, so an **empty
+  directory** is the legitimate state. `rowsFromWiki` correctly rebuilds **0** rows once the blocks
+  are stripped, and its window assertion had to stop demanding one epoch's literal dates: a rebuild
+  is a HISTORICAL decoder.
 - ⚠ **Epoch 6's re-measure set is 23, not 215.** `measurementValid()` is deliberately coarse and
   invalidates every pre-6 row, but the change can only move a strategy that set its OWN stock cost
   to something other than the bench's. `node utils/stockcost-affected.js` classifies all 215:
@@ -1192,8 +1258,9 @@ Only the directories whose contents aren't self-evident:
   them at the head of `data/pending-normalize.json`. A missing `close_tax` counts as
   bench-default, not as a difference. 36 of the affected declared a *cheaper* commission than the
   bench, so the pre-6 ledger **flatters** them.
-- **Stage thresholds**: every stage requires sharpe **1.5** (`harness.stageGate(stage, sharpe)`).
-  Integration held 2.0 until epoch 7 dropped it — see below for why it never bound.
+- **Stage thresholds**: every stage requires sharpe **1.0** since epoch 9 (`harness.stageGate(stage, sharpe)`).
+  It was 1.5 from epoch 5; integration held 2.0 until epoch 7 dropped it — see below for why that
+  never bound. ⚠ Never hard-code the number: it has moved three times (2.5 → 1.5 → 1.0).
 - **Epoch 7 (2026-10-13)**: scoring only — the measurement bench is **byte-identical to epoch 6**,
   so `measurementPreservedFromPrevious: true` and **no row is re-measured**. Two changes, both
   about how a measurement is JUDGED:
