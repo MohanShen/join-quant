@@ -1446,5 +1446,20 @@
     "postId": "5ac906ea399afcf548b6336e6980e65f",
     "sourceFile": "2026-10-18_五福闹新春策略分时回测_探寻最优交易入场时点-5ac906ea.py",
     "registeredAt": "2026-10-17T18:07:13.345Z"
+  },
+  "d2dbada98c5d23be0d13fc60c505672adcd6490de19dc8173f61a03255bdf596": {
+    "postId": "7c2e9238dbe7a060538364bec63af675",
+    "sourceFile": "2026-10-18_五福5_2修改by_Claude_V4版本-7c2e9238.py",
+    "registeredAt": "2026-10-17T23:51:49.658Z"
+  },
+  "a9e3f33bf9a0027c7db664fa2e227f2deeb3ff59e431881dfe128b54867e2ee5": {
+    "postId": "d864895d870621e468175ee1c07ffd26",
+    "sourceFile": "2026-10-18_关于退市股的回测风险-d864895d.py",
+    "registeredAt": "2026-10-17T23:51:52.173Z"
+  },
+  "3abb33894940226a97aeb8381e320e6375105237d4f183c95a032bf6e6c5de92": {
+    "postId": "0593c701415e4d04ec0761be9dfe2114",
+    "sourceFile": "2026-10-18_大类ETF轮动回测-0593c701.py",
+    "registeredAt": "2026-10-17T23:51:54.858Z"
   }
 }

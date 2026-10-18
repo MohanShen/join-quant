@@ -1,52 +1,52 @@
 {
-  "fetchedAt": "2026-10-17T18:07:13.363Z",
+  "fetchedAt": "2026-10-17T23:51:54.870Z",
   "entries": [
     {
-      "postId": "aaee30357ddba224573a58a447f65aba",
-      "backtestId": "b33926c8633b80309f131d72f15ab204",
-      "title": "五福闹新春V5.2动态池优化",
-      "url": "https://www.joinquant.com/view/community/detail/aaee30357ddba224573a58a447f65aba",
-      "sourceFile": "2026-10-18_五福闹新春V5_2动态池优化-aaee3035.py",
+      "postId": "7c2e9238dbe7a060538364bec63af675",
+      "backtestId": "53856e9d4aa58893daa9e54068eadf99",
+      "title": "五福5.2修改by Claude V4版本",
+      "url": "https://www.joinquant.com/view/community/detail/7c2e9238dbe7a060538364bec63af675",
+      "sourceFile": "2026-10-18_五福5_2修改by_Claude_V4版本-7c2e9238.py",
       "stats": {
-        "annualReturn": 0.74503656611362,
-        "cumulativeReturn": 18.380604859043,
-        "maxDrawdown": 0.22964098798646,
-        "sharpe": 2.2022777979692,
-        "winRatio": 0.53082706766917,
-        "tradingDays": 1331,
-        "periodLabel": "2026-07"
+        "annualReturn": 2.4486426437519,
+        "cumulativeReturn": 24.496917328,
+        "maxDrawdown": 0.18150168707906,
+        "sharpe": 6.7304068268195,
+        "winRatio": 0.57396449704142,
+        "tradingDays": 654,
+        "periodLabel": "2026-09"
       }
     },
     {
-      "postId": "d1679937d4cb53cd990346dd1230ea2e",
-      "backtestId": "6a41a87e69e75a9ec98b4a90b2349882",
-      "title": "机器学习线性回归小市值-滚动训练版",
-      "url": "https://www.joinquant.com/view/community/detail/d1679937d4cb53cd990346dd1230ea2e",
-      "sourceFile": "2026-10-18_机器学习线性回归小市值-滚动训练版-d1679937.py",
+      "postId": "d864895d870621e468175ee1c07ffd26",
+      "backtestId": "dee035e1e70b741875f3d66d723d599c",
+      "title": "关于退市股的回测风险",
+      "url": "https://www.joinquant.com/view/community/detail/d864895d870621e468175ee1c07ffd26",
+      "sourceFile": "2026-10-18_关于退市股的回测风险-d864895d.py",
       "stats": {
-        "annualReturn": 0.35406892434534,
-        "cumulativeReturn": 0.9766439781,
-        "maxDrawdown": 0.42069874274347,
-        "sharpe": 0.86412581697588,
-        "winRatio": 0.51704545454545,
-        "tradingDays": 562,
-        "periodLabel": "2026-04"
+        "annualReturn": -0.25708674936465,
+        "cumulativeReturn": -0.139099808,
+        "maxDrawdown": 0.34727882490672,
+        "sharpe": -0.64538892470972,
+        "winRatio": null,
+        "tradingDays": 126,
+        "periodLabel": "2024-12"
       }
     },
     {
-      "postId": "5ac906ea399afcf548b6336e6980e65f",
-      "backtestId": "1eaa982f213e7789a06431c1a1e07081",
-      "title": "五福闹新春策略分时回测 探寻最优交易入场时点",
-      "url": "https://www.joinquant.com/view/community/detail/5ac906ea399afcf548b6336e6980e65f",
-      "sourceFile": "2026-10-18_五福闹新春策略分时回测_探寻最优交易入场时点-5ac906ea.py",
+      "postId": "0593c701415e4d04ec0761be9dfe2114",
+      "backtestId": "1fa08387024c79aa76fbdedd87bcf416",
+      "title": "大类ETF轮动回测",
+      "url": "https://www.joinquant.com/view/community/detail/0593c701415e4d04ec0761be9dfe2114",
+      "sourceFile": "2026-10-18_大类ETF轮动回测-0593c701.py",
       "stats": {
-        "annualReturn": 1.3058088466205,
-        "cumulativeReturn": 33.3137521675,
-        "maxDrawdown": 0.16919536468373,
-        "sharpe": 4.0744345732243,
-        "winRatio": 0.5140712945591,
-        "tradingDays": 1058,
-        "periodLabel": "2026-05"
+        "annualReturn": 0.47810672947858,
+        "cumulativeReturn": 1.1208695074,
+        "maxDrawdown": 0.25246287266936,
+        "sharpe": 1.7803072121711,
+        "winRatio": 0.48659003831418,
+        "tradingDays": 481,
+        "periodLabel": "2026-09"
       }
     }
   ]
