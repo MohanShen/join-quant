@@ -958,9 +958,10 @@ test('the daily chain stops only for the budget, a lock, or an empty board', asy
   });
 
   await t.test('DISCOVER runs at most once per chain', () => {
-    // It ADMITS work rather than consuming it, its own strategy-daily limit is 3 fetches/day by
-    // design, and it costs no backtest minutes — so an unbounded chain would re-run it to
-    // maxStages, fetching ~120 against a designed cadence of 3.
+    // It ADMITS work rather than consuming it, its own strategy-daily limit is 20 fetches per RUN
+    // (raised from 3 on 2026-10-17), and it costs no backtest minutes — so an unbounded chain would
+    // re-run it to maxStages and admit up to 800 in a day. The raise makes this brake the only
+    // thing bounding the daily total, so it matters MORE than when the per-run cap was 3.
     assert.match(src, /if \(r\.stage === 'discover'\) stalled\.add\('discover'\)/);
   });
 

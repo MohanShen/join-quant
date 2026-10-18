@@ -1461,5 +1461,95 @@
     "postId": "0593c701415e4d04ec0761be9dfe2114",
     "sourceFile": "2026-10-18_大类ETF轮动回测-0593c701.py",
     "registeredAt": "2026-10-17T23:51:54.858Z"
+  },
+  "abba2eb5432e037a8211970fac8d4c652cbb9e20297d09899728de2a1b35665a": {
+    "postId": "db3ad342a1283d9b4634c59f03a27fee",
+    "sourceFile": "2026-10-18_基于机器学习的多因子选股策略-db3ad342.py",
+    "registeredAt": "2026-10-18T04:11:07.557Z"
+  },
+  "80e5e1dfdf5d9a93a1f3bbccadc42ab2325e3e076c3d249e9ec91bc596be3075": {
+    "postId": "27bd5e8c72182cae7f327e61fb7bb979",
+    "sourceFile": "2026-10-18_滚动复利策略_的量化实现-改进v1_0-27bd5e8c.py",
+    "registeredAt": "2026-10-18T04:11:10.174Z"
+  },
+  "c89e1d3c74f0a7c159b41250bbc806ccc41ad826c71ce408611e28ed5b1f1a38": {
+    "postId": "b5631f9b9fd67940fce0e03238bc298e",
+    "sourceFile": "2026-10-18_仓位控制_风险价值法_VaR_算法有变更-b5631f9b.py",
+    "registeredAt": "2026-10-18T04:11:12.747Z"
+  },
+  "3294947b15c6b5cf8c943b08e2dda8c4b003d6303ffa531a05deee9d5931b3db": {
+    "postId": "7875d5458c8d8198f438fe2cde55cbaf",
+    "sourceFile": "2026-10-18_商品期货_多品种日频双均线模型_作为给入门者的小礼物-7875d545.py",
+    "registeredAt": "2026-10-18T04:11:15.840Z"
+  },
+  "33d4de646a1e184b662db58e9ef01c5d6eb34d96d3ec8a87f27aba5afa1c1cdc": {
+    "postId": "99d4a0378dd55d61fe5ce19581ee81c0",
+    "sourceFile": "2026-10-18_小市值20只组合不择时不止损IC对冲_股指期货对冲研究成果应用-99d4a037.py",
+    "registeredAt": "2026-10-18T04:11:18.586Z"
+  },
+  "59d279b697a417e26d21beac9e704135a5af5bb2862155ae11f1251cac77f504": {
+    "postId": "9c5a9546d5be543dcba1d6fca84d46b3",
+    "sourceFile": "2026-10-18_商品期货多因子_全市场对冲模型-9c5a9546.py",
+    "registeredAt": "2026-10-18T04:11:26.409Z"
+  },
+  "cddd5f45e1e9e07919d7aaf320b205f176572623bf16471835846a6ee178a0ba": {
+    "postId": "54310d8174afda8ef9097fe480788912",
+    "sourceFile": "2026-10-18_魔法公式选股_由其构建的指数进行MACD控制买卖-54310d81.py",
+    "registeredAt": "2026-10-18T04:11:28.946Z"
+  },
+  "86209979977aab0eb74435fae556b33e44ff7f6407a0953b7463fad5b9897db7": {
+    "postId": "d2aa73992810721e6aa2bc814474bb6a",
+    "sourceFile": "2026-10-18_扒一扒常见技术指标的大盘择时效果-d2aa7399.py",
+    "registeredAt": "2026-10-18T04:11:31.477Z"
+  },
+  "7395e97a82b0fa1b41c6b95c5389f02a1a55fc310e42c0260a17b8dd7e6c116a": {
+    "postId": "c083c1097dac0349b367aa4662deb203",
+    "sourceFile": "2026-10-18_头寸调整策略_波动性百分比调仓-c083c109.py",
+    "registeredAt": "2026-10-18T04:11:34.766Z"
+  },
+  "9056264c11423d8479f20cf09e5ea7aa83fff5ece40fe13bfca4b56f579ed54c": {
+    "postId": "fcc8c3efa95ff565f60bb1d1d609c5a7",
+    "sourceFile": "2026-10-18_一个偏重防守的低波动策略_根据MACD底背离策略改写-fcc8c3ef.py",
+    "registeredAt": "2026-10-18T04:11:38.432Z"
+  },
+  "f90b495b334c512d4b55344cf661d096fdb70797207c182cc04aa4f650917f53": {
+    "postId": "65f61366dfac86711f8159133355fc4f",
+    "sourceFile": "2026-10-18_基于阻力的市场投资策略_--_国泰君安量化报告的代码实现-65f61366.py",
+    "registeredAt": "2026-10-18T04:11:41.043Z"
+  },
+  "1b3d7f9f0bbfa6a6d6a4bc63c247af983031fa031b646865f9def139973cfeb0": {
+    "postId": "b1dc366fa1833e452009afb11e2018b0",
+    "sourceFile": "2026-10-18_质量因子选股策略_感觉挺特别的_质量_因子-b1dc366f.py",
+    "registeredAt": "2026-10-18T04:11:44.159Z"
+  },
+  "d0db5bcc96faead6391b28d01a843e093dc8de415a79ab48c6eb786f62ba6ec0": {
+    "postId": "cf81afce54f18e3692026c0d31046d9a",
+    "sourceFile": "2026-10-18_投资学_CAPM单因子回归模型_ROE股票池_含止损-cf81afce.py",
+    "registeredAt": "2026-10-18T04:11:46.942Z"
+  },
+  "122fe9995493c7e15acf4a386c4bd676e70b43e59a62b26ac328325edb248c63": {
+    "postId": "decbc72d1336448862dd04f33a09591c",
+    "sourceFile": "2026-10-18_FollowBB与RideMood策略研究-decbc72d.py",
+    "registeredAt": "2026-10-18T04:11:49.535Z"
+  },
+  "b27ed6eae8e91f3e9e6ce841461f409ad2b692f71bf0a73c0c3db4fb3a9c2eb5": {
+    "postId": "e646ca1e6aedf533ad6d36ad685f81b3",
+    "sourceFile": "2026-10-18_因子拥挤度择时策略-性能优化-e646ca1e.py",
+    "registeredAt": "2026-10-18T04:11:52.120Z"
+  },
+  "60bf5a98de4e7ce0616b0e6261861b9a0a1e8e58bd6cd343d6f3cdb359665d76": {
+    "postId": "63f0c9b9401722f24ef0a9aebfd9b9a6",
+    "sourceFile": "2026-10-18_贰章_量化交易_估值因子分析-63f0c9b9.py",
+    "registeredAt": "2026-10-18T04:11:55.074Z"
+  },
+  "fde21de094b146fb1591c69431c3ae1a22efc08ae9a7f7d18e38d96badb7abde": {
+    "postId": "8d6831d4d62ad02f8dde8df00bf3cf12",
+    "sourceFile": "2026-10-18_市场大小盘风格切换多因子轮动策略-8d6831d4.py",
+    "registeredAt": "2026-10-18T04:11:57.713Z"
+  },
+  "73f7ce66ca7e6b36cb69675bbdad1156c37afcb0160acf8bc1fed73362e4b4d9": {
+    "postId": "4e0feefc054353e9e82552e0bba6d3a9",
+    "sourceFile": "2026-10-18_RSRS模型深入研究2-对右偏态样本处理的质疑与分析-4e0feefc.py",
+    "registeredAt": "2026-10-18T04:12:00.240Z"
   }
 }

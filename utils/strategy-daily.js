@@ -128,10 +128,22 @@ async function main() {
   const today = new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' });
 
   // Parse --limit N
-  let limit = 3; // default 3 per day
+  //
+  // ⚠ Raised 3 -> 20 (user decision, 2026-10-17) because the ADMISSION RATE had become the
+  // binding constraint instead of the backtest budget. Measured that day: the chain ran nine
+  // stages, `data/pending-normalize.json` drained to `[]`, the deferred pool held 20 entries with
+  // **0 retryable**, and the day finished at **used=36 of 180 minutes** — while 720 strategies sat
+  // uncopied in the queue. At the measured ~3.3 min/backtest, 3 fetches is ~10-15 minutes of work
+  // against a 180-minute budget, so ~80% of capacity went idle with the funnel's mouth as the only
+  // reason. The old 3/day was right at 60 min/day with ~70 queued; neither still holds.
+  //
+  // ⚠ This does NOT relax the once-per-chain brake in `daily-pipeline.runDiscover` — that brake is
+  // what keeps the total bounded (40 stages x 20 would be 800 fetches). The limit caps one run;
+  // the brake caps the runs per day.
+  let limit = 20;
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--limit' && args[i + 1] != null) {
-      limit = parseInt(args[i + 1]) || 3;
+      limit = parseInt(args[i + 1]) || 20;
       i++;
     }
   }

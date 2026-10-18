@@ -945,10 +945,21 @@ Only the directories whose contents aren't self-evident:
   in-flight claim. That is a lock, and proceeding would let two runs spend the same budget.
   `exhausted` still breaks too — every queue empty means there is nothing for the minutes to buy.
   ⚠⚠ **`discover` runs at most ONCE per chain.** It is the stage that ADMITS work rather than
-  consuming it, `strategy-daily.js`'s own limit is **3 fetches/day by design**, and it costs no
-  backtest minutes — so an unbounded chain would re-run it to `maxStages`, fetching ~120 against a
-  cadence of 3 and flooding the normalize queue it is meant to feed gently. Consuming stages may run
-  as long as the budget allows; the admitting stage may not.
+  consuming it, `strategy-daily.js`'s own limit is **20 fetches per RUN**, and it costs no
+  backtest minutes — so an unbounded chain would re-run it to `maxStages` and admit up to 800 in a
+  day, burying the normalize queue it is meant to feed. Consuming stages may run as long as the
+  budget allows; the admitting stage may not.
+  ⚠⚠ **The limit was 3/day until 2026-10-17, when the ADMISSION RATE overtook the budget as the
+  binding constraint** (user decision). Measured that day: the chain ran nine stages,
+  `data/pending-normalize.json` drained to **`[]`**, the deferred pool held 20 entries with **0
+  retryable** (each past the 3-attempt ceiling or already tried at a cap ≥ the current one), and the
+  day ended at **used=36 of 180 minutes** — while **720 strategies sat uncopied**. At the measured
+  ~3.3 min/backtest, 3 fetches is 10–15 minutes of work against a 180-minute budget, so ~80% of
+  capacity went idle with the funnel's mouth as the only cause. 3/day was right at 60 min/day with
+  ~70 queued; neither premise still holds.
+  ⚠ The raise makes the **once-per-chain brake the only thing bounding the daily total**, so it is
+  now more load-bearing, not less: the per-run limit caps one invocation, the brake caps the
+  invocations. Do not relax both.
   ⚠⚠ **What the budget gate CANNOT see**: an agent stage that spends no backtest minutes. A research
   round taking the Step-0 early exit costs **zero** (measured 2026-10-17: 小市值 → `logged-only`), so
   the budget will never stop it — only its queue draining will, and `maxStages` is now the only

@@ -738,10 +738,12 @@ function execute(p, { dry = false } = {}) {
  *
  * ⚠⚠ **`discover` runs at most ONCE per chain**, which is the one place "run until the budget is
  * gone" needed a brake. It is the stage that ADMITS work rather than consuming it, its own
- * `strategy-daily.js` limit is **3 fetches per day** by design, and it costs no backtest minutes —
- * so an unbounded chain would re-run it until `maxStages`, fetching 120 strategies against a
- * designed cadence of 3 and inflating the normalize queue it was supposed to feed gently. The
- * consuming stages may run as long as the budget allows; the admitting stage may not.
+ * `strategy-daily.js` limit is **20 fetches per run** (raised from 3 on 2026-10-17, when the
+ * admission rate rather than the budget became the binding constraint), and it costs no backtest
+ * minutes — so an unbounded chain would re-run it until `maxStages`, admitting up to 800 strategies
+ * in a day and burying the normalize queue it is supposed to feed. ⚠ The raise makes this brake
+ * MORE load-bearing, not less: the per-run limit caps one invocation, this caps the invocations.
+ * The consuming stages may run as long as the budget allows; the admitting stage may not.
  *
  * ⚠ **What the budget gate CANNOT see**: an agent stage that spends no backtest minutes. A research
  * round taking the Step-0 early exit costs ZERO minutes (measured today: 小市值, `logged-only`), so
@@ -835,8 +837,8 @@ function runChain({ dry = false, maxStages = 40, stageOverride = null } = {}) {
       }
     }
 
-    // ⚠ `discover` ADMITS work; it does not consume it. Its own limit is 3 fetches/day by design
-    // and it spends no backtest minutes, so without this it would re-run until maxStages.
+    // ⚠ `discover` ADMITS work; it does not consume it. Its own limit is 20 fetches per RUN, so
+    // without this brake a chain would re-run it to maxStages and admit up to 800 in a day.
     if (r.stage === 'discover') stalled.add('discover');
     // In dry mode nothing actually changed, so a second pass would replan identically.
     if (dry) break;
