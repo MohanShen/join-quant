@@ -1633,6 +1633,34 @@ Only the directories whose contents aren't self-evident:
   including the row that mattered. It needs an AST walk or a probe, not a third regex.
   ⚠ Nothing in the pipeline consults the lint; a test asserts that `daily-pipeline`,
   `strategy-normalize` and `integrate-eligible` do not import it.
+- ⚠⚠⚠ **NEVER KILL A NORMALIZER MID-BACKTEST. An ORPHANED REAL RUN BILLS ITS FULL ELAPSED TIME.**
+  Measured 2026-10-18, and it cost **617 minutes — 3.4× the whole daily free tier**:
+  | time | used | event |
+  |---|---|---|
+  | 14:20Z | 179 | two orphans listed, ages ~235 and ~259 min |
+  | 14:59Z | **493** | orphan 1254 settled on its own → **+314** |
+  | 15:02Z | **796** | orphan 1255 cancelled by hand → **+303** (its age was 308 min) |
+  Each orphan billed almost exactly its **wall-clock age**, not its useful runtime.
+  **Cause: my own kills.** Stopping a `strategy-normalize` batch (twice that day — once to change
+  the usage ceiling, once to stop a premature research dispatch) leaves its in-flight backtest
+  running on JQ with nothing polling it. The entry then ages indefinitely and bills the whole age
+  when it finally terminates.
+  ⚠⚠ **This CONTRADICTS the phantom note below, and the distinction is the whole lesson:**
+  | listed entry | billing |
+  |---|---|
+  | **phantom** (no backtest behind it — `buildList` has no row) | bills **nothing** (`used` sat at 92 before, during and after a 121-min entry) |
+  | **orphaned REAL run** (killed mid-flight, `log.state=1`, a real backtest behind it) | bills its **FULL ELAPSED AGE** |
+  So "a listed run is not a billed run" is true only for phantoms. Check `log.state` /
+  `buildList`: state 1 with a row means a real run is accruing.
+  ⚠ **The documented overshoot bound is wrong for orphans.** `limit + SLOW_SKIP_MIN` (225) bounds a
+  run the executor is still polling, because the cap cancels it. An orphan has no poller and no
+  cap — it can bill hours.
+  **RULE: cancel the backtest BEFORE killing the process.** `node utils/jq-cancel.js --cap-min <age>`
+  then kill. And if an orphan is already loose, **cancel it immediately** — it bills elapsed-so-far,
+  which only grows. Cancelling 1255 at 308 min cost 303; leaving it until the nightly reap would
+  have cost more.
+  ⚠ A further hazard: an orphan that settles AFTER the daily rollover bills into the NEXT day's
+  tier. That is why containing it the same day matters even when the day's budget is already gone.
 - ⚠⚠ **A capped run that JQ refuses to cancel may be a PHANTOM that bills nothing** — and the
   difference is only visible in `duration.used`. Measured 2026-10-17: a liquidity-floor run hit the
   45-min cap, JQ refused cancellation five times (`在此状态不能取消`) across two attempts, the entry
