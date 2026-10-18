@@ -14,3 +14,10 @@
 2026-10-16T18:14:42.843Z	strategies/2026-10-17_市场仪表盘_重大升级_从_7_维到_13_维的宏观风险模型-8e8861f0.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'close'}字段数据, current_dt=2022-01-04 09:31:00, end_date=2022-01-04 09:31:00
 2026-10-17T10:16:47.194Z	strategies/2026-10-17_医疗行业多因子模型及单行业多因子测试代码模板-7cdab207.py	jqboson.core.exception.ReadRemoteFileError: read_file 医疗IC.csv: 文件'/opt/research-files/655/65568519426/医疗IC.csv'不存在
 2026-10-17T11:30:09.132Z	strategies/2026-10-17_行业上下游预测策略的多行业实现_止损-54fe6f38.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2022-01-10, current_dt=2022-01-10 09:30:00
+2026-10-18T04:51:07.691Z	strategies/2026-10-18_滚动复利策略_的量化实现-改进v1_0-27bd5e8c.py	ValueError: cannot convert float NaN to integer
+2026-10-18T04:52:20.497Z	strategies/2026-10-18_仓位控制_风险价值法_VaR_算法有变更-b5631f9b.py	TypeError: type numpy.ndarray doesn't define __round__ method
+2026-10-18T04:53:25.093Z	strategies/2026-10-18_魔法公式选股_由其构建的指数进行MACD控制买卖-54310d81.py	KeyError: &lt;map object at 0x7fb33ca84a20&gt;
+2026-10-18T05:42:05.686Z	strategies/2026-10-18_一个偏重防守的低波动策略_根据MACD底背离策略改写-fcc8c3ef.py	jqdata.exceptions.ParamsError: 行业板块 'HY493' 不存在
+2026-10-18T05:44:29.724Z	strategies/2026-10-18_质量因子选股策略_感觉挺特别的_质量_因子-b1dc366f.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数
+2026-10-18T06:07:20.991Z	strategies/2026-10-18_贰章_量化交易_估值因子分析-63f0c9b9.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数
+2026-10-18T06:12:50.991Z	strategies/2026-10-18_美股全细分板块_A股ETF_隔夜轮动_求优化-861a8b7c.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时, 当天开盘前不能获取当日的{'close'}字段数据, current_dt=2022-01-04 09:00:00, end_date=2022-01-04 09:00:00

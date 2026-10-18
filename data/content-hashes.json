@@ -1551,5 +1551,95 @@
     "postId": "4e0feefc054353e9e82552e0bba6d3a9",
     "sourceFile": "2026-10-18_RSRS模型深入研究2-对右偏态样本处理的质疑与分析-4e0feefc.py",
     "registeredAt": "2026-10-18T04:12:00.240Z"
+  },
+  "50e3c4eaadcf5ca2d99dc17a02bdec1cef31856e84581dc875f49013a75da955": {
+    "postId": "861a8b7c03bbec6fe0f29b60afaa178a",
+    "sourceFile": "2026-10-18_美股全细分板块_A股ETF_隔夜轮动_求优化-861a8b7c.py",
+    "registeredAt": "2026-10-18T06:10:45.431Z"
+  },
+  "fe044b45e54562e0ec11cf7c0e2a9d6e3ae440f7a1828d83a16ca20f3905fe89": {
+    "postId": "814e303a5eac7e9f4e41d52dc8062744",
+    "sourceFile": "2026-10-18_基金筛选与轮动策略_V2_0-814e303a.py",
+    "registeredAt": "2026-10-18T06:10:48.656Z"
+  },
+  "a82e7c24dca436d0950a2a507bfc0af6de5657e0914864dad454cd2f64f6a67b": {
+    "postId": "d29621b64a60cb1a1fb651a33dae37f4",
+    "sourceFile": "2026-10-18_模拟近一年的打板策略_ST策略_半年的小市值策略-d29621b6.py",
+    "registeredAt": "2026-10-18T06:10:51.273Z"
+  },
+  "837e6b6042430153124d76b5973a953acc3af54330da29e39fef48f2a482c164": {
+    "postId": "69c34d01214f050d116d7b4fa4c07b31",
+    "sourceFile": "2026-10-18_股东数小市值-69c34d01.py",
+    "registeredAt": "2026-10-18T06:10:53.898Z"
+  },
+  "30c84fa3d3c5ebd002fe098494272c30dd91af7c42bf3c0c11c7593faa7cc549": {
+    "postId": "5f2f36a917c700fa7f8c7954a46761e0",
+    "sourceFile": "2026-10-18_趋势捕捉加点低关联的ETF_烧token搞的换点分回测-5f2f36a9.py",
+    "registeredAt": "2026-10-18T06:10:56.586Z"
+  },
+  "67fea95311ae87e1d92556f6b0f8ba4071e45964c4093133b605f21564fc20f1": {
+    "postId": "6f04114cfc47b655b141b1de61faf509",
+    "sourceFile": "2026-10-18_经典三马-五福-改版-6f04114c.py",
+    "registeredAt": "2026-10-18T06:10:59.822Z"
+  },
+  "321d4000069d3defa3cbdc9dceea55470659b0102421de84bc809f0768d1a418": {
+    "postId": "c5d203933cd8f1060d77cfe93312eb36",
+    "sourceFile": "2026-10-18_优化了半个月的ETF动量轮动策略-c5d20393.py",
+    "registeredAt": "2026-10-18T06:11:02.939Z"
+  },
+  "3953b3ce5334646dba847a72ade08e31e9f2f301899cf87f34b324655f71fe70": {
+    "postId": "02c9133be60d8641e60d5eee07f7e44e",
+    "sourceFile": "2026-10-18_固定资产投资增速也不错-02c9133b.py",
+    "registeredAt": "2026-10-18T06:11:06.685Z"
+  },
+  "8dda04d198a9be634e9b043259c8cf3dba373817329194ac5fc5f4187225d497": {
+    "postId": "dd17cc2d449de31939a6a6a5ffd1adee",
+    "sourceFile": "2026-10-18_考夫曼自适应均线在大跌行情中的应用-dd17cc2d.py",
+    "registeredAt": "2026-10-18T06:11:09.229Z"
+  },
+  "81bcba44208cbdec8620f7d3bc0c86580e913718e82f9574a70045e218604f35": {
+    "postId": "9aec8c87e33c22d10deb8079573f8031",
+    "sourceFile": "2026-10-18_10年回测年化29_的低频操作策略-9aec8c87.py",
+    "registeredAt": "2026-10-18T06:11:15.441Z"
+  },
+  "3ec23221319deff5e62b24f9962f30720a70785779c0aa3f2e72583f4ced723e": {
+    "postId": "e0629c868750d8882be642e85363bec6",
+    "sourceFile": "2026-10-18_用_净利润增速_选股的聚宽策略_逻辑其实很朴素-e0629c86.py",
+    "registeredAt": "2026-10-18T06:11:18.290Z"
+  },
+  "63536ac384d053da990fa68b1b087d6b63a93c7616b2b07e2d8eef7fc755ce14": {
+    "postId": "8152fa27c0dd3f61841c723deb22f937",
+    "sourceFile": "2026-10-18_这版再修改了下_有兴趣的宽友可以一起交流-8152fa27.py",
+    "registeredAt": "2026-10-18T06:11:21.859Z"
+  },
+  "58acd4e0e928529154dc377aaf42b393e09741d88b2249ab5fdd9a0679ea537b": {
+    "postId": "b616d8e872007a394de311fb0ac7d423",
+    "sourceFile": "2026-10-18_把PEG从散户指标做成选股因子-b616d8e8.py",
+    "registeredAt": "2026-10-18T06:11:25.032Z"
+  },
+  "a814d98bbe4b3683df5ab61a6d0cd3e910cd72b2172541e9b39384f43ea02dd2": {
+    "postId": "8e9766ebae8bd88f8e0889af4dcd56b6",
+    "sourceFile": "2026-10-18_回测来啦_鳄鱼法则交易系统_15年至今114-8e9766eb.py",
+    "registeredAt": "2026-10-18T06:11:27.647Z"
+  },
+  "aff446c9bf18c18ea1b480cc4dcc7245be9116c0ac41896248183cc67dacfca3": {
+    "postId": "6ddc7d4074690da1eb7c7b8b47f29676",
+    "sourceFile": "2026-10-18_华泰价值选股之FFScore模型-6ddc7d40.py",
+    "registeredAt": "2026-10-18T06:11:30.781Z"
+  },
+  "fc93043da4bada9d14981d2ac0c01304548432516a5e0530013f2df71739cd27": {
+    "postId": "8cc0c05b533fa72d37047ace149b98ad",
+    "sourceFile": "2026-10-18_首席质量因子_-_Gross_Profitability-8cc0c05b.py",
+    "registeredAt": "2026-10-18T06:11:37.264Z"
+  },
+  "bdd1c2fd641217b4732cef0a12032789a604a5a85e9d735d58d35a0aee7b70d6": {
+    "postId": "cba6a8f88a4eafc2859ced5a9480b550",
+    "sourceFile": "2026-10-18_基于凸组合优化的均线交叉策略-cba6a8f8.py",
+    "registeredAt": "2026-10-18T06:11:39.929Z"
+  },
+  "849d1de44ad5f69abd6ffc84ece00c35bbe2b9f069418ce0e745de2df74d6e53": {
+    "postId": "bc245606de0dfec03e486d4c610dcef6",
+    "sourceFile": "2026-10-18_期限结构Carry收益_期货多品种对冲模型-bc245606.py",
+    "registeredAt": "2026-10-18T06:11:42.515Z"
   }
 }

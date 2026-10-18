@@ -3,54 +3,14 @@
   "lastRun": {
     "stage": "normalize",
     "target": null,
-    "budget": 31,
-    "at": "2026-10-17T23:51:58.844Z",
-    "outcome": "ran",
-    "note": "0 retry(--redo) + 3 fresh, 0 newly deferred at 45min",
+    "budget": 77,
+    "at": "2026-10-18T06:11:49.124Z",
+    "outcome": "error",
+    "note": "0 retry(--redo) + 20 fresh, 1 newly deferred at 45min",
     "minutesUsed": null,
-    "endedAt": "2026-10-17T23:59:05.866Z"
+    "endedAt": "2026-10-18T08:25:50.069Z"
   },
   "runs": [
-    {
-      "stage": "enhance",
-      "target": "ETF动量",
-      "budget": 46,
-      "at": "2026-09-20T13:02:14.913Z",
-      "outcome": "ran",
-      "note": "resumed enhance session 1de3cdea (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-09-20T13:02:24.344Z"
-    },
-    {
-      "stage": "enhance",
-      "target": "ETF动量",
-      "budget": 46,
-      "at": "2026-09-20T13:02:31.521Z",
-      "outcome": "error",
-      "note": "resumed enhance session 1de3cdea (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-09-20T13:25:27.367Z"
-    },
-    {
-      "stage": "enhance",
-      "target": null,
-      "budget": 56,
-      "at": "2026-09-20T14:59:03.077Z",
-      "outcome": "budget-spent",
-      "note": "used 56 >= 55; enhance not started",
-      "minutesUsed": null,
-      "endedAt": "2026-09-20T14:59:03.078Z"
-    },
-    {
-      "stage": "enhance",
-      "target": null,
-      "budget": 56,
-      "at": "2026-09-20T15:15:50.217Z",
-      "outcome": "budget-spent",
-      "note": "used 56 >= 55; enhance not started",
-      "minutesUsed": null,
-      "endedAt": "2026-09-20T15:15:50.219Z"
-    },
     {
       "stage": "enhance",
       "target": null,
@@ -1180,6 +1140,76 @@
       "note": "0 retry(--redo) + 3 fresh, 0 newly deferred at 45min",
       "minutesUsed": null,
       "endedAt": "2026-10-17T23:59:05.866Z"
+    },
+    {
+      "stage": "research",
+      "target": "五福闹新春",
+      "budget": 36,
+      "at": "2026-10-18T04:12:43.201Z",
+      "outcome": "ran",
+      "note": "resumed research session a6b44bf4 (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-18T04:22:04.549Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 36,
+      "at": "2026-10-18T04:22:10.757Z",
+      "outcome": "ran",
+      "note": "family assignment over 3 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-18T04:24:25.429Z"
+    },
+    {
+      "stage": "research",
+      "target": "ETF动量",
+      "budget": 36,
+      "at": "2026-10-18T04:24:30.426Z",
+      "outcome": "killed",
+      "note": "stopped between backtests to restart with USAGE_LIMIT=120 (user wants ~60 of the 180 free minutes reserved for other work). Nothing was billed: the stage in flight was an agent stage and JQ showed live=0, used=36 unchanged.",
+      "minutesUsed": null,
+      "endedAt": "2026-10-18T04:26:16.622Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 36,
+      "at": "2026-10-18T04:26:53.854Z",
+      "outcome": "ran",
+      "note": "family assignment over 2 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-18T04:27:43.499Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 36,
+      "at": "2026-10-18T04:27:47.447Z",
+      "outcome": "ran",
+      "note": "0 retry(--redo) + 20 fresh, 1 newly deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-18T06:10:26.534Z"
+    },
+    {
+      "stage": "discover",
+      "target": null,
+      "budget": 77,
+      "at": "2026-10-18T06:10:32.335Z",
+      "outcome": "ran",
+      "note": "discover + fetch (normalize is its own stage)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-18T06:11:42.929Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 77,
+      "at": "2026-10-18T06:11:49.124Z",
+      "outcome": "error",
+      "note": "0 retry(--redo) + 20 fresh, 1 newly deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-18T08:25:50.069Z"
     }
   ]
 }
