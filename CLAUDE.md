@@ -681,6 +681,26 @@ Only the directories whose contents aren't self-evident:
   ⚠ Epoch 9 does not relieve the pool problem, it reshapes it: the *availability* half improves
   (most of the 2026 pool existed by 2024, where 8 of 17 postdated the old 2022 TRAIN) while the
   *selection* half worsens (the window now sits ~2 years from the authoring date instead of 4).
+- ✅ **RESULT (2026-10-19): the pools FLATTER the books but do not EXPLAIN them.** Restricting each
+  pool to names listed before the window:
+  | book | objective | sharpe | Δ |
+  |---|---|---|---|
+  | 73b13d92 unrestricted | 1.4926 | 5.22 | |
+  | 73b13d92 **point-in-time** | **1.0025** | **3.66** | −0.4901 (**−33%**) |
+  | 1cc495be unrestricted | 0.9954 | 4.59 | |
+  | 1cc495be **point-in-time** | **0.8068** | **3.77** | −0.1886 (**−19%**) |
+  Both still clear epoch 9's 1.0 gate comfortably. ⚠ **This is NOT the ETF动量 pattern**, where
+  swapping to a broad A-share pool took the result to **−0.27** — hindsight is at most a third of
+  the 2024 ETF-momentum strength, so these books are real candidates and the pool question does not
+  have to be won before working on them.
+  ⚠⚠ **Quote the two numbers as a PAIR.** The unrestricted figures run 19–33% higher, so citing one
+  alone systematically over-reports. Recorded as 五福闹新春 §2 rows + finding `q-e9-pit`.
+  ⚠⚠ **The VAL contamination is UNADDRESSED by this result and is the worse half.** Seven pool
+  names listed in 2025 (`159323`, `159206`, `588170`, `159218`, `159227`, `588790`, `159256`) and
+  epoch 9's VAL **is** 2025 — a 2026-authored pool containing names that listed inside the
+  validation year has selection-on-VAL written into the source. **Any VAL on this family must apply
+  a pre-2025 pool cutoff first**; recorded as a blocking precondition in the family's §4, because
+  VAL is one per (family, bench) and epoch 9 just re-granted it.
 - **The point-in-time pool test is `study/五福闹新春/build-e9-pit.js`** — `pool ∩ { 上市日期 < train
   start }`, cutoff READ FROM THE HARNESS so it survives the next window move. Both inputs are
   pre-run facts from the book itself (names from its source, dates from the author's own inline

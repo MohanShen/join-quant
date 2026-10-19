@@ -33,3 +33,13 @@
 2026-10-18T16:49:07.698Z	strategies/2026-10-17_市场仪表盘_重大升级_从_7_维到_13_维的宏观风险模型-8e8861f0.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'close'}字段数据, current_dt=2024-01-02 09:31:00, end_date=2024-01-02 09:31:00
 2026-10-18T17:37:34.121Z	strategies/2026-06-25_小市值优选_KNN预测择股策略V1_0版-3141242e.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-02-01, current_dt=2024-02-01 09:40:00
 2026-10-18T17:48:35.928Z	strategies/2026-05-28_经典策略系列_之周规则交易策略_使用分级移动止盈_移动止盈方法_以及新api--run_daily等的用法-23b0cbdc.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 mylib
+2026-10-18T18:51:16.046Z	strategies/2026-07-15_超短线_快刀手_1万本金单票满仓_极致止盈损-7cf56e56.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'close', 'volume'}字段数据, current_dt=2024-01-02 09:35:00, end_date=2024-01-02
+2026-10-18T19:11:34.137Z	strategies/2026-06-01_组合魅力_4策略融合-小市值_白马_低相关轮动_行业轮动-962e727b.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 jqmt
+2026-10-18T20:07:09.722Z	strategies/2026-05-15_价值投资--低估价值选股策略-c748b9d5.py	TypeError: 'float' object cannot be interpreted as an integer
+2026-10-18T20:27:21.419Z	strategies/2026-05-15_回馈社区_分享市盈率股息率选股_均线止盈交易策略-796c6f98.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-10-18T20:45:58.996Z	strategies/2026-05-17_复现东方证券研报--特质波动率因子研究-b0e7b728.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时, 当天开盘前不能获取当日的{'low', 'open', 'close', 'volume', 'high', 'open_interest', 'money'}字段数据, current_dt=2024-01-31 09:00:00, end_date=2024-01-31 09:00:00
+2026-10-18T20:49:51.800Z	strategies/2026-05-17_策略发布_CSI300_多因子截面策略_低换手-34e0e03f.py	jqboson.core.exception.ReadRemoteFileError: read_file signal_table.json: 文件'/opt/research-files/655/65568519426/signal_table.json'不存在
+2026-10-18T21:11:17.419Z	strategies/2026-06-17_最小市值轮动_不择时-cad4cc5d.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:30:00
+2026-10-18T22:09:05.163Z	strategies/2026-10-18_华泰价值选股之FFScore模型-6ddc7d40.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-10-18T22:11:17.527Z	strategies/2026-10-18_基于凸组合优化的均线交叉策略-cba6a8f8.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-10-18T22:12:08.988Z	strategies/2026-10-18_首席质量因子_-_Gross_Profitability-8cc0c05b.py	ImportError: cannot import name 'gta'

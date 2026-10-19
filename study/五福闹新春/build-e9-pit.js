@@ -62,6 +62,11 @@ const CUT = harness.window('train').start;
 const BOOKS = [
   { tag: 'q-e9-pit_73b13d92', match: /73b13d92/, label: '五福_ETF_轮动五年迭代' },
   { tag: 'q-e9-pit_1cc495be', match: /1cc495be/, label: '给五福多ETF动量增加卖出冷却' },
+  // Added after the first two came back: the epoch-9 re-measurement produced a NEW library leader
+  // at objective 1.7881 / sharpe 6.99, and it carries the same pool structure (115 names with
+  // inline listing dates, 18 of them after 2024-01-01). Same rule, same builder — the point of
+  // keeping one builder is that the membership rule cannot drift between books.
+  { tag: 'q-e9-pit_bba95a11', match: /bba95a11/, label: '小市值_五福6年87倍13回撤' },
 ];
 
 const header = (label, cut, dropped) => [
