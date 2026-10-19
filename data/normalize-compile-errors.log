@@ -43,3 +43,11 @@
 2026-10-18T22:09:05.163Z	strategies/2026-10-18_华泰价值选股之FFScore模型-6ddc7d40.py	AttributeError: 'DataFrame' object has no attribute 'sort'
 2026-10-18T22:11:17.527Z	strategies/2026-10-18_基于凸组合优化的均线交叉策略-cba6a8f8.py	AttributeError: 'DataFrame' object has no attribute 'sort'
 2026-10-18T22:12:08.988Z	strategies/2026-10-18_首席质量因子_-_Gross_Profitability-8cc0c05b.py	ImportError: cannot import name 'gta'
+2026-10-19T18:33:42.054Z	strategies/2026-10-17_行业上下游预测策略的多行业实现_止损-54fe6f38.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-08, current_dt=2024-01-08 09:30:00
+2026-10-19T18:54:54.668Z	strategies/2026-10-18_一个偏重防守的低波动策略_根据MACD底背离策略改写-fcc8c3ef.py	jqdata.exceptions.ParamsError: 行业板块 'HY493' 不存在
+2026-10-19T18:56:07.397Z	strategies/2026-10-18_仓位控制_风险价值法_VaR_算法有变更-b5631f9b.py	TypeError: type numpy.ndarray doesn't define __round__ method
+2026-10-19T20:34:33.863Z	strategies/2026-10-18_滚动复利策略_的量化实现-改进v1_0-27bd5e8c.py	ValueError: cannot convert float NaN to integer
+2026-10-19T20:43:08.877Z	strategies/2026-10-18_美股全细分板块_A股ETF_隔夜轮动_求优化-861a8b7c.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时, 当天开盘前不能获取当日的{'close'}字段数据, current_dt=2024-01-02 09:00:00, end_date=2024-01-02 09:00:00
+2026-10-19T20:46:56.405Z	strategies/2026-10-18_质量因子选股策略_感觉挺特别的_质量_因子-b1dc366f.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数
+2026-10-19T20:47:46.530Z	strategies/2026-10-18_贰章_量化交易_估值因子分析-63f0c9b9.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数
+2026-10-19T21:37:49.985Z	strategies/2026-10-18_魔法公式选股_由其构建的指数进行MACD控制买卖-54310d81.py	KeyError: &lt;map object at 0x7fe0b578fcf8&gt;

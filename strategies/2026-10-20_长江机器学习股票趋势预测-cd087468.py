@@ -1,0 +1,62 @@
+# Clone from JoinQuant
+# postId: cd087468b197535dafbc4a63f2af88bc
+# backtestId: 18681697d2ad6b3389fa8693a03d62e0
+# title: 长江机器学习股票趋势预测
+
+# 导入函数库
+from jqdata import *
+import pandas as pd
+import numpy as np
+from six import StringIO
+from sklearn import preprocessing
+from sklearn.linear_model import LogisticRegression
+from sklearn import tree
+from sklearn import svm
+
+factor=pd.read_csv(StringIO(read_file("./Data/Factor1.csv")))
+factor_nor = preprocessing.normalize(factor, norm='l1')
+hs = pd.read_csv(StringIO(read_file("./Data/HS300.csv")))
+
+def initialize(context):
+
+    set_benchmark('000300.XSHG')
+
+    set_option('use_real_price', True)
+
+    set_order_cost(OrderCost(close_tax=0.001, open_commission=0.0003, close_commission=0.0003, min_commission=5), type='stock')
+    
+    run_monthly(monthly, 1, '09:40')
+    
+    g.m = 0
+
+def monthly(context):
+    alg = tree.DecisionTreeClassifier(criterion='gini') 
+    #alg = LogisticRegression()
+    #alg = svm.SVC() 
+    pred, ytest = train_pred(factor_nor,hs,30,alg)
+    
+    if pred[g.m] == 1:
+        order_target_value('000300.XSHG',context.portfolio.available_cash)
+    elif pred[g.m] == 0:
+        order_target_value('000300.XSHG',0)
+        
+    if g.m < len(pred):
+        g.m+=1
+    else:
+        pass
+    
+def train_pred(factor,hs,period,alg):
+    pred = []
+    ytest = []
+    alg=alg
+    
+    for i in np.arange(len(factor)-period):
+        x_train, y_train = factor[i:i+period], hs[i:i+period]
+        x_test, y_test = np.array(factor[i+period]), hs.close.iloc[i+period]
+        
+        alg.fit(x_train,y_train)
+    
+        temp = alg.predict(x_test.reshape(1,16))
+        pred.append(temp[0])
+        ytest.append(y_test)
+    return(pred,ytest)

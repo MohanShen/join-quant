@@ -1641,5 +1641,105 @@
     "postId": "bc245606de0dfec03e486d4c610dcef6",
     "sourceFile": "2026-10-18_期限结构Carry收益_期货多品种对冲模型-bc245606.py",
     "registeredAt": "2026-10-18T06:11:42.515Z"
+  },
+  "27678dfdb12ec25594bc256e439fd4b1e9f2b896d0fc2ca8fe42f9466ba5f777": {
+    "postId": "127c753d122c07ea8bebe2017a6a6886",
+    "sourceFile": "2026-10-20_期货策略_钢厂利润模型-螺纹钢铁矿石焦炭套利-127c753d.py",
+    "registeredAt": "2026-10-19T22:12:55.434Z"
+  },
+  "11639264160e23f2dfebeba587777d0780103cc263d96b86c23e2a191e00a94d": {
+    "postId": "9981752e4845e3005bcbb2a22affd33e",
+    "sourceFile": "2026-10-20_华泰高股息率选股模型-9981752e.py",
+    "registeredAt": "2026-10-19T22:12:58.036Z"
+  },
+  "e42fdc939351894ba4733d67523fa3624ae7f31247da5885a8e47dc67eaf630a": {
+    "postId": "6d082a3f37ec8f24e6dd70da2e0930d6",
+    "sourceFile": "2026-10-20_几个期货基本面因子的研究-6d082a3f.py",
+    "registeredAt": "2026-10-19T22:13:00.639Z"
+  },
+  "3511a4390830d4564f24360c74d209a12583c0eceda62b33c8c5c76f1635116e": {
+    "postId": "298b196e5dd4b724c675d48f7e6a0f0f",
+    "sourceFile": "2026-10-20_通过回测_二八轮动小市值优化版_v2_0_7_对小市值股票的一些疑问-298b196e.py",
+    "registeredAt": "2026-10-19T22:13:03.267Z"
+  },
+  "b19210b5fdcdfa2930c5b4b8840467f5fea4731521a8c450ac8cdc864bdd82ce": {
+    "postId": "25afa025c9893439b4eb57acdcf03817",
+    "sourceFile": "2026-10-20_LLT低延迟趋势线择时交易初探-25afa025.py",
+    "registeredAt": "2026-10-19T22:13:05.870Z"
+  },
+  "6757fb255fae3acdce8e89b48fa852e18e25b65c79568c721ac148256bf0e6ce": {
+    "postId": "dac63f1fbbe6daea4898bc3d110d8aaf",
+    "sourceFile": "2026-10-20_二八轮动2_0-dac63f1f.py",
+    "registeredAt": "2026-10-19T22:13:08.470Z"
+  },
+  "157fb01ba2d98d1734bfe8bf3bfa19a88020bfbbccce539786e4a8f462926b85": {
+    "postId": "49756729df1dd7ea142f51b0c6920f16",
+    "sourceFile": "2026-10-20_基于卡尔曼滤波器的银行搬砖-49756729.py",
+    "registeredAt": "2026-10-19T22:13:11.070Z"
+  },
+  "040d68653663c1bbc5bca1633196aa094d946acb47333fba62a3f00b64181ae1": {
+    "postId": "357daea89ac278beca7f3b288842e37b",
+    "sourceFile": "2026-10-20_RSRS模型深入研究1-附上优化版代码-357daea8.py",
+    "registeredAt": "2026-10-19T22:13:13.591Z"
+  },
+  "f7a8b896376400ae53bee79ddf4a3eab346024f6c97994c291254683dc837ce4": {
+    "postId": "1587c799ecebd986f9b0de4a5cc1f5b8",
+    "sourceFile": "2026-10-20_年化20_滚IC吃贴水策略-1587c799.py",
+    "registeredAt": "2026-10-19T22:13:16.197Z"
+  },
+  "11059aae56a8596918870e499ab705a88f95431dc5d323845c59aaaee4e24338": {
+    "postId": "1d3cd90089d8d974e7e8ca1e5f663052",
+    "sourceFile": "2026-10-20_稳健型涨停基因增强策略_v1_0-1d3cd900.py",
+    "registeredAt": "2026-10-19T22:13:18.741Z"
+  },
+  "cee58705e40be15c1e0ca4ea0b4e4e41dd02fb4f07bb5cc9fb607edd04b46b69": {
+    "postId": "cd087468b197535dafbc4a63f2af88bc",
+    "sourceFile": "2026-10-20_长江机器学习股票趋势预测-cd087468.py",
+    "registeredAt": "2026-10-19T22:13:21.426Z"
+  },
+  "8eca1ddac20d9d93a519cccd37d28c236fc3493ca19e801ea2447e3b2a7cd510": {
+    "postId": "9473ea7ad9691f7f2e030ac6add13c98",
+    "sourceFile": "2026-10-20_暴跌抄底融合五福-9473ea7a.py",
+    "registeredAt": "2026-10-19T22:13:24.187Z"
+  },
+  "4e8535cf30ce417bc6ea8e742224073fcedf19a3cfcba4824515f01e0503930d": {
+    "postId": "603a87f1444bca8729b0d65a5098c72b",
+    "sourceFile": "2026-10-20_工农配对-动态-Clone-603a87f1.py",
+    "registeredAt": "2026-10-19T22:13:26.725Z"
+  },
+  "844bfa009cd096451452a0c630b96c9aaed01b85c653ee6f1b7cc88396bad279": {
+    "postId": "d9dafab2dbfbfd7aebb6c696467c3c5c",
+    "sourceFile": "2026-10-20_该相信癌股还是该相信海外_思考再三_决定将这压轴策略奉上-d9dafab2.py",
+    "registeredAt": "2026-10-19T22:13:29.360Z"
+  },
+  "1c33e71f996958454c482739424f14590ec0019845f21f32e7e7857e2fb0d4eb": {
+    "postId": "1418d676fd84ae4629e73a943221f1ea",
+    "sourceFile": "2026-10-20_核心资产龙头策略-1418d676.py",
+    "registeredAt": "2026-10-19T22:13:31.973Z"
+  },
+  "f3a69380c53457b8f968525e4b3845663a24424ae137508f1ff892b51ef1267c": {
+    "postId": "94888e61be61ce9dce51c6d30d0327d3",
+    "sourceFile": "2026-10-20_蓝筹大盘分红策略_超稳健-94888e61.py",
+    "registeredAt": "2026-10-19T22:13:34.578Z"
+  },
+  "a64d0d0674660efa4ec26377c4fe74690126691de50e5f2f4bb15fa6fbd7a6f5": {
+    "postId": "15d723c686672a765e4077292a813dec",
+    "sourceFile": "2026-10-20_七星ETF策略优化_更高收益-15d723c6.py",
+    "registeredAt": "2026-10-19T22:13:37.175Z"
+  },
+  "e2dbfb2bdd827dbd913baec8ff32da4ef232294ecb795b53b8c8763ef515b5ac": {
+    "postId": "4b168f5aa530c847a8d5a04f69f5f1af",
+    "sourceFile": "2026-10-20_自由现金流策略编制-4b168f5a.py",
+    "registeredAt": "2026-10-19T22:13:39.942Z"
+  },
+  "c3ca8e358263c00b4753704ef3c66e707478a6b57489c05262d596a5f879b973": {
+    "postId": "dae84e6ca10bbb92641f4e15f9685949",
+    "sourceFile": "2026-10-20_七星高照_ETF池再优化_减少过拟合-dae84e6c.py",
+    "registeredAt": "2026-10-19T22:13:42.599Z"
+  },
+  "f877fb9a32b7dfba082398b5632b8fdadd8a7cd9958f2bbb6e1a3257e8c842e0": {
+    "postId": "85329a34c66d23c318425f9d7cd9c577",
+    "sourceFile": "2026-10-20_收益率极致优化_年化5150_夏普109_含未来函数_求修正-85329a34.py",
+    "registeredAt": "2026-10-19T22:13:45.206Z"
   }
 }
