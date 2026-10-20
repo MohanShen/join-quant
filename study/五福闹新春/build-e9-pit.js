@@ -59,6 +59,33 @@ const DRY = process.argv.includes('--dry');
 // builder stays correct if the window moves again.
 const CUT = harness.window('train').start;
 
+/**
+ * Corpus-wide code -> listing-date map, built from every book that documents dates inline.
+ *
+ * ⚠ Used ONLY as a fallback, and the provenance is weaker than the primary rule, so it is stated
+ * in the variant header rather than hidden. b50e4387 (小市值+ETF引擎, the #2 book) carries the
+ * SAME 114-name pool as the documented books but with **no inline comments at all**, so the
+ * primary rule found nothing to exclude and the builder correctly refused — the test would have
+ * been inert. Every one of its 114 names is documented by another author in this corpus, and the
+ * resulting exclusion set is the same 17 names / 7 from 2025 as its siblings, which is itself
+ * corroboration that these are the same pool.
+ *
+ * It is still a pre-run fact with zero free parameters: a listing date is a security attribute,
+ * not performance data, and reading it from another book's comment is verification, not a choice.
+ */
+function corpusListingDates() {
+  const map = new Map();
+  const dir = path.join(ROOT, 'strategies');
+  for (const f of fs.readdirSync(dir).filter(x => x.endsWith('.py'))) {
+    const t = fs.readFileSync(path.join(dir, f), 'utf8');
+    for (const m of t.matchAll(/'([0-9]{6}\.(?:XSHG|XSHE))',\s*#[^\n]*上市日期：(\d{4}-\d{2}-\d{2})/g)) {
+      if (!map.has(m[1])) map.set(m[1], m[2]);
+    }
+  }
+  return map;
+}
+const CORPUS_DATES = corpusListingDates();
+
 const BOOKS = [
   { tag: 'q-e9-pit_73b13d92', match: /73b13d92/, label: '五福_ETF_轮动五年迭代' },
   { tag: 'q-e9-pit_1cc495be', match: /1cc495be/, label: '给五福多ETF动量增加卖出冷却' },
@@ -67,6 +94,9 @@ const BOOKS = [
   // inline listing dates, 18 of them after 2024-01-01). Same rule, same builder — the point of
   // keeping one builder is that the membership rule cannot drift between books.
   { tag: 'q-e9-pit_bba95a11', match: /bba95a11/, label: '小市值_五福6年87倍13回撤' },
+  // #2 book (objective 1.6997 / sharpe 6.65). Its pool is UNDATED, so it needs the corpus
+  // fallback above — see that comment for why that is still a zero-free-parameter rule.
+  { tag: 'q-e9-pit_b50e4387', match: /b50e4387/, label: '从30倍到47倍_给小市值装上ETF引擎后' },
 ];
 
 const header = (label, cut, dropped) => [
@@ -80,7 +110,8 @@ const header = (label, cut, dropped) => [
   '#   （上市日是证券属性，不是业绩数据）。本规则不引用任何 2024 年的价格、收益、成交额或排名。',
   '#',
   `# 【被排除的 ${dropped.length} 只 —— 一只都不得放回】`,
-  ...dropped.map(d => `#   ${d.code}  上市 ${d.date}${d.date >= '2025-01-01' ? '   ← 2025 才上市：TRAIN 完全不可交易，但 VAL(2025) 可交易' : '   ← TRAIN 窗口内上市'}`),
+  ...dropped.map(d => `#   ${d.code}  上市 ${d.date}  [日期来源: ${d.via === 'own' ? '本书行内注释' : '语料库内其他作者的行内注释'}]` +
+    (d.date >= '2025-01-01' ? '   ← 2025 才上市：TRAIN 完全不可交易，但 VAL(2025) 可交易' : '   ← TRAIN 窗口内上市')),
   '#',
   '# 【刻意不碰】排名、动量窗口、择时、阈值、流动性过滤、成本块，全部逐字不动。',
   '#   唯一的改动是把上述名字在池中注释掉。',
@@ -95,21 +126,44 @@ for (const b of BOOKS) {
   const raw = py2to3(fs.readFileSync(path.join(ROOT, 'strategies', src), 'utf8'));
 
   const dropped = [];
+  // ⚠ A book may list one name per line WITH a dated comment (73b13d92 etc.) or several bare
+  // names per line with none (b50e4387). Commenting out a whole line is only safe in the first
+  // shape; in the second the excluded CODES are removed from the line individually, which is why
+  // the assertion below counts changed LINES rather than codes.
   const out = raw.split('\n').map((l) => {
-    const m = l.match(/^(\s*)'([0-9]{6}\.(?:XSHG|XSHE))',\s*#(.*)$/);
-    if (!m) return l;
     if (/^\s*#/.test(l)) return l;                      // already inactive in the author's source
-    const date = (m[3].match(/上市日期：(\d{4}-\d{2}-\d{2})/) || [])[1];
-    if (!date || date < CUT) return l;                  // no date, or genuinely pre-window
-    dropped.push({ code: m[2], date });
-    return `${m[1]}#${l.trim()}   # q-e9-pit: 上市 ${date} >= ${CUT}`;
+    const one = l.match(/^(\s*)'([0-9]{6}\.(?:XSHG|XSHE))',\s*#(.*)$/);
+    if (one) {
+      const date = (one[3].match(/上市日期：(\d{4}-\d{2}-\d{2})/) || [])[1] || CORPUS_DATES.get(one[2]);
+      if (!date || date < CUT) return l;
+      dropped.push({ code: one[2], date, via: (one[3].match(/上市日期：/) ? 'own' : 'corpus') });
+      return `${one[1]}#${l.trim()}   # q-e9-pit: 上市 ${date} >= ${CUT}`;
+    }
+    // Bare codes, possibly several on one line.
+    const codes = [...l.matchAll(/'([0-9]{6}\.(?:XSHG|XSHE))'/g)].map(m => m[1]);
+    if (!codes.length) return l;
+    const kill = codes.filter(c => { const d = CORPUS_DATES.get(c); return d && d >= CUT; });
+    if (!kill.length) return l;
+    let out2 = l;
+    for (const c of kill) {
+      dropped.push({ code: c, date: CORPUS_DATES.get(c), via: 'corpus' });
+      out2 = out2.replace(new RegExp(`'${c.replace('.', '\\.')}',\\s*`), '');
+    }
+    return `${out2}   # q-e9-pit: 移除 ${kill.join(' ')}（上市 >= ${CUT}）`;
   }).join('\n');
 
   // ⚠ Assert the edit did exactly what the rule says, and nothing else: the only differences
   // between raw and out must be the commented lines.
-  const diff = raw.split('\n').filter((l, i) => l !== out.split('\n')[i]).length;
-  if (diff !== dropped.length) {
-    throw new Error(`${b.tag}: ${diff} line(s) changed but ${dropped.length} excluded — refusing`);
+  // ⚠ Lines changed <= codes excluded, because a bare-code line can lose several codes at once.
+  // The invariant is: every changed line carries the q-e9-pit marker, and nothing else moved.
+  const rl = raw.split('\n'), ol = out.split('\n');
+  const changed = rl.map((l, i) => [i, l, ol[i]]).filter(([, a, b2]) => a !== b2);
+  if (!changed.length) throw new Error(`${b.tag}: nothing changed — the test would be inert`);
+  for (const [i, , b2] of changed) {
+    if (!/q-e9-pit:/.test(b2)) throw new Error(`${b.tag}: line ${i + 1} changed without the marker — refusing`);
+  }
+  if (changed.length > dropped.length) {
+    throw new Error(`${b.tag}: ${changed.length} line(s) changed but only ${dropped.length} excluded — refusing`);
   }
   if (!dropped.length) throw new Error(`${b.tag}: nothing to exclude — the test would be inert`);
 
