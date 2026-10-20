@@ -695,6 +695,14 @@ Only the directories whose contents aren't self-evident:
   have to be won before working on them.
   ⚠⚠ **Quote the two numbers as a PAIR.** The unrestricted figures run 19–33% higher, so citing one
   alone systematically over-reports. Recorded as 五福闹新春 §2 rows + finding `q-e9-pit`.
+  ⚠⚠ **And the pool bonus is PER BOOK, not a family property.** The same rule on **bba95a11**
+  (小市值+五福组合, the epoch-9 library leader) moved it **+0.0015** — objective 1.7881 →
+  **1.7896**, sharpe 6.99 → 7.10, with all **18** post-window names removed. So the three books
+  span **0% / 19% / 33%** of pool hindsight: 「ETF 池都带事后性」 is NOT a family-level fact and
+  must be tested book by book. bba95a11 is therefore the most trustworthy high score on this
+  bench, and should be preferred over the other two for research, since they each carry a
+  19–33% pool bonus. (Finding `q-e9-pit-bba95a11`; the book is `family: 小市值`, so its §2 row
+  lives there while the finding stays with the chain that spawned it.)
   ⚠⚠ **The VAL contamination is UNADDRESSED by this result and is the worse half.** Seven pool
   names listed in 2025 (`159323`, `159206`, `588170`, `159218`, `159227`, `588790`, `159256`) and
   epoch 9's VAL **is** 2025 — a 2026-authored pool containing names that listed inside the
