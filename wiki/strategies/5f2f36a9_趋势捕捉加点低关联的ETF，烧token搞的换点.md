@@ -2,6 +2,7 @@
 postId: 5f2f36a917c700fa7f8c7954a46761e0
 title: 趋势捕捉加点低关联的ETF，烧token搞的换点分回测
 sourceFile: strategies/2026-10-18_趋势捕捉加点低关联的ETF_烧token搞的换点分回测-5f2f36a9.py
+family: 其他
 concepts: [小市值因子, ETF轮动, 打板与涨停, 动量与趋势, 均值回归]
 factors:
   选股: [规模价值·小市值, ETF动量, 动量]

@@ -2,6 +2,7 @@
 postId: decbc72d1336448862dd04f33a09591c
 title: FollowBB与RideMood策略研究
 sourceFile: strategies/2026-10-18_FollowBB与RideMood策略研究-decbc72d.py
+family: 其他
 concepts: [未分类]
 factors:
   选股: [未分类]

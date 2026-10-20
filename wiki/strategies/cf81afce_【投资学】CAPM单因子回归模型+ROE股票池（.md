@@ -2,6 +2,7 @@
 postId: cf81afce54f18e3692026c0d31046d9a
 title: 【投资学】CAPM单因子回归模型+ROE股票池（含止损）
 sourceFile: strategies/2026-10-18_投资学_CAPM单因子回归模型_ROE股票池_含止损-cf81afce.py
+family: 其他
 concepts: [未分类]
 factors:
   风控: [止损线]
