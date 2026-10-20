@@ -3,64 +3,14 @@
   "lastRun": {
     "stage": "discover",
     "target": null,
-    "budget": 151,
-    "at": "2026-10-19T22:12:49.894Z",
+    "budget": 40,
+    "at": "2026-10-20T19:09:46.520Z",
     "outcome": "ran",
     "note": "discover + fetch (normalize is its own stage)",
     "minutesUsed": null,
-    "endedAt": "2026-10-19T22:13:45.606Z"
+    "endedAt": "2026-10-20T19:10:44.817Z"
   },
   "runs": [
-    {
-      "stage": "research",
-      "target": null,
-      "budget": 88,
-      "at": "2026-09-22T13:20:11.860Z",
-      "outcome": "ran",
-      "note": "resumed research session new (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-09-22T14:12:16.721Z"
-    },
-    {
-      "stage": "research",
-      "target": null,
-      "budget": 113,
-      "at": "2026-09-22T14:12:22.114Z",
-      "outcome": "ran",
-      "note": "resumed research session new (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-09-22T15:06:54.903Z"
-    },
-    {
-      "stage": "research",
-      "target": null,
-      "budget": 140,
-      "at": "2026-09-22T15:07:00.846Z",
-      "outcome": "ran",
-      "note": "resumed research session new (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-09-22T15:39:54.389Z"
-    },
-    {
-      "stage": "research",
-      "target": null,
-      "budget": 147,
-      "at": "2026-09-22T15:40:00.980Z",
-      "outcome": "ran",
-      "note": "resumed research session new (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-09-22T17:51:10.929Z"
-    },
-    {
-      "stage": "research",
-      "target": null,
-      "budget": 88,
-      "at": "2026-09-23T00:09:45.712Z",
-      "outcome": "ran",
-      "note": "resumed research session new (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-09-23T01:16:25.671Z"
-    },
     {
       "stage": "research",
       "target": null,
@@ -1210,6 +1160,56 @@
       "note": "discover + fetch (normalize is its own stage)",
       "minutesUsed": null,
       "endedAt": "2026-10-19T22:13:45.606Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 12,
+      "at": "2026-10-20T18:00:16.938Z",
+      "outcome": "ran",
+      "note": "family assignment over 20 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-20T18:05:01.369Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 12,
+      "at": "2026-10-20T18:05:05.006Z",
+      "outcome": "ran",
+      "note": "family assignment over 5 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-20T18:06:54.618Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 12,
+      "at": "2026-10-20T18:06:58.557Z",
+      "outcome": "ran",
+      "note": "0 retry(--redo) + 169 fresh, 0 newly deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-20T18:54:09.109Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 40,
+      "at": "2026-10-20T18:54:13.319Z",
+      "outcome": "ran",
+      "note": "0 retry(--redo) + 164 fresh, 0 newly deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-20T19:09:42.694Z"
+    },
+    {
+      "stage": "discover",
+      "target": null,
+      "budget": 40,
+      "at": "2026-10-20T19:09:46.520Z",
+      "outcome": "ran",
+      "note": "discover + fetch (normalize is its own stage)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-20T19:10:44.817Z"
     }
   ]
 }

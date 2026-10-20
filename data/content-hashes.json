@@ -1741,5 +1741,100 @@
     "postId": "85329a34c66d23c318425f9d7cd9c577",
     "sourceFile": "2026-10-20_收益率极致优化_年化5150_夏普109_含未来函数_求修正-85329a34.py",
     "registeredAt": "2026-10-19T22:13:45.206Z"
+  },
+  "078dac2d26ece4112444b73f115afaa415bed89bb7db6d1634c4f5bab0d2fe3d": {
+    "postId": "c65b0c1e699181d40d89ea5e90eaa1cc",
+    "sourceFile": "2026-10-21_一个适合上班族懒人定投的资产配置策略_年化13-c65b0c1e.py",
+    "registeredAt": "2026-10-20T19:09:52.547Z"
+  },
+  "edb35cddfbd6b79ab45974a132618daee11f35b851f6d9a9bc1e8df7123783df": {
+    "postId": "d030efd862a6e6d5a02704048581952b",
+    "sourceFile": "2026-10-21_一个防守型策率_不会大赚-d030efd8.py",
+    "registeredAt": "2026-10-20T19:09:55.162Z"
+  },
+  "014a638627f5368a990d739d990783587338ff9b6cb6f59ae729666c86127244": {
+    "postId": "fd55765f0e3458a24b0bb8f0b58a478b",
+    "sourceFile": "2026-10-21_全天候策略增强_A股风格轮动-fd55765f.py",
+    "registeredAt": "2026-10-20T19:09:57.769Z"
+  },
+  "d13e01fedc1df2dcb0ccfda5c731bb93a4928457c9d4d202808cff2e5d157da3": {
+    "postId": "4cef3692cf543140be2d972404ae8ac7",
+    "sourceFile": "2026-10-21_择时_轮动_双驱动策略-4cef3692.py",
+    "registeredAt": "2026-10-20T19:10:01.308Z"
+  },
+  "1070c9ecc29c8779ec34ee2c7eb5c1e95c05dd7e89f1eaadd5841db5f1dbc7fb": {
+    "postId": "fd2c49b6e08b3aea63fe486a79b65014",
+    "sourceFile": "2026-10-21_羊群效应系列_--识别股市中的羊群效应-fd2c49b6.py",
+    "registeredAt": "2026-10-20T19:10:03.916Z"
+  },
+  "d25d605f43fa3ced5a3bc74b718c07c69188ff1bf85b0be642039dd65a0941e7": {
+    "postId": "df3d10a3449c8a62585d62202e72ef09",
+    "sourceFile": "2026-10-21_投资者情绪类型划分与情绪指数构建在交易策略中的应用-df3d10a3.py",
+    "registeredAt": "2026-10-20T19:10:06.521Z"
+  },
+  "742f64a8b789147dabbb6e153d11510e9c1bf6adf32a2a896c94585c0d2791b3": {
+    "postId": "4c82066d72b93d35d0031d662b09db7f",
+    "sourceFile": "2026-10-21_一起造个多因子指数增强策略吧-4c82066d.py",
+    "registeredAt": "2026-10-20T19:10:09.132Z"
+  },
+  "9f3d951d257e81ef2c5c428e0912e719cc484241f5840d554f16dd4bfabeb016": {
+    "postId": "8de018c089a18d27f113e0ed93f4b545",
+    "sourceFile": "2026-10-21_加强版海龟_完全仓位风险管理_大盘保护_混合标的_小市值_ETF_大蓝筹_自定义等-8de018c0.py",
+    "registeredAt": "2026-10-20T19:10:11.885Z"
+  },
+  "6883b36ab3528852c0fea350fb81a5d17dfdb8668e88fc9a6485504975c49866": {
+    "postId": "48814d09238fb9b80764f6e79997ac3a",
+    "sourceFile": "2026-10-21_量化课堂_股指期货对冲策略_之学习笔记-48814d09.py",
+    "registeredAt": "2026-10-20T19:10:14.732Z"
+  },
+  "54c0bf551f9fc6bd4c330d3481555b9aec065fbfb19d5db4e42c1e3b63f86d02": {
+    "postId": "49751d61952b3ab1e8d939ea3edfecdc",
+    "sourceFile": "2026-10-21_TMOM趋势策略-49751d61.py",
+    "registeredAt": "2026-10-20T19:10:20.274Z"
+  },
+  "e648f7e3ee2cf13ee70e004dabe363a3b0f2d649da13ac9bdfb3c61ec797e139": {
+    "postId": "f34b863acecf5d74939b81f2e0d42fd5",
+    "sourceFile": "2026-10-21_多空对冲策略_大盘风险为_0-f34b863a.py",
+    "registeredAt": "2026-10-20T19:10:22.934Z"
+  },
+  "f62599fe9239d6b152d06034896a3bf278af110996b89cc0ac142205dd89ffe8": {
+    "postId": "d020499c6051a9d48574645468c0f046",
+    "sourceFile": "2026-10-21_基于多期限的选股策略_二_构建LLT因子改进-d020499c.py",
+    "registeredAt": "2026-10-20T19:10:25.569Z"
+  },
+  "5959fba9dc704c56903eee54b39b72e4ebafc80bbebbb021b8da342d066ab1ea": {
+    "postId": "a92001a64353c1f7891680b8f30a5f0f",
+    "sourceFile": "2026-10-21_OLS回归的量化之旅Chapter_2-a92001a6.py",
+    "registeredAt": "2026-10-20T19:10:28.193Z"
+  },
+  "022c83ea9acebf4285953014c974ec7cb454e35f209d13725c0808fad1542a24": {
+    "postId": "18586a2d9a5257822b2a3170c4aab348",
+    "sourceFile": "2026-10-21_大小盘风格轮动_基本面选股_涨停板接力-18586a2d.py",
+    "registeredAt": "2026-10-20T19:10:30.842Z"
+  },
+  "967f148bb58586df59bcbdb3325d889614452b2a2ddd0d30f03b93afdd250b42": {
+    "postId": "a0092e2d949803d35307c74f683fc421",
+    "sourceFile": "2026-10-21_核心资产轮动改进_中位数定仓_杠杆2-a0092e2d.py",
+    "registeredAt": "2026-10-20T19:10:33.493Z"
+  },
+  "c67b5990035ce6a46514b13380c39faa7f5f898c2530f90beaf009ddaa42fc61": {
+    "postId": "33622040733fa34e3002bd64c3a08213",
+    "sourceFile": "2026-10-21_四大银行轮动P-Trade移植版-33622040.py",
+    "registeredAt": "2026-10-20T19:10:36.127Z"
+  },
+  "73d68870759c5476f9eba862853fdfebedb309d0d05c170033257ed49708dfd0": {
+    "postId": "e03a2ef18247dbe1deb858eaa0fd89ce",
+    "sourceFile": "2026-10-21_四合一_七星高照_搅屎棍_五境掘金_红利-e03a2ef1.py",
+    "registeredAt": "2026-10-20T19:10:38.976Z"
+  },
+  "3918e9678b37d125b6b136639c955fe32bcde6b38309cc54901f35e6498d2ddc": {
+    "postId": "7da05cc892ce9a80eb2bb079f00b34a5",
+    "sourceFile": "2026-10-21_BBI_的小市值选股策略--基于多空指标_BBI_过滤-7da05cc8.py",
+    "registeredAt": "2026-10-20T19:10:41.618Z"
+  },
+  "fff355c603fa12a86fad2adff795b607568899e41638e8d92e9767c3c94e8e73": {
+    "postId": "aec6bd0e412af0676db382768ce140f9",
+    "sourceFile": "2026-10-21_长盈智选_既要高收益_更要低回撤_11年最大回撤12-aec6bd0e.py",
+    "registeredAt": "2026-10-20T19:10:44.395Z"
   }
 }
