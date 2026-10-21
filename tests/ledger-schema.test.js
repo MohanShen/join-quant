@@ -938,8 +938,43 @@ test('realizability flags are precise, and advisory', async (t) => {
     }
   });
 
+  /**
+   * ⚠⚠ The auction window MUST cover 9:26 — it is the pattern's own documented example.
+   *
+   * `call-auction-entry` was written for the 9:15–9:25 auction, but CLAUDE.md attributes
+   * a30641fb's R=1 partly to "9:26 auction entry" — and the 9:15–9:25 regex reported
+   * `0 of 1 file(s) flagged` on that very file. Found 2026-10-21 when 96fb1ca0 (竞价擒龙,
+   * `run_daily(buy, '09:26')`) normalized at objective 7.8535 / sharpe 11.95, 3.7x the next book
+   * on the bench, while the column a §3 reader weighs against such a score stayed silent.
+   *
+   * A flag that misses its own worked example is worse than no flag: it reads as evidence of
+   * absence. This test pins both files so the window cannot be narrowed back.
+   */
+  await t.test('the auction window covers 9:26 — the documented R=1 entry', () => {
+    for (const tag of ['a30641fb', '96fb1ca0']) {
+      const f = strategies.find(x => x.includes(tag));
+      assert.ok(f, `${tag} must still be in strategies/`);
+      const ids = rl.lintFile(`strategies/${f}`).map(x => x.id);
+      assert.ok(ids.includes('call-auction-entry'),
+        `${tag} schedules an order at 9:26 and must be flagged; got [${ids.join(', ')}]`);
+    }
+  });
+
+  await t.test('and STOPS at 9:29 — 9:30 is the ordinary open, implicated by nothing', () => {
+    // 12 of the 20 files scheduling an order in 9:26–9:30 sit on 9:30 exactly, so including it
+    // would roughly double the hits on no evidence. 9:26–9:29 is the gap between the auction
+    // price publishing and continuous trading opening; 9:30 IS the open.
+    const src = fs.readFileSync(path.join(ROOT, 'utils/realizability-lint.js'), 'utf8');
+    assert.match(src, /1\[5-9\]\|2\[0-9\]/, 'the minute class must span 9:15-9:29');
+    assert.ok(!/3\[0-9\]|\|30\)/.test(src.slice(src.indexOf("id: 'call-auction-entry'"),
+                                                src.indexOf("id: 'depth-gated'"))),
+      '9:30 must not be in the auction window');
+  });
+
   await t.test('it stays PRECISE — a noisy flag teaches readers to skip the column', () => {
-    // Measured 2026-10-17: 18 of 259 files. Two earlier attempts at a limit-up pattern hit 37 and
+    // Measured 2026-10-17: 18 of 259 files. Re-measured 2026-10-21 after widening the auction
+    // window to 9:29: 36 of 340 (0.106), of which call-auction-entry is 18, up from 2.
+    // Two earlier attempts at a limit-up pattern hit 37 and
     // then 140, both dominated by code that AVOIDS limit-ups, and it was removed rather than
     // tuned a third time. If this ratio balloons, a pattern has gone loose.
     const n = strategies.filter(f => rl.lintFile(`strategies/${f}`).length).length;

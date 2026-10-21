@@ -92,17 +92,37 @@ const PATTERNS = [
   {
     id: 'call-auction-entry',
     severity: 'info',
-    why: 'Places orders inside the 9:15–9:25 call auction. Part of the stated basis for ' +
-         "a30641fb's R=1 (min-500 market cap / 9:26 auction entry / ~100% daily turnover). " +
+    why: 'Places orders inside the 9:15–9:25 call auction, or in the 9:26–9:29 gap after the ' +
+         'auction price publishes and before continuous trading opens. Part of the stated basis ' +
+         "for a30641fb's R=1 (min-500 market cap / 9:26 auction entry / ~100% daily turnover). " +
          'INFO rather than measured: the auction itself was never isolated as the cause.',
     // ⚠ NARROWED after its first run flagged 73 files, almost all on
     // `'09:25' < current_time < '11:30'` — a CONTINUOUS-TRADING window guard, which is the
-    // opposite of an auction order. Now it requires a scheduled call INSIDE the auction window
-    // (9:15–9:25) whose target name looks like an order, not a check.
+    // opposite of an auction order. It requires a scheduled call INSIDE the window whose target
+    // name looks like an order, not a check. That requirement is what killed the false positives
+    // and it is unchanged.
+    //
+    // ⚠⚠ WIDENED 9:25 -> 9:29 (2026-10-21), because the ORIGINAL WINDOW MISSED ITS OWN
+    // DOCUMENTED EXAMPLE. `a30641fb` schedules `run_daily(buy, time='9:26')` and CLAUDE.md
+    // attributes its R=1 partly to "9:26 auction entry" — yet the 9:15–9:25 window reported
+    // `0 of 1 file(s) flagged` on it. Found when `96fb1ca0` (竞价擒龙, `run_daily(buy, '09:26')`)
+    // normalized at objective **7.8535 / sharpe 11.95**, 3.7x the next book on the bench, and the
+    // realizability column that a §3 reader is supposed to weigh against it said nothing.
+    //
+    // 9:26–9:29 is the gap between the auction match price being PUBLISHED (9:25) and continuous
+    // trading OPENING (9:30): an order scheduled there is placed knowing the opening print. The
+    // book being measured says so itself, in a line its author commented out —
+    //   `# run_daily(buy2, '09:27') #9:25分知道开盘价后可以提前下单`
+    //   ("after knowing the opening price at 9:25 you can place the order early")
+    // ⚠ It deliberately STOPS AT 9:29. 9:30 is the open of continuous trading — an ordinary
+    // at-the-open entry, nominally fillable, and implicated by nothing in this repo. 12 of the 20
+    // files scheduling an order in 9:26–9:30 sit on 9:30 exactly, so including it would have
+    // doubled the hits on no evidence. The rule stays grounded in what was measured, which is the
+    // standard `limit-up-entry` was DELETED for failing.
     test: lines => {
       const hit = lines.findIndex(l => {
         const c = code(l);
-        const m = c.match(/run_daily\(\s*([A-Za-z_][\w]*)\s*,\s*(?:time\s*=\s*)?['"]0?9:(1[5-9]|2[0-5])['"]/);
+        const m = c.match(/run_daily\(\s*([A-Za-z_][\w]*)\s*,\s*(?:time\s*=\s*)?['"]0?9:(1[5-9]|2[0-9])['"]/);
         // ⚠ `before_market_open` / `after_market_open` are JQ's PREPARATION hooks, not orders,
         // and they matched on the word "open" — 4 of the first 6 hits. Excluded by name, which
         // leaves the two real ones (`st_buy` at 09:23, `check_emergency_buy` at 9:15).
