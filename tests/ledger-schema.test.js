@@ -960,6 +960,23 @@ test('realizability flags are precise, and advisory', async (t) => {
     }
   });
 
+  /**
+   * ⚠ SECONDS-PRECISION times, the same pattern's second false negative.
+   *
+   * `38ca196e` (一进二v3.0) schedules `run_daily(buy, '09:25:41')` and scored objective 5.2937 /
+   * sharpe 11.48 — #3 on the epoch-9 bench — while a regex demanding the closing quote right
+   * after the MINUTES could not see it. Seconds precision is not incidental: it is what you use
+   * to time the auction, and every HH:MM:SS in the corpus clusters in 9:24–9:28 except two at
+   * 09:30:00. So the most aggressively timed entries were exactly the ones the flag missed.
+   */
+  await t.test('the auction window reads HH:MM:SS, not just HH:MM', () => {
+    const f = strategies.find(x => x.includes('38ca196e'));
+    assert.ok(f, '38ca196e must still be in strategies/');
+    const ids = rl.lintFile(`strategies/${f}`).map(x => x.id);
+    assert.ok(ids.includes('call-auction-entry'),
+      `a 09:25:41 entry must be flagged; got [${ids.join(', ')}]`);
+  });
+
   await t.test('and STOPS at 9:29 — 9:30 is the ordinary open, implicated by nothing', () => {
     // 12 of the 20 files scheduling an order in 9:26–9:30 sit on 9:30 exactly, so including it
     // would roughly double the hits on no evidence. 9:26–9:29 is the gap between the auction

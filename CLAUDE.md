@@ -1962,3 +1962,45 @@ Only the directories whose contents aren't self-evident:
   backtests and concurrent runs have returned identical metrics for different strategies, whereas
   a false "blocking" only wastes time. A test pins the whitelist's contents and still forbids
   inferring done-ness from "not 1".
+- ⚠⚠ **THE ENTIRE TOP OF THE EPOCH-9 BENCH IS LIMIT-UP CHASING, and the auction flag was blind to
+  all of it.** Measured 2026-10-22 over 110 epoch-9 rows:
+  | # | objective | sharpe | implied vol | book | flag before / after |
+  |---|---|---|---|---|---|
+  | 1 | 7.8535 | 11.95 | 69% | 竞价擒龙 | none / `call-auction-entry` |
+  | 2 | 7.5458 | 11.46 | 70% | 首板高开-低开-弱转强混合 | none / `call-auction-entry` |
+  | 3 | 5.2937 | 11.48 | 48% | 一进二v3.0 | none / `call-auction-entry` |
+  | 4 | 2.1171 | 5.14 | 47% | 10年15000倍，但是没什么卵用 | none / `call-auction-entry` |
+  Every one is internally consistent (implied vol 47–70%, so **none is a scrape artefact** by the
+  >150% rule) — the question is fills, not arithmetic, and 打板短线's realizability is already
+  **measured 1**: a sealed 一字板 cannot be bought at any price. **Before the two fixes below the
+  flag caught ZERO of these four**; now it catches all four. The first genuinely interesting
+  candidates start around #5–#8 (objective 1.7–1.9, implied vol 27–38%).
+  ⚠ Read this as a property of the WINDOW CHANGE, not of the books: a one-year TRAIN rewards
+  whatever worked in 2024, and 打板 books post enormous one-year numbers. It is the clearest
+  argument yet for weighting VAL 2025 and the untouched 2026 reserve over the TRAIN ranking.
+  **Two false negatives, same pattern, found an hour apart:**
+  1. **the window excluded its own documented example.** `call-auction-entry` matched 9:15–9:25,
+     but CLAUDE.md attributes a30641fb's R=1 partly to 「9:26 auction entry」 — and the lint said
+     `0 of 1 file(s) flagged` on that very file. 9:26–9:29 is the gap between the auction price
+     PUBLISHING (9:25) and continuous trading OPENING (9:30); a book being measured says so in a
+     line its own author commented out:
+     `# run_daily(buy2, '09:27') #9:25分知道开盘价后可以提前下单`.
+     It deliberately **stops at 9:29** — 9:30 is the ordinary open, implicated by nothing here, and
+     12 of the 20 files scheduling an order in 9:26–9:30 sit on 9:30 exactly, so including it would
+     have doubled the hits on no evidence.
+  2. **the regex demanded `HH:MM`, so SECONDS-PRECISION entries were invisible.**
+     `38ca196e` schedules `run_daily(buy, '09:25:41')`. Seconds precision is not incidental — it is
+     what you use to time the auction, and every `HH:MM:SS` in the corpus clusters in 9:24–9:28
+     apart from two at 09:30:00. So the most aggressively timed entries in the library were exactly
+     the ones the flag could not read.
+  Measured: `call-auction-entry` **2 → 20** hits, repo-wide **37 of 340 (0.109)** against the 0.25
+  precision guard. Tests pin both files and forbid 9:30 entering the window.
+  ⚠ **A flag that misses its own worked example is worse than no flag** — it reads as evidence of
+  absence. That is the standard `limit-up-entry` was DELETED for failing, and the same standard
+  applies to a pattern that is too NARROW, not only to one that is too loose.
+  ⚠ Still unclosed: **15 wiki pages carry a now-missing flag** and nothing can update them —
+  `kb-stub.realizabilityLine()` writes it only at stub CREATION, `stampNormalized` is ADD-ONLY
+  (returns `present` and writes nothing), and `wiki-epoch-repair` covers only the 7 `CANONICAL`
+  metric fields. kb-stub's own comment says 「correcting a stale one is a different job and
+  `wiki-epoch-repair.js` already owns it」 — but it does not: the capability was documented as
+  belonging somewhere and never implemented there.

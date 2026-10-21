@@ -122,7 +122,15 @@ const PATTERNS = [
     test: lines => {
       const hit = lines.findIndex(l => {
         const c = code(l);
-        const m = c.match(/run_daily\(\s*([A-Za-z_][\w]*)\s*,\s*(?:time\s*=\s*)?['"]0?9:(1[5-9]|2[0-9])['"]/);
+        // ⚠ `(?::[0-9]{2})?` — SECONDS-PRECISION times, a second false negative of the same
+        // pattern, found the same night. The #3 book on the epoch-9 bench
+        // (`38ca196e` 一进二v3.0, objective 5.2937 / sharpe 11.48) schedules
+        // `run_daily(buy, '09:25:41')`, and a regex demanding the closing quote right after the
+        // MINUTES cannot see it. Seconds precision is not incidental here — it is what you use to
+        // time the auction, and every `HH:MM:SS` in the corpus clusters in 9:24–9:28 apart from
+        // two at 09:30:00. Requiring HH:MM exactly meant the most aggressively timed entries in
+        // the library were the ones the flag could not read.
+        const m = c.match(/run_daily\(\s*([A-Za-z_][\w]*)\s*,\s*(?:time\s*=\s*)?['"]0?9:(1[5-9]|2[0-9])(?::[0-9]{2})?['"]/);
         // ⚠ `before_market_open` / `after_market_open` are JQ's PREPARATION hooks, not orders,
         // and they matched on the word "open" — 4 of the first 6 hits. Excluded by name, which
         // leaves the two real ones (`st_buy` at 09:23, `check_emergency_buy` at 9:15).
