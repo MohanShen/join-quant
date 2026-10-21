@@ -9,6 +9,7 @@ familyRole: variant
 ingestedAt: 2026-06-28
 codeLines: 1555
 stats: { annualReturn: null, sharpe: null, maxDrawdown: null, periodLabel: null }
+realizabilityFlags: [call-auction-entry]   # static, FREE, never a veto — node utils/realizability-lint.js strategies/2026-06-10_分享我的聚宽灵感挖掘Skill-d29d708e.py
 ---
 
 # 分享我的聚宽灵感挖掘Skill

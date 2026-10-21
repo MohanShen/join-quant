@@ -15,6 +15,7 @@ ingestedAt: 2026-10-18
 codeLines: 605
 stats: { 绩效未公开: true }
 normalized: { epoch: 9, window: "TRAIN 2024", annualReturn: 0.8239, sharpe: 4.14, maxDrawdown: 0.0739, objective: 0.75, gate: pass }
+realizabilityFlags: [uncapped-position-size!]   # static, FREE, never a veto — node utils/realizability-lint.js strategies/2026-10-17_小市值-白马-ETF组合_挺火的_模拟运行了半年多-92dbf9aa.py
 autoStub: true
 ---
 

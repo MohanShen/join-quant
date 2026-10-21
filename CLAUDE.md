@@ -1998,9 +1998,42 @@ Only the directories whose contents aren't self-evident:
   ⚠ **A flag that misses its own worked example is worse than no flag** — it reads as evidence of
   absence. That is the standard `limit-up-entry` was DELETED for failing, and the same standard
   applies to a pattern that is too NARROW, not only to one that is too loose.
-  ⚠ Still unclosed: **15 wiki pages carry a now-missing flag** and nothing can update them —
-  `kb-stub.realizabilityLine()` writes it only at stub CREATION, `stampNormalized` is ADD-ONLY
-  (returns `present` and writes nothing), and `wiki-epoch-repair` covers only the 7 `CANONICAL`
-  metric fields. kb-stub's own comment says 「correcting a stale one is a different job and
-  `wiki-epoch-repair.js` already owns it」 — but it does not: the capability was documented as
-  belonging somewhere and never implemented there.
+  ⚠⚠⚠ **CLOSED, and the gap was far worse than first reported: `realizabilityFlags` was DEAD CODE.**
+  I first wrote that "15 pages carry a now-missing flag". Both halves were wrong — the 254-page
+  figure behind it came from a bad `grep -lc` (both flags together), and the real state was
+  **0 of 256 pages carrying any flag line at all**. `kb-stub.realizabilityLine()` was defined,
+  documented in this file as something kb-stub "stamps", used for the 18-of-259 measurement via the
+  lint's CLI — and **called by nothing and exported by nothing**. The column a §3 reader is meant to
+  weigh a score against did not exist on a single page, on the night the bench's top four turned
+  out to be limit-up/auction books at sharpe 11.95 / 11.46 / 11.48 / 5.14.
+  **Fix**: `realizabilityLine` + new `stampRealizability` are exported, `createStub` emits the line,
+  and `normalize-sync.syncRealizability()` stamps every page — the FOURTH leak of the shape that
+  file already documents three times (bookkeeping that exists but belongs to no step). **34 pages
+  stamped, idempotent on re-run.**
+  ⚠ It REPLACES rather than being add-only, unlike `stampNormalized`, and the difference is
+  principled: the `normalized:` block is co-authored (74 pages carry a `ranAt:` the builder does not
+  emit, and rewriting it once destroyed provenance), whereas every character of the flag line is
+  derived from the source, so a stale one is simply wrong. It also **removes** a flag that no longer
+  applies — a column with one wrong entry is what taught readers to ignore `limit-up-entry`.
+  ⚠ It walks EVERY page, not the batch's: the flag is a function of the lint's current patterns, and
+  the auction window moved twice that night (2 → 20 hits), so a batch-scoped refresh would have left
+  the top four unflagged.
+  ⚠⚠ **`realizability-lint.lintFile(rel)` takes a REPO-RELATIVE path and silently returns `[]` for
+  anything else** — `path.join(ROOT, abs)` is garbage, `readFileSync` throws, the catch returns no
+  flags, indistinguishable from "this book is clean". It bit immediately: the dry run reported 34
+  pages to stamp and the live run stamped **0**, because one path passed `src` and the other
+  `path.join(ROOT, src)`. `stampRealizability` now **throws** on an absolute path, the same
+  precedent as `logicalSourceFile()`, and a test pins both the throw and the dry/wet agreement.
+- ⚠ **A SECOND hard-coded window label survived the epoch-9 sweep**, in `kb-stub`'s stub PROSE:
+  `📊 归一化（TRAIN 2022–2023，零滑点）`. The `normalized:` block was fixed to derive its label from
+  `windowLabel()`; this copy was missed because it uses an **en-dash**, so a grep for `2022-2023`
+  never found it. Now derived too. ⚠ **112 of 256 existing pages still carry the stale prose label**
+  (and stale gate text — `夏普<2.5` and `夏普<1.5` against an active gate of 1.0). `wiki-epoch-repair`
+  repairs the BLOCK's 7 `CANONICAL` fields only, so nothing repairs the prose. Reported, not fixed.
+- ⚠ **A test that reads live ledger state fails mid-batch, and the assertion was too strict.**
+  `integrate-queue.test.js`'s "family-queue reopens research-owned blocks" counted only
+  `reason === 'integrate-blocked'` as reopened. `family-queue` assigns ONE reason and `new-members`
+  outranks it, so when the epoch-9 re-measurement took 小市值 to **20 valid members against 17
+  awaiting** — releasing the coverage hold — it became due as `new-members` and the test reported a
+  correctly-queued family as stranded. The test's intent is "nothing research-owned is STRANDED", so
+  it now asserts presence in `due` under any expected reason.

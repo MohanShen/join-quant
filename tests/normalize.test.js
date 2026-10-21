@@ -613,6 +613,87 @@ const dbos = require('os');
 const dbpath = require('path');
 const { stampNormalized, normalizedLine } = require('../utils/kb-stub');
 
+/**
+ * ⚠⚠⚠ `realizabilityFlags:` was DEAD CODE: written, documented, never called.
+ *
+ * CLAUDE.md says kb-stub "stamps `realizabilityFlags:` beside the `normalized:` block, because
+ * that line is what feeds §3, `wiki/types/` and champion resolution". The lint existed, the
+ * 18-of-259 figure came from its CLI, the rationale was recorded — and `realizabilityLine()` was
+ * called by nothing and exported by nothing. Measured 2026-10-22: **0 of 256 pages** carried a
+ * flag line, so the caveat a §3 reader needs was on no page at all, the night the bench's top
+ * four turned out to be limit-up/auction books at sharpe 11.95 / 11.46 / 11.48 / 5.14.
+ */
+dbt('realizability flags reach the page', async (t) => {
+  const ns = require('../utils/normalize-sync');
+  const kb = require('../utils/kb-stub');
+  const tmp2 = () => dbfs.mkdtempSync(dbpath.join(dbos.tmpdir(), 'kbflag-'));
+
+  await t.test('the writer is reachable at all — exported and called', () => {
+    dba.ok(typeof kb.realizabilityLine === 'function', 'realizabilityLine must be exported');
+    dba.ok(typeof kb.stampRealizability === 'function', 'stampRealizability must be exported');
+    const sync = dbfs.readFileSync(dbpath.join(__dirname, '../utils/normalize-sync.js'), 'utf8');
+    dba.match(sync, /stampRealizability\(/, 'something must CALL it — dead code is how this broke');
+    dba.match(sync, /const realizability = syncRealizability\(/,
+      'sync() must run it, so every entry point converges like stubs and queue pruning do');
+  });
+
+  /**
+   * ⚠ The bug this test exists for, hit while writing the feature: the dry run reported 34 pages
+   * to stamp and the real run stamped 0. `lintFile(rel)` does `path.join(ROOT, rel)`, so an
+   * ABSOLUTE path becomes garbage, `readFileSync` throws, and the catch returns `[]` — identical
+   * to "this book has no flags". One code path passed `src`, the other `path.join(ROOT, src)`.
+   */
+  await t.test('an absolute sourceFile THROWS rather than silently finding no flags', () => {
+    const d = tmp2(), f = dbpath.join(d, 'p.md');
+    dbfs.writeFileSync(f, '---\npostId: a\n---\n\n# x\n');
+    dba.throws(() => kb.stampRealizability(f, '/abs/strategies/x.py'), /repo-relative/);
+  });
+
+  await t.test('dry and wet agree on what would change', () => {
+    const a = ns.syncRealizability({ dry: true });
+    const b = ns.syncRealizability({ dry: true });
+    dba.deepStrictEqual(
+      { add: a.added.length, up: a.updated.length, rm: a.removed.length },
+      { add: b.added.length, up: b.updated.length, rm: b.removed.length },
+      'the dry decision must be deterministic');
+    // After the real sync ran, a dry run must report nothing left to do — which is exactly the
+    // invariant the absolute-path bug violated (dry said 34, wet did 0, dry still said 34).
+    dba.strictEqual(a.added.length, 0, 'the live wiki should already be stamped');
+    dba.strictEqual(a.updated.length, 0);
+  });
+
+  await t.test('it is idempotent, and the flag sits beside the measurement', () => {
+    const d = tmp2(), f = dbpath.join(d, 'p.md');
+    // A real flagged source, so the lint actually fires: the bench's #3 book buys at 09:25:41.
+    const src = dbfs.readdirSync(dbpath.join(__dirname, '../strategies'))
+      .find(x => x.includes('38ca196e'));
+    dba.ok(src, '38ca196e must still exist for this fixture');
+    const rel = `strategies/${src}`;
+    dbfs.writeFileSync(f, `---\npostId: a\nsourceFile: ${rel}\nnormalized: { epoch: 9 }\n---\n\n# x\n`);
+
+    dba.strictEqual(kb.stampRealizability(f, rel), 'added');
+    const once = dbfs.readFileSync(f, 'utf8');
+    dba.match(once, /^normalized: \{ epoch: 9 \}\nrealizabilityFlags: \[call-auction-entry\]/m,
+      'the flag belongs immediately after the measurement it qualifies');
+
+    dba.strictEqual(kb.stampRealizability(f, rel), 'unchanged');
+    dba.strictEqual(dbfs.readFileSync(f, 'utf8'), once, 'a second stamp must not alter the file');
+  });
+
+  await t.test('a flag that no longer applies is REMOVED, not left to rot', () => {
+    const d = tmp2(), f = dbpath.join(d, 'p.md');
+    // An unflagged source with a stale flag line: it must go. A column with one wrong entry is
+    // what taught readers to ignore `limit-up-entry` before it was deleted.
+    const clean = dbfs.readdirSync(dbpath.join(__dirname, '../strategies'))
+      .find(x => require('../utils/realizability-lint').lintFile(`strategies/${x}`).length === 0);
+    dba.ok(clean, 'some strategy must lint clean');
+    dbfs.writeFileSync(f, `---\npostId: a\nsourceFile: strategies/${clean}\n` +
+                          'realizabilityFlags: [tick-depth-x100!]   # stale\n---\n\n# x\n');
+    dba.strictEqual(kb.stampRealizability(f, `strategies/${clean}`), 'removed');
+    dba.doesNotMatch(dbfs.readFileSync(f, 'utf8'), /realizabilityFlags/);
+  });
+});
+
 dbt('an existing page gets its measurement, without losing anything', async (t) => {
   const M = { annual: -7.72, sharpe: '-0.48', maxdd: 32.62, obj: '-0.4034', gate: 'fail', epoch: '6' };
   const tmp = () => dbfs.mkdtempSync(dbpath.join(dbos.tmpdir(), 'kbstub-'));

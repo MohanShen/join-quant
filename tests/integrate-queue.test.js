@@ -535,7 +535,16 @@ test('the exit gate names the owner of every block', async (t) => {
           `${f} is held and MUST say so — a silent hold is the stranding this test exists for`);
         continue;
       }
-      assert.ok(reopened.includes(f), `${f} is research-owned and must be reopened`);
+      // ⚠ The test is "nothing research-owned is STRANDED", not "its reason is integrate-blocked".
+      // `family-queue` assigns ONE reason per family and `new-members` outranks `integrate-blocked`,
+      // so a family due for both reports the other one — and the loop picks it up just the same.
+      // Measured 2026-10-22: the epoch-9 re-measurement took 小市值 to 20 valid members against 17
+      // awaiting, which released the coverage hold and left it due as `new-members`; asserting the
+      // reason rather than the presence reported that correctly-queued family as stranded.
+      const due = q.due.find(x => x.family === f);
+      assert.ok(due, `${f} is research-owned and must be in the research queue, under some reason`);
+      assert.ok(['integrate-blocked', 'new-members', 'never-researched'].includes(due.reason),
+        `${f} is due but for an unexpected reason: ${due.reason}`);
     }
     for (const f of reopened) {
       assert.ok(researchOwned.includes(f),

@@ -85,6 +85,20 @@ const safe = t => t.replace(/[\\/:*?"<>|#\[\]]/g, '').replace(/\s+/g, '').slice(
  * feeds §3, `wiki/types/` and champion resolution — the reader who needs the caveat is the one
  * looking at the table, not someone who later finds §4.
  */
+/**
+ * ⚠⚠⚠ THIS WAS DEAD CODE FOR ITS ENTIRE LIFE — defined, never called, never exported.
+ *
+ * CLAUDE.md states that `kb-stub` "stamps `realizabilityFlags:` beside the `normalized:` block,
+ * because that line is what feeds §3, `wiki/types/` and champion resolution — the reader who
+ * needs the caveat is the one looking at the table". The lint was written, the 18-of-259
+ * measurement was taken from its CLI, the rationale was recorded — and the writer was never
+ * wired into the page. Measured 2026-10-22: **0 of 256 wiki pages carried a flag line.**
+ *
+ * It mattered the same night: the four highest-scoring books on the epoch-9 bench are all
+ * limit-up/auction entries (objective 7.85 / 7.55 / 5.29 / 2.12, sharpe 11.95 / 11.46 / 11.48 /
+ * 5.14), 打板短线's realizability is measured 1, and a §3 reader had nothing on the page to weigh
+ * against those numbers.
+ */
 function realizabilityLine(sourceFile) {
   if (!sourceFile) return null;
   let flags = [];
@@ -134,6 +148,66 @@ function normalizedLine(metrics) {
  * Touches nothing but that one frontmatter line, and is idempotent: an unchanged line is not
  * rewritten, so a page's mtime and any human edits elsewhere are left alone.
  */
+/**
+ * Add or refresh a page's `realizabilityFlags:` line.
+ *
+ * ⚠ Unlike `stampNormalized`, this one REPLACES rather than being add-only, and the difference is
+ * principled, not a shortcut. The `normalized:` block is co-authored — 74 pages carry a `ranAt:`
+ * this builder does not emit — so rewriting it from the ledger destroyed provenance and was
+ * reverted within the hour. This line has no human-authored part: every character of it is
+ * derived from the source file by `realizability-lint`, so the generated text IS the truth and a
+ * stale one is simply wrong. Verified before writing: 0 of 256 pages carried the line at all, so
+ * there were no hand edits to preserve.
+ *
+ * ⚠ It also REMOVES the line when the source no longer flags anything. A flag that lingers after
+ * the pattern stops matching is worse than no flag, the same reason `limit-up-entry` was deleted:
+ * a reader who finds one wrong entry stops trusting the column.
+ *
+ * @returns 'added' | 'updated' | 'unchanged' | 'removed' | 'none' | 'no-frontmatter' | 'no-source'
+ */
+function stampRealizability(file, sourceFile) {
+  // ⚠⚠ `sourceFile` MUST be repo-relative, and passing an absolute path THROWS rather than
+  // quietly doing nothing. `realizability-lint.lintFile(rel)` does `path.join(ROOT, rel)`, which
+  // turns an absolute path into garbage, so `readFileSync` throws into a `catch` that returns
+  // `[]` — indistinguishable from "this book has no flags". I hit exactly that writing this
+  // function: the dry run reported 34 pages to stamp and the real run stamped 0, because one
+  // path passed `src` and the other passed `path.join(ROOT, src)`. Same precedent as
+  // `logicalSourceFile()`, which throws on a path escaping the repo rather than writing a hidden
+  // file: a silent wrong answer costs more than a loud refusal.
+  if (sourceFile && path.isAbsolute(sourceFile)) {
+    throw new Error(`stampRealizability: sourceFile must be repo-relative, got ${sourceFile}`);
+  }
+  let t;
+  try { t = fs.readFileSync(file, 'utf8'); } catch { return 'unreadable'; }
+  if (!t.startsWith('---')) return 'no-frontmatter';
+  const end = t.indexOf('\n---', 3);
+  if (end < 0) return 'no-frontmatter';
+  if (!sourceFile || !fs.existsSync(path.join(ROOT, sourceFile))) return 'no-source';
+
+  const want = realizabilityLine(sourceFile);
+  const fm = t.slice(0, end);
+  const have = (fm.match(/^realizabilityFlags:.*$/m) || [])[0] || null;
+
+  if (!want && !have) return 'none';
+  if (want === have) return 'unchanged';
+  if (!want && have) {
+    fs.writeFileSync(file, fm.replace(/^realizabilityFlags:.*$\n?/m, '') + t.slice(end));
+    return 'removed';
+  }
+  if (have) {
+    fs.writeFileSync(file, fm.replace(/^realizabilityFlags:.*$/m, want) + t.slice(end));
+    return 'updated';
+  }
+  // New line goes directly after `normalized:` when there is one — CLAUDE.md's reason for this
+  // field is that the reader looking at the measurement is the one who needs the caveat, so it
+  // belongs beside it, not at the end of the frontmatter.
+  const next = /^normalized:.*$/m.test(fm)
+    ? fm.replace(/^(normalized:.*)$/m, `$1\n${want}`)
+    : `${fm}\n${want}`;
+  fs.writeFileSync(file, next + t.slice(end));
+  return 'added';
+}
+
 function stampNormalized(file, metrics) {
   if (!metrics || metrics.annual == null || metrics.sharpe == null) return 'no-metrics';
   let t;
@@ -213,7 +287,7 @@ ${proposal}ingestedAt: ${new Date().toISOString().slice(0, 10)}
 codeLines: ${fullSrc.split('\n').length}
 stats: { 绩效未公开: true }
 ${normalizedLine(metrics)}
-autoStub: true
+${realizabilityLine(srcFile) ? realizabilityLine(srcFile) + '\n' : ''}autoStub: true
 ---
 
 # ${title}
@@ -221,7 +295,7 @@ autoStub: true
 **一句话**：⚙ 自动桩页（daily 归一化生成），概念为启发式推断，忠实翻译待 \`/ingest-strategy\` 补全。
 
 ## 绩效
-📊 归一化（TRAIN 2022–2023，零滑点）：年化 ${pct(a)} | 夏普 ${metrics.sharpe} | 最大回撤 ${pct(m)} | objective ${metrics.obj}（${gateTxt}）。自报绩效未公开。
+📊 归一化（${windowLabel('train')}，零滑点）：年化 ${pct(a)} | 夏普 ${metrics.sharpe} | 最大回撤 ${pct(m)} | objective ${metrics.obj}（${gateTxt}）。自报绩效未公开。
 
 ## 涉及概念
 ${concepts.map(c => `- [[${c}]]`).join('\n')}
@@ -264,4 +338,4 @@ function regenConceptTables() {
   return n;
 }
 
-module.exports = { stampNormalized, normalizedLine, classify, createStub, regenConceptTables, headerField, windowLabel };
+module.exports = { stampNormalized, stampRealizability, realizabilityLine, normalizedLine, classify, createStub, regenConceptTables, headerField, windowLabel };

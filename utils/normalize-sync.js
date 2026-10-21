@@ -61,6 +61,57 @@ function pagedSourceFiles() {
 }
 
 /**
+ * Stamp every page's `realizabilityFlags:` line from its source.
+ *
+ * ⚠⚠ The FOURTH leak of the same shape as the three already recorded here: the bookkeeping
+ * existed but belonged to no step. `kb-stub.realizabilityLine()` was written, CLAUDE.md recorded
+ * why the flag belongs beside the measurement, the 18-of-259 figure was taken from the lint's
+ * CLI — and the function was **never called by anything**. Measured 2026-10-22: 0 of 256 pages
+ * carried a flag line, so the column a §3 reader is supposed to weigh against a score did not
+ * exist on any page.
+ *
+ * It belongs here for the same reason stub creation and queue pruning do: this is the step that
+ * reconciles the knowledge base against the ledger, and it runs at the end of every batch, so the
+ * flag cannot drift away from the lint again. A direct normalizer run gets it too.
+ *
+ * ⚠ It walks EVERY page, not just the ones this batch touched. The flag is a function of the
+ * source and the lint's current patterns, so a lint change (the auction window moved twice on
+ * 2026-10-22, taking `call-auction-entry` from 2 hits to 20) must propagate to pages measured
+ * long ago. A batch-scoped refresh would have left the top four books on the bench unflagged.
+ *
+ * @returns {{added:string[], updated:string[], removed:string[], unchanged:number, noSource:string[]}}
+ */
+function syncRealizability({ dry = false } = {}) {
+  const kb = require('./kb-stub');
+  const out = { added: [], updated: [], removed: [], unchanged: 0, noSource: [] };
+  if (!fs.existsSync(PAGES_DIR)) return out;
+  for (const f of fs.readdirSync(PAGES_DIR).filter(x => x.endsWith('.md'))) {
+    const fp = path.join(PAGES_DIR, f);
+    const m = fs.readFileSync(fp, 'utf8').match(/^sourceFile:\s*(\S+)/m);
+    if (!m) continue;
+    const src = m[1];
+    if (!fs.existsSync(path.join(ROOT, src))) { out.noSource.push(f); continue; }
+    if (dry) {
+      // Decide without writing, using the same two inputs stampRealizability compares.
+      const want = kb.realizabilityLine(src);
+      const have = (fs.readFileSync(fp, 'utf8').match(/^realizabilityFlags:.*$/m) || [])[0] || null;
+      if (want === have) { if (want) out.unchanged++; }
+      else if (want && !have) out.added.push(f);
+      else if (!want && have) out.removed.push(f);
+      else out.updated.push(f);
+      continue;
+    }
+    const r = kb.stampRealizability(fp, src);   // repo-relative — stampRealizability throws on absolute
+    if (r === 'added') out.added.push(f);
+    else if (r === 'updated') out.updated.push(f);
+    else if (r === 'removed') out.removed.push(f);
+    else if (r === 'unchanged') out.unchanged++;
+    else if (r === 'no-source') out.noSource.push(f);
+  }
+  return out;
+}
+
+/**
  * Reconcile the knowledge base and the pending queue against the ledger.
  * @returns {{stubbed:string[], pruned:string[], missingSource:string[]}}
  */
@@ -147,7 +198,11 @@ function sync({ window = 'train', dry = false } = {}) {
     }
   } catch { /* state module unavailable — reported as none */ }
 
-  return { stubbed, pruned, unresolvable, resolvedDeferred, missingSource };
+  // ⚠ Runs on EVERY page, after the stubs exist, so a page created a moment ago gets its flag
+  // in the same pass. See syncRealizability for why it is not scoped to this batch.
+  const realizability = syncRealizability({ dry });
+
+  return { stubbed, pruned, unresolvable, resolvedDeferred, missingSource, realizability };
 }
 
 /**
@@ -201,4 +256,4 @@ if (require.main === module) {
   if (dry) console.log('[sync] (dry run — nothing written)');
 }
 
-module.exports = { sync, refreshFamilies, ledgerRows, TERMINAL };
+module.exports = { sync, refreshFamilies, syncRealizability, ledgerRows, TERMINAL };
