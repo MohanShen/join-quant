@@ -1946,3 +1946,19 @@ Only the directories whose contents aren't self-evident:
   ⚠ The failure path must NOT rewrite that file — with `stdio` pointed at it, the streamed output
   is not in `e.stdout`, so the old unconditional `writeFileSync` would have REPLACED the whole log
   with `e.message`. The reason is appended; a test asserts the guard and the `finally` close.
+- ⚠⚠ **`log.state=3` means ERRORED, and an errored run LINGERS in `running[]` exactly like a
+  finished one.** Found 2026-10-22, right after a batch produced eight compile-errors: with no
+  normalizer running, `jq-running` showed one live entry (这是一个简单的策略-1424, 4 min old) in a
+  state nobody had documented — the repo knew only `1` = in-flight and `2` = finished.
+  Settled by OBSERVATION, not inference: the entry's own log first line is
+  `2024-01-01 - ERROR - Traceback … jqboson/plugin/web.py", line 86, in import_` — the strategy
+  never loaded — and `duration.used` sat at **90 across the whole episode**, so an errored run
+  **bills nothing**. It is the compile-error case, still listed.
+  ⚠ Consequence if left: `probeFinished` cleared only `'2'`, so a lingering compile-error reads as
+  a live blocker and parks the next batch in `waitClear` for up to **50 minutes** against a run
+  that can never complete. At eight compile-errors a batch, that is most of a tier.
+  **`DONE_STATES` is now an explicit WHITELIST (`'2'`, `'3'`)** and `'1'` must never appear in it.
+  Anything unobserved keeps the entry BLOCKING — a false "not blocking" permits two concurrent
+  backtests and concurrent runs have returned identical metrics for different strategies, whereas
+  a false "blocking" only wastes time. A test pins the whitelist's contents and still forbids
+  inferring done-ness from "not 1".

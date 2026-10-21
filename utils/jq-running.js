@@ -87,6 +87,28 @@ function cnMinutes(s) {
  *        in place, for the caller's diagnostics
  * @returns {Promise<Set<string>>} the ids whose own log reads FINISHED
  */
+/**
+ * The log states that mean "this entry will never finish, so waiting for it is waiting forever".
+ *
+ * ⚠⚠ A WHITELIST, never a blacklist. Anything not listed here — including a state nobody has
+ * observed yet — keeps the entry BLOCKING, because a false "not blocking" lets two backtests run
+ * at once and concurrent runs have returned IDENTICAL metrics for different strategies on this
+ * account. A false "blocking" only wastes time. Never infer done-ness from "not 1".
+ *
+ * Each entry was settled by OBSERVATION, not inference:
+ *   '2'  FINISHED — settled 2026-10-18 by instrumenting the executor to print the state while a
+ *        run was KNOWN live (`LIVE-RUN-STATE`): in-flight read 1, finished read 2.
+ *   '3'  ERRORED  — settled 2026-10-22 on 这是一个简单的策略-1424, which sat in `running[]` for
+ *        minutes after its batch exited. Its own log's first line is the proof:
+ *          `2024-01-01 - ERROR - Traceback … jqboson/plugin/web.py", line 86, in import_`
+ *        i.e. the strategy never loaded. `duration.used` stayed at 90 across the whole episode,
+ *        so an errored run also bills nothing — it is the compile-error case, still listed.
+ *        Without this, every lingering compile-error would park the next batch in `waitClear`
+ *        for up to 50 minutes against a run that can never complete, and we had just produced
+ *        EIGHT compile-errors in one batch.
+ */
+const DONE_STATES = new Set(['2', '3']);
+
 async function probeFinished(page, rows) {
   const finishedIds = new Set();
   for (const r of rows) {
@@ -100,7 +122,7 @@ async function probeFinished(page, rows) {
         } catch { return null; }
       }, r.id);
       r.logState = st;
-      if (st === '2') finishedIds.add(r.id);
+      if (DONE_STATES.has(st)) finishedIds.add(r.id);
     } catch { /* unreadable -> still blocking */ }
   }
   return finishedIds;
@@ -239,7 +261,8 @@ if (require.main === module) {
     console.log(`[running] live=${r.live} stale=${r.stale}`);
     for (const x of r.rows) console.log(`   ${x.usedSec} old, started ${x.time}` +
       (x.logState != null ? `  log.state=${x.logState}` : '') +
-      (x.logState === '2' ? '  (FINISHED — not a blocker)' : ''));
+      (x.logState === '2' ? '  (FINISHED — not a blocker)'
+       : x.logState === '3' ? '  (ERRORED — not a blocker)' : ''));
     process.exit(r.live === 0 ? 0 : 1);
   })().catch(e => { console.error('FATAL', e.message); process.exit(0); });
 }

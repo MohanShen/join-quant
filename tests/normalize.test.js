@@ -410,7 +410,19 @@ cwt('a concurrent backtest is waited out', async (t) => {
 
     // ⚠ ONLY an exact '2' clears an entry. state 1, null (unreadable) and a throw must all leave
     // it blocking — a false "not blocking" corrupts results, a false "blocking" only wastes time.
-    cwa.match(src, /st === '2'/, "clearing must require a positive read, not a truthy one");
+    // ⚠ Clearing must be a POSITIVE read against a WHITELIST, never a truthy test and never a
+    // blacklist. '2' = finished (settled 2026-10-18 via LIVE-RUN-STATE); '3' = errored (settled
+    // 2026-10-22 on 这是一个简单的策略-1424, whose log's first line is an import Traceback and
+    // whose episode never moved `duration.used` off 90). A state nobody has observed must keep
+    // the entry BLOCKING, because a false "not blocking" permits two concurrent backtests and
+    // concurrent runs have returned identical metrics for different strategies.
+    cwa.match(src, /DONE_STATES\s*=\s*new Set\(\[([^\]]*)\]\)/,
+      'the done states must be an explicit whitelist');
+    const listed = src.match(/DONE_STATES\s*=\s*new Set\(\[([^\]]*)\]\)/)[1];
+    cwa.match(listed, /'2'/, "'2' (finished) must clear");
+    cwa.match(listed, /'3'/, "'3' (errored) must clear — it can never complete");
+    cwa.ok(!/'1'/.test(listed), "'1' is IN-FLIGHT and must never clear");
+    cwa.match(src, /DONE_STATES\.has\(st\)/, 'the whitelist must be what gates the clear');
     cwa.doesNotMatch(src, /st\s*!==?\s*'1'/, 'never infer finished from "not 1"');
     // The age rule stays — a cancelled-but-unreaped run reports 1 and is still handled by age.
     cwa.match(src, /cnMinutes\(r\.usedSec\) <= STALE_MIN/);
