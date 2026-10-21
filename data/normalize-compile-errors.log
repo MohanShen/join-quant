@@ -51,3 +51,17 @@
 2026-10-19T20:46:56.405Z	strategies/2026-10-18_质量因子选股策略_感觉挺特别的_质量_因子-b1dc366f.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数
 2026-10-19T20:47:46.530Z	strategies/2026-10-18_贰章_量化交易_估值因子分析-63f0c9b9.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数
 2026-10-19T21:37:49.985Z	strategies/2026-10-18_魔法公式选股_由其构建的指数进行MACD控制买卖-54310d81.py	KeyError: &lt;map object at 0x7fe0b578fcf8&gt;
+2026-10-21T16:44:24.219Z	strategies/2026-05-13_价值选股与RSRS择时-5a5ba567.py	ModuleNotFoundError: 您是否想导入研究中的自定义库? 自定义库暂时不支持文件夹, 请把库文件放在研究根目录: pandas.stats.api
+2026-10-21T16:45:37.443Z	strategies/2026-05-13_量化课堂_多因子策略入门-49efd264.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:30:00
+2026-10-21T17:30:43.035Z	strategies/2026-05-17_量化课堂_季报预告信号策略的失效_-_知情交易的查证-26b52dca.py	jqboson.core.exception.ReadRemoteFileError: read_file DateStockDict.pkl: 文件'/opt/research-files/655/65568519426/DateStockDict.pkl'不存在
+2026-10-21T17:32:47.958Z	strategies/2026-05-18_基本面单因子测试_以BP因子为例-c18e0923.py	TabError: inconsistent use of tabs and spaces in indentation
+2026-10-21T17:33:47.937Z	strategies/2026-05-18_策略发布_A股日频均值回归_低换手_多因子截面-23f07734.py	jqboson.core.exception.ReadRemoteFileError: read_file signal_table_meanreverse.json: 文件'/opt/research-files/655/65568519426/signal_table_meanreverse.json'不存在
+2026-10-21T17:34:45.848Z	strategies/2026-05-19_单股2014_01_01-2016_08_01_收益6508_年化386-cf5cbac2.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 tradestat
+2026-10-21T17:35:43.484Z	strategies/2026-05-19_多任务学习一条龙框架优化修复版-77e78b06.py	jqboson.core.exception.ReadRemoteFileError: read_file inference_config.pkl: 文件'/opt/research-files/655/65568519426/inference_config.pkl'不存在
+2026-10-21T17:36:43.323Z	strategies/2026-05-19_首板炸板回封买入策略-9106ccaf.py	jqboson.data.interfaces.SecurityNotExist: 300060.XSHE
+2026-10-21T17:46:49.523Z	strategies/2026-05-21_shi盘4_1-511大结局三马七星胜_五福惨遭淘汰七星小胜-c4291a66.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 jqmt8
+2026-10-21T19:32:23.829Z	strategies/2026-05-23_利用爬虫进行每日市场行情推送-477c48dc.py	AttributeError: 'NoneType' object has no attribute 'get_text'
+2026-10-21T19:33:18.601Z	strategies/2026-05-23_基于RSRS策略的改进年化20-9ca7f493.py	ModuleNotFoundError: 您是否想导入研究中的自定义库? 自定义库暂时不支持文件夹, 请把库文件放在研究根目录: pandas.stats.api
+2026-10-21T19:39:23.510Z	strategies/2026-05-24_二八轮动小市值策略改进版07年至16年4000多倍-1ae37a5f.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 tradestat
+2026-10-21T19:41:41.725Z	strategies/2026-05-26_一日游短线策略-43fca771.py	KeyError: '300995.XSHE'
+2026-10-21T19:51:22.247Z	strategies/2026-05-29_策略研发_三进兵策略_第二版-87ab0122.py	jqdata.exceptions.FutureDataError: 设置avoid_future_data=True之后, get_bars的end_dt(2025-10-10 17:00:00)不能大于当前时间current_dt(2024-01-05 09:30:00)
