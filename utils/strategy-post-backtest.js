@@ -33,6 +33,7 @@
 const { chromium } = require('playwright');
 const { StrategyLoader } = require('./loader');
 const { ensureCdp, allowLocalFallback, describe: describeExec } = require('./exec-config');
+const { probeFinished } = require('./jq-running');   // ONE OWNER of "is this listed entry actually live?"
 const path = require('path');
 const fs   = require('fs');
 
@@ -495,7 +496,7 @@ async function concurrencyGate(page) {
   const rows = await page.evaluate(async () => {
     try {
       const j = await (await fetch('/algorithm/index/statistics', { credentials: 'include' })).json();
-      return ((j && j.data && j.data.running) || []).map(r => ({ usedSec: r.usedSec, time: r.time }));
+      return ((j && j.data && j.data.running) || []).map(r => ({ usedSec: r.usedSec, time: r.time, id: r.id }));
     } catch { return null; }
   });
   if (rows == null) {
@@ -503,7 +504,7 @@ async function concurrencyGate(page) {
     return { baseline: 0, live: 0, tolerated: 0 };
   }
 
-  // Three categories, not two. The middle one is what used to cost whole days.
+  // Four categories, not two. The middle ones are what used to cost whole days.
   //
   //   young   age <= our own cap        a backtest that can still finish. REAL contention: refuse.
   //   dead    cap < age <= STALE_MIN    OURS, cancelled at the cap, and JQ refused the cancel
@@ -514,11 +515,30 @@ async function concurrencyGate(page) {
   // ours" because the pipeline caps its own runs — which is backwards. Capping is exactly how it
   // becomes ours-and-dead. That made every entry between 45 and 120 minutes refuse new work: a
   // 75-minute dead zone created by our own slow-skip, hit by the research stage on 2026-10-04.
+  //
+  // ⚠⚠⚠ FOUR categories, because AGE ALONE CANNOT SEE A FINISHED RUN. JQ keeps a completed
+  // backtest listed in running[] for a while after it is done, and such an entry is young by age
+  // while being no blocker at all. `jq-running.probeFinished` is the ONE OWNER of that rule (see
+  // its header for why only a positive log.state of 2 clears an entry) and this gate MUST use it:
+  // when the rule lived only in the waiter, the two disagreed about the same entry and the
+  // normalizer LIVELOCKED — this gate refused, the normalizer called the waiter, the waiter
+  // cleared the account in seconds, the same file was retried, refused again. Measured
+  // 2026-10-21: `used` frozen at 49/180 for ~38 minutes with 183 files pending and a waiter child
+  // respawning every few seconds, i.e. the whole day spent printing CONCURRENT-STOP.
+  //
+  //   finished  log.state == 2           done, JQ just has not dropped it. NOT a blocker.
   const capMin = Math.max(1, Math.round(MAX_POLL_MS / 60000));
-  const young = [], dead = [], stale = [];
+  const finishedIds = await probeFinished(page, rows);
+  const young = [], dead = [], stale = [], finished = [];
   for (const r of rows) {
     const age = parseCnDuration(r.usedSec);
+    if (finishedIds.has(r.id)) { finished.push(r); continue; }
     (age > CONCURRENT_STALE_MIN ? stale : age > capMin ? dead : young).push(r);
+  }
+  for (const r of finished) {
+    console.log(`[post] ⚠ a listed running[] entry has already FINISHED (log.state=2): ` +
+                `${r.usedSec} old, started ${r.time}. Not a blocker — JQ has simply not dropped ` +
+                'it from the list yet.');
   }
   for (const r of [...dead, ...stale]) {
     console.log(`[post] ⚠ tolerating an unreapable running[] entry: ${r.usedSec} old ` +
@@ -538,8 +558,12 @@ async function concurrencyGate(page) {
     console.log(`[post] ⚠ JQ_ALLOW_CONCURRENT=1 with ${young.length} live run(s) — metrics may be MIS-ATTRIBUTED.`);
   }
 
-  // ⚠ The BASELINE is every entry still listed, dead and stale included — because that is the
-  // number `pollUntilComplete` will actually see. It reads `running.length` with NO age filter,
+  // ⚠ The BASELINE is every entry still listed — dead, stale AND finished-but-not-dropped —
+  // because that is the number `pollUntilComplete` will actually see. A finished entry is excluded
+  // from `young` (it is no reason to refuse) but NOT from the baseline (it is still counted by the
+  // endpoint until JQ drops it), and those are different questions. Completion no longer rests on
+  // this count alone anyway: the poller requires the algorithm's own buildList to read 完成, so a
+  // finished entry being reaped mid-run cannot be mistaken for our run finishing. It reads `running.length` with NO age filter,
   // while this gate filtered by age: the asymmetry meant a lingering entry let runs START and
   // never let them COMPLETE, so each one spun to its cap and was recorded as a slow-skip.
   // Handing the count over replaces "done when it reaches 0" with "done when it returns to

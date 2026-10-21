@@ -1907,3 +1907,31 @@ Only the directories whose contents aren't self-evident:
   484-day result and curve at zero cost (`backtest-series.fetchViaHttp`, saved under the normal
   series key; the finding is flagged `recovered-after-slow-skip`). Check the buildList before
   writing a capped run off as a phantom; the minutes are already billed either way.
+- ⚠⚠⚠ **"Is the account blocked?" is answered in TWO places, and fixing ONE of them LIVELOCKED the
+  normalizer for a whole stage.** JQ keeps a *completed* backtest listed in `running[]` for a
+  while, so a finished entry is **young by age** while being no blocker at all.
+  `jq-running.probeFinished` reads each listed entry's own `/algorithm/backtest/log` and clears it
+  only on a positive `state === '2'` — and on 2026-10-18 that fix went into the **waiter only**.
+  `concurrencyGate()` in `strategy-post-backtest.js` kept classifying by AGE alone
+  (`age > STALE_MIN ? stale : age > capMin ? dead : young`), so the two gates disagreed about the
+  same entry and the batch span:
+  gate refuses → `CONCURRENT-STOP` → normalizer calls `jq-running --wait` → the waiter clears the
+  account **in seconds** → same file retried → refused again, 3 times per file, then on to the next
+  file and the same wall.
+  **Measured 2026-10-21** (`data/daily-logs/stage-strategy-normalize-2026-10-21T14-02-22.log`):
+  **114 `CONCURRENT STOP` lines, 0 normalized rows, 0 backtest minutes**, `used` frozen at 49/180
+  for ~38 min with 183 files pending and a `jq-running --wait` child respawning every few seconds.
+  That is the "15-minute no-op" — it was never a hang; it was the pipeline refusing itself.
+  ⚠ The parent normalizer is NOT where the gate lives, so it looked innocent: 0.93s CPU over 38
+  minutes, **zero open sockets**, no child at the instant sampled. `pgrep -P <pid>` catching a
+  two-second-old waiter child is what exposed the cycle.
+  **Fixed by giving the rule ONE OWNER**: `probeFinished(page, rows)` is exported from
+  `jq-running.js` and `concurrencyGate` calls it, adding a fourth category (`finished`) that is
+  excluded from `young` but still counted in the poller's `baseline` — different questions.
+  A test asserts both files share it, including that the executor's `running[]` map carries
+  `id: r.id` (drop that and the probe has nothing to key on, returns an empty set, and the
+  livelock returns with every call site still looking correct).
+  ⚠ **A diagnosis rule, not just a bug**: the loudest line in the log was the refusal, and the
+  refusal names the *blocker*, not the disagreement. Two gates both "working" is invisible in
+  either one's output — only the pair is wrong. When a stage reports nothing and spends nothing,
+  compare what each gate says about the SAME entry.

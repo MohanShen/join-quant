@@ -416,6 +416,46 @@ cwt('a concurrent backtest is waited out', async (t) => {
     cwa.match(src, /cnMinutes\(r\.usedSec\) <= STALE_MIN/);
   });
 
+  /**
+   * ⚠⚠⚠ BOTH blockers must answer "is this entry live?" with the SAME rule.
+   *
+   * "Is the account blocked?" is asked in two places: `waitClear` here, and `concurrencyGate` in
+   * the executor. The finished-entry rule above landed in the waiter ONLY, and the two then
+   * disagreed about one entry and LIVELOCKED the normalizer — the executor's age-only split put a
+   * finished 28-minute entry in `young` and printed CONCURRENT-STOP, the normalizer called the
+   * waiter, the waiter cleared the account in seconds, the same file was retried, refused again,
+   * round and round. Measured 2026-10-21: `used` frozen at 49/180 for ~38 minutes with 183 files
+   * pending and a waiter child respawning every few seconds — a whole day spent refusing itself.
+   *
+   * It is not enough that both files happen to implement the rule: they must SHARE it, because the
+   * failure was a fix applied to one copy. So `probeFinished` is exported and the executor calls
+   * it, and this test fails if the executor grows its own version.
+   */
+  await t.test('the executor and the waiter share ONE finished-entry rule', () => {
+    const jr = cwfs.readFileSync(cwpath.join(__dirname, '../utils/jq-running.js'), 'utf8');
+    const ex = cwfs.readFileSync(cwpath.join(__dirname, '../utils/strategy-post-backtest.js'), 'utf8');
+
+    cwa.match(jr, /module\.exports = \{[^}]*probeFinished/, 'the rule must be exported to be shared');
+    cwa.ok(require('../utils/jq-running').probeFinished, 'probeFinished must be callable');
+
+    cwa.match(ex, /require\('\.\/jq-running'\)/, 'the executor must import the rule, not restate it');
+    cwa.match(ex, /probeFinished\(page, rows\)/, 'concurrencyGate must actually call it');
+    cwa.match(ex, /finishedIds\.has\(r\.id\)/,
+      'a finished entry must be excluded from the refuse-worthy category');
+
+    // ⚠ The silent way to break this: the executor's running[] map drops `id`, so probeFinished
+    // has nothing to key on, returns an empty set, and the livelock returns with every call site
+    // still looking correct.
+    const mapLine = (ex.match(/\.map\(r => \(\{ usedSec: r\.usedSec[^)]*\)/) || [''])[0];
+    cwa.match(mapLine, /id: r\.id/, 'the executor must carry each entry id through to the probe');
+
+    // The executor must not re-derive "finished" from the log itself — one owner, one rule.
+    const gate = ex.slice(ex.indexOf('async function concurrencyGate'),
+                          ex.indexOf('async function usageGate'));
+    cwa.doesNotMatch(gate, /backtest\/log\?backtestId=/,
+      'the executor must not grow a second copy of the log probe');
+  });
+
   await t.test('an unreadable account is treated as clear, not as blocked', () => {
     // A transient CDP failure must not wedge the batch; the executor's own gate re-checks anyway.
     const src = cwfs.readFileSync(cwpath.join(__dirname, '../utils/jq-running.js'), 'utf8');

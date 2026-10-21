@@ -51,6 +51,61 @@ function cnMinutes(s) {
   return (parseInt(h || 0, 10) * 60) + parseInt(m || 0, 10) + (parseInt(sec || 0, 10) / 60);
 }
 
+/**
+ * ⚠⚠⚠ A listed entry whose own log says FINISHED is not a live blocker.
+ *
+ * Measured 2026-10-18: the normalizer sat in `waitClear` for 34 of 50 wait-minutes at 0.21s CPU on
+ * 这是一个简单的策略-1251, a run that had COMPLETED and that JQ never dropped from the list. The age
+ * rule could not help — at 36min the entry was UNDER the 45min cap, so it read as "ours, still
+ * running. WAIT", which is the one verdict that is pure loss here.
+ *
+ * ⚠ This was deliberately NOT implemented until the code was OBSERVED, because this rule is what
+ * prevents two concurrent backtests and concurrent runs have returned IDENTICAL metrics for
+ * different strategies on this account: a false "not blocking" silently corrupts results, where a
+ * false "blocking" only wastes time. Every `state` seen before came from a run already believed
+ * finished, so 2 might have meant "has output". Settled by instrumenting the executor to print the
+ * state while a run was KNOWN live (`LIVE-RUN-STATE`, 2026-10-18):
+ *
+ *     in-flight, 17s in  ->  log.state = 1
+ *     finished / 完成     ->  log.state = 2
+ *
+ * So the states DO separate, and only a positive read of 2 clears an entry. Anything else — state
+ * 1, an unreadable log, a throw — leaves it blocking, which is the safe direction.
+ *
+ * ⚠⚠ **THIS FUNCTION IS THE ONE OWNER OF THE RULE**, and it is exported for that reason alone.
+ * "Is the account blocked?" is answered in TWO places — this waiter, and `concurrencyGate()` in
+ * `strategy-post-backtest.js` — and when the fix above landed in only this one, the two
+ * disagreed about the same entry and the normalizer LIVELOCKED: the executor's age-only split put
+ * a finished 28-minute entry in `young` and printed CONCURRENT-STOP, the normalizer called
+ * `waitClear`, this rule cleared it in seconds, the same file was retried, and round it went.
+ * Measured 2026-10-21: `used` frozen at 49/180 for ~38 minutes, 183 files still pending, a waiter
+ * child respawning every few seconds. A third copy of the rule would reopen exactly that gap, so
+ * both callers pass their own `page` into this.
+ *
+ * @param {import('playwright').Page} page a page already on joinquant.com
+ * @param {Array<{id?: string, logState?: string}>} rows running[] entries; `logState` is annotated
+ *        in place, for the caller's diagnostics
+ * @returns {Promise<Set<string>>} the ids whose own log reads FINISHED
+ */
+async function probeFinished(page, rows) {
+  const finishedIds = new Set();
+  for (const r of rows) {
+    if (!r.id) continue;
+    try {
+      const st = await page.evaluate(async (bt) => {
+        try {
+          const j = await (await fetch(`/algorithm/backtest/log?backtestId=${bt}&offset=0&limit=1&ajax=1`,
+            { credentials: 'include' })).json();
+          return (j && j.data && j.data.state != null) ? String(j.data.state) : null;
+        } catch { return null; }
+      }, r.id);
+      r.logState = st;
+      if (st === '2') finishedIds.add(r.id);
+    } catch { /* unreadable -> still blocking */ }
+  }
+  return finishedIds;
+}
+
 /** @returns {{live:number, stale:number, rows:Array}|null} null when the read itself failed. */
 async function running() {
   let browser;
@@ -66,40 +121,7 @@ async function running() {
       return ((j && j.data && j.data.running) || []).map(r => ({ usedSec: r.usedSec, time: r.time, id: r.id }));
     });
 
-    // ⚠⚠⚠ A listed entry whose own log says FINISHED is not a live blocker.
-    //
-    // Measured 2026-10-18: the normalizer sat here for 34 of 50 wait-minutes at 0.21s CPU on
-    // 这是一个简单的策略-1251, a run that had COMPLETED and that JQ never dropped from the list. The
-    // age rule could not help — at 36min the entry was UNDER the 45min cap, so it read as "ours,
-    // still running. WAIT", which is the one verdict that is pure loss here.
-    //
-    // ⚠ This was deliberately NOT implemented until the code was OBSERVED, because this waiter is
-    // what prevents two concurrent backtests and concurrent runs have returned IDENTICAL metrics
-    // for different strategies on this account: a false "not blocking" silently corrupts results,
-    // where a false "blocking" only wastes time. Every `state` seen before came from a run already
-    // believed finished, so 2 might have meant "has output". Settled by instrumenting the executor
-    // to print the state while a run was KNOWN live (`LIVE-RUN-STATE`, 2026-10-18):
-    //
-    //     in-flight, 17s in  ->  log.state = 1
-    //     finished / 完成     ->  log.state = 2
-    //
-    // So the states DO separate, and only a positive read of 2 clears an entry. Anything else —
-    // state 1, an unreadable log, a throw — leaves it blocking, which is the safe direction.
-    const finishedIds = new Set();
-    for (const r of rows) {
-      if (!r.id) continue;
-      try {
-        const st = await page.evaluate(async (bt) => {
-          try {
-            const j = await (await fetch(`/algorithm/backtest/log?backtestId=${bt}&offset=0&limit=1&ajax=1`,
-              { credentials: 'include' })).json();
-            return (j && j.data && j.data.state != null) ? String(j.data.state) : null;
-          } catch { return null; }
-        }, r.id);
-        r.logState = st;
-        if (st === '2') finishedIds.add(r.id);
-      } catch { /* unreadable -> still blocking */ }
-    }
+    const finishedIds = await probeFinished(page, rows);
 
     const live = rows.filter(r => cnMinutes(r.usedSec) <= STALE_MIN && !finishedIds.has(r.id));
     // Oldest LIVE age is what distinguishes "ours, still legitimately running" from "ours, already
@@ -193,7 +215,7 @@ async function waitClear({ timeoutMin = 10, pollSec = 45, capMin = 0, quiet = fa
   }
 }
 
-module.exports = { running, waitClear, cnMinutes };
+module.exports = { running, waitClear, cnMinutes, probeFinished };
 
 if (require.main === module) {
   const argv = process.argv.slice(2);
