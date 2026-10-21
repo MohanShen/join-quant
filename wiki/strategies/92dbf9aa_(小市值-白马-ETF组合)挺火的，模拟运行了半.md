@@ -2,6 +2,7 @@
 postId: 92dbf9aafae2d1952f104b02f969dc33
 title: (小市值-白马-ETF组合)挺火的，模拟运行了半年多...
 sourceFile: strategies/2026-10-17_小市值-白马-ETF组合_挺火的_模拟运行了半年多-92dbf9aa.py
+family: 其他
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/1399
 concepts: [小市值因子, ETF轮动, 动量与趋势, 择时-均线, 多因子模型]
 factors:
