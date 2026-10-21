@@ -350,23 +350,60 @@ function plan({ stageOverride = null, exclude = [] } = {}) {
  */
 const TIMEOUT_WRAPPER = path.join(ROOT, 'scripts/with-timeout.sh');
 
+/**
+ * Persist a stage's FULL child output, because otherwise it is captured and thrown away.
+ *
+ * ⚠⚠ This is why the "second normalize invocation does nothing" bug could not be diagnosed.
+ * Observed twice (2026-10-19 and 2026-10-20): a first productive normalize, then a second that
+ * runs ~15 minutes, bills ZERO minutes, resolves ZERO files, and trips the no-progress guard —
+ * ending the day with 140 of 180 minutes unspent. `execFileSync` captures the child's stdout into
+ * a string, `runNormalize` keeps a 6-line tail for the stage note, and the rest is discarded. So
+ * the run log held 28 lines and none of the normalizer's own output: no `[N/169]` lines, no
+ * USAGE-STOP, no CONCURRENT-STOP, nothing to reason from.
+ *
+ * Every candidate mechanism was ruled out on code reading alone (the cooldown cannot apply — done
+ * files are filtered out of `todo` BEFORE the loop; `waitMinFor` is cap+margin ≈ 50min, not 15),
+ * which left a hypothesis with no way to test it. That is a diagnosability defect, not a mystery.
+ *
+ * `data/daily-logs/` is gitignored, so this costs nothing in the repo and makes tomorrow's run
+ * readable.
+ */
+function stageLogPath(cmd, args) {
+  const tag = String(args[0] || cmd).replace(/^.*\//, '').replace(/\.js$/, '') || 'stage';
+  const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  const dir = path.join(ROOT, 'data/daily-logs');
+  try { fs.mkdirSync(dir, { recursive: true }); } catch { /* best effort */ }
+  return path.join(dir, `stage-${tag}-${ts}.log`);
+}
+
+function persistStageOutput(file, out) {
+  try { fs.writeFileSync(file, out == null ? '' : String(out)); return file; }
+  catch { return null; }
+}
+
 function sh(cmd, args, { timeout = STAGE_TIMEOUT_MIN * 60000 } = {}) {
   const mins = Math.max(1, Math.ceil(timeout / 60000));
   const wrapped = fs.existsSync(TIMEOUT_WRAPPER);
   const c = wrapped ? 'bash' : cmd;
   const a = wrapped ? [TIMEOUT_WRAPPER, String(mins), cmd, ...args] : args;
+  const logFile = stageLogPath(cmd, args);
   try {
     const out = execFileSync(c, a, { encoding: 'utf8', cwd: ROOT, timeout: timeout + 90000 });
-    return { ok: true, out };
+    persistStageOutput(logFile, out);
+    return { ok: true, out, logFile };
   } catch (e) {
     const timedOut = e.status === 124 || e.code === 'ETIMEDOUT' || e.signal === 'SIGTERM';
     const out = `${e.stdout || ''}${e.stderr || ''}${e.message}`.slice(0, 4000);
     // ⚠ Name the timeout explicitly. `spawnSync bash ETIMEDOUT` is what the first VIP run wrote
     // into the daily summary, and it reads like the loop script crashed. It did not — we killed
     // it. The note a human reads has to say which.
-    return { ok: false, timedOut, out: timedOut
+    const full = timedOut
       ? `${out}\n[daily] stage exceeded STAGE_TIMEOUT_MIN=${STAGE_TIMEOUT_MIN} min; process group terminated`
-      : out };
+      : out;
+    // ⚠ The FAILURE path matters more than the success one: `out` here is already truncated to
+    // 4000 chars for the note, so persist what we have and say where it is.
+    persistStageOutput(logFile, `${e.stdout || ''}${e.stderr || ''}\n${e.message || ''}`);
+    return { ok: false, timedOut, out: full, logFile };
   }
 }
 
@@ -492,8 +529,12 @@ function runNormalize(q, { dry }) {
   }
   return {
     outcome: r.ok ? 'ran' : 'error',
+    // ⚠ Name the log. A stage that resolves nothing is the case most in need of a diagnosis, and
+    // the note is where a human looks first — twice in a row a 15-minute no-op normalize left no
+    // trace beyond this line.
     note: `${retryFiles.length} retry(--redo) + ${freshFiles.length} fresh, ` +
-          `${parked.length} newly deferred at ${SLOW_SKIP_MIN}min`,
+          `${parked.length} newly deferred at ${SLOW_SKIP_MIN}min` +
+          (r.logFile ? ` [log ${path.relative(ROOT, r.logFile)}]` : ''),
     tail: r.out.split('\n').filter(Boolean).slice(-6).join('\n'),
   };
 }

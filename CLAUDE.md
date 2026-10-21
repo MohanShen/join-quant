@@ -695,7 +695,30 @@ Only the directories whose contents aren't self-evident:
   have to be won before working on them.
   ⚠⚠ **Quote the two numbers as a PAIR.** The unrestricted figures run 19–33% higher, so citing one
   alone systematically over-reports. Recorded as 五福闹新春 §2 rows + finding `q-e9-pit`.
-  ⚠⚠ **And the pool bonus is PER BOOK, not a family property.** The same rule on **bba95a11**
+  ✅✅ **FOUR BOOKS TESTED — the pool bonus splits by MECHANISM, not per book.**
+  | book | unrestricted | point-in-time | Δ |
+  |---|---|---|---|
+  | bba95a11 小盘**+五福** | 1.7881 | **1.7896** | +0.0015 |
+  | b50e4387 小盘**+ETF** | 1.6997 | **1.7180** | **+0.0183** |
+  | 1cc495be 五福+冷却 | 0.9954 | 0.8068 | −0.1886 (**19%**) |
+  | 73b13d92 五福 ETF | 1.4926 | 1.0025 | −0.4901 (**33%**) |
+  The two **小市值 × ETF HYBRIDS lose nothing** — both are fractionally BETTER restricted. The two
+  **pure ETF-momentum** books lose 19% and 33%. Reading: the hybrids' edge comes from the 小市值
+  leg, which has no pool to select, while the pure ETF books genuinely depend on the 2026 name list.
+  **So the library's top two books are pool-clean and can be advanced as candidates; any new pure
+  ETF-momentum book must run this test before its score is quoted, and quoted as a PAIR.**
+  ⚠ **n=2 per group.** The split is clean but small — it is a guide to which book to test next (one
+  more of each kind), not an established law.
+  ⚠ b50e4387's pool is **UNDATED** (114 bare hardcoded codes), so the primary rule found nothing
+  and the builder correctly REFUSED. It uses a **corpus-wide fallback** — listing dates recorded by
+  other authors in the same corpus — with each date's provenance stamped into the variant header,
+  because that is weaker evidence than a book's own comment. Corroboration: the exclusion set came
+  out as the same 17 names / 7 from 2025 as its siblings.
+  ⚠ The builder also learned **bare-code lines** (several ETFs per line, no comment), where
+  exclusion removes CODES rather than commenting the line; the assertion therefore counts changed
+  LINES and requires every changed line to carry the marker.
+  ⚠⚠ **The earlier "PER BOOK" note below is superseded by the table above.** The same rule on
+  **bba95a11**
   (小市值+五福组合, the epoch-9 library leader) moved it **+0.0015** — objective 1.7881 →
   **1.7896**, sharpe 6.99 → 7.10, with all **18** post-window names removed. So the three books
   span **0% / 19% / 33%** of pool hindsight: 「ETF 池都带事后性」 is NOT a family-level fact and
@@ -1636,6 +1659,37 @@ Only the directories whose contents aren't self-evident:
   one are the **correct board-lot idiom** (`int(value/price/100)*100` — JQ requires multiples of 100
   for A-share buys). So authors generally do know a lot is 100 shares, which makes this branch's
   error a misreading of what `a1_v` RETURNS rather than ignorance of lots.
+- ✅ **`b3751277` liq-1: the feasibility floor is INERT — R=1 is measured FALSE.** objective
+  **1.3443 → 1.3443**, sharpe 4.29 → 4.29, Δ exactly 0.0000 at the book's own ¥4e6/day floor
+  (capital 1,000,000 / `g.stock_num` 5 / `order_volume_ratio` 0.05). Same outcome as 大小盘轮动's
+  liq-1, the opposite of ETF溢价 (8.44→1.10) and 小市值 (7/8 不可成交). Supports **R ≥ 2, not 3** —
+  liq-2 (5×) and liq-3 (10×) are built but unrun, so the capacity ceiling is unmeasured.
+  ⚠⚠ **I had flagged this book as unfillable and was WRONG on every point.** I called it "a 涨停
+  selection book, same mechanism as 打板短线's R=1". Reading the code: the entry is
+  `run_weekly(weekly_buy, 2, '10:30')` — a weekly rebalance, NOT a buy at the next-day open of
+  yesterday's limit-up, which is the specific unfillable thing; 涨停 is a HISTORICAL screen
+  (`g.limit_days_window = 3 * 250`), i.e. a 涨停基因 filter; and it explicitly AVOIDS sealed boards
+  (`last_price < high_limit`). The title misled me — 「涨停优选后再买入」 is "screen by limit-up,
+  THEN buy later", and the 再 is load-bearing. **This is exactly the error that got the
+  `limit-up-entry` lint pattern deleted** ("'buys them' and 'screens them out' both read
+  `high_limit` with an equality, and the difference lives in control flow a line regex cannot
+  see") — I made the regex's mistake by eye, having written that note myself. Read the entry, not
+  the title.
+- ⚠⚠ **A STAGE'S CHILD OUTPUT USED TO BE CAPTURED AND DISCARDED, which made a real bug
+  undiagnosable.** Observed twice (2026-10-19, 2026-10-20): a first productive normalize, then a
+  second invocation that runs **~15 minutes, bills ZERO, resolves ZERO files** and trips the
+  no-progress guard — ending 2026-10-20 with **140 of 180 minutes unspent**. The run log held
+  **28 lines and none of the normalizer's own output**: `sh()` captures stdout with `execFileSync`,
+  `runNormalize` keeps a 6-line tail for the note, the rest is dropped.
+  Every candidate was ruled out on code reading alone — the 6s cooldown cannot apply (done files
+  leave `todo` BEFORE the loop), `waitMinFor` is cap+margin ≈ **50** min not 15, the stage timeout
+  is 255 — which left a hypothesis with no way to test it.
+  **Fixed**: `sh()` writes the full child output to `data/daily-logs/stage-<tag>-<ts>.log`
+  (gitignored) and the stage note names the path. ⚠ Limitation: the log is written when the child
+  RETURNS, so a true hang still leaves nothing.
+  Leading hypothesis, now testable: the CONCURRENT-STOP retry path — with a past-cap blocker
+  listed, `phantom` sets `cleared = true`, each file retries up to 3× then skips, and 164 files ×
+  3 fast cycles ≈ 15 minutes writing no rows.
 - **Realizability: a FREE STATIC FLAG at normalize time — `utils/realizability-lint.js` — and
   deliberately NOT a gate.** The question "should we check realizability before normalize?" has a
   three-part answer:

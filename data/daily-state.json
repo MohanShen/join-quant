@@ -1,26 +1,16 @@
 {
   "inFlight": null,
   "lastRun": {
-    "stage": "discover",
+    "stage": "assign",
     "target": null,
     "budget": 40,
-    "at": "2026-10-20T19:09:46.520Z",
+    "at": "2026-10-21T00:51:44.973Z",
     "outcome": "ran",
-    "note": "discover + fetch (normalize is its own stage)",
+    "note": "family assignment over 5 pending",
     "minutesUsed": null,
-    "endedAt": "2026-10-20T19:10:44.817Z"
+    "endedAt": "2026-10-21T00:53:46.461Z"
   },
   "runs": [
-    {
-      "stage": "research",
-      "target": null,
-      "budget": 123,
-      "at": "2026-09-23T01:16:29.016Z",
-      "outcome": "ran",
-      "note": "resumed research session new (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-09-23T02:03:20.166Z"
-    },
     {
       "stage": "research",
       "target": null,
@@ -1210,6 +1200,16 @@
       "note": "discover + fetch (normalize is its own stage)",
       "minutesUsed": null,
       "endedAt": "2026-10-20T19:10:44.817Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 40,
+      "at": "2026-10-21T00:51:44.973Z",
+      "outcome": "ran",
+      "note": "family assignment over 5 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-21T00:53:46.461Z"
     }
   ]
 }
