@@ -381,29 +381,77 @@ function persistStageOutput(file, out) {
   catch { return null; }
 }
 
+/**
+ * Read back what the child streamed, capped, so `out` means the same thing it used to.
+ *
+ * The cap is on the TAIL because every reader of `out` wants the end: the cause extractor greps
+ * the last lines, and `runNormalize` keeps a 6-line tail for the stage note.
+ */
+function readStageOutput(file, maxBytes = 2 * 1024 * 1024) {
+  try {
+    const { size } = fs.statSync(file);
+    const start = Math.max(0, size - maxBytes);
+    const fd = fs.openSync(file, 'r');
+    try {
+      const buf = Buffer.alloc(size - start);
+      fs.readSync(fd, buf, 0, buf.length, start);
+      return (start > 0 ? `[…${start} earlier bytes in ${path.relative(ROOT, file)}]\n` : '') + buf.toString('utf8');
+    } finally { fs.closeSync(fd); }
+  } catch { return ''; }
+}
+
 function sh(cmd, args, { timeout = STAGE_TIMEOUT_MIN * 60000 } = {}) {
   const mins = Math.max(1, Math.ceil(timeout / 60000));
   const wrapped = fs.existsSync(TIMEOUT_WRAPPER);
   const c = wrapped ? 'bash' : cmd;
   const a = wrapped ? [TIMEOUT_WRAPPER, String(mins), cmd, ...args] : args;
   const logFile = stageLogPath(cmd, args);
+  // ⚠⚠ The child's output is STREAMED to the log file, not captured into a string and written at
+  // exit. Capturing meant a stage that HANGS — the one case the log exists for — produced no file
+  // at all, because `execFileSync` only returns when the child is already over.
+  //
+  // That cost a real diagnosis on 2026-10-21: a normalize stage sat for 38 minutes billing
+  // nothing, and its log did not exist yet, so the livelock had to be found with `pgrep -P` on a
+  // two-second-old waiter child instead. The 114 `CONCURRENT STOP` lines proving it were sitting
+  // in a pipe buffer the whole time. Now `tail -f data/daily-logs/stage-*.log` works mid-stage.
+  //
+  // Side effect, deliberate: stdout and stderr interleave in one file, in real order. That is
+  // better for reading a failure than two separate strings concatenated after the fact.
+  let fd = null;
+  try { fd = fs.openSync(logFile, 'a'); } catch { /* fall back to capture */ }
+  const opts = fd == null
+    ? { encoding: 'utf8', cwd: ROOT, timeout: timeout + 90000 }
+    : { cwd: ROOT, timeout: timeout + 90000, stdio: ['ignore', fd, fd] };
   try {
-    const out = execFileSync(c, a, { encoding: 'utf8', cwd: ROOT, timeout: timeout + 90000 });
-    persistStageOutput(logFile, out);
+    const captured = execFileSync(c, a, opts);
+    const out = fd == null ? captured : readStageOutput(logFile);
+    if (fd == null) persistStageOutput(logFile, out);
     return { ok: true, out, logFile };
   } catch (e) {
     const timedOut = e.status === 124 || e.code === 'ETIMEDOUT' || e.signal === 'SIGTERM';
-    const out = `${e.stdout || ''}${e.stderr || ''}${e.message}`.slice(0, 4000);
+    // ⚠ With `stdio` pointed at the file, `e.stdout`/`e.stderr` are null — the log IS the output.
+    const streamed = fd == null ? '' : readStageOutput(logFile);
+    const out = (streamed || `${e.stdout || ''}${e.stderr || ''}${e.message}`).slice(-4000);
     // ⚠ Name the timeout explicitly. `spawnSync bash ETIMEDOUT` is what the first VIP run wrote
     // into the daily summary, and it reads like the loop script crashed. It did not — we killed
     // it. The note a human reads has to say which.
     const full = timedOut
       ? `${out}\n[daily] stage exceeded STAGE_TIMEOUT_MIN=${STAGE_TIMEOUT_MIN} min; process group terminated`
       : out;
-    // ⚠ The FAILURE path matters more than the success one: `out` here is already truncated to
-    // 4000 chars for the note, so persist what we have and say where it is.
-    persistStageOutput(logFile, `${e.stdout || ''}${e.stderr || ''}\n${e.message || ''}`);
+    // ⚠ The FAILURE path matters more than the success one: `out` here is truncated to the last
+    // 4000 chars for the note, so the log must keep everything.
+    // ⚠⚠ When the child streamed straight to the file, do NOT rewrite it — that would REPLACE the
+    // whole stage log with `e.message` alone (the streamed stdout is not in `e.stdout`), throwing
+    // away exactly the output this was built to keep. Append the reason instead.
+    if (fd == null) {
+      persistStageOutput(logFile, `${e.stdout || ''}${e.stderr || ''}\n${e.message || ''}`);
+    } else {
+      try { fs.appendFileSync(logFile, `\n[daily] stage ended: ${e.message || 'non-zero exit'}\n`); }
+      catch { /* best effort */ }
+    }
     return { ok: false, timedOut, out: full, logFile };
+  } finally {
+    if (fd != null) { try { fs.closeSync(fd); } catch { /* best effort */ } }
   }
 }
 

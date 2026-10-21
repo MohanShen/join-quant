@@ -267,6 +267,33 @@ test('state files are durable and gitignored appropriately', async t => {
     assert.match(ignore, /daily-logs/);
     assert.match(ignore, /\.lock/);
   });
+
+  /**
+   * ⚠⚠ A stage log that only appears at exit is useless for the case it exists for.
+   *
+   * The log was added to diagnose "a stage runs 15 minutes and bills nothing", then written from
+   * the string `execFileSync` returns — which only exists once the child is already over. So on
+   * 2026-10-21, with a normalize stage 38 minutes into a livelock and billing nothing, there was
+   * no log file at all; the 114 CONCURRENT STOP lines proving it sat in a pipe buffer, and the
+   * cause had to be found with `pgrep -P` on a two-second-old waiter child.
+   *
+   * The child now writes straight into the file, so `tail -f` works mid-stage.
+   */
+  await t.test('a stage streams its output, so a HUNG stage is readable while it hangs', () => {
+    const src = fs.readFileSync(path.join(ROOT, 'utils/daily-pipeline.js'), 'utf8');
+    const fn = src.slice(src.indexOf('function sh(cmd, args'), src.indexOf('function sessionPinned'));
+    assert.match(fn, /stdio: \['ignore', fd, fd\]/,
+      'the child must write into the log file, not into a buffer read at exit');
+
+    // ⚠ The failure path must NOT rewrite the file: with stdio pointed at it, the streamed output
+    // is not in e.stdout, so an unconditional writeFileSync would REPLACE the whole stage log
+    // with e.message — destroying exactly what was being kept.
+    const katch = fn.slice(fn.indexOf('} catch'));
+    assert.match(katch, /if \(fd == null\) \{\s*\n\s*persistStageOutput/,
+      'persisting on the failure path must be guarded to the non-streaming fallback');
+    assert.match(katch, /appendFileSync/, 'the streamed log gets the reason appended, not replaced');
+    assert.match(fn, /finally \{[\s\S]*closeSync/, 'the log fd must be closed on every path');
+  });
 });
 
 test('the daily summary', async t => {

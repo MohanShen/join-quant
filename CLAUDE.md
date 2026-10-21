@@ -1935,3 +1935,14 @@ Only the directories whose contents aren't self-evident:
   refusal names the *blocker*, not the disagreement. Two gates both "working" is invisible in
   either one's output — only the pair is wrong. When a stage reports nothing and spends nothing,
   compare what each gate says about the SAME entry.
+- ⚠⚠ **A stage log written at exit cannot explain a stage that never exits.** `data/daily-logs/`
+  was added to diagnose "a stage runs 15 minutes and bills nothing", but `sh()` wrote the string
+  `execFileSync` returns — which exists only once the child is over. So on 2026-10-21, with a
+  normalize stage 38 minutes into the livelock above and billing nothing, **the log file did not
+  exist yet**: the 114 `CONCURRENT STOP` lines proving the cause were sitting in a pipe buffer, and
+  the diagnosis had to come from `pgrep -P <pid>` catching a two-second-old waiter child.
+  The child now writes **straight into the file** (`stdio: ['ignore', fd, fd]`), so
+  `tail -f data/daily-logs/stage-*.log` works mid-stage and stdout/stderr interleave in real order.
+  ⚠ The failure path must NOT rewrite that file — with `stdio` pointed at it, the streamed output
+  is not in `e.stdout`, so the old unconditional `writeFileSync` would have REPLACED the whole log
+  with `e.message`. The reason is appended; a test asserts the guard and the `finally` close.
