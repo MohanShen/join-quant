@@ -7,14 +7,6 @@
     "maxCapTried": 45,
     "lastDeferredAt": "2026-10-22T18:19:29.525Z"
   },
-  "strategies/2026-07-01_穿越牛熊周期-多策略组合-20至今年化103_20-5511f8f0.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-10-22T18:19:29.525Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-10-22T18:19:29.525Z"
-  },
   "strategies/2026-05-27_14个月200_超短线实盘交易策略_无未来函数-01d60c34.py": {
     "attempts": 1,
     "firstDeferredAt": "2026-10-22T18:19:29.525Z",

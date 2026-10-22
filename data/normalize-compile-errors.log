@@ -65,3 +65,10 @@
 2026-10-21T19:39:23.510Z	strategies/2026-05-24_二八轮动小市值策略改进版07年至16年4000多倍-1ae37a5f.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 tradestat
 2026-10-21T19:41:41.725Z	strategies/2026-05-26_一日游短线策略-43fca771.py	KeyError: '300995.XSHE'
 2026-10-21T19:51:22.247Z	strategies/2026-05-29_策略研发_三进兵策略_第二版-87ab0122.py	jqdata.exceptions.FutureDataError: 设置avoid_future_data=True之后, get_bars的end_dt(2025-10-10 17:00:00)不能大于当前时间current_dt(2024-01-05 09:30:00)
+2026-10-22T16:25:54.121Z	strategies/2026-05-30_传统反转因子的改进与实测-3691829a.py	TypeError: slice indices must be integers or None or have an __index__ method
+2026-10-22T18:42:35.754Z	strategies/2026-06-24_行为金融学_预测结果分析1_更新_2019_03_17-5a127075.py	KeyError: 'the label [2024-01-02] is not in the [index]'
+2026-10-22T18:48:24.260Z	strategies/2026-06-25_三进兵小改进-7552f0ef.py	jqdata.exceptions.FutureDataError: 设置avoid_future_data=True之后, get_bars的end_dt(2025-10-13 17:00:00)不能大于当前时间current_dt(2024-01-10 09:30:00)
+2026-10-22T19:15:37.679Z	strategies/2026-06-29_一个不太理想的机器学习模型-e0cbb752.py	[log] backtestId 66831ac39bb397732fa6e0452eaadde5 state=2 60 log line(s), 0 error line(s)
+2026-10-22T19:56:03.909Z	strategies/2026-07-05_市场时机选择量化策略_V1_01-f29926bf.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'high', 'low'}字段数据, current_dt=2024-01-02 09:30:00, end_date=2024-01-02 09:30:00
+2026-10-22T20:05:41.479Z	strategies/2026-07-08_均值回归_基于zscore的均值回归策略_胜率100-5b95886d.py	AttributeError: module 'pandas' has no attribute 'rolling_mean'
+2026-10-22T20:06:46.633Z	strategies/2026-07-09_钟摆系列3_单股票价值中枢动态调仓-c9b21e9d.py	TypeError: list indices must be integers or slices, not Series
