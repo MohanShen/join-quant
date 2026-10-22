@@ -78,7 +78,7 @@ function corpusListingDates() {
   const dir = path.join(ROOT, 'strategies');
   for (const f of fs.readdirSync(dir).filter(x => x.endsWith('.py'))) {
     const t = fs.readFileSync(path.join(dir, f), 'utf8');
-    for (const m of t.matchAll(/'([0-9]{6}\.(?:XSHG|XSHE))',\s*#[^\n]*上市日期：(\d{4}-\d{2}-\d{2})/g)) {
+    for (const m of t.matchAll(/["']([0-9]{6}\.(?:XSHG|XSHE))["'],\s*#[^\n]*上市日期：(\d{4}-\d{2}-\d{2})/g)) {
       if (!map.has(m[1])) map.set(m[1], m[2]);
     }
   }
@@ -97,6 +97,22 @@ const BOOKS = [
   // #2 book (objective 1.6997 / sharpe 6.65). Its pool is UNDATED, so it needs the corpus
   // fallback above — see that comment for why that is still a zero-free-parameter rule.
   { tag: 'q-e9-pit_b50e4387', match: /b50e4387/, label: '从30倍到47倍_给小市值装上ETF引擎后' },
+
+  // ── Round 2, added 2026-10-22 after the epoch-9 re-measurement put five more pool-carrying
+  //    books in the credible band. Same rule, same builder: the point of ONE builder is that the
+  //    membership rule cannot drift between books, and four of these are the 五福 family pool the
+  //    first round already measured at −33% / −19% / +0.2% / +1.1%, so they are directly
+  //    comparable to it.
+  { tag: 'q-e9-pit_bf30eb36', match: /bf30eb36/, label: '三马105-五福35-修复版' },        // 1.9437, pool 121, UNDATED -> corpus fallback
+  { tag: 'q-e9-pit_fd5d388d', match: /fd5d388d/, label: '五福闹新春_v5_1-拟合ETF池' },     // 1.7890, pool 115, 114 dated
+  { tag: 'q-e9-pit_4d4705e1', match: /4d4705e1/, label: '五福闹新春_v5_0-动态池' },        // 1.7405, pool 115, 114 dated
+  { tag: 'q-e9-pit_a722ab8a', match: /a722ab8a/, label: '五福51-三状态V2版' },            // 1.5278, pool 120, 116 dated
+  // ⚠ A DIFFERENT pool: 44 double-quoted codes in `g.etf_pool_2`/`g.etf_pool_3`, not the family's
+  // ~115-name list, and it also runs a stock sleeve off `get_index_stocks("399101.XSHE")`. Kept in
+  // because the question is the same (is the hardcoded ETF list hindsight?) — but its result is NOT
+  // comparable to the four above, and it is one of THREE byte-identical books at obj 1.6156 /
+  // sharpe 6.12, so one run answers all three.
+  { tag: 'q-e9-pit_3c462ece', match: /3c462ece/, label: '三马七星172-大池子' },
 ];
 
 const header = (label, cut, dropped) => [
@@ -132,7 +148,7 @@ for (const b of BOOKS) {
   // the assertion below counts changed LINES rather than codes.
   const out = raw.split('\n').map((l) => {
     if (/^\s*#/.test(l)) return l;                      // already inactive in the author's source
-    const one = l.match(/^(\s*)'([0-9]{6}\.(?:XSHG|XSHE))',\s*#(.*)$/);
+    const one = l.match(/^(\s*)["']([0-9]{6}\.(?:XSHG|XSHE))["'],\s*#(.*)$/);
     if (one) {
       const date = (one[3].match(/上市日期：(\d{4}-\d{2}-\d{2})/) || [])[1] || CORPUS_DATES.get(one[2]);
       if (!date || date < CUT) return l;
@@ -140,14 +156,14 @@ for (const b of BOOKS) {
       return `${one[1]}#${l.trim()}   # q-e9-pit: 上市 ${date} >= ${CUT}`;
     }
     // Bare codes, possibly several on one line.
-    const codes = [...l.matchAll(/'([0-9]{6}\.(?:XSHG|XSHE))'/g)].map(m => m[1]);
+    const codes = [...l.matchAll(/["']([0-9]{6}\.(?:XSHG|XSHE))["']/g)].map(m => m[1]);
     if (!codes.length) return l;
     const kill = codes.filter(c => { const d = CORPUS_DATES.get(c); return d && d >= CUT; });
     if (!kill.length) return l;
     let out2 = l;
     for (const c of kill) {
       dropped.push({ code: c, date: CORPUS_DATES.get(c), via: 'corpus' });
-      out2 = out2.replace(new RegExp(`'${c.replace('.', '\\.')}',\\s*`), '');
+      out2 = out2.replace(new RegExp(`["']${c.replace('.', '\\.')}["'],\\s*`), '');
     }
     return `${out2}   # q-e9-pit: 移除 ${kill.join(' ')}（上市 >= ${CUT}）`;
   }).join('\n');
