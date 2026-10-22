@@ -2037,3 +2037,18 @@ Only the directories whose contents aren't self-evident:
   awaiting** — releasing the coverage hold — it became due as `new-members` and the test reported a
   correctly-queued family as stranded. The test's intent is "nothing research-owned is STRANDED", so
   it now asserts presence in `due` under any expected reason.
+- ⚠⚠ **A DIRECT normalizer run STRANDS every `slow-skipped` row** — the fifth leak of the shape
+  this file already documents four times (bookkeeping that exists but belongs to no step). The
+  deferral into `data/deferred.json` lives in `daily-pipeline.js`, not in the normalizer, and
+  `slow-skipped` is deliberately TERMINAL in the normalizer (making it retriable re-bills it every
+  batch — the `no-trades` bug). So a row measured by a bare `strategy-normalize.js` gets its
+  terminal row and **never enters the retry pool**: no higher-cap retry, no `exhausted` listing,
+  nothing. Not visible anywhere, because a terminal row looks finished.
+  Measured 2026-10-23: a 44-minute slow-skip (`b8a7451f`, hit the 45-min cap) left the pool holding
+  only one entry from four days earlier. `node utils/daily-pipeline.js --seed-deferred` then parked
+  **7** stranded rows at once, so the gap had been accumulating across the whole epoch-9
+  re-measurement, not just that night.
+  ⚠ Every supervisor written for this epoch drives the normalizer DIRECTLY (to keep the chain from
+  re-planning into `research` after each batch), so this is the normal case now, not an edge one.
+  **Run `--seed-deferred` after any direct normalize batch**, or the 45 minutes buys a terminal row
+  and no retry.

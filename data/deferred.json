@@ -1,10 +1,58 @@
 {
   "strategies/2026-10-18_这版再修改了下_有兴趣的宽友可以一起交流-8152fa27.py": {
-    "attempts": 1,
+    "attempts": 2,
     "firstDeferredAt": "2026-10-19T21:58:00.648Z",
-    "reason": "slow-skipped",
-    "lastCapMin": 45,
+    "reason": "slow-skipped (seeded from ledger)",
+    "lastCapMin": 20,
     "maxCapTried": 45,
-    "lastDeferredAt": "2026-10-19T21:58:00.648Z"
+    "lastDeferredAt": "2026-10-22T18:19:29.525Z"
+  },
+  "strategies/2026-07-01_穿越牛熊周期-多策略组合-20至今年化103_20-5511f8f0.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-22T18:19:29.525Z",
+    "reason": "slow-skipped (seeded from ledger)",
+    "lastCapMin": 20,
+    "maxCapTried": 20,
+    "lastDeferredAt": "2026-10-22T18:19:29.525Z"
+  },
+  "strategies/2026-05-27_14个月200_超短线实盘交易策略_无未来函数-01d60c34.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-22T18:19:29.525Z",
+    "reason": "slow-skipped (seeded from ledger)",
+    "lastCapMin": 20,
+    "maxCapTried": 20,
+    "lastDeferredAt": "2026-10-22T18:19:29.525Z"
+  },
+  "strategies/2026-06-11_KAMA_趋势策略_社区最牛的趋势交易-已被私募机构征用-b7269ff2.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-22T18:19:29.525Z",
+    "reason": "slow-skipped (seeded from ledger)",
+    "lastCapMin": 20,
+    "maxCapTried": 20,
+    "lastDeferredAt": "2026-10-22T18:19:29.525Z"
+  },
+  "strategies/2026-06-29_小盘绩优股轮动策略-293f4ab7.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-22T18:19:29.525Z",
+    "reason": "slow-skipped (seeded from ledger)",
+    "lastCapMin": 20,
+    "maxCapTried": 20,
+    "lastDeferredAt": "2026-10-22T18:19:29.525Z"
+  },
+  "strategies/2026-06-11_2_5年254_小市值做T_全球资产ETF轮动-87826299.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-22T18:19:29.526Z",
+    "reason": "slow-skipped (seeded from ledger)",
+    "lastCapMin": 20,
+    "maxCapTried": 20,
+    "lastDeferredAt": "2026-10-22T18:19:29.526Z"
+  },
+  "strategies/2026-06-21_首次将实战模型转化为量化策略年化468_07_amp_11_92-b8a7451f.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-22T18:19:29.526Z",
+    "reason": "slow-skipped (seeded from ledger)",
+    "lastCapMin": 20,
+    "maxCapTried": 20,
+    "lastDeferredAt": "2026-10-22T18:19:29.526Z"
   }
 }
