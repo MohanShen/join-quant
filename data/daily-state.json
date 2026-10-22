@@ -1,31 +1,16 @@
 {
-  "inFlight": {
-    "stage": "normalize",
-    "target": null,
-    "budget": 49,
-    "at": "2026-10-21T14:41:43.854Z"
-  },
+  "inFlight": null,
   "lastRun": {
     "stage": "normalize",
     "target": null,
-    "budget": 45,
-    "at": "2026-10-21T14:02:22.473Z",
-    "outcome": "ran",
-    "note": "0 retry(--redo) + 184 fresh, 0 newly deferred at 45min",
+    "budget": 49,
+    "at": "2026-10-21T14:41:43.854Z",
+    "outcome": "abandoned",
+    "note": "chain killed by hand 2026-10-21 to clear the concurrency-gate livelock (050f93d); the normalize work it owned was completed by direct batches instead — 201 measured / 126 passing",
     "minutesUsed": null,
-    "endedAt": "2026-10-21T14:41:36.531Z"
+    "endedAt": "2026-10-22T21:08:09.749Z"
   },
   "runs": [
-    {
-      "stage": "research",
-      "target": null,
-      "budget": 155,
-      "at": "2026-09-23T15:32:42.209Z",
-      "outcome": "ran",
-      "note": "resumed research session 5e6c9c72 (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-09-23T15:33:58.728Z"
-    },
     {
       "stage": "assign",
       "target": null,
@@ -1215,6 +1200,16 @@
       "note": "0 retry(--redo) + 184 fresh, 0 newly deferred at 45min",
       "minutesUsed": null,
       "endedAt": "2026-10-21T14:41:36.531Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 49,
+      "at": "2026-10-21T14:41:43.854Z",
+      "outcome": "abandoned",
+      "note": "chain killed by hand 2026-10-21 to clear the concurrency-gate livelock (050f93d); the normalize work it owned was completed by direct batches instead — 201 measured / 126 passing",
+      "minutesUsed": null,
+      "endedAt": "2026-10-22T21:08:09.749Z"
     }
   ]
 }
