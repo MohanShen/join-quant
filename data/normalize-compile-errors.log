@@ -72,3 +72,17 @@
 2026-10-22T19:56:03.909Z	strategies/2026-07-05_市场时机选择量化策略_V1_01-f29926bf.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'high', 'low'}字段数据, current_dt=2024-01-02 09:30:00, end_date=2024-01-02 09:30:00
 2026-10-22T20:05:41.479Z	strategies/2026-07-08_均值回归_基于zscore的均值回归策略_胜率100-5b95886d.py	AttributeError: module 'pandas' has no attribute 'rolling_mean'
 2026-10-22T20:06:46.633Z	strategies/2026-07-09_钟摆系列3_单股票价值中枢动态调仓-c9b21e9d.py	TypeError: list indices must be integers or slices, not Series
+2026-10-23T16:13:48.715Z	strategies/2026-05-11_量化课堂_多因子策略入门-5b915770.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:30:00
+2026-10-23T19:12:53.547Z	strategies/2026-10-20_华泰高股息率选股模型-9981752e.py	ImportError: cannot import name 'gta'
+2026-10-23T19:15:54.239Z	strategies/2026-10-20_通过回测_二八轮动小市值优化版_v2_0_7_对小市值股票的一些疑问-298b196e.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 tradestat
+2026-10-23T19:18:01.228Z	strategies/2026-10-20_二八轮动2_0-dac63f1f.py	jqboson.core.exception.InvalidHandle: `&lt;bound method Strategy.onRebalance of &lt;user_code.Strategy object at 0x7f05512b1128&gt;&gt;` not serialable
+2026-10-23T19:20:21.258Z	strategies/2026-10-20_RSRS模型深入研究1-附上优化版代码-357daea8.py	statsmodels.tools.sm_exceptions.MissingDataError: exog contains inf or nans
+2026-10-23T19:32:41.062Z	strategies/2026-10-20_长江机器学习股票趋势预测-cd087468.py	jqboson.core.exception.ReadRemoteFileError: read_file ./Data/Factor1.csv: 文件'/opt/research-files/655/65568519426/Data/Factor1.csv'不存在
+2026-10-23T19:52:34.555Z	strategies/2026-10-20_七星ETF策略优化_更高收益-15d723c6.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 jqmt
+2026-10-23T20:02:54.245Z	strategies/2026-10-21_羊群效应系列_--识别股市中的羊群效应-fd2c49b6.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时, 当天开盘前不能获取当日的{'close'}字段数据, current_dt=2024-01-02 09:00:00, end_date=2024-01-02
+2026-10-23T20:03:53.666Z	strategies/2026-10-21_投资者情绪类型划分与情绪指数构建在交易策略中的应用-df3d10a3.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-03-28, current_dt=2024-03-28 09:30:00
+2026-10-23T20:05:01.658Z	strategies/2026-10-21_一起造个多因子指数增强策略吧-4c82066d.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-10-23T20:06:01.854Z	strategies/2026-10-21_加强版海龟_完全仓位风险管理_大盘保护_混合标的_小市值_ETF_大蓝筹_自定义等-8de018c0.py	TypeError: can only concatenate list (not "dict_keys") to list
+2026-10-23T20:08:10.415Z	strategies/2026-10-21_多空对冲策略_大盘风险为_0-f34b863a.py	SyntaxError: invalid syntax
+2026-10-23T20:09:11.848Z	strategies/2026-10-21_基于多期限的选股策略_二_构建LLT因子改进-d020499c.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'close'}字段数据, current_dt=2024-01-02 09:30:00, end_date=2024-01-02 09:30:00
+2026-10-23T20:10:14.643Z	strategies/2026-10-21_OLS回归的量化之旅Chapter_2-a92001a6.py	AttributeError: 'DataFrame' object has no attribute 'sort'
