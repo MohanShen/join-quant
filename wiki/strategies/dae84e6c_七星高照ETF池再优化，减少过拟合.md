@@ -2,6 +2,7 @@
 postId: dae84e6ca10bbb92641f4e15f9685949
 title: 七星高照 ETF池再优化，减少过拟合
 sourceFile: strategies/2026-10-20_七星高照_ETF池再优化_减少过拟合-dae84e6c.py
+family: 七星高照
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/72262
 concepts: [ETF轮动, 动量与趋势]
 factors:

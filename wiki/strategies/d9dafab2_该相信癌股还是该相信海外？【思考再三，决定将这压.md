@@ -2,6 +2,7 @@
 postId: d9dafab2dbfbfd7aebb6c696467c3c5c
 title: 该相信癌股还是该相信海外？【思考再三，决定将这压轴策略奉上】
 sourceFile: strategies/2026-10-20_该相信癌股还是该相信海外_思考再三_决定将这压轴策略奉上-d9dafab2.py
+family: 七星高照
 concepts: [ETF轮动, 动量与趋势]
 factors:
   选股: [ETF动量, 动量]

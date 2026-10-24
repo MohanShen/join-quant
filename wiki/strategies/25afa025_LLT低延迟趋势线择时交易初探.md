@@ -2,6 +2,7 @@
 postId: 25afa025c9893439b4eb57acdcf03817
 title: LLT低延迟趋势线择时交易初探
 sourceFile: strategies/2026-10-20_LLT低延迟趋势线择时交易初探-25afa025.py
+family: 其他
 concepts: [未分类]
 factors:
   选股: [未分类]
