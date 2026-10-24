@@ -178,6 +178,28 @@ test('the /run-family exit gate', async t => {
     });
   });
 
+  await t.test('a measured R=1 rejects BEFORE any step that would spend minutes or a VAL', () => {
+    // ⚠⚠ Live 2026-10-24: PT多策略 (R=1, study-u-7) read research-owned "re-measure the product
+    // or re-finalise the family" because the stale-shelf and VAL checks ran first — so the
+    // planner reopened it to spend TRAIN minutes and the epoch's one VAL on a book this gate
+    // rejects anyway. Neither a stale product nor a missing VAL may mask a measured rejection.
+    const stale = [1, 2, 3, 4, 5].find(e => !harness.measurementValid(e));
+    const shelf = world({
+      A: { u: 'U', obj: 0.45, sharpe: 2.6, R: 1,
+           product: { expId: 'A-old', obj: 0.9, epoch: stale ?? 2 } },
+    });
+    inWorld(shelf, ({ eligible }) => {
+      const a = eligible.assess('A');
+      assert.strictEqual(a.status, 'rejected');
+      assert.strictEqual(a.owner, 'none');
+      assert.match(a.why, /realizability 1 < 2/);
+    });
+    const noVal = world({ A: { u: 'U', obj: 0.5, sharpe: 2.0, R: 1 } });
+    inWorld(noVal, ({ eligible }) => {
+      assert.strictEqual(eligible.assess('A').owner, 'none');
+    });
+  });
+
   await t.test('UNKNOWN realizability BLOCKS, it does not permit', () => {
     // Same rule the VAL budget applies to an unknown epoch: blocking is visible and a human
     // clears it with one edit, whereas permitting silently ships an unrealizable book.

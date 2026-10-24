@@ -95,6 +95,7 @@ bestObjectiveEpoch: 9
 - **LOF / QDII 的净值发布滞后**（CLAUDE.md 对折价族的公开问题）：本家族 universe 是 `['etf']`，不含 LOF；QDII-ETF 的 T−1 NAV 滞后一天可能制造「假折价」——那部分若被 u-7 的 14:50 成交拿到，应为正，实测为负，说明它不是主要来源。未单独测。
 - **§3 显示 epoch-2 的 3.5952**：`wiki-family-build.js` 按「每个源文件 objective 最高的行」取数、不看 epoch，所以家族头条与 `bestObjective` 仍是无参与上限的旧数（epoch-6 应为 1.8592 / 1.8448）。是 builder 的通用问题，不在本家族改。
 - **c70281d3 桩页的概念是死代码的概念**（小市值因子 / 打板与涨停）：已在其 备注 挂旗，frontmatter 等 `/ingest-strategy` 重写；[[fa0d3bd9_PT多策略并行]] 的「忠实翻译」同样按标题写、与代码不符，已挂旗。
+- **epoch 9 退出闸（2026-10-24）：REJECTED，owner none——不是待办。** 闸门曾报「货架产品 pt-base-e6 是 epoch 6、在本台不可用——重测产品或重新定稿」，归 research 所有，于是被重新派发。但 realizability 1 是**实测**（u-7），成交是书的执行属性、不随窗口变化：重测 TRAIN 或花 epoch 9 的唯一一次 VAL 都改变不了它，闸门两步之后照样拒绝。所以本次**没有跑任何回测、没有花 VAL**（`val-budget` 仍为 ALLOWED），只修了闸门顺序（`utils/integrate-eligible.js`：实测 R<2 先于货架/VAL 检查）。清除条件：一个在非集合竞价时点（如 u-7 的 14:50）仍过闸的候选，并重新给它打 realizability。
 - **improve 已穷尽**：band 上界（u-2）、下界（imp-1）、权重（u-5）、集中度（imp-2）、执行时点（u-7）都不优于原值；基类是这条血统在 epoch 6 上的最优点，而最优点不可实现。
 
 ## 5. 沿革 (provenance)

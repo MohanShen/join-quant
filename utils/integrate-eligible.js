@@ -268,6 +268,21 @@ function assess(family) {
       `no candidate: nothing on the product shelf for this family, and no member measured under ` +
       `epoch ${harness.config().epoch}`, 'normalize');
   }
+  // ⚠⚠ A MEASURED realizability rejection is terminal and must be checked BEFORE any step that
+  // asks the loop to spend something. It used to sit after the shelf and VAL checks, so an R=1
+  // family whose shelf product predated the bench read `research`-owned ("re-measure the product
+  // or re-finalise the family") — and was reopened daily to spend TRAIN minutes plus the epoch's
+  // one VAL on a book this same gate rejects two checks later. Measured 2026-10-24 on PT多策略
+  // (R=1 from study-u-7: the same signal filled at 14:50 returns −29%) and 打板短线 (R=1).
+  // Fills are a property of the book's execution, not of the window, so a bench change does not
+  // revive the score. UNKNOWN realizability still blocks further down, after the steps that can
+  // produce a candidate to score.
+  if (realizability != null && !Number.isNaN(realizability) && realizability < MIN_REALIZABILITY) {
+    return fail('rejected', `realizability ${realizability} < ${MIN_REALIZABILITY} — a book whose ` +
+                            'fills a daily bar cannot honour must not enter the shipping set ' +
+                            '(checked before any re-measure or VAL, since neither can change it)',
+                'none');
+  }
   if (!product && shelf && shelf.unusable) {
     return fail('blocked',
       `its shelf product(s) (${shelf.unusable.map(x => `${x.expId} epoch ${x.epoch} gate ${x.gateVal}`).join('; ')}) ` +
