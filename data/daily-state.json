@@ -3,44 +3,14 @@
   "lastRun": {
     "stage": "normalize",
     "target": null,
-    "budget": 49,
-    "at": "2026-10-21T14:41:43.854Z",
-    "outcome": "abandoned",
-    "note": "chain killed by hand 2026-10-21 to clear the concurrency-gate livelock (050f93d); the normalize work it owned was completed by direct batches instead — 201 measured / 126 passing",
+    "budget": 0,
+    "at": "2026-10-24T18:05:01.781Z",
+    "outcome": "ran",
+    "note": "9 retry(--redo) + 2 fresh, 2 newly deferred at 45min",
     "minutesUsed": null,
-    "endedAt": "2026-10-22T21:08:09.749Z"
+    "endedAt": "2026-10-24T21:46:18.931Z"
   },
   "runs": [
-    {
-      "stage": "assign",
-      "target": null,
-      "budget": 155,
-      "at": "2026-09-23T15:34:09.424Z",
-      "outcome": "ran",
-      "note": "family assignment over 1 pending",
-      "minutesUsed": null,
-      "endedAt": "2026-09-23T15:37:37.684Z"
-    },
-    {
-      "stage": "normalize",
-      "target": null,
-      "budget": 155,
-      "at": "2026-09-23T15:37:43.222Z",
-      "outcome": "error",
-      "note": "70 queued, 3 deferred at 45min",
-      "minutesUsed": null,
-      "endedAt": "2026-09-23T18:09:21.606Z"
-    },
-    {
-      "stage": "normalize",
-      "target": null,
-      "budget": 0,
-      "at": "2026-09-26T15:55:02.213Z",
-      "outcome": "ran",
-      "note": "76 queued, 1 deferred at 45min",
-      "minutesUsed": null,
-      "endedAt": "2026-09-26T17:28:51.754Z"
-    },
     {
       "stage": "normalize",
       "target": null,
@@ -1210,6 +1180,36 @@
       "note": "chain killed by hand 2026-10-21 to clear the concurrency-gate livelock (050f93d); the normalize work it owned was completed by direct batches instead — 201 measured / 126 passing",
       "minutesUsed": null,
       "endedAt": "2026-10-22T21:08:09.749Z"
+    },
+    {
+      "stage": "research",
+      "target": "PT多策略",
+      "budget": 0,
+      "at": "2026-10-24T18:00:27.498Z",
+      "outcome": "ran",
+      "note": "resumed research session f78b9ffc (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-24T18:04:20.903Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-24T18:04:25.898Z",
+      "outcome": "ran",
+      "note": "family assignment over 3 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-24T18:04:57.362Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-24T18:05:01.781Z",
+      "outcome": "ran",
+      "note": "9 retry(--redo) + 2 fresh, 2 newly deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-24T21:46:18.931Z"
     }
   ]
 }

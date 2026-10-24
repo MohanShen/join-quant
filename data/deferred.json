@@ -7,61 +7,21 @@
     "maxCapTried": 45,
     "lastDeferredAt": "2026-10-23T20:21:22.446Z"
   },
-  "strategies/2026-05-27_14个月200_超短线实盘交易策略_无未来函数-01d60c34.py": {
-    "attempts": 2,
-    "firstDeferredAt": "2026-10-22T18:19:29.525Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-10-23T20:21:22.446Z"
-  },
-  "strategies/2026-06-11_KAMA_趋势策略_社区最牛的趋势交易-已被私募机构征用-b7269ff2.py": {
-    "attempts": 2,
-    "firstDeferredAt": "2026-10-22T18:19:29.525Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-10-23T20:21:22.446Z"
-  },
-  "strategies/2026-06-29_小盘绩优股轮动策略-293f4ab7.py": {
-    "attempts": 2,
-    "firstDeferredAt": "2026-10-22T18:19:29.525Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-10-23T20:21:22.446Z"
-  },
-  "strategies/2026-06-11_2_5年254_小市值做T_全球资产ETF轮动-87826299.py": {
-    "attempts": 2,
-    "firstDeferredAt": "2026-10-22T18:19:29.526Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-10-23T20:21:22.447Z"
-  },
   "strategies/2026-06-21_首次将实战模型转化为量化策略年化468_07_amp_11_92-b8a7451f.py": {
-    "attempts": 2,
+    "attempts": 3,
     "firstDeferredAt": "2026-10-22T18:19:29.526Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-10-23T20:21:22.447Z"
-  },
-  "strategies/2026-07-01_穿越牛熊周期-多策略组合-20至今年化103_20-5511f8f0.py": {
-    "attempts": 1,
-    "firstDeferredAt": "2026-10-23T20:21:22.445Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-10-23T20:21:22.446Z"
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-24T21:46:18.930Z"
   },
   "strategies/2026-07-16_四模式量化-无未来-25年至今收益138_回撤16_3-61c9c428.py": {
-    "attempts": 1,
+    "attempts": 2,
     "firstDeferredAt": "2026-10-23T20:21:22.447Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-10-23T20:21:22.447Z"
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-24T21:46:18.930Z"
   },
   "strategies/2026-05-23_收益提升到471_--加入风控升级的连续涨停基因轮动-c658ef98.py": {
     "attempts": 1,
