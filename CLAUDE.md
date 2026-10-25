@@ -2052,3 +2052,43 @@ Only the directories whose contents aren't self-evident:
   re-planning into `research` after each batch), so this is the normal case now, not an edge one.
   **Run `--seed-deferred` after any direct normalize batch**, or the 45 minutes buys a terminal row
   and no retry.
+- ⚠⚠ **THE LEDGER IS CURRENT AND THE UNDERSTANDING IS NOT — 4 of 238 findings are epoch-9.**
+  After epoch 9's reset every ledger row is an epoch-9 measurement (335 rows, 223 measured), but
+  the RESEARCH layer still reasons from the old bench. Measured 2026-10-25 and now stamped:
+  **e6 218 | e8 16 | e9 4**. Since `sameBench(6,8)` is **true**, the 234 pre-epoch-9 findings all
+  sit on ONE older bench with the 2022–23 window — so "which variant helps", "what the family's
+  edge is" and most §4 gaps were established somewhere else.
+  `node utils/findings-epoch-backfill.js` makes that visible: a 13th `measuredEpoch` column on
+  every `study/*/findings.tsv`, taken from the author's `q-eN-` qId when stated (64) and from
+  **git blame** against the epoch timeline otherwise (174), with **0 unknown**. The timeline is
+  derived from the git history of `harness/config/active.json` — epoch configs carry **no date
+  field**, and a second copy of the timeline would drift.
+  ✅ **The inference was validated, not trusted**: on the 64 findings whose qId states an epoch,
+  blame agrees on **63 (98%)**. The one disagreement (小市值 `q-e6-19`: stated e6, blamed e8) is
+  not an error — epochs 6–8 share a bench, so the author labelled the BENCH and git recorded the
+  CALENDAR. qId therefore wins over blame.
+  ⚠ **Do NOT "start clean" by deleting the family pages.** Considered and rejected, the same
+  conclusion `epoch-reset.js` reached: only §3 is generated. §1/§2/§4/§5/§6 are hand-written —
+  2,551 lines across 13 pages, 30 edge claims, 9 `realizabilityBasis` and 3 `valDeclined`. Two of
+  those are what `integrate-eligible` DISPATCHES on and unknown realizability BLOCKS, so a wipe
+  moves all 13 families from "5 measured rejections + 5 research-owned" to 13 blocked on a human.
+  The irreplaceable half is the NEGATIVE results: §4 is what stops the loop re-deriving settled
+  answers. Stamping provenance is the cheap fix; re-measuring conclusions is the expensive one and
+  this does not do it.
+  ⚠⚠ **Two bugs worth remembering, both in the backfill's first version:**
+  (a) **the epoch timeline was order-dependent.** Epochs 3, 4 and 5 all activated on
+  **2026-09-19**, so truncating to `YYYY-MM-DD` attributed that day's findings to whichever entry
+  sorted last — epoch 3, when 5 was in force. Compare FULL ISO instants; ISO-8601 sorts correctly
+  as a string, so no date parsing is needed.
+  (b) **the header and the rows are NOT the same width, and appending to both corrupts the file.**
+  8 of 14 `findings.tsv` carry the ORIGINAL 9-column header (`qId`..`description`) while their rows
+  already have 12 fields, because `implication`/`spawned`/`edgeRef` were appended to the ROWS and
+  the header never updated. The first write put the name at header column 10 while the value landed
+  in row position 13 — the header then claimed `measuredEpoch` was `implication` — and on a second
+  run `cells[9]` (a non-empty implication) read as "already stamped", so ONLY rows with an empty
+  implication were re-stamped: 5 rows grew to 14 fields. **Reverted with `git checkout -- study/`,
+  which was cheap only because these files are tracked.** The write now NORMALISES first: header
+  becomes all 12 `FINDING_COLUMNS` names plus the stamp, every row padded to 12 before appending.
+  Result: 14 files at 13/13, and the second run stamps 0.
+  ⚠ The tool imports `FINDING_COLUMNS` from `research-queue` rather than restating it, and a test
+  forbids a second copy — the `utils/ledger.js` rule that a schema has one owner.

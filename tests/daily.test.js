@@ -1054,3 +1054,86 @@ test('integrate is wired into the funnel', async (t) => {
     assert.match(sh, /no-such-universe\)[\s\S]{0,160}exit 1/, 'a typo must fail loudly');
   });
 });
+
+/**
+ * ⚠⚠ The research layer carried no provenance, and stamping it naively CORRUPTS the file.
+ *
+ * After epoch 9's reset every ledger row is an epoch-9 measurement, but 174 of 238 findings had
+ * no epoch at all — so ~73% of the repo's recorded understanding looked current when it was
+ * measured on the 2022–23 window (and pre-epoch-6, under different costs).
+ *
+ * The trap: 8 of 14 findings.tsv carry the ORIGINAL 9-column header while their rows already have
+ * 12 fields. A first version appended the name as header column 10 while the value landed in row
+ * position 13, so the header claimed `measuredEpoch` was `implication`; and on a re-run
+ * `cells[9]` (a non-empty implication) read as "already stamped", so only rows with an EMPTY
+ * implication were re-stamped — 5 rows grew to 14 fields. Reverted with git checkout.
+ */
+const fet = require('node:test');
+const fea = require('node:assert');
+const fefs = require('fs');
+const fepath = require('path');
+
+fet('findings carry the epoch they were measured under', async t => {
+  const be = require('../utils/findings-epoch-backfill');
+  const { FINDING_COLUMNS } = require('../utils/research-queue');
+  const files = fefs.readdirSync(fepath.join(ROOT, 'study'))
+    .map(d => fepath.join(ROOT, 'study', d, 'findings.tsv'))
+    .filter(p => fefs.existsSync(p));
+
+  await t.test('header and EVERY row are the same width — the corruption test', () => {
+    const want = FINDING_COLUMNS.length + 1;
+    for (const f of files) {
+      const L = fefs.readFileSync(f, 'utf8').split('\n').filter(x => x.trim());
+      fea.strictEqual(L[0].split('\t').length, want,
+        `${fepath.basename(fepath.dirname(f))}: header must be ${want} wide`);
+      for (const [i, l] of L.slice(1).entries()) {
+        fea.strictEqual(l.split('\t').length, want,
+          `${fepath.basename(fepath.dirname(f))} row ${i + 2}: width must match the header`);
+      }
+    }
+  });
+
+  await t.test('the stamp sits AFTER the canonical columns, so readers are unaffected', () => {
+    const f = files[0];
+    const hdr = fefs.readFileSync(f, 'utf8').split('\n')[0].split('\t');
+    fea.deepStrictEqual(hdr.slice(0, FINDING_COLUMNS.length), FINDING_COLUMNS,
+      'the first 12 names must still be exactly FINDING_COLUMNS');
+    fea.strictEqual(hdr[FINDING_COLUMNS.length], be.COLUMN);
+  });
+
+  await t.test('the schema has one owner — the tool must not restate the column list', () => {
+    const src = fefs.readFileSync(fepath.join(ROOT, 'utils/findings-epoch-backfill.js'), 'utf8');
+    fea.match(src, /FINDING_COLUMNS \} = require\('\.\/research-queue'\)/);
+    fea.ok(!/'qId',\s*'type',\s*'component_or_param'/.test(src),
+      'a second copy of the column list would drift');
+  });
+
+  await t.test('an author-stated qId epoch beats inference', () => {
+    fea.strictEqual(be.epochFromQid('q-e6-13'), 6);
+    fea.strictEqual(be.epochFromQid('q-e9-pit'), 9);
+    fea.strictEqual(be.epochFromQid('baseline'), null);
+  });
+
+  /**
+   * ⚠ Epochs 3, 4 and 5 all became active on 2026-09-19, so a date-only comparison attributed
+   * that day's findings to whichever entry sorted last. ISO-8601 compares correctly as a string.
+   */
+  await t.test('the epoch timeline is ordered by INSTANT, not by date', () => {
+    const tl = be.epochTimeline();
+    fea.ok(tl.length >= 2, 'the timeline must come from active.json history');
+    for (let i = 1; i < tl.length; i++) {
+      fea.ok(tl[i].from > tl[i - 1].from, 'strictly ascending by ISO instant');
+      fea.ok(tl[i].epoch > tl[i - 1].epoch, 'epochs only move forward');
+    }
+    const sameDay = tl.filter(x => x.from.slice(0, 10) === '2026-09-19');
+    if (sameDay.length > 1) {
+      fea.deepStrictEqual(sameDay.map(x => x.epoch), [...sameDay.map(x => x.epoch)].sort((a, b) => a - b),
+        'same-day entries must still be in epoch order');
+    }
+  });
+
+  await t.test('an undatable line is stamped unknown, never guessed', () => {
+    const src = fefs.readFileSync(fepath.join(ROOT, 'utils/findings-epoch-backfill.js'), 'utf8');
+    fea.match(src, /stamp = 'unknown'/);
+  });
+});
