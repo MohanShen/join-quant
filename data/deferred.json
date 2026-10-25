@@ -24,19 +24,19 @@
     "lastDeferredAt": "2026-10-24T21:46:18.930Z"
   },
   "strategies/2026-05-23_收益提升到471_--加入风控升级的连续涨停基因轮动-c658ef98.py": {
-    "attempts": 1,
+    "attempts": 2,
     "firstDeferredAt": "2026-10-23T20:21:22.447Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-10-23T20:21:22.447Z"
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-25T22:26:03.286Z"
   },
   "strategies/2026-07-04_多因子优选_KNN预测择股策略V3_0-13819419.py": {
-    "attempts": 1,
+    "attempts": 2,
     "firstDeferredAt": "2026-10-23T20:21:22.447Z",
-    "reason": "slow-skipped (seeded from ledger)",
-    "lastCapMin": 20,
-    "maxCapTried": 20,
-    "lastDeferredAt": "2026-10-23T20:21:22.447Z"
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-25T22:26:03.286Z"
   }
 }

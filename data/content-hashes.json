@@ -1836,5 +1836,100 @@
     "postId": "aec6bd0e412af0676db382768ce140f9",
     "sourceFile": "2026-10-21_长盈智选_既要高收益_更要低回撤_11年最大回撤12-aec6bd0e.py",
     "registeredAt": "2026-10-20T19:10:44.395Z"
+  },
+  "8f7adadb9a91f2deec37346ac62da384990981a06679e4c2d6f5bc4dbcfd67bb": {
+    "postId": "01fa47a7fb2233e8c602a78618e34545",
+    "sourceFile": "2026-10-26_动态获取ETF池子策略--01fa47a7.py",
+    "registeredAt": "2026-10-25T22:26:14.496Z"
+  },
+  "67cd87914a44d44640adee74314a414b17e0c387c82d0b06ab65986f0f0e26d7": {
+    "postId": "71118013a574ee1c45dd1f8fb5934b90",
+    "sourceFile": "2026-10-26_中证500市值前80策略_参数配置与回测调优实战指南-71118013.py",
+    "registeredAt": "2026-10-25T22:26:17.074Z"
+  },
+  "92c6b5a62a00915a8eff72f9e94d1e48c9dde432b30c7e95cab547eccc8f5b6a": {
+    "postId": "2a3235229fdfd62a917c78a5d8236c15",
+    "sourceFile": "2026-10-26_自己搭建的一个10年230_收益率的银行股策略-2a323522.py",
+    "registeredAt": "2026-10-25T22:26:19.672Z"
+  },
+  "9f11a35b5cade80d9dc621cdf0dfc4df0a1bca6deee39857efcf284926e81931": {
+    "postId": "f95907c7e3190968b33f933286de4e8e",
+    "sourceFile": "2026-10-26_简单清晰的5只ETF低频轮动策略_6年半回测年化35_8-f95907c7.py",
+    "registeredAt": "2026-10-25T22:26:22.307Z"
+  },
+  "ee2bd67a10814a94574921e100d1a23c278180076e49a095864e3f6a94100c16": {
+    "postId": "ee03935459266d698b03c040fa1d4628",
+    "sourceFile": "2026-10-26_解构巴菲特神话_在a股重现复利奇迹_2-ee039354.py",
+    "registeredAt": "2026-10-25T22:26:25.354Z"
+  },
+  "9aa59411d8ec7490e98b4a078db3692fd38073af77e8f6983d73b2370542d118": {
+    "postId": "0a7de9fad52e6c789cae6ef3b5032c61",
+    "sourceFile": "2026-10-26_中小盘趋势策略_年化_85-0a7de9fa.py",
+    "registeredAt": "2026-10-25T22:26:27.980Z"
+  },
+  "7f307dffd695cd9d02ac6b4dcb1631b9d81bff37cb6c20907260bf10c2cd1e46": {
+    "postId": "4a67a7b0442764e0d7643831ff08abb6",
+    "sourceFile": "2026-10-26_多仓位再平衡22_77_年化_最大回撤11_17-4a67a7b0.py",
+    "registeredAt": "2026-10-25T22:26:30.592Z"
+  },
+  "66642517c0a2f4e9af3a36202e282f6319fd9624d9140b0b0eb8ac3c44104d7a": {
+    "postId": "dbc9af1853ad9c890aeccadfa28c3b8a",
+    "sourceFile": "2026-10-26_打板策略标准股票池常用写法_从入门到避坑-dbc9af18.py",
+    "registeredAt": "2026-10-25T22:26:33.301Z"
+  },
+  "5767deecc7b9ab21cbde7ef1c6c09beb3bd422f2786c2d6153006176bb8910de": {
+    "postId": "21cf5bed46a8a460de509ce6ff9a95be",
+    "sourceFile": "2026-10-26_银行轮动_中_农_工_商_无止损_年化77-21cf5bed.py",
+    "registeredAt": "2026-10-25T22:26:35.914Z"
+  },
+  "7789f0646e9f15db8e99612433fc652d6cf1fbce744407a93c11c3d25a4bbf9b": {
+    "postId": "a5490c1b103a3727b50a246d99003b82",
+    "sourceFile": "2026-10-26_多因子模型_资产组合优化-a5490c1b.py",
+    "registeredAt": "2026-10-25T22:26:38.519Z"
+  },
+  "84d2c6fb93b47f43853d39c17c241fe74b208e3e135a2dc815004b865be8f738": {
+    "postId": "d414730a97c95fc8c425c4f464cc7607",
+    "sourceFile": "2026-10-26_复现_FFScore财务模型-d414730a.py",
+    "registeredAt": "2026-10-25T22:26:44.432Z"
+  },
+  "2c95ebb611fef4d6d1ce6333c79ff2e7729fa25b12c881d6ed9c78ffd8d55994": {
+    "postId": "b27131c6fb393ca6cae017eb0896ee67",
+    "sourceFile": "2026-10-26_双因子加指标模型-b27131c6.py",
+    "registeredAt": "2026-10-25T22:26:46.975Z"
+  },
+  "097480ac3ac3fa9f69f167a4e4289e8d36676ad3f1544b2657aed298dca7d61f": {
+    "postId": "73266f9bd7ed7e5b5176cbad04688f87",
+    "sourceFile": "2026-10-26_多因子系列_基于多因子框架的收益预测模型-73266f9b.py",
+    "registeredAt": "2026-10-25T22:26:49.596Z"
+  },
+  "7c1eb60496dee617ad339a1397544df3e0faf97c282f04c2a32b3922b6108da0": {
+    "postId": "8e688165e9e1704058d379d70e47c7dc",
+    "sourceFile": "2026-10-26_基于分析师深度研报的T_1策略-年化51_回撤3_7-8e688165.py",
+    "registeredAt": "2026-10-25T22:26:52.286Z"
+  },
+  "b16f47f300df69f464c9ad69c2cdb443ab42c110b5df1da4a876a504ef6591ba": {
+    "postId": "d8bb674ba78069b4f511b0fe69c0fe57",
+    "sourceFile": "2026-10-26_复现_扩散指标择时-d8bb674b.py",
+    "registeredAt": "2026-10-25T22:26:55.169Z"
+  },
+  "14572aea37a93e99012175d5d182bb4be8cc4f7afa23196d0dc3ae7a69adfb3c": {
+    "postId": "05ebe213bd6e7f2c4a42a2686f663a3c",
+    "sourceFile": "2026-10-26_资金流数据_支持向量机_判断股价走势-05ebe213.py",
+    "registeredAt": "2026-10-25T22:26:57.787Z"
+  },
+  "4d2b1092cba1aa0c335327a520c627ece6833ab70521d1f1a4ba1aea81b4017c": {
+    "postId": "5d88889d80fa69d9f630d452799827e1",
+    "sourceFile": "2026-10-26_多因子共振策略-5d88889d.py",
+    "registeredAt": "2026-10-25T22:27:01.319Z"
+  },
+  "130cf67a20224636ef132d156c03c9bfa86c478928444942c4b7914b7d8db2c8": {
+    "postId": "9e0991dc546c36b59f6fb36a6f42562a",
+    "sourceFile": "2026-10-26_高股息率策略修改优化-9e0991dc.py",
+    "registeredAt": "2026-10-25T22:27:03.930Z"
+  },
+  "6d25d97e3be033545dc97887e71b790a145983377c96f936e11636206a157590": {
+    "postId": "923d3903537dfbd36c774d4733be7c6b",
+    "sourceFile": "2026-10-26_十字星_策略研究-923d3903.py",
+    "registeredAt": "2026-10-25T22:27:06.536Z"
   }
 }

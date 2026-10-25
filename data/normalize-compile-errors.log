@@ -86,3 +86,9 @@
 2026-10-23T20:08:10.415Z	strategies/2026-10-21_多空对冲策略_大盘风险为_0-f34b863a.py	SyntaxError: invalid syntax
 2026-10-23T20:09:11.848Z	strategies/2026-10-21_基于多期限的选股策略_二_构建LLT因子改进-d020499c.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'close'}字段数据, current_dt=2024-01-02 09:30:00, end_date=2024-01-02 09:30:00
 2026-10-23T20:10:14.643Z	strategies/2026-10-21_OLS回归的量化之旅Chapter_2-a92001a6.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-10-25T23:35:11.729Z	strategies/2026-10-26_多因子模型_资产组合优化-a5490c1b.py	AttributeError: 'Series' object has no attribute 'order'
+2026-10-25T23:42:09.512Z	strategies/2026-10-26_双因子加指标模型-b27131c6.py	TypeError: 'KeysView' object does not support indexing
+2026-10-25T23:43:10.112Z	strategies/2026-10-26_多因子系列_基于多因子框架的收益预测模型-73266f9b.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 cPickle
+2026-10-25T23:44:10.674Z	strategies/2026-10-26_基于分析师深度研报的T_1策略-年化51_回撤3_7-8e688165.py	jqboson.core.exception.ReadRemoteFileError: read_file 深度报告数据0.csv: 文件'/opt/research-files/655/65568519426/深度报告数据0.csv'不存在
+2026-10-25T23:47:56.679Z	strategies/2026-10-26_资金流数据_支持向量机_判断股价走势-05ebe213.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时, get_money_flow只能在盘后15:00之后才能获取标的的资金流数据，current_dt= 2024-03-28 09:30:00
+2026-10-25T23:57:21.516Z	strategies/2026-10-26_十字星_策略研究-923d3903.py	NameError: name 'xrange' is not defined
