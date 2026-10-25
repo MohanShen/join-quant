@@ -160,5 +160,91 @@
     "rank": 10,
     "status": "answered",
     "result": "20 日仍是同一本书的量级（objective 0.14，2022 赚 53%），相关 0.72；预注册（Δobj > −0.05 即平台）刚好成立。窗口曲线是 20→0.14、25→0.19、50→−0.20：短端平缓、长端断崖"
+  },
+  {
+    "id": "q-e9-1",
+    "kind": "understand",
+    "title": "点时池（pit-pool.py 原样）在 epoch-9 TRAIN 2024 上复测：池子承载收益的结论是否延续到新台",
+    "hypothesis": "若 epoch-8 的 refutation 延续，点时池 obj <= 0.556（base 1.1110 的一半）或 sharpe < 1.0 ⇒ 池子仍承载收益；obj >= 0.83 且 sharpe >= 2.5 ⇒ 2024 上被推翻（短窗口平滑动量在无后见池上可用）。0.556–0.83 区间 = 部分承载，记为 inconclusive-partial，不升级 edge",
+    "why": "本族唯一的 edge 声明的 refutation 建立在 2022–23 台上，且损失 100% 在 2022；epoch 9 只看 2024，旧结论是否成立恰是未知的——两个方向都是信息。2024 距写池日更近（选择后见更强、可得性后见更弱），方向无先验。一次回测；pit-pool 每月初重建、2024 ETF 总数比 2022 多，预期几分钟，远低于 45 分钟上限。⚠ 继承的混淆不变：点时池（数百只）vs 名单 11 只同时改了无后见与选择集宽度；若再次塌陷，§4 的 N=11 截断成为下一个该排的拆分实验",
+    "design": "study/ETF动量/variants/pit-pool.py 不改一行，--window train（epoch 9 = 2024-01-01..2024-12-31）。对照 = ledger 0aa4028d epoch-9 行（同源 + 同 OVERRIDE，允许 ~0.15pp 重跑漂移）。⚠ 文件第 116 行注释写「no post-2023 information」是旧窗口的措辞，构造是逐日 get_all_securities(date=d)，与窗口无关，无需改动。报告年内 sharpe、持有期、换手（与 epoch-8 的 52→4.7 天对比）",
+    "from": [
+      "pit-pool",
+      "q-e6-3",
+      "ledger:0aa4028d@epoch9 obj 1.1110"
+    ],
+    "edgeRef": "动量",
+    "rank": 1,
+    "status": "answered",
+    "result": "点时池在 2024 上 objective 1.1110→−0.3324、sharpe 3.39→−0.21，符号翻转，gate fail。预注册证伪项（obj ≤ 0.556 或 sharpe < 1.0 ⇒ 旧 refutation 延续）决定性触发。机制面与 epoch 6 同形：持有期塌到约 2 日、换手 0.478、盈亏比 1.04——盈亏不对称消失。存储曲线 final cum −4.64% 与 SUMMARY 一致"
+  },
+  {
+    "id": "q-e9-3",
+    "kind": "understand",
+    "title": "冠军 62c2664f（26 只裸代码纯 ETF 动量）的上市日期点时池测试 + 2025 上市名单（VAL 污染）报告",
+    "hypothesis": "纯 ETF 动量书 n=2 时池子后见奖励 19–33%：Δobj/obj <= −19% ⇒ 第三个复制点确认；Δobj/obj >= −5% ⇒ 本书反驳该分组；之间 = inconclusive。若 --dry 排除 0 只则不跑回测，直接记「池在 2024 前全部上市、可得性后见为零」（选择后见仍未测，须注明）",
+    "why": "§3 第 1 名 / bestVariant 2.0078 正在被引用，而 CLAUDE.md 规定任何纯 ETF 动量书的分数必须先跑此测试并成对引用——这是合规缺口。另一半（2025 上市者 = VAL 选择污染）是 VAL 的前置条件，虽然 VAL 由人工持有，名单本身零成本。可能 0 回测（dry 无排除），否则 1 次",
+    "design": "复制 study/五福闹新春/build-e9-pit.js 的规则到本族（或给它加一个 62c2664f 条目）：pool ∩ {上市日期 < harness TRAIN start}，截止日从 harness 读；池无作者日期 ⇒ corpus-wide fallback，逐条在变体头里注明 provenance；corpus 也无日期的代码 ⇒ 构建器拒绝并报告，不猜。先 --dry 列出排除集（区分 2024 内上市 / 2025 上市）。只注释掉被排除的行/代码，断言改动行即排除集。对照 = ledger 62c2664f epoch-9 行",
+    "from": [
+      "五福闹新春:q-e9-pit",
+      "小市值:q-e9-pit-bba95a11",
+      "ledger:62c2664f@epoch9 obj 2.0078"
+    ],
+    "edgeRef": "动量",
+    "rank": 2,
+    "status": "answered",
+    "result": "冠军点时池 objective 2.0078→1.3247（−34%）、sharpe 5.78→4.20，仍过 1.0 闸门。全部损失来自一只后见名 159529 标普消费（2024-02 上市）在 7 月后进入持仓：7-22 前曲线逐位相同。预注册证伪项（降幅 ≥19% ⇒ 纯 ETF 后见奖励确认）触发，落在五福闹新春纯 ETF 书 19–33% 区间的顶端。存储曲线 final cum 151.34% 与 SUMMARY 一致"
+  },
+  {
+    "id": "q-e9-2",
+    "kind": "understand",
+    "title": "排序方向反转（q-1_invert-rank.py）在 2024 上复测：11 只名单内排序是否仍有信息",
+    "hypothesis": "反排年化 >= base 126.22 的 75%（>= 94.7）⇒ 2024 上名单内排序无信息、收益全在名单；反排年化 <= 50% ⇒ 排序信息延续（epoch 6 为 29%）",
+    "why": "epoch 6 的 29% 是 2022 主导的读数（差距主要在 2022）；2024 是否同向未知。这是相对比较（同名单内），不违反「本族水平数字不作机制证据」的规则，且无论 q-e9-1 结果如何都可读：pit 塌陷时它回答「后见名单内排序是否还有贡献」。单行 diff，一次快速回测",
+    "design": "study/ETF动量/variants/q-1_invert-rank.py（对 baseline-e6.py 单行 diff，已核），--window train。对照 = ledger 0aa4028d epoch-9 行；报告年化、obj、与 base 的日收益相关",
+    "from": [
+      "q-e6-1",
+      "q-e6-7"
+    ],
+    "edgeRef": "动量",
+    "rank": 3,
+    "status": "answered",
+    "result": "反排在 2024 上 annual 126.22→−7.74、objective 1.1110→−0.2451（−1.3561），sharpe −0.69，gate fail；回撤几乎不变（+1.65pp），损失是收益而非新增风险。预注册证伪项（反排年化 ≥94.7 ⇒ 排序无信息；≤63.1 ⇒ 排序信息延续）以 −7.74 决定性落在「延续」一侧，且比 epoch 6 更强（保留 29%→−6%）。存储曲线 final cum −7.74% 与 SUMMARY 一致"
+  },
+  {
+    "id": "q-e9-4",
+    "kind": "understand",
+    "title": "等权持有全部 11 只名单、月度再平衡：轮动 vs 直接持有名单",
+    "hypothesis": "等权 obj >= 0.83（base 的 75%）⇒ 轮动在名单之上贡献很少，收益是名单本身；等权 obj <= 0.556 ⇒ 轮动有实质贡献",
+    "why": "与 q-e9-2 互补而非重复：反排给的是「持最弱合格者」，等权给的是名单平均——可以出现反排很差而等权也不差（轮动只是在避开最差者）。q-e6-8 的关闭只针对不重写仓位的 max_hold=11（现金拖累），本设计重写分配，不受其约束。⚠ 排第 4：若 q-e9-2 已给出清楚的「排序无信息」，本题信息量大降，执行前可由 gatekeeper 重判；构造风险高于单行 diff（分配函数改写），须断言 diff 只落在分配/调度",
+    "design": "从 baseline-e6.py 出发：每月首个交易日按 total_value/11 等分目标市值下单，去掉打分/闸门/止损调度；未上市（2024 内无行情）名单成员的份额按可交易者等分并在头部注明。--window train；对照 ledger 0aa4028d epoch-9",
+    "from": [
+      "q-e6-8",
+      "q-e6-3",
+      "q-e9-2"
+    ],
+    "edgeRef": "动量",
+    "rank": null,
+    "status": "dropped",
+    "result": "gatekeeper 2026-10-25 drop：预注册证伪项已不可解读——「等权 obj≥0.83 ⇒ 轮动贡献很少」与 q-e9-2 直接矛盾（同一名单内只翻转排序 obj 1.1110→−0.2451，轮动贡献已测为 >100% 的 objective），任何等权读数都只能给出一个后见名单的水平数字，而本页规定名单水平数字不作机制证据；且需改写分配函数、构造风险高于单行 diff。若 q-e9-5 截断名单回到 base 附近，可在那份无后见名单上重提"
+  },
+  {
+    "id": "q-e9-5",
+    "kind": "understand",
+    "title": "点时池按 20 日中位成交额截断到 N=11（每月重建）：拆开「无后见」与「选择集变宽」",
+    "hypothesis": "对照 0aa4028d@e9 obj 1.1110 / sharpe 3.39（名单，后见）与 pit-pool@e9 −0.3324 / −0.21（无后见、宽池）；缺口 1.4434。规模份额 s=(obj_trunc+0.3324)/1.4434。证伪「名单后见承载收益」：obj_trunc ≥ 0.83（base 的 75%，s ≥ 0.81）且 sharpe ≥ 2.5 ⇒ 宽选择集是主因，无后见构建的 11 只名单复现了排序×名单交互，「手选跨资产名单内的短窗口动量」可提请人工升为 measured。obj_trunc ≤ 0 或 sharpe < 1.0 ⇒ 名单后见仍承载收益（与 七星高照 study-q-pit7 同形），edge 维持 refuted，新措辞不得升级。之间 ⇒ 部分，报告 s 与 七星高照 的 59% 比较，不升级。先验（七星 s=0.59）预测 obj_trunc ≈ 0.52，即落在中间带",
+    "why": "q-e9-1/2/3 合读后唯一能升级重述 edge 的实验，也是 §4 自 epoch 6 开着的拆分；两个方向都是信息（≤0 关闭名单方向，≥0.83 是与姊妹族相反的本族独有事实）。⚠ 已知构造混淆：按成交额排名的前 11 只很可能几乎全是 A 股宽基/行业 ETF，接近 q-e6-3 的 A 股池（−0.27）而非跨资产名单——须逐月报告截断池按资产类别的构成；若构成单一资产类别，读数为「流动性截断」而非「无后见的跨资产名单」，不得用来升级 edge（分层截断另起一条）。成本：pit-pool@e9 为单次快速回测，截断只减少打分标的，预计数分钟，远低于 45 分钟上限",
+    "design": "从 study/ETF动量/variants/pit-pool.py 出发，单处改动：_rebuild 里过滤后的候选按 _pool_median_money 降序取前 POOL_TOP_N=11 再与持仓并集（持仓并集保留，避免强制平仓）；其余（上市≥250 日、2e7 底、月初重建、打分/闸门/止损/OVERRIDE）逐字不动。断言 diff 只落在池构建。→ study/ETF动量/variants/q-e9-5_pit-top11.py，--window train（2024）。日志打印每月池代码，用于资产类别构成",
+    "from": [
+      "q-e9-1",
+      "q-e9-2",
+      "q-e9-3",
+      "七星高照:study-q-pit7",
+      "ledger:0aa4028d@epoch9 obj 1.1110"
+    ],
+    "edgeRef": "动量",
+    "rank": 1,
+    "status": "answered",
+    "result": "截断到 11 只最流动名后 objective −0.3324→0.0197、sharpe −0.21→0.58，gate fail（<1.0）。缩窄选择集只补上生成池与手选名单缺口的 24%，其余 76% 属于作者挑了哪些名字；七星高照 N=7 先验为规模 59% / 名单 41%，本族为 24% / 76%。预注册证伪项（obj ≤ 0 或 sharpe < 1.0）在 sharpe 上触发（obj 微正）。存储曲线 final cum 20.85% 与 SUMMARY 一致"
   }
 ]
