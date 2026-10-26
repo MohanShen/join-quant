@@ -2,6 +2,7 @@
 postId: f9cf1a11d82bddc3ae2cc60356d050d7
 title: DMI——大盘择时
 sourceFile: strategies/2026-10-26_DMI_大盘择时-f9cf1a11.py
+family: 趋势技术
 concepts: [未分类]
 factors:
   选股: [未分类]
