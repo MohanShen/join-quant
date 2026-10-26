@@ -1183,6 +1183,30 @@ Only the directories whose contents aren't self-evident:
   has already paid for one guess-based rule that permanently discarded 287 of 549 strategies.
   `/run-family` step 0b now tells a session how to record a decline, which is the half that makes
   the loop converge instead of being re-dispatched.
+  ⚠⚠⚠ **`valDeclined` was honoured on ONE branch of the gate, and the unguarded one fired.** It was
+  read only inside `if (!val.has)`. The branch ABOVE it — 「its shelf product(s) are not usable on
+  this bench」 — returned `owner: 'research'` without consulting it, so `family-queue` reopened the
+  family as `integrate-blocked` **every day** with the decline sitting unread in its own
+  frontmatter. Exactly the non-convergence the field exists to end, arriving on the one path that
+  could not see it.
+  **Measured 2026-10-26, by the dispatch itself**: ETF动量 sat at the head of the research queue, a
+  session resumed, re-derived its own recorded decline, ran no backtest, committed only paperwork
+  (`e2348e4`) and then **reported that it would keep happening** — which is how this was found.
+  ⚠ **Both routes that branch offers run through a VAL**, so the loop never had a move:
+  `usable` demands `gate_val === 'pass'` at a comparable epoch and only an ARCHIVED VAL stamps that
+  field, so 「re-measure the product」 moves the objective and leaves the product exactly as
+  unusable (`ffd92ab` did precisely that on etfmom-005 → 2.4187, and the gate correctly did not
+  budge); 「re-finalise the family」 is a VAL by definition. So the owner is **`human`** — grant
+  `JQ_ALLOW_REVAL`, or edit the decline.
+  ⚠ Narrow by construction: of the three families on that branch only ETF动量 has declined.
+  大小盘轮动 (shelf product `dxp-imp-1`, epoch 6) and 红利低频 (VAL at epoch 6, budget allows a
+  fresh one) have work the loop really can do and correctly stay `research`.
+  ⚠ ETF动量 is **still queued**, now on `new-members` — a different and legitimate reopening, since
+  a new member can change the champion, and Step 0 handles it with a `logged-only` exit. The fix
+  removes the spurious dispatch, not the family.
+  ⚠ The test is **generic, not pinned to ETF动量**: it fails for any family on any branch whose page
+  declines the VAL while the gate names research, so a path added above the `!val.has` check cannot
+  reintroduce this silently. Verified red on the pre-fix code before being trusted.
 - **`slow-skipped` stays TERMINAL in the normalizer** (making it retriable re-bills it every
   batch — the `no-trades` bug). The retry path is a separate **deferred pool**,
   `data/deferred.json`, drained only by the daily pipeline and only at a **higher cap than the
