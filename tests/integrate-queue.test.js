@@ -523,6 +523,33 @@ test('the exit gate names the owner of every block', async (t) => {
     }
   });
 
+  await t.test('a DECLINED validation is never research-owned, whichever branch reports it', () => {
+    // ⚠⚠ The decline was honoured on ONE path and not the other, and the unguarded path is the
+    // one that fired. `valDeclined` was introduced so a family that has reasoned its way to "do
+    // not spend our one validation" stops being re-dispatched daily to re-derive that — but it
+    // was read only in the `!val.has` branch. A family whose SHELF PRODUCT is unusable returns
+    // above that branch, so it reported `owner: research` with the decline sitting unread in its
+    // own frontmatter.
+    //
+    // Measured 2026-10-26: ETF动量 was dispatched at the head of the research queue, spent a
+    // session re-deriving its recorded decline, ran no backtest and committed only paperwork.
+    // Both routes that branch offers run through a VAL — restamping a product's `gate_val` needs
+    // an archived VAL, and "re-finalise" is a VAL by definition — so the loop never had a move.
+    //
+    // Generic on purpose: it fails for ANY family on ANY branch, so the next path added above
+    // the VAL check cannot reintroduce this silently.
+    const fm = require('../utils/frontmatter');
+    for (const r of rows) {
+      if (r.eligible || r.owner !== 'research') continue;
+      const page = path.join(__dirname, `../wiki/families/${r.family}.md`);
+      if (!fs.existsSync(page)) continue;
+      const declined = fm.field(fs.readFileSync(page, 'utf8'), 'valDeclined');
+      assert.ok(!declined,
+        `${r.family}: declined its VAL at epoch ${declined} yet the gate names research as the ` +
+        `owner — the loop cannot clear it, so family-queue will reopen it every day. Verdict: ${r.why}`);
+    }
+  });
+
   await t.test('a VAL on a bench the active epoch rejects asks the BUDGET who owns it', () => {
     // sameBench(valEpoch, active) false => a fresh VAL is allowed => research can clear it.
     // An unrecorded epoch is UNKNOWN, unknown blocks, so only a human override moves it. Keeping

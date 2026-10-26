@@ -284,8 +284,30 @@ function assess(family) {
                 'none');
   }
   if (!product && shelf && shelf.unusable) {
+    const products = shelf.unusable.map(x => `${x.expId} epoch ${x.epoch} gate ${x.gateVal}`).join('; ');
+    // ⚠⚠ BOTH routes out of this block run through a VAL, so a family that has DECLINED its
+    // validation does not own this step — the loop cannot clear it:
+    //   · "re-measure the product"   — `usable` demands `gate_val === 'pass'` at a comparable
+    //     epoch, and only an archived VAL stamps that field. A TRAIN re-measurement moves the
+    //     objective and leaves the product exactly as unusable as before.
+    //   · "re-finalise the family"   — a VAL by definition.
+    // This check used to sit BELOW the `!val.has` branch, so `valDeclined` was never consulted on
+    // this path and the verdict read `owner: research`. `family-queue` duly reopened the family as
+    // `integrate-blocked` EVERY DAY: measured 2026-10-26 on ETF动量, which was dispatched at the
+    // head of the research queue, re-derived its own recorded decline, ran no backtest and
+    // committed only paperwork — the exact non-convergence the `valDeclined` field was introduced
+    // to end, arriving on the one path that could not see it.
+    if (valDeclined) {
+      return fail('blocked',
+        `its shelf product(s) (${products}) are not usable on this bench, and the research loop ` +
+        `DECLINED to spend this family's validation (epoch ${valDeclinedAt}): ` +
+        `${valDeclinedBasis || 'no basis recorded ⚠'}. Restamping a product's gate_val needs a VAL, ` +
+        'so neither route out of this block is open to the loop — clearing it is a human decision ' +
+        '(grant JQ_ALLOW_REVAL, or edit the decline), not a research round.',
+        'human');
+    }
     return fail('blocked',
-      `its shelf product(s) (${shelf.unusable.map(x => `${x.expId} epoch ${x.epoch} gate ${x.gateVal}`).join('; ')}) ` +
+      `its shelf product(s) (${products}) ` +
       'are not usable on this bench, and the best ingested member is not the finalised book — ' +
       're-measure the product or re-finalise the family', 'research');
   }
