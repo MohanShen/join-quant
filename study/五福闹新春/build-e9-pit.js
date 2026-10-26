@@ -113,6 +113,15 @@ const BOOKS = [
   // comparable to the four above, and it is one of THREE byte-identical books at obj 1.6156 /
   // sharpe 6.12, so one run answers all three.
   { tag: 'q-e9-pit_3c462ece', match: /3c462ece/, label: '三马七星172-大池子' },
+
+  // ── The PRODUCT SHELF, added 2026-10-26. ETF动量's validated product re-measured on epoch 9 at
+  //    objective 2.4187 / sharpe 7.23 — rank 8 of 235, and the highest score on the bench from a
+  //    family NOT measured at realizability 1 (6 of the 7 above it are 打板短线 or PT多策略, both
+  //    R=1). It carries 45 hardcoded ETF codes and ZERO inline listing dates, so it needs the
+  //    corpus fallback, and ETF动量 is the family whose pool CLAUDE.md records as 「写于 2026」 with
+  //    a broad A-share pool scoring −0.27. So that 2.4187 is not quotable until this runs.
+  { tag: 'q-e9-pit_etfmom-005', match: /^etfmom-005\.py$/, label: 'ETF动量 产品 etfmom-005',
+    dir: 'validated_strategies' },
 ];
 
 const header = (label, cut, dropped) => [
@@ -137,9 +146,14 @@ const header = (label, cut, dropped) => [
 
 const built = [];
 for (const b of BOOKS) {
-  const src = fs.readdirSync(path.join(ROOT, 'strategies')).find(f => b.match.test(f));
-  if (!src) throw new Error(`no source for ${b.tag}`);
-  const raw = py2to3(fs.readFileSync(path.join(ROOT, 'strategies', src), 'utf8'));
+  // ⚠ `dir` defaults to strategies/ but may name the product shelf. A shelf artifact is a BUILT
+  // book, so it is not a ledger row and the primary dated-comment rule rarely applies to it — but
+  // the pool question is identical, and routing it through THIS builder is the point: one builder
+  // means the membership rule cannot drift between an ingested book and a product.
+  const srcDir = b.dir || 'strategies';
+  const src = fs.readdirSync(path.join(ROOT, srcDir)).find(f => b.match.test(f));
+  if (!src) throw new Error(`no source for ${b.tag} in ${srcDir}`);
+  const raw = py2to3(fs.readFileSync(path.join(ROOT, srcDir, src), 'utf8'));
 
   const dropped = [];
   // ⚠ A book may list one name per line WITH a dated comment (73b13d92 etc.) or several bare
@@ -184,7 +198,23 @@ for (const b of BOOKS) {
   if (!dropped.length) throw new Error(`${b.tag}: nothing to exclude — the test would be inert`);
 
   const file = path.join(OUT, `${b.tag}.py`);
-  const text = header(b.label, CUT, dropped) + out + OVERRIDE;
+  // ⚠⚠ NEVER append OVERRIDE to a book that already carries it. A PRODUCT from
+  // `validated_strategies/` was built from `enhance/strategy_template.py`, which embeds the pins,
+  // so a second copy rebinds `__jq_orig_initialize` to the ALREADY-WRAPPED `initialize` and the
+  // wrapper calls itself: `RecursionError: maximum recursion depth exceeded`, 985 frames deep,
+  // reported as a bare `compile-error`. Measured on etfmom-005, 2026-10-26 — and the signal was in
+  // plain sight beforehand (a pin-marker count of 14 on the product), which I read as "good, it is
+  // pinned" rather than "the OVERRIDE is already here".
+  // The pins must still be PRESENT, so this asserts rather than silently skipping.
+  const hasOverride = /__jq_orig_initialize/.test(out);
+  if (hasOverride) {
+    for (const marker of ['avoid_future_data', 'order_volume_ratio', 'set_order_cost']) {
+      if (!out.includes(marker)) {
+        throw new Error(`${b.tag}: claims its own OVERRIDE but is missing ${marker} — refusing`);
+      }
+    }
+  }
+  const text = header(b.label, CUT, dropped) + out + (hasOverride ? '' : OVERRIDE);
   if (!DRY) fs.writeFileSync(file, text);
   built.push({ tag: b.tag, src, dropped: dropped.length,
                in2025: dropped.filter(d => d.date >= '2025-01-01').length });
