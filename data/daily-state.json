@@ -1,5 +1,10 @@
 {
-  "inFlight": null,
+  "inFlight": {
+    "stage": "research",
+    "target": "打板短线",
+    "budget": 0,
+    "at": "2026-10-26T18:00:15.033Z"
+  },
   "lastRun": {
     "stage": "normalize",
     "target": null,
