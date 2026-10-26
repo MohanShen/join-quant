@@ -2,6 +2,7 @@
 postId: 7da05cc892ce9a80eb2bb079f00b34a5
 title: BBI 的小市值选股策略--基于多空指标（BBI）过滤
 sourceFile: strategies/2026-10-21_BBI_的小市值选股策略--基于多空指标_BBI_过滤-7da05cc8.py
+family: 小市值
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/60630
 concepts: [小市值因子]
 factors:

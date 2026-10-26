@@ -2,6 +2,7 @@
 postId: 01fa47a7fb2233e8c602a78618e34545
 title: 动态获取ETF池子策略-
 sourceFile: strategies/2026-10-26_动态获取ETF池子策略--01fa47a7.py
+family: ETF动量
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/61912
 concepts: [ETF轮动, 动量与趋势]
 factors:

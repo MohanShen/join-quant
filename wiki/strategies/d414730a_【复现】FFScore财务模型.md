@@ -2,6 +2,7 @@
 postId: d414730a97c95fc8c425c4f464cc7607
 title: 【复现】FFScore财务模型
 sourceFile: strategies/2026-10-26_复现_FFScore财务模型-d414730a.py
+family: 其他
 concepts: [未分类]
 factors:
   选股: [未分类]

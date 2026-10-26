@@ -2,6 +2,7 @@
 postId: aec6bd0e412af0676db382768ce140f9
 title: 「长盈智选」：既要高收益，更要低回撤——11年最大回撤12%
 sourceFile: strategies/2026-10-21_长盈智选_既要高收益_更要低回撤_11年最大回撤12-aec6bd0e.py
+family: 七星高照
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/68704
 concepts: [小市值因子, ETF轮动, 择时-RSRS, 动量与趋势, 择时-均线]
 factors:
