@@ -2130,3 +2130,25 @@ Only the directories whose contents aren't self-evident:
   `rejectedVariants()` parses §2 `判定: rejected` rows carrying **no epoch at all**. Reopening a
   refuted edge sends that family's `edge:` block back to `proposed`, changing what the loop may
   cite as fact — a judgement to make deliberately, not as a side effect.
+- ⚠⚠ **`--seed-deferred` ignored NEWEST-ROW-WINS and re-billed a finished backtest.** The ledger is
+  append-only, so one file holds several rows and only the LAST is authoritative. The seeder walked
+  every row and parked any file carrying a `slow-skipped` one, keeping the **FIRST** seen — the
+  OLDEST — so a file that slow-skipped and was then measured successfully got parked anyway, and the
+  pool's `--redo` retry re-measured it.
+  Measured on **`5511f8f0`**: ledger row 17 `slow-skipped`, row 97 `normalized` (sharpe 2.74,
+  already done), row 335 `normalized` **again**, identical to four significant figures, written by
+  the 2026-10-24 18:05 `9 retry(--redo)` drain — a full 365-day backtest to reproduce a number the
+  ledger already held. ⚠ **The same file CLAUDE.md records double-measuring at epoch 6**, so this is
+  the second occurrence by a DIFFERENT route: that one was `retry ++ pending` with no union dedup
+  (fixed, and `freshFiles` still excludes `retryFiles`), this one is the seeder.
+  **Fixed**: resolve each file to its newest row and park only if that row is `slow-skipped`.
+  Measured at the time of the fix: the old rule parked **10** files, the new one **5** — the five it
+  drops are four `normalized` and one `no-trades`, all epoch 9, every one of which the next drain
+  would have re-measured. Cost so far 1 backtest; forward cost would have been 5.
+  ⚠ The epoch check is not decoration either: a slow-skip the active bench does NOT accept is not
+  stranded, because the normalizer's done-check runs `measurementValid` and will measure the file
+  as FRESH. Parking it forces a needless `--redo` and starts it at a HIGHER cap than it needs.
+  Reported as `skippedStaleEpoch` rather than silently dropped.
+  ✅ Checked the four other previously-parked files: each reads `slow-skipped -> normalized` ONCE,
+  so the 2026-10-24 drain's four new measurements were genuine first results, not re-runs. The pool
+  did pay off; only 5511f8f0 was waste.

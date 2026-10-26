@@ -1137,3 +1137,92 @@ fet('findings carry the epoch they were measured under', async t => {
     fea.match(src, /stamp = 'unknown'/);
   });
 });
+
+/**
+ * ⚠⚠ --seed-deferred must respect NEWEST-ROW-WINS, or it re-bills a finished backtest.
+ *
+ * The ledger is append-only, so one file holds several rows and only the LAST is authoritative.
+ * The first version walked every row and parked any file with a `slow-skipped` one, keeping the
+ * FIRST seen — the OLDEST. So a file that slow-skipped and was later measured got parked, and the
+ * pool's `--redo` retry re-measured it.
+ *
+ * Measured on 5511f8f0: row 17 slow-skipped, row 97 normalized (sharpe 2.74), row 335 normalized
+ * AGAIN, identical to 4 s.f., written by the 2026-10-24 `9 retry(--redo)` drain. The same file
+ * CLAUDE.md records double-measuring at epoch 6 — second occurrence, different route. At the time
+ * of the fix the old rule would have parked 10 files where 5 are genuinely stranded.
+ */
+const sdt = require('node:test');
+const sda = require('node:assert');
+const sdfs = require('fs');
+const sdos = require('os');
+const sdpath = require('path');
+
+sdt('--seed-deferred parks only genuinely stranded rows', async t => {
+  const harness = require('../utils/harness-config');
+  const ep = harness.config().epoch;
+
+  const withLedger = (rows, fn) => {
+    const d = sdfs.mkdtempSync(sdpath.join(sdos.tmpdir(), 'sd-'));
+    const led = sdpath.join(d, 'normalize-train.tsv');
+    const ledger = require('../utils/ledger');
+    const hdr = ledger.COLS.join('\t');
+    const body = rows.map(r => ledger.COLS.map(c => {
+      if (c === 'sourceFile') return r.file;
+      if (c === 'status') return r.status;
+      if (c === 'epoch') return String(r.epoch == null ? ep : r.epoch);
+      if (c === 'days') return '365';
+      return '';
+    }).join('\t'));
+    sdfs.writeFileSync(led, [hdr, ...body].join('\n') + '\n');
+    const prevL = process.env.JQ_LEDGER, prevD = process.env.JQ_DAILY_STATE_DIR;
+    process.env.JQ_LEDGER = led;
+    process.env.JQ_DAILY_STATE_DIR = d;
+    for (const m of ['../utils/ledger', '../utils/daily-pipeline', '../utils/daily-state']) {
+      delete require.cache[require.resolve(m)];
+    }
+    try { return fn(require('../utils/daily-pipeline')); } finally {
+      if (prevL === undefined) delete process.env.JQ_LEDGER; else process.env.JQ_LEDGER = prevL;
+      if (prevD === undefined) delete process.env.JQ_DAILY_STATE_DIR; else process.env.JQ_DAILY_STATE_DIR = prevD;
+      for (const m of ['../utils/ledger', '../utils/daily-pipeline', '../utils/daily-state']) {
+        delete require.cache[require.resolve(m)];
+      }
+    }
+  };
+
+  await t.test('a slow-skip SUPERSEDED by a later measurement is NOT parked', () => {
+    const r = withLedger([
+      { file: 'strategies/a.py', status: 'slow-skipped' },
+      { file: 'strategies/a.py', status: 'normalized' },
+    ], dp => dp.seedDeferred({ dry: true }));
+    sda.strictEqual(r.added, 0, 'the newest row is a measurement — nothing is stranded');
+  });
+
+  await t.test('a slow-skip that is still the NEWEST row is parked', () => {
+    const r = withLedger([
+      { file: 'strategies/b.py', status: 'normalized' },
+      { file: 'strategies/b.py', status: 'slow-skipped' },
+    ], dp => dp.seedDeferred({ dry: true }));
+    sda.strictEqual(r.added, 1, 'order matters: the slow-skip came last, so it is current');
+  });
+
+  await t.test('a no-trades result also supersedes — it is terminal', () => {
+    const r = withLedger([
+      { file: 'strategies/c.py', status: 'slow-skipped' },
+      { file: 'strategies/c.py', status: 'no-trades' },
+    ], dp => dp.seedDeferred({ dry: true }));
+    sda.strictEqual(r.added, 0);
+  });
+
+  /**
+   * ⚠ A slow-skip the active bench does not accept is not stranded: the normalizer's done-check
+   * runs measurementValid, so it measures the file as FRESH. Parking it forces a needless --redo
+   * and starts it at a HIGHER cap than it needs.
+   */
+  await t.test('a slow-skip from a non-comparable epoch is left for a fresh pass', () => {
+    const r = withLedger([{ file: 'strategies/d.py', status: 'slow-skipped', epoch: 2 }],
+      dp => dp.seedDeferred({ dry: true }));
+    sda.strictEqual(r.added, 0);
+    sda.deepStrictEqual(r.skippedStaleEpoch, ['strategies/d.py'],
+      'and it must be reported, not silently dropped');
+  });
+});

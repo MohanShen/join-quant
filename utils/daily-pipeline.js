@@ -976,18 +976,51 @@ function syncStudyManifest({ dry = false } = {}) {
 // ── seeding ─────────────────────────────────────────────────────────────────
 
 /** Park the slow-skipped rows already in the ledger, which are otherwise stranded forever. */
+/**
+ * Park genuinely-stranded slow-skipped rows in the deferred pool.
+ *
+ * ⚠⚠ NEWEST ROW WINS, and the first version ignored that — it double-billed a backtest.
+ *
+ * The ledger is append-only, so one file can hold several rows and only the LAST is authoritative
+ * (CLAUDE.md: "The new row APPENDS and newest-row-wins makes it authoritative"). The original loop
+ * walked every row and parked any file with a `slow-skipped` one, keeping the FIRST seen — i.e. the
+ * OLDEST. So a file that slow-skipped and was then measured successfully got parked anyway, and the
+ * pool's `--redo` retry re-measured it.
+ *
+ * Measured on `5511f8f0`: ledger row 17 `slow-skipped`, row 97 `normalized` (sharpe 2.74) — already
+ * done — then row 335 `normalized` again, identical to four significant figures, written by the
+ * 2026-10-24 18:05 `9 retry(--redo)` drain. A full 365-day backtest spent to reproduce a number the
+ * ledger already held. ⚠ It is the SAME FILE CLAUDE.md records doing this at epoch 6, so this is
+ * the second occurrence by a different route: that one was `retry ++ pending` without a union
+ * dedup (since fixed, and `freshFiles` still excludes `retryFiles`), this one is the seeder.
+ *
+ * ⚠ The epoch check is not decoration. A slow-skipped row the active bench does NOT accept is not
+ * stranded at all — the normalizer's done-check runs `measurementValid`, so it will measure the
+ * file as FRESH on the next pass. Parking it would force an unnecessary `--redo` and, worse, start
+ * it at a HIGHER cap than it needs.
+ */
 function seedDeferred({ dry = false } = {}) {
+  const harness = require('./harness-config');
   // Columns via `utils/ledger.js` — `rows()` returns [] when the ledger is absent.
-  const seen = new Set();
-  const rows = [];
-  for (const r of require('./ledger').rows()) {
-    if (r.status !== 'slow-skipped' || seen.has(r.sourceFile)) continue;
-    seen.add(r.sourceFile);
-    rows.push(r.sourceFile);
+  // Last write wins, which is what makes this the file's CURRENT status.
+  const newest = new Map();
+  for (const r of require('./ledger').rows()) newest.set(r.sourceFile, r);
+
+  const rows = [], superseded = [];
+  for (const [file, r] of newest) {
+    if (r.status !== 'slow-skipped') {
+      // Only interesting for the report: a file whose newest row is terminal-and-measured is
+      // exactly what the old loop would have parked if an older row was a slow-skip.
+      continue;
+    }
+    let valid = false;
+    try { valid = harness.measurementValid(parseInt(r.epoch, 10)); } catch { valid = false; }
+    if (!valid) { superseded.push(file); continue; }
+    rows.push(file);
     // The ledger does not record the cap those runs used; the default was 20.
-    if (!dry) state.defer(r.sourceFile, { reason: 'slow-skipped (seeded from ledger)', capMin: 20 });
+    if (!dry) state.defer(file, { reason: 'slow-skipped (seeded from ledger)', capMin: 20 });
   }
-  return { added: rows.length, rows };
+  return { added: rows.length, rows, skippedStaleEpoch: superseded };
 }
 
 // ── CLI ─────────────────────────────────────────────────────────────────────
