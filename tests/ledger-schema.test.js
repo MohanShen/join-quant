@@ -355,7 +355,29 @@ test('a reasoned VAL decline is not reopened', async (t) => {
       assert.ok(['none', 'normalize', 'human'].includes(r.owner),
         `${fam}: unexpected owner ${r.owner} for a declared decline`);
     }
-    assert.ok(declared >= 1, 'expected at least one recorded decline');
+    // ⚠ A deliberate REOPEN may legitimately take the active-decline count to zero (human
+    // decision, 2026-10-26: every declined family was reopened at epoch 9), so `declared >= 1`
+    // would fail on a correct repo. The invariant that survives is that a VAL decision is never
+    // DISCARDED — a reopen renames the keys and keeps the reasoning, because the clearing
+    // condition it names still binds whoever runs the VAL. Without this, a reopen could quietly
+    // delete the basis and the next round would re-derive it from nothing.
+    let reopened = 0;
+    for (const f of fs.readdirSync(dir).filter(x => x.endsWith('.md'))) {
+      const t2 = fs.readFileSync(path.join(dir, f), 'utf8');
+      if (!field(t2, 'valReopened')) continue;
+      reopened++;
+      const fam = f.replace(/\.md$/, '');
+      assert.ok(field(t2, 'valDeclinedPrior'),
+        `${fam}: reopened but the prior decline's epoch was discarded`);
+      assert.ok(field(t2, 'valDeclinedPriorBasis').length > 40,
+        `${fam}: reopened but the prior decline's REASONING was discarded — it still binds the run`);
+      assert.ok(field(t2, 'valReopenedBasis').length > 40,
+        `${fam}: a reopen needs a basis saying who decided it and what it does NOT grant`);
+      assert.strictEqual(field(t2, 'valDeclined'), '',
+        `${fam}: carries both an active decline and a reopen`);
+    }
+    assert.ok(declared + reopened >= 1,
+      'expected at least one recorded VAL decision (declined or reopened)');
   });
 
   await t.test('family-queue reopens nothing whose block is a decision', () => {

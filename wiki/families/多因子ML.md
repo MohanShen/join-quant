@@ -27,8 +27,10 @@ sources: { normalized: 20, study: 0, enhance: 0 }
 realism: "epoch-6 头条 52.58% 年化 / 8.55% 回撤不可当作可实现水平：(a) 台仍零滑点，而最大单一收益来源是 6 只微盘周度轮换（q-e6-1）；(b) etf 腿收益全在 2022 且池为事后组装，2023 净拖累 −8.43pp（q-e6-2, q-audit）；(c) 日线台把盘中止损坍缩成收盘检查、隐藏盘中回撤（q-audit）；(d) 约 3.8pp 回撤保护挂在 n=4 的 1/4 月日历规则上（q-3, epoch 2）。源码审计未发现确证的未来函数——是不可实现，不是造假"
 realizability: 1
 realizabilityBasis: "xp-merge-1 candidate.json — its own realism says 不可当作可实现水平"
-valDeclined: 8
-valDeclinedBasis: "「没有 improve 候选；base 的 VAL 2024-25 对作者而言很可能是样本内（帖子 2026-02、ETF 池为事后组装）。epoch 6 的一次 VAL 预算留给未来的候选」(§4). The window is probably IN-sample for the author, so spending the family's one validation on it would buy a number that is not out-of-sample. Clearing condition: an improve candidate of our own."
+valReopened: 9
+valReopenedBasis: "human decision 2026-10-26: VAL reopened for every family that had declined. The prior decline is preserved as valDeclinedPrior/valDeclinedPriorBasis (declined at epoch 8) — its REASONING still binds whoever runs the VAL, and any precondition it names (e.g. a pre-2025 pool cutoff) must still be satisfied first. Reopening permits the run; it does not pre-approve the book."
+valDeclinedPrior: 8
+valDeclinedPriorBasis: "「没有 improve 候选；base 的 VAL 2024-25 对作者而言很可能是样本内（帖子 2026-02、ETF 池为事后组装）。epoch 6 的一次 VAL 预算留给未来的候选」(§4). The window is probably IN-sample for the author, so spending the family's one validation on it would buy a number that is not out-of-sample. Clearing condition: an improve candidate of our own."
 status: active
 updatedAt: 2026-10-18
 bestObjectiveEpoch: 8
