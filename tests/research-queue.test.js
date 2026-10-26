@@ -152,3 +152,105 @@ test('research-sync makes the page catch up with the ledger', async (t) => {
     }
   });
 });
+
+/**
+ * ⚠⚠ A CLOSED DIRECTION ONLY BINDS ON THE BENCH THAT MADE IT.
+ *
+ * `closedDirections` is what stops a round re-proposing finished work: the gatekeeper hard-rejects
+ * a duplicate against it and the skill's Step 0 exits on one. Right within a bench, wrong across
+ * one — a knob closed because it did not help on TRAIN 2022-2023 may help on 2024, and the loop
+ * would never try it again. Measured 2026-10-26: 125 of 134 closures were made on a bench epoch 9
+ * does not accept.
+ */
+const sct = require('node:test');
+const sca = require('node:assert');
+const scfs = require('fs');
+const scos = require('os');
+const scpath = require('path');
+
+sct('closures are split by the bench that made them', async t => {
+  const rq = require('../utils/research-queue');
+  const harness = require('../utils/harness-config');
+  const active = harness.config().epoch;
+
+  const mk = rows => {
+    const d = scfs.mkdtempSync(scpath.join(scos.tmpdir(), 'rqc-'));
+    const fam = scpath.join(d, 'F');
+    scfs.mkdirSync(fam, { recursive: true });
+    const hdr = rq.FINDING_COLUMNS.concat(['measuredEpoch']).join('\t');
+    const body = rows.map(r => {
+      const c = rq.FINDING_COLUMNS.map(k => r[k] || '');
+      c.push(r.measuredEpoch == null ? '' : String(r.measuredEpoch));
+      return c.join('\t');
+    });
+    scfs.writeFileSync(scpath.join(fam, 'findings.tsv'), [hdr, ...body].join('\n') + '\n');
+    return d;
+  };
+
+  const withDir = (d, fn) => {
+    const prev = process.env.JQ_RESEARCH_DIR;
+    process.env.JQ_RESEARCH_DIR = d;
+    try { return fn(); } finally {
+      if (prev === undefined) delete process.env.JQ_RESEARCH_DIR; else process.env.JQ_RESEARCH_DIR = prev;
+    }
+  };
+
+  await t.test('a closure from the ACTIVE bench still binds', () => {
+    const d = mk([{ qId: 'q-now', finding: 'x', implication: 'that knob is closed', measuredEpoch: active }]);
+    withDir(d, () => {
+      const c = rq.context('F');
+      sca.strictEqual(c.closedDirections.length, 1, 'same bench => binding');
+      sca.strictEqual(c.staleClosures.length, 0);
+    });
+  });
+
+  await t.test('a closure from a NON-comparable bench is reopenable, with its reason attached', () => {
+    // epoch 6 changed fills and fees, so sameBench(6, 9) is false.
+    const d = mk([{ qId: 'q-old', finding: 'x', implication: '止损这个旋钮关闭', measuredEpoch: 6 }]);
+    withDir(d, () => {
+      const c = rq.context('F');
+      sca.strictEqual(c.closedDirections.length, 0, 'a different bench must not bind');
+      sca.strictEqual(c.staleClosures.length, 1);
+      const s = c.staleClosures[0];
+      sca.strictEqual(s.qId, 'q-old');
+      sca.strictEqual(s.closedAtEpoch, 6, 'the epoch must travel with it, so the reason can be judged');
+      sca.match(s.implication, /关闭/, 'the original implication must be carried, not just the id');
+    });
+  });
+
+  /**
+   * ⚠ Deliberately the OPPOSITE of the VAL budget's unknown-epoch rule. A false "still closed"
+   * suppresses work silently and forever; a false "reopenable" costs a few backtest minutes.
+   */
+  await t.test('an UNKNOWN epoch is reopenable, not binding', () => {
+    const d = mk([{ qId: 'q-?', finding: 'x', implication: 'direction closed', measuredEpoch: '' }]);
+    withDir(d, () => {
+      const c = rq.context('F');
+      sca.strictEqual(c.closedDirections.length, 0);
+      sca.strictEqual(c.staleClosures[0].closedAtEpoch, 'unknown');
+    });
+  });
+
+  /**
+   * ⚠⚠ The regression that shipped: `findings()` mapped only the 12 canonical columns, so
+   * `measuredEpoch` was always undefined, every closure read as unknown-and-therefore-stale, and
+   * the split reported "0 binding / 134 stale" — telling the loop to reopen its own current
+   * conclusions. The parser must expose the 13th field.
+   */
+  await t.test('findings() exposes measuredEpoch — without it the split is degenerate', () => {
+    const d = mk([{ qId: 'q-now', finding: 'x', implication: 'closed', measuredEpoch: active }]);
+    withDir(d, () => {
+      sca.strictEqual(rq.findings('F')[0].measuredEpoch, String(active),
+        'the 13th column must be readable or every closure looks unknown');
+    });
+  });
+
+  await t.test('both consumers are told, or the split changes nothing', () => {
+    const gk = scfs.readFileSync(scpath.join(__dirname, '../.claude/agents/family-gatekeeper.md'), 'utf8');
+    const sk = scfs.readFileSync(scpath.join(__dirname, '../.claude/skills/run-family/SKILL.md'), 'utf8');
+    for (const [name, src] of [['family-gatekeeper', gk], ['run-family SKILL', sk]]) {
+      sca.match(src, /staleClosures/, `${name} must know stale closures are not duplicates`);
+    }
+    sca.match(gk, /REOPENABLE, not duplicates/i, 'the gatekeeper must not hard-reject them');
+  });
+});

@@ -57,6 +57,11 @@ Pick the family from `node utils/family-queue.js` (highest score first) unless t
 2. Ask one question: **do the new variants raise an idea that has not already been explored?**
    Compare against prior findings' implications, `closedDirections`, and §2 rows already
    `rejected`.
+   ⚠ `closedDirections` now means "closed on THIS bench". `context().staleClosures` are closures
+   made on a bench the active epoch rejects — 125 of 134 at epoch 9 — and they do **not** make an
+   idea a duplicate. If the only thing standing between a new member and a live idea is a stale
+   closure, that is an idea, not an early exit. Judge the reasoning (mechanism survives a bench
+   change, a level or window argument does not), rank, and cite the stale qId in `from`.
 3. **If not — log the new members' normalized results as §2 rows (`类型: raw`, `判定: —`), record
    a `research` consumption event with outcome `logged-only`, and EXIT.** Do not open the loop.
    A new member of a family you have already dissected is usually one more variant of a settled

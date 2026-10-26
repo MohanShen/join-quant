@@ -34,6 +34,20 @@ node utils/research-queue.js <family> --lint
 2. **One experiment** — if it needs three runs, it is three entries.
 3. **Not already answered** — cross-check `context().findings` implications, `closedDirections`
    and `rejected` §2 rows. A duplicate is a hard reject with the prior id cited.
+
+   ⚠⚠ `closedDirections` is only the closures made on the ACTIVE bench. `context().staleClosures`
+   holds the ones closed on a bench the current epoch does not accept — **125 of the 134 recorded
+   closures, as of epoch 9** — and those are **REOPENABLE, not duplicates**. A knob closed because
+   it did not help on TRAIN 2022–2023 may help on 2024; refusing it as answered is how a working
+   strategy gets discarded without anyone deciding to discard it.
+   Each stale entry carries its original `implication` and `closedAtEpoch`, so judge the REASONING
+   rather than the verdict:
+   - a MECHANISM argument survives the bench (「池子是一个 2026 年事后写的池子」 — hindsight is
+     hindsight; a sealed 一字板 is unbuyable in any window). Still treat it as closed, and say so.
+   - a LEVEL or WINDOW argument does not (「base 是一个「2022 年的策略」」, or a stop-loss knob closed
+     because daily reranking beat a 10% drawdown that 2024 may not produce). That is a live idea.
+   ⚠ Do NOT reopen all 125 — at ~2 backtest-min each that is ~268 minutes, 1.5 daily tiers, spent
+   re-deriving what is already written down. Rank them, and cite the stale qId in `from`.
 4. **Grounded** — `from` naming the prior results that prompted it. Empty is allowed but ranks last.
 5. **On-mechanism** (improve only) — once the family has a `measured` edge, an idea with no
    `edgeRef` is off-mechanism by default; demand a reason or rank it down.

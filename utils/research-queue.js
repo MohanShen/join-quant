@@ -132,7 +132,17 @@ function findings(family) {
   const body = /^qId\t/.test(lines[0]) ? lines.slice(1) : lines;
   return body.map(l => {
     const c = l.split('\t');
-    return Object.fromEntries(FINDING_COLUMNS.map((k, i) => [k, c[i] || '']));
+    const o = Object.fromEntries(FINDING_COLUMNS.map((k, i) => [k, c[i] || '']));
+    // ⚠ The 13th column, stamped by recordFinding and backfilled for older rows. It is read here
+    // but deliberately NOT added to FINDING_COLUMNS, which defines the WRITE positions — appending
+    // it there would shift nothing but would blur what "canonical" means.
+    //
+    // ⚠⚠ Exposing it is load-bearing, not cosmetic: `splitClosures` decides whether a closed
+    // direction still binds, and with the field unread every closure looked `unknown` and
+    // therefore STALE — including the 9 made on the active bench. The split reported
+    // "0 binding / 134 stale" and would have told the loop to reopen its own current conclusions.
+    o.measuredEpoch = c[FINDING_COLUMNS.length] || '';
+    return o;
   });
 }
 
@@ -156,8 +166,20 @@ function recordFinding(family, row) {
   if (probs.length) throw new Error(`research-queue.recordFinding(${family}): ${probs.join('; ')}`);
   const f = findingsFile(family);
   fs.mkdirSync(dir(family), { recursive: true });
-  if (!fs.existsSync(f)) fs.writeFileSync(f, FINDING_COLUMNS.join('\t') + '\n');
+  // ⚠⚠ The 13th column is the EPOCH the finding was measured under, stamped from the live config
+  // and never accepted from the caller — the same rule `consumption.record()` follows, because a
+  // caller that could choose its own epoch could label a stale conclusion as current.
+  //
+  // `utils/findings-epoch-backfill.js` filled this in for the 238 findings that predate it (218
+  // e6, 16 e8, 4 e9 — i.e. only 1.7% were measured on the current bench). But a one-shot migration
+  // that leaves the WRITER behind just re-opens the gap: the first research round after it wrote a
+  // 12-field row into a 13-wide file and 打板短线 went misaligned. Fixed here so the stamp belongs
+  // to the step that owns the write, which is this repo's recurring lesson.
+  const EPOCH_COLUMN = 'measuredEpoch';
+  const cols = FINDING_COLUMNS.concat([EPOCH_COLUMN]);
+  if (!fs.existsSync(f)) fs.writeFileSync(f, cols.join('\t') + '\n');
   const line = FINDING_COLUMNS.map(k => clean(row[k] == null ? (k === 'spawned' ? 'none' : '') : row[k]));
+  line.push(String(require('./harness-config').config().epoch));
   fs.appendFileSync(f, line.join('\t') + '\n');
 
   // Close the idea this answers. Without it a run leaves its own finished ideas sitting at
@@ -212,9 +234,54 @@ function edges(family) {
  * Everything a generator is required to have read. Returning it as one object is the point: an
  * agent that calls this cannot claim it did not know what had already been tried.
  */
+/**
+ * A closure is only binding on the bench that MADE it.
+ *
+ * ⚠⚠ `closedDirections` is what stops a round re-proposing finished work — the gatekeeper hard-
+ * rejects a duplicate against it and the skill's Step 0 exits on one. That is right WITHIN a bench
+ * and wrong ACROSS one: a knob closed because it did not help on TRAIN 2022–2023 may help on 2024,
+ * and the loop would never try it again.
+ *
+ * Measured 2026-10-26 over the 134 recorded closures: **125 (93%) were closed on a bench the active
+ * epoch does not accept.** They do not all deserve reopening — 「池子是一个 2026 年事后写的池子」 is
+ * hindsight in any window — but some are explicitly about the old one (「base 是一个「2022 年的
+ * 策略」」) or about a level 2024 can move (「止损这个旋钮关闭——日频重排在单只 ETF 跌 10% 之前就把它
+ * 换掉了」). Keeping all 125 shut risks discarding a strategy that works now; reopening all 125
+ * blindly costs ~268 backtest minutes — 1.5 tiers — to re-derive what is already written down.
+ *
+ * So this REPORTS the split and decides nothing: `closedDirections` stays binding, `staleClosures`
+ * carries the original implication AND the epoch that closed it, so a generator can judge whether
+ * the reasoning was bench-dependent. That judgement is cheap with the old finding in hand and
+ * impossible from a blank page — which is the argument against wiping the family pages, and the
+ * reason the epoch backfill had to come first.
+ *
+ * ⚠ An UNKNOWN epoch counts as STALE here — the OPPOSITE of the VAL budget's rule, deliberately.
+ * A false "still closed" suppresses work silently and forever; a false "reopenable" costs a few
+ * backtest minutes to re-derive. The VAL budget blocks on unknown because there the irreversible
+ * resource sits on the other side.
+ */
+function splitClosures(fnd) {
+  const harness = require('./harness-config');
+  const active = harness.config().epoch;
+  const RE = /closed|关闭|关掉|已闭|不再|封闭/;
+  const binding = [], stale = [];
+  for (const f of fnd) {
+    if (!RE.test(f.implication || '')) continue;
+    const raw = String(f.measuredEpoch || '');
+    const ep = /^\d+$/.test(raw) ? parseInt(raw, 10) : null;
+    const row = { qId: f.qId, implication: f.implication,
+                  closedAtEpoch: ep == null ? 'unknown' : ep };
+    let same = false;
+    if (ep != null) { try { same = harness.sameBench(ep, active); } catch { same = false; } }
+    (same ? binding : stale).push(row);
+  }
+  return { binding, stale };
+}
+
 function context(family) {
   const q = load(family);
   const fnd = findings(family);
+  const closures = splitClosures(fnd);
   return {
     family,
     edges: edges(family),
@@ -226,8 +293,10 @@ function context(family) {
     // ("关掉这个方向"). 五福闹新春's q-e8-2 closed two directions with it and was invisible here, i.e.
     // the next generator's REQUIRED reading would not have seen the round's most durable closure —
     // exactly the re-propose-finished-work failure this field exists to prevent.
-    closedDirections: fnd.filter(f => /closed|关闭|关掉|已闭|不再|封闭/.test(f.implication || ''))
-      .map(f => ({ qId: f.qId, implication: f.implication })),
+    closedDirections: closures.binding,
+    // Closed on a bench the active epoch does not accept — reopenable, with the reason attached
+    // so the decision is a judgement rather than a guess. See splitClosures above.
+    staleClosures: closures.stale,
     rejected: rejectedVariants(family),
     ungrounded: q.filter(e => !(e.from || []).length).map(e => e.id),
     unspawned: fnd.filter(f => (f.spawned || 'none') === 'none' && /high/i.test(f.confidence || ''))
@@ -252,7 +321,7 @@ function lint(family) {
 
 module.exports = {
   load, save, add, validate, findings, recordFinding, implicationProblems,
-  context, lint, edges, rejectedVariants, FINDING_COLUMNS, KINDS,
+  context, lint, edges, rejectedVariants, splitClosures, FINDING_COLUMNS, KINDS,
 };
 
 if (require.main === module) {
@@ -274,7 +343,9 @@ if (require.main === module) {
   console.log(`  edge claims   : ${c.edges.length ? c.edges.map(e => `${e.name}(${e.status})`).join(', ') : 'NONE — unanswered'}`);
   console.log(`  queue         : ${c.queue.length} (${c.open.length} open)`);
   console.log(`  findings      : ${c.findings.length}, of which ${c.implications.length} carry an implication`);
-  console.log(`  closed dirs   : ${c.closedDirections.length}`);
+  console.log(`  closed dirs   : ${c.closedDirections.length} binding` +
+              (c.staleClosures.length
+                ? `, ${c.staleClosures.length} STALE (closed on another bench — REOPENABLE)` : ''));
   console.log(`  rejected §2   : ${c.rejected.length}`);
   if (c.ungrounded.length) console.log(`  ⚠ ungrounded  : ${c.ungrounded.join(', ')}`);
   if (c.unspawned.length) console.log(`  ⚠ unfollowed  : ${c.unspawned.join(', ')}`);

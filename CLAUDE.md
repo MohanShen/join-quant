@@ -2092,3 +2092,41 @@ Only the directories whose contents aren't self-evident:
   Result: 14 files at 13/13, and the second run stamps 0.
   ⚠ The tool imports `FINDING_COLUMNS` from `research-queue` rather than restating it, and a test
   forbids a second copy — the `utils/ledger.js` rule that a schema has one owner.
+- ⚠⚠⚠ **A CLOSED DIRECTION ONLY BINDS ON THE BENCH THAT MADE IT — and 125 of 134 did not.**
+  `context().closedDirections` is what stops a round re-proposing finished work: the gatekeeper
+  hard-rejects a duplicate against it and `/run-family`'s Step 0 exits on one. Correct WITHIN a
+  bench, **wrong across one** — a knob closed because it did not help on TRAIN 2022–2023 may help
+  on 2024, and the loop would never try it again. So the pre-epoch-9 findings were not merely stale
+  labels; they were **actively suppressing work the new bench might reward** (user's observation,
+  2026-10-26, and a better argument than the staleness one it replaced).
+  Measured over the 134 recorded closures: **9 bind, 125 do not** (115 e6, 10 e8). `context()` now
+  returns `staleClosures` beside `closedDirections`, each carrying its original `implication` AND
+  `closedAtEpoch`, so a generator judges the REASONING rather than the verdict:
+  **mechanism survives a bench change** (「池子是一个 2026 年事后写的池子」 — hindsight is hindsight;
+  a sealed 一字板 is unbuyable in any window); **a level or window argument does not**
+  (「base 是一个「2022 年的策略」」, or a stop-loss knob closed because daily reranking beat a 10%
+  drawdown that 2024 may not produce).
+  ⚠ BOTH consumers were updated or the split changes nothing — `.claude/agents/family-gatekeeper.md`
+  (no longer a duplicate) and `.claude/skills/run-family/SKILL.md` (no longer an early exit). Both
+  warn against reopening all 125: at ~2 backtest-min each that is **~268 minutes, 1.5 tiers**, to
+  re-derive what is already written down.
+  ⚠ **Unknown epoch counts as STALE here — the OPPOSITE of the VAL budget's rule.** A false "still
+  closed" suppresses work silently and forever; a false "reopenable" costs a few backtest minutes.
+  The VAL budget blocks on unknown because there the irreversible resource is on the other side.
+  ⚠⚠ **The first version reported `0 binding / 134 stale`** — it would have told the loop to reopen
+  its own current conclusions. `findings()` mapped only the 12 canonical `FINDING_COLUMNS`, so
+  `measuredEpoch` was always `undefined` and every closure read as unknown-and-therefore-stale. The
+  parser now exposes the 13th field; a test pins it, because the split still *looks* like it works.
+  ✅ **This is the answer to "delete the family pages and start clean".** No: a wipe removes the 9
+  CURRENT closures and the valid mechanism findings along with the stale ones, removes the
+  `realizabilityBasis`/`valDeclined` fields the exit gate dispatches on (unknown realizability
+  BLOCKS, so all 13 families would go to human-blocked), and produces ignorance rather than
+  knowledge — the backtest minutes still have to be spent, and a blank page forces re-running all
+  134 blindly instead of the dozen whose reasoning was level-dependent. Judging a stale closure is
+  cheap with the old finding in hand and impossible without it.
+  ⚠ **Same class, still open**: **9 refuted edges** across 7 families, every one refuted on the old
+  bench — ETF动量 has BOTH of its edges refuted (`动量`, `趋势择时`), which leaves the improve
+  generator no prior to steer by and makes the family look dead on epoch-6 evidence. And
+  `rejectedVariants()` parses §2 `判定: rejected` rows carrying **no epoch at all**. Reopening a
+  refuted edge sends that family's `edge:` block back to `proposed`, changing what the loop may
+  cite as fact — a judgement to make deliberately, not as a side effect.
