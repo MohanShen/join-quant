@@ -93,3 +93,15 @@
 2026-10-25T23:47:56.679Z	strategies/2026-10-26_资金流数据_支持向量机_判断股价走势-05ebe213.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时, get_money_flow只能在盘后15:00之后才能获取标的的资金流数据，current_dt= 2024-03-28 09:30:00
 2026-10-25T23:57:21.516Z	strategies/2026-10-26_十字星_策略研究-923d3903.py	NameError: name 'xrange' is not defined
 2026-10-26T15:23:42.930Z	strategies/2026-10-26_壹章_量化交易_盈利性因子分析-33fdc588.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数
+2026-10-26T21:10:04.321Z	strategies/2026-10-26_大妈买菜_策略_一个能穿越牛熊的稳健策略-3116f2c2.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'close'}字段数据, current_dt=2024-01-02 09:30:00, end_date=2024-01-02 09:30:00
+2026-10-26T21:11:05.532Z	strategies/2026-10-26_苍老师推荐_价值投资_--_成长股内在价值投资-ca484994.py	TypeError: 'float' object cannot be interpreted as an integer
+2026-10-26T21:12:08.630Z	strategies/2026-10-26_价值投资_--_三一投资管理公司价值选股法-8513cb01.py	TypeError: 'float' object cannot be interpreted as an integer
+2026-10-26T21:13:11.421Z	strategies/2026-10-26_605更新_11年_100倍以上的多因子策略-四因子选股策略研究_2-258e83f5.py	AttributeError: 'Series' object has no attribute 'sort'
+2026-10-26T21:14:16.251Z	strategies/2026-10-26_机器学习_海量数据预测股票的未来趋势_Model的研究-3fac575e.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 MMM_sp
+2026-10-26T21:15:19.449Z	strategies/2026-10-26_动态因子策略探讨-87ae2f80.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 cPickle
+2026-10-26T21:16:25.523Z	strategies/2026-10-26_再论高开卖_低开买_以_量化侠_代码为例-e07cd7de.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-10-26T21:17:51.750Z	strategies/2026-10-26_巴菲特说毛利率就是护城河-3945f2fe.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数
+2026-10-26T21:18:51.139Z	strategies/2026-10-26_最简单的动量模型_能否应对A股暴涨_二-22050d9e.py	statsmodels.tools.sm_exceptions.MissingDataError: exog contains inf or nans
+2026-10-26T22:34:49.723Z	strategies/2026-10-27_彼得林奇修正_PEG-b979ed54.py	SyntaxError: invalid syntax
+2026-10-26T22:35:58.609Z	strategies/2026-10-27_羊群效应系列_--寻找行业轮动中的龙头股-6949cfcd.py	AttributeError: module 'pandas' has no attribute 'stats'
+2026-10-26T22:39:01.718Z	strategies/2026-10-27_基本面单因子测试_以BP因子为例-c8afa5dd.py	TabError: inconsistent use of tabs and spaces in indentation

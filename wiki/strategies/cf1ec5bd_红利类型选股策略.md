@@ -1,0 +1,28 @@
+---
+postId: cf1ec5bd80c4719365170ac995e38f8a
+title: 红利类型选股策略
+sourceFile: strategies/2026-10-27_红利类型选股策略-cf1ec5bd.py
+concepts: [小市值因子]
+factors:
+  选股: [规模价值·小市值]
+familyProposal: ~
+familyProposalNote: below MIN_SCORE
+ingestedAt: 2026-10-26
+codeLines: 732
+stats: { 绩效未公开: true }
+normalized: { epoch: 9, window: "TRAIN 2024", annualReturn: 0.3334, sharpe: 1.36, maxDrawdown: 0.1656, objective: 0.1678, gate: pass }
+autoStub: true
+---
+
+# 红利类型选股策略
+
+**一句话**：⚙ 自动桩页（daily 归一化生成），概念为启发式推断，忠实翻译待 `/ingest-strategy` 补全。
+
+## 绩效
+📊 归一化（TRAIN 2024，零滑点）：年化 33.3% | 夏普 1.36 | 最大回撤 16.6% | objective 0.1678（过门槛）。自报绩效未公开。
+
+## 涉及概念
+- [[小市值因子]]
+
+## 备注
+- ⚙ **自动桩页**（`autoStub: true`）：概念/因子为源码启发式推断，未做忠实翻译。运行 `/ingest-strategy strategies/2026-10-27_红利类型选股策略-cf1ec5bd.py` 可补全并去除该标记。

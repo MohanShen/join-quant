@@ -38,5 +38,13 @@
     "lastCapMin": 45,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-10-25T22:26:03.286Z"
+  },
+  "strategies/2026-10-27_强者恒强策略不行-158c3d10.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-26T22:40:15.446Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-26T22:40:15.446Z"
   }
 }

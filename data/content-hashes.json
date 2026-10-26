@@ -2026,5 +2026,100 @@
     "postId": "22050d9e0ba8b6fdb4f2b27f9e7e21aa",
     "sourceFile": "2026-10-26_最简单的动量模型_能否应对A股暴涨_二-22050d9e.py",
     "registeredAt": "2026-10-26T15:17:52.214Z"
+  },
+  "4f91d80f5bb5214fe01c9f652b9177f4419f7c442a7cf85b000373c049b8b340": {
+    "postId": "ed85aa38f5aa1ca413cbb9d50e3ca61a",
+    "sourceFile": "2026-10-27_七星高照ETF轮动v1_7_P_Trade版_破百更新-ed85aa38.py",
+    "registeredAt": "2026-10-26T21:19:09.296Z"
+  },
+  "9586eb91f60d5f0d609172ec66b96c8a034b5cbc2c6a92e4c93f08452e982076": {
+    "postId": "158c3d10ab37f6550c6eb3ac27dd9ca4",
+    "sourceFile": "2026-10-27_强者恒强策略不行-158c3d10.py",
+    "registeredAt": "2026-10-26T21:19:12.115Z"
+  },
+  "5749adef9e6a5369d8b1229a2697322247972253f4ae7a9f76fb303bcc26c50f": {
+    "postId": "2f1a26528a6dd6846ade35478d1eecf2",
+    "sourceFile": "2026-10-27_科技结束了_分享个我自己的科技策略-2f1a2652.py",
+    "registeredAt": "2026-10-26T21:19:15.087Z"
+  },
+  "3863bea175330dbf119d1fca8a6cde4114262ab117d06bd5c93fad9bb808a1ea": {
+    "postId": "df9da0e63c14173546b02acb9ed43c3d",
+    "sourceFile": "2026-10-27_揭秘保本基金策略之TIPP-df9da0e6.py",
+    "registeredAt": "2026-10-26T21:19:17.700Z"
+  },
+  "2ea5c10415b67450a69b569fda8bc4565c7f023918b22d346997b8879fc89833": {
+    "postId": "cf1ec5bd80c4719365170ac995e38f8a",
+    "sourceFile": "2026-10-27_红利类型选股策略-cf1ec5bd.py",
+    "registeredAt": "2026-10-26T21:19:20.652Z"
+  },
+  "27717e7e8736e8239f0f2c2da00af0f0bd03a488ce9e11f8f80b11ea9de63ca0": {
+    "postId": "29048a4fa00b2bec20dffce7385d77fc",
+    "sourceFile": "2026-10-27_中小板弱转强_高年化率低回撤修复版-29048a4f.py",
+    "registeredAt": "2026-10-26T21:19:23.274Z"
+  },
+  "dad27df0d5efad41cd187aa4299c3c1f30a4b7b6233df47f6879a4b54d046f04": {
+    "postId": "042aea4deda0cd08c39bb595ea9b55b2",
+    "sourceFile": "2026-10-27_ETF低相关策略的聚宽实现_EPO优化器与资产配置实战-042aea4d.py",
+    "registeredAt": "2026-10-26T21:19:25.875Z"
+  },
+  "24fa8612f31b7d829b14891fa2d0463d625ab3fb6af684f45853b7b28963e3ed": {
+    "postId": "554587175886848fe6e9476cbe77111d",
+    "sourceFile": "2026-10-27_创业板掘金_小市值轮动策略_年化收益超50-55458717.py",
+    "registeredAt": "2026-10-26T21:19:28.510Z"
+  },
+  "5e9edc2d8b2b00569e994e8b79a58c5aa5d33e29334efda36628d5d301b7f300": {
+    "postId": "05625fd91d15f21aa69b2cb6a6a00cc6",
+    "sourceFile": "2026-10-27_小市值仓位分层实验_年化11-05625fd9.py",
+    "registeredAt": "2026-10-26T21:19:31.120Z"
+  },
+  "b0d2181577481a5ca2abecd79056f0aebe243c91b64b44d5bc6e3c33f49c2290": {
+    "postId": "6c923b7342771b50797fc26f11ac51b9",
+    "sourceFile": "2026-10-27_小市值策略_请大家评价-6c923b73.py",
+    "registeredAt": "2026-10-26T21:19:33.751Z"
+  },
+  "30d73a4d0cbf48ad252a524edec7e8522a7679da6b61d007c90dacb3632c4b8d": {
+    "postId": "b0c225d40b7e63d8cfa5b49d27d57891",
+    "sourceFile": "2026-10-27_叠加涨停基因小市值_1_4_月五福_178_19-b0c225d4.py",
+    "registeredAt": "2026-10-26T21:19:36.584Z"
+  },
+  "7f8da76a1087009370c31ce3fb03d52c3a02cdbf582cc35db0f679aa53d990ca": {
+    "postId": "e79e9884f4de707afadcfcd2b07bbe86",
+    "sourceFile": "2026-10-27_基于上一版本进行了适当调整_增加其攻击性-e79e9884.py",
+    "registeredAt": "2026-10-26T21:19:39.171Z"
+  },
+  "8d6f3cfe28732e34a5a0a8692c40702092c09e4e67629290d825a44e664989c0": {
+    "postId": "b979ed5451b1ebba3b7c3b528cdddc9f",
+    "sourceFile": "2026-10-27_彼得林奇修正_PEG-b979ed54.py",
+    "registeredAt": "2026-10-26T21:19:41.818Z"
+  },
+  "f6d6f4302c858d68c9400bbac8d7e6f28df9d409ccb2d8b2e39a83bce3f260e4": {
+    "postId": "6949cfcd46d06081f5a2306462847804",
+    "sourceFile": "2026-10-27_羊群效应系列_--寻找行业轮动中的龙头股-6949cfcd.py",
+    "registeredAt": "2026-10-26T21:19:44.434Z"
+  },
+  "34d9c024b384931cd1af1df5eb0c984699a802546de2511ed9cc55cac335caf9": {
+    "postId": "8457a08582dd29b726e132489486c69b",
+    "sourceFile": "2026-10-27_整合了_VaR_仓位控制的小市值策略-8457a085.py",
+    "registeredAt": "2026-10-26T21:19:47.185Z"
+  },
+  "4e7512ef182ad47d5857e088d4a8a8bfc209459b872802618bb801d84e9e8239": {
+    "postId": "30dec53b56badb2e2e6fce5890ac6c5b",
+    "sourceFile": "2026-10-27_改进版二八轮动策略-30dec53b.py",
+    "registeredAt": "2026-10-26T21:19:49.829Z"
+  },
+  "f099fa574e2df23005033a96912b70f47eddac22923f8ca7a20086653ce5fae1": {
+    "postId": "8070299e701356438d14328bd12f7c77",
+    "sourceFile": "2026-10-27_Morningstar原版V2_0_7_股指期货投机-8070299e.py",
+    "registeredAt": "2026-10-26T21:19:52.479Z"
+  },
+  "ab95f1ec09a1235f4e820df610ad65dd41fb19eb5e01a092c9bc357c3ab38f80": {
+    "postId": "c8afa5dd193c589ca2dff8a79d49ab4a",
+    "sourceFile": "2026-10-27_基本面单因子测试_以BP因子为例-c8afa5dd.py",
+    "registeredAt": "2026-10-26T21:19:55.125Z"
+  },
+  "12a4ab48cc1a09700dd1a4e90a5d5e38e6af1ebf4535d9bdd98c2bc0bfc8e289": {
+    "postId": "30398b1b2428da4a3c77efca37bd83ba",
+    "sourceFile": "2026-10-27_仓位控制_多标的凯利公式-30398b1b.py",
+    "registeredAt": "2026-10-26T21:19:57.821Z"
   }
 }
