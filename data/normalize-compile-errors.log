@@ -92,3 +92,4 @@
 2026-10-25T23:44:10.674Z	strategies/2026-10-26_基于分析师深度研报的T_1策略-年化51_回撤3_7-8e688165.py	jqboson.core.exception.ReadRemoteFileError: read_file 深度报告数据0.csv: 文件'/opt/research-files/655/65568519426/深度报告数据0.csv'不存在
 2026-10-25T23:47:56.679Z	strategies/2026-10-26_资金流数据_支持向量机_判断股价走势-05ebe213.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时, get_money_flow只能在盘后15:00之后才能获取标的的资金流数据，current_dt= 2024-03-28 09:30:00
 2026-10-25T23:57:21.516Z	strategies/2026-10-26_十字星_策略研究-923d3903.py	NameError: name 'xrange' is not defined
+2026-10-26T15:23:42.930Z	strategies/2026-10-26_壹章_量化交易_盈利性因子分析-33fdc588.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数

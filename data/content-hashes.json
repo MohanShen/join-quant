@@ -1931,5 +1931,100 @@
     "postId": "923d3903537dfbd36c774d4733be7c6b",
     "sourceFile": "2026-10-26_十字星_策略研究-923d3903.py",
     "registeredAt": "2026-10-25T22:27:06.536Z"
+  },
+  "23fd1ef400e30f3afaee27241484c2d76b7b87753e1e76d499f88c7db628d2ab": {
+    "postId": "11d9562ea12f13147006711cfd442f05",
+    "sourceFile": "2026-10-26_低估值_高股息_小市值_低价股-11d9562e.py",
+    "registeredAt": "2026-10-26T15:16:52.376Z"
+  },
+  "e457aac8af393c8f7504cab62ed4a7b92e42956a9bfb51eb925e266cbc044db5": {
+    "postId": "f9cf1a11d82bddc3ae2cc60356d050d7",
+    "sourceFile": "2026-10-26_DMI_大盘择时-f9cf1a11.py",
+    "registeredAt": "2026-10-26T15:16:55.092Z"
+  },
+  "e402362e1c203cca9f0fe03ce9b8648e2ea4408901a9bf894b528c3d082cbca3": {
+    "postId": "33fdc588089b8f6bfb3b0b700cf3c480",
+    "sourceFile": "2026-10-26_壹章_量化交易_盈利性因子分析-33fdc588.py",
+    "registeredAt": "2026-10-26T15:16:58.131Z"
+  },
+  "5e31347e6614a0315347e9fd2e57de2abd22a4de76d617191494246887fec28e": {
+    "postId": "332d698cb9253897075223b96f0ab5fd",
+    "sourceFile": "2026-10-26_抖音奥数老师阴线低吸战法_回测年化61-332d698c.py",
+    "registeredAt": "2026-10-26T15:17:00.771Z"
+  },
+  "ffcbf8162926a2426762cef007f10c5a7154d5997b9b8298e8b9d82f36384cfc": {
+    "postId": "004aca1c2b4beba715adaf31885c4c16",
+    "sourceFile": "2026-10-26_重研可SHI盘的打板策略-004aca1c.py",
+    "registeredAt": "2026-10-26T15:17:04.498Z"
+  },
+  "0da1903d31437976a42c083fbb0eb431d483a8b47b249a57637bb7c33c6e096b": {
+    "postId": "bba81e385a9fa79435c5054f3a6493e0",
+    "sourceFile": "2026-10-26_热点概念追踪_低吸小市值-bba81e38.py",
+    "registeredAt": "2026-10-26T15:17:07.758Z"
+  },
+  "3ec1b7b547ec0973c4f888cc64c8b59f973caae41604b29f81678875bf190fd1": {
+    "postId": "ba87029cbd57ddd8a9d5b70be3cd5ded",
+    "sourceFile": "2026-10-26_小市值策略在各种指数上的表现-ba87029c.py",
+    "registeredAt": "2026-10-26T15:17:10.380Z"
+  },
+  "030c5018c7dbd1a0c1abc59258bf3acb32e4c392de9702b9b31f02ac78fbb471": {
+    "postId": "0b7e8583af8b615a1ff4b7c9c75767d9",
+    "sourceFile": "2026-10-26_牛市衰减函数控仓策略-对比KAMA策略-0b7e8583.py",
+    "registeredAt": "2026-10-26T15:17:13.825Z"
+  },
+  "4801dc32ef873eb723646005467e0b7ec6840f76cf6a2416a1b1e00b688b1ea0": {
+    "postId": "d5040aa00b1168d9c0926f68ba673b8d",
+    "sourceFile": "2026-10-26_多策略组合系统_ETF轮动_小市值增强-d5040aa0.py",
+    "registeredAt": "2026-10-26T15:17:17.580Z"
+  },
+  "7ea4a907682d5f016e0fa1ed911ca72a0c29c585eeb97372aa41c3d3429d520f": {
+    "postId": "3127f2827f7603cb15deb26aac741647",
+    "sourceFile": "2026-10-26_经典的小市值策略_低频收益更高-3127f282.py",
+    "registeredAt": "2026-10-26T15:17:20.205Z"
+  },
+  "ea073f36ee3606a834671124b0db1a763aee83b95db188a20ff39bf25488401e": {
+    "postId": "3116f2c23868336f8e641d1a56a20a0b",
+    "sourceFile": "2026-10-26_大妈买菜_策略_一个能穿越牛熊的稳健策略-3116f2c2.py",
+    "registeredAt": "2026-10-26T15:17:24.042Z"
+  },
+  "9453e6a9be523386e806dc8bb40fedd2aee41ad3fecaf75e0dce41ac11efc888": {
+    "postId": "ca4849947b4d1fab4377132b8c674919",
+    "sourceFile": "2026-10-26_苍老师推荐_价值投资_--_成长股内在价值投资-ca484994.py",
+    "registeredAt": "2026-10-26T15:17:30.062Z"
+  },
+  "1130a424b2c21ab42fd960eff5ad5c226fd7412046eb047b21dcd0208a67b4c6": {
+    "postId": "8513cb0185ab2b43a18e6e2064232983",
+    "sourceFile": "2026-10-26_价值投资_--_三一投资管理公司价值选股法-8513cb01.py",
+    "registeredAt": "2026-10-26T15:17:33.382Z"
+  },
+  "eeb19f0b58866a5df98d5c15bcfca0b6975091cad5417b3fcac1b59b9eda1d5b": {
+    "postId": "258e83f5cdd80b9f098598bf33658c39",
+    "sourceFile": "2026-10-26_605更新_11年_100倍以上的多因子策略-四因子选股策略研究_2-258e83f5.py",
+    "registeredAt": "2026-10-26T15:17:37.700Z"
+  },
+  "243e10d4750fb6f1e3251b78698c4b8e3e600e8bc2dae776b356caa86459d2d6": {
+    "postId": "3fac575eb8c1dc311c4650483a980c3b",
+    "sourceFile": "2026-10-26_机器学习_海量数据预测股票的未来趋势_Model的研究-3fac575e.py",
+    "registeredAt": "2026-10-26T15:17:40.323Z"
+  },
+  "c9e4f7c21c1695987a1161585b5e4f6968879e46a3091a0587c6c90dd8fe2657": {
+    "postId": "87ae2f80ea789bb556ef769c15015e63",
+    "sourceFile": "2026-10-26_动态因子策略探讨-87ae2f80.py",
+    "registeredAt": "2026-10-26T15:17:44.077Z"
+  },
+  "1df8d56450c604a2a56af0ba83a80cae44012f685fa988ba3179f849d455b733": {
+    "postId": "e07cd7de6148ed2259c4bdd71e2294ca",
+    "sourceFile": "2026-10-26_再论高开卖_低开买_以_量化侠_代码为例-e07cd7de.py",
+    "registeredAt": "2026-10-26T15:17:46.706Z"
+  },
+  "51469763d16c35bf0b6e44c79ebbbe0be2d41f5ecf3af3c950853d9f63cdd492": {
+    "postId": "3945f2fe07fba75d6d5092e01e5c321f",
+    "sourceFile": "2026-10-26_巴菲特说毛利率就是护城河-3945f2fe.py",
+    "registeredAt": "2026-10-26T15:17:49.586Z"
+  },
+  "6b0c4180007bf05c654eb92b26255cc5188dd233380babb8331b39c555bbd5e4": {
+    "postId": "22050d9e0ba8b6fdb4f2b27f9e7e21aa",
+    "sourceFile": "2026-10-26_最简单的动量模型_能否应对A股暴涨_二-22050d9e.py",
+    "registeredAt": "2026-10-26T15:17:52.214Z"
   }
 }

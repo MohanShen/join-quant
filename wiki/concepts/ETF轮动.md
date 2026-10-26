@@ -4,7 +4,7 @@ kind: 结构
 rollup:
 aliases: [ETF动量轮动, 基金轮动, 核心资产轮动]
 strategyCount: 39
-updatedAt: 2026-10-25
+updatedAt: 2026-10-26
 ---
 
 # ETF轮动
