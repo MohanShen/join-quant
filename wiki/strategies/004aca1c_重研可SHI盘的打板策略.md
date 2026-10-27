@@ -2,6 +2,7 @@
 postId: 004aca1c2b4beba715adaf31885c4c16
 title: 重研可SHI盘的打板策略
 sourceFile: strategies/2026-10-26_重研可SHI盘的打板策略-004aca1c.py
+family: 打板短线
 concepts: [小市值因子, 打板与涨停, 择时-均线]
 factors:
   选股: [规模价值·小市值]

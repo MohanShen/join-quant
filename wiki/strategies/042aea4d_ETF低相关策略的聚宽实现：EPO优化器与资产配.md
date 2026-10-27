@@ -2,6 +2,7 @@
 postId: 042aea4deda0cd08c39bb595ea9b55b2
 title: ETF低相关策略的聚宽实现：EPO优化器与资产配置实战
 sourceFile: strategies/2026-10-27_ETF低相关策略的聚宽实现_EPO优化器与资产配置实战-042aea4d.py
+family: 其他
 concepts: [未分类]
 factors:
   选股: [未分类]

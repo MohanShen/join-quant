@@ -2,6 +2,7 @@
 postId: df9da0e63c14173546b02acb9ed43c3d
 title: 揭秘保本基金策略之TIPP
 sourceFile: strategies/2026-10-27_揭秘保本基金策略之TIPP-df9da0e6.py
+family: 其他
 concepts: [未分类]
 factors:
   选股: [未分类]

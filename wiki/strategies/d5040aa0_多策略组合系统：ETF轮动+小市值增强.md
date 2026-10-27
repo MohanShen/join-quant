@@ -2,6 +2,7 @@
 postId: d5040aa00b1168d9c0926f68ba673b8d
 title: 多策略组合系统：ETF轮动 + 小市值增强
 sourceFile: strategies/2026-10-26_多策略组合系统_ETF轮动_小市值增强-d5040aa0.py
+family: 多因子ML
 concepts: [小市值因子, ETF轮动, 动量与趋势, 多策略组合]
 factors:
   选股: [规模价值·小市值, ETF动量, 动量]

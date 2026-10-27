@@ -2,6 +2,7 @@
 postId: 4e0feefc054353e9e82552e0bba6d3a9
 title: RSRS模型深入研究2-对右偏态样本处理的质疑与分析
 sourceFile: strategies/2026-10-18_RSRS模型深入研究2-对右偏态样本处理的质疑与分析-4e0feefc.py
+family: 其他
 concepts: [择时-RSRS]
 factors:
   择时: [RSRS]

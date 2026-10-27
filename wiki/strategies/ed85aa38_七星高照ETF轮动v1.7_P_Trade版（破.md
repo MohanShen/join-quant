@@ -2,6 +2,7 @@
 postId: ed85aa38f5aa1ca413cbb9d50e3ca61a
 title: 七星高照ETF轮动v1.7_P_Trade版（破百更新）
 sourceFile: strategies/2026-10-27_七星高照ETF轮动v1_7_P_Trade版_破百更新-ed85aa38.py
+family: 七星高照
 concepts: [ETF轮动, 动量与趋势]
 factors:
   选股: [ETF动量, 动量]

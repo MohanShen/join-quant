@@ -2,6 +2,7 @@
 postId: cf1ec5bd80c4719365170ac995e38f8a
 title: 红利类型选股策略
 sourceFile: strategies/2026-10-27_红利类型选股策略-cf1ec5bd.py
+family: 其他
 concepts: [小市值因子]
 factors:
   选股: [规模价值·小市值]
