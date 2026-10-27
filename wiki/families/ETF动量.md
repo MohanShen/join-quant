@@ -28,7 +28,9 @@ realism: "⚠ epoch-6 base objective 0.1868 / sharpe 1.41（epoch 2 的 0.2965 �
 valRevalGranted: 9
 valRevalGrantedBasis: "human decision 2026-10-27: JQ_ALLOW_REVAL granted for this family at epoch 9. granted, but NOT yet spendable on this evidence: realizabilityScope is UNSET, so the page R=2 is taken to describe the base while the candidate is bestVariant 62c2664f; and the only shelf product etfmom-005 is portfolio_value_proportion [1,0,0,0] = 100% the XSZ stock leg. Scope the candidate before spending this. RECORD ONLY — nothing reads this field; the override is still the env var at run time, deliberately left on the escape-hatch side so granting it stays a human act."
 realizability: 2
-realizabilityBasis: "etf-m2 round 2 candidate.json (ETF merge, 2026-10-16)"
+realizabilityBasis: "q-e9-liq（2026-10-27，本台实测）：在本书自身的可行性地板 ¥2e7/日（capital 1,000,000 / stock_sum 1 / order_volume_ratio 0.05）上跑 TRAIN —— 地板**非惰性**（曲线在 185/242 日不同、相关 0.9915、2024-03-28 起分叉），而本书在地板下**变好**：objective 1.3251→1.4542、sharpe 4.20→4.55、maxDD 18.83→18.87 基本不动，LIQFLOOR 0 次 ERROR。故在本书自身规模上可成交性不构成损失 ⇒ R=2。**不给 3**：容量曲线（liq-2 1e8 / liq-3 2e8）已构建但**未跑**，容量上限未测。旧依据 etf-m2 round 2 candidate.json（另一本书、旧台）已被本次直接测量取代。"
+realizabilityScope: etfmom-e9-pit
+realizabilityScopeNote: "**本分数描述 q-e9-3_pit-champion / 产品 etfmom-e9-pit**（冠军 62c2664f 的点时池版本，26 只 ∩ 上市日期<2024-01-01，单持仓周度轮动），依据即上面的 q-e9-liq。⚠ **不覆盖** base 0aa4028d、raw 冠军 62c2664f（含 2 只 2025 年上市的名字）、以及任何逐日机械池构造（q-e9-1 / 01fa47a7），后者均未过闸、也从未跑过地板测试 —— 不代为给分。"
 valReopened: 9
 valReopenedBasis: "human decision 2026-10-26: VAL reopened for every family that had declined. The prior decline is preserved as valDeclinedPrior/valDeclinedPriorBasis (declined at epoch 9) — its REASONING still binds whoever runs the VAL, and any precondition it names (e.g. a pre-2025 pool cutoff) must still be satisfied first. Reopening permits the run; it does not pre-approve the book."
 valDeclinedPrior: 9
