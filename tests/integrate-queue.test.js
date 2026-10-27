@@ -490,9 +490,46 @@ test('the incremental round', async t => {
       assert.ok(r.lineageRefused.length >= 1, 'the lineage must be refused deterministically');
       assert.match(r.lineageRefused[0].why, /same lineage/);
       assert.match(r.lineageRefused[0].why, /parent: \[\[Parent\]\]/);
+      // ⚠⚠ The refusal must bind on the ACTION, which is what this test used to miss.
+      //
+      // It asserted only the lineageRefused REPORT, so it passed for as long as the bug existed:
+      // `action` was set to 'integrate' unconditionally and the queue kept offering the pair as a
+      // merge. The test's own name says "refused structurally", and a report is not a refusal.
+      //
+      // Measured 2026-10-27 on live data: after ETF was re-seeded with ETF动量's book, 五福闹新春
+      // (parent: [[ETF动量]]) arrived against it and the queue read `-> INTEGRATE ETF` with
+      // lineage as a footnote — a dispatch would have spent minutes merging a FORK with its parent.
+      assert.notStrictEqual(r.action, 'integrate',
+        'a parent/child pair must not be offered as an integration');
+      assert.strictEqual(r.action, 'idle',
+        'with no mergeable incumbent left, the universe is idle and the work is upstream');
+      assert.match(r.why, /run-family/, 'the verdict must point at where the choice belongs');
     });
   });
-});
+
+  await t.test('lineage refuses only the RELATED incumbent, not the whole round', () => {
+      // The complement, so the fix cannot become "any lineage note kills the round": an arrival
+      // facing one related and one UNRELATED promoted candidate still integrates, against the
+      // unrelated one. Without this the fix would silently idle universes that have real work.
+      const w = world({
+        Parent: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base', edges: [['动量', 'measured']] },
+        Other:  { u: 'U', obj: 0.4, sharpe: 1.8, val: 2.0, R: 3, valOn: 'base', edges: [['红利', 'measured']] },
+        Child:  { u: 'U', obj: 0.6, sharpe: 1.9, val: 2.1, R: 3, parent: 'Parent', valOn: 'base',
+                  edges: [['趋势择时', 'measured']] },
+      });
+      inWorld(w, ({ queue, promoted }) => {
+        promoted.record({ universe: 'U', action: 'promote', candidateId: 'strategies/Parent.py',
+                          members: ['Parent'], sharpe: 2.0 });
+        promoted.record({ universe: 'U', action: 'promote', candidateId: 'strategies/Other.py',
+                          members: ['Other'], sharpe: 1.8 });
+        const r = row('U', queue.build());
+        assert.strictEqual(r.arrival.family, 'Child');
+        assert.ok(r.lineageRefused.length >= 1, 'the Parent must still be refused');
+        assert.strictEqual(r.action, 'integrate', 'the unrelated incumbent is still mergeable');
+        assert.match(r.why, /lineage/, 'and the round must say one was refused');
+      });
+    });
+  });
 
 /**
  * The gate must say WHO can clear a block, or the funnel's last stage waits in silence.

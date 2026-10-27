@@ -302,10 +302,37 @@ function build() {
       why = `${arrival.family} is the FIRST eligible candidate in this universe — promote it with ` +
             'no judgement and no backtest; it becomes what later arrivals must beat';
     } else {
-      action = 'integrate';
-      why = `${arrival.family} arrives against ${current.length} promoted candidate(s) — the agent ` +
-            'judges symbol overlap, then promotes (no overlap) or merges against the strongest ' +
-            'overlapping incumbent';
+      // ⚠⚠ The lineage refusal has to bind on the ACTION, not only appear in the report.
+      //
+      // `lineageRefused` was computed and rendered, and `action` was set to 'integrate' regardless
+      // — so the queue went on offering a parent/child pair as a merge, which is the one thing the
+      // doc comment above and CLAUDE.md both say it refuses "deterministically". The earlier fix
+      // taught it to DETECT the case and to print it; it never taught it to decline.
+      //
+      // Measured 2026-10-27: after ETF was re-seeded with ETF动量's book, 五福闹新春 (which
+      // declares parent: [[ETF动量]]) arrived against it and the queue read `-> INTEGRATE ETF`
+      // with lineage as a footnote. Dispatching that would have spent backtest minutes asking an
+      // agent to merge a FORK with its own parent — a within-lineage variant choice that belongs
+      // to /run-family, where a child already carries the parent's mechanism by construction.
+      //
+      // Only candidates NOT lineage-related to the arrival are mergeable. If none is left there is
+      // nothing to integrate against, so the universe is idle and the work is upstream.
+      const refusedIds = new Set(lineageRefused.map(r => r.promoted));
+      const mergeable = current.filter(c => !refusedIds.has(c.candidateId));
+      if (!mergeable.length) {
+        action = 'idle';
+        why = `${arrival.family} is the only arrival and every promoted candidate shares its ` +
+              `lineage (${lineageRefused.map(r => r.member).join(', ')}) — a child is a FORK of ` +
+              'its parent, so choosing between them is /run-family\'s job, not integration\'s. ' +
+              'Nothing to merge against.';
+      } else {
+        action = 'integrate';
+        why = `${arrival.family} arrives against ${mergeable.length} mergeable promoted ` +
+              `candidate(s)${mergeable.length !== current.length
+                ? ` (${current.length - mergeable.length} refused on lineage)` : ''} — the agent ` +
+              'judges symbol overlap, then promotes (no overlap) or merges against the strongest ' +
+              'overlapping incumbent';
+      }
     }
 
     return {
