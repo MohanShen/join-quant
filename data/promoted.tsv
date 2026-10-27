@@ -1,1 +1,2 @@
 at	universe	action	candidateId	kind	members	sharpe	objective	epoch	note
+2026-10-27T18:00:28.783Z	ETF	promote	validated_strategies/wufu-e9-pit.py	family	五福闹新春	7.51	1.9658	9	SEED — first eligible candidate in ETF; no overlap question, no merge, no backtest. Candidate is the family shelf product wufu-e9-pit (point-in-time pool build of champion bf30eb36), not a ledger row: TRAIN 2024 sharpe 7.51 / objective 1.9658 from its archive header; VAL wufu-e9-pit-val sharpe 9.64 pass; R=2. Next arrival: ETF动量.
