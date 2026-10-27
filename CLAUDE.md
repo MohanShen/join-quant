@@ -1924,6 +1924,11 @@ Only the directories whose contents aren't self-evident:
   ⚠ **And this undercuts the "a cancelled run bills nothing" reading** recorded above: if those
   runs COMPLETED, their minutes were charged normally. Do not treat the slow-skip overshoot as free
   on that evidence.
+- ⚠ **`/algorithm/backtest/log` serves 100 lines per request regardless of `limit`** (returns
+  `max: false`), and `utils/backtest-log.js` fetches a single page — so on a chatty strategy it
+  reads only the first few weeks (打板短线's u-e9-rzq: 2024-01-02..02-23 of an 886-line year).
+  Page by `offset` in steps of 100 until a short page to read a whole run. Found 2026-10-27; the
+  tool is unmodified.
 - ⚠ **A run JQ refuses to cancel at the slow-skip cap (「在此状态不能取消」) is not necessarily lost.**
   打板短线's jy-u-2 hit the 50-min cap, five cancel attempts failed, the executor reported
   `slow-skipped` — and the run completed server-side two minutes later. The algorithm's buildList
