@@ -246,8 +246,8 @@
     ],
     "edgeRef": "动量",
     "rank": 10,
-    "status": "blocked",
-    "result": null
+    "status": "answered",
+    "result": "预注册的两个证伪项（Δobjective<−0.20、以及本条 hypothesis 里的「掉幅>10%」）都没触发，而且符号与预测相反：排除唯一一只窗内上市的池成员 159525.XSHE（2024-05-20，etf_pool 14→13）之后本书变好——objective 1.4731→1.5943（+0.1212 / +8.2%）、sharpe 5.45→5.90、annual 156.71→168.83、maxDD 9.40 不变。⇒ 本族头条带的是池罚分而不是池红利，1.4731 已是保守值，五福闹新春 那条「必须成对引用」的规矩在本族不适用。机制：base 只在 13/242 天持有 159525（8 天为自家 rank-1），两次往返都亏（约 −21,390 元），Δ 实际来自替代品（变体改持 161226 国投白银 10-10..10-23，+83,384）；两曲线 1–9 月逐月 log-growth 完全相同，首次分叉 2024-10-09，ρ 0.9929；逐月 Δ 中约 74% 是 10 月替换、26% 是 12 月路径连带。⚠ 与 q-e9-liq-1 混淆：同一只名字的同 8 个 rank-1 天，两个 Δ 都只能当同一次 10 月替换的上界 → q-e9-pit-sep。⚠ 只关掉 listing 半边，selection 半边仍归 q-e9-pool-sel；动量 维持 refuted（未跑其 test:）"
   },
   {
     "id": "q-e9-6",
@@ -401,6 +401,40 @@
     "edgeRef": "动量",
     "rank": 45,
     "status": "queued",
+    "result": null
+  },
+  {
+    "id": "xp-e9-1",
+    "kind": "improve",
+    "title": "组合候选：把 q-e9-liq-1 的可成交下限与 q-e9-pit 的点时池截止同时加到冠军 d02cde29 上（enhance/candidates/xp-e9-1.py）",
+    "hypothesis": "两条独立且各自原则正当的改动各自单独 IMPROVE 了 base（liq-1 1.4731→1.5643 / sharpe 5.45→5.89；pit 1.4731→1.5943 / 5.90），同加之后应 >= max(1.5643,1.5943) − 0.02 且 sharpe >= 1.0 ⇒ 该书是本族最有论据的 VAL 候选。⚠ 预注册「不期待可加性」：两个 Δ 高度混淆（159525 是 liq-1 里被地板剔得最多的成员，63 次剔除、18 次 rank-1 替换中的 8 次，而那 8 天正是 pit 分析里 159525 赢得 rank 1 的 8 天；159525 全年只被持有 13/242 天，全在 10 月，两次往返都亏），所以 1.56–1.60 区间即为预期结果，并不意味着两条改动「没有叠加」，而是它们重叠。证伪：combined objective < 1.4731（比未改动的 base 还差）⇒ 两条改动破坏性互作，其中至少一条做的事与其声称的不同，必须大声报告。",
+    "why": "本族 exit gate 现在只被 VAL 一项阻断，而编排者不愿把家族唯一一次验证花在一本「原则上已知可被击败」的书上。liq-1 与 pit 各自都是原则性改动（可成交性、点时池），各自都提升了 objective，所以该拿去 VAL 的是两者同加的那一本，而不是任何单边。",
+    "design": "从 study/多因子ML/baseline-e6.py（断言 == py2to3(raw d02cde29) + 当前 frozen OVERRIDE，43002 chars）出发，写 study/多因子ML/build-e9-cand.js：REUSE 既有两个 builder（build-e9-liq.js / build-e9-pit.js）的编辑逻辑而非重打一遍——先各自重跑生成其变体，再从「变体 vs baseline」的 diff 取出各自的编辑，合成后 ASSERT 改动行集合恰好等于两者之并（否则拒写）。截止日由 harness.window(\"train\").start 现读，绝不写死。产物 enhance/candidates/xp-e9-1.py，--window train --usage-limit free --max-poll-min 45，一次回测。对照全部免费：base 账本行 1.4731/5.45/156.71/9.40 + 曲线，liq-1 1.5643/5.89 + 曲线，pit 1.5943/5.90 + 曲线。⚠ 绝不 --window val、绝不 --allow-oos。",
+    "from": [
+      "q-e9-liq-1",
+      "q-e9-pit"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 0,
+    "status": "answered",
+    "result": "头条结果不是那个 objective，而是两条曲线逐位相同：组合书与 q-e9-liq-1 在 242/242 天上 max|Δcum| = 0.000000pp、ρ = 1.000000、0 天不同 —— 即 point-in-time 池截断在已有可成交地板的书上「恰好惰性」。两个 Δ 因此不是可相加的量：Δ(pit|base) = +0.1212，而 Δ(pit|liq-1) = 0.0000。机制由候选自己的 LIQFLOOR 普查给出（3,713 行日志、538 条 LIQFLOOR 行、0 ERROR —— 这是一个控制读数，不是「没输出」）：159525 在候选日志里出现 0 次"
+  },
+  {
+    "id": "q-e9-pit-sep",
+    "kind": "understand",
+    "title": "分离两个同向缺陷：只对 159525.XSHE 加成交地板、其余逐字不动（q-e9-pit 与 q-e9-liq-1 的 Δ 指向同一只名字的同 8 个 rank-1 天）",
+    "hypothesis": "若「只对 159525 加地板」的 Δobjective 接近 q-e9-pit 的 +0.1212，则那条 Δ 基本是「不可成交」而不是「事后上市」，q-e9-pit 的量级读法要改写成成交约束；若接近 0 而 q-e9-pit 仍 +0.1212，则事后上市与不可成交是两个可加的独立缺陷，两个 Δ 才可以各自引用；若介于中间，则按差值报「可分离的部分」。三种结果都是结论，没有空手而归的分支。",
+    "why": "q-e9-pit（+0.1212 → 1.5943）与 q-e9-liq-1（+0.0912 → 1.5643）两条已测 Δ 都把收益追到 159525 在 2024-10-09..10-22 夺得 rank-1 的同 8 个交易日：pit 把它从池里删掉，liq-1 用成交地板在同样的日子把它剔除（63 次剔除中最多的一只）。两个数字此刻无法各自当量级引用，而 §4 的「三仓消融必须同时对照 1.5643」以及 realizabilityBasis 的论证都依赖知道那条 Δ 属于哪个缺陷。一次回测即可分离，且本族已有两条可直接对照的曲线。",
+    "design": "以 base 为底，只在 etf 选股点对 159525.XSHE 这一只代码施加 q-e9-liq-1 的同一条 fill-feasibility 地板（previous_date 上 20 bar median money，动态下限 = 当日 total_value×0.40/1/0.05），其余 13 只与两条股票腿逐字不动、零自由参数；逐次打 LIQFLOOR 行以证明只有这一只被判定过不可成交。--window train，1 次回测（liq-1 实测 214s、pit 212s）。对照三者并列：base 1.4731 / q-e9-pit 1.5943 / q-e9-liq-1 1.5643（三条曲线均已存，不欠对照 run）。⚠ 变体与 builder 文件不得写进 study/多因子ML/variants/ 或 build-*.js —— 这两处由并行执行器持有；跑它的人要么等目录释放、要么用自己的独立文件名。",
+    "from": [
+      "q-e9-pit",
+      "q-e9-liq-1",
+      "q-e9-pool"
+    ],
+    "edgeRef": "动量",
+    "rank": 13,
+    "status": "queued",
+    "note": "spawned by q-e9-pit (recorder, epoch 9). 排在 q-e9-2 / q-e9-4 之后：它修的是已有读数的归因，不是 2024 可重复性判据。",
     "result": null
   }
 ]
