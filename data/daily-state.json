@@ -4,23 +4,13 @@
     "stage": "research",
     "target": "小市值",
     "budget": 135,
-    "at": "2026-10-27T12:46:23.512Z",
+    "at": "2026-10-27T13:59:29.656Z",
     "outcome": "ran",
     "note": "resumed research session ce45da2b (exit 0 is NOT proof work happened — check its ledger)",
     "minutesUsed": null,
-    "endedAt": "2026-10-27T12:54:47.400Z"
+    "endedAt": "2026-10-27T14:20:44.115Z"
   },
   "runs": [
-    {
-      "stage": "assign",
-      "target": null,
-      "budget": 46,
-      "at": "2026-10-04T19:33:19.132Z",
-      "outcome": "ran",
-      "note": "family assignment over 1 pending",
-      "minutesUsed": null,
-      "endedAt": "2026-10-04T19:37:21.164Z"
-    },
     {
       "stage": "research",
       "target": null,
@@ -1210,6 +1200,16 @@
       "note": "resumed research session ce45da2b (exit 0 is NOT proof work happened — check its ledger)",
       "minutesUsed": null,
       "endedAt": "2026-10-27T12:54:47.400Z"
+    },
+    {
+      "stage": "research",
+      "target": "小市值",
+      "budget": 135,
+      "at": "2026-10-27T13:59:29.656Z",
+      "outcome": "ran",
+      "note": "resumed research session ce45da2b (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-27T14:20:44.115Z"
     }
   ]
 }

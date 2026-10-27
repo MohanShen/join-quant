@@ -25,6 +25,8 @@ bestObjective: 2.0078
 memberCount: 33
 sources: { normalized: 27, study: 0, enhance: 0 }
 realism: "⚠ epoch-6 base objective 0.1868 / sharpe 1.41（epoch 2 的 0.2965 高估 59%）；收益 85% 在 2022 一年；11 只池写于 2026（2022 年初只有约 6 只有行情），换成 A 股宽基池 objective −0.27——池子是事后选成的必要条件，VAL 2024–25 对它不是干净样本外；零滑点台仍偏乐观（单持仓日频换仓）"
+valRevalGranted: 9
+valRevalGrantedBasis: "human decision 2026-10-27: JQ_ALLOW_REVAL granted for this family at epoch 9. granted, but NOT yet spendable on this evidence: realizabilityScope is UNSET, so the page R=2 is taken to describe the base while the candidate is bestVariant 62c2664f; and the only shelf product etfmom-005 is portfolio_value_proportion [1,0,0,0] = 100% the XSZ stock leg. Scope the candidate before spending this. RECORD ONLY — nothing reads this field; the override is still the env var at run time, deliberately left on the escape-hatch side so granting it stays a human act."
 realizability: 2
 realizabilityBasis: "etf-m2 round 2 candidate.json (ETF merge, 2026-10-16)"
 valReopened: 9
