@@ -550,6 +550,31 @@ test('the exit gate names the owner of every block', async (t) => {
     }
   });
 
+  await t.test('research never owns a block whose only routes need a VAL the budget refuses', () => {
+    // ⚠ The sibling of the valDeclined bug above, and found the same way — by a dispatch.
+    // The shelf-unusable branch offers "re-measure the product" and "re-finalise the family";
+    // BOTH run through a VAL, because `usable` demands `gate_val === 'pass'` and only an archived
+    // VAL stamps it. So when the VAL budget refuses, neither route is open and the block is the
+    // human's. The valDeclined guard fixed only the DECLARED case, leaving a family whose VAL is
+    // budget-blocked (an unrecorded prior epoch — unknown blocks) still reading `research`.
+    //
+    // Measured 2026-10-27: 小市值 was dispatched as the research queue head and the round spent
+    // ZERO backtest minutes, correctly concluding the step was not its to take.
+    //
+    // Generic, like its sibling: any research-owned verdict that names the shelf branch must have
+    // an open VAL budget, whichever family it is.
+    const vb = require('../utils/val-budget');
+    for (const r of rows) {
+      if (r.eligible || r.owner !== 'research') continue;
+      if (!/not usable on this bench/.test(r.why || '')) continue;
+      let allowed = false;
+      try { allowed = !!vb.check(r.family).allowed; } catch { allowed = false; }
+      assert.ok(allowed,
+        `${r.family}: research owns a shelf-stale block, but the VAL budget refuses a fresh VAL ` +
+        `— the loop has no route, so this is human-owned. Verdict: ${r.why}`);
+    }
+  });
+
   await t.test('a VAL on a bench the active epoch rejects asks the BUDGET who owns it', () => {
     // sameBench(valEpoch, active) false => a fresh VAL is allowed => research can clear it.
     // An unrecorded epoch is UNKNOWN, unknown blocks, so only a human override moves it. Keeping

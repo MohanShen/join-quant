@@ -306,6 +306,26 @@ function assess(family) {
         '(grant JQ_ALLOW_REVAL, or edit the decline), not a research round.',
         'human');
     }
+    // ⚠⚠ Both routes run through a VAL (see above), so the VAL BUDGET decides the owner here as
+    // well — asked of the budget rather than re-derived, exactly as the stale-VAL branch below
+    // does it. The `valDeclined` guard added above fixed only the DECLARED case; a family whose
+    // VAL is blocked by the BUDGET with no decline still read `research` and was re-dispatched
+    // daily to attempt a step it cannot take.
+    // Measured 2026-10-27, by the dispatch: 小市值 was picked as the research queue head, the
+    // session correctly determined the named step was not its to perform, and the round spent
+    // ZERO backtest minutes. It also declined to write `valDeclined` to make the symptom go
+    // away, which was right — that field means "no candidate deserves this family's one
+    // validation", and this family HAS one (champion 0a7de9fa, objective 2.6282, R=2 measured).
+    // Declining would misrecord a missing epoch column as a judgement about the book, and a
+    // decline does not expire on an epoch bump.
+    let canVal;
+    try { canVal = !!require('./val-budget').check(family).allowed; } catch { canVal = false; }
+    if (!canVal) {
+      return fail('blocked',
+        `its shelf product(s) (${products}) are not usable on this bench, and both routes out ` +
+        '(re-measure the product, re-finalise the family) require a VAL that the budget refuses ' +
+        '— so this needs the human override, not a research round', 'human');
+    }
     return fail('blocked',
       `its shelf product(s) (${products}) ` +
       'are not usable on this bench, and the best ingested member is not the finalised book — ' +
