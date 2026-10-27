@@ -1,36 +1,16 @@
 {
   "inFlight": null,
   "lastRun": {
-    "stage": "normalize",
-    "target": null,
-    "budget": 67,
-    "at": "2026-10-26T21:20:05.462Z",
+    "stage": "research",
+    "target": "小市值",
+    "budget": 135,
+    "at": "2026-10-27T12:46:23.512Z",
     "outcome": "ran",
-    "note": "0 retry(--redo) + 20 fresh, 1 newly deferred at 45min",
+    "note": "resumed research session ce45da2b (exit 0 is NOT proof work happened — check its ledger)",
     "minutesUsed": null,
-    "endedAt": "2026-10-26T22:40:15.446Z"
+    "endedAt": "2026-10-27T12:54:47.400Z"
   },
   "runs": [
-    {
-      "stage": "normalize",
-      "target": null,
-      "budget": 130,
-      "at": "2026-10-03T21:17:05.574Z",
-      "outcome": "ran",
-      "note": "40 queued, 0 deferred at 45min",
-      "minutesUsed": null,
-      "endedAt": "2026-10-03T21:27:23.810Z"
-    },
-    {
-      "stage": "normalize",
-      "target": null,
-      "budget": 0,
-      "at": "2026-10-04T18:00:19.637Z",
-      "outcome": "ran",
-      "note": "40 queued, 1 deferred at 45min",
-      "minutesUsed": null,
-      "endedAt": "2026-10-04T19:33:15.606Z"
-    },
     {
       "stage": "assign",
       "target": null,
@@ -1210,6 +1190,26 @@
       "note": "0 retry(--redo) + 20 fresh, 1 newly deferred at 45min",
       "minutesUsed": null,
       "endedAt": "2026-10-26T22:40:15.446Z"
+    },
+    {
+      "stage": "research",
+      "target": "五福闹新春",
+      "budget": 131,
+      "at": "2026-10-27T00:44:21.870Z",
+      "outcome": "ran",
+      "note": "resumed research session a6b44bf4 (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-27T01:09:54.536Z"
+    },
+    {
+      "stage": "research",
+      "target": "小市值",
+      "budget": 135,
+      "at": "2026-10-27T12:46:23.512Z",
+      "outcome": "ran",
+      "note": "resumed research session ce45da2b (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-27T12:54:47.400Z"
     }
   ]
 }
