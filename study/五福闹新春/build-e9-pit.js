@@ -122,17 +122,34 @@ const BOOKS = [
   //    a broad A-share pool scoring −0.27. So that 2.4187 is not quotable until this runs.
   { tag: 'q-e9-pit_etfmom-005', match: /^etfmom-005\.py$/, label: 'ETF动量 产品 etfmom-005',
     dir: 'validated_strategies' },
+
+  // ── 七星高照's epoch-9 candidate, added 2026-10-27. The family's §3 #1 and bestVariant moved to
+  //    this book (1.2451 / sharpe 4.40) while the old baseline 19ca0e69 now fails the 1.0 gate, so
+  //    the family's whole level rests on a 29-name pool nothing has touched. Its pool lines carry
+  //    CHINESE NAMES ONLY — no inline listing dates — so the primary rule has nothing to read and
+  //    the corpus fallback is the entire instrument, exactly as on b50e4387.
+  //    ⚠ 9 of its 29 names have NO corpus date either; the builder refuses to exclude an undated
+  //    name (no provenance ⇒ no edit), which makes the measured Δ a LOWER BOUND on pool hindsight.
+  { tag: 'q-e9-pit-d9dafab2', match: /d9dafab2/, label: '七星高照 候选 d9dafab2 该相信癌股还是该相信海外',
+    out: path.join(ROOT, 'study/七星高照/variants'),
+    pool: 'g.overseas_etf_pool + g.commodity_etf_pool + g.domestic_etf_pool（29 只，第 132 行合并）' },
 ];
 
-const header = (label, cut, dropped) => [
+const header = (label, cut, dropped, poolDesc) => [
   '# ============================================================================',
   `# q-e9-pit 变体：${label} —— 「点时」池（POINT-IN-TIME POOL）`,
   '#',
   '# 【成员资格规则 —— 跑前固定，零自由度】',
-  '#   池 = 本书自己的 g.global_etf_pool + g.china_etf_pool 中所有未被作者注释掉的名字',
+  `#   池 = 本书自己的 ${poolDesc || 'g.global_etf_pool + g.china_etf_pool'} 中所有未被作者注释掉的名字`,
   `#        ∩ { 上市日期 < ${cut} }`,
-  '#   两个输入都是跑前可查的事实：名单来自本书源码；上市日来自同几行作者自己的行内注释',
+  // ⚠ Say WHICH source actually supplied the dates. A corpus-fallback book carries weaker
+  // provenance than a self-documented one and the header must not claim the stronger rule.
+  (dropped.some(d => d.via === 'own')
+    ? '#   两个输入都是跑前可查的事实：名单来自本书源码；上市日来自同几行作者自己的行内注释'
+    : '#   两个输入都是跑前可查的事实：名单来自本书源码；本书的池行**不带上市日期**，故上市日全部来自\n' +
+      '#   语料库内其他作者写下的行内注释（b50e4387 式回退，逐条出处见下）'),
   '#   （上市日是证券属性，不是业绩数据）。本规则不引用任何 2024 年的价格、收益、成交额或排名。',
+  '#   ⚠ 无出处的名字一律不动（不得猜），故被剔除集是真实事后性的**下界**。',
   '#',
   `# 【被排除的 ${dropped.length} 只 —— 一只都不得放回】`,
   ...dropped.map(d => `#   ${d.code}  上市 ${d.date}  [日期来源: ${d.via === 'own' ? '本书行内注释' : '语料库内其他作者的行内注释'}]` +
@@ -144,8 +161,14 @@ const header = (label, cut, dropped) => [
   '',
 ].join('\n');
 
+// `--only <tag-substring>` builds one book. Without it every entry is rebuilt, which is correct but
+// would also rewrite other families' variants if the corpus map or the OVERRIDE has moved since.
+const ONLY = (process.argv.find(a => a.startsWith('--only=')) || '').slice(7)
+  || (process.argv.includes('--only') ? process.argv[process.argv.indexOf('--only') + 1] : '');
+
 const built = [];
 for (const b of BOOKS) {
+  if (ONLY && !b.tag.includes(ONLY)) continue;
   // ⚠ `dir` defaults to strategies/ but may name the product shelf. A shelf artifact is a BUILT
   // book, so it is not a ledger row and the primary dated-comment rule rarely applies to it — but
   // the pool question is identical, and routing it through THIS builder is the point: one builder
@@ -197,7 +220,10 @@ for (const b of BOOKS) {
   }
   if (!dropped.length) throw new Error(`${b.tag}: nothing to exclude — the test would be inert`);
 
-  const file = path.join(OUT, `${b.tag}.py`);
+  // ⚠ A variant belongs to the FAMILY whose book it mutates (`study/<family>/variants/`), not to
+  // whichever family's directory happens to host this builder. `out` names it; default = here.
+  const outDir = b.out || OUT;
+  const file = path.join(outDir, `${b.tag}.py`);
   // ⚠⚠ NEVER append OVERRIDE to a book that already carries it. A PRODUCT from
   // `validated_strategies/` was built from `enhance/strategy_template.py`, which embeds the pins,
   // so a second copy rebinds `__jq_orig_initialize` to the ALREADY-WRAPPED `initialize` and the
@@ -214,8 +240,8 @@ for (const b of BOOKS) {
       }
     }
   }
-  const text = header(b.label, CUT, dropped) + out + (hasOverride ? '' : OVERRIDE);
-  if (!DRY) fs.writeFileSync(file, text);
+  const text = header(b.label, CUT, dropped, b.pool) + out + (hasOverride ? '' : OVERRIDE);
+  if (!DRY) { fs.mkdirSync(outDir, { recursive: true }); fs.writeFileSync(file, text); }
   built.push({ tag: b.tag, src, dropped: dropped.length,
                in2025: dropped.filter(d => d.date >= '2025-01-01').length });
   console.log(`[pit] ${b.tag}: excluded ${dropped.length} name(s) listed >= ${CUT} ` +
