@@ -66,7 +66,7 @@
     "edgeRef": "规模因子",
     "rank": 90,
     "status": "dropped",
-    "note": "gatekeeper 否决，不回测：在 on-mechanism 方向上机械加杠杆，TRAIN 上几乎必然抬分，但增量全部来自零滑点最失真的 6 只微盘周度轮换腿，并把本家族推成 [[小市值]] 的更差副本（edge 冗余）。q-e6-1 的 implication 已关闭该方向",
+    "note": "gatekeeper 否决，不回测：在 on-mechanism 方向上机械加杠杆，TRAIN 上几乎必然抬分，但增量全部来自零滑点最失真的 6 只微盘周度轮换腿，并把本家族推成 [[小市值]] 的更差副本（edge 冗余）。q-e6-1 的 implication 已关闭该方向 ｜ epoch-9 gatekeeper 复核后维持否决：q-e6-1 的 implication 虽然是 epoch-6 closure（staleClosures），但它有两半——level 那半（「32.05% 年化仍过闸」等数字）随台作废，mechanism 那半（加权会放大零滑点最失真的 6 只微盘周度轮换腿，并把本家族变成 [[小市值]] 的更差副本，即 edge 冗余）跨台存活。epoch 9 还加强了它：小市值 的 pool-clean 龙头 bba95a11 得 1.7896，本 base 1.4731。按 CLAUDE.md 的规矩，mechanism 论证跨台仍然 closed。q-e9-corr 会把这半论证从论证变成测量。",
     "result": null
   },
   {
@@ -81,7 +81,325 @@
       "q-e6-0"
     ],
     "edgeRef": "规模因子",
+    "rank": 95,
+    "status": "dropped",
+    "result": null,
+    "note": "被 q-e9-3 取代（同一行改动 pass_april True→False，但本条的假设、证伪项与基线都是为 epoch 6 写的：TRAIN 2022–23、n=4 次事件、maxDD +3.78pp 的 epoch-2 量级）。从未运行，没有信息损失；epoch-9 版本见 q-e9-3，并在 from 里引了本 id。"
+  },
+  {
+    "id": "q-e9-corr",
+    "kind": "understand",
+    "title": "零回测：base 的 epoch-9 TRAIN 曲线与 小市值 / ETF动量 epoch-9 成员的相关性（家族归属 / 冗余度）",
+    "hypothesis": "ρ(base, 小市值 的 pool-clean 龙头 bba95a11) > 0.8 ⇒ 本家族的 edge 是继承的、与 小市值 高度冗余（且分数更低：1.4731 vs 1.7896）；ρ(base, ETF动量 epoch-9 成员) > 0.8 ⇒ 归属 ETF动量。证伪（两个方向都是结果）：全部 ρ < 0.5 ⇒ §4「应改归 / 改名」的猜想被否，base 是真正独立的三仓混合书，值得独立投入回测分钟。",
+    "why": "零回测、零分钟，而且它预先回答「这个家族还值不值得花分钟」。三个回报：(1) 它把 staleClosures 里 q-e6-1 唯一还活着的那半论证——「加大微盘权重会把本家族变成 小市值 的更差副本」——从论证变成测量；那是 mechanism 论证，跨台存活，但至今没有任何测量支撑。(2) 回答 §4 开着的「家族归属」空白（base 与 小市值 / ETF动量 部分重叠，真正的多因子/ML 成员全部不过闸）。(3) 若 ρ>0.8 且分数更低，正确动作是写下这件事，而不是再花 5 次腿归因回测。",
+    "design": "已存曲线对比，无回测、无变体文件：data/series/2026-06-28_高质量稳定上涨策略-d02cde29__train__e9.json 对 data/series/*__train__e9.json 里的 小市值 成员（bba95a11、8dbd994c、a30641fb、b50e4387 等）与 ETF动量 成员，用 utils/backtest-series.js --corr。⚠ 必须用 dailyReturns() 的链式换算 (1+cₜ/100)/(1+cₜ₋₁/100)−1，差分累计百分比会报出 1.3620 而真值 0.2271（6× 错误）。报 ρ 矩阵 + 各自 objective，并与免费事实「2024-09 +26.25% / 2024-10 +25.04% 供给 48.7% log-growth」对读：共同的 9/10 月敞口是最可能的高 ρ 来源。",
+    "from": [
+      "q-e6-1",
+      "q-audit"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 1,
+    "status": "answered",
+    "result": "base d02cde29（epoch-9 TRAIN，objective 1.4731 / sharpe 5.45 / annual 156.71 / maxDD 9.40）对全库 279 条 e9 TRAIN 曲线的相关性中位数仅 0.5017，>0.8 的只有 1 条。那一条是未归属的 d5040aa0「多策略组合系统_ETF轮动_小市值增强」ρ=0.9014（familyProposal 多因子ML 0.4575，objective 1.5967 / sharpe 5.56 / maxDD 9.65）——姊妹书，不是父族成员。两个命名家族的最高值都在 0.8 以下：小市值 0.7523"
+  },
+  {
+    "id": "q-e9-1",
+    "kind": "understand",
+    "title": "edge test（epoch 9 重开）：small_cap 分仓权重 0.35→0.0（第 29 行）",
+    "hypothesis": "规模因子 edge 若在 2024 台上仍成立，Δannual > 52.2pp（=156.71 的 1/3，即 edge 自己预注册的 test:）。证伪：Δannual < 52.2pp ⇒ 规模因子 status measured → proposed。",
+    "why": "这是本家族唯一的 measured edge，而它的全部证据（q-e6-1）测在 epoch 6 / TRAIN 2022–23，epoch 9 判无效——frontmatter 现在声称的 measured 没有当前台支撑，而 q-e9-liq-1 与 q-e9-imp-1 两条 improve 都 edgeRef 它。方向已知不可转移：成员 914d5724 从 −0.2362(e6) 变 +0.8078(e9)。免费曲线还给了两个与「微盘腿是最大单一来源」不自然并存的事实：2024 收益高度集中在 9/10 月（48.7% log-growth，像大盘/ETF 行情），而 1 月微盘崩盘期本书 +8.15%。所以结果真的不确定，任一方向都改变本家族能引用什么。TRAIN 只剩一年，约 3 分钟。",
+    "design": "baseline-e6.py 第 29 行 small_cap 0.35→0.0，单行 diff → variants/q-e9-1.py，--window train。对照=账本行 objective 1.4731 / sharpe 5.45 / annual 156.71 / maxDD 9.40 + 已存曲线 data/series/2026-06-28_高质量稳定上涨策略-d02cde29__train__e9.json，不欠对照 run（baseline-e6.py 已核与 py2to3(d02cde29)+当前 OVERRIDE 逐字相同：43002 chars / 0 differing lines）。⚠ 已知混淆按 q-1/q-e6-1 原样记录，不得省略：35% 权重归零后闲置吃 0 收益（idle-cash-confound）；第 176 行守卫会连带整块跳过该仓的三档止损与 1/4 月日历轮换（bundled-machinery），故 Δ 只能读作「仓 + 其风控机器」。",
+    "from": [
+      "q-e6-1",
+      "q-1"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 2,
+    "status": "answered",
+    "result": "规模因子 edge 在 epoch-9 台上存活且更强，但它的机制读法变了。 去掉 small_cap 腿后 annual 156.71→58.95（−97.76pp，占总年化 62.4%）、objective 1.4731→0.5182、sharpe 5.45→2.64、maxDD 9.40→7.13（反降 2.27pp）。 预注册证伪项（Δannual < 52.2pp = 156.71 的 1/3）未触发，余量 1.87×，故 edge 的 test: 在当前台上是 PASS 而非仅「未被否」。 单位权重口径与 q-e6-1 同一算法：small_cap 279.3 total%/uni"
+  },
+  {
+    "id": "q-e9-liq-1",
+    "kind": "improve",
+    "title": "整书 fill-feasibility floor（liq-1，逐仓动态下限）——用测量决定 R=1 还是 R≥2",
+    "hypothesis": "若三仓在各自仓位规模下的 20 日中位成交额下限都不剔除标的（Δobjective≈0、LIQFLOOR in==out、槽位全满），realizability 1→≥2，本家族从 integrate-eligible 的 REJECTED 变为可进入。反向同样是结论：etf 腿把 40% 压在单一基金上且池里有 161226 国投白银 / 501018 南方原油 / 159985 豆粕 这类小基金，若 sharpe 明显下滑或出现不可成交槽位，R=1 由测量确证而不再是 prose 猜测。证伪无论哪边都写进 §2。",
+    "why": "R=1 是本家族在 integrate-eligible 的唯一阻断，owner 是 none——没有任何别的阶段会去清它，它永远不会自己解决。而它当前的 realizabilityBasis 引的是 xp-merge-1 candidate.json 里一句关于 headline 水平的话（level），不是关于成交的；realizability-lint 在 base 上零 flag。本仓库的规矩是 pre-measurement 的否决必须是已知事实、绝不能是猜测（已为一条猜测规则永久丢掉 287/549 个策略）。先例两边都有：大小盘轮动 liq-1 与 b3751277 liq-1 完全惰性（Δ 0.0000），ETF溢价 8.44→1.10、小市值 7/8 不可成交。⚠ 预算：本书重（epoch 6 用 324s），再加逐 bar 的 20 日中位成交额查询，可能是本队列最贵的一次 → --max-poll-min 45。",
+    "design": "照抄 study/ETF动量/variants/q-e9-3_liq-1.py 的做法：previous_date 上 20 bar median `money`；逐仓动态下限 total_value*weight/n_slots/0.05（n_slots 6/1/20 ⇒ 1.17e6 / 8e6 / 0.25e6 @ 1e6 本金）；逐仓打 LIQFLOOR 行（in / out / slots / errors）→ variants/q-e9-liq-1.py，--window train --max-poll-min 45。对照=账本行 objective 1.4731 / sharpe 5.45 / annual 156.71 / maxDD 9.40 + 已存曲线 data/series/2026-06-28_高质量稳定上涨策略-d02cde29__train__e9.json，不欠对照 run（baseline-e6.py 已核与 py2to3(d02cde29)+当前 OVERRIDE 逐字相同：43002 chars / 0 differing lines）。⚠ etf 那三分之一相对 规模因子 是 off-mechanism，但逐仓标记让它免费附带，而它恰是最可能咬住的一仓。",
+    "from": [
+      "q-e6-1",
+      "q-audit"
+    ],
+    "edgeRef": "规模因子",
     "rank": 3,
+    "status": "answered",
+    "result": "整书三个选股点都加上各自的 fill-feasibility 地板（previous_date 上 20 bar median money，逐仓逐次动态下限 = total_value × weight / n_slots / 0.05，0.05 即被 pin 的 order_volume_ratio，故无自由参数）后，本书不是变差而是变好：objective 1.4731→1.5643（+0.0912）、sharpe 5.45→5.89（+0.44）、annual 156.71→165.79（+9.08pp）、maxDD 9.40→9.36（−0.04pp）；隐含波动 165.79/5.89"
+  },
+  {
+    "id": "q-e9-3",
+    "kind": "understand",
+    "title": "1/4 月日历轮换 SMALL_CAP_CONFIG['pass_april'] True→False（第 62 行）——2024 台上只剩 n=2 次事件",
+    "hypothesis": "epoch 2 测得关掉后 maxDD +3.78pp / total −19.34pp。2024 上事件数只剩 2（1 月、4 月），其中 1 月正好覆盖微盘崩盘。证伪：ΔmaxDD < 1.5pp 且 Δannual < 10pp ⇒ 在当前台上它是装饰件，realism (d) 条应改写。",
+    "why": "免费曲线给了这条一个 epoch-9 专属的理由：base 在 2024-01 是 +8.15%、2024-02 是 +11.26%，而它持着 35% 的 6 只微盘——而 pass_april 在 1 月 1–30 日把整条微盘腿换成 600036 招商银行。所以「微盘崩盘月还赚钱」很可能不是微盘腿扛住了，而是这张硬编码月份表躲过去了。若成立，9.40% 的 TRAIN maxDD 与「低回撤稳健」的全部主张都挂在 n=2 的日历规则上，这是本书最该被当前台确认的过拟合嫌疑，也直接约束 q-e9-1 的读法。另外这是全书唯一无闲置资金混淆的干净消融（两侧都按 total_value×0.35 满额建仓，只改持有什么）。约 3 分钟。",
+    "design": "baseline-e6.py 第 62 行 pass_april True→False，单行 diff（相关代码：第 1148-1154 行 is_no_trading_month、第 67 行 no_trading_buy=[\"600036.XSHG\"]、第 218 行每日调用）→ variants/q-e9-3.py，--window train。对照=账本行 objective 1.4731 / sharpe 5.45 / annual 156.71 / maxDD 9.40 + 已存曲线 data/series/2026-06-28_高质量稳定上涨策略-d02cde29__train__e9.json，不欠对照 run（baseline-e6.py 已核与 py2to3(d02cde29)+当前 OVERRIDE 逐字相同：43002 chars / 0 differing lines）。报告时必须把 ΔmaxDD 定位到日期：base 的 9.40% maxDD 发生在 2024-06-25，不在 1/4 月，所以若 maxDD 抬升，须说明新的最深段落在哪里（否则无法把 Δ 归给这条规则）。",
+    "from": [
+      "q-3",
+      "q-e6-3",
+      "q-audit"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 4,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "q-e9-2",
+    "kind": "understand",
+    "title": "动量 edge 的审慎重开：etf 分仓权重 0.40→0.0（第 28 行），全 2024 年",
+    "hypothesis": "若 etf 腿在 2024 有非事后的动量贡献，c_etf = base − var > 0。证伪：c_etf ≤ 0 ⇒ 动量 在两个独立的台上都 refuted，该 closure 的力度加倍。⚠ 即便 c_etf > 0，动量 只能回到 proposed 而非 measured：池的事后性未解（另见 q-e9-pool / q-e9-pit），且 40% 闲置现金使量级偏保守。",
+    "why": "动量 现在是 refuted，但那条 implication 的论证是窗口论证——「贡献全在 2022，2023 净拖累 −8.43pp」——而 2022/2023 已不在 TRAIN 里。按 staleClosures 的判法（level/window 论证不跨台，mechanism 论证跨台），窗口那半死了，所以这是正当的重开；机制那半（池是 2026 视角事后组装）不在本条重开，另由 q-e9-pool / q-e9-pit 单独处理。epoch 9 让它更值得问：免费曲线显示 2024-09 +26.25% 与 2024-10 +25.04% 供给 48.7% 的 log-growth，而 518880 黄金 / 511090 30 年国债 / 513100 纳指 恰是 2024 的三条大趋势——有可能 2024 的本书根本是 etf 腿的书，那会反转家族身份与 §1 的「为什么有效」。约 3 分钟。",
+    "design": "baseline-e6.py 第 28 行 etf 0.4→0.0 → variants/q-e9-2.py。与 epoch-6 的 variants/q-e6-2.py 是同一行改动，但台与窗口都不同（那次是 epoch 6 + 2023 单年子窗），不是重复实验。--window train（整 2024）。对照=账本行 objective 1.4731 / sharpe 5.45 / annual 156.71 / maxDD 9.40 + 已存曲线 data/series/2026-06-28_高质量稳定上涨策略-d02cde29__train__e9.json，不欠对照 run（baseline-e6.py 已核与 py2to3(d02cde29)+当前 OVERRIDE 逐字相同：43002 chars / 0 differing lines）。",
+    "from": [
+      "q-e6-2",
+      "q-6",
+      "q-audit"
+    ],
+    "edgeRef": "动量",
+    "rank": 5,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "q-e9-pool",
+    "kind": "understand",
+    "title": "探针：18 只 ETF/股票池代码的上市日期（其中 6 只在语料里无日期）——TRAIN 可得性与 VAL-2025 污染前置条件",
+    "hypothesis": "若全部代码的上市日期 < 2024-01-01 ⇒ 本书在 epoch-9 TRAIN 上没有「池里含当时尚未上市标的」这一类事后性，q-e9-pit 会是空改动并自证，可零成本记掉。若任何一只在 2025 年内上市 ⇒ valDeclinedPriorBasis 指名的 pre-2025 池截断前置条件对本家族 binding。两个方向都是结果。",
+    "why": "免费核过：池里 9–10 只有语料日期且全部 pre-2024（最晚 588120 是 2023-09-15），6 只（159525 / 159628 / 159652 / 511090 / 159934 / 515180）在任何地方都没有日期——所以 point-in-time builder 今天会（正确地）拒绝，这是 q-e9-pit 的唯一阻断，而仓库的规矩是宁可拒绝也不猜日期。第二个回报同等重要：VAL 已被人工重开（valReopened 9），但 valDeclinedPrior 的推理仍然约束执行者，而它的清除条件正是「池里有没有 2025 年上市的名字」——本探针把那个前置条件变成事实而不是待办。⚠ 这是探针不是策略：不产生 objective，不写 §2 变体行，约 1–2 分钟。",
+    "design": "variants/q-e9-pool-probe.py：取 ETF_CONFIG[\"etf_pool\"]（第 34-49 行，14 只）∪ WHITE_HORSE_CONFIG[\"foreign_etfs\"]（第 76-81 行，4 只）∪ SMALL_CAP_CONFIG[\"no_trading_buy\"]（600036），在 initialize 里对每只 log.info(get_security_info(c).start_date / end_date / display_name)。窗口取 TRAIN 内任意 1 天（--start/--end 同日）以把成本压到最小。结果用 utils/backtest-log.js 读（/algorithm/backtest/log?backtestId=&offset=0&limit=2000 返回完整日志），不要靠标记交易走私答案。",
+    "from": [
+      "q-audit",
+      "q-e6-2"
+    ],
+    "edgeRef": "动量",
+    "rank": 6,
+    "status": "answered",
+    "result": "base 两个 ETF 池（etf_pool 14 + foreign_etfs 4，去重 17 只 + 600036）的上市日期全部测到，三条互证通道一致，且控制读数把语料里作者自注的 10 条日期逐字重现、0 处不一致。两个答案都是单一的：(1) TRAIN 开始后上市的恰好一只 —— 159525，2024-05-20，落在窗内约 4.5 个月处，前约 92 个交易日结构上不可交易，却被一位 2026 年写稿、已知 2024 结果的作者放进了池；逐日 membership 通道独立佐证（159525 在 2024-01-02..01-05 读作 OUT，另 16 只读作 IN）。(2) "
+  },
+  {
+    "id": "q-e9-imp-1",
+    "kind": "improve",
+    "title": "把 is_no_trading_month 的硬编码月份表换成本书自己的大/小盘 regime 信号（g.white_horse['signal']=='big'）",
+    "hypothesis": "若 1/4 月规则真正的作用是「大盘占优时把微盘腿挪开」，用本书已有的月度 regime 信号做同一个门会在 2024 上同向且更一般：Δobjective > 0，或 maxDD 改善而 annual 不降超 10pp。证伪：Δobjective ≤ 0 ⇒ 日历表不是 regime 的代理，n=2 的硬编码月份就是它本来的样子，该方向关闭。退化守卫（预注册）：若 2024 年内 signal==\"big\" 的月份 ≤ 1，本次报告为 degenerate（门几乎没开过），不作结果、不写 §2 判定。",
+    "why": "on-mechanism（规模因子 的择时侧：改的是 size exposure 什么时候在场），零新参数、零新数据：signal 由第 772-848 行 white_horse_signal 每月 1 日 9:00 计算、读 previous_date、取值 big/small/etf，第 166 行默认 big——是本书已有的量，不是外来因子。新颖度高：队列里从未有人动过这条，而它是把 realism (d) 条那 n=2 的过拟合部件换成有机制依据的部件的唯一候选，也是本家族第一个真正属于自己的 improve 候选（valDeclinedPrior 的清除条件正是「有我们自己的 improve 候选」）。排在 q-e9-3 之后是因为解释依赖它：若日历表在 2024 上是装饰件，替换它就没有可读的 Δ。约 3 分钟。",
+    "design": "baseline-e6.py 第 1148-1154 行 is_no_trading_month 的 return 改为 g.white_horse[\"signal\"] == \"big\"（保留 pass_april 作总开关短路，其余逐字不动；第 67 行 no_trading_buy 仍是 600036），并在改动点加一行 log 记录每个月门的开/关以判退化 → variants/q-e9-imp-1.py，--window train。对照=账本行 objective 1.4731 / sharpe 5.45 / annual 156.71 / maxDD 9.40 + 已存曲线 data/series/2026-06-28_高质量稳定上涨策略-d02cde29__train__e9.json，不欠对照 run（baseline-e6.py 已核与 py2to3(d02cde29)+当前 OVERRIDE 逐字相同：43002 chars / 0 differing lines）。",
+    "from": [
+      "q-3",
+      "q-e6-3"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 7,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "q-e9-stop",
+    "kind": "understand",
+    "title": "SMALL_CAP_CONFIG['run_stoploss'] True→False（第 63 行）——realism (c) 条「日线台把盘中止损坍缩成收盘检查」的唯一仪器",
+    "hypothesis": "若三档止损在日线台上仍实质起作用，关掉它会抬 maxDD（> 1.5pp）或掉 objective（> 0.05）。证伪：|Δobjective| < 0.05 且 ΔmaxDD < 1.5pp ⇒ 这套机器在当前台上已接近惰性，realism (c) 条无法通过这条通道影响水平。",
+    "why": "realism 的 (c) 条（日线一天只有一根 bar，9:31/10:00/14:25/14:50 的 run_daily 全落同一根 bar，四档止损坍缩成一次收盘检查、盘中回撤结构上不可见）至今是纯断言、零测量，而第 649 行 `if not config[\"run_stoploss\"]: return` 是唯一能碰它的开关。它也没有闲置资金混淆：关掉止损是继续满仓持有，不归零权重，也不像 q-e9-1 那样连带关掉 1/4 月轮换。⚠ 诚实的边界要预先写明：它只能测「已被坍缩的那套止损贡献多少」，不能测「坍缩本身值多少」——后者需要分钟台，不在本冻结台上。约 3 分钟。",
+    "design": "baseline-e6.py 第 63 行 run_stoploss True→False，单行 diff → variants/q-e9-stop.py，--window train。对照=账本行 objective 1.4731 / sharpe 5.45 / annual 156.71 / maxDD 9.40 + 已存曲线 data/series/2026-06-28_高质量稳定上涨策略-d02cde29__train__e9.json，不欠对照 run（baseline-e6.py 已核与 py2to3(d02cde29)+当前 OVERRIDE 逐字相同：43002 chars / 0 differing lines）。",
+    "from": [
+      "q-audit",
+      "q-e6-0"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 8,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "q-e9-4",
+    "kind": "understand",
+    "title": "white_horse 分仓权重 0.25→0.0（第 30 行）——补齐三仓分解，并给候选新 edge「跨资产低相关混合」一个免费判据",
+    "hypothesis": "(a) 若 white_horse 仍是最弱腿，|Δobjective| < 0.20。(b) 三腿齐全后免费检验候选新 edge：sharpe(base) > max(各腿隐含 sharpe) 且三腿日收益两两 |ρ| < 0.3 才成立。先验不利：epoch-2/6 三次消融（q-1 −1.42、q-2 −1.85、q-5 −1.66pp）都让 maxDD 下降，即没有任何一腿留下可归因的对冲残差，9.40% 更像三仓叠加的涌现属性。证伪：任一 |ρ| > 0.3 或 sharpe 不超过最佳隐含腿 ⇒ 该 edge 不写入家族页。",
+    "why": "分解的最后一块；跑完 q-e9-1 / q-e9-2 / 本条后，(b) 的检验是零回测的（三条已存曲线相减）。排在后面有两个理由：先验明确不利（三次消融都 maxDD 下降），且它带 25% 闲置现金 + 第 184 行守卫整块跳过该仓的月度 regime 信号、周度反弹清仓与盘中止损（bundled-machinery），是三腿消融里 Δ 最难读的一条。约 3 分钟。",
+    "design": "baseline-e6.py 第 30 行 white_horse 0.25→0.0 → variants/q-e9-4.py，--window train。对照=账本行 objective 1.4731 / sharpe 5.45 / annual 156.71 / maxDD 9.40 + 已存曲线 data/series/2026-06-28_高质量稳定上涨策略-d02cde29__train__e9.json，不欠对照 run（baseline-e6.py 已核与 py2to3(d02cde29)+当前 OVERRIDE 逐字相同：43002 chars / 0 differing lines）。(b) 用 utils/backtest-series.js 的 dailyReturns + --corr 在三条 e9 变体曲线上做，零回测。⚠ q-5 已测得三仓次可加（残差 +18.58pp / Σc_i 127.53 < R 146.11），所以 c_i 只能读作「该仓在此组合语境下的贡献」，绝不可读作独立运行水平。",
+    "from": [
+      "q-5",
+      "q-2",
+      "q-e6-1"
+    ],
+    "edgeRef": null,
+    "rank": 9,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "q-e9-pit",
+    "kind": "improve",
+    "title": "point-in-time ETF 池（池 ∩ {上市日期 < TRAIN start}）",
+    "hypothesis": "按已测得的跨家族分裂：混合书几乎不掉（bba95a11 +0.0015、b50e4387 +0.0183），纯 ETF 动量书掉 19–33%（1cc495be −0.1886、73b13d92 −0.4901）。本书是 40% etf + 60% 股票的混合，预期掉幅接近 0。证伪：掉幅 > 10% ⇒ 本书的 etf 腿与纯 ETF 动量书同性质吃池的事后性，headline 必须成对引用（unrestricted / point-in-time）。",
+    "why": "BLOCKED，不是 queued：6 只池代码在语料里无上市日期，按 study/五福闹新春/build-e9-pit.js 的规矩 builder 今天必须 REFUSE（宁可拒绝也不猜日期）。清除条件 = q-e9-pool 探针跑完。⚠ 两条诚实的保留：(1) 它作用在 edge 已 refuted 的那条腿上，所以更像 realism / provenance 证据而不是 improve，判定行应按此口径写；(2) 若 q-e9-pool 显示全部代码 pre-2024，这个变体就是空改动，应当直接作为「TRAIN 无可得性事后性」的零成本结论记掉，一次回测都不花。",
+    "design": "等 q-e9-pool 给出 6 只无日期代码的 start_date 后，按 build-e9-pit.js 的做法：cutoff 从 harness 读取（不写死），就地注释掉上市日期 ≥ TRAIN start 的代码行（第 34-49 行与第 76-81 行），并断言「改动行恰好等于排除集」，否则拒绝 → variants/q-e9-pit.py，--window train。每个日期的来源（语料注释 / q-e9-pool 探针）必须逐条写进变体文件头，因为探针日期与作者自注的证据强度不同。",
+    "from": [
+      "q-audit",
+      "q-e6-2"
+    ],
+    "edgeRef": "动量",
+    "rank": 10,
+    "status": "blocked",
+    "result": null
+  },
+  {
+    "id": "q-e9-6",
+    "kind": "understand",
+    "title": "把 2024 的三条大趋势（518880 黄金 / 511090 30 年国债 / 513100 纳指）从 etf 池剔除，排名逻辑逐字不动——池 vs 排名",
+    "hypothesis": "若 etf 腿的贡献来自排名机制而非池成分，剔掉三只后 c_etf 大部分保留。证伪：c_etf 掉过半 ⇒ 贡献来自池成分本身，即 2026 视角组装的池，而不是动量排名。",
+    "why": "BLOCKED on q-e9-2：只有 q-e9-2 测出 c_etf > 0 才有东西可归因；若 c_etf ≤ 0 本条自动作废（清除条件即 q-e9-2 的结果）。⚠ 生成者自认的弱点必须带：选哪三只用了 2024 的知识，所以它永远只是归因（池 vs 排名的相对读数），其绝对水平不是诚实水平，不得进 §3 / 账本 / headline / 任何 integrate 候选。",
+    "design": "baseline-e6.py 第 34-49 行注释掉 518880.XSHG / 511090.XSHG / 513100.XSHG 三行，target_num / m25_days / auto_day / min_days / max_days / premium_threshold 等排名参数逐字不动 → variants/q-e9-6.py，--window train，与 q-e9-2 的 c_etf 对读。对照=账本行 objective 1.4731 / sharpe 5.45 / annual 156.71 / maxDD 9.40 + 已存曲线 data/series/2026-06-28_高质量稳定上涨策略-d02cde29__train__e9.json，不欠对照 run（baseline-e6.py 已核与 py2to3(d02cde29)+当前 OVERRIDE 逐字相同：43002 chars / 0 differing lines）。",
+    "from": [
+      "q-audit",
+      "q-e6-2",
+      "q-6"
+    ],
+    "edgeRef": "动量",
+    "rank": 11,
+    "status": "blocked",
+    "result": null
+  },
+  {
+    "id": "idea-imp-2",
+    "kind": "improve",
+    "title": "为可实现性下调 small_cap / etf 权重（weight trim for realizability）",
+    "hypothesis": "降权可以把不可成交的部分压掉，从而抬 realizability",
+    "why": "gatekeeper 否决，不回测：被 q-e9-liq-1 支配。降权是用猜测替代测量——它同时改机制（规模因子 的敞口）与可实现性两件事，Δ 因此不可读；而 liq-1 在不动任何权重的前提下直接测出每仓的可行下限咬不咬，并且两个方向都给结论。先量后调：若 liq-1 显示某仓真的咬，再谈降哪一仓，那时降权才有可读的靶。",
+    "design": "n/a — 不执行",
+    "from": [
+      "q-e6-1"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 92,
+    "status": "dropped",
+    "note": "否决理由同 why；记录在案以免被重新提出。",
+    "result": null
+  },
+  {
+    "id": "idea-imp-3",
+    "kind": "improve",
+    "title": "从 research/factorlib 引入外部因子（6 个过成本幸存者之一）",
+    "hypothesis": "外部正交因子可以给三仓混合加一条新腿",
+    "why": "gatekeeper 否决，不回测，两条独立理由：(1) off-mechanism——本家族唯一 measured 的 edge 是 规模因子（仓位配置/择时），不是选股因子层；按 on-mechanism 规则，有 measured edge 的家族里不带 edgeRef 的 improve 默认是跑偏。(2) 量级不足且不可引用——6 个幸存者的超额年化只有 0.10–2.80%，而且那是 zz500 / 3y / JQ 成本模型的另一个台，按 CLAUDE.md 因子看板数字不得进我们的表；要在一本年化 156.71% 的书上产生可测 Δ，这个量级没有通道。另：快照是 zz500 中盘，本家族是 小盘，IC 未必转移。",
+    "design": "n/a — 不执行",
+    "from": [],
+    "edgeRef": null,
+    "rank": 93,
+    "status": "dropped",
+    "note": "否决理由同 why；记录在案以免被重新提出。ungrounded（from: []）也是排最后的理由之一。",
+    "result": null
+  },
+  {
+    "id": "q-e9-corr-resid",
+    "kind": "understand",
+    "title": "零回测：对 benchmark 残差收益重算 ρ——把共同市场 beta 从家族特异重叠里剥出来",
+    "hypothesis": "q-e9-corr 测得 ρ(base, 自己 benchmark 曲线) = 0.6388，高于 base 对 小市值 pool-clean 龙头 bba95a11 的 0.6243。若对 base 与各成员都先回归掉 benchmark 日收益、再对残差算 ρ：小市值 侧的残差 ρ 仍显著为正（> 0.4）⇒ 结构性重叠成立，§4 的「改归 小市值」猜想得到第一个合格证据；若残差 ρ 全部塌到 0.2 以下 ⇒ 原始 ρ 的 0.5–0.8 带全部是共同 beta，§4 的归属猜想按相关性口径被否，base 作为独立三仓混合书值得独立投入回测分钟。两个方向都是结果。",
+    "why": "q-e9-corr 的 implication 明确禁止在本条出结果之前用原始 ρ 支持或反驳 §4 的家族归属。这是唯一能把那条禁令解除的测量，并且它零回测、零回测分钟：所需曲线（base、各成员、benchmark）都已存在 data/series/*__train__e9.json。",
+    "design": "只读 helper，不写 data/series、不写账本、不建变体。用 series.dailyReturns() 的链式换算取 base / 候选成员 / benchmark 三组日收益（⚠ 差分累计百分比会给 1.8–6× 错的波动），对齐日期后用 OLS 对 benchmark 回归，取残差再算 ρ。候选集合＝q-e9-corr 里 ρ > 0.60 的那一批（d5040aa0 0.9014、8d6831d4 0.7523、0.7512、0.7421、5a70adc1 0.7091、七星高照 0.7339、0aa4028d 0.7060、bba95a11 0.6243），外加一条 ρ ≈ 中位数的对照书。同时报原始 ρ、残差 ρ、以及对 benchmark 的 beta，三者并列，禁止只引用其中一个。",
+    "from": [
+      "q-e9-corr"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 2,
+    "status": "answered",
+    "result": "q-e9-corr 的「ETF 侧是共享 9/10 月 beta、小市值 侧才是结构性的」被证伪。把双边都对 base 自己的 benchmark（000300.XSHG，betaBase 0.8889 / R2 0.4101）残差化之后，八个最高 peer 的残差 ρ 全部仍在 0.51 以上，预注册证伪项（全部塌到 0.2 以下）未触发：d5040aa0 0.8441、8d6831d4 0.6465、1c80dd9a 0.6414、5a70adc1 0.6416、9f6f8188 0.6187、0aa4028d 0.5952、7301c5c4 0.5902、bba95a11 0.5105。"
+  },
+  {
+    "id": "q-e9-month",
+    "kind": "understand",
+    "title": "零回测：把 small_cap 腿的 2024 贡献按月分解（12 个月 c_smallcap）——检验「崩盘后反弹收割者」读法",
+    "hypothesis": "若该腿是平滑的规模溢价，12 个月的 c_smallcap 应大致同号且无单月占 |Σc| 过半；若是崩盘后反弹收割者，贡献应集中在紧随回撤之后的月份（2 月已知 −10.05pp，吃掉该月 89%）。证伪：最大单月占 |Σc| < 25% 且正负月数相近 ⇒ 反弹读法被否，回到规模溢价读法。",
+    "why": "q-e9-1 只读了 1/2/9/10 四个窗，而「2 月拿走 89%、1 月只占 0.37pp」是整条发现里最脆弱也最可操作的一点：它决定这条 measured edge 是常年溢价还是一次事件，直接影响 realism 与任何 VAL 候选的措辞。两条曲线（base e9 与 q-e9-1 e9，各 242 天全重叠）都已存，0 回测分钟。",
+    "design": "只读 data/series/2026-06-28_高质量稳定上涨策略-d02cde29__train__e9.json 与 data/series/study_多因子ML_variants_q-e9-1__train__e9.json；dailyReturns() 在整条序列上链式，之后再按月切片（⚠ 必须先转换后切片：先 clip cum 会把早期累计折进首日，CLAUDE.md 的 yearlySplit 教训）。输出每月 base / variant 收益与差。不建变体、不写账本、不写 data/series。⚠ 月度收益与全窗 annual 不同量纲，只作形状读数；并按 q-e9-1 的约定同时报含/不含 cum[0] 两种口径。",
+    "from": [
+      "q-e9-1"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 1,
+    "status": "answered",
+    "result": "q-e9-1 的「崩盘后反弹收割者」读法在年度尺度上被证伪，而它附带的那条脆弱性主张被解体。预注册证伪项（最大月 < Σ|c| 的 25% 且符号大致均衡）只在第一个子句上差 0.1pp 未触发（10 月 24.9%），第二个子句明确不成立（9 正 3 负），但真正的读数在分布形状上：主导月是 10 月（+16.30pp）而不是 2 月，2 月只占 Σ|c| 的 15.3%，并且有五个月各贡献 ≥ +7.9pp（2 月 10.05 / 7 月 9.10 / 9 月 8.07 / 10 月 16.30 / 11 月 7.97），HHI 0.1451 对均匀的 0.0833、top-3 占 54."
+  },
+  {
+    "id": "q-e9-idle",
+    "kind": "understand",
+    "title": "small_cap 0.35→0 的同时把 35% 按比例重分配给 etf / white_horse（0.40/0.25 → 0.6154/0.3846）——拆掉 idle-cash 混淆",
+    "hypothesis": "q-e9-1 的 −97.76pp 里有一部分只是 35% 现金吃零收益。预注册：若重分配后 objective > 0.75（即把 q-e9-1 的 0.5182 往 base 1.4731 方向拉回 1/4 以上），则「该腿供给 62.4% 年化」须收窄为「该腿 + 其闲置权重」；若 ≤ 0.5682（0.5182+0.05），则 62.4% 是干净的腿贡献，且两腿满仓书不是出路。",
+    "why": "idle-cash-confound 在本家族被记了三次（q-1 / q-e6-1 / q-e9-1）却从未被测过，所以三条消融的 Δ 至今都只能读作「该仓在其固定权重下的贡献」。这是第一次有机会把它拆开，且本家族 realizability=1 的 realism 第 (a) 条正指向这条零滑点微盘腿。⚠ 本条是 understand，不是 improve：它不声称改进，也不重开 idea-imp-1（加大微盘权重，mechanism 论证跨台仍 closed）或 idea-imp-2（为可实现性降权，被 q-e9-liq-1 支配）。要把两腿满仓书当成可实现性出路，必须先等 q-e9-liq-1 的测量结果，不得由本条代替。",
+    "design": "baseline-e6.py 三行改动（第 28 行 etf 0.40→0.6154、第 29 行 small_cap 0.35→0.0、第 30 行 white_horse 0.25→0.3846，和为 1.0）→ variants/q-e9-idle.py，--window train。对照=q-e9-1（objective 0.5182，曲线已存）与 base（1.4731，账本行 + 曲线已存），不欠对照 run。⚠ bundled-machinery 仍在（第 176 行守卫照样跳过该仓的三档止损与 1/4 月日历轮换），所以本实验只消除 idle-cash 这一个混淆，不消除另一个。约 3 分钟一次回测；排在 q-e9-liq-1 / q-e9-2 之后。",
+    "from": [
+      "q-e9-1",
+      "q-e6-1",
+      "q-1"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 7,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "q-e9-liq-cap",
+    "kind": "understand",
+    "title": "容量曲线 liq-2（5×）/ liq-3（10×）—— q-e9-liq-1 的两个地板点，已构建未跑",
+    "hypothesis": "若 5× 与 10× 本金对应的地板下 sharpe 仍过 1.0 闸且 objective 下滑有限，则本书容量 ≥ 对应本金；若 10× 破闸（大小盘轮动 在 2e7 掉到 1.32 的形状），容量上限落在 5×–10× 之间。无论哪边都是结论，写进 §2。",
+    "why": "q-e9-liq-1 只测了 1× 这一个地板点，所以 realizability 评 2 不评 3 —— 容量是「能吃下多少」，不是「闸门上还剩多少余量」（大小盘轮动 的产品曾按这条自我更正）。⚠ 明确记下它买不到闸门：integrate 只要求 R≥2，本族 R 已为 2，所以这条对当前 blocked 状态买不到任何东西，必须排在 q-e9-2 / q-e9-4（2024 数字可重复性的直接判据）之后。瓶颈已被 q-e9-liq-1 定位到 etf 单仓腿（两条股票腿在 1× 下 0/73 与 0/223 次剔除），所以本测的读数应按腿报。",
+    "design": "variants/q-e9-liq-2.py 与 q-e9-liq-3.py 已构建（同一 builder、同一插入点、除数口径不变，仅把每仓地板乘 5 / 10 —— 零自由度）。各跑一次 --window train，对照 q-e9-liq-1 的 1.5643 / 5.89 与 base 账本行 1.4731 / 5.45；逐仓 LIQFLOOR 普查照抄 liq-1 的口径（calls / 剔除日 / removedFrac / 槽位 / out==0）。预算约 2 次 TRAIN 回测（liq-1 实测 214s），--max-poll-min 45。",
+    "from": [
+      "q-e9-liq-1"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 12,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "q-e9-corr-resid2",
+    "kind": "understand",
+    "title": "零回测：双残差 ρ——同时控制 benchmark 与一条 ETF 动量参照，看 小市值 侧的结构性重叠是否独立存活",
+    "hypothesis": "q-e9-corr-resid 测得 base 在 benchmark 残差尺度上对 ETF 侧（0aa4028d 0.5952 / 对 ETF+白马半书 0.7092）与 小市值 侧（5a70adc1 0.6416 / 对合成微盘腿 0.6653）都有结构性连接。若把 0aa4028d 一并作为回归量，小市值 侧的残差 ρ 仍显著（> 人口 p75 0.4284），则 base 是真三腿混合、两侧重叠互不替代；若 小市值 侧塌到人口中位以下，则本族的「结构性重叠」其实只是一条共同的组合书因子。",
+    "why": "这是 §4「家族归属 / 改名」空白唯一还能用相关性回答的半边：q-e9-corr 的原始 ρ 带已作废，q-e9-corr-resid 换成了单残差尺度，但单残差不能区分「两侧各自独立重叠」与「两侧共享同一条非 benchmark 因子」。零回测、只读已存曲线。",
+    "design": "对 base / 5a70adc1 / 0aa4028d / q-e9-1 变体 / 合成腿 d(t) 的链式日收益做二元 OLS（regressor = benchCum 链式收益 + 0aa4028d 残差），取残差后重算两两 ρ；对称地反向控制（以 5a70adc1 为第二回归量看 ETF 侧）。全库 281 条 e9 曲线给同一尺度的人口分布。先注册证伪项：小市值 侧双残差 ρ < 0.4284（人口 p75）即判「共享因子」。⚠ 不写 data/series、不建变体、不碰 variants/（并行 PIT 执行器持有）。",
+    "from": [
+      "q-e9-corr-resid"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 35,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "q-e9-jan",
+    "kind": "understand",
+    "title": "log.info 探针：2024 年 1 月 small_cap 腿到底持有什么——日历规则（整仓 600036）还是空仓/被过滤",
+    "hypothesis": "q-e9-month 测得 sleeve 的累计贡献整个 1 月只有 +0.03..+0.34pp，而纯 小市值 参照 5a70adc1 在 02-07 已累计 −9.81%；贡献在 02-06 突然跳 +1.69pp。先验候选解释是 q-3 记录的 1/4 月日历规则：small_cap 在 1 月与 4 月整仓切 600036 招商银行。若日志证实 1 月持仓是 600036（或空仓），则「这条腿在崩盘期做了择时」被证伪，1 月的平坦是一条 n=2 的日历规则。",
+    "why": "q-e9-month 的唯一真例外就是 1 月，而曲线在原理上读不出「持了微盘但躲过了」与「根本没持微盘」的区别——这需要日志，不是曲线。它同时决定 q-e9-1 读数 (1)（「1 月的强势从来不是这条腿给的」）该怎么改写，以及 q-e9-3（pass_april）是否从回撤保护复测升级为这条日历规则的直接判据。",
+    "design": "在 base 的 small_cap 调仓点加 log.info（持仓代码 + 市值 + 当日权重），只跑 2024-01-01..2024-02-29 子窗，读 /algorithm/backtest/log。零策略逻辑改动、零自由参数。⚠ 变体文件不得写进 study/多因子ML/variants/（并行 PIT 执行器持有该目录），另起文件名或等其交还。",
+    "from": [
+      "q-e9-month"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 40,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "q-e9-pool-sel",
+    "kind": "understand",
+    "title": "etf 池的 selection 级事后性（listing 级已被 q-e9-pool 排除）——把手写 14 只池换成规则化池",
+    "hypothesis": "q-e9-pool 测得池里只有 1 只（159525, 2024-05-20）在 TRAIN 开始后上市、0 只在 VAL 2025 上市，所以 listing-availability 这半边的事后性量级很小。但池本身是 2026 年手写的，selection 级事后性（知道 2024–25 哪些资产涨了才把它们写进池）完全未测。参照 [[ETF动量]]：换成宽基 A 股池后同族结果到 −0.27，而 [[小市值]] 的混合书换 point-in-time 池只动 +0.0015 —— 所以本书属于哪一类是未知的，不是可推的。",
+    "why": "q-audit Finding A / q-e6-2 把「etf 池为 2026 年事后组装」列为 realism 四条腿之一，也是 valDeclinedPrior 的理由之一。q-e9-pool 只关掉了其中 listing 的半边；selection 半边仍是本族 realism 里最大的一块未测项，且它决定 VAL 候选的论证能不能站住。",
+    "design": "⚠ 替代池的构造规则必须由 generator 设计并预注册，不得由记录者指定——这是一个设计决定（候选方向：同类资产的宽基全集按同一动量排序；或按 2023-12-31 可得的规模/成交额门槛机械筛出 N 只）。规则一旦写定：排序逻辑、动量窗、择时、阈值、成本块逐字不动，只换池；预注册证伪项（例如 objective 掉到闸门 1.0 以下即判「池就是 edge」）。约 1 次 TRAIN 回测。",
+    "from": [
+      "q-e9-pool"
+    ],
+    "edgeRef": "动量",
+    "rank": 45,
     "status": "queued",
     "result": null
   }

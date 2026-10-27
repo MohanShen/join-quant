@@ -2121,5 +2121,95 @@
     "postId": "30398b1b2428da4a3c77efca37bd83ba",
     "sourceFile": "2026-10-27_仓位控制_多标的凯利公式-30398b1b.py",
     "registeredAt": "2026-10-26T21:19:57.821Z"
+  },
+  "e4a5b388fd1d8e94d6ec80955cae34cce62b7fa7402bc07ee5a6607155b642a3": {
+    "postId": "3ecb22c55ea4e64a38005f498d4fc731",
+    "sourceFile": "2026-10-28_查尔斯_布兰德斯价值投资策略-3ecb22c5.py",
+    "registeredAt": "2026-10-27T19:26:03.928Z"
+  },
+  "66186dd482190b4b8eb9f0dd1c4629f36c99308df1e415fdf318a6784ffb79e6": {
+    "postId": "1d73a8055d65aa5aeb68e0730b8948eb",
+    "sourceFile": "2026-10-28_小白做了一个自适应曲线策略_中证500ETF回测-1d73a805.py",
+    "registeredAt": "2026-10-27T19:26:06.669Z"
+  },
+  "9fbb65d655e349023a0c11a9634f1d9bd2d9ec7c196f771944b19105865a36d6": {
+    "postId": "3988058559cc204ade7671f41e5b2143",
+    "sourceFile": "2026-10-28_哒咩_禁止踩踏_小市值优化-39880585.py",
+    "registeredAt": "2026-10-27T19:26:09.284Z"
+  },
+  "cec1f06f62428a49e10b7f53fb3a8196bc7e4cdb35cd67453721813087368c3b": {
+    "postId": "84f72cedf0de633ba3b5cb62b89a8d10",
+    "sourceFile": "2026-10-28_费雪转换策略研究-84f72ced.py",
+    "registeredAt": "2026-10-27T19:26:11.921Z"
+  },
+  "130a7d5b861c0ccfab024c312cde0c2bde1d8cc90be1624d35b0f22da23aa442": {
+    "postId": "608832742e7d9344eaae1598cf527b10",
+    "sourceFile": "2026-10-28_底部形态选股策略-60883274.py",
+    "registeredAt": "2026-10-27T19:26:14.582Z"
+  },
+  "64c962759d9ed86f0032d441015b7503606a5e139829db5f5d5c86b8e08e166e": {
+    "postId": "fc6826b23d10a9759100d9e1ddc8a242",
+    "sourceFile": "2026-10-28_更新一下最近的表现_年化35_ETF轮动策略-fc6826b2.py",
+    "registeredAt": "2026-10-27T19:26:18.168Z"
+  },
+  "c080ed03cf506611a587b6cb3c4219c604cfc0695353be86392b2ad5e6590b6c": {
+    "postId": "a533fba3a36d8a258527738842ad59dd",
+    "sourceFile": "2026-10-28_ETF动量策略对比_目前看ETF才是王道-a533fba3.py",
+    "registeredAt": "2026-10-27T19:26:20.866Z"
+  },
+  "99c6f8fbb5be56bd17657bf3c0f7064f504f4ecd0f41caf8a9e7d724a51717c1": {
+    "postId": "71d4258b6b719b5739114d29977f3b6d",
+    "sourceFile": "2026-10-28_颈线突破的波段策略-71d4258b.py",
+    "registeredAt": "2026-10-27T19:26:23.610Z"
+  },
+  "3b2fec2ca57116b166226f05284111a3a48658403d805a5ca0761105a7aa0fa8": {
+    "postId": "b162637c9c452789d9fe39de4260e30a",
+    "sourceFile": "2026-10-28_七星高照去除过拟合优化版模拟盘记录-b162637c.py",
+    "registeredAt": "2026-10-27T19:26:26.807Z"
+  },
+  "a32d00f0000bba39b14be213d36c05d96534e1edd6153a58cac96d3ea53aea9b": {
+    "postId": "e309bf89559b582dbdc732d27447be89",
+    "sourceFile": "2026-10-28_彼得_林奇多因子量化策略_V1_0-e309bf89.py",
+    "registeredAt": "2026-10-27T19:26:29.640Z"
+  },
+  "9ebf90d646a243047d94595980322bc768214e7dcce6dd69245010736e4fc78f": {
+    "postId": "53562455d19fda7b3df239f30a7d468c",
+    "sourceFile": "2026-10-28_一字千金-小市值轮动策略-53562455.py",
+    "registeredAt": "2026-10-27T19:26:32.279Z"
+  },
+  "fb2c0cff6292f7c587be03c42e25bd9d0eb6e744f043bdcd432dfb9f9237c552": {
+    "postId": "b3066395ee0a70ad99e38fb306a5655f",
+    "sourceFile": "2026-10-28_探索多维数据极端值处理方法-b3066395.py",
+    "registeredAt": "2026-10-27T19:26:34.894Z"
+  },
+  "c7597c8a40563deb6f45978fafd70e53fba77e39a31a3d6facd860f84da47ef8": {
+    "postId": "e5bf0a736e0469ded0691114f8f49102",
+    "sourceFile": "2026-10-28_主板小市值战法_7年半900_无未来-e5bf0a73.py",
+    "registeredAt": "2026-10-27T19:26:37.582Z"
+  },
+  "69ffca1d2aa4e99ebd116c854a20558ff380dd0ebdec1e1e998202aa2bd0f7c1": {
+    "postId": "b5dd66ebfd94579ec47e89b2bd132b82",
+    "sourceFile": "2026-10-28_十年十倍_纳指_黄金全天候_动态杠杆网格系统-b5dd66eb.py",
+    "registeredAt": "2026-10-27T19:26:40.425Z"
+  },
+  "ee9bd2b35d23d0e7e5ed705c702c2bfb873d60a9c672f4af41ecdcf0c78239eb": {
+    "postId": "b6739620a4966a7e4292c3fccf20bca9",
+    "sourceFile": "2026-10-28_通过ai搞了一个简单策略-b6739620.py",
+    "registeredAt": "2026-10-27T19:26:43.100Z"
+  },
+  "5a8718115dac6463fe7f0db4a092c0efaf96715cb4876f6660019f83342951df": {
+    "postId": "e94e68067054eb6a89cbdc5779405756",
+    "sourceFile": "2026-10-28_穿越牛熊基业长青的价值精选策略-e94e6806.py",
+    "registeredAt": "2026-10-27T19:26:48.378Z"
+  },
+  "6a9d3247db5da1232f32a1db0549e06007c3ed2f054ad22761a8685a7aa36717": {
+    "postId": "d2e56da3a5a25cd932aea4c534a49799",
+    "sourceFile": "2026-10-28_量化选股专题_在稳定增长中寻找超额收益-d2e56da3.py",
+    "registeredAt": "2026-10-27T19:26:51.027Z"
+  },
+  "d7829c599a1b011f53d431781751933d8ec399c2fee7d12b1e55dccb093bdfc1": {
+    "postId": "766e332da1a04fb586f3b65bbf4d8e5f",
+    "sourceFile": "2026-10-28_白马股筛选策略-766e332d.py",
+    "registeredAt": "2026-10-27T19:26:53.644Z"
   }
 }

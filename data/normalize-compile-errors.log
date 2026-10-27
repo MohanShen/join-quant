@@ -105,3 +105,9 @@
 2026-10-26T22:34:49.723Z	strategies/2026-10-27_彼得林奇修正_PEG-b979ed54.py	SyntaxError: invalid syntax
 2026-10-26T22:35:58.609Z	strategies/2026-10-27_羊群效应系列_--寻找行业轮动中的龙头股-6949cfcd.py	AttributeError: module 'pandas' has no attribute 'stats'
 2026-10-26T22:39:01.718Z	strategies/2026-10-27_基本面单因子测试_以BP因子为例-c8afa5dd.py	TabError: inconsistent use of tabs and spaces in indentation
+2026-10-27T19:27:57.573Z	strategies/2026-10-28_查尔斯_布兰德斯价值投资策略-3ecb22c5.py	ImportError: cannot import name 'gta'
+2026-10-27T20:36:12.605Z	strategies/2026-10-28_颈线突破的波段策略-71d4258b.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'volume', 'close'}字段数据, current_dt=2024-01-03 14:50:00, end_date=2024-01-03 14:50:00
+2026-10-27T20:41:57.765Z	strategies/2026-10-28_探索多维数据极端值处理方法-b3066395.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:30:00
+2026-10-27T20:48:12.606Z	strategies/2026-10-28_穿越牛熊基业长青的价值精选策略-e94e6806.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数
+2026-10-27T20:49:14.740Z	strategies/2026-10-28_量化选股专题_在稳定增长中寻找超额收益-d2e56da3.py	TypeError: 'float' object cannot be interpreted as an integer
+2026-10-27T20:50:18.978Z	strategies/2026-10-28_白马股筛选策略-766e332d.py	AttributeError: 'DataFrame' object has no attribute 'sort'
