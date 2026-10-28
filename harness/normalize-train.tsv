@@ -433,3 +433,4 @@ strategies/2026-10-28_价值选股与RSRS择时的Pthon3版本-e84ffb52.py	e84ff
 strategies/2026-10-28_趋势追踪策略_设计原理与代码实现-509537f1.py	509537f14c71f2696545cb31da85d4a4	趋势追踪策略：设计原理与代码实现	slow-skipped										9
 strategies/2026-10-28_各位大神帮我看一下这个策略的问题在哪-a40bc39b.py	a40bc39b8dd63ebf4ecaf5b233f7fec7	各位大神帮我看一下这个策略的问题在哪	normalized	2024-01-01	2024-12-31	365	131.71	131.71	3.59	19.29	1.1242	pass	9
 strategies/2026-10-28_11年36倍收益的四因子选股策略研究_1-529f8af6.py	529f8af659c17bf7e1993705d7ae0f02	11年36倍收益的四因子选股策略研究（1）	compile-error										9
+strategies/2026-10-28_XGBoost模型多因子策略分享-3767cd64.py	3767cd641f360239fd3c3215c3402a1e	XGBoost模型多因子策略分享	failed										9
