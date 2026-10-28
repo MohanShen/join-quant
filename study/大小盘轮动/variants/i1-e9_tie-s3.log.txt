@@ -1,0 +1,311 @@
+2024-01-01 00:00:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=empty reason=分歧（1:1），保留择时一信号：big
+2024-01-01 00:00:00 - INFO  - 启用择时的信号：[('择时二', 'small'), ('择时三', 'big')]，最终信号=big，理由=分歧（1:1），保留择时一信号：big
+2024-01-01 00:00:00 - INFO  - MONTHLY signal=big trade_allowed=True n_pos=0
+2024-01-02 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=big reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-01-02 09:30:10 - INFO  - MONTHLY signal=big trade_allowed=True n_pos=0
+2024-01-03 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=small final=small prev=big reason=多数通过（2/3），['择时二', '择时三'] 认为买小盘
+2024-01-03 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'big'), ('择时二', 'small'), ('择时三', 'small')]，最终信号=small，理由=多数通过（2/3），['择时二', '择时三'] 认为买小盘
+2024-01-04 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=small final=small prev=small reason=多数通过（2/3），['择时二', '择时三'] 认为买小盘
+2024-01-05 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-01-08 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-01-09 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=small final=small prev=small reason=仅启用择时三，直接采用其信号：small
+2024-01-10 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-01-11 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=small final=small prev=small reason=仅启用择时三，直接采用其信号：small
+2024-01-12 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=small reason=分歧（1:1），保留择时一信号：big
+2024-01-12 06:02:00 - INFO  - 启用择时的信号：[('择时二', 'small'), ('择时三', 'big')]，最终信号=big，理由=分歧（1:1），保留择时一信号：big
+2024-01-15 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=big reason=分歧（1:1），保留择时一信号：big
+2024-01-16 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=big reason=分歧（1:1），保留择时一信号：big
+2024-01-17 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=big reason=分歧（1:1），保留择时一信号：big
+2024-01-18 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=big reason=分歧（1:1），保留择时一信号：big
+2024-01-19 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=big reason=分歧（1:1），保留择时一信号：big
+2024-01-22 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-01-23 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=big final=big prev=big reason=仅启用择时三，直接采用其信号：big
+2024-01-24 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=big final=big prev=big reason=仅启用择时三，直接采用其信号：big
+2024-01-25 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-01-26 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-01-29 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-01-30 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-01-31 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-02-01 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-02-01 09:30:10 - INFO  - MONTHLY signal=big trade_allowed=True n_pos=10
+2024-02-02 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-02-05 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-02-06 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=big final=small prev=big reason=分歧（1:1），保留择时一信号：small
+2024-02-06 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时三', 'big')]，最终信号=small，理由=分歧（1:1），保留择时一信号：small
+2024-02-07 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-02-08 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-02-08 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'big'), ('择时二', 'small'), ('择时三', 'big')]，最终信号=big，理由=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-02-19 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=big reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-02-20 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=big final=big prev=big reason=多数通过（2/3），['择时二', '择时三'] 认为买大盘/避险
+2024-02-21 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=big final=big prev=big reason=多数通过（2/3），['择时二', '择时三'] 认为买大盘/避险
+2024-02-22 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=big final=big prev=big reason=多数通过（2/3），['择时二', '择时三'] 认为买大盘/避险
+2024-02-23 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=big final=big prev=big reason=多数通过（2/3），['择时二', '择时三'] 认为买大盘/避险
+2024-02-26 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=big reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-02-26 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'big'), ('择时三', 'small')]，最终信号=small，理由=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-02-27 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-02-28 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-02-29 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-03-01 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-03-01 09:30:10 - INFO  - MONTHLY signal=small trade_allowed=True n_pos=10
+2024-03-04 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-03-05 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-03-06 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-03-07 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-03-08 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=big final=big prev=small reason=多数通过（2/3），['择时二', '择时三'] 认为买大盘/避险
+2024-03-08 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'big'), ('择时三', 'big')]，最终信号=big，理由=多数通过（2/3），['择时二', '择时三'] 认为买大盘/避险
+2024-03-11 06:02:00 - INFO  - SIGDAY s1=small s2=neutral s3=big final=small prev=big reason=分歧（1:1），保留择时一信号：small
+2024-03-11 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时三', 'big')]，最终信号=small，理由=分歧（1:1），保留择时一信号：small
+2024-03-12 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-03-13 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-03-14 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-03-15 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-03-18 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-03-19 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-03-20 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-03-21 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-03-22 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-03-25 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-03-26 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-03-27 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-03-28 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-03-29 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-04-01 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-04-01 09:30:10 - INFO  - MONTHLY signal=small trade_allowed=True n_pos=10
+2024-04-02 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-04-03 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-04-03 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'big'), ('择时二', 'small'), ('择时三', 'big')]，最终信号=big，理由=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-04-08 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=big reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-04-08 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'small'), ('择时三', 'big')]，最终信号=small，理由=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-04-09 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-04-09 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'big'), ('择时二', 'small'), ('择时三', 'big')]，最终信号=big，理由=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-04-10 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=big reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-04-10 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'small'), ('择时三', 'big')]，最终信号=small，理由=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-04-11 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=big final=big prev=small reason=多数通过（2/3），['择时二', '择时三'] 认为买大盘/避险
+2024-04-11 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'big'), ('择时三', 'big')]，最终信号=big，理由=多数通过（2/3），['择时二', '择时三'] 认为买大盘/避险
+2024-04-12 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=big final=big prev=big reason=多数通过（2/3），['择时二', '择时三'] 认为买大盘/避险
+2024-04-15 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=big final=small prev=big reason=分歧（1:1），保留择时一信号：small
+2024-04-15 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时三', 'big')]，最终信号=small，理由=分歧（1:1），保留择时一信号：small
+2024-04-16 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-04-17 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-04-17 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'big'), ('择时三', 'big')]，最终信号=big，理由=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-04-18 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=big reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-04-18 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'small'), ('择时三', 'big')]，最终信号=small，理由=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-04-19 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-04-19 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'big'), ('择时三', 'big')]，最终信号=big，理由=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-04-22 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=big final=small prev=big reason=分歧（1:1），保留择时一信号：small
+2024-04-22 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时三', 'big')]，最终信号=small，理由=分歧（1:1），保留择时一信号：small
+2024-04-23 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-04-24 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-04-24 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'big'), ('择时二', 'small'), ('择时三', 'big')]，最终信号=big，理由=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-04-25 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=big reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-04-25 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'small'), ('择时三', 'big')]，最终信号=small，理由=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-04-26 06:02:00 - INFO  - SIGDAY s1=big s2=big s3=big final=big prev=small reason=全票通过（3/3），三个择时都认为买大盘/避险
+2024-04-26 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'big'), ('择时二', 'big'), ('择时三', 'big')]，最终信号=big，理由=全票通过（3/3），三个择时都认为买大盘/避险
+2024-04-29 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=big final=big prev=big reason=多数通过（2/3），['择时二', '择时三'] 认为买大盘/避险
+2024-04-30 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=big reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-04-30 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'big'), ('择时三', 'small')]，最终信号=small，理由=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-05-06 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-05-06 09:30:10 - INFO  - MONTHLY signal=small trade_allowed=True n_pos=10
+2024-05-07 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-05-08 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-05-09 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-05-10 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-05-13 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-05-14 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=big final=big prev=small reason=多数通过（2/3），['择时二', '择时三'] 认为买大盘/避险
+2024-05-14 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'big'), ('择时三', 'big')]，最终信号=big，理由=多数通过（2/3），['择时二', '择时三'] 认为买大盘/避险
+2024-05-15 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=big reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-05-15 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'big'), ('择时三', 'small')]，最终信号=small，理由=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-05-16 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-05-17 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-05-20 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-05-20 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'big'), ('择时二', 'small'), ('择时三', 'big')]，最终信号=big，理由=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-05-21 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=big reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-05-21 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'small'), ('择时三', 'big')]，最终信号=small，理由=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-05-22 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-05-22 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'big'), ('择时二', 'small'), ('择时三', 'big')]，最终信号=big，理由=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-05-23 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=big reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-05-24 06:02:00 - INFO  - SIGDAY s1=big s2=neutral s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-05-27 06:02:00 - INFO  - SIGDAY s1=empty s2=big s3=big final=big prev=big reason=一致通过（2/2），['择时二', '择时三'] 认为买大盘/避险
+2024-05-28 06:02:00 - INFO  - SIGDAY s1=big s2=big s3=big final=big prev=big reason=全票通过（3/3），三个择时都认为买大盘/避险
+2024-05-29 06:02:00 - INFO  - SIGDAY s1=big s2=big s3=big final=big prev=big reason=全票通过（3/3），三个择时都认为买大盘/避险
+2024-05-30 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=big reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-05-31 06:02:00 - INFO  - SIGDAY s1=empty s2=big s3=big final=big prev=big reason=一致通过（2/2），['择时二', '择时三'] 认为买大盘/避险
+2024-06-03 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=big reason=分歧（1:1），保留择时一信号：big
+2024-06-03 09:30:10 - INFO  - MONTHLY signal=big trade_allowed=True n_pos=10
+2024-06-04 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=big reason=分歧（1:1），保留择时一信号：big
+2024-06-05 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=big final=big prev=big reason=多数通过（2/3），['择时二', '择时三'] 认为买大盘/避险
+2024-06-06 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=big reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-06-07 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-06-11 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=big final=big prev=big reason=仅启用择时三，直接采用其信号：big
+2024-06-12 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=big final=big prev=big reason=仅启用择时三，直接采用其信号：big
+2024-06-13 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=big reason=分歧（1:1），保留择时一信号：big
+2024-06-14 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=big final=big prev=big reason=仅启用择时三，直接采用其信号：big
+2024-06-17 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-06-18 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=big final=small prev=big reason=分歧（1:1），保留择时一信号：small
+2024-06-18 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时三', 'big')]，最终信号=small，理由=分歧（1:1），保留择时一信号：small
+2024-06-19 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=big final=small prev=small reason=分歧（1:1），保留择时一信号：small
+2024-06-20 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=big final=big prev=small reason=仅启用择时三，直接采用其信号：big
+2024-06-20 06:02:00 - INFO  - 启用择时的信号：[('择时三', 'big')]，最终信号=big，理由=仅启用择时三，直接采用其信号：big
+2024-06-21 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=small final=small prev=big reason=仅启用择时三，直接采用其信号：small
+2024-06-21 06:02:00 - INFO  - 启用择时的信号：[('择时三', 'small')]，最终信号=small，理由=仅启用择时三，直接采用其信号：small
+2024-06-24 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=small reason=分歧（1:1），保留择时一信号：big
+2024-06-24 06:02:00 - INFO  - 启用择时的信号：[('择时二', 'small'), ('择时三', 'big')]，最终信号=big，理由=分歧（1:1），保留择时一信号：big
+2024-06-25 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-06-26 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=big final=big prev=big reason=仅启用择时三，直接采用其信号：big
+2024-06-27 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-06-28 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=big final=big prev=big reason=仅启用择时三，直接采用其信号：big
+2024-07-01 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-07-01 09:30:10 - INFO  - MONTHLY signal=big trade_allowed=True n_pos=10
+2024-07-02 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-07-03 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-07-04 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-07-05 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-07-08 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=small final=small prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-07-08 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时三', 'small')]，最终信号=small，理由=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-07-09 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-07-09 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'big'), ('择时三', 'big')]，最终信号=big，理由=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-07-10 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-07-11 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=big final=small prev=big reason=分歧（1:1），保留择时一信号：small
+2024-07-11 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时三', 'big')]，最终信号=small，理由=分歧（1:1），保留择时一信号：small
+2024-07-12 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=big final=small prev=small reason=分歧（1:1），保留择时一信号：small
+2024-07-15 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-07-16 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=big final=small prev=small reason=分歧（1:1），保留择时一信号：small
+2024-07-17 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-07-18 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-07-18 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'big'), ('择时二', 'small'), ('择时三', 'big')]，最终信号=big，理由=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-07-19 06:02:00 - INFO  - SIGDAY s1=big s2=big s3=big final=big prev=big reason=全票通过（3/3），三个择时都认为买大盘/避险
+2024-07-22 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=big final=big prev=big reason=多数通过（2/3），['择时二', '择时三'] 认为买大盘/避险
+2024-07-23 06:02:00 - INFO  - SIGDAY s1=big s2=big s3=small final=big prev=big reason=多数通过（2/3），['择时一', '择时二'] 认为买大盘/避险
+2024-07-24 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=small final=small prev=big reason=多数通过（2/3），['择时二', '择时三'] 认为买小盘
+2024-07-24 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'big'), ('择时二', 'small'), ('择时三', 'small')]，最终信号=small，理由=多数通过（2/3），['择时二', '择时三'] 认为买小盘
+2024-07-25 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-07-25 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'big'), ('择时二', 'small'), ('择时三', 'big')]，最终信号=big，理由=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-07-26 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=big reason=分歧（1:1），保留择时一信号：big
+2024-07-29 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=big reason=全票通过（3/3），三个择时都认为买小盘
+2024-07-29 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'small'), ('择时三', 'small')]，最终信号=small，理由=全票通过（3/3），三个择时都认为买小盘
+2024-07-30 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-07-31 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-08-01 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-08-01 09:30:10 - INFO  - MONTHLY signal=small trade_allowed=True n_pos=10
+2024-08-02 06:02:00 - INFO  - SIGDAY s1=small s2=neutral s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-08-05 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-08-06 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-08-07 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-08-08 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-08-09 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-08-12 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-08-13 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-08-14 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=small final=small prev=small reason=一致通过（2/2），['择时二', '择时三'] 认为买小盘
+2024-08-15 06:02:00 - INFO  - SIGDAY s1=empty s2=big s3=big final=big prev=small reason=一致通过（2/2），['择时二', '择时三'] 认为买大盘/避险
+2024-08-15 06:02:00 - INFO  - 启用择时的信号：[('择时二', 'big'), ('择时三', 'big')]，最终信号=big，理由=一致通过（2/2），['择时二', '择时三'] 认为买大盘/避险
+2024-08-16 06:02:00 - INFO  - SIGDAY s1=empty s2=big s3=small final=small prev=big reason=分歧（1:1），保留择时一信号：small
+2024-08-16 06:02:00 - INFO  - 启用择时的信号：[('择时二', 'big'), ('择时三', 'small')]，最终信号=small，理由=分歧（1:1），保留择时一信号：small
+2024-08-19 06:02:00 - INFO  - SIGDAY s1=big s2=big s3=small final=big prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买大盘/避险
+2024-08-19 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'big'), ('择时二', 'big'), ('择时三', 'small')]，最终信号=big，理由=多数通过（2/3），['择时一', '择时二'] 认为买大盘/避险
+2024-08-20 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=big reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-08-21 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=big reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-08-22 06:02:00 - INFO  - SIGDAY s1=big s2=small s3=big final=big prev=big reason=多数通过（2/3），['择时一', '择时三'] 认为买大盘/避险
+2024-08-23 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-08-26 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-08-27 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-08-28 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-08-29 06:02:00 - INFO  - SIGDAY s1=big s2=empty s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-08-30 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=big final=big prev=big reason=仅启用择时三，直接采用其信号：big
+2024-09-02 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=big reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-09-02 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'big'), ('择时三', 'small')]，最终信号=small，理由=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-09-02 09:30:10 - INFO  - MONTHLY signal=small trade_allowed=True n_pos=10
+2024-09-03 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-09-04 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-09-05 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-09-06 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-09-09 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=big final=small prev=small reason=分歧（1:1），保留择时一信号：small
+2024-09-10 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-09-11 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-09-12 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=small final=small prev=small reason=仅启用择时三，直接采用其信号：small
+2024-09-13 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=big final=big prev=small reason=仅启用择时三，直接采用其信号：big
+2024-09-13 06:02:00 - INFO  - 启用择时的信号：[('择时三', 'big')]，最终信号=big，理由=仅启用择时三，直接采用其信号：big
+2024-09-18 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=big final=big prev=big reason=仅启用择时三，直接采用其信号：big
+2024-09-19 06:02:00 - INFO  - SIGDAY s1=empty s2=empty s3=big final=big prev=big reason=仅启用择时三，直接采用其信号：big
+2024-09-20 06:02:00 - INFO  - SIGDAY s1=empty s2=big s3=small final=small prev=big reason=分歧（1:1），保留择时一信号：small
+2024-09-20 06:02:00 - INFO  - 启用择时的信号：[('择时二', 'big'), ('择时三', 'small')]，最终信号=small，理由=分歧（1:1），保留择时一信号：small
+2024-09-23 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=small reason=分歧（1:1），保留择时一信号：big
+2024-09-23 06:02:00 - INFO  - 启用择时的信号：[('择时二', 'small'), ('择时三', 'big')]，最终信号=big，理由=分歧（1:1），保留择时一信号：big
+2024-09-24 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=big reason=全票通过（3/3），三个择时都认为买小盘
+2024-09-24 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'small'), ('择时三', 'small')]，最终信号=small，理由=全票通过（3/3），三个择时都认为买小盘
+2024-09-25 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-09-26 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-09-27 06:02:00 - INFO  - SIGDAY s1=small s2=neutral s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-09-30 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-10-08 06:02:00 - INFO  - SIGDAY s1=small s2=neutral s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-10-08 09:30:10 - INFO  - MONTHLY signal=small trade_allowed=True n_pos=10
+2024-10-09 06:02:00 - INFO  - SIGDAY s1=small s2=neutral s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-10-10 06:02:00 - INFO  - SIGDAY s1=small s2=neutral s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-10-11 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-10-14 06:02:00 - INFO  - SIGDAY s1=small s2=big s3=small final=small prev=small reason=多数通过（2/3），['择时一', '择时三'] 认为买小盘
+2024-10-15 06:02:00 - INFO  - SIGDAY s1=small s2=neutral s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-10-16 06:02:00 - INFO  - SIGDAY s1=small s2=neutral s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-10-17 06:02:00 - INFO  - SIGDAY s1=small s2=neutral s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-10-18 06:02:00 - INFO  - SIGDAY s1=small s2=neutral s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-10-21 06:02:00 - INFO  - SIGDAY s1=small s2=neutral s3=big final=small prev=small reason=分歧（1:1），保留择时一信号：small
+2024-10-22 06:02:00 - INFO  - SIGDAY s1=small s2=neutral s3=big final=small prev=small reason=分歧（1:1），保留择时一信号：small
+2024-10-23 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-10-24 06:02:00 - INFO  - SIGDAY s1=small s2=neutral s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-10-25 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-10-28 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-10-29 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-10-30 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-10-31 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-11-01 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-11-01 09:30:10 - INFO  - MONTHLY signal=small trade_allowed=True n_pos=10
+2024-11-04 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-11-05 06:02:00 - INFO  - SIGDAY s1=small s2=empty s3=small final=small prev=small reason=一致通过（2/2），['择时一', '择时三'] 认为买小盘
+2024-11-06 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-11-07 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-11-08 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-11-11 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-11-12 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-11-13 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-11-14 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-11-15 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-11-18 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-11-19 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=small reason=分歧（1:1），保留择时一信号：big
+2024-11-19 06:02:00 - INFO  - 启用择时的信号：[('择时二', 'small'), ('择时三', 'big')]，最终信号=big，理由=分歧（1:1），保留择时一信号：big
+2024-11-20 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=big reason=分歧（1:1），保留择时一信号：big
+2024-11-21 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=small final=small prev=big reason=一致通过（2/2），['择时二', '择时三'] 认为买小盘
+2024-11-21 06:02:00 - INFO  - 启用择时的信号：[('择时二', 'small'), ('择时三', 'small')]，最终信号=small，理由=一致通过（2/2），['择时二', '择时三'] 认为买小盘
+2024-11-22 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=small final=small prev=small reason=一致通过（2/2），['择时二', '择时三'] 认为买小盘
+2024-11-25 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=small reason=分歧（1:1），保留择时一信号：big
+2024-11-25 06:02:00 - INFO  - 启用择时的信号：[('择时二', 'small'), ('择时三', 'big')]，最终信号=big，理由=分歧（1:1），保留择时一信号：big
+2024-11-26 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=big reason=分歧（1:1），保留择时一信号：big
+2024-11-27 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=big reason=分歧（1:1），保留择时一信号：big
+2024-11-28 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=small final=small prev=big reason=一致通过（2/2），['择时二', '择时三'] 认为买小盘
+2024-11-28 06:02:00 - INFO  - 启用择时的信号：[('择时二', 'small'), ('择时三', 'small')]，最终信号=small，理由=一致通过（2/2），['择时二', '择时三'] 认为买小盘
+2024-11-29 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-12-02 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-12-02 09:30:10 - INFO  - MONTHLY signal=small trade_allowed=True n_pos=10
+2024-12-03 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-12-04 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-12-05 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-12-06 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-12-09 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-12-10 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-12-11 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-12-12 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-12-13 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-12-16 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-12-17 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=small final=small prev=small reason=全票通过（3/3），三个择时都认为买小盘
+2024-12-17 09:30:05 - INFO  - DAPAN top_divergence signal=small n_pos=10
+2024-12-18 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-12-19 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-12-20 06:02:00 - INFO  - SIGDAY s1=empty s2=small s3=big final=big prev=small reason=分歧（1:1），保留择时一信号：big
+2024-12-20 06:02:00 - INFO  - 启用择时的信号：[('择时二', 'small'), ('择时三', 'big')]，最终信号=big，理由=分歧（1:1），保留择时一信号：big
+2024-12-23 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=big reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-12-23 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'small'), ('择时三', 'big')]，最终信号=small，理由=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-12-24 06:02:00 - INFO  - SIGDAY s1=empty s2=neutral s3=big final=big prev=small reason=仅启用择时三，直接采用其信号：big
+2024-12-24 06:02:00 - INFO  - 启用择时的信号：[('择时三', 'big')]，最终信号=big，理由=仅启用择时三，直接采用其信号：big
+2024-12-25 06:02:00 - INFO  - SIGDAY s1=big s2=neutral s3=big final=big prev=big reason=一致通过（2/2），['择时一', '择时三'] 认为买大盘/避险
+2024-12-26 06:02:00 - INFO  - SIGDAY s1=empty s2=big s3=big final=big prev=big reason=一致通过（2/2），['择时二', '择时三'] 认为买大盘/避险
+2024-12-27 06:02:00 - INFO  - SIGDAY s1=big s2=big s3=big final=big prev=big reason=全票通过（3/3），三个择时都认为买大盘/避险
+2024-12-30 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=big reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-12-30 06:02:00 - INFO  - 启用择时的信号：[('择时一', 'small'), ('择时二', 'small'), ('择时三', 'big')]，最终信号=small，理由=多数通过（2/3），['择时一', '择时二'] 认为买小盘
+2024-12-31 06:02:00 - INFO  - SIGDAY s1=small s2=small s3=big final=small prev=small reason=多数通过（2/3），['择时一', '择时二'] 认为买小盘

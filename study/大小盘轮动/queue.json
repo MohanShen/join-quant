@@ -183,5 +183,177 @@
     "rank": 1,
     "status": "answered",
     "result": "¥12 只比 ¥9 低 0.047，且逐年符号相反（2022 −19pt / 2023 +9pt）——上侧是宽平台；价格响应是 ¥5 0.25 / ¥9 0.66 / ¥12 0.62 / 无上限 0.27，下侧断崖、上侧缓降"
+  },
+  {
+    "id": "e9-r1",
+    "kind": "understand",
+    "title": "liq-1 2e6 下限在 base 上的 epoch-9 复测（realizability 重新落在 e9 候选书上）",
+    "hypothesis": "2e6 = 1M/10仓/0.05 的可成交下限在 2024 窗口仍不剔任何名字：曲线与 e9 base 曲线逐日 bit-identical、每次 LIQFLOOR in==out、slots=10。驳斥：任一次选股剔名或 max|Δcum|>0 ⇒ R=2 不能沿用，base 不得送 VAL",
+    "why": "GATE（必跑）：realizabilityScope 目前是 dxp-imp-1，而 e9 候选是 base；R 是书的属性，2024 的池子不同于 2022–23。1 次回测 ≈3 min",
+    "design": "variants/liq-1_floor-2e6.py 原样 --window train（bench 除窗口外未变，文件即 e9 类比）；对比 data/series/…2f5bc859__train__e9.json",
+    "from": [
+      "liq-floor",
+      "liq-imp1"
+    ],
+    "edgeRef": null,
+    "rank": 1,
+    "status": "answered",
+    "result": "2e6 可成交下限在 2024 窗口上对 base 仍完全不咬：曲线与 base e9 曲线逐日 bit-identical（242 日 max|Δcum|=0），24/24 次小盘选股 in==out、10 槽全满、0 错误，objective 1.0614 不变。附带观察：2024-01、02 没有任何 LIQFLOOR 行，即小盘 sleeve 的选股在 2024-01-04→02-07 踩踏期一次都没运行——base 那段时间不在小盘 sleeve 里",
+    "note": "排第一：它是 VAL 的前置条件，失败则改变本轮候选。若本轮采纳 e9-i1/e9-i3（只改投票、不改选股链），本测可沿用，但 realizabilityScope 须写明被测书"
+  },
+  {
+    "id": "e9-u2",
+    "kind": "understand",
+    "title": "探针：打开信号切换日志，读 2024-01/02 是哪条路由（big / empty / dapan）把钱移出小盘",
+    "hypothesis": "base 在 2024-01-04→02-07 踩踏期间（always-small 同期 maxDD 36.37）主要不在小盘；预测路由为择时一 empty 或 big，而非 dapan。驳斥：日志显示该期大部分交易日 signal=small（则 base 的 2024 优势不来自躲开踩踏）",
+    "why": "一次回测同时回答 e9-u3/e9-i3 的前提；控制：曲线须与已存 e9 base 曲线 bit-identical，否则日志改动污染了书、读数作废。1 次 ≈3 min；日志须按 offset 100 分页读全年（backtest-log 单页只 100 行）",
+    "design": "baseline-e6.py:452 取消注释信号日志行，--window train；utils/backtest-log.js 分页读",
+    "from": [
+      "q-3",
+      "q-analytic",
+      "q-4",
+      "val-imp-1"
+    ],
+    "edgeRef": "风格轮动择时",
+    "rank": 2,
+    "status": "answered",
+    "result": "2024-01-04→02-07 踩踏期 base 全程持白马（big）sleeve：01-02 由择时一+择时三 2/3 投 big（择时二投 small），02-01 择时二弃权、择时一+三 2/2 再投 big，故不仅躲开踩踏、还在该段 +7.6%。cash 腿与 dapan 均未参与踩踏期。日度信号频繁翻转（4 月约 14 次），但只有月初（及 14:00 涨停打开补仓）成交，所以只有月初那一票承重。全年最大回撤 18.23 不在 1–2 月，而在 2024-04-02→04-16 持小盘期间"
+  },
+  {
+    "id": "e9-i3",
+    "kind": "improve",
+    "title": "base 去掉择时二（q-4 在 e9 复测）",
+    "hypothesis": "e6 上 +0.0706。驳斥：e9 Δobj ≤ 0，或 2024-01/02 子窗回撤恶化 >3pt",
+    "why": "q-4 是投票书上最大的已测改进。u-1 关闭投票方向的理由是 2022–23 两年同号的 LEVEL 论证（stale e6），而 val-imp-1 的 2024 切片已显示投票在本窗口承重，故方向重开。edgeRef 风格轮动择时 仅 proposed——在 e9 上它是 base 对 always-small 领先 ~66pt 的唯一来源，这是允许 off-measured-edge 的理由。1 次 ≈3 min",
+    "design": "variants/q-4_no_s2.py 原样 --window train",
+    "from": [
+      "q-4",
+      "u-1",
+      "val-imp-1"
+    ],
+    "edgeRef": "风格轮动择时",
+    "rank": 3,
+    "status": "answered",
+    "result": "去掉择时二在 2024 上 obj +0.0605 / sharpe +0.17 / maxDD 不变（记录者自曲线复核：total 130.42、maxDD 18.22 于 04-02→04-16、obj 1.1220，242 点）。1–2 月踩踏子窗与 base 相同（+7.60% / DD 4.38），驳斥条件未触发。逐月 Δpp：2 月 +1.30、3 月 +0.23、6 月 −2.35、11 月 +3.36、12 月 +0.83，其余≈0；曲线自 2024-02-22 起分叉。唯一不同的月初票在 06-03（base EMPTY→i3 BIG），6 月 DD 0.12%→4.60%。",
+    "note": "若 e9-u2 显示择时二是踩踏期间的移出路由，先验转负但仍跑——那正是证伪点；e9-u2：择时二在踩踏期不是移出路由（01-02 投 small 被否决，02-01 弃权），本变体在 1–2 月无作用，Δ 来自 03-01/06-03 类月份"
+  },
+  {
+    "id": "e9-i1",
+    "kind": "improve",
+    "title": "base 平票 → s3 而非空仓（q-7 在 e9 复测）",
+    "hypothesis": "e6 上 +0.0425。驳斥：e9 Δobj ≤ 0（原提案的 −0.03 阈值太宽，[−0.03,0) 不应算未证伪），或 2024-01/02 子窗回撤恶化 >3pt",
+    "why": "风险：平票空仓可能正是 2024-02 的保护，改走 s3 会在踩踏里加暴露——这让它成为干净的证伪。1 次 ≈3 min",
+    "design": "variants/q-7_tie_no_cash.py 原样 --window train（baseline-e6.py:436）",
+    "from": [
+      "q-7",
+      "u-1",
+      "dxp-oos-1"
+    ],
+    "edgeRef": "风格轮动择时",
+    "rank": 4,
+    "status": "answered",
+    "result": "记录者自曲线复核（242 点）：total 127.21、maxDD 18.23 于 04-02→04-16、obj 1.0898。曲线与 base 逐日相同至 2024-05-31，06-03 起分叉；21 个平票日（择时一弃权、二三 1:1）改随择时三。逐月 Δpp 对 base：6 月 −2.35（06-03 base 转债腿 511010，i1 持 big，与 e9-i3 的 6 月相同到 0.01pp）、11 月 +3.36、12 月 +0.84（自 11-25 起与 e9-i3 日收益逐日一致），2 月 0.00（e9-i3 的 +1.30 来自非平票日去掉择时二）、1–2 月踩踏"
+  },
+  {
+    "id": "e9-u4",
+    "kind": "understand",
+    "title": "base 去掉 <¥9 股价上限：低价股效应 在国九条之后的 2024 是否还在",
+    "hypothesis": "u-7（always-small, e6）年化腰斩；在 base 上应保留 <75%。驳斥：e9 年化 ≥ 93.3（= 124.37×0.75），则低价效应在 2024 不再承重",
+    "why": "u-7/u-8/dxp-imp-3 的「价格旋钮关闭」是 2022–23 的 LEVEL 结论；国九条（2024 退市新规，低价/面值退市）是真实的窗口变化，结果两个方向都是信息。仅 understanding：它重开流动性轴，结果不可直接作候选，除非补跑 liq-1。1 次 ≈3 min",
+    "design": "base + 删 filter_highprice_stock 一行（u-7 的同一 edit 移植到投票书）",
+    "from": [
+      "u-7",
+      "u-8",
+      "dxp-imp-3"
+    ],
+    "edgeRef": "低价股效应",
+    "rank": 5,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "e9-u3",
+    "kind": "understand",
+    "title": "仅择时三投票（择时一/二关闭）：smallest-50 宽度信号是不是踩踏开关",
+    "hypothesis": "驳斥：2024-01/02 子窗回撤 ≥ 30%（则 s3 单独不能躲开踩踏）",
+    "why": "CONDITIONAL：在 e9-u2 之后跑；若 u2 日志已显示踩踏期移出路由是择时一 empty 或 dapan，本题被免费回答 ⇒ dropped。混淆：同时去掉了 tie→bond 腿。1 次 ≈3 min",
+    "design": "enable_strategy_one=False, enable_strategy_two=False",
+    "from": [
+      "q-analytic",
+      "q-4",
+      "e9-u2"
+    ],
+    "edgeRef": "风格轮动择时",
+    "rank": 6,
+    "status": "answered",
+    "result": "记录者自曲线复核（242 点）：total 121.85、maxDD 11.03 于 10-08→10-11、obj 1.1082。1–3 月与 base 逐日相同；1–2 月 DD 4.38、踩踏子窗 01-04→02-07 +7.60%/DD 4.38 与 base 相同 ⇒ 驳斥线（1–2 月 DD ≥30%）未触发。择时三单独投票即直接成为 final_signal，其 empty 分支不可达（q-analytic）⇒ 恒在仓；s3 与 base 的 s3 243/243 日一致。与 base 只在两个月初分叉：04-01 base small → u3 big（4 月 −3.92pp",
+    "note": "unblocked by e9-u2（2026-10-27）：择时三在 01-02 与 02-01 两次踩踏期月初都投 big，故本题未被免费回答，照跑。预测 1–2 月子窗回撤远小于 30%；读数时注意同时去掉了 tie→bond 腿（06-03 EMPTY 将变 big）"
+  },
+  {
+    "id": "e9-u1",
+    "kind": "understand",
+    "title": "always-small 在 e9 TRAIN（= u-1 重测）",
+    "hypothesis": "预测 obj ≈0.21±0.08，驳斥 ≥1.0614",
+    "why": "REJECTED 为重复：val-imp-1 的 2024 切片就是这次运行——同一本书、同一 bench（e6→e9 只动窗口，成本/pin 未动）、同一起点 2024-01-01，路径逐日相同。已记录 2024 +57.9% / maxDD 36.37 ⇒ obj ≈0.215 < base 1.0614。重跑 3 min 只复现已写下的数（~0.15pp 漂移）。仅当整合层需要 e9 ledger 行/曲线时才值得跑（e6 VAL 曲线已被 epoch-reset 清掉）",
+    "design": null,
+    "from": [
+      "val-imp-1",
+      "u-1"
+    ],
+    "edgeRef": "风格轮动择时",
+    "rank": 90,
+    "status": "dropped",
+    "result": null
+  },
+  {
+    "id": "e9-i2",
+    "kind": "improve",
+    "title": "股息闸门 top-25% → top-50%（保留派息要求 + 375d）",
+    "hypothesis": "驳斥：Δobj ≤ 0 或 liq-1 2e6 剔名",
+    "why": "DEFERRED（不进本轮）：需 2 次（放宽选股链会重开流动性轴，必须配对 liq-1）；u-6 已显示股息闸门是规模的影子、增益集中在一年；放宽池子去取更小的票，其吸引力部分来自已知小池在 2025 的 +74%——对 VAL 年有知识泄漏风险。本轮 5–6 次预算下排不进",
+    "design": "get_dividend_ratio_filter_list 0.25→0.5 + liq-1 2e6 配对",
+    "from": [
+      "u-6",
+      "u-4"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 80,
+    "status": "dropped",
+    "result": null,
+    "note": "可在 VAL 之后或下一 bench 重提；拒绝原因已记，不得静默重提"
+  },
+  {
+    "id": "e9-u5",
+    "kind": "understand",
+    "title": "14:00 补仓路径：把 check_limit_up_and_buy 的补仓 sleeve 冻结为月初信号",
+    "hypothesis": "e9-i3 的 +0.0605 主要经 14:00 涨停打开卖出后按「日度」信号补仓的路径实现（2/11/12 月），而不是月初投票（6 月为负）。驳斥：在 base 与 i3 上都把补仓 sleeve 冻结为月初 final_signal 后，i3−base 的 Δobj 仍保留 ≥75%（≈+0.045），则增益来自月初投票而非补仓混仓",
+    "why": "e9-i3 采纳为 VAL 候选，但其增益的承载路径是推断（日志无成交行）；补仓路径是未被设计审视的第二交易通道，会把日度信号的 sleeve 混进月初持仓。低优先级：不改变 VAL 候选，只改变对增益来源的解释。2 次 ≈6 min",
+    "design": "base 与 i3-e9_no-s2 各加一处：check_limit_up_and_buy 的补仓 sleeve 读月初保存的 final_signal 而非当日信号；加逐笔补仓日志（日期/卖出/补入 sleeve）",
+    "from": [
+      "e9-i3",
+      "e9-u2"
+    ],
+    "edgeRef": "风格轮动择时",
+    "rank": 9,
+    "status": "queued",
+    "result": null
+  },
+  {
+    "id": "e9-r2",
+    "kind": "understand",
+    "title": "liq-1 2e6 下限在产品 dxp-e9-i3 上的 epoch-9 复测（R 落在被验证的那本书上）",
+    "hypothesis": "2e6 = 1M/10仓/0.05 可成交下限在 i3 的选股日（含 14:00 补仓路径）上不剔任何名字：曲线与 i3-e9_no-s2 TRAIN 曲线逐日 bit-identical、每次 LIQFLOOR in==out、slots=10。驳斥：任一次剔名或 max|Δcum|>0 ⇒ 产品的 R=2 不能从 base 沿用",
+    "why": "e9-r1 测的是 base；产品 dxp-e9-i3 的增益走 14:00 补仓路径，选股日与 base 不同，R 是书的属性 ⇒ realizabilityScope 要指名产品必须在产品上测。1 次回测 ≈3 min",
+    "design": "build-liq-i3.js → variants/liq-i3-e9_floor-2e6.py（与 liq-1 同一下限文本），--window train，runId dxp-e9-r2；对比 data/series/study_大小盘轮动_variants_i3-e9_no-s2__train__e9.json",
+    "from": [
+      "e9-r1",
+      "e9-i3",
+      "val-e9-i3"
+    ],
+    "edgeRef": null,
+    "rank": 1,
+    "status": "answered",
+    "note": "realizability 测量；scope=dxp-e9-i3",
+    "result": "2e6 可成交下限对产品 dxp-e9-i3 完全不咬：记录者自曲线复核 242 点与 i3-e9_no-s2 TRAIN 曲线 max|Δcum|=0、终值 130.42。25 条 LIQFLOOR 25/25 in==out、slots=10、0 错误；约 9 条是月初调仓、约 16 条是普通交易日的 14:00 补仓（补仓路径调用 daily_my_trader_1，故下限覆盖它）"
   }
 ]
