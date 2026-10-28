@@ -2,6 +2,7 @@
 postId: b5dd66ebfd94579ec47e89b2bd132b82
 title: 【十年十倍】纳指+黄金全天候：动态杠杆网格系统
 sourceFile: strategies/2026-10-28_十年十倍_纳指_黄金全天候_动态杠杆网格系统-b5dd66eb.py
+family: 其他
 concepts: [ETF轮动, 网格交易, 多策略组合]
 factors:
   选股: [ETF动量]

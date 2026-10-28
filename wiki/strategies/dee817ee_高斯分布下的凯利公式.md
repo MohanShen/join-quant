@@ -2,6 +2,7 @@
 postId: dee817eee2b90d0d4f5ff355c24ae80d
 title: 高斯分布下的凯利公式
 sourceFile: strategies/2026-10-28_高斯分布下的凯利公式-dee817ee.py
+family: 其他
 concepts: [未分类]
 factors:
   选股: [未分类]

@@ -2,6 +2,7 @@
 postId: e84ffb529bd4cbdb003b4f8c5e6adddc
 title: 价值选股与RSRS择时的Pthon3版本
 sourceFile: strategies/2026-10-28_价值选股与RSRS择时的Pthon3版本-e84ffb52.py
+family: 多因子ML
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/15002
 concepts: [择时-RSRS]
 factors:

@@ -2,6 +2,7 @@
 postId: a533fba3a36d8a258527738842ad59dd
 title: ETF动量策略对比（目前看ETF才是王道）
 sourceFile: strategies/2026-10-28_ETF动量策略对比_目前看ETF才是王道-a533fba3.py
+family: 七星高照
 concepts: [ETF轮动, 动量与趋势]
 factors:
   选股: [ETF动量, 动量]
