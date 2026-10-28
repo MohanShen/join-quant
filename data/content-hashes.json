@@ -2211,5 +2211,105 @@
     "postId": "766e332da1a04fb586f3b65bbf4d8e5f",
     "sourceFile": "2026-10-28_白马股筛选策略-766e332d.py",
     "registeredAt": "2026-10-27T19:26:53.644Z"
+  },
+  "403b3def9958a639b1da32b58fbcd2100ad6dd063141004655370c9cc90c8d47": {
+    "postId": "3767cd641f360239fd3c3215c3402a1e",
+    "sourceFile": "2026-10-28_XGBoost模型多因子策略分享-3767cd64.py",
+    "registeredAt": "2026-10-28T01:42:56.599Z"
+  },
+  "a0bfe480e62f61b1dc392bee5aff21b70be2ea1e3d82f7d245660bfbd72f7a52": {
+    "postId": "b882a317878eee9548c3d58276830a73",
+    "sourceFile": "2026-10-28_基于上证指数macd择时的小市值_20161222更新_指数跌幅超过4_且破ma60就空仓休息-b882a317.py",
+    "registeredAt": "2026-10-28T01:42:59.424Z"
+  },
+  "ea1fd6aa299451b8cbed23c55dd2a42d7a5b41d36b6b306c1930f4381af19e72": {
+    "postId": "62bf82dfeac8ceae758ffae3db09889f",
+    "sourceFile": "2026-10-28_主力脉冲_模块化小市值策略编辑器-62bf82df.py",
+    "registeredAt": "2026-10-28T01:43:02.819Z"
+  },
+  "7b5e7dbfffc5cb541c4b8c2bfaf4de30fec0fc0f0f6131fc70f2ee6c31c25fef": {
+    "postId": "8498ed7422235f6e5cf9653e407015b6",
+    "sourceFile": "2026-10-28_三高五低_一种基本面选股思路的验证-8498ed74.py",
+    "registeredAt": "2026-10-28T01:43:05.548Z"
+  },
+  "53231ba3fd694c873bce10880fc906525d276f788b7f54c3f98918cbd0f7697e": {
+    "postId": "31109b2d1b4944b1aabd9056aea39a36",
+    "sourceFile": "2026-10-28_均线系统-31109b2d.py",
+    "registeredAt": "2026-10-28T01:43:08.611Z"
+  },
+  "83800e6061a5d87d6bae818a6729c70b8f665307908ba35bcdc3e6f9f1cb8d3d": {
+    "postId": "717484258fcd8c14850e478e77867d0e",
+    "sourceFile": "2026-10-28_银行股搬砖轮动_300指数对冲策略-71748425.py",
+    "registeredAt": "2026-10-28T01:43:12.241Z"
+  },
+  "147b0b1d48f3a123927d8a09f9cffee2cda7848e9207b31c20e66b05445f08b1": {
+    "postId": "dee817eee2b90d0d4f5ff355c24ae80d",
+    "sourceFile": "2026-10-28_高斯分布下的凯利公式-dee817ee.py",
+    "registeredAt": "2026-10-28T01:43:16.305Z"
+  },
+  "66473fb6e0151c4d8f311e165fb3e1b87462daa8809ea234eafa9e6ed5bb2302": {
+    "postId": "8bda20b846dbc42b41f4ed82edde4d49",
+    "sourceFile": "2026-10-28_基于借壳公告的驱动的买入策略-8bda20b8.py",
+    "registeredAt": "2026-10-28T01:43:20.438Z"
+  },
+  "64eb97b2988b34e94653f43b9b762cb96e4ad1d8edfd2a88b5efe60e22f71018": {
+    "postId": "fce37d09e84c16ce0875c138526fae4d",
+    "sourceFile": "2026-10-28_五因子特征重要性加权综合得分选股-fce37d09.py",
+    "registeredAt": "2026-10-28T01:43:24.013Z"
+  },
+  "92b86dbed9e46812a0b8bbdadc9c4187f60c7eccd19c718e230eac87abe29aec": {
+    "postId": "f5d0151dd967086f79ecd16c1e5ff068",
+    "sourceFile": "2026-10-28_低估值_TRIX_RSI_低回撤策略-f5d0151d.py",
+    "registeredAt": "2026-10-28T01:43:26.816Z"
+  },
+  "0942038a4be3de32b1cb38a2dbb17fa1c1548260e9b368fdd3706d2edd70966f": {
+    "postId": "bf0e094410458e8e67053255212aa8bb",
+    "sourceFile": "2026-10-28_54万3只可-bf0e0944.py",
+    "registeredAt": "2026-10-28T01:43:30.224Z"
+  },
+  "089b1246ddcd1a27e8413a4382798caf51f2ca863780ca184fa9aeab222f66aa": {
+    "postId": "75d5439fad945e5e7b4406d80edafe2d",
+    "sourceFile": "2026-10-28_四合一V3_七星高照_菜场大妈_五境掘金_红利-75d5439f.py",
+    "registeredAt": "2026-10-28T01:43:33.070Z"
+  },
+  "3c97d873bd7df6a7273493e7dae073fd1aada185a38efe4efc84dcadb8d8e799": {
+    "postId": "7e7459c1b8c9e61330c6d551abc72f2f",
+    "sourceFile": "2026-10-28_小市值策略优化-7e7459c1.py",
+    "registeredAt": "2026-10-28T01:43:35.985Z"
+  },
+  "be05b450558bc0060086a81fc74d9c3bd14931867e934e5ca7d0a09f14b85e83": {
+    "postId": "648c2da31a48a9804dec14673d602583",
+    "sourceFile": "2026-10-28_使用标普500_60日均线乖离度增加超额收益的策略-648c2da3.py",
+    "registeredAt": "2026-10-28T01:43:38.724Z"
+  },
+  "5265c78294ea447f333729aafafa60ddf19c0b63509cdf9b7e200758e4ff7c29": {
+    "postId": "6a933dfb8d4b8034ce2cdd0ef09543f7",
+    "sourceFile": "2026-10-28_小资金适配的进攻型小市值成长趋势策略-6a933dfb.py",
+    "registeredAt": "2026-10-28T01:43:42.858Z"
+  },
+  "82aaa91bb9679de544ea1c94586ae215a5f6c7038e222d248642f25c0ccc6cd4": {
+    "postId": "7d57c2629921be1616ef07f41ee85793",
+    "sourceFile": "2026-10-28_小市值轮动策略_-_20年至今年化57_87-7d57c262.py",
+    "registeredAt": "2026-10-28T01:43:46.279Z"
+  },
+  "7633623b84aaee4c596ac00d531e2e7161176cb4421e9a6e1427f0bc47946f7f": {
+    "postId": "e84ffb529bd4cbdb003b4f8c5e6adddc",
+    "sourceFile": "2026-10-28_价值选股与RSRS择时的Pthon3版本-e84ffb52.py",
+    "registeredAt": "2026-10-28T01:43:49.239Z"
+  },
+  "b1918b83835550d5c299db7783ac5d5b53fcdcb31f4b31216ccd5483ef4d90fa": {
+    "postId": "509537f14c71f2696545cb31da85d4a4",
+    "sourceFile": "2026-10-28_趋势追踪策略_设计原理与代码实现-509537f1.py",
+    "registeredAt": "2026-10-28T01:43:52.510Z"
+  },
+  "293d41fd3992f237c4e552a05d60e59f36e646260a46cc33beb14f720ce71802": {
+    "postId": "a40bc39b8dd63ebf4ecaf5b233f7fec7",
+    "sourceFile": "2026-10-28_各位大神帮我看一下这个策略的问题在哪-a40bc39b.py",
+    "registeredAt": "2026-10-28T01:43:56.074Z"
+  },
+  "7894ce943442ed933a90da5ddf4bd451126c818b24459b06bb06b9c581d3ee59": {
+    "postId": "529f8af659c17bf7e1993705d7ae0f02",
+    "sourceFile": "2026-10-28_11年36倍收益的四因子选股策略研究_1-529f8af6.py",
+    "registeredAt": "2026-10-28T01:43:58.807Z"
   }
 }

@@ -1,50 +1,58 @@
 {
   "strategies/2026-10-18_这版再修改了下_有兴趣的宽友可以一起交流-8152fa27.py": {
-    "attempts": 3,
+    "attempts": 4,
     "firstDeferredAt": "2026-10-19T21:58:00.648Z",
     "reason": "slow-skipped (seeded from ledger)",
     "lastCapMin": 20,
     "maxCapTried": 45,
-    "lastDeferredAt": "2026-10-23T20:21:22.446Z"
+    "lastDeferredAt": "2026-10-28T04:15:54.572Z"
   },
   "strategies/2026-06-21_首次将实战模型转化为量化策略年化468_07_amp_11_92-b8a7451f.py": {
-    "attempts": 3,
+    "attempts": 4,
     "firstDeferredAt": "2026-10-22T18:19:29.526Z",
-    "reason": "slow-skipped",
-    "lastCapMin": 45,
+    "reason": "slow-skipped (seeded from ledger)",
+    "lastCapMin": 20,
     "maxCapTried": 45,
-    "lastDeferredAt": "2026-10-24T21:46:18.930Z"
+    "lastDeferredAt": "2026-10-28T04:15:54.573Z"
   },
   "strategies/2026-07-16_四模式量化-无未来-25年至今收益138_回撤16_3-61c9c428.py": {
-    "attempts": 2,
+    "attempts": 3,
     "firstDeferredAt": "2026-10-23T20:21:22.447Z",
-    "reason": "slow-skipped",
-    "lastCapMin": 45,
+    "reason": "slow-skipped (seeded from ledger)",
+    "lastCapMin": 20,
     "maxCapTried": 45,
-    "lastDeferredAt": "2026-10-24T21:46:18.930Z"
+    "lastDeferredAt": "2026-10-28T04:15:54.573Z"
   },
   "strategies/2026-05-23_收益提升到471_--加入风控升级的连续涨停基因轮动-c658ef98.py": {
-    "attempts": 2,
+    "attempts": 3,
     "firstDeferredAt": "2026-10-23T20:21:22.447Z",
-    "reason": "slow-skipped",
-    "lastCapMin": 45,
+    "reason": "slow-skipped (seeded from ledger)",
+    "lastCapMin": 20,
     "maxCapTried": 45,
-    "lastDeferredAt": "2026-10-25T22:26:03.286Z"
+    "lastDeferredAt": "2026-10-28T04:15:54.574Z"
   },
   "strategies/2026-07-04_多因子优选_KNN预测择股策略V3_0-13819419.py": {
-    "attempts": 2,
+    "attempts": 3,
     "firstDeferredAt": "2026-10-23T20:21:22.447Z",
-    "reason": "slow-skipped",
-    "lastCapMin": 45,
+    "reason": "slow-skipped (seeded from ledger)",
+    "lastCapMin": 20,
     "maxCapTried": 45,
-    "lastDeferredAt": "2026-10-25T22:26:03.286Z"
+    "lastDeferredAt": "2026-10-28T04:15:54.574Z"
   },
   "strategies/2026-10-27_强者恒强策略不行-158c3d10.py": {
-    "attempts": 1,
+    "attempts": 2,
     "firstDeferredAt": "2026-10-26T22:40:15.446Z",
-    "reason": "slow-skipped",
-    "lastCapMin": 45,
+    "reason": "slow-skipped (seeded from ledger)",
+    "lastCapMin": 20,
     "maxCapTried": 45,
-    "lastDeferredAt": "2026-10-26T22:40:15.446Z"
+    "lastDeferredAt": "2026-10-28T04:15:54.574Z"
+  },
+  "strategies/2026-10-28_趋势追踪策略_设计原理与代码实现-509537f1.py": {
+    "attempts": 2,
+    "firstDeferredAt": "2026-10-28T04:15:21.295Z",
+    "reason": "slow-skipped (seeded from ledger)",
+    "lastCapMin": 20,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-28T04:15:54.574Z"
   }
 }

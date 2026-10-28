@@ -111,3 +111,9 @@
 2026-10-27T20:48:12.606Z	strategies/2026-10-28_穿越牛熊基业长青的价值精选策略-e94e6806.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数
 2026-10-27T20:49:14.740Z	strategies/2026-10-28_量化选股专题_在稳定增长中寻找超额收益-d2e56da3.py	TypeError: 'float' object cannot be interpreted as an integer
 2026-10-27T20:50:18.978Z	strategies/2026-10-28_白马股筛选策略-766e332d.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-10-28T02:33:15.044Z	strategies/2026-10-28_基于上证指数macd择时的小市值_20161222更新_指数跌幅超过4_且破ma60就空仓休息-b882a317.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 tradestat
+2026-10-28T02:35:03.264Z	strategies/2026-10-28_主力脉冲_模块化小市值策略编辑器-62bf82df.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 seek_cash_flow
+2026-10-28T02:39:54.208Z	strategies/2026-10-28_银行股搬砖轮动_300指数对冲策略-71748425.py	jqboson.core.exception.InvalidParam: 每个仓位的资金之和，必须等于初始资金
+2026-10-28T02:43:10.544Z	strategies/2026-10-28_基于借壳公告的驱动的买入策略-8bda20b8.py	NameError: name 'gta' is not defined
+2026-10-28T02:48:37.194Z	strategies/2026-10-28_低估值_TRIX_RSI_低回撤策略-f5d0151d.py	jqdata.exceptions.FutureDataError: 设置avoid_future_data=True之后, get_bars的end_dt(2024-01-02 17:00:00)不能大于当前时间current_dt(2024-01-02 14:50:00)
+2026-10-28T04:15:15.030Z	strategies/2026-10-28_11年36倍收益的四因子选股策略研究_1-529f8af6.py	AttributeError: 'Series' object has no attribute 'sort'
