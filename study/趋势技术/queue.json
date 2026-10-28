@@ -122,5 +122,26 @@
     "rank": 7,
     "status": "answered",
     "result": "有周/月确认时把 20 日带从 85–92 放宽到 50–92（出场下限随之 80→50），两年 −31.4%，比去掉周/月确认（u-4，−23.8%）还差：20 日带的紧度也承重，不是装饰。⚠ 两个常量同动——放宽入场和放慢出场混在一起，「持仓等到 RPS<50 才卖」本身可能就是主要损失"
+  },
+  {
+    "id": "q-e9-rps-clean",
+    "kind": "understand",
+    "title": "RPS 清洁基类（e6-1 的 previous_date 改动）在 TRAIN 2024 上复测——8 条 stale closure 能否沿用的前提",
+    "hypothesis": "e6 的理解（闸门与三周期共振各自只作为部件成立、单独为负）是机理结论，应在 2024 上同号：清洁书 TRAIN 2024 sharpe < 1.0 且不优于 MA20 指数择时器 +10pp 以上。证伪：清洁书 2024 obj ≥ 0.19（超过本 epoch 冠军）或 sharpe ≥ 1.0",
+    "why": "家族 epoch-9 冠军是桶里的单股 MA10 书且 VAL 已失败；页面上两条 measured edge 都是在 RPS 基类上、e6 bench 量的，而 RPS 基类在 epoch 9 没有任何行（原文 no-trades）。不复测它，§4 和 edge 块在本 bench 上都是无依据引用；复测只花 TRAIN，不花验证",
+    "design": "variants/e6-1_clean.py 原样跑 --window train（epoch 9 = 2024）；若成立再决定是否把 u-2/u-5 的闸门消融搬到 2024",
+    "from": [
+      "q-e9-val",
+      "e6-1",
+      "u-2",
+      "u-3",
+      "u-4",
+      "u-5",
+      "u-6"
+    ],
+    "edgeRef": "动量",
+    "rank": 1,
+    "status": "queued",
+    "result": null
   }
 ]
