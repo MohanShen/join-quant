@@ -17,6 +17,19 @@ const rows = [
     spawned: 'q-e9-rps-clean',
     edgeRef: '',
   },
+  {
+    qId: 'q-e9-rps-clean', type: 're-measure',
+    component_or_param: 'RPS 清洁基类（variants/e6-1_clean.py：基类 33b1b1e3 的 08:00 通道改 previous_date，其余原样）在 epoch-9 TRAIN 2024 上的复测——8 条 e6 closure 能否沿用的前提',
+    metric_delta: 'TRAIN 2024：total 4.89 / annual 4.89 / sharpe 0.04 / maxDD 15.26 / obj −0.1037；对照 e6 bench（TRAIN 2022–23）annual 3.67 / sharpe −0.01 / maxDD 20.03；同窗沪深300 约 +15%（低约 10pp）；本 epoch 冠军 9befa9b8 0.1912 / 1.03',
+    window: 'train 2024-01-01→2024-12-31（365d / 242 交易日）',
+    finding: '换了 bench 结论不变：清洁的 RPS 书在 2024 年化 4.89%、sharpe 0.04、回撤 15.3%，比买入持有沪深300 低约 10pp，和 2022–23 上的 3.67% / −0.01 是同一个水平。2024 含 9 月 V 型反转这种对 MA20 闸门最坏的窗口，书没有爆、也没有赚——它仍然是「两个部件各自为负、合起来约等于零」的那本书',
+    confidence: 'high',
+    flags: 'bench-transfer · single-year · DQ（sharpe 0.04 ≪ 1.0）· ⚠零滑点台 · no-timer-control-on-2024（u-5 的指数择时器未在 2024 重跑，假设的「不优于择时器 +10pp」那一半未直接量；但书已低于买入持有，结论不依赖它）',
+    description: 'study/趋势技术/variants/e6-1_clean.py 原样（build-e6.js 用 live OVERRIDE 重建后 git 无 diff，即 e6→e9 成本块逐字节相同）；algorithmId 5b252b04aeb2ea762b86af454377f3ce；SUMMARY train 2024-01-01 2024-12-31 365 4.89 4.89 0.04 15.26 completed；曲线 data/series/study_趋势技术_variants_e6-1_clean__train__e9.json；约 2 JQ 分钟。预注册证伪项（obj ≥ 0.19 或 sharpe ≥ 1.0）未触发',
+    implication: '关闭（本 bench）：RPS 血统作为候选来源——基类在 2024 距 1.0 闸门差 0.96 个 sharpe，8 条 e6 stale closure 讨论的是旋钮与耦合，而旋钮在一本 sharpe 0.04 的书上无论开关都到不了候选，所以它们不必在 2024 逐条重测，按「基类本身出局」一并封存；两条 measured edge 保持原状（它们量的是部件间的相对效应，本次没有跑它们的 test，不升不降）。本家族在 epoch 9 的状态：VAL 已花且失败、桶内 7 本单标的均线/趋势择时书无一过闸、唯一有机理的血统在新窗上仍为零——无新成员改变冠军之前，不再有 research 待办；结构性修复仍是 §4 的「桶应拆」',
+    spawned: 'none',
+    edgeRef: '',
+  },
 ];
 let n = 0;
 for (const r of rows) if (!have.has(r.qId)) { rq.recordFinding(F, r); n++; }
