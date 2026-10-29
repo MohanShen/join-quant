@@ -2204,13 +2204,20 @@ Only the directories whose contents aren't self-evident:
   unreadable budget SKIPS the budget-spent check, and `strategy-post-backtest.js:583` gates on
   `u && u.used != null && u.used >= limit`, so it starts the run. That is the opposite of the
   「unknown blocks」 rule the VAL budget and realizability both follow.
-  Observed 2026-10-27 twice as a transient (a retry seconds later succeeded), and 2026-10-29 as a
-  persistent failure. ⚠ Root cause the second time was NOT the tunnel: `/json/version` and
-  `/json/list` answered and `cdp-tunnel.sh status` read OK, but a Playwright `connectOverCDP`
-  handshake TIMED OUT — so `jq-budget` found no usable page and bailed, and `jq-http` fell back to
-  direct HTTP and threw `GeoBlockedError`. Cycling the tunnel did not fix it; the remote Chrome
-  itself is wedged. ⚠ Do NOT "fix" it by closing Chrome (invalidates the session) or by closing
-  pages (`jq-budget`: 「NEVER close pages (destroys the CDP cookie context)」).
+  ⚠⚠ **The failure mode is TRANSIENT and SELF-CLEARING — do not escalate it.** Observed 2026-10-27
+  twice (a retry seconds later succeeded) and 2026-10-29 for roughly fifteen minutes, where it
+  looked far worse: `/json/version` and `/json/list` answered and `cdp-tunnel.sh status` read OK,
+  but a Playwright `connectOverCDP` handshake TIMED OUT, so `jq-budget` found no usable page and
+  bailed while `jq-http` fell back to direct HTTP and threw `GeoBlockedError`. Cycling the tunnel
+  did not restore it immediately.
+  ⚠ **I concluded from that the remote Chrome was wedged and needed a hand on the Windows server.
+  That was WRONG**: it recovered on its own with no intervention (21 pages, handshake fine, the
+  endpoint serving `{"used":0,"free":180}`), possibly as the tunnel cycle took effect late or as the
+  remote browser cleared a backlog. **The correct response to a blank budget is to retry over
+  MINUTES, not to rebuild the tunnel or escalate.** A persistent-looking CDP timeout is not evidence
+  of a wedged browser.
+  ⚠ Do NOT "fix" it by closing Chrome (invalidates the session) or by closing pages
+  (`jq-budget`: 「NEVER close pages (destroys the CDP cookie context)」).
   ⚠ The exposure is narrower than it looks: a wedged CDP also stops backtests STARTING, so the
   dangerous window is 「budget read flaky while CDP is healthy」 — which is precisely the transient
   seen twice on 2026-10-27. A fix should RETRY and then BLOCK, not simply fail closed, or a
