@@ -2159,6 +2159,62 @@ Only the directories whose contents aren't self-evident:
   `rejectedVariants()` parses §2 `判定: rejected` rows carrying **no epoch at all**. Reopening a
   refuted edge sends that family's `edge:` block back to `proposed`, changing what the loop may
   cite as fact — a judgement to make deliberately, not as a side effect.
+- ⚠⚠⚠ **EVERY BOOK THIS REPO HAS MEASURED IS A 2026 POST, while the LIBRARY is old.** The post's own
+  publication date (`postedAt`, listV2's `addTime`) is the only thing that can say whether a harness
+  window is out-of-sample FOR THE AUTHOR, and it was missing on exactly the books that matter:
+  measured 2026-10-27, 826 of 1239 strategy records carried a real `uniqueKey` and ALL had
+  `postedAt`, while 413 were legacy-keyed (`lk_<sha1(title|author)>`) and only 59 did. The 354
+  undated included every book validated, promoted or OOS-tested.
+  `node utils/postedat-backfill.js --pages 150` filled **310** of them (HTTP only, no backtest
+  minutes; it reuses `postKey`/`legacyKey` from `strategy-discover` and tries BOTH identities,
+  because the targets are stored under the legacy form). Coverage 885 → **1195 of 1239**.
+  ⚠ The library-wide dates are reassuring and the per-book dates are not:
+  | | |
+  |---|---|
+  | library median post date | **2021-03-18** (703 of 1195 pre-2024) |
+  | ETF动量 62c2664f | **2026-01-26** |
+  | 大小盘轮动 2f5bc859 | **2026-03-15** |
+  | 红利低频 93379f98 | **2026-05-05** |
+  | 小市值 0a7de9fa | **2026-05-23** |
+  | 网格 9498d93f | 2025-11-08 |
+  So for the books we SELECTED, TRAIN 2024 and VAL 2025 are inside what their authors could see.
+  A 2026 author publishing a strong 2024–25 backtest has published something that fits 2024–25, so
+  a TRAIN→VAL pass is substantially a check that the author's own backtest reproduces on our台 —
+  not evidence of forward performance. 44 records remain undated (deeper than 150 pages of cate=0).
+  ⚠⚠ **The ETF动量 OOS round split at the FETCH date and its conclusion is REFUTED by the real one.**
+  It declared the split at 2026-05-23 — the `strategies/` filename prefix, which is when WE fetched
+  it — and concluded 「the whole positive total comes from the stretch the author could see」. The
+  real post date is **2026-01-26**, four months earlier. Recomputed from the stored holdout curve:
+  | segment | days | strategy | benchmark | hit |
+  |---|---|---|---|---|
+  | author could see (Jan 1–26) | 16 | **+5.34%** | +1.66% | 56.3% |
+  | CLEAN (Jan 27 →) | 179 | **+1.98%** | **−13.97%** | 51.4% |
+  | └ Jan 27 – May 23 | 74 | **+51.57%** | +2.94% | 62.2% |
+  | └ May 24 → | 105 | **−32.71%** | −16.43% | 43.8% |
+  The author saw 16 days worth +5.34%; the +51.57% is GENUINELY out-of-sample. So this book is not
+  an author-hindsight artifact — it worked for ~4 clean months and then broke in late May, and over
+  the whole clean stretch it still beat a falling benchmark by ~16pp. **Never split on the filename
+  prefix**; it is the fetch date, and the two differ by months.
+  ⚠ Match books to records by POST TITLE, never by `postId`/`backtestId` (re-minted) and never by
+  the filename hash (the `copied` map's `sourceFile` hash and the on-disk name disagree). A title
+  edited after posting does not match — that is why 五福闹新春's book is still undated.
+- ⚠⚠ **An UNREADABLE backtest budget FAILS OPEN in two places.** `node utils/jq-budget.js` prints
+  `used= free=` and exits 2 on any failure, and both consumers treat that as "no ceiling known" and
+  proceed: `daily-pipeline.js:901` gates on `p.budget.ok && p.budget.used >= ceiling`, so an
+  unreadable budget SKIPS the budget-spent check, and `strategy-post-backtest.js:583` gates on
+  `u && u.used != null && u.used >= limit`, so it starts the run. That is the opposite of the
+  「unknown blocks」 rule the VAL budget and realizability both follow.
+  Observed 2026-10-27 twice as a transient (a retry seconds later succeeded), and 2026-10-29 as a
+  persistent failure. ⚠ Root cause the second time was NOT the tunnel: `/json/version` and
+  `/json/list` answered and `cdp-tunnel.sh status` read OK, but a Playwright `connectOverCDP`
+  handshake TIMED OUT — so `jq-budget` found no usable page and bailed, and `jq-http` fell back to
+  direct HTTP and threw `GeoBlockedError`. Cycling the tunnel did not fix it; the remote Chrome
+  itself is wedged. ⚠ Do NOT "fix" it by closing Chrome (invalidates the session) or by closing
+  pages (`jq-budget`: 「NEVER close pages (destroys the CDP cookie context)」).
+  ⚠ The exposure is narrower than it looks: a wedged CDP also stops backtests STARTING, so the
+  dangerous window is 「budget read flaky while CDP is healthy」 — which is precisely the transient
+  seen twice on 2026-10-27. A fix should RETRY and then BLOCK, not simply fail closed, or a
+  one-second blip would stall a whole day.
 - ⚠⚠ **`--seed-deferred` ignored NEWEST-ROW-WINS and re-billed a finished backtest.** The ledger is
   append-only, so one file holds several rows and only the LAST is authoritative. The seeder walked
   every row and parked any file carrying a `slow-skipped` one, keeping the **FIRST** seen — the
