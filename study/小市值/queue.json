@@ -443,7 +443,7 @@
     "id": "q-e9-bench-lastprice",
     "kind": "understand",
     "rank": 27,
-    "status": "queued",
+    "status": "answered",
     "title": "台面语义：日频台上 get_current_data()[s].last_price 是否等于当日收盘价",
     "hypothesis": "harness 的 costs.frequency 是 \"daily\"（已核 harness/config/epoch-9.json），JQ 日频回测里 run_daily 的时间串只决定当日内的执行顺序，所有 handler 共享同一根日 bar。预注册证伪：若 9:00 / 10:30 / 14:00 三个时点记录到的 last_price 彼此不同，或任一时点不等于该股当日 close ⇒ 语义干净，本条关闭，2.6282 不因此被质疑。若三者相同且等于当日 close ⇒ 2.6282 不是一个结果，必须按前视重读，且该结论外推到全库所有盘中调用 get_current_data 的成员。",
     "why": "这是本轮唯一能一次性作废其余全部条目的测量，故紧随 liq。本书把 get_current_data().last_price 用在四处决策上：L376 顶背离清仓时「未涨停才清」、L742 now_high_limit 决定调仓日保留谁、L309 current_price >= avg_cost*1.4 止盈、L318 跌破 7% 止损；check_limit_up 还用 get_price(end_date=context.current_dt) 取「当前价」与涨停价比。若这些读到的是当日收盘，那么「涨停就留着」「跌 7% 就走」都是用当天答案做当天决定。§4 已把「买一档数据在日频台上的语义」列为 open gap；CLAUDE.md 只测过 get_extras(is_st) 与无日期 get_fundamentals 两条，本条从未测。",
@@ -459,7 +459,8 @@
     "edgeRefNote": "无 edge —— 这是台面语义，不是机制主张。按 understand 判：两个方向都是信息。",
     "control": "CONTROL = the champion's own epoch-9 ledger row: strategies/2026-10-26_中小盘趋势策略_年化_85-0a7de9fa.py, objective 2.6282 / sharpe 7.07 / annual 276.82 / maxDD 14.00, 365 days, curve on disk. No separate re-measure of the control is queued (orchestrator ruling 1): every builder uses the same exported py2to3 + OVERRIDE path the normalizer used, so a one-edit variant is directly comparable to 2.6282, and rank 26's inert case doubles as the build-path reproduction check.",
     "secondaryRead": "PRE-REGISTERED FREE SECONDARY READ (on every entry, orchestrator ruling 3) — recompute the\nvariant's objective EXCLUDING December 2024 from its stored curve, and compare with the control's\nJan-Nov figure. CONTROL, recomputed by the gatekeeper from\ndata/series/2026-10-26_中小盘趋势策略_年化_85-0a7de9fa__train__e9.json:\n  full 2024  total 276.82 | annual 276.82 | maxDD 14.01 | objective 2.6281  (reproduces ledger 2.6282)\n  Jan-Nov    total 159.71 | annual 182.88 (365/335) | maxDD 14.01 | objective 1.6888\n  December alone +45.09% in 22 trading days = 28.1% of the year's LOG-growth.\n! The orchestrator's \"~45% of the year\" is the simple-return figure; the log-growth share is 28.1%,\n  and log-growth is the convention CLAUDE.md uses (the 62%-in-2022 precedent). Quote 28.1%.\n! maxDD is 14.01 in BOTH slices — the year's drawdown is NOT in December, so the Jan-Nov read moves\n  return only, never risk.\n!! Annualize over the SLICE'S CALENDAR SPAN (365 full / 335 Jan-Nov), never over the curve's own\n  trading-day count, and compute BOTH sides with the one formula. Self-annualizing each side\n  reported annual 298.05 / objective 2.8405 for a row the ledger stores as 2.6282.\nThis is a ROBUSTNESS FALSIFIER, never the adoption metric. Adoption is always the full-2024 number.",
-    "targetStale": "TARGET SUPERSEDED (gatekeeper, 2026-10-30): written against 0a7de9fa, which is no longer the family champion — bestVariant is now 02fdafaa (objective 3.0172 / sharpe 8.22 / maxDD 18.63, epoch 9). The QUESTION is still live; the TARGET and every control figure quoted here are not. Retarget before spending minutes, and do NOT dispatch this as written. NOTE for whoever retargets it: 02fdafaa DOES read intraday prices for decisions (get_current_data()[s].last_price / high_limit at L297 and L449; history(1, unit='1m') at L346/L356/L375), so the bench-semantics question transfers to the new champion intact, and its free STEP 0 (read the stored run's own log) is unchanged in kind."
+    "targetStale": "TARGET SUPERSEDED (gatekeeper, 2026-10-30): written against 0a7de9fa, which is no longer the family champion — bestVariant is now 02fdafaa (objective 3.0172 / sharpe 8.22 / maxDD 18.63, epoch 9). The QUESTION is still live; the TARGET and every control figure quoted here are not. Retarget before spending minutes, and do NOT dispatch this as written. NOTE for whoever retargets it: 02fdafaa DOES read intraday prices for decisions (get_current_data()[s].last_price / high_limit at L297 and L449; history(1, unit='1m') at L346/L356/L375), so the bench-semantics question transfers to the new champion intact, and its free STEP 0 (read the stored run's own log) is unchanged in kind.",
+    "result": "**日频台（epoch 9 `costs.frequency: \"daily\"`）上 `get_current_data()[s].last_price` 返回的是盘中当前价、不是当日收盘价 —— 预注册第一支触发，且两个半边都触发。** **先说 CONTROL：探针就是探针。** objective **3.0172** / sharpe **8.22** / annual **320.35** / maxDD **18.63** 与 02fdafaa 的 epoch-9 台账行**四项全同**； recorder 另从探针自身存盘曲线独立复算（242 点，2024-01-02..2024"
   },
   {
     "id": "q-e9-champ-emptymonth",
@@ -695,5 +696,21 @@
       "study/小市值/variants/02fdafaa-liq-1.py",
       "data/series/study_小市值_variants_02fdafaa-liq-1__train__e9.json"
     ]
+  },
+  {
+    "id": "q-e9-bench-dayopen-prepos",
+    "kind": "understand",
+    "title": "全库：哪些成员在 09:30 之前排程的 handler 里读 day_open / open，且其中有没有一本用它作决定",
+    "hypothesis": "q-e9-bench-lastprice 顺带测到：`day_open` 在 **09:05**（开盘前 25 分钟）就已被填好，202 / 202 次等于该日最终的 `day_open`，且在 (日, 代码) 内 0 / 228 次变动。这与 `last_price` 不同类 —— `last_price` 在盘前正确地给昨收（202/202），`day_open` 给的是**当日还没发生的开盘价**。⚠ **不主张任何成员受影响**：本仓已为一条猜测型规则付过代价（一次性永久丢掉 549 本里的 287 本）。待答的是事实本身：全库有哪些 `.py` 在 `run_daily(..., '09:00'..'09:29')` 或 `run_weekly` 的同段时点里读 `day_open` / `['open']`，以及其中**有没有一本**把那个值喂进条件、排序或下单（读到但只打印、或只在 09:30 之后读，都不算）。预注册：若 0 本用它作决定 ⇒ 这个面在本仓**不存在**，整条关闭；若 ≥ 1 本 ⇒ 按本列出的行号与改动点，逐本给出预期方向，再决定是否值得花分钟。",
+    "why": "**本族不是花这个的地方**：当前 champion 02fdafaa 全文 **0 处** `day_open`，它之所以被记录下来，只是因为预注册字段表写了 `open`。但它是一个**活的、repo 级**的面：`realizability-lint` 的 `call-auction-entry` 已经把 09:15–09:29 的集合竞价入场列为旗标（CLAUDE.md 记它从 2 个命中扩到 20 个），而「盘前 handler 能读到当日开盘价」是比排程时点更直接的证据 —— 读到就是读到，不必推测作者的意图。⚠ 它**不是**本族的 realizability 问题：02fdafaa 的 `realizability: 2` 由 q-e9-champ-liq-02fdafaa 在本书自身 ¥3.33e6/日 下限上实测，与本条无关。",
+    "design": "**零回测成本（grep + 读源码），这是它可以排在最后却仍值得留着的理由**。STEP 1：`grep -n` 全库 strategies/*.py（以及 study/*/variants、enhance/candidates）找 `day_open` / `['open']` / `.open` 的读取点。STEP 2：对每个命中，回头找它所在函数的**排程时点** —— `run_daily` / `run_weekly` / `run_monthly` 的时间串，或 `handle_data`（连续竞价，不在本条范围）。只保留时点 < 09:30 的。⚠ **09:30 本身不算**：那是普通开盘，CLAUDE.md 已记 lint 的窗口刻意停在 09:29，且语料库里 20 个 09:26–09:30 的排程有 12 个正好压在 09:30。STEP 3：对筛下来的每一本，读控制流，判断那个值是否进入条件 / 排序 / 下单。**逐本给出文件:行号**，不给总数了事。! 不改任何文件，不跑任何回测，产出是一张表；若表为空就把本条关掉并写明 grep 的具体模式（否则下一轮无从复核）。! 一条已知的反例教训（CLAUDE.md）：`limit-up-entry` 旗标被**删除**正因为「买涨停」与「剔涨停」都读 `high_limit` 的等式，差别藏在正则看不见的控制流里。本条必须读控制流，不能以 grep 计数结案。",
+    "from": [
+      "q-e9-bench-lastprice"
+    ],
+    "edgeRef": null,
+    "rank": 28,
+    "status": "queued",
+    "note": "spawned by q-e9-bench-lastprice（2026-10-30）。⚠ 排 28（低于 26.5 q-e9-champ-liq-2 与 27 本身）：面是真的，但本族是错误的花钱地点，且本条零回测成本，不占预算。",
+    "result": null
   }
 ]
