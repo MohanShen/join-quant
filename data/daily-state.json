@@ -1,46 +1,21 @@
 {
-  "inFlight": null,
+  "inFlight": {
+    "stage": "research",
+    "target": "打板短线",
+    "budget": 0,
+    "at": "2026-10-30T18:00:36.614Z"
+  },
   "lastRun": {
-    "stage": "normalize",
+    "stage": "assign",
     "target": null,
-    "budget": 138,
-    "at": "2026-10-30T00:30:19.721Z",
+    "budget": 175,
+    "at": "2026-10-30T10:46:47.584Z",
     "outcome": "ran",
-    "note": "0 retry(--redo) + 20 fresh, 0 newly deferred at 45min",
+    "note": "family assignment over 2 pending",
     "minutesUsed": null,
-    "endedAt": "2026-10-30T01:36:58.043Z"
+    "endedAt": "2026-10-30T10:47:17.145Z"
   },
   "runs": [
-    {
-      "stage": "normalize",
-      "target": null,
-      "budget": 0,
-      "at": "2026-10-15T18:02:01.919Z",
-      "outcome": "ran",
-      "note": "18 queued, 0 deferred at 45min",
-      "minutesUsed": null,
-      "endedAt": "2026-10-15T18:02:01.985Z"
-    },
-    {
-      "stage": "normalize",
-      "target": null,
-      "budget": 0,
-      "at": "2026-10-15T18:02:04.997Z",
-      "outcome": "ran",
-      "note": "16 queued, 0 deferred at 45min",
-      "minutesUsed": null,
-      "endedAt": "2026-10-15T18:02:05.063Z"
-    },
-    {
-      "stage": "discover",
-      "target": null,
-      "budget": 0,
-      "at": "2026-10-15T18:02:10.905Z",
-      "outcome": "error",
-      "note": "discover + fetch",
-      "minutesUsed": null,
-      "endedAt": "2026-10-15T22:17:11.147Z"
-    },
     {
       "stage": "assign",
       "target": null,
@@ -1210,6 +1185,36 @@
       "note": "0 retry(--redo) + 20 fresh, 0 newly deferred at 45min",
       "minutesUsed": null,
       "endedAt": "2026-10-30T01:36:58.043Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 175,
+      "at": "2026-10-30T10:39:26.345Z",
+      "outcome": "ran",
+      "note": "family assignment over 19 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-30T10:44:26.601Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 175,
+      "at": "2026-10-30T10:45:13.300Z",
+      "outcome": "ran",
+      "note": "family assignment over 2 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-30T10:45:56.197Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 175,
+      "at": "2026-10-30T10:46:47.584Z",
+      "outcome": "ran",
+      "note": "family assignment over 2 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-30T10:47:17.145Z"
     }
   ]
 }
