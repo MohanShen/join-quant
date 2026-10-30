@@ -1268,6 +1268,40 @@ Only the directories whose contents aren't self-evident:
   strategies using the `get_extras` ST form and the 130 undated fundamentals calls are clean.
   The 七星高照 NAV-premium lookahead claim is moot: study q-4 measured that filter as exactly
   inert. Still open: LOF/QDII NAV publication lag for the discount families.
+- ✅ **A THIRD lookahead claim tested and NOT reproduced: on a `frequency: "daily"` bench,
+  `get_current_data()[s].last_price` is the LIVE intraday price, not the day's close**
+  (`study/小市值/variants/02fdafaa-benchsem.py`, finding `q-e9-bench-lastprice`, 2026-10-30).
+  This mattered because the bench simulates on daily *bars*, so 「涨停就留着」 and 「跌 7% 就走」
+  scheduled intraday looked like they might be deciding with the day's answer in hand — which
+  would have forced a re-read of **every** library member calling `get_current_data` intraday.
+  Measured over 242 days × 4 handlers (09:05 / 10:00 / 14:25 / 14:55, 968 log lines, 0 failures):
+  timepoints differ on **181 of 182** same-code days, `last != close(D)` on **198 of 204**
+  (day, code) pairs, and — the stronger evidence — `last_price` **converges monotonically** on the
+  close as the clock advances (2.8 → 9.0 → 21.7 → 39.1% equal to the close; median deviation
+  2.28 → 1.11 → 0.42 → 0.20%), which is arithmetically impossible if the field *were* the close.
+  At **09:05, before the open, it is yesterday's close in 202 of 202** — the correct pre-open
+  answer. So the bench runs daily bars for simulation but serves `get_current_data()` from real
+  intraday data: a `run_daily('HH:MM')` handler sees the price as of that clock time.
+  ⚠ The claim is scoped to **this API**. `history(1, unit='1m')` is a different call and is
+  **untested**; reopening this needs a named different API, not a re-run of the same one.
+  ⚠ **Corroboration that `avoid_future_data` binds**, from the same probe:
+  `get_price(s, end_date=context.current_dt, frequency='daily', count=1)` returned a number in
+  **0 of 809** readings against **809 of 809** for `end_date=context.previous_date` — the bench
+  refuses the same-day daily bar outright.
+  ⚠⚠ **A SEPARATE surface found by the same probe and still open**: `day_open` is already
+  populated at **09:05, 25 minutes before the open, in 202 of 202** readings, equal to that day's
+  final value (0 of 228 vary intraday). The book measured does not use it (0 occurrences), and
+  **no member is claimed affected** — which members read `day_open`/`open` in a pre-09:30 handler
+  is free grep-and-read work, queued as `q-e9-bench-dayopen-prepos`. The repo has already paid for
+  one guess-based rule that permanently discarded 287 of 549 strategies.
+  ⚠ Also reported, and **not** a lookahead finding: **39.1% of 14:55 readings equal the close
+  exactly** (median deviation 0.20%), so a 14:55 decision is a *near-close* decision. 14:55 is a
+  genuinely tradeable moment — this is latency/realism, and it must not drift into a
+  realizability claim.
+  ⚠ **The control is what licenses all of the above.** The probe reproduced its book's epoch-9
+  ledger row on all four metrics (3.0172 / 8.22 / 320.35 / 18.63), so the logged prices are the
+  book's real ones. A probe whose whole output is log lines needs that check: absent `BENCHSEM`
+  lines would read as "the prices agreed" rather than as instrumentation failure.
 - ⚠ **The backtest log IS retrievable — the old note here was wrong.** `/algorithm/backtest/log`
   returns 400/empty only in its BARE form; with parameters it returns the full 日志 tab:
   `/algorithm/backtest/log?backtestId=X&offset=0&limit=2000&ajax=1` → `{data:{state,logArr[]}}`
@@ -1928,7 +1962,11 @@ Only the directories whose contents aren't self-evident:
   `max: false`), and `utils/backtest-log.js` fetches a single page — so on a chatty strategy it
   reads only the first few weeks (打板短线's u-e9-rzq: 2024-01-02..02-23 of an 886-line year).
   Page by `offset` in steps of 100 until a short page to read a whole run. Found 2026-10-27; the
-  tool is unmodified.
+  tool is **still unmodified**.
+  ⚠ It bit again on 2026-10-30, where the runs needed **70 and 18** pages (6831 and 1616 lines) —
+  so this is the normal case on a logging strategy, not an edge one. A working pager exists at
+  `study/小市值/pagelog.js`; it is a study-local script and **promoting it to `utils/` is an open
+  suggestion**, recorded in that family's §4. Do not write a third copy.
 - ⚠ **A run JQ refuses to cancel at the slow-skip cap (「在此状态不能取消」) is not necessarily lost.**
   打板短线's jy-u-2 hit the 50-min cap, five cancel attempts failed, the executor reported
   `slow-skipped` — and the run completed server-side two minutes later. The algorithm's buildList
