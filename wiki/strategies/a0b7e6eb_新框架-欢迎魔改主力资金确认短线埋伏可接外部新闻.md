@@ -2,6 +2,7 @@
 postId: a0b7e6ebf82aa3446c23ade7e896ef8e
 title: 新框架-欢迎魔改主力资金确认短线埋伏可接外部新闻聚合AI分析
 sourceFile: strategies/2026-10-29_新框架-欢迎魔改主力资金确认短线埋伏可接外部新闻聚合AI分析-a0b7e6eb.py
+family: 其他
 concepts: [小市值因子, 打板与涨停, 动量与趋势]
 factors:
   选股: [规模价值·小市值, 动量]

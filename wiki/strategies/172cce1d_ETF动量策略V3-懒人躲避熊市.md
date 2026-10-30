@@ -2,6 +2,7 @@
 postId: 172cce1d195f92113d0ea7da087d92af
 title: ETF动量策略V3-懒人躲避熊市
 sourceFile: strategies/2026-10-30_ETF动量策略V3-懒人躲避熊市-172cce1d.py
+family: 其他
 concepts: [ETF轮动, 动量与趋势]
 factors:
   选股: [ETF动量, 动量]

@@ -2,6 +2,7 @@
 postId: 02fdafaa268f95d5c3deaaf22af790da
 title: 今天多个策略告警，这是什么意思，怎么解决？
 sourceFile: strategies/2026-10-30_今天多个策略告警_这是什么意思_怎么解决-02fdafaa.py
+family: 小市值
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/57271
 concepts: [小市值因子]
 factors:
