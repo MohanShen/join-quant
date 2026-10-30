@@ -70,5 +70,21 @@
     "lastCapMin": 45,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-10-30T00:28:56.888Z"
+  },
+  "strategies/2026-10-31_量比于同花顺显示不相同-e5dfc906.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-30T20:56:14.938Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-30T20:56:14.938Z"
+  },
+  "strategies/2026-10-31_进程占用内存过大_3_1_GB_被强制杀掉-b7e45c0b.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-30T21:41:54.672Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-30T21:41:54.672Z"
   }
 }

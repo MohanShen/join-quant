@@ -130,3 +130,10 @@
 2026-10-30T01:26:16.557Z	strategies/2026-10-30_pytorch_cnn_seq_deep_learning-e903174f.py	FileNotFoundError: [Errno 2] No such file or directory: 'a.pt'
 2026-10-30T01:28:29.633Z	strategies/2026-10-30_关于get_fundamentals函数的一个问题-68761197.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:00:00
 2026-10-30T01:30:41.558Z	strategies/2026-10-30_本地库函数调用问题-142b8551.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时, get_money_flow只能在盘后15:00之后才能获取标的的资金流数据，current_dt= 2024-01-02 09:00:00
+2026-10-30T19:43:43.813Z	strategies/2026-10-31_聚宽_KD_MACD_策略都是只操作一只股票_有那位高人指点下_多股票循环操作是什么代码啊-127bc588.py	TypeError: '&gt;' not supported between instances of 'dict' and 'dict'
+2026-10-30T19:44:26.993Z	strategies/2026-10-31_ETF网格交易问题-ac484665.py	SyntaxError: unexpected character after line continuation character
+2026-10-30T19:46:16.791Z	strategies/2026-10-31_怎样把监控单只股票改成同时监控多只股票的呢-088da3a5.py	SyntaxError: invalid syntax
+2026-10-30T19:47:01.138Z	strategies/2026-10-31_模拟交易问题_日志提示交易_但持仓中没有-f932f4c2.py	jqdata.exceptions.ParamsError: 概念板块 'GN028' 不存在
+2026-10-30T20:38:02.303Z	strategies/2026-10-31_求大神实现MACD顶背离_用来逃顶-b79ba7d8.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 tradestat
+2026-10-30T20:52:03.432Z	strategies/2026-10-31_关于talib的macd函数_计算周期中_碰到股票停牌时_计算出来的macd值和股票软件不一致的问题-967ffec4.py	AttributeError: module 'pandas' has no attribute 'ewma'
+2026-10-30T20:56:08.560Z	strategies/2026-10-31_为什么我的策略模拟盘和回测收益差这么多-b9649673.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'money', 'volume', 'low', 'high', 'close', 'open_interest'}字段数据, current_dt=2024-01-02 09:30:00, end_date=2024-01-02 09:30:00

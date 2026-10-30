@@ -472,3 +472,24 @@ strategies/2026-10-30_pytorch_cnn_seq_deep_learning-e903174f.py	e903174f00a8b78a
 strategies/2026-10-30_关于get_fundamentals函数的一个问题-68761197.py	687611976c16db1d82d26a6402f1a113	关于get_fundamentals函数的一个问题	compile-error										9
 strategies/2026-10-30_本地库函数调用问题-142b8551.py	142b8551cdd934ebfe5ab34a9d58aee2	本地库函数调用问题	compile-error										9
 strategies/2026-10-30_发现了选择股票代码的一个奇葩坑_不知道多少回测被影响-d695b821.py	d695b8217c3d24c254d1fc40827e4819	发现了选择股票代码的一个奇葩坑，不知道多少回测被影响？	normalized	2024-01-01	2024-12-31	365	30.27	30.27	0.52	45.08	-0.1481	fail	9
+strategies/2026-10-31_聚宽_KD_MACD_策略都是只操作一只股票_有那位高人指点下_多股票循环操作是什么代码啊-127bc588.py	127bc5881e992bbd75540b07c8560a70	聚宽 KD MACD  策略都是只操作一只股票，有那位高人指点下，多股票循环操作是什么代码啊？	compile-error										9
+strategies/2026-10-31_ETF网格交易问题-ac484665.py	ac484665afa9ec23a9d2695bdebfb7f1	ETF网格交易问题	compile-error										9
+strategies/2026-10-31_求教_求问大神们哪里有错误-cb3edbf2.py	cb3edbf2888adcc6393d4c2796533ffc	求教！求问大神们哪里有错误？	incompatible-futures										9
+strategies/2026-10-31_科技抱团瓦解了吗-f25ac3c6.py	f25ac3c62b9cbf06884daa0e1ddeac8f	科技抱团瓦解了吗	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-10-31_怎样把监控单只股票改成同时监控多只股票的呢-088da3a5.py	088da3a5fa6f6ae923e3e32df4310a56	怎样把监控单只股票改成同时监控多只股票的呢？	compile-error										9
+strategies/2026-10-31_求助_最近在学习研究期货的策略编写_系统自带的期货标准策略运行回测结果中无交易_不知道哪里出问题了-f3daf01b.py	f3daf01b2d024426045c1283d6dd851a	求助！最近在学习研究期货的策略编写，系统自带的期货标准策略运行回测结果中无交易，不知道哪里出问题了？	incompatible-futures										9
+strategies/2026-10-31_模拟交易问题_日志提示交易_但持仓中没有-f932f4c2.py	f932f4c28d81d93384fe6985f99bd60b	模拟交易问题，日志提示交易，但持仓中没有	compile-error										9
+strategies/2026-10-31_麻烦增加同一标的卖出N天内不再买入的代码-40da3d49.py	40da3d49a41d8eeb80486f24603c5669	麻烦增加同一标的卖出N天内不再买入的代码	normalized	2024-01-01	2024-12-31	365	9.90	9.90	0.13	45.52	-0.3562	fail	9
+strategies/2026-10-31_聚宽的回测问题到底多久才好啊-f9332900.py	f9332900f2ac0fce1d9f1118448f0d07	聚宽的回测问题到底多久才好啊	normalized	2024-01-01	2024-12-31	365	-8.19	-8.19	-0.28	32.47	-0.4066	fail	9
+strategies/2026-10-31_牛年春节-策略比赛_在给定的股票池里程序化操作增强收益-17412c3c.py	17412c3ce1cd0c6d8bcda3b8ee86e65a	【牛年春节-策略比赛】在给定的股票池里程序化操作增强收益	normalized	2024-01-01	2024-12-31	365	0.50	0.50	-0.26	8.81	-0.0831	fail	9
+strategies/2026-10-31_量比于同花顺显示不相同-e5dfc906.py	e5dfc9065253d3fda14854b6358f2c41	量比于同花顺显示不相同	slow-skipped										9
+strategies/2026-10-31_为什么在程序里面设置了过滤涨停股_回测时却还是买到了涨停股-319acd07.py	319acd07cebeed34aa61aead213186f4	为什么在程序里面设置了过滤涨停股，回测时却还是买到了涨停股？	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-10-31_ETF手续费怎么设置最低0_1元和免印花税-e9cab1df.py	e9cab1df1b8013b268a67937a77e9551	ETF手续费怎么设置最低0.1元和免印花税	normalized	2024-01-01	2024-12-31	365	14.42	14.42	1.37	4.72	0.097	pass	9
+strategies/2026-10-31_求大神实现MACD顶背离_用来逃顶-b79ba7d8.py	b79ba7d8be77bcc1a8c5cfff93b53e57	求大神实现MACD顶背离，用来逃顶	compile-error										9
+strategies/2026-10-31_进程占用内存过大_3_1_GB_被强制杀掉-b7e45c0b.py	b7e45c0b998413c9b1337be4a6ed265d	进程占用内存过大(3.1 GB), 被强制杀掉.	failed										9
+strategies/2026-10-31_关于talib的macd函数_计算周期中_碰到股票停牌时_计算出来的macd值和股票软件不一致的问题-967ffec4.py	967ffec417fcba2d7a94c70f6d34396a	关于talib的macd函数，计算周期中，碰到股票停牌时，计算出来的macd值和股票软件不一致的问题	compile-error										9
+strategies/2026-10-31_我就不信了_还有策略比我这个收益高-327edbb1.py	327edbb1c921cb288c7435af4b4742b4	我就不信了，还有策略比我这个收益高！	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-10-31_为什么这个二八轮动策略收益率是0-557d5149.py	557d5149494bfcf356177085fa35327b	为什么这个二八轮动策略收益率是0%	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-10-31_哪位大神能帮忙修改一下策略啊-79dcc61c.py	79dcc61c03d8063dfdc3b8193b073cfa	哪位大神能帮忙修改一下策略啊	normalized	2024-01-01	2024-12-31	365	8.56	8.56	0.12	42.30	-0.3374	fail	9
+strategies/2026-10-31_为什么我的策略模拟盘和回测收益差这么多-b9649673.py	b96496732911430d04868a3e7ef80f8d	为什么我的策略模拟盘和回测收益差这么多	compile-error										9
+strategies/2026-10-31_进程占用内存过大_3_1_GB_被强制杀掉-b7e45c0b.py	b7e45c0b998413c9b1337be4a6ed265d	进程占用内存过大(3.1 GB), 被强制杀掉.	slow-skipped										9
