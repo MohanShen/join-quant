@@ -1,321 +1,323 @@
 {
-  "fetchedAt": "2026-10-28T19:46:55.823Z",
+  "fetchedAt": "2026-10-30T00:30:12.752Z",
   "entries": [
     {
-      "postId": "f0479fc28c72cfc7d6d214e3bc8e6346",
-      "backtestId": "691d322fbfe08f530025bc2c18da9907",
-      "title": "也谈技术指标布林通道的策略",
-      "url": "https://www.joinquant.com/view/community/detail/f0479fc28c72cfc7d6d214e3bc8e6346",
+      "postId": "e1053979bd68950e6e09252bbb563f1e",
+      "backtestId": "3f34731dfab1a20b9420c0030036b7e4",
+      "title": "年化68.63%，回撤16.82连板策略",
+      "url": "https://www.joinquant.com/view/community/detail/e1053979bd68950e6e09252bbb563f1e",
+      "sourceFile": "2026-10-30_年化68_63_回撤16_82连板策略-e1053979.py",
       "stats": {
-        "annualReturn": 0.3781335925244,
-        "cumulativeReturn": 0.4322086,
-        "maxDrawdown": 0.1485574,
-        "sharpe": 1.3100013172201,
-        "winRatio": 1,
-        "tradingDays": 280,
-        "periodLabel": "2019-02"
+        "annualReturn": 0.68633211362447,
+        "cumulativeReturn": 3.579924703,
+        "maxDrawdown": 0.16821865698843,
+        "sharpe": 2.3124554727949,
+        "winRatio": 0.42204301075269,
+        "tradingDays": 728,
+        "periodLabel": "2022-12"
       }
     },
     {
-      "postId": "346bc18177a5ccde409d82bb9a09e500",
-      "backtestId": "224e8f4ac4633de8b46336f5e443a7c2",
-      "title": "一个没劲的波动策略",
-      "url": "https://www.joinquant.com/view/community/detail/346bc18177a5ccde409d82bb9a09e500",
-      "sourceFile": "2026-10-29_一个没劲的波动策略-346bc181.py",
+      "postId": "172cce1d195f92113d0ea7da087d92af",
+      "backtestId": "72123a8d4bdf0db9540bcd063157630a",
+      "title": "ETF动量策略V3-懒人躲避熊市",
+      "url": "https://www.joinquant.com/view/community/detail/172cce1d195f92113d0ea7da087d92af",
+      "sourceFile": "2026-10-30_ETF动量策略V3-懒人躲避熊市-172cce1d.py",
       "stats": {
-        "annualReturn": 0.56088695562372,
-        "cumulativeReturn": 57.6392693,
-        "maxDrawdown": 0.29987746636808,
-        "sharpe": 2.0106725279397,
-        "winRatio": null,
-        "tradingDays": 2286,
-        "periodLabel": "2016-05"
-      }
-    },
-    {
-      "postId": "da27a120dec839d6e519020a2bb5c487",
-      "backtestId": "2d738b50b10c81580f27b1bc862a4618",
-      "title": "能够在2018年获得10%+年化的择时策略，了解一下？",
-      "url": "https://www.joinquant.com/view/community/detail/da27a120dec839d6e519020a2bb5c487",
-      "sourceFile": "2026-10-29_能够在2018年获得10_年化的择时策略_了解一下-da27a120.py",
-      "stats": {
-        "annualReturn": 0.20883790193422,
-        "cumulativeReturn": 2.10621546,
-        "maxDrawdown": 0.2257525330235,
-        "sharpe": 0.69303575418307,
-        "winRatio": 0.63636363636364,
-        "tradingDays": 1494,
-        "periodLabel": "2019-02"
-      }
-    },
-    {
-      "postId": "0074e69664af0a56455ed171557d2cbf",
-      "backtestId": "40651841bdad89578e618c102f4c6750",
-      "title": "上市公司发布股价波动风险提示性公告的买入策略",
-      "url": "https://www.joinquant.com/view/community/detail/0074e69664af0a56455ed171557d2cbf",
-      "sourceFile": "2026-10-29_上市公司发布股价波动风险提示性公告的买入策略-0074e696.py",
-      "stats": {
-        "annualReturn": 1.2019708257566,
-        "cumulativeReturn": 0.4332504,
-        "maxDrawdown": 0.073900280032255,
-        "sharpe": 4.9578506497721,
-        "winRatio": 0.75,
-        "tradingDays": 114,
-        "periodLabel": "2019-02"
-      }
-    },
-    {
-      "postId": "c2ef5ea72d478dc5b85ad0c8b904b411",
-      "backtestId": "71965ee6fd90ce4b213a58d9edc27f8e",
-      "title": "新思路！天天向上策略！2026年收益非常可观，欢迎大家优化！",
-      "url": "https://www.joinquant.com/view/community/detail/c2ef5ea72d478dc5b85ad0c8b904b411",
-      "sourceFile": "2026-10-29_新思路_天天向上策略_2026年收益非常可观_欢迎大家优化-c2ef5ea7.py",
-      "stats": {
-        "annualReturn": 5.5077011185555,
-        "cumulativeReturn": 2.4167130368,
-        "maxDrawdown": 0.20590352266942,
-        "sharpe": 8.7031620726011,
-        "winRatio": 0.5,
-        "tradingDays": 164,
-        "periodLabel": "2026-09"
-      }
-    },
-    {
-      "postId": "6f8beaed4fc192695989163e9e8ce26a",
-      "backtestId": "028c3af3d0345a0898350ddebc8f2aec",
-      "title": "小资金趋势量化策略，回测感觉还可以，欢迎大家指正",
-      "url": "https://www.joinquant.com/view/community/detail/6f8beaed4fc192695989163e9e8ce26a",
-      "sourceFile": "2026-10-29_小资金趋势量化策略_回测感觉还可以_欢迎大家指正-6f8beaed.py",
-      "stats": {
-        "annualReturn": 1.0304710083817,
-        "cumulativeReturn": 9.9566341375,
-        "maxDrawdown": 0.30133848224409,
-        "sharpe": 4.5830345585326,
-        "winRatio": 0.60957446808511,
-        "tradingDays": 845,
-        "periodLabel": "2026-07"
-      }
-    },
-    {
-      "postId": "a0b7e6ebf82aa3446c23ade7e896ef8e",
-      "backtestId": "0199ef76b781357d889b21c6d912a1cb",
-      "title": "新框架-欢迎魔改主力资金确认短线埋伏可接外部新闻聚合AI分析",
-      "url": "https://www.joinquant.com/view/community/detail/a0b7e6ebf82aa3446c23ade7e896ef8e",
-      "sourceFile": "2026-10-29_新框架-欢迎魔改主力资金确认短线埋伏可接外部新闻聚合AI分析-a0b7e6eb.py",
-      "stats": {
-        "annualReturn": 1.2713055203704,
-        "cumulativeReturn": 0.0573693999,
-        "maxDrawdown": 0.031343129750714,
-        "sharpe": 5.6047841833953,
-        "winRatio": 0.52,
-        "tradingDays": 17,
-        "periodLabel": "2026-01"
-      }
-    },
-    {
-      "postId": "e999b7ed7ce5435e26959b98004ee053",
-      "backtestId": "1c265681acbfa2f38330259432212519",
-      "title": "为什么几个最强的多因子小市值跑出来是一坨屎啊",
-      "url": "https://www.joinquant.com/view/community/detail/e999b7ed7ce5435e26959b98004ee053",
-      "sourceFile": "2026-10-29_为什么几个最强的多因子小市值跑出来是一坨屎啊-e999b7ed.py",
-      "stats": {
-        "annualReturn": 0.29698047571352,
-        "cumulativeReturn": 1.334334073,
-        "maxDrawdown": 0.42631212790436,
-        "sharpe": 0.76779218685729,
-        "winRatio": 0.6,
-        "tradingDays": 815,
-        "periodLabel": "2026-05"
-      }
-    },
-    {
-      "postId": "e560c5030cf6f4a756a51ba180854302",
-      "backtestId": "8af3d0c10aa349fa2a5307cfafd68922",
-      "title": "稳扎稳打的rsrs",
-      "url": "https://www.joinquant.com/view/community/detail/e560c5030cf6f4a756a51ba180854302",
-      "sourceFile": "2026-10-29_稳扎稳打的rsrs-e560c503.py",
-      "stats": {
-        "annualReturn": 0.13649428785312,
-        "cumulativeReturn": 0.131850599,
-        "maxDrawdown": 0.043210178927406,
-        "sharpe": 1.1579695902615,
-        "winRatio": 0.5,
-        "tradingDays": 242,
+        "annualReturn": 0.29949653900299,
+        "cumulativeReturn": 0.764673954,
+        "maxDrawdown": 0.22268962301042,
+        "sharpe": 1.0229335793074,
+        "winRatio": 0.51327433628319,
+        "tradingDays": 542,
         "periodLabel": "2026-04"
       }
     },
     {
-      "postId": "2afa56b0da59956ae2224b369156c108",
-      "backtestId": "932d28210e92174ab22ba879e3637b91",
-      "title": "【简单的多均线择时策略】那个天台排队的孩子，我给你讲个故事",
-      "url": "https://www.joinquant.com/view/community/detail/2afa56b0da59956ae2224b369156c108",
-      "sourceFile": "2026-10-29_简单的多均线择时策略_那个天台排队的孩子_我给你讲个故事-2afa56b0.py",
+      "postId": "c002a8215306b2553b964eed9b5b60fa",
+      "backtestId": "e89acc931655e539e7b2f6b3a2916d7c",
+      "title": "分享一个我实战中高收益回撤还行的策略",
+      "url": "https://www.joinquant.com/view/community/detail/c002a8215306b2553b964eed9b5b60fa",
+      "sourceFile": "2026-10-30_分享一个我实战中高收益回撤还行的策略-c002a821.py",
+      "stats": {
+        "annualReturn": 0.6846963932334,
+        "cumulativeReturn": 189.02369540707,
+        "maxDrawdown": 0.15416468651974,
+        "sharpe": 2.9632827290022,
+        "winRatio": 0.54387568555759,
+        "tradingDays": 2515,
+        "periodLabel": "2026-05"
+      }
+    },
+    {
+      "postId": "db3a73967dc6325bccfaae4eff54cf2c",
+      "backtestId": "51595abfabd264396352178dfa7f6c8f",
+      "title": "突破回踩确认",
+      "url": "https://www.joinquant.com/view/community/detail/db3a73967dc6325bccfaae4eff54cf2c",
+      "sourceFile": "2026-10-30_突破回踩确认-db3a7396.py",
+      "stats": {
+        "annualReturn": 0.42803863200933,
+        "cumulativeReturn": 0.6027865975,
+        "maxDrawdown": 0.21450117290106,
+        "sharpe": 1.1542223553818,
+        "winRatio": 0.43333333333333,
+        "tradingDays": 331,
+        "periodLabel": "2026-05"
+      }
+    },
+    {
+      "postId": "17014a8cb85b0060d571a7873e00cace",
+      "backtestId": "95ba3e6cf6afd9071909d44284c72b5e",
+      "title": "现在模拟交易怎么没法删除？",
+      "url": "https://www.joinquant.com/view/community/detail/17014a8cb85b0060d571a7873e00cace",
+      "sourceFile": "2026-10-30_现在模拟交易怎么没法删除-17014a8c.py",
+      "stats": {
+        "annualReturn": 1.0864488957804,
+        "cumulativeReturn": 1.5938953247,
+        "maxDrawdown": 0.12700460830286,
+        "sharpe": 3.0071332365665,
+        "winRatio": 0.59756097560976,
+        "tradingDays": 324,
+        "periodLabel": "2020-05"
+      }
+    },
+    {
+      "postId": "95e3eec7d4b1b8e7acbedf625bbcb75a",
+      "backtestId": "82ed79cce3d708a7b6ea59af2585a83a",
+      "title": "【心灵鸡汤】我应该向我的策略学习",
+      "url": "https://www.joinquant.com/view/community/detail/95e3eec7d4b1b8e7acbedf625bbcb75a",
+      "sourceFile": "2026-10-30_心灵鸡汤_我应该向我的策略学习-95e3eec7.py",
       "stats": {
         "annualReturn": null,
-        "cumulativeReturn": 0.302005,
-        "maxDrawdown": 0.081170034575055,
-        "sharpe": 1.4302318315024,
+        "cumulativeReturn": -0.0283177,
+        "maxDrawdown": 0.022875114387136,
+        "sharpe": -6.6411020694932,
         "winRatio": null,
-        "tradingDays": 226,
+        "tradingDays": 10,
         "periodLabel": "2016-01"
       }
     },
     {
-      "postId": "5a1809d7c35405f0b277ea9673f55b44",
-      "backtestId": "1da67d32c879903361cc1f0deaf48a0b",
-      "title": "魔法公式选股+黄金分割线止盈及重建仓",
-      "url": "https://www.joinquant.com/view/community/detail/5a1809d7c35405f0b277ea9673f55b44",
-      "sourceFile": "2026-10-29_魔法公式选股_黄金分割线止盈及重建仓-5a1809d7.py",
-      "stats": {
-        "annualReturn": 0.4125134565868,
-        "cumulativeReturn": 30.5301472,
-        "maxDrawdown": 0.35839132162207,
-        "sharpe": 1.4672100679474,
-        "winRatio": null,
-        "tradingDays": 2498,
-        "periodLabel": "2016-04"
-      }
-    },
-    {
-      "postId": "e7b1725d4e91160457644b96094c476c",
-      "backtestId": "f21c4c69f835bbccaeb258e45367b2f0",
-      "title": "把社区基础文档里的羊驼和均线策略合并了一下",
-      "url": "https://www.joinquant.com/view/community/detail/e7b1725d4e91160457644b96094c476c",
-      "sourceFile": "2026-10-29_把社区基础文档里的羊驼和均线策略合并了一下-e7b1725d.py",
+      "postId": "7b325e8915bcf901e94acd8fa8876185",
+      "backtestId": "9ba08e27365b1f52cb07ba067ea26de6",
+      "title": "写了过滤停牌股，但是还会选出停牌股欣泰电器~",
+      "url": "https://www.joinquant.com/view/community/detail/7b325e8915bcf901e94acd8fa8876185",
+      "sourceFile": "2026-10-30_写了过滤停牌股_但是还会选出停牌股欣泰电器-7b325e89.py",
       "stats": {
         "annualReturn": null,
-        "cumulativeReturn": 1.2047698,
-        "maxDrawdown": 0.1917431362155,
-        "sharpe": 3.3931097362275,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
         "winRatio": null,
-        "tradingDays": 1397,
-        "periodLabel": "2015-10"
+        "tradingDays": 3,
+        "periodLabel": "2017-06"
       }
     },
     {
-      "postId": "fda3281f43c98c13402b10759fcec415",
-      "backtestId": "196089a99d1674e65e92b57f8913b3df",
-      "title": "价值投资之大白马",
-      "url": "https://www.joinquant.com/view/community/detail/fda3281f43c98c13402b10759fcec415",
-      "sourceFile": "2026-10-29_价值投资之大白马-fda3281f.py",
+      "postId": "0d022129841ab182fb97c45ffa6eaf8b",
+      "backtestId": "db56b7800517b94ff4cb22a222d42868",
+      "title": "超跌反弹，小盘股实操求教，请大咖指点！",
+      "url": "https://www.joinquant.com/view/community/detail/0d022129841ab182fb97c45ffa6eaf8b",
+      "sourceFile": "2026-10-30_超跌反弹_小盘股实操求教_请大咖指点-0d022129.py",
       "stats": {
-        "annualReturn": 0.36596766752672,
-        "cumulativeReturn": 6.5449075,
-        "maxDrawdown": 0.39623171303437,
-        "sharpe": 1.0493393978271,
-        "winRatio": 0.35490605427975,
-        "tradingDays": 1620,
-        "periodLabel": "2017-08"
+        "annualReturn": 0.80631729576478,
+        "cumulativeReturn": 314.58736044625,
+        "maxDrawdown": 0.41281375827685,
+        "sharpe": 2.6468220588779,
+        "winRatio": 0.62461538461538,
+        "tradingDays": 2433,
+        "periodLabel": "2025-04"
       }
     },
     {
-      "postId": "18a20f8f5089355b34e631ee2b4e9ba5",
-      "backtestId": "28d81f2a36c0e9f2e60a89a10d1467ce",
-      "title": "【策略研发】三进兵策略",
-      "url": "https://www.joinquant.com/view/community/detail/18a20f8f5089355b34e631ee2b4e9ba5",
+      "postId": "4e9060cc541d2969a155cf9746062e09",
+      "backtestId": "4419a7888721275d34b5209b56fb5631",
+      "title": "回测的时候还是有手续费",
+      "url": "https://www.joinquant.com/view/community/detail/4e9060cc541d2969a155cf9746062e09",
+      "sourceFile": "2026-10-30_回测的时候还是有手续费-4e9060cc.py",
       "stats": {
-        "annualReturn": 0.20900930375892,
-        "cumulativeReturn": 0.2117661,
-        "maxDrawdown": 0.092194470923464,
-        "sharpe": 1.1102522322849,
-        "winRatio": 0.41666666666667,
-        "tradingDays": 253,
-        "periodLabel": "2019-01"
+        "annualReturn": 0.074827279773004,
+        "cumulativeReturn": 0.330380345893,
+        "maxDrawdown": 0.12319291557996,
+        "sharpe": 0.32272782239788,
+        "winRatio": 0.59047619047619,
+        "tradingDays": 989,
+        "periodLabel": "2019-07"
       }
     },
     {
-      "postId": "48c30615354b5eb630f34e865c90b21a",
-      "backtestId": "bf7e8f96fcea0a4358eacd16b5c31487",
-      "title": "市销率与毛利率策略，简单实用",
-      "url": "https://www.joinquant.com/view/community/detail/48c30615354b5eb630f34e865c90b21a",
-      "sourceFile": "2026-10-29_市销率与毛利率策略_简单实用-48c30615.py",
+      "postId": "d808e7766c72714586f2ce0f23df1339",
+      "backtestId": "d426b85b9a8375185f410639e28d76f5",
+      "title": "持仓ETF由于发生分红，被模拟盘判定为大幅下跌",
+      "url": "https://www.joinquant.com/view/community/detail/d808e7766c72714586f2ce0f23df1339",
+      "sourceFile": "2026-10-30_持仓ETF由于发生分红_被模拟盘判定为大幅下跌-d808e776.py",
       "stats": {
-        "annualReturn": 0.3287314577886,
-        "cumulativeReturn": 2.9756773,
-        "maxDrawdown": 0.37864994815716,
-        "sharpe": 0.92415638792319,
-        "winRatio": 0.77777777777778,
-        "tradingDays": 1214,
+        "annualReturn": 0.067652153704932,
+        "cumulativeReturn": 0.0965517464,
+        "maxDrawdown": 0.057389713726742,
+        "sharpe": 0.41309789990918,
+        "winRatio": 0.87755102040816,
+        "tradingDays": 352,
+        "periodLabel": "2026-06"
+      }
+    },
+    {
+      "postId": "89643623da402bd0bf1c7ca4dce6072a",
+      "backtestId": "00a084b51690ed6f4cdff0f842f31014",
+      "title": "模拟和回测的取数不同？",
+      "url": "https://www.joinquant.com/view/community/detail/89643623da402bd0bf1c7ca4dce6072a",
+      "sourceFile": "2026-10-30_模拟和回测的取数不同-89643623.py",
+      "stats": {
+        "annualReturn": 819.95168316487,
+        "cumulativeReturn": 0.02720534461,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": 1,
+        "periodLabel": "2024-10"
+      }
+    },
+    {
+      "postId": "39b24b3ea368fefc46bfa215bd9d023b",
+      "backtestId": "e7fcd8cc16ee00a4a9e526b2a1799a1c",
+      "title": "仓位查询结果与实际情况不一致",
+      "url": "https://www.joinquant.com/view/community/detail/39b24b3ea368fefc46bfa215bd9d023b",
+      "sourceFile": "2026-10-30_仓位查询结果与实际情况不一致-39b24b3e.py",
+      "stats": {
+        "annualReturn": 0.3744403430167,
+        "cumulativeReturn": 1.534428914796,
+        "maxDrawdown": 0.30412081795629,
+        "sharpe": 1.351492852217,
+        "winRatio": 0.62189054726368,
+        "tradingDays": 731,
+        "periodLabel": "2019-12"
+      }
+    },
+    {
+      "postId": "f8ab6f9df5787773fad0a39b5edcede4",
+      "backtestId": "d8cbc42e18244ac3a68ff2f31712751f",
+      "title": "关于下单时常被不明原因取消的问题，想请教",
+      "url": "https://www.joinquant.com/view/community/detail/f8ab6f9df5787773fad0a39b5edcede4",
+      "sourceFile": "2026-10-30_关于下单时常被不明原因取消的问题_想请教-f8ab6f9d.py",
+      "stats": {
+        "annualReturn": -0.14949753785388,
+        "cumulativeReturn": -0.119793942,
+        "maxDrawdown": 0.142083522,
+        "sharpe": -1.2342481710324,
+        "winRatio": null,
+        "tradingDays": 197,
+        "periodLabel": "2020-12"
+      }
+    },
+    {
+      "postId": "35d3df5d6110901382def7ce6fbec33e",
+      "backtestId": "ac2dc2556ad6a2f8ceea115000758654",
+      "title": "回测很美好，但是模拟交易跑不动",
+      "url": "https://www.joinquant.com/view/community/detail/35d3df5d6110901382def7ce6fbec33e",
+      "sourceFile": "2026-10-30_回测很美好_但是模拟交易跑不动-35d3df5d.py",
+      "stats": {
+        "annualReturn": 0.51225728160575,
+        "cumulativeReturn": 0.2690081,
+        "maxDrawdown": 0.026906548464391,
+        "sharpe": 4.1756737427106,
+        "winRatio": 0.63374485596708,
+        "tradingDays": 144,
         "periodLabel": "2016-12"
       }
     },
     {
-      "postId": "e1e8c71787822c318be3e286b3deba85",
-      "backtestId": "1843b2eda14591ef48ef6e330351b103",
-      "title": "三进兵小改进",
-      "url": "https://www.joinquant.com/view/community/detail/e1e8c71787822c318be3e286b3deba85",
+      "postId": "6fbc270f5514a1cd8337dd9e11c59d62",
+      "backtestId": "d650047a55ad1b3d03b92fa67f4426d2",
+      "title": "请高手帮忙去掉ST 以及退市股票",
+      "url": "https://www.joinquant.com/view/community/detail/6fbc270f5514a1cd8337dd9e11c59d62",
       "stats": {
-        "annualReturn": 0.8364064934169,
-        "cumulativeReturn": 0.9467484,
-        "maxDrawdown": 0.11960011045836,
-        "sharpe": 3.6827701694102,
+        "annualReturn": 1.379581943202,
+        "cumulativeReturn": 1.3305834,
+        "maxDrawdown": 0.11610691232206,
+        "sharpe": 4.3898690605979,
         "winRatio": null,
-        "tradingDays": 274,
-        "periodLabel": "2019-02"
+        "tradingDays": 244,
+        "periodLabel": "2016-05"
       }
     },
     {
-      "postId": "8b9cb8e2ce67b2e9708004cc61a5ef01",
-      "backtestId": "970fb30cb560ce5eff524ff666b98339",
-      "title": "向导式 ATR指标择时测试 0.0.1",
-      "url": "https://www.joinquant.com/view/community/detail/8b9cb8e2ce67b2e9708004cc61a5ef01",
-      "sourceFile": "2026-10-29_向导式_ATR指标择时测试_0_0_1-8b9cb8e2.py",
+      "postId": "02fdafaa268f95d5c3deaaf22af790da",
+      "backtestId": "bc8a380dc255046ec07c3541a8cb7e9b",
+      "title": "今天多个策略告警，这是什么意思，怎么解决？",
+      "url": "https://www.joinquant.com/view/community/detail/02fdafaa268f95d5c3deaaf22af790da",
+      "sourceFile": "2026-10-30_今天多个策略告警_这是什么意思_怎么解决-02fdafaa.py",
       "stats": {
-        "annualReturn": 0.22621408806462,
-        "cumulativeReturn": 9.8521852000002,
-        "maxDrawdown": 0.3669344782244,
-        "sharpe": 0.98436163797609,
-        "winRatio": 1,
-        "tradingDays": 2923,
-        "periodLabel": "2018-06"
+        "annualReturn": 1.4161813904264,
+        "cumulativeReturn": 6.7969645129,
+        "maxDrawdown": 0.18516742137824,
+        "sharpe": 4.4145124074122,
+        "winRatio": 0.67605633802817,
+        "tradingDays": 582,
+        "periodLabel": "2025-06"
       }
     },
     {
-      "postId": "f120a0673eefc9f6699b1c102867e78f",
-      "backtestId": "e103d41543c509a347bbe2cf7b19dcfb",
-      "title": "分享-中证500趋势跟踪策略",
-      "url": "https://www.joinquant.com/view/community/detail/f120a0673eefc9f6699b1c102867e78f",
-      "sourceFile": "2026-10-29_分享-中证500趋势跟踪策略-f120a067.py",
+      "postId": "e903174f00a8b78a19e463f0a06db480",
+      "backtestId": "0fc322f448ab374beadcbeb31f428bd9",
+      "title": "pytorch cnn_seq deep learning",
+      "url": "https://www.joinquant.com/view/community/detail/e903174f00a8b78a19e463f0a06db480",
+      "sourceFile": "2026-10-30_pytorch_cnn_seq_deep_learning-e903174f.py",
       "stats": {
-        "annualReturn": 1.5866213684046,
-        "cumulativeReturn": 0.572030044,
-        "maxDrawdown": 0.12424122000596,
-        "sharpe": 3.7123698308656,
-        "winRatio": 0.4952380952381,
-        "tradingDays": 119,
-        "periodLabel": "2026-07"
+        "annualReturn": null,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": null,
+        "periodLabel": null
       }
     },
     {
-      "postId": "7f3d77e29be106cd254e16d1ef9acca1",
-      "backtestId": "18b6d02730b0a02f0836935d2b2069aa",
-      "title": "一阳穿三线长测版",
-      "url": "https://www.joinquant.com/view/community/detail/7f3d77e29be106cd254e16d1ef9acca1",
-      "sourceFile": "2026-10-29_一阳穿三线长测版-7f3d77e2.py",
+      "postId": "687611976c16db1d82d26a6402f1a113",
+      "backtestId": "47d8863c05079886000be03318d15ac9",
+      "title": "关于get_fundamentals函数的一个问题",
+      "url": "https://www.joinquant.com/view/community/detail/687611976c16db1d82d26a6402f1a113",
+      "sourceFile": "2026-10-30_关于get_fundamentals函数的一个问题-68761197.py",
       "stats": {
-        "annualReturn": 1.1495066221678,
-        "cumulativeReturn": 0.069660142,
-        "maxDrawdown": 0.07901465329802,
-        "sharpe": 2.9251697404121,
-        "winRatio": 0.5,
-        "tradingDays": 22,
-        "periodLabel": "2025-09"
+        "annualReturn": 2.7962686811467,
+        "cumulativeReturn": 3.6002808,
+        "maxDrawdown": 0.26230404660262,
+        "sharpe": 6.8973789730055,
+        "winRatio": null,
+        "tradingDays": 286,
+        "periodLabel": "2016-03"
       }
     },
     {
-      "postId": "98024e05b191902c2e2d8b3e9cbdb1b9",
-      "backtestId": "4f52458e884776944b7c444bd6445fb3",
-      "title": "再谈小市值策略",
-      "url": "https://www.joinquant.com/view/community/detail/98024e05b191902c2e2d8b3e9cbdb1b9",
-      "sourceFile": "2026-10-29_再谈小市值策略-98024e05.py",
+      "postId": "142b8551cdd934ebfe5ab34a9d58aee2",
+      "backtestId": "8144cafaf0cd7bbd5c2df51d23aa0f28",
+      "title": "本地库函数调用问题",
+      "url": "https://www.joinquant.com/view/community/detail/142b8551cdd934ebfe5ab34a9d58aee2",
+      "sourceFile": "2026-10-30_本地库函数调用问题-142b8551.py",
       "stats": {
-        "annualReturn": 0.64230121583735,
-        "cumulativeReturn": 1.010747617,
-        "maxDrawdown": 0.23912172246388,
-        "sharpe": 2.0090580422975,
-        "winRatio": 0.40298507462687,
-        "tradingDays": 352,
-        "periodLabel": "2026-06"
+        "annualReturn": 0.52030368231819,
+        "cumulativeReturn": 0.155005466,
+        "maxDrawdown": 0.070080996721315,
+        "sharpe": 1.9510493676036,
+        "winRatio": 0.45348837209302,
+        "tradingDays": 86,
+        "periodLabel": "2024-09"
+      }
+    },
+    {
+      "postId": "d695b8217c3d24c254d1fc40827e4819",
+      "backtestId": "73dcea101c8dd52e571a6d37daa78736",
+      "title": "发现了选择股票代码的一个奇葩坑，不知道多少回测被影响？",
+      "url": "https://www.joinquant.com/view/community/detail/d695b8217c3d24c254d1fc40827e4819",
+      "sourceFile": "2026-10-30_发现了选择股票代码的一个奇葩坑_不知道多少回测被影响-d695b821.py",
+      "stats": {
+        "annualReturn": 1.0988530268843,
+        "cumulativeReturn": 8.666405412,
+        "maxDrawdown": 0.21489116212836,
+        "sharpe": 3.5640155508958,
+        "winRatio": 0.6890756302521,
+        "tradingDays": 765,
+        "periodLabel": "2023-03"
       }
     }
   ]

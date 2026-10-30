@@ -434,3 +434,41 @@ strategies/2026-10-28_趋势追踪策略_设计原理与代码实现-509537f1.py
 strategies/2026-10-28_各位大神帮我看一下这个策略的问题在哪-a40bc39b.py	a40bc39b8dd63ebf4ecaf5b233f7fec7	各位大神帮我看一下这个策略的问题在哪	normalized	2024-01-01	2024-12-31	365	131.71	131.71	3.59	19.29	1.1242	pass	9
 strategies/2026-10-28_11年36倍收益的四因子选股策略研究_1-529f8af6.py	529f8af659c17bf7e1993705d7ae0f02	11年36倍收益的四因子选股策略研究（1）	compile-error										9
 strategies/2026-10-28_XGBoost模型多因子策略分享-3767cd64.py	3767cd641f360239fd3c3215c3402a1e	XGBoost模型多因子策略分享	failed										9
+strategies/2026-10-28_XGBoost模型多因子策略分享-3767cd64.py	3767cd641f360239fd3c3215c3402a1e	XGBoost模型多因子策略分享	failed-final										9
+strategies/2026-10-29_一个没劲的波动策略-346bc181.py	346bc18177a5ccde409d82bb9a09e500	一个没劲的波动策略	compile-error										9
+strategies/2026-10-29_能够在2018年获得10_年化的择时策略_了解一下-da27a120.py	da27a120dec839d6e519020a2bb5c487	能够在2018年获得10%+年化的择时策略，了解一下？	normalized	2024-01-01	2024-12-31	365	4.68	4.68	0.04	16.54	-0.1186	fail	9
+strategies/2026-10-29_上市公司发布股价波动风险提示性公告的买入策略-0074e696.py	0074e69664af0a56455ed171557d2cbf	上市公司发布股价波动风险提示性公告的买入策略	compile-error										9
+strategies/2026-10-29_新思路_天天向上策略_2026年收益非常可观_欢迎大家优化-c2ef5ea7.py	c2ef5ea72d478dc5b85ad0c8b904b411	新思路！天天向上策略！2026年收益非常可观，欢迎大家优化！	crash										9
+strategies/2026-10-29_小资金趋势量化策略_回测感觉还可以_欢迎大家指正-6f8beaed.py	6f8beaed4fc192695989163e9e8ce26a	小资金趋势量化策略，回测感觉还可以，欢迎大家指正	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-10-29_新框架-欢迎魔改主力资金确认短线埋伏可接外部新闻聚合AI分析-a0b7e6eb.py	a0b7e6ebf82aa3446c23ade7e896ef8e	新框架-欢迎魔改主力资金确认短线埋伏可接外部新闻聚合AI分析	normalized	2024-01-01	2024-12-31	365	-6.32	-6.32	-0.35	25.22	-0.3154	fail	9
+strategies/2026-10-29_为什么几个最强的多因子小市值跑出来是一坨屎啊-e999b7ed.py	e999b7ed7ce5435e26959b98004ee053	为什么几个最强的多因子小市值跑出来是一坨屎啊	normalized	2024-01-01	2024-12-31	365	22.96	22.96	0.42	42.70	-0.1974	fail	9
+strategies/2026-10-29_稳扎稳打的rsrs-e560c503.py	e560c5030cf6f4a756a51ba180854302	稳扎稳打的rsrs	normalized	2024-01-01	2024-12-31	365	14.18	14.18	0.57	10.99	0.0319	fail	9
+strategies/2026-10-29_简单的多均线择时策略_那个天台排队的孩子_我给你讲个故事-2afa56b0.py	2afa56b0da59956ae2224b369156c108	【简单的多均线择时策略】那个天台排队的孩子，我给你讲个故事	normalized	2024-01-01	2024-12-31	365	-0.23	-0.23	-18.41	0.38	-0.0061	fail	9
+strategies/2026-10-29_魔法公式选股_黄金分割线止盈及重建仓-5a1809d7.py	5a1809d7c35405f0b277ea9673f55b44	魔法公式选股+黄金分割线止盈及重建仓	compile-error										9
+strategies/2026-10-29_把社区基础文档里的羊驼和均线策略合并了一下-e7b1725d.py	e7b1725d4e91160457644b96094c476c	把社区基础文档里的羊驼和均线策略合并了一下	incompatible-notrunnable										9
+strategies/2026-10-29_价值投资之大白马-fda3281f.py	fda3281f43c98c13402b10759fcec415	价值投资之大白马	normalized	2024-01-01	2024-12-31	365	-11.42	-11.42	-0.50	41.83	-0.5325	fail	9
+strategies/2026-10-29_市销率与毛利率策略_简单实用-48c30615.py	48c30615354b5eb630f34e865c90b21a	市销率与毛利率策略，简单实用	compile-error										9
+strategies/2026-10-29_向导式_ATR指标择时测试_0_0_1-8b9cb8e2.py	8b9cb8e2ce67b2e9708004cc61a5ef01	向导式 ATR指标择时测试 0.0.1	normalized	2024-01-01	2024-12-31	365	29.38	29.38	1.19	10.80	0.1858	pass	9
+strategies/2026-10-29_分享-中证500趋势跟踪策略-f120a067.py	f120a0673eefc9f6699b1c102867e78f	分享-中证500趋势跟踪策略	normalized	2024-01-01	2024-12-31	365	-9.45	-9.45	-0.43	23.94	-0.3339	fail	9
+strategies/2026-10-29_一阳穿三线长测版-7f3d77e2.py	7f3d77e29be106cd254e16d1ef9acca1	一阳穿三线长测版	slow-skipped										9
+strategies/2026-10-29_再谈小市值策略-98024e05.py	98024e05b191902c2e2d8b3e9cbdb1b9	再谈小市值策略	normalized	2024-01-01	2024-12-31	365	-1.12	-1.12	-0.13	38.56	-0.3968	fail	9
+strategies/2026-10-29_新思路_天天向上策略_2026年收益非常可观_欢迎大家优化-c2ef5ea7.py	c2ef5ea72d478dc5b85ad0c8b904b411	新思路！天天向上策略！2026年收益非常可观，欢迎大家优化！	slow-skipped										9
+strategies/2026-10-30_年化68_63_回撤16_82连板策略-e1053979.py	e1053979bd68950e6e09252bbb563f1e	年化68.63%，回撤16.82连板策略	normalized	2024-01-01	2024-12-31	365	32.20	32.20	0.56	40.64	-0.0844	fail	9
+strategies/2026-10-30_ETF动量策略V3-懒人躲避熊市-172cce1d.py	172cce1d195f92113d0ea7da087d92af	ETF动量策略V3-懒人躲避熊市	normalized	2024-01-01	2024-12-31	365	-13.66	-13.66	-0.73	24.25	-0.3791	fail	9
+strategies/2026-10-30_分享一个我实战中高收益回撤还行的策略-c002a821.py	c002a8215306b2553b964eed9b5b60fa	分享一个我实战中高收益回撤还行的策略	normalized	2024-01-01	2024-12-31	365	93.78	93.78	4.04	8.42	0.8536	pass	9
+strategies/2026-10-30_突破回踩确认-db3a7396.py	db3a73967dc6325bccfaae4eff54cf2c	突破回踩确认	compile-error										9
+strategies/2026-10-30_现在模拟交易怎么没法删除-17014a8c.py	17014a8cb85b0060d571a7873e00cace	现在模拟交易怎么没法删除？	normalized	2024-01-01	2024-12-31	365	6.80	6.80	0.08	25.64	-0.1884	fail	9
+strategies/2026-10-30_心灵鸡汤_我应该向我的策略学习-95e3eec7.py	95e3eec7d4b1b8e7acbedf625bbcb75a	【心灵鸡汤】我应该向我的策略学习	compile-error										9
+strategies/2026-10-30_写了过滤停牌股_但是还会选出停牌股欣泰电器-7b325e89.py	7b325e8915bcf901e94acd8fa8876185	写了过滤停牌股，但是还会选出停牌股欣泰电器~	incompatible-notrunnable										9
+strategies/2026-10-30_超跌反弹_小盘股实操求教_请大咖指点-0d022129.py	0d022129841ab182fb97c45ffa6eaf8b	超跌反弹，小盘股实操求教，请大咖指点！	normalized	2024-01-01	2024-12-31	365	228.56	228.56	6.77	12.14	2.1642	pass	9
+strategies/2026-10-30_回测的时候还是有手续费-4e9060cc.py	4e9060cc541d2969a155cf9746062e09	回测的时候还是有手续费	compile-error										9
+strategies/2026-10-30_持仓ETF由于发生分红_被模拟盘判定为大幅下跌-d808e776.py	d808e7766c72714586f2ce0f23df1339	持仓ETF由于发生分红，被模拟盘判定为大幅下跌	compile-error										9
+strategies/2026-10-30_模拟和回测的取数不同-89643623.py	89643623da402bd0bf1c7ca4dce6072a	模拟和回测的取数不同？	normalized	2024-01-01	2024-12-31	365	45.18	45.18	0.91	37.18	0.08	fail	9
+strategies/2026-10-30_仓位查询结果与实际情况不一致-39b24b3e.py	39b24b3ea368fefc46bfa215bd9d023b	仓位查询结果与实际情况不一致	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-10-30_关于下单时常被不明原因取消的问题_想请教-f8ab6f9d.py	f8ab6f9df5787773fad0a39b5edcede4	关于下单时常被不明原因取消的问题，想请教	compile-error										9
+strategies/2026-10-30_回测很美好_但是模拟交易跑不动-35d3df5d.py	35d3df5d6110901382def7ce6fbec33e	回测很美好，但是模拟交易跑不动	compile-error										9
+strategies/2026-10-30_今天多个策略告警_这是什么意思_怎么解决-02fdafaa.py	02fdafaa268f95d5c3deaaf22af790da	今天多个策略告警，这是什么意思，怎么解决？	normalized	2024-01-01	2024-12-31	365	320.35	320.35	8.22	18.63	3.0172	pass	9
+strategies/2026-10-30_pytorch_cnn_seq_deep_learning-e903174f.py	e903174f00a8b78a19e463f0a06db480	pytorch cnn_seq deep learning	compile-error										9
+strategies/2026-10-30_关于get_fundamentals函数的一个问题-68761197.py	687611976c16db1d82d26a6402f1a113	关于get_fundamentals函数的一个问题	compile-error										9
+strategies/2026-10-30_本地库函数调用问题-142b8551.py	142b8551cdd934ebfe5ab34a9d58aee2	本地库函数调用问题	compile-error										9
+strategies/2026-10-30_发现了选择股票代码的一个奇葩坑_不知道多少回测被影响-d695b821.py	d695b8217c3d24c254d1fc40827e4819	发现了选择股票代码的一个奇葩坑，不知道多少回测被影响？	normalized	2024-01-01	2024-12-31	365	30.27	30.27	0.52	45.08	-0.1481	fail	9

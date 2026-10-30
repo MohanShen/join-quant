@@ -2396,5 +2396,100 @@
     "postId": "98024e05b191902c2e2d8b3e9cbdb1b9",
     "sourceFile": "2026-10-29_再谈小市值策略-98024e05.py",
     "registeredAt": "2026-10-28T19:46:55.806Z"
+  },
+  "ed986f6d8e8a9b602e34390de7245c0b44979bb5867999a199b640a3abe982c3": {
+    "postId": "e1053979bd68950e6e09252bbb563f1e",
+    "sourceFile": "2026-10-30_年化68_63_回撤16_82连板策略-e1053979.py",
+    "registeredAt": "2026-10-30T00:29:17.954Z"
+  },
+  "943965903a6703d5915d9d4a2dc204140cc7c770d44762657dca8ce59d9b82af": {
+    "postId": "172cce1d195f92113d0ea7da087d92af",
+    "sourceFile": "2026-10-30_ETF动量策略V3-懒人躲避熊市-172cce1d.py",
+    "registeredAt": "2026-10-30T00:29:20.594Z"
+  },
+  "62b401be4d2bde76e97be5c071e098187e78887daf4d7234b84483206a9dfa78": {
+    "postId": "c002a8215306b2553b964eed9b5b60fa",
+    "sourceFile": "2026-10-30_分享一个我实战中高收益回撤还行的策略-c002a821.py",
+    "registeredAt": "2026-10-30T00:29:24.018Z"
+  },
+  "b23b7dd6459192d85efec2476244fca3b1f0bb1427c8358ed62ca6ecf8a35fac": {
+    "postId": "db3a73967dc6325bccfaae4eff54cf2c",
+    "sourceFile": "2026-10-30_突破回踩确认-db3a7396.py",
+    "registeredAt": "2026-10-30T00:29:27.046Z"
+  },
+  "b745f58f6df0e08baf2ad016affb6eabcfe11d929af260d4933750c0da2fa3f2": {
+    "postId": "17014a8cb85b0060d571a7873e00cace",
+    "sourceFile": "2026-10-30_现在模拟交易怎么没法删除-17014a8c.py",
+    "registeredAt": "2026-10-30T00:29:30.885Z"
+  },
+  "c46fbb8125dea3410ff50cdb1f94af70b205252aab1df9a8cd8e0b4b026bf45a": {
+    "postId": "95e3eec7d4b1b8e7acbedf625bbcb75a",
+    "sourceFile": "2026-10-30_心灵鸡汤_我应该向我的策略学习-95e3eec7.py",
+    "registeredAt": "2026-10-30T00:29:34.156Z"
+  },
+  "32f98c70dad9ba6014efe2ca826d9f7b80e0c7149482c01424eb1f6684ab9b45": {
+    "postId": "7b325e8915bcf901e94acd8fa8876185",
+    "sourceFile": "2026-10-30_写了过滤停牌股_但是还会选出停牌股欣泰电器-7b325e89.py",
+    "registeredAt": "2026-10-30T00:29:36.781Z"
+  },
+  "c744b395587a1499954ad4b1749c6a4834b2891d76291bd8d57b683d28e8fea3": {
+    "postId": "0d022129841ab182fb97c45ffa6eaf8b",
+    "sourceFile": "2026-10-30_超跌反弹_小盘股实操求教_请大咖指点-0d022129.py",
+    "registeredAt": "2026-10-30T00:29:39.488Z"
+  },
+  "459b3625b78e0132c807627d5445678f0f993f07b200ebcd5c8768de5b1bb3f8": {
+    "postId": "4e9060cc541d2969a155cf9746062e09",
+    "sourceFile": "2026-10-30_回测的时候还是有手续费-4e9060cc.py",
+    "registeredAt": "2026-10-30T00:29:42.091Z"
+  },
+  "40394a4673ad89823f6fdab414e39b8e1fe7365d421c21a197e51e0b4818aa81": {
+    "postId": "d808e7766c72714586f2ce0f23df1339",
+    "sourceFile": "2026-10-30_持仓ETF由于发生分红_被模拟盘判定为大幅下跌-d808e776.py",
+    "registeredAt": "2026-10-30T00:29:44.709Z"
+  },
+  "d0f64c471ec195a6f3872e92104fa1c51ad5c087288b44e72023d717f4f0d4cb": {
+    "postId": "89643623da402bd0bf1c7ca4dce6072a",
+    "sourceFile": "2026-10-30_模拟和回测的取数不同-89643623.py",
+    "registeredAt": "2026-10-30T00:29:47.329Z"
+  },
+  "e2b79c146b0fb32664cd6bae777576aac29b75f0082f1b2a715d953e7802223c": {
+    "postId": "39b24b3ea368fefc46bfa215bd9d023b",
+    "sourceFile": "2026-10-30_仓位查询结果与实际情况不一致-39b24b3e.py",
+    "registeredAt": "2026-10-30T00:29:50.043Z"
+  },
+  "26f20635f0b3029d08c4e1658780a339df7323a58ea21b39d0052656962f73af": {
+    "postId": "f8ab6f9df5787773fad0a39b5edcede4",
+    "sourceFile": "2026-10-30_关于下单时常被不明原因取消的问题_想请教-f8ab6f9d.py",
+    "registeredAt": "2026-10-30T00:29:53.414Z"
+  },
+  "d397cc4c7e3a98f846d2dc8044eaca63dd6bbaf77cd06f23ed10aba503871588": {
+    "postId": "35d3df5d6110901382def7ce6fbec33e",
+    "sourceFile": "2026-10-30_回测很美好_但是模拟交易跑不动-35d3df5d.py",
+    "registeredAt": "2026-10-30T00:29:56.144Z"
+  },
+  "5bc4d10c8c0aa31666a1cbefa2bde75750a6423d83a8e6aeb2c5338d19a7b14a": {
+    "postId": "02fdafaa268f95d5c3deaaf22af790da",
+    "sourceFile": "2026-10-30_今天多个策略告警_这是什么意思_怎么解决-02fdafaa.py",
+    "registeredAt": "2026-10-30T00:30:01.548Z"
+  },
+  "c39ecf411b94c02954fe8839b746ba8e1abaf275e66f5bc616bca4454f2408ce": {
+    "postId": "e903174f00a8b78a19e463f0a06db480",
+    "sourceFile": "2026-10-30_pytorch_cnn_seq_deep_learning-e903174f.py",
+    "registeredAt": "2026-10-30T00:30:04.622Z"
+  },
+  "35b0beae6f65de23184ec302de83c5aa57e711f97f5ce905b7b23bd496b017af": {
+    "postId": "687611976c16db1d82d26a6402f1a113",
+    "sourceFile": "2026-10-30_关于get_fundamentals函数的一个问题-68761197.py",
+    "registeredAt": "2026-10-30T00:30:07.289Z"
+  },
+  "a5bba98d313e7fca74925ff981a74836be2b78ee010f1303141b1c9b45838788": {
+    "postId": "142b8551cdd934ebfe5ab34a9d58aee2",
+    "sourceFile": "2026-10-30_本地库函数调用问题-142b8551.py",
+    "registeredAt": "2026-10-30T00:30:10.104Z"
+  },
+  "6b917db5202783d2e5b9697b2a241f469f9cbe76a8a1f623a3454c1fd17f5a54": {
+    "postId": "d695b8217c3d24c254d1fc40827e4819",
+    "sourceFile": "2026-10-30_发现了选择股票代码的一个奇葩坑_不知道多少回测被影响-d695b821.py",
+    "registeredAt": "2026-10-30T00:30:12.737Z"
   }
 }

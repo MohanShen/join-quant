@@ -1,66 +1,16 @@
 {
   "inFlight": null,
   "lastRun": {
-    "stage": "discover",
+    "stage": "normalize",
     "target": null,
-    "budget": 0,
-    "at": "2026-10-28T19:45:56.953Z",
+    "budget": 138,
+    "at": "2026-10-30T00:30:19.721Z",
     "outcome": "ran",
-    "note": "discover + fetch (normalize is its own stage)",
+    "note": "0 retry(--redo) + 20 fresh, 0 newly deferred at 45min",
     "minutesUsed": null,
-    "endedAt": "2026-10-28T19:46:56.152Z"
+    "endedAt": "2026-10-30T01:36:58.043Z"
   },
   "runs": [
-    {
-      "stage": "research",
-      "target": null,
-      "budget": 14,
-      "at": "2026-10-12T18:01:23.919Z",
-      "outcome": "ran",
-      "note": "resumed research session a6b44bf4 (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-10-12T18:30:46.430Z"
-    },
-    {
-      "stage": "normalize",
-      "target": null,
-      "budget": 30,
-      "at": "2026-10-12T18:30:49.358Z",
-      "outcome": "ran",
-      "note": "20 queued, 0 deferred at 45min",
-      "minutesUsed": null,
-      "endedAt": "2026-10-12T18:30:49.416Z"
-    },
-    {
-      "stage": "normalize",
-      "target": null,
-      "budget": 30,
-      "at": "2026-10-12T18:30:52.329Z",
-      "outcome": "ran",
-      "note": "15 queued, 0 deferred at 45min",
-      "minutesUsed": null,
-      "endedAt": "2026-10-12T18:30:52.387Z"
-    },
-    {
-      "stage": "discover",
-      "target": null,
-      "budget": 30,
-      "at": "2026-10-12T18:30:58.728Z",
-      "outcome": "error",
-      "note": "discover + fetch",
-      "minutesUsed": null,
-      "endedAt": "2026-10-12T22:45:59.076Z"
-    },
-    {
-      "stage": "assign",
-      "target": null,
-      "budget": 0,
-      "at": "2026-10-15T18:00:14.777Z",
-      "outcome": "ran",
-      "note": "family assignment over 2 pending",
-      "minutesUsed": null,
-      "endedAt": "2026-10-15T18:01:59.108Z"
-    },
     {
       "stage": "normalize",
       "target": null,
@@ -1210,6 +1160,56 @@
       "note": "discover + fetch (normalize is its own stage)",
       "minutesUsed": null,
       "endedAt": "2026-10-28T19:46:56.152Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-29T20:51:14.585Z",
+      "outcome": "ran",
+      "note": "family assignment over 2 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-10-29T20:51:38.288Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 0,
+      "at": "2026-10-29T20:51:44.149Z",
+      "outcome": "ran",
+      "note": "0 retry(--redo) + 21 fresh, 1 newly deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-29T23:43:08.589Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 96,
+      "at": "2026-10-29T23:43:13.266Z",
+      "outcome": "ran",
+      "note": "0 retry(--redo) + 1 fresh, 1 newly deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-30T00:28:56.889Z"
+    },
+    {
+      "stage": "discover",
+      "target": null,
+      "budget": 138,
+      "at": "2026-10-30T00:29:02.656Z",
+      "outcome": "ran",
+      "note": "discover + fetch (normalize is its own stage)",
+      "minutesUsed": null,
+      "endedAt": "2026-10-30T00:30:13.132Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 138,
+      "at": "2026-10-30T00:30:19.721Z",
+      "outcome": "ran",
+      "note": "0 retry(--redo) + 20 fresh, 0 newly deferred at 45min",
+      "minutesUsed": null,
+      "endedAt": "2026-10-30T01:36:58.043Z"
     }
   ]
 }

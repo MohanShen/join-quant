@@ -54,5 +54,21 @@
     "lastCapMin": 20,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-10-28T04:15:54.574Z"
+  },
+  "strategies/2026-10-29_一阳穿三线长测版-7f3d77e2.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-29T23:43:08.589Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-29T23:43:08.589Z"
+  },
+  "strategies/2026-10-29_新思路_天天向上策略_2026年收益非常可观_欢迎大家优化-c2ef5ea7.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-10-30T00:28:56.888Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-10-30T00:28:56.888Z"
   }
 }

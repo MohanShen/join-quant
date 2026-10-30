@@ -117,3 +117,16 @@
 2026-10-28T02:43:10.544Z	strategies/2026-10-28_基于借壳公告的驱动的买入策略-8bda20b8.py	NameError: name 'gta' is not defined
 2026-10-28T02:48:37.194Z	strategies/2026-10-28_低估值_TRIX_RSI_低回撤策略-f5d0151d.py	jqdata.exceptions.FutureDataError: 设置avoid_future_data=True之后, get_bars的end_dt(2024-01-02 17:00:00)不能大于当前时间current_dt(2024-01-02 14:50:00)
 2026-10-28T04:15:15.030Z	strategies/2026-10-28_11年36倍收益的四因子选股策略研究_1-529f8af6.py	AttributeError: 'Series' object has no attribute 'sort'
+2026-10-29T21:39:12.433Z	strategies/2026-10-29_一个没劲的波动策略-346bc181.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-10-29T21:41:04.380Z	strategies/2026-10-29_上市公司发布股价波动风险提示性公告的买入策略-0074e696.py	jqboson.core.exception.ReadRemoteFileError: read_file notice.csv: 文件'/opt/research-files/655/65568519426/notice.csv'不存在
+2026-10-29T22:46:15.670Z	strategies/2026-10-29_魔法公式选股_黄金分割线止盈及重建仓-5a1809d7.py	KeyError: &lt;map object at 0x7f5bd9f36160&gt;
+2026-10-29T22:50:55.134Z	strategies/2026-10-29_市销率与毛利率策略_简单实用-48c30615.py	TypeError: 'float' object cannot be interpreted as an integer
+2026-10-30T00:54:55.843Z	strategies/2026-10-30_突破回踩确认-db3a7396.py	ValueError: need at least one array to concatenate
+2026-10-30T00:58:38.797Z	strategies/2026-10-30_心灵鸡汤_我应该向我的策略学习-95e3eec7.py	TypeError: 'KeysView' object does not support indexing
+2026-10-30T01:05:21.639Z	strategies/2026-10-30_回测的时候还是有手续费-4e9060cc.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'close'}字段数据, current_dt=2024-01-02 14:59:00, end_date=2024-01-02
+2026-10-30T01:06:41.517Z	strategies/2026-10-30_持仓ETF由于发生分红_被模拟盘判定为大幅下跌-d808e776.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 redistrade
+2026-10-30T01:19:09.319Z	strategies/2026-10-30_关于下单时常被不明原因取消的问题_想请教-f8ab6f9d.py	Exception
+2026-10-30T01:21:02.302Z	strategies/2026-10-30_回测很美好_但是模拟交易跑不动-35d3df5d.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:00:00
+2026-10-30T01:26:16.557Z	strategies/2026-10-30_pytorch_cnn_seq_deep_learning-e903174f.py	FileNotFoundError: [Errno 2] No such file or directory: 'a.pt'
+2026-10-30T01:28:29.633Z	strategies/2026-10-30_关于get_fundamentals函数的一个问题-68761197.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:00:00
+2026-10-30T01:30:41.558Z	strategies/2026-10-30_本地库函数调用问题-142b8551.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时, get_money_flow只能在盘后15:00之后才能获取标的的资金流数据，current_dt= 2024-01-02 09:00:00
