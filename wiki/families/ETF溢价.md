@@ -67,7 +67,8 @@ bestObjectiveEpoch: 9
 | 变体 | 类型 | 相对基类的改动 | 来源 | Δobjective | Δsharpe | ΔmaxDD | 判定 | 结论 |
 |---|---|---|---|---|---|---|---|---|
 | [[15c36e0c_ETF溢价改进版]] | raw | 无 | normalized-raw | 0 | 0 | 0 | — | 基类；epoch-6 锚点 obj 0.8607，§3 里的 1.5642 是 epoch-2 无参与上限的行 |
-| [[edd94ebc_ETF溢价回撤]] | raw | ETF-only + 三个入场过滤 + top-2 | normalized-raw | — | — | — | — | q-ledger：本台无行（ledger 回退时丢失，非 DQ）；pre-wipe epoch-2 记 3.5961；top-2 在本台是负贡献（ep-imp-2），其头条应为容量幻觉，待 normalize 给它锚点 |
+| [[edd94ebc_ETF溢价回撤]] | raw | ETF-only + 三个入场过滤 + top-2 | normalized-raw | — | — | — | — | q-ledger：epoch 6 时本台无行（ledger 回退时丢失，非 DQ）；pre-wipe epoch-2 记 3.5961。**epoch 9 已有锚点**：obj 1.3862 / sharpe 6.93 / annual 144.30 / maxDD 5.68（TRAIN 2024），低于同台基类 2.2695——与 ep-imp-2「top-2 是负贡献」同向 |
+| [[c002a821_分享一个我实战中高收益回撤还行的策略]] | raw | ETF-only + 昨日成交额>1e7 + top-2 + 最小折价阈 2.5%（无买入时每日 −0.15，下限 1.5）+ 昨日分红剔除 + \|premium\|<20 + day_open±2% 限价单 | normalized-raw（epoch 9） | — | — | — | — | 2026-10-30 新成员，源码自注克隆自基类同一帖（post 33636）。epoch 9 TRAIN 2024：obj 0.8536 / sharpe 4.04 / annual 93.78 / maxDD 8.42，低于基类 2.2695。信号仍是 day_open 对 T−1 净值、09:30 成交——u-1 / ep-imp-3 的集合竞价判决原样适用（机制层，不随台变），realizability 仍 1。未测的只有折价阈与分红过滤，但调一本不可成交的书产不出可交付候选（gate owner: none），Step-0 logged-only |
 | u-1 同信号、14:50 成交 | understand | run_daily 14:50 + market_exec | [[study-u-1]] | −1.0283 | −5.86 | +2.41 | informative | **realizability 判决**：+321% → +10%，偏离只在集合竞价成交价上存在 |
 | u-2 去 LOF | understand | universe 一行 | [[study-u-2]] | +0.7586 | +2.13 | −6.83 | informative | LOF 腿是拖累（差额全在 2022）；关闭 LOF 净值滞后=收益来源 |
 | u-3 镜像买最高溢价 | understand | 排序降序 + premium>0 | [[study-u-3]] | −2.7353 | −9.97 | +79.44 | informative | 均值回归 measured：镜像 −99%，上涨日 20%；比 PT 更不对称（LOF/QDII 高溢价名字的塌陷） |
