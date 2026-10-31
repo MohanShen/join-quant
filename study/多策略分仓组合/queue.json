@@ -1,0 +1,282 @@
+[
+  {
+    "id": "u-1b",
+    "kind": "understand",
+    "title": "edge test 1/4：腿 B（弱转强）单独跑，原权重 0.35，其余三腿置 0",
+    "hypothesis": "分仓分散（强形式）：组合 sharpe 4.96 来自四腿并行而不是某一条腿。可证伪：若腿 B 的原生 sharpe ≥ 4.96，强形式证伪，族的水平归腿 B，停止 u-1 序列（见 stop rule）。原生 sharpe 低于 4.96 则强形式在本腿上站住，继续 u-1a",
+    "why": "排第一：(1) 这是家族页 edge.test 的第一步，也是本族 edge 从 proposed 走向 measured/refuted 的唯一路径；(2) 腿 B 带 every_bar 处理器，是四腿里最可能慢的一条——先跑它就把本族的运行时测出来，后面每条的预算都按它定；(3) 腿 A 在 u-0 里已知 ~40% 的周三持 511880，最可能超过 4.96 的是腿 B，所以 stop rule 最可能在这一次触发，先跑它最可能省下后面的回测。成本：未知，按 5–15 分钟估；若触 45 分钟 slow-skip 帽，先查 buildList 是否 完成 再写 slow-skipped（CLAUDE.md：jy-u-2 的先例）",
+    "design": "variant = baseline.py + ONE asserted edit of the weight block L23–26: STRATEGY_A_WEIGHT = 0 / STRATEGY_B_WEIGHT = 0.35 / STRATEGY_ETF2_WEIGHT = 0 / STRATEGY_ETF3_WEIGHT = 0。书本身支持零权重（L1698–1721 的 run_daily 按 WEIGHT > 0 登记，L288/301/538/910 有 WEIGHT == 0 的早退）——但 strategy_a_weekly_adjustment 的 run_weekly（L1704–1709）不在权重判断里面，所以执行后必须核对：日志中被置零的腿下单数 = 0，且没有新增 ERROR 行（run_strategy_function 会吞异常）。--window train。控制组 = 已存曲线 2026-07-18_多策略-题材概念-35ce65d2__train__e9（baseline.py 与它逐字节一致，不需要复现跑）。原生 sharpe 的算法（⚠ 关键）：不要用 r/w——闲置现金恒定而腿的子账本会复利，权重会漂移。用腿净值 NAV_t = ((1+c_t/100) − (1−w)) / w（c_t = overallReturn 累计百分比，w = 0.35），由 NAV 链出日收益，rf 4%，按行的天数年化；先用同一约定在 base 存储曲线上复现 4.96，复现不了就不报原生 sharpe。另记账户级日收益序列，供 u-1 结束后算 DR = σ_base / Σσ_run_i 和可加性残差 Σr_run_i − r_base。日志 > 100 行要分页（study/小市值/pagelog.js 的方法，不要写第三份）",
+    "from": [
+      "wiki/families/多策略分仓组合 edge[分仓分散].test (amended 2026-10-31: original weight)",
+      "normalized:35ce65d2 (epoch 9, objective 0.8792, sharpe 4.96)",
+      "u-0 (free): leg A holds 511880 on ~17 of ~41 active Wednesdays"
+    ],
+    "edgeRef": "分仓分散",
+    "rank": 1,
+    "status": "answered",
+    "note": "gatekeeper 2026-10-31：新家族，0 findings / 0 closures / 0 §2 行，无重复可查。stop rule：若 u-1b 或 u-1a 原生 sharpe ≥ 4.96，强形式证伪，剩下的 u-1 子跑不再需要用于强形式判决；此时弱形式（DR）记为 unresolved，而不是 refuted。一次 dispatch = 一次回测",
+    "result": "account 52.55 / sharpe 3.61 / maxDD 4.59 / obj 0.4796; leg-B native sharpe 4.925 (annual 157.84%, vol 0.3124, maxDD 11.23%) < base 4.96 by 0.03–0.06 under 4 conventions -> strong-form stop rule NOT fired (just). 56% of base total return, corr 0.768, 0 ERROR, ~3 min wall. Finding u-1b."
+  },
+  {
+    "id": "u-2",
+    "kind": "understand",
+    "title": "免费：用已存日志查跨腿耦合（A/B 同时持同一代码；卖出订单失败 告警数）",
+    "hypothesis": "四腿的虚拟账本在账户层面互不干扰。可证伪：存在任何一天腿 A 和腿 B 同时持有同一代码，或日志中出现 ≥1 条 卖出订单失败 告警 ⇒ 腿之间经账户级 order_target_value 耦合，u-1 的可加性残差要按耦合来读，而不是按噪声来读",
+    "why": "0 回测分钟。它不改变 u-1 的设计，但决定 u-1 的残差怎么读：A 和 B 都从 399101 选股，账户级 order_target_value(code, value) 作用于真实总持仓，一条腿卖出可能平掉另一条腿的仓位。排在 u-1b 之后只是因为一次只派一个 executor；它可以在 u-1b 之后立即做，不需要等 u-1a",
+    "design": "分页读 base 的 4533 行已存日志（offset 步长 100，直到短页）。逐日解析各腿的买卖记录，列出 A∩B 同日同码的天数与代码；统计 卖出订单失败 / 可卖数量不足 类告警的条数和所属腿。不跑回测",
+    "from": [
+      "wiki/families/多策略分仓组合 §1.1 (virtual per-leg ledger, real orders at account level)",
+      "u-0 (stored 4533-line log)"
+    ],
+    "edgeRef": "分仓分散",
+    "rank": 2,
+    "status": "answered",
+    "result": "answered by u-1 (no separate probe): P&L-basis additivity corr 0.9999, mean |Δ| 1.06bp/day, Σ leg totals 93.79% vs base 93.68% ⇒ cross-leg coupling through account-level orders is negligible"
+  },
+  {
+    "id": "u-3",
+    "kind": "understand",
+    "title": "免费：ETF3 池（17 只在用 + 1 只注释掉）的上市日期 vs 2024-01-01 / 2025",
+    "hypothesis": "ETF3 的池子在 TRAIN 2024 上没有事后性。可证伪：任何一只在用代码上市于 2024-01-01 之后 ⇒ 有事后性。若上市于 2025 年 ⇒ 池子里写着对 VAL 年的选择，任何 VAL 之前必须先做 2025 前的池截断",
+    "why": "0 回测分钟，而且大部分已经答完：commit 7208916 的 study/_probes/probe-listdates-12fam.py 已用 get_security_info().start_date 读过本池里没有语料日期的代码，其中 **159550.XSHE 上市于 2025-06-27**（在 VAL 年内）就在本池里。剩下只需把其余代码（159851、159980 等）的语料日期或探针日期对齐成一张表。它决定 imp-3 是跑还是 drop，并给出 VAL 前置条件",
+    "design": "列出 L1411–1435 的 18 个代码（511090 已注释），每个配上上市日期和来源（probe-listdates-12fam 的输出 / 语料作者注释，按 build-e9-pit.js 的规则，无日期的代码不得当作截断前）。分三类：< 2024-01-01 / 2024 年内 / 2025 年内。不跑回测",
+    "from": [
+      "wiki/families/多策略分仓组合 §1.1 fact 5 (ETF3 pool written in 2026)",
+      "commit 7208916 probe-listdates-12fam (159550 listed 2025-06-27)",
+      "CLAUDE.md epoch-9 VAL contamination note (五福闹新春)"
+    ],
+    "edgeRef": "分仓分散",
+    "rank": 6,
+    "status": "queued",
+    "result": null,
+    "note": "gatekeeper 2026-10-31 re-rank → 6：0 回测分钟，只服务 VAL 前置条件（u-1e3：ETF3 仅 16% 收益，动不了 TRAIN 水平），而 VAL 本轮不花。不占账户，可在两次回测之间顺手做，不在今天的回测关键路径上"
+  },
+  {
+    "id": "u-1a",
+    "kind": "understand",
+    "title": "edge test 2/4：腿 A（概念热点小市值，台上实为「熊市小市值 + 牛市货币基金」）单独跑，原权重 0.35",
+    "hypothesis": "同 u-1b。可证伪：腿 A 原生 sharpe ≥ 4.96 ⇒ 强形式证伪，族的水平归腿 A。先验认为不会（u-0：~40% 的活跃周三持 511880），但 511880 那 40% 恰好会压低腿 A 的波动，所以原生 sharpe 高并非不可能——这正是要测的",
+    "why": "edge test 的第二步。也是 u-4 和 imp-1 的解锁条件（「腿 A 是否重要」）。成本按 5–15 分钟估，腿 A 没有 every_bar，应比 u-1b 快",
+    "design": "同 u-1b，权重块改为 A 0.35 / B 0 / ETF2 0 / ETF3 0。同样核对被置零腿下单数 = 0。另外从日志统计：腿 A 持 511880 的天数占比、读取同花顺概念失败 行数（应与 u-0 一致）。原生 sharpe 用 NAV 重建法，w = 0.35",
+    "from": [
+      "wiki/families/多策略分仓组合 edge[分仓分散].test",
+      "u-0 (concept CSV missing on our account; leg A holds 511880 on bull Wednesdays)"
+    ],
+    "edgeRef": "分仓分散",
+    "rank": 4,
+    "status": "answered",
+    "note": "若 u-1b 已触发 stop rule，本条仍建议跑：u-4 / imp-1 的解锁条件需要它，而且强形式被腿 B 证伪后「腿 A 有没有贡献」仍是开放问题",
+    "result": "leg A alone at weight 0.35 scores account 19.44%, sharpe 1.72, maxDD 6.79%, objective 0.1265 (stored curve 242 pts). Native leg NAV (w=0.35, same convention that reproduces base 4.961): annual 57.83%, vol 0.2422, sharpe 2.223, maxDD 17.82%. Log: all 18 bull-regime rebalance days fell to 511880 (conc"
+  },
+  {
+    "id": "u-1e3",
+    "kind": "understand",
+    "title": "edge test 3/4：ETF3（跨资产动量轮动）单独跑，原权重 0.20",
+    "hypothesis": "同 u-1b；本条主要服务弱形式：DR = σ_base / Σσ_run_i ≥ 0.85 ⇒ 弱形式证伪（各腿并不低相关）。可加性残差大 ⇒ 账户级耦合（与 u-2 对读）",
+    "why": "弱形式 DR 和可加性残差需要全部四个 σ。若 u-1b/u-1a 触发 stop rule，这条和 u-1e2 只在弱形式仍值得回答时再跑（它们决定 30% 的 ETF 仓有没有贡献），orchestrator 可按剩余预算决定。ETF 腿没有 every_bar，预计很快",
+    "design": "同 u-1b，权重块改为 A 0 / B 0 / ETF2 0 / ETF3 0.20。w = 0.20。核对置零腿下单数 = 0",
+    "from": [
+      "wiki/families/多策略分仓组合 edge[分仓分散].test"
+    ],
+    "edgeRef": "分仓分散",
+    "rank": 5,
+    "status": "answered",
+    "result": "ETF3 alone at weight 0.20 scores account 15.01%, sharpe 1.27, maxDD 5.31%, objective 0.0970 (stored curve 242 pts). Native leg NAV (w=0.20): annual 78.32%, vol 0.3432, sharpe 2.165, maxDD 19.44%. Supplies 16.0% of base total return; correlation with leg A 0.035, leg B 0.182, ETF2 0.546"
+  },
+  {
+    "id": "u-1e2",
+    "kind": "understand",
+    "title": "edge test 4/4：ETF2（宽基反弹）单独跑，原权重 0.10",
+    "hypothesis": "同 u-1e3。四个单腿跑齐后报：最好的单腿原生 sharpe、DR、可加性残差 Σr_run_i − r_base 的日均绝对值与累计值",
+    "why": "补齐 DR。权重最小的腿，最后跑。若被 stop rule 跳过，DR 记为 unresolved",
+    "design": "同 u-1b，权重块改为 A 0 / B 0 / ETF2 0.10 / ETF3 0。w = 0.10",
+    "from": [
+      "wiki/families/多策略分仓组合 edge[分仓分散].test"
+    ],
+    "edgeRef": "分仓分散",
+    "rank": 6,
+    "status": "answered",
+    "result": "ETF2 alone at weight 0.10 scores account 6.79%, sharpe 0.80, maxDD 1.62%, objective 0.0517 (stored curve 242 pts). Native leg NAV (w=0.10): annual 70.80%, vol 0.2717, sharpe 2.458, maxDD 9.83%. Supplies 7.2% of base total return; correlation with leg A 0.159, leg B 0.327, ETF3 0.546"
+  },
+  {
+    "id": "u-5",
+    "kind": "understand",
+    "title": "涨停动量延续 edge test：腿 B 单独跑，删去 rzq_list（L926）",
+    "hypothesis": "弱转强条件（前天涨停、昨天未封板）是腿 B 的收益来源。可证伪：删去 rzq_list 后腿 B 原生 sharpe ≥ 0.85 × u-1b 的原生 sharpe（降幅 < 15%）⇒ 弱转强条件不是来源，腿 B 的收益来自其余过滤（竞价开盘区间、竞价买卖盘、均线）",
+    "why": "这是家族页 涨停动量延续 的注册判据，不是新发明。结果任一方向都有信息量。⚠ 成本风险：去掉 rzq_list 后，候选池从几只变成 399101 非 ST 的上千只，后面的 get_call_auction 竞价盘口过滤每天要跑在上千只上，再叠加 every_bar——slow-skip 风险显著高于 u-1b。跑之前用 u-1b 的实测运行时估算；若 u-1b ≥ 15 分钟，本条大概率触 45 分钟帽，应先报告 orchestrator。⚠ 另一个混淆：候选从几只变上千只后「最多 6 只」的截取顺序决定买哪 6 只，executor 要在结果里写明截取规则",
+    "design": "从 u-1b 的变体（B 0.35，其余 0）出发，再加一条断言编辑：L926 `stk_list = self.rzq_list(stk_list)` 注释掉。其余不动。--window train。对照 = u-1b，不是 base",
+    "from": [
+      "wiki/families/多策略分仓组合 edge[涨停动量延续].test",
+      "u-1b"
+    ],
+    "edgeRef": "涨停动量延续",
+    "rank": 3,
+    "status": "answered",
+    "note": "blocked-on u-1b。解锁条件（「腿 B 重要」）：u-1b 原生 sharpe ≥ 1.0 且账户级累计收益 ≥ base 累计收益的 20%。都不满足 ⇒ drop，原因写「腿 B 对本书不重要，其内部归因没有决策价值」 ‖ UNLOCKED 2026-10-31 by u-1b: native 4.925 >= 1.0 and leg B = 56% of base total return >= 20%. u-1b ran in ~3 min wall, so the slow-skip pre-check (>=15 min) does not trip; the 1000-name auction filter remains the runtime risk ‖ gatekeeper 2026-10-31 re-rank → 3（liq-1/liq-2 之后）：先清 exit gate 阻塞；本条是族水平来源（腿 B 56%）的机制测试，高于两条腿 A 测试。⚠ 预算：去掉 rzq_list 后 get_call_auction 每天跑在全部候选上，墙钟超 20 分钟先报 orchestrator；触 45 分钟帽先查 buildList 是否 完成",
+    "result": "removing the 弱转强 pre-filter (rzq_list) widens the pool from a median 4 to 95 candidates/day and raises buys 367 -> 517; leg B scores account 48.42 / 3.04 / 14.31 / 0.3411 vs u-1b 52.55 / 3.61 / 4.59 / 0.4796. Native leg sharpe 3.930 vs 4.925 = 0.798x, below the registered 0.85 threshold, so the hypo"
+  },
+  {
+    "id": "u-4",
+    "kind": "understand",
+    "title": "腿 A 单独跑，强制熊市分支（L305 的 `if self.isbull:` → `if False:`）",
+    "hypothesis": "台上腿 A 在牛市周三持 511880（u-0），这条意外的货币基金回退改变了腿 A 的风险收益。可证伪：强制熊市分支（牛市周三也选 399101 小市值）后腿 A 原生 sharpe ≤ u-1a 的原生 sharpe ⇒「货币基金回退是拖累」证伪——即台上测到的腿 A 是被一个缺失文件意外对冲过的书，而这个对冲在帮它。两个方向都有信息：它告诉我们台上腿 A 和作者设计的腿 A 差多远",
+    "why": "排在 u-5 之后：腿 A 在 u-0 已知结构性失真，但它的归因要等 u-1a 说明腿 A 重不重要。⚠ 它 **不是** 规模因子 的注册判据——家族页写的是 market_cap asc→desc，而这条测的是牛市分支的回退。所以本条结果不改变 规模因子 的状态；注册判据目前没有任何队列条目（已报告给 orchestrator，属于 generator A 的缺口）。⚠ 编辑位置：L305 只此一处。L277 的 `if self.isbull:` 是牛熊状态机本身，改它会改信号，不得动",
+    "design": "从 u-1a 的变体（A 0.35，其余 0）出发，再加一条断言编辑：get_stock_list 内 L305 `if self.isbull:` → `if False:`。断言：全文件恰好这一行变化，L277 不变。--window train。对照 = u-1a。另报：原 511880 的周三现在持了几只、是哪类（市值分位）",
+    "from": [
+      "u-0 (leg A holds 511880 on ~17 of ~41 active Wednesdays)",
+      "wiki/families/多策略分仓组合 §1.1 fact 1",
+      "u-1a"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 5,
+    "status": "answered",
+    "note": "blocked-on u-1a。解锁条件（「腿 A 重要」）：u-1a 原生 sharpe ≥ 1.0 且账户级累计收益 ≥ base 累计收益的 20%。都不满足 ⇒ drop 并写明原因 ‖ UNLOCKED 2026-10-31 by u-1a: native 2.22 >= 1.0 and leg A = 20.8% of base total return >= 20% (barely) ‖ gatekeeper 2026-10-31 re-rank → 5：低于 u-6（u-6 测作者写下的机制，u-4 测台上缺文件造成的意外）。原 why 里「规模因子 注册判据没有队列条目」已由 u-6 补上",
+    "result": "forcing the bear branch on leg A scores account 111.14 / 4.43 / 8.13 / objective 1.0301 vs u-1a 19.44 / 1.72 / 6.79 / 0.1265; native leg total 317.54%, sharpe 6.92, maxDD 17.29, and the gain sits in the weeks that previously held 511880 (bull weeks native +150.5%). But the 14:00 check_remain_amount "
+  },
+  {
+    "id": "imp-1",
+    "kind": "improve",
+    "title": "整书：腿 A 牛市分支换成小市值分支（与 u-4 同一编辑，作用于完整四腿书）",
+    "hypothesis": "把意外的 511880 回退换成作者设计意图里最接近的可用替代（小市值），提高整书 sharpe。可证伪：整书 sharpe ≤ 4.96（base 存储曲线），或 sharpe 升而 maxDD 升幅超过 annual 升幅（objective 不升）",
+    "why": "期望收益：中。事前有理由（回退是缺文件造成的意外，不是作者的设计）。但排在最后一档，三个理由：(1) 它和 u-4 是同一个编辑，u-4 先在腿 A 上隔离地回答「这个替换好不好」，u-4 若显示腿 A 变差，本条几乎必然变差，不应再花分钟；(2) 腿 A 和腿 B 都从 399101 选小盘，加大腿 A 的小盘敞口会抬高两条主腿的相关性——正好与本族的 分仓分散 claim 相抵，整书 sharpe 可能在腿 A 改善时反而下降；(3) 形状上就是 大小盘轮动 dxp-imp-1（多持小盘、TRAIN 上更好），那本 VAL 1.88、OOS −0.21。这不是否决理由（不同家族、不同机制），但它意味着本条在 TRAIN 上赢了也必须当作「2024 小盘 β」的嫌疑来读。若成为候选，realizability 需要按这本书重新打分（realizabilityScope）",
+    "design": "baseline.py + 一条断言编辑：L305 `if self.isbull:` → `if False:`（同 u-4，L277 不动）。权重不动。--window train。对照 = base 存储曲线 35ce65d2__train__e9",
+    "from": [
+      "u-0",
+      "u-4",
+      "wiki/families/多策略分仓组合 §1.1 fact 1",
+      "大小盘轮动 dxp-imp-1 (TRAIN 3.51 → VAL 1.88 → OOS −0.21) as caution"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 9,
+    "status": "blocked",
+    "note": "blocked-on u-4。解锁条件：u-4 的腿 A 原生 sharpe > u-1a 的原生 sharpe。否则 drop，原因引用 u-4 ‖ recorder 2026-10-31（u-4）：u-4 原生 sharpe 6.92 > u-1a 2.223，原解锁条件形式上满足，但 u-4 的水平是腿 A 14:00 未设上限补仓的集中度伪影（年末单一微盘 ¥1.93M，34 次 1–2 名补仓 vs 17），不可引用。仍 BLOCKED。新解锁条件：先构建腿 A 单名上限 ≤ 腿现金 / stock_num 的版本并通过 liq-1，再在整书上测本编辑",
+    "result": null
+  },
+  {
+    "id": "imp-3",
+    "kind": "understand",
+    "title": "ETF3 点时池（build-e9-pit.js 规则：pool ∩ 上市 < TRAIN 起点）",
+    "hypothesis": "ETF3 的池子事后性抬高了本书的 TRAIN 分数。可证伪：点时池下整书 objective 与 base 相差 < 0.01",
+    "why": "gatekeeper 把 kind 从 improve 改为 understand：它不是改进而是测量池子事后性，结果「无差别」是好结果（信息），不应按期望收益排。⚠ 预期是 drop，不跑：u-3 已基本答出——唯一晚于 2024-01-01 的代码 159550 上市于 2025-06-27，它在 2024 全年根本不存在、不可能被选中，所以 TRAIN 上的点时池与原池**在构造上等价**，这次回测只会复现 base。只有当 u-3 发现某只代码**在 2024 年内**上市时，TRAIN 上的点时测试才有意义。⚠ 但 159550 在 VAL 年内上市这件事本身必须记成 VAL 前置条件：本族任何 VAL 之前必须先把池子截断到 2025-01-01 之前（同 五福闹新春 的规则；VAL 每 (family, bench) 只有一次）",
+    "design": "若解锁：照 study/五福闹新春/build-e9-pit.js 的规则，截断日从 harness 读，被排除的代码原地注释并保留作者日期，断言改动行恰好是排除行。--window train。对照 = base。成对引用两个数字",
+    "from": [
+      "generator B imp-3",
+      "u-3",
+      "commit 7208916 (159550 listed 2025-06-27)",
+      "CLAUDE.md q-e9-pit (pool bonus splits by mechanism)"
+    ],
+    "edgeRef": "分仓分散",
+    "rank": 10,
+    "status": "blocked",
+    "note": "blocked-on u-3。若 u-3 确认 2024 年内上市的在用代码为 0 ⇒ 改为 dropped，原因「TRAIN 上与原池构造等价」，并把「VAL 前须截断至 2025-01-01 前（排除 159550）」写入家族页 §4 作为 VAL 阻塞前置条件。不论 ETF3 贡献大小，该前置条件都成立 ‖ recorder 2026-10-31（liq-2）：10× 地板下 ETF3 的 25 次剔除落在 159637/159692/159851（2026 写的池子里的薄名字），与池子事后性指向同一批代码——imp-3 结果须并列报其 liq-2 剔除数",
+    "result": null
+  },
+  {
+    "id": "imp-2p",
+    "kind": "understand",
+    "title": "imp-2 的计时探针：点时 get_concept_stocks 在牛市周三的单次调用成本",
+    "hypothesis": "在每个牛市周三对全部概念调用 get_concept_stocks(date=previous_date) 并计 ≥9% 涨幅股数，能在 slow-skip 帽内跑完一整年。可证伪：短窗口（约 1 个月、含 ≥2 个牛市周三）上外推的全年运行时 > 30 分钟",
+    "why": "从 imp-2 拆出：它需要两次回测（计时 + 正式），按规则就是两条。成本：一次短窗口回测，几分钟。只在 imp-2 本身有理由跑时才跑",
+    "design": "腿 A 单独（u-1a 变体）+ 把 get_stocks_list2 的 CSV 读取换成 get_concept_stocks 的点时实现，打印每次调用耗时。--start/--end 自定义短窗口（TRAIN 内），只看 wall-clock，不读收益",
+    "from": [
+      "generator B imp-2",
+      "u-0"
+    ],
+    "edgeRef": null,
+    "rank": 11,
+    "status": "blocked",
+    "note": "blocked-on imp-2 的解锁条件（见 imp-2）",
+    "result": null
+  },
+  {
+    "id": "imp-2",
+    "kind": "improve",
+    "title": "用点时 get_concept_stocks(date=previous_date) 恢复腿 A 的题材热度分支",
+    "hypothesis": "题材热度（≥9% 涨幅股数最多的概念交集）在小市值之上提供额外选股能力。可证伪：整书 sharpe ≤ imp-1 的整书 sharpe（对照是 imp-1——同样不持 511880 的小盘版本——不是 base，否则把「不持货币基金」的效果算成题材热度的）",
+    "why": "期望收益不确定，新颖性高（腿 A 的题材机制在本库是新的）。排最后：(1) 没有 edge 可挂——必须先在家族页登记一条 proposed 的 题材热度 claim，再跑，否则它是 off-mechanism；(2) ⚠ 聚宽的 get_concept_stocks 返回的是 **聚宽概念**，不是作者用的 **同花顺** 概念 CSV——这是替代品而不是恢复，结果不能写成「作者的设计在台上的表现」；(3) slow-skip 风险高，需要 imp-2p 先计时；(4) 依赖 imp-1 作为对照",
+    "design": "完整四腿书 + 腿 A 的 get_stocks_list2 换成点时 get_concept_stocks 实现（概念集合按 previous_date 取），其余不动。--window train。对照 = imp-1",
+    "from": [
+      "generator B imp-2",
+      "u-0",
+      "wiki/families/多策略分仓组合 §1.1 fact 1"
+    ],
+    "edgeRef": null,
+    "rank": 12,
+    "status": "blocked",
+    "note": "blocked-on：(a) u-1a 显示腿 A 重要；(b) imp-1 已跑（作对照）；(c) 家族页已登记 proposed claim 题材热度 并带 test；(d) imp-2p 外推运行时 ≤ 30 分钟。今天 110 分钟预算内几乎不可能走到",
+    "result": null
+  },
+  {
+    "id": "liq-1",
+    "kind": "understand",
+    "title": "可成交性：完整 base 书在自身仓位规模上加流动性地板（前一日成交额 ≥ 本笔金额 / 0.05），作用于腿 A、腿 B 和两条 ETF 腿的全部买入",
+    "hypothesis": "在本书自己的仓位规模上，日线可行性地板对整书不起作用。可证伪：任何一个买入批次出现 LIQFLOOR in≠out（有名字因前一日成交额 < 本笔金额/0.05 被跳过），或者曲线偏离对照（max|Δcum| > 0）⇒ 地板确实约束；若整书 sharpe 因此跌破 1.0 闸门 ⇒ R=1（量意义上不可成交）。先验：腿 B 买的是 399101 里刚涨停过的小盘，开板日成交额通常被放大，所以地板大概率惰性——但先验不能代替测量（大小盘轮动 惰性、ETF溢价 8.44→1.10、小市值 7/8 不可成交）",
+    "why": "排第一：exit gate 上 realizability 未设 ⇒ BLOCK，这是本族今天唯一能清掉的阻塞（VAL 本轮不花，§4 已定）。u-1 已把族的水平和可成交性都归到腿 B（56% 收益、原生 sharpe 4.925 ≈ base 4.96），所以必须在完整 base 书上测（R 描述 candidate=base 35ce65d2，不设 realizabilityScope），决定性的是腿 B 那一路的剔除数。成本：1 次回测，u-1b 实测 ~3 分钟墙钟、~1–2 预算分钟；地板只多一次 attribute_history/名。结果任一方向都有信息。⚠ 本测量回答不了的事（必须写进结论，不得省略）：地板是按**日线**成交额算的，而腿 B 在 **09:30:05** 用市价单（order_value）买一只**前天涨停、昨天开板**的小盘股。order_volume_ratio 0.05 在本台上是对**当天整根日线**的量做的上限，不是对开盘 5 秒的量；成交价是 09:30:05 的 last_price（q-e9-bench-lastprice：get_current_data 给的是实时价），且台是零滑点。所以地板惰性只排除「全天量不够吸收这一笔」，**不排除**「开盘 5 秒内按这个价拿不到这一笔」——队列深度、开盘价差、竞价后第一笔的冲击都不在日线里。另外前一日（开板日）的成交额本身被涨停事件放大，地板对这类名字天然偏松。因此：liq-1 惰性 ⇒ 只证伪「量不够」意义上的 R=1，支持 R≥2；**R=3 不能单靠 liq 挣得**（无论 liq-2 结果如何），需要一次开盘成交测试（例如把腿 B 入场推迟到 09:35/10:00 的执行延迟消融，或分钟级价差读取）——那是另一条条目，不在本条范围内。腿 B 本来就跳过 09:30:05 时 last_price==high_limit 的名字（L1081–1084），所以「一字板买不进」不是本书的问题，问题是开盘冲击成本",
+    "design": "从 baseline.py（完整四腿，权重不动）出发，加一个 helper 和两处调用，用断言编辑构建（照 study/资产配置/build-u1-u3-liq1.js 的 edit() 写法：每处恰好 1 次匹配，否则抛错；新建 build-liq.js，K 作参数，一份脚本出 liq-1 / liq-2）。helper：liq_ok(leg, s, value) = 前一日成交额 attribute_history(s, 1, '1d', ['money'])（盘中调用时日线只到 previous_date，avoid_future_data 已 pin）≥ K × value / 0.05，K=1。⚠ 地板用**本笔订单的实际金额**动态计算，而不是写死 1.17e6：腿 B 原生总收益 150%，腿内现金复利，年末单笔约 ¥146k ⇒ 本身的可行性下限约 2.9e6，写死的常数会在下半年把地板低估到 1/2.5。名义参考值（开局）：腿 B / 腿 A 0.35e6/6 ≈ ¥58.3k ⇒ 1.17e6；ETF2 整腿 1e5 ⇒ 2e6；ETF3 整腿 2e5 ⇒ 4e6；腿 A 的 511880 照样过地板（预期惰性）。调用点 (1) StrategyB.buy() 循环里、order_value 之前（L1094 前），不通过就 continue——与该循环已有的停牌/涨跌停跳过同一语义，空出的仓位今天不补；(2) BaseStrategy.order_target_value_ 的买入分支（value > 0）里、order_target_value 之前，不通过就 return None——覆盖腿 A、ETF2、ETF3。卖出不加地板（已有持仓总要能退出）。日志：每个买入批次一行 `LIQFLOOR <date> <leg> in=<n> out=<m> excluded=<codes|-> <code>=<prevmoney>/<floor> ...`（腿 B 每次 buy()、腿 A 每次 buy_security()、ETF 腿每笔），异常打 `LIQFLOOR ERROR` 并放行（响亮失败，不静默剔除）。另加一行只记录、不过滤的 `LIQAUCT <date> <code> auctmoney=<x> posvalue=<y>`：腿 B 的 filter_stocks_by_b_s 已经调 get_call_auction，从同一 df 取 money 列，记下每只买入名字的 09:25 竞价成交额与本笔金额之比——这是本台上离「开盘那一下的量」最近的读数，零额外回测，但它是读数不是测量，不改变 R。断言：构建出的文件相对 baseline.py 只多出 helper + 两处调用 + LIQAUCT 读数。--window train。对照 = 已存 base 曲线 2026-07-18_多策略-题材概念-35ce65d2__train__e9。读法照 study/资产配置/liqfloor-read.js（分页读日志、按腿汇总 in/out、每名最低成交额与地板倍数、与对照的 max|Δcum|）；正则要加 leg 字段，所以复制一份到本目录改，不动 资产配置 的那份。报：每条腿的剔除次数与名字、最紧名字的成交额/地板倍数、整书账户级 sharpe/objective（整书不报腿原生值——NAV 约定只适用于单腿跑）",
+    "from": [
+      "u-1 (family level and realizability = leg B; ~¥58k/position, 09:30:05 entry)",
+      "u-1b (734 transactions all 策略B, ~100% daily turnover, ~3 min wall)",
+      "wiki/families/多策略分仓组合 §4 [阻塞 exit gate] + [新，u-1] 腿 B 的 liq 测试还没有队列条目",
+      "study/资产配置 liq-1 (realizabilityBasis; build-u1-u3-liq1.js, liqfloor-read.js)",
+      "CLAUDE.md liq precedents (大小盘轮动 inert, b3751277 inert, ETF溢价 8.44→1.10)"
+    ],
+    "edgeRef": "分仓分散",
+    "rank": 1,
+    "status": "answered",
+    "note": "gatekeeper 2026-10-31：无重复——0 条 liq finding、binding closedDirections 1 条（非 realizability）、§2 无 liq 行。dispatch 本条。判读：(a) 全部 in==out 且 max|Δcum|=0 ⇒ 惰性，realizability 记 2，basis 必须照抄 ⚠ 限制（开盘 5 秒成交未测）；(b) 有剔除但整书 sharpe ≥ 1.0 ⇒ 记 2，成对引用 base 与地板后两个数；(c) 整书 sharpe < 1.0 ⇒ 记 1。不论结果，R=3 不由本条或 liq-2 授予",
+    "result": "the floor is INERT at the book own position size: 0.8792 / 4.96 / 93.68 / 5.76, curve bit-identical to the control (max|dcum| = 0 over 242/242 days). Leg B 169 buy batches, 367 in = 367 out, tightest prev-day money / floor 33.71x (003001 2024-06-14), median 367x; leg A 84/84 batches pass, tightest 2"
+  },
+  {
+    "id": "liq-2",
+    "kind": "understand",
+    "title": "可成交性容量：同 liq-1，地板放大到 10×（前一日成交额 ≥ 10 × 本笔金额 / 0.05，开局腿 B ≈ 1.17e7）",
+    "hypothesis": "本书在 10 倍资金（约 ¥1e7）下仍过 1.0 闸门。可证伪：10× 地板下整书 sharpe < 1.0，或腿 B 一路被剔除的买入批次过半（容量 < ¥1e7）。若 liq-1 已生效，本条的问题变成「容量曲线有多陡」",
+    "why": "容量曲线的第二个点（同 资产配置 liq-2、大小盘轮动 1e7/2e7 的读法）：区分未受损容量与过闸容量。1 次回测，~2 分钟。⚠ 它不能把 R 提到 3——上限由开盘成交的盲区决定，不由日线容量决定（liq-1 的 ⚠ 限制原样适用于本条）。价值是给 R=2 一个容量数字，并告诉后续 improve 轮这本书能放多大；若两档都惰性，说明腿 B 的名字日成交额普遍 > 3e7，这本身是关于 弱转强 候选池的事实（它不是微盘）",
+    "design": "从 baseline.py（完整四腿，权重不动）出发，加一个 helper 和两处调用，用断言编辑构建（照 study/资产配置/build-u1-u3-liq1.js 的 edit() 写法：每处恰好 1 次匹配，否则抛错；新建 build-liq.js，K 作参数，一份脚本出 liq-1 / liq-2）。helper：liq_ok(leg, s, value) = 前一日成交额 attribute_history(s, 1, '1d', ['money'])（盘中调用时日线只到 previous_date，avoid_future_data 已 pin）≥ K × value / 0.05，K=10。⚠ 地板用**本笔订单的实际金额**动态计算，而不是写死 1.17e6：腿 B 原生总收益 150%，腿内现金复利，年末单笔约 ¥146k ⇒ 本身的可行性下限约 2.9e6，写死的常数会在下半年把地板低估到 1/2.5。名义参考值（开局）：腿 B / 腿 A 0.35e6/6 ≈ ¥58.3k ⇒ 1.17e7；ETF2 整腿 1e5 ⇒ 2e7；ETF3 整腿 2e5 ⇒ 4e7；腿 A 的 511880 照样过地板（预期惰性）。调用点 (1) StrategyB.buy() 循环里、order_value 之前（L1094 前），不通过就 continue——与该循环已有的停牌/涨跌停跳过同一语义，空出的仓位今天不补；(2) BaseStrategy.order_target_value_ 的买入分支（value > 0）里、order_target_value 之前，不通过就 return None——覆盖腿 A、ETF2、ETF3。卖出不加地板（已有持仓总要能退出）。日志：每个买入批次一行 `LIQFLOOR <date> <leg> in=<n> out=<m> excluded=<codes|-> <code>=<prevmoney>/<floor> ...`（腿 B 每次 buy()、腿 A 每次 buy_security()、ETF 腿每笔），异常打 `LIQFLOOR ERROR` 并放行（响亮失败，不静默剔除）。断言：构建出的文件相对 baseline.py 只多出 helper + 两处调用。--window train。对照 = 已存 base 曲线 2026-07-18_多策略-题材概念-35ce65d2__train__e9。读法照 study/资产配置/liqfloor-read.js（分页读日志、按腿汇总 in/out、每名最低成交额与地板倍数、与对照的 max|Δcum|）；正则要加 leg 字段，所以复制一份到本目录改，不动 资产配置 的那份。报：每条腿的剔除次数与名字、最紧名字的成交额/地板倍数、整书账户级 sharpe/objective（整书不报腿原生值——NAV 约定只适用于单腿跑）",
+    "from": [
+      "liq-1",
+      "study/资产配置 liq-2 (4e7: 16/25 rebalances bound, sharpe 2.47→2.05)",
+      "大小盘轮动 liq capacity curve (2e6 inert / 1e7 pass / 2e7 fail)"
+    ],
+    "edgeRef": "分仓分散",
+    "rank": 2,
+    "status": "answered",
+    "note": "blocked-on liq-1（只为顺序：共用构建脚本，liq-1 先验证 helper 与日志格式、0 条 LIQFLOOR ERROR）。liq-1 answered 即解锁，不论方向；若 liq-1 整书已跌破 1.0（R=1），本条改 dropped，原因「1× 已不过闸，10× 无新信息」",
+    "result": "at 10x the floor the book loses 0.1316 objective (0.7476 / 4.61 / 80.28 / 5.52, max|dcum| 14.82pp) and still clears the 1.0 gate. Leg B is untouched: 367 in = 367 out, 0 excluded, tightest 3.37x. All exclusions are on the ETF legs and leg A: ETF3 25 orders (159637 x9, 159692 x8, 159851 x6, 501018, 5"
+  },
+  {
+    "id": "u-6",
+    "kind": "understand",
+    "title": "规模因子 edge test（注册判据）：腿 A 单独，order_by(valuation.market_cap.asc()) → desc（L321），其余不动",
+    "hypothesis": "规模（取最小市值）是腿 A 熊市分支的收益来源。可证伪（家族页注册判据）：asc→desc 后腿 A 原生 sharpe 降幅 < 30%（Δ > −30%）⇒ 规模不是腿 A 的来源，规模因子 refuted；降幅 ≥ 30% ⇒ measured",
+    "why": "规模因子 唯一的注册判据，u-0 和 u-1a 两次写了「判据未跑、没有队列条目」——gatekeeper 补上。值一次回测：本族三条 edge 里唯一没有任何测量的一条，两个方向都改变 edge 状态（improve generator 靠它判 u-4/imp-1 一线是否 on-mechanism）；成本 ~2 分钟（腿 A 无 every_bar）。排在 u-5 之后：腿 A 只占 20.8% 收益，不是族的水平。排在 u-4 之前：u-4 测台上意外（缺 CSV 导致的 511880 回退），本条测作者写下的机制。⚠ 稀释（必须处理，否则判据偏向「不是来源」）：u-1a 里 18/18 牛市调仓日持 511880，desc 只影响 23 个熊市调仓日，那一半货基两次跑完全相同，整腿 sharpe 降幅被稀释。主读数 = 熊市分支持仓期内的腿 A 原生 sharpe（牛熊状态机 L277 不动，熊市日期集合两边相同，从日志取），整腿原生 sharpe 作次读数；两读数方向不一致时如实报，不择一",
+    "design": "从 u-1a 变体（A 0.35，其余 0）出发，加一条断言编辑：get_stock_list 内 L321 `.order_by(valuation.market_cap.asc())` → `.order_by(valuation.market_cap.desc())`，断言全文件恰好这一处变化（.limit(self.stock_num*3) 不动 ⇒ 过滤后池子最大的 18 只再截 6，同注册判据）。L277、L305 不动。--window train。对照 = u-1a 已存曲线 study_多策略分仓组合_variants_u-1a__train__e9。报：整腿原生 sharpe（w=0.35，NAV 约定同 u-1）、熊市分支期内原生 sharpe（先核对两次跑熊市调仓日集合一致）、desc 版选中名字的市值分位、核对牛市日仍落 511880（证明编辑没碰牛市路径）",
+    "from": [
+      "wiki/families/多策略分仓组合 edge[规模因子].test (registered: asc→desc, Δ > −30% ⇒ not the source)",
+      "u-0 (规模因子 status unchanged because its test has not run)",
+      "u-1a (18/18 bull days in 511880; 23 bear days on the market-cap-ascending pipeline; native 2.223)"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 4,
+    "status": "answered",
+    "note": "gatekeeper 2026-10-31 新增：判据已在家族页注册，无重复；无 stale closure 涉及 market_cap 方向。不依赖 u-4",
+    "result": "flipping leg A ranking from market_cap asc to desc inside the same 6–200亿 band takes leg A from account 19.44 / 1.72 / 6.79 / 0.1265 to 2.47 / -0.26 / 6.31 / -0.0384; native sharpe 2.223 -> 0.208 (-90.6%), and on the bear-regime holding days alone 4.06 -> 0.51 (-87.5%). Regime dates are identical an"
+  },
+  {
+    "id": "u-7",
+    "kind": "understand",
+    "title": "开盘成交测试：腿 B 入场从 09:30:05 推迟到 09:35 / 10:00（两档），其余不动",
+    "hypothesis": "腿 B 的 sharpe 不依赖开盘最初几秒的价格。可证伪：推迟到 09:35 后整书（或腿 B 单独）sharpe 下降 > 30%，或推迟到 10:00 后跌破 1.0 闸门 ⇒ 边际来自开盘瞬间的价格，零滑点台在 09:30:05 的 last_price 成交不可信，R=3 不可得、R=2 也需要重新考虑",
+    "why": "liq-1 惰性 + liq-2 腿 B 10× 仍零剔除，日线量这条路已经走完；R 停在 2 的唯一原因是 09:30:05 开盘 5 秒的成交（冲击/价差/竞价后第一笔）日线台看不见。执行延迟消融是本台上唯一能接近这个问题的测量：get_current_data 在 run_daily 时刻给的是实时价（q-e9-bench-lastprice），所以推迟入场会改变成交价。2 次回测，每次 ~3 分钟",
+    "design": "从 baseline.py 出发，一次断言编辑：腿 B 买入的 run_daily 时刻 09:30:05 → 09:35:00（u-7a）/ 10:00:00（u-7b）。⚠ 核对腿 B 买入函数内的 high_limit 跳过（L1081–1084）与竞价过滤在新时刻仍按原语义执行（竞价数据 09:26 已读，不受影响）；核对腿 B 卖出时刻与新买入时刻不冲突。--window train。对照 = 已存 base 曲线 35ce65d2__train__e9。另可做腿 B 单独版（权重块同 u-1b）以免被三条稀释腿掩盖，按 u-1b 的 NAV 约定报原生 sharpe。报：Δsharpe / Δobjective，腿 B 买入次数是否变化（推迟后更多名字触及涨停被跳过）",
+    "from": [
+      "liq-1 (floor inert; R=3 not earnable by liq)",
+      "liq-2 (leg B 0 exclusions at 10x)",
+      "CLAUDE.md q-e9-bench-lastprice (intraday last_price is live)"
+    ],
+    "edgeRef": "涨停动量延续",
+    "rank": 2,
+    "status": "answered",
+    "result": "delaying leg B entry costs a quarter of the book sharpe by 09:35 and ~39% by 10:00: 09:35 scores 67.15 / 3.74 / 6.25 / objective 0.6090, 10:00 scores 53.26 / 3.04 / 6.62 / 0.4664, against base 93.68 / 4.96 / 5.76 / 0.8792 (stored curves 242 pts each). Leg B buys 354 (09:35) and 345 (10:00) vs u-1b 3"
+  }
+]
