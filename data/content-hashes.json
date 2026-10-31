@@ -2591,5 +2591,200 @@
     "postId": "b96496732911430d04868a3e7ef80f8d",
     "sourceFile": "2026-10-31_为什么我的策略模拟盘和回测收益差这么多-b9649673.py",
     "registeredAt": "2026-10-30T19:43:02.192Z"
+  },
+  "2741b566c679dffaca34a880cca92da265923280745c00f3e37e03a864b4b492": {
+    "postId": "c346b07084f35f999f679e057f462e7d",
+    "sourceFile": "2026-11-01_关于回测成交_熔断没有处理-c346b070.py",
+    "registeredAt": "2026-10-31T16:14:30.359Z"
+  },
+  "db506318b795f117df02cc699cb745f32aa7dfb09af00d4dd2930fed6ed20bb9": {
+    "postId": "a73e6945fe5d1ae66ed8953c21fd6fe1",
+    "sourceFile": "2026-11-01_请教下如何得到MACD_KDJ这样指标的API_谢谢-a73e6945.py",
+    "registeredAt": "2026-10-31T16:14:33.694Z"
+  },
+  "4a7a46df13cf870b9f405af8ecf8df0b72a2aa52588fd8f31481707a32243627": {
+    "postId": "bf21ea18738fc1f9e9aa061afa168e80",
+    "sourceFile": "2026-11-01_五福etf轮动_这个年化收益是不是不太正常-bf21ea18.py",
+    "registeredAt": "2026-10-31T16:14:37.506Z"
+  },
+  "8178a538bd197fe2e147df48f43b05aa94daa514b7621a98e66ae4d3fc2cce18": {
+    "postId": "8c6ca187e23335b3a19e449d4d9e649f",
+    "sourceFile": "2026-11-01_求大神指教基本面计算_先行拜谢-8c6ca187.py",
+    "registeredAt": "2026-10-31T16:14:42.728Z"
+  },
+  "b367683e065182bd35e6c80a6f40a9fe016084ffc2f91891118daad4d80fa62a": {
+    "postId": "12ec85b628f80a27404278883c4e3349",
+    "sourceFile": "2026-11-01_关于策略运行时和回测不一致的问题-12ec85b6.py",
+    "registeredAt": "2026-10-31T16:14:46.494Z"
+  },
+  "5ffadf30964573cb6dcd0412d4a909c9b0ffafc306cf5b90bb6b7cf02259cebe": {
+    "postId": "ab17f6f13ff914d74c671cea6c326d7f",
+    "sourceFile": "2026-11-01_get_bars返回数据有问题导致收益大爆炸-ab17f6f1.py",
+    "registeredAt": "2026-10-31T16:14:50.588Z"
+  },
+  "0db3b26a7efd97c95c6252103187276142c93be568ca4fe84f8eb85c29dc4de9": {
+    "postId": "1816c8c638217776611e7df60f788dda",
+    "sourceFile": "2026-11-01_关于回测购买基金_遇到基金分红_导致回测不准确-1816c8c6.py",
+    "registeredAt": "2026-10-31T16:14:54.581Z"
+  },
+  "9c0ea7e5262588e8c25817f68115301027752894c760bf4aef29712113efdf8a": {
+    "postId": "7a8ae3d2baca80a645395a850f687c11",
+    "sourceFile": "2026-11-01_请教胜率是如何得出的_99_8_的胜率_可是收益和回撤都不太理想-7a8ae3d2.py",
+    "registeredAt": "2026-10-31T16:14:58.375Z"
+  },
+  "73c7bd9c63d77210c134a0bd9eb0a3cd99e3becdc3e853011aa2495dc47b0324": {
+    "postId": "6464554dbfa4c247c9e33b6a79b8edf4",
+    "sourceFile": "2026-11-01_新手求救_半年78倍错哪了-6464554d.py",
+    "registeredAt": "2026-10-31T16:15:01.551Z"
+  },
+  "57f485fc7021ab3f590e9d4776eddd0dd9687afc8d80169765a93f4bc329f388": {
+    "postId": "954f1d36ba25e861b0524aa65eb2f82b",
+    "sourceFile": "2026-11-01_研究能一直运行吗-954f1d36.py",
+    "registeredAt": "2026-10-31T16:15:04.440Z"
+  },
+  "81ce0c38ec238820e965ffdbd6430635268e139462f9ad9ff409fb1d2c45be0f": {
+    "postId": "9478e83f4974e439b4d8b6de97f75a8b",
+    "sourceFile": "2026-11-01_已解决_基金分拆打你个措手不及-9478e83f.py",
+    "registeredAt": "2026-10-31T16:15:07.899Z"
+  },
+  "bc1f8c517b424b111ee98cfa4ff29519d59de26ef213f1b70bed0cdafbb5f05f": {
+    "postId": "18b67eb4bf7e2b655d0776ff7b376c22",
+    "sourceFile": "2026-11-01_用聚宽金融终端_同一段代码在云端上可以运行在终端上会报错-18b67eb4.py",
+    "registeredAt": "2026-10-31T16:15:11.768Z"
+  },
+  "aa3078b6071444da1c900258556ec41a67ffa42870a752b84414f66b5fb069cc": {
+    "postId": "45fcdc1314197f3541e0e67f2b2fa27a",
+    "sourceFile": "2026-11-01_改写了一下机器学习多因子策略_但是为什么回测结果上没有改变-45fcdc13.py",
+    "registeredAt": "2026-10-31T16:15:17.161Z"
+  },
+  "1d838411e5a16186fac31188e73c392990f9426618067f3722ff2f32a6dc0075": {
+    "postId": "c4a4f8806351b884dc5c25cf8d7c9589",
+    "sourceFile": "2026-11-01_做了一个期货策略_但是回测没有交易_大神们帮忙看看-c4a4f880.py",
+    "registeredAt": "2026-10-31T16:15:22.766Z"
+  },
+  "98fb62e86a81d5e68c25bfcafd2c6bc4b68b023dd13e14ffddcbcb396b091aa4": {
+    "postId": "8b9fd6dc3f7cbe061897cd2773975d57",
+    "sourceFile": "2026-11-01_定投沪深300_结果比基准沪深300低太多-8b9fd6dc.py",
+    "registeredAt": "2026-10-31T16:15:31.142Z"
+  },
+  "092846ad8b300992092512cd98fa290f5db90b285bcd25615ba52e5ca31da71f": {
+    "postId": "508126a0427c09c6bd154ab95424dcce",
+    "sourceFile": "2026-11-01_一个可行的框架测试中持续更新-508126a0.py",
+    "registeredAt": "2026-10-31T16:15:34.110Z"
+  },
+  "61ee10a9746eb2c40ffc8cb9742b3c6c4454be7282609a12fbc7b885202a3810": {
+    "postId": "2cf9f10ccd6a5c3442414902a10430da",
+    "sourceFile": "2026-11-01_分钟级别模拟交易_延时很大-2cf9f10c.py",
+    "registeredAt": "2026-10-31T16:15:38.720Z"
+  },
+  "2425636c85db332b3a34367acef39c320d545525208b9554a970c412ff7b8e7b": {
+    "postId": "2a745246cb194855fc5fb38a44809759",
+    "sourceFile": "2026-11-01_研究了这么多策略_大家亏了还是赚了-2a745246.py",
+    "registeredAt": "2026-10-31T16:15:43.961Z"
+  },
+  "dc08a9be6a24701c92b320b3cc3146342093aa1bdf290faffc2e6785d51dee39": {
+    "postId": "df7e3966b111970452d8e5e431761400",
+    "sourceFile": "2026-11-01_网格交易策略_执行报错_请大佬看看要怎么修改-df7e3966.py",
+    "registeredAt": "2026-10-31T16:15:49.083Z"
+  },
+  "f28fd1b0bb091dcddb0a2a034bd80beafdd2dfb4fb96c3fd4faacf4be1dba9df": {
+    "postId": "577b71b22aef6c7aac43e52dcfdc0d40",
+    "sourceFile": "2026-11-01_请求帮忙贴_策略这个错如何改造在一创运行实盘-577b71b2.py",
+    "registeredAt": "2026-10-31T18:02:58.178Z"
+  },
+  "adefa1f48b3dc6af1ae4df4e516d70aa13cb96ba78b8b610db62d42036a57b8a": {
+    "postId": "5e82f8245b659d34016be9055a2473bf",
+    "sourceFile": "2026-11-01_几张表的代码不一致-5e82f824.py",
+    "registeredAt": "2026-10-31T18:03:01.249Z"
+  },
+  "5e1228f3e88326e239dd54ae50c0c1d4c4357125d4bb946837eba862eabee37c": {
+    "postId": "2813eecbb7ed686e6a65befb8599be61",
+    "sourceFile": "2026-11-01_怎么删除-2813eecb.py",
+    "registeredAt": "2026-10-31T18:03:04.404Z"
+  },
+  "9f0845df388112c9cf0d8770e6363f344584f960171a91b14bf635dfddf20dc1": {
+    "postId": "1904d7b5941f63529e1d514027bde463",
+    "sourceFile": "2026-11-01_聚宽和一创聚宽貌似有区别-1904d7b5.py",
+    "registeredAt": "2026-10-31T18:03:07.271Z"
+  },
+  "f299be45a1d47cfab5deef686a89f38023eda63faded8362c8cc19efed91feec": {
+    "postId": "e085f0680706a2f775b4bb9dd5731d71",
+    "sourceFile": "2026-11-01_讨论帖_为何Fama-French三因子绩效较差-e085f068.py",
+    "registeredAt": "2026-10-31T18:03:10.139Z"
+  },
+  "9f8e5105df5ebcd9298c0ffa59011d09c5e8ce930a0c839d8e01f37cc492031b": {
+    "postId": "681b54208e9b3392522c560fc6aead97",
+    "sourceFile": "2026-11-01_关于get_fundamentals_中的indicator_roe_数值-681b5420.py",
+    "registeredAt": "2026-10-31T18:03:14.567Z"
+  },
+  "ba8955654fac27fbe9428eace95f17c6642ebb815fac6c8d6f054f87e8aaf57c": {
+    "postId": "054005e10a5dbd7b13c5d99135f79069",
+    "sourceFile": "2026-11-01_悬赏哦_按天粒度回测速度超级慢的问题求助-054005e1.py",
+    "registeredAt": "2026-10-31T18:03:17.467Z"
+  },
+  "15bbd60bfe5c066f29187f832e0d41bd16f7995989095655dbe7f92a6c82dc91": {
+    "postId": "bba6ba31e7199ab81d70887f070456ab",
+    "sourceFile": "2026-11-01_请问_g_d_yesterday_为什么能够获得昨日的日期-bba6ba31.py",
+    "registeredAt": "2026-10-31T18:03:20.323Z"
+  },
+  "b36bd952d21c50cdf942ef6542ef814b3323ee80236a286462ad1ce1ddeb5ce1": {
+    "postId": "e04bfd6269bc605cae5d5133076f6f47",
+    "sourceFile": "2026-11-01_求助_请问怎么进行分钟回测呢-e04bfd62.py",
+    "registeredAt": "2026-10-31T18:03:23.166Z"
+  },
+  "720ba2fd373d991a6152d4506bbedda307eda270c51c91f443b3501ee46f1d32": {
+    "postId": "7dd7456ec61f9166386cd76557b71eb3",
+    "sourceFile": "2026-11-01_发现使用attribute_history取得小时数据不准确-7dd7456e.py",
+    "registeredAt": "2026-10-31T18:03:26.420Z"
+  },
+  "ad7c324c6774bfcfbcea3d63cca4100d8ee491b7534a9fef1a57de6a7ed924fb": {
+    "postId": "8bf9d7a8b4713846516d97c34d585948",
+    "sourceFile": "2026-11-01_同一套策略_聚宽和P-T-rade上回测差了6-7倍收益-8bf9d7a8.py",
+    "registeredAt": "2026-10-31T18:03:29.293Z"
+  },
+  "93707d9f4fa9bba36e5e1849e04b71b6f11d1fbb24b5c117dde24ba09a8047f8": {
+    "postId": "39e18ad8415252955ee14375dcbfdc4c",
+    "sourceFile": "2026-11-01_请帮忙修改代码-39e18ad8.py",
+    "registeredAt": "2026-10-31T18:03:32.161Z"
+  },
+  "3ddff651ae06645074ddce8ddb85b8f386de9e162716df1e2893269ad01000ca": {
+    "postId": "b71927d041ae8873e09c919177efb757",
+    "sourceFile": "2026-11-01_请求帮助_一创聚宽编译运行出错如何解决-b71927d0.py",
+    "registeredAt": "2026-10-31T18:03:35.125Z"
+  },
+  "49d78530e9d10f8566585544b943adc86c57e00643b420b04341e51a9f5785a3": {
+    "postId": "9e9472baca976e35a3dc318e34766987",
+    "sourceFile": "2026-11-01_请问如何修改相关编译出错的地方_或者可以将正确的发出来吗-9e9472ba.py",
+    "registeredAt": "2026-10-31T18:03:38.198Z"
+  },
+  "77fcb8f0801d371fc57c8a43f0c909ca4c7fd12660173fa47b33ac06d54f67ce": {
+    "postId": "42b25b31b2c61413e5b98173dac34ef0",
+    "sourceFile": "2026-11-01_回测中如何避免引入未来函数-42b25b31.py",
+    "registeredAt": "2026-10-31T18:03:41.169Z"
+  },
+  "a713ca1daa001a12a1b7a7c4b6a3760dda1686c36530f3a7205eb5135527c0f2": {
+    "postId": "1fdfd9da4dfcf843f474636756e52289",
+    "sourceFile": "2026-11-01_想问下期货平仓的问题-1fdfd9da.py",
+    "registeredAt": "2026-10-31T18:03:44.001Z"
+  },
+  "78bd5f4d789cd44a2e49956270d51ab1510e3e099c262820e5e27cb32e9bd683": {
+    "postId": "a8380587d50166ee327979f7b6b34ba3",
+    "sourceFile": "2026-11-01_融券卖出是保证金比例好像起不到作用-a8380587.py",
+    "registeredAt": "2026-10-31T18:03:46.913Z"
+  },
+  "d50e8c6086a0bc4fe1394341ba061e5884b053e977560d80e8c8f96d65b7c1a3": {
+    "postId": "10de6f9a8c34adbf7c4af1499adc01c6",
+    "sourceFile": "2026-11-01_多因子策略选股模板计算出来的因子值和单因子分析中计算出来的因子值不一样_计算因子的代码是一样-10de6f9a.py",
+    "registeredAt": "2026-10-31T18:03:49.874Z"
+  },
+  "12192d43bd7b54148a80b58aac5c5c9f3838ddb557fe26bd2d2f7f596e1a1b56": {
+    "postId": "a4907eab5580d2f9149d3809b585d283",
+    "sourceFile": "2026-11-01_帮忙加个过滤条件-a4907eab.py",
+    "registeredAt": "2026-10-31T18:03:52.944Z"
+  },
+  "446812e5d9d3d6bda0cefa1530723e1d7c9c107c4c7a4424ee23909528f659e1": {
+    "postId": "e3ce49aa4484750ec2175a3bbd40598f",
+    "sourceFile": "2026-11-01_求解答这个策略怎么模拟盘-e3ce49aa.py",
+    "registeredAt": "2026-10-31T18:03:55.824Z"
   }
 }

@@ -1,324 +1,324 @@
 {
-  "fetchedAt": "2026-10-30T19:43:02.208Z",
+  "fetchedAt": "2026-10-31T18:03:55.842Z",
   "entries": [
     {
-      "postId": "127bc5881e992bbd75540b07c8560a70",
-      "backtestId": "bc1af19f6c3cc1f2ed11d91499352b1a",
-      "title": "聚宽 KD MACD  策略都是只操作一只股票，有那位高人指点下，多股票循环操作是什么代码啊？",
-      "url": "https://www.joinquant.com/view/community/detail/127bc5881e992bbd75540b07c8560a70",
-      "sourceFile": "2026-10-31_聚宽_KD_MACD_策略都是只操作一只股票_有那位高人指点下_多股票循环操作是什么代码啊-127bc588.py",
+      "postId": "577b71b22aef6c7aac43e52dcfdc0d40",
+      "backtestId": "07a8702922528d3cd365319f60e497c2",
+      "title": "请求帮忙贴！策略这个错如何改造在一创运行实盘",
+      "url": "https://www.joinquant.com/view/community/detail/577b71b22aef6c7aac43e52dcfdc0d40",
+      "sourceFile": "2026-11-01_请求帮忙贴_策略这个错如何改造在一创运行实盘-577b71b2.py",
       "stats": {
-        "annualReturn": 1.1136505585689,
-        "cumulativeReturn": 2.9871386,
-        "maxDrawdown": 0.069915694882489,
-        "sharpe": 5.631469215681,
-        "winRatio": 0.84848484848485,
-        "tradingDays": 462,
-        "periodLabel": "2018-11"
+        "annualReturn": 0.54796771632633,
+        "cumulativeReturn": 0.7833835414,
+        "maxDrawdown": 0.099649170430603,
+        "sharpe": 2.1398724039624,
+        "winRatio": 0.76595744680851,
+        "tradingDays": 331,
+        "periodLabel": "2022-02"
       }
     },
     {
-      "postId": "ac484665afa9ec23a9d2695bdebfb7f1",
-      "backtestId": "929095cb05e70bc8687e6da70e13fa07",
-      "title": "ETF网格交易问题",
-      "url": "https://www.joinquant.com/view/community/detail/ac484665afa9ec23a9d2695bdebfb7f1",
-      "sourceFile": "2026-10-31_ETF网格交易问题-ac484665.py",
-      "stats": {
-        "annualReturn": -0.28079787226268,
-        "cumulativeReturn": -0.0260244,
-        "maxDrawdown": 0.0666241,
-        "sharpe": -1.7899840995272,
-        "winRatio": 0.6027397260274,
-        "tradingDays": 20,
-        "periodLabel": "2018-03"
-      }
-    },
-    {
-      "postId": "cb3edbf2888adcc6393d4c2796533ffc",
-      "backtestId": "69350f802d70bfad3d1332762007d695",
-      "title": "求教！求问大神们哪里有错误？",
-      "url": "https://www.joinquant.com/view/community/detail/cb3edbf2888adcc6393d4c2796533ffc",
-      "sourceFile": "2026-10-31_求教_求问大神们哪里有错误-cb3edbf2.py",
+      "postId": "5e82f8245b659d34016be9055a2473bf",
+      "backtestId": "510511ae8f459f6ef8c6a846fec15a93",
+      "title": "几张表的代码不一致",
+      "url": "https://www.joinquant.com/view/community/detail/5e82f8245b659d34016be9055a2473bf",
+      "sourceFile": "2026-11-01_几张表的代码不一致-5e82f824.py",
       "stats": {
         "annualReturn": null,
         "cumulativeReturn": null,
         "maxDrawdown": null,
         "sharpe": null,
         "winRatio": null,
-        "tradingDays": 2783,
-        "periodLabel": "2020-06"
+        "tradingDays": 118,
+        "periodLabel": "2019-06"
       }
     },
     {
-      "postId": "f25ac3c62b9cbf06884daa0e1ddeac8f",
-      "backtestId": "5d80f3c060024f7d6698df286f3443b9",
-      "title": "科技抱团瓦解了吗",
-      "url": "https://www.joinquant.com/view/community/detail/f25ac3c62b9cbf06884daa0e1ddeac8f",
-      "sourceFile": "2026-10-31_科技抱团瓦解了吗-f25ac3c6.py",
+      "postId": "2813eecbb7ed686e6a65befb8599be61",
+      "backtestId": "650a18d4b648c648af506acc45c6cc70",
+      "title": "怎么删除？",
+      "url": "https://www.joinquant.com/view/community/detail/2813eecbb7ed686e6a65befb8599be61",
+      "sourceFile": "2026-11-01_怎么删除-2813eecb.py",
       "stats": {
-        "annualReturn": 5.6296399231834,
-        "cumulativeReturn": 9533.485768502,
-        "maxDrawdown": 0.076087421583301,
-        "sharpe": 23.473904789423,
-        "winRatio": 0.79800221975583,
-        "tradingDays": 1211,
-        "periodLabel": "2026-06"
-      }
-    },
-    {
-      "postId": "088da3a5fa6f6ae923e3e32df4310a56",
-      "backtestId": "f7782127e30d22f7fd9163e04583207d",
-      "title": "怎样把监控单只股票改成同时监控多只股票的呢？",
-      "url": "https://www.joinquant.com/view/community/detail/088da3a5fa6f6ae923e3e32df4310a56",
-      "sourceFile": "2026-10-31_怎样把监控单只股票改成同时监控多只股票的呢-088da3a5.py",
-      "stats": {
-        "annualReturn": 0.52751385235877,
-        "cumulativeReturn": 0.36588166666667,
-        "maxDrawdown": 0.073675186197289,
-        "sharpe": 2.155173907166,
-        "winRatio": 0.83333333333333,
-        "tradingDays": 184,
-        "periodLabel": "2017-09"
-      }
-    },
-    {
-      "postId": "f3daf01b2d024426045c1283d6dd851a",
-      "backtestId": "0a45eb88eaaca1818271c0e05f01d460",
-      "title": "求助！最近在学习研究期货的策略编写，系统自带的期货标准策略运行回测结果中无交易，不知道哪里出问题了？",
-      "url": "https://www.joinquant.com/view/community/detail/f3daf01b2d024426045c1283d6dd851a",
-      "sourceFile": "2026-10-31_求助_最近在学习研究期货的策略编写_系统自带的期货标准策略运行回测结果中无交易_不知道哪里出问题了-f3daf01b.py",
-      "stats": {
-        "annualReturn": null,
-        "cumulativeReturn": null,
-        "maxDrawdown": null,
-        "sharpe": null,
-        "winRatio": null,
-        "tradingDays": 62,
-        "periodLabel": "2017-08"
-      }
-    },
-    {
-      "postId": "f932f4c28d81d93384fe6985f99bd60b",
-      "backtestId": "3ceca2442506410d993800b02896f372",
-      "title": "模拟交易问题，日志提示交易，但持仓中没有",
-      "url": "https://www.joinquant.com/view/community/detail/f932f4c28d81d93384fe6985f99bd60b",
-      "sourceFile": "2026-10-31_模拟交易问题_日志提示交易_但持仓中没有-f932f4c2.py",
-      "stats": {
-        "annualReturn": 2.8868713650155,
-        "cumulativeReturn": 0.6126468,
-        "maxDrawdown": 0.092324842282285,
-        "sharpe": 10.393025685443,
-        "winRatio": 0.41666666666667,
-        "tradingDays": 88,
-        "periodLabel": "2017-11"
-      }
-    },
-    {
-      "postId": "40da3d49a41d8eeb80486f24603c5669",
-      "backtestId": "0febe91b5d2c19025b673b850baec907",
-      "title": "麻烦增加同一标的卖出N天内不再买入的代码",
-      "url": "https://www.joinquant.com/view/community/detail/40da3d49a41d8eeb80486f24603c5669",
-      "sourceFile": "2026-10-31_麻烦增加同一标的卖出N天内不再买入的代码-40da3d49.py",
-      "stats": {
-        "annualReturn": 0.83916204445762,
-        "cumulativeReturn": 372.3415770107,
-        "maxDrawdown": 0.40228387669339,
-        "sharpe": 2.1468386938555,
-        "winRatio": 0.61587982832618,
-        "tradingDays": 2430,
-        "periodLabel": "2022-10"
-      }
-    },
-    {
-      "postId": "f9332900f2ac0fce1d9f1118448f0d07",
-      "backtestId": "ac176277ecc9a694c288dfae4bd75fd7",
-      "title": "聚宽的回测问题到底多久才好啊",
-      "url": "https://www.joinquant.com/view/community/detail/f9332900f2ac0fce1d9f1118448f0d07",
-      "sourceFile": "2026-10-31_聚宽的回测问题到底多久才好啊-f9332900.py",
-      "stats": {
-        "annualReturn": 0.45524352203088,
-        "cumulativeReturn": 0.570994094,
-        "maxDrawdown": 0.2923031870239,
-        "sharpe": 1.3278279003349,
-        "winRatio": 0.47560975609756,
-        "tradingDays": 301,
-        "periodLabel": "2024-04"
-      }
-    },
-    {
-      "postId": "17412c3ce1cd0c6d8bcda3b8ee86e65a",
-      "backtestId": "7bf683ae109443b160502ec0678c2a75",
-      "title": "【牛年春节-策略比赛】在给定的股票池里程序化操作增强收益",
-      "url": "https://www.joinquant.com/view/community/detail/17412c3ce1cd0c6d8bcda3b8ee86e65a",
-      "sourceFile": "2026-10-31_牛年春节-策略比赛_在给定的股票池里程序化操作增强收益-17412c3c.py",
-      "stats": {
-        "annualReturn": 0.64926755765544,
-        "cumulativeReturn": 0.7097636377448,
-        "maxDrawdown": 0.13165646249265,
-        "sharpe": 3.0023538809625,
-        "winRatio": 0.85985748218527,
-        "tradingDays": 268,
-        "periodLabel": "2021-02"
-      }
-    },
-    {
-      "postId": "e5dfc9065253d3fda14854b6358f2c41",
-      "backtestId": "12085b1450dfd74cff78fd9a2dd91b83",
-      "title": "量比于同花顺显示不相同",
-      "url": "https://www.joinquant.com/view/community/detail/e5dfc9065253d3fda14854b6358f2c41",
-      "sourceFile": "2026-10-31_量比于同花顺显示不相同-e5dfc906.py",
-      "stats": {
-        "annualReturn": -0.93659437748254,
-        "cumulativeReturn": -0.12400398,
-        "maxDrawdown": 0.22707315660301,
-        "sharpe": -1.5289083621597,
-        "winRatio": null,
-        "tradingDays": 12,
-        "periodLabel": "2016-01"
-      }
-    },
-    {
-      "postId": "319acd07cebeed34aa61aead213186f4",
-      "backtestId": "1967226a05886ac1f4dde64af3119006",
-      "title": "为什么在程序里面设置了过滤涨停股，回测时却还是买到了涨停股？",
-      "url": "https://www.joinquant.com/view/community/detail/319acd07cebeed34aa61aead213186f4",
-      "sourceFile": "2026-10-31_为什么在程序里面设置了过滤涨停股_回测时却还是买到了涨停股-319acd07.py",
-      "stats": {
-        "annualReturn": 0.58843867229994,
-        "cumulativeReturn": 3.90381946,
-        "maxDrawdown": 0.12412647682108,
-        "sharpe": 2.8720252682959,
-        "winRatio": null,
-        "tradingDays": 859,
-        "periodLabel": "2016-07"
-      }
-    },
-    {
-      "postId": "e9cab1df1b8013b268a67937a77e9551",
-      "backtestId": "ae8a6fafd4485f2cbf8ff4700dc00b05",
-      "title": "ETF手续费怎么设置最低0.1元和免印花税",
-      "url": "https://www.joinquant.com/view/community/detail/e9cab1df1b8013b268a67937a77e9551",
-      "sourceFile": "2026-10-31_ETF手续费怎么设置最低0_1元和免印花税-e9cab1df.py",
-      "stats": {
-        "annualReturn": 0.083374876623293,
-        "cumulativeReturn": 1.1779582396667,
-        "maxDrawdown": 0.10914395288022,
-        "sharpe": 0.6243585890209,
-        "winRatio": 0.91666666666667,
-        "tradingDays": 2430,
-        "periodLabel": "2025-07"
-      }
-    },
-    {
-      "postId": "b79ba7d8be77bcc1a8c5cfff93b53e57",
-      "backtestId": "ca1bf9b94f267a951045e1012d0dcc1b",
-      "title": "求大神实现MACD顶背离，用来逃顶",
-      "url": "https://www.joinquant.com/view/community/detail/b79ba7d8be77bcc1a8c5cfff93b53e57",
-      "sourceFile": "2026-10-31_求大神实现MACD顶背离_用来逃顶-b79ba7d8.py",
-      "stats": {
-        "annualReturn": -0.21606566193194,
-        "cumulativeReturn": -0.019286,
-        "maxDrawdown": 0.034755842864247,
-        "sharpe": -1.5303054104512,
-        "winRatio": 0.5,
-        "tradingDays": 20,
-        "periodLabel": "2016-11"
-      }
-    },
-    {
-      "postId": "b7e45c0b998413c9b1337be4a6ed265d",
-      "backtestId": "4b63859944a0a44ff590bd4b973c6e10",
-      "title": "进程占用内存过大(3.1 GB), 被强制杀掉.",
-      "url": "https://www.joinquant.com/view/community/detail/b7e45c0b998413c9b1337be4a6ed265d",
-      "sourceFile": "2026-10-31_进程占用内存过大_3_1_GB_被强制杀掉-b7e45c0b.py",
-      "stats": {
-        "annualReturn": 2.0712648240498,
-        "cumulativeReturn": 0.1237792159,
-        "maxDrawdown": 0.0192477038,
-        "sharpe": 14.800236058492,
-        "winRatio": 0.60526315789474,
-        "tradingDays": 26,
-        "periodLabel": "2024-11"
-      }
-    },
-    {
-      "postId": "967ffec417fcba2d7a94c70f6d34396a",
-      "backtestId": "de207eef7607365450afa269be79f41d",
-      "title": "关于talib的macd函数，计算周期中，碰到股票停牌时，计算出来的macd值和股票软件不一致的问题",
-      "url": "https://www.joinquant.com/view/community/detail/967ffec417fcba2d7a94c70f6d34396a",
-      "sourceFile": "2026-10-31_关于talib的macd函数_计算周期中_碰到股票停牌时_计算出来的macd值和股票软件不一致的问题-967ffec4.py",
-      "stats": {
-        "annualReturn": null,
-        "cumulativeReturn": null,
-        "maxDrawdown": null,
-        "sharpe": null,
-        "winRatio": null,
-        "tradingDays": 43,
-        "periodLabel": "2017-02"
-      }
-    },
-    {
-      "postId": "327edbb1c921cb288c7435af4b4742b4",
-      "backtestId": "8dba0fdaa527b6d53012009cd0df0323",
-      "title": "我就不信了，还有策略比我这个收益高！",
-      "url": "https://www.joinquant.com/view/community/detail/327edbb1c921cb288c7435af4b4742b4",
-      "sourceFile": "2026-10-31_我就不信了_还有策略比我这个收益高-327edbb1.py",
-      "stats": {
-        "annualReturn": 1459.3039955774,
-        "cumulativeReturn": 71.5592265718,
-        "maxDrawdown": 0.040149383878658,
-        "sharpe": 188.41806739457,
-        "winRatio": 1,
-        "tradingDays": 147,
-        "periodLabel": "2021-03"
-      }
-    },
-    {
-      "postId": "557d5149494bfcf356177085fa35327b",
-      "backtestId": "cb85e87742775743f2bed98e5eab6cd4",
-      "title": "为什么这个二八轮动策略收益率是0%",
-      "url": "https://www.joinquant.com/view/community/detail/557d5149494bfcf356177085fa35327b",
-      "sourceFile": "2026-10-31_为什么这个二八轮动策略收益率是0-557d5149.py",
-      "stats": {
-        "annualReturn": null,
-        "cumulativeReturn": null,
-        "maxDrawdown": null,
-        "sharpe": null,
-        "winRatio": null,
-        "tradingDays": 857,
-        "periodLabel": "2016-07"
-      }
-    },
-    {
-      "postId": "79dcc61c03d8063dfdc3b8193b073cfa",
-      "backtestId": "78b673d34ca614f68319f02e65f2d77d",
-      "title": "哪位大神能帮忙修改一下策略啊",
-      "url": "https://www.joinquant.com/view/community/detail/79dcc61c03d8063dfdc3b8193b073cfa",
-      "sourceFile": "2026-10-31_哪位大神能帮忙修改一下策略啊-79dcc61c.py",
-      "stats": {
-        "annualReturn": 0.44909187071199,
-        "cumulativeReturn": 165.90883034063,
-        "maxDrawdown": 0.70614015489053,
-        "sharpe": 1.1551785501249,
-        "winRatio": 0.60625,
-        "tradingDays": 3449,
+        "annualReturn": -0.08688753592148,
+        "cumulativeReturn": -0.094162268222806,
+        "maxDrawdown": 0.096587214345501,
+        "sharpe": -5.9042328487909,
+        "winRatio": 0.59718969555035,
+        "tradingDays": 272,
         "periodLabel": "2020-02"
       }
     },
     {
-      "postId": "b96496732911430d04868a3e7ef80f8d",
-      "backtestId": "72a4d0a05c8849bc798e60165f6afac8",
-      "title": "为什么我的策略模拟盘和回测收益差这么多",
-      "url": "https://www.joinquant.com/view/community/detail/b96496732911430d04868a3e7ef80f8d",
-      "sourceFile": "2026-10-31_为什么我的策略模拟盘和回测收益差这么多-b9649673.py",
+      "postId": "1904d7b5941f63529e1d514027bde463",
+      "backtestId": "b881bb1d3d38037ec0c03e643a9fbba1",
+      "title": "聚宽和一创聚宽貌似有区别",
+      "url": "https://www.joinquant.com/view/community/detail/1904d7b5941f63529e1d514027bde463",
+      "sourceFile": "2026-11-01_聚宽和一创聚宽貌似有区别-1904d7b5.py",
       "stats": {
-        "annualReturn": 0.38478311923657,
-        "cumulativeReturn": 7.7989360630875,
-        "maxDrawdown": 0.1561570606354,
-        "sharpe": 1.8271125382672,
-        "winRatio": 0.56470588235294,
-        "tradingDays": 1670,
-        "periodLabel": "2019-04"
+        "annualReturn": 0.36762449707715,
+        "cumulativeReturn": 49.3224018696,
+        "maxDrawdown": 0.74658363829274,
+        "sharpe": 0.93955486415308,
+        "winRatio": 0.62406015037594,
+        "tradingDays": 3129,
+        "periodLabel": "2019-11"
+      }
+    },
+    {
+      "postId": "e085f0680706a2f775b4bb9dd5731d71",
+      "backtestId": "482b28816c2caae7547d6973fe1c151e",
+      "title": "【讨论帖】为何Fama-French三因子绩效较差",
+      "url": "https://www.joinquant.com/view/community/detail/e085f0680706a2f775b4bb9dd5731d71",
+      "sourceFile": "2026-11-01_讨论帖_为何Fama-French三因子绩效较差-e085f068.py",
+      "stats": {
+        "annualReturn": 0.0084939872799799,
+        "cumulativeReturn": 0.051951699999996,
+        "maxDrawdown": 0.51509624148372,
+        "sharpe": -0.13969598682711,
+        "winRatio": 0.5687134502924,
+        "tradingDays": 1497,
+        "periodLabel": "2019-03"
+      }
+    },
+    {
+      "postId": "681b54208e9b3392522c560fc6aead97",
+      "backtestId": "a10370b38ccb9f9f9655343e0175f2ad",
+      "title": "关于get_fundamentals 中的indicator.roe 数值",
+      "url": "https://www.joinquant.com/view/community/detail/681b54208e9b3392522c560fc6aead97",
+      "sourceFile": "2026-11-01_关于get_fundamentals_中的indicator_roe_数值-681b5420.py",
+      "stats": {
+        "annualReturn": 0.35145180379896,
+        "cumulativeReturn": 3.35866156,
+        "maxDrawdown": 0.11887040219188,
+        "sharpe": 1.7475951190158,
+        "winRatio": 0.74682203389831,
+        "tradingDays": 1222,
+        "periodLabel": "2018-10"
+      }
+    },
+    {
+      "postId": "054005e10a5dbd7b13c5d99135f79069",
+      "backtestId": "b27c95e6aacb4ea2922e7fb7f8a19ce8",
+      "title": "悬赏哦：按天粒度回测速度超级慢的问题求助",
+      "url": "https://www.joinquant.com/view/community/detail/054005e10a5dbd7b13c5d99135f79069",
+      "sourceFile": "2026-11-01_悬赏哦_按天粒度回测速度超级慢的问题求助-054005e1.py",
+      "stats": {
+        "annualReturn": -0.0024297223166404,
+        "cumulativeReturn": -0.0012156000000002,
+        "maxDrawdown": 0.019384113143334,
+        "sharpe": -1.7706295944264,
+        "winRatio": null,
+        "tradingDays": 125,
+        "periodLabel": "2017-12"
+      }
+    },
+    {
+      "postId": "bba6ba31e7199ab81d70887f070456ab",
+      "backtestId": "38f0a45e57276dd87e8b5b1d8e9524ee",
+      "title": "请问 g.d_yesterday 为什么能够获得昨日的日期？",
+      "url": "https://www.joinquant.com/view/community/detail/bba6ba31e7199ab81d70887f070456ab",
+      "sourceFile": "2026-11-01_请问_g_d_yesterday_为什么能够获得昨日的日期-bba6ba31.py",
+      "stats": {
+        "annualReturn": 0.50396357188573,
+        "cumulativeReturn": 0.216393,
+        "maxDrawdown": 0.018315222321979,
+        "sharpe": 6.4396574446538,
+        "winRatio": 0.8469387755102,
+        "tradingDays": 120,
+        "periodLabel": "2016-06"
+      }
+    },
+    {
+      "postId": "e04bfd6269bc605cae5d5133076f6f47",
+      "backtestId": "edbbf15de6fce9419e67088fdfc63dc7",
+      "title": "求助，请问怎么进行分钟回测呢？",
+      "url": "https://www.joinquant.com/view/community/detail/e04bfd6269bc605cae5d5133076f6f47",
+      "sourceFile": "2026-11-01_求助_请问怎么进行分钟回测呢-e04bfd62.py",
+      "stats": {
+        "annualReturn": 0.053962175576375,
+        "cumulativeReturn": 0.0320364,
+        "maxDrawdown": 0.18852722404046,
+        "sharpe": 0.054919639257556,
+        "winRatio": null,
+        "tradingDays": 150,
+        "periodLabel": "2016-06"
+      }
+    },
+    {
+      "postId": "7dd7456ec61f9166386cd76557b71eb3",
+      "backtestId": "afe31b77432b00f00041bbd42bff4cf7",
+      "title": "发现使用attribute_history取得小时数据不准确",
+      "url": "https://www.joinquant.com/view/community/detail/7dd7456ec61f9166386cd76557b71eb3",
+      "sourceFile": "2026-11-01_发现使用attribute_history取得小时数据不准确-7dd7456e.py",
+      "stats": {
+        "annualReturn": null,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": 2,
+        "periodLabel": "2016-04"
+      }
+    },
+    {
+      "postId": "8bf9d7a8b4713846516d97c34d585948",
+      "backtestId": "fa2145e8e72586b7ec14e2335d379396",
+      "title": "同一套策略，聚宽和P-T-rade上回测差了6-7倍收益",
+      "url": "https://www.joinquant.com/view/community/detail/8bf9d7a8b4713846516d97c34d585948",
+      "sourceFile": "2026-11-01_同一套策略_聚宽和P-T-rade上回测差了6-7倍收益-8bf9d7a8.py",
+      "stats": {
+        "annualReturn": 0.88424435577077,
+        "cumulativeReturn": 39.644565035,
+        "maxDrawdown": 0.30061639893167,
+        "sharpe": 2.6086158424724,
+        "winRatio": 0.57241379310345,
+        "tradingDays": 1462,
+        "periodLabel": "2020-12"
+      }
+    },
+    {
+      "postId": "39e18ad8415252955ee14375dcbfdc4c",
+      "backtestId": "965e50777e7423d75628ad062cfc2eb6",
+      "title": "请帮忙修改代码",
+      "url": "https://www.joinquant.com/view/community/detail/39e18ad8415252955ee14375dcbfdc4c",
+      "sourceFile": "2026-11-01_请帮忙修改代码-39e18ad8.py",
+      "stats": {
+        "annualReturn": 1.4417401210018,
+        "cumulativeReturn": 0.010770116,
+        "maxDrawdown": 0.015350132701847,
+        "sharpe": 4.6793887684282,
+        "winRatio": null,
+        "tradingDays": 3,
+        "periodLabel": "2023-11"
+      }
+    },
+    {
+      "postId": "b71927d041ae8873e09c919177efb757",
+      "backtestId": "b8fb8c6ca857c6345f3072c719a769b8",
+      "title": "请求帮助：一创聚宽编译运行出错如何解决",
+      "url": "https://www.joinquant.com/view/community/detail/b71927d041ae8873e09c919177efb757",
+      "sourceFile": "2026-11-01_请求帮助_一创聚宽编译运行出错如何解决-b71927d0.py",
+      "stats": {
+        "annualReturn": 0.37604585326965,
+        "cumulativeReturn": 4.2387480945,
+        "maxDrawdown": 0.17441436419301,
+        "sharpe": 1.5069829906749,
+        "winRatio": 0.59669811320755,
+        "tradingDays": 1297,
+        "periodLabel": "2021-04"
+      }
+    },
+    {
+      "postId": "9e9472baca976e35a3dc318e34766987",
+      "backtestId": "21073badae271f9be97f02677482aaf1",
+      "title": "请问如何修改相关编译出错的地方，或者可以将正确的发出来吗？",
+      "url": "https://www.joinquant.com/view/community/detail/9e9472baca976e35a3dc318e34766987",
+      "sourceFile": "2026-11-01_请问如何修改相关编译出错的地方_或者可以将正确的发出来吗-9e9472ba.py",
+      "stats": {
+        "annualReturn": null,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": null,
+        "periodLabel": null
+      }
+    },
+    {
+      "postId": "42b25b31b2c61413e5b98173dac34ef0",
+      "backtestId": "518850599640f9279087d1bde42cef29",
+      "title": "回测中如何避免引入未来函数",
+      "url": "https://www.joinquant.com/view/community/detail/42b25b31b2c61413e5b98173dac34ef0",
+      "sourceFile": "2026-11-01_回测中如何避免引入未来函数-42b25b31.py",
+      "stats": {
+        "annualReturn": 0.68201719230984,
+        "cumulativeReturn": 3.564832613052,
+        "maxDrawdown": 0.033033434754605,
+        "sharpe": 5.061458965309,
+        "winRatio": 0.56358783940589,
+        "tradingDays": 730,
+        "periodLabel": "2019-06"
+      }
+    },
+    {
+      "postId": "1fdfd9da4dfcf843f474636756e52289",
+      "backtestId": "0af8f7985cd7e705022293dcb1d3ca86",
+      "title": "想问下期货平仓的问题",
+      "url": "https://www.joinquant.com/view/community/detail/1fdfd9da4dfcf843f474636756e52289",
+      "sourceFile": "2026-11-01_想问下期货平仓的问题-1fdfd9da.py",
+      "stats": {
+        "annualReturn": 0.39913256946817,
+        "cumulativeReturn": 0.24480115,
+        "maxDrawdown": 0.50128843029563,
+        "sharpe": 0.46977333433966,
+        "winRatio": 0.44444444444444,
+        "tradingDays": 163,
+        "periodLabel": "2018-08"
+      }
+    },
+    {
+      "postId": "a8380587d50166ee327979f7b6b34ba3",
+      "backtestId": "77d2575d8d1a5b0ee01c66f9abe3a8f4",
+      "title": "融券卖出是保证金比例好像起不到作用",
+      "url": "https://www.joinquant.com/view/community/detail/a8380587d50166ee327979f7b6b34ba3",
+      "sourceFile": "2026-11-01_融券卖出是保证金比例好像起不到作用-a8380587.py",
+      "stats": {
+        "annualReturn": -0.48752358041981,
+        "cumulativeReturn": -0.25482803,
+        "maxDrawdown": 0.25482803,
+        "sharpe": -15.355249505514,
+        "winRatio": 0.37254901960784,
+        "tradingDays": 110,
+        "periodLabel": "2018-06"
+      }
+    },
+    {
+      "postId": "10de6f9a8c34adbf7c4af1499adc01c6",
+      "backtestId": "e261c547b197c39a544f2a423c7bd79c",
+      "title": "多因子策略选股模板计算出来的因子值和单因子分析中计算出来的因子值不一样，计算因子的代码是一样",
+      "url": "https://www.joinquant.com/view/community/detail/10de6f9a8c34adbf7c4af1499adc01c6",
+      "sourceFile": "2026-11-01_多因子策略选股模板计算出来的因子值和单因子分析中计算出来的因子值不一样_计算因子的代码是一样-10de6f9a.py",
+      "stats": {
+        "annualReturn": -0.7165962245446,
+        "cumulativeReturn": -0.09595,
+        "maxDrawdown": 0.10571,
+        "sharpe": -3.7955708865098,
+        "winRatio": 0.26315789473684,
+        "tradingDays": 20,
+        "periodLabel": "2010-01"
+      }
+    },
+    {
+      "postId": "a4907eab5580d2f9149d3809b585d283",
+      "backtestId": "ec04928e45a89a04947c375d5be815a5",
+      "title": "帮忙加个过滤条件",
+      "url": "https://www.joinquant.com/view/community/detail/a4907eab5580d2f9149d3809b585d283",
+      "sourceFile": "2026-11-01_帮忙加个过滤条件-a4907eab.py",
+      "stats": {
+        "annualReturn": -0.13596831204605,
+        "cumulativeReturn": -0.1845536,
+        "maxDrawdown": 0.38951162055481,
+        "sharpe": -0.73264948747773,
+        "winRatio": 0.51239669421488,
+        "tradingDays": 349,
+        "periodLabel": "2018-06"
+      }
+    },
+    {
+      "postId": "e3ce49aa4484750ec2175a3bbd40598f",
+      "backtestId": "d7a6bff73cd13735ba59c281587ba92f",
+      "title": "求解答这个策略怎么模拟盘",
+      "url": "https://www.joinquant.com/view/community/detail/e3ce49aa4484750ec2175a3bbd40598f",
+      "sourceFile": "2026-11-01_求解答这个策略怎么模拟盘-e3ce49aa.py",
+      "stats": {
+        "annualReturn": 0.2117167096244,
+        "cumulativeReturn": 0.098246265795768,
+        "maxDrawdown": 0.018767230035741,
+        "sharpe": 3.3436159723606,
+        "winRatio": 0.69565217391304,
+        "tradingDays": 122,
+        "periodLabel": "2017-07"
       }
     }
   ]
