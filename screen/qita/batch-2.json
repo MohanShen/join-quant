@@ -1,0 +1,52 @@
+[
+ {
+  "sourceFile": "strategies/2026-10-26_自己搭建的一个10年230_收益率的银行股策略-2a323522.py",
+  "objective": 0.3371,
+  "sharpe": 2.37
+ },
+ {
+  "sourceFile": "strategies/2026-10-21_四合一_七星高照_搅屎棍_五境掘金_红利-e03a2ef1.py",
+  "objective": 0.3367,
+  "sharpe": 1.99
+ },
+ {
+  "sourceFile": "strategies/2026-10-21_核心资产轮动改进_中位数定仓_杠杆2-a0092e2d.py",
+  "objective": 0.3256,
+  "sharpe": 1.81
+ },
+ {
+  "sourceFile": "strategies/2026-10-28_使用标普500_60日均线乖离度增加超额收益的策略-648c2da3.py",
+  "objective": 0.2492,
+  "sharpe": 2.02
+ },
+ {
+  "sourceFile": "strategies/2026-10-20_蓝筹大盘分红策略_超稳健-94888e61.py",
+  "objective": 0.2352,
+  "sharpe": 1.81
+ },
+ {
+  "sourceFile": "strategies/2026-10-26_多仓位再平衡22_77_年化_最大回撤11_17-4a67a7b0.py",
+  "objective": 0.2346,
+  "sharpe": 2.47
+ },
+ {
+  "sourceFile": "strategies/2026-10-18_趋势捕捉加点低关联的ETF_烧token搞的换点分回测-5f2f36a9.py",
+  "objective": 0.2241,
+  "sharpe": 1.43
+ },
+ {
+  "sourceFile": "strategies/2026-10-17_全天候风险平价策略的一点回测观察-4730554e.py",
+  "objective": 0.2078,
+  "sharpe": 2.03
+ },
+ {
+  "sourceFile": "strategies/2026-10-28_十年十倍_纳指_黄金全天候_动态杠杆网格系统-b5dd66eb.py",
+  "objective": 0.2053,
+  "sharpe": 1.7
+ },
+ {
+  "sourceFile": "strategies/2026-10-27_基于上一版本进行了适当调整_增加其攻击性-e79e9884.py",
+  "objective": 0.2007,
+  "sharpe": 1.54
+ }
+]

@@ -1,0 +1,52 @@
+[
+ {
+  "sourceFile": "strategies/2026-10-28_四合一V3_七星高照_菜场大妈_五境掘金_红利-75d5439f.py",
+  "objective": 0.1858,
+  "sharpe": 1.37
+ },
+ {
+  "sourceFile": "strategies/2026-10-29_向导式_ATR指标择时测试_0_0_1-8b9cb8e2.py",
+  "objective": 0.1858,
+  "sharpe": 1.19
+ },
+ {
+  "sourceFile": "strategies/2026-10-11_ETF网格交易策略_v30_渐进式网格策略简介-8f57bd36.py",
+  "objective": 0.1716,
+  "sharpe": 1.62
+ },
+ {
+  "sourceFile": "strategies/2026-10-27_红利类型选股策略-cf1ec5bd.py",
+  "objective": 0.1678,
+  "sharpe": 1.36
+ },
+ {
+  "sourceFile": "strategies/2026-10-27_ETF低相关策略的聚宽实现_EPO优化器与资产配置实战-042aea4d.py",
+  "objective": 0.1407,
+  "sharpe": 1.73
+ },
+ {
+  "sourceFile": "strategies/2026-10-13_低利率时代的稳健选择_国债量化组合_后附PT版代码-b1531180.py",
+  "objective": 0.1325,
+  "sharpe": 2.06
+ },
+ {
+  "sourceFile": "strategies/2026-10-17_年化14_回撤16_对标美股SCHD的A股红利股息策略月频-d0a149b1.py",
+  "objective": 0.1221,
+  "sharpe": 1.09
+ },
+ {
+  "sourceFile": "strategies/2026-10-21_一个适合上班族懒人定投的资产配置策略_年化13-c65b0c1e.py",
+  "objective": 0.1192,
+  "sharpe": 1.78
+ },
+ {
+  "sourceFile": "strategies/2026-10-17_量化分享_ETF低波海龟法则与复利增强的验证-4a8bcfd5.py",
+  "objective": 0.0955,
+  "sharpe": 1.22
+ },
+ {
+  "sourceFile": "strategies/2026-10-17_哈利-布朗永久投资组合-平均年化11_最大回撤11-c913387f.py",
+  "objective": 0.0761,
+  "sharpe": 1.28
+ }
+]

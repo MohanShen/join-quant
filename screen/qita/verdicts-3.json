@@ -1,0 +1,92 @@
+[
+ {
+  "sourceFile": "strategies/2026-10-28_四合一V3_七星高照_菜场大妈_五境掘金_红利-75d5439f.py",
+  "family": "UNKNOWN",
+  "mechanism": "4 isolated sleeves: micro-cap + 红利ETF MA250 + two ETF momentum rotations",
+  "universe": "other",
+  "entry": "daily 14:50 main_trade; sleeve-11 signals executed 13:05 / next-day 09:35; monthly 10:00 rebalance",
+  "evidence": "initialize() sets 3 subportfolios and g.strategies=[Strategy11(0),Strategy12(1),Strategy13(1),Strategy14(2)] at weights [0.2,0.2,0.3,0.3]; main_trade loops st.trade(context) at run_daily 14:50. Strategy11 = '微盘股择时': min_mv 10 / max_mv 100 亿, low_price 2 / high_price 10, ma_day_1 10 / ma_day_2 26, sell_limit 1.27, loss_percent 0.15, plus a self-built 200-name 微盘股 half-day index with an EMA-26 channel and dd_thresholds [-0.06,-0.12,-0.20] driving channel_position (position SIZE timing, not stock selection). Strategy12 = single 512890.XSHG vs its own 250-day MA (ratio_low<buy_threshold buy / ratio_high>sell_threshold flat, l.1112-1145). Strategy13 = 5-ETF rotation on 20-day return with bias20/60/250 caps, cash leg 511880.XSHG, 5-day cooldown, -6% stop (l.1158-1199). Strategy14 = '多因子ETF动量' over overseas/commodity/domestic pools with a defensive ETF (l.1310-1320, 1521-1572). high_limit is used to SCREEN OUT, not to chase: BaseStrategy._order returns False when amount>0 and last_price>=high_limit (l.71-72), and check_limit_up only SELLS a held yesterday-limit-up once it opens below high_limit (l.778-783). Not assigned: this is a combination book embedding several lineages at once (a 小市值-shaped stock sleeve + two ETF-rotation sleeves), exactly the case family-match abstains on by design.",
+  "confidence": "high"
+ },
+ {
+  "sourceFile": "strategies/2026-10-29_向导式_ATR指标择时测试_0_0_1-8b9cb8e2.py",
+  "family": "NEW:向导式低波价值",
+  "mechanism": "HS300 low-PE names bought when ATR(14) low, sold when ATR high",
+  "universe": "指数成分",
+  "entry": "market order at 'open' (run_daily(trade,'open')), re-screened every 10 trading days",
+  "evidence": "from kuanke.wizard import * — the whole file is the platform's wizard skeleton (check_stocks_initialize / sell_initialize / risk_management_initialize, '### _入场函数筛选-开始 ###' markers). g.security_universe_index=['000300.XSHG'] (l.79); financial_statements_filter = financial_data_filter_qujian(valuation.pe_ratio,(6,11)) (l.228); entry filter buy_lists=[s for s in buy_lists if ATR_judge_xiaoyu(s,0.15,14)] (l.192); exit filter sell_lists=[s for s in sell_lists if ATR_judge_dayu(s,0.35,14)] (l.285); g.max_hold_stocknum=5, refresh rates all 10 (l.28-34); order(stock, amount, MarketOrderStyle()) (l.327). high_limit is only used to EXCLUDE: buy_lists=high_limit_filter(context,buy_lists) (l.189). ⚠ ATR_judge_xiaoyu/dayu and high_limit_filter are kuanke.wizard library functions, not in this file, so the exact normalization of the 0.15/0.35 thresholds is unverified. NEW proposed on the wizard boilerplate as the shared ancestry plus a volatility-gated value screen, which no registered family implements (趋势技术 is RPS/MA20 on the same universe but a different base, 33b1b1e3).",
+  "confidence": "medium"
+ },
+ {
+  "sourceFile": "strategies/2026-10-11_ETF网格交易策略_v30_渐进式网格策略简介-8f57bd36.py",
+  "family": "网格",
+  "mechanism": "Progressive layered grid on 4 fixed-weight ETFs with MA200 base position",
+  "universe": "ETF",
+  "entry": "intraday every 10 min 09:40-14:50 (grid_routine), 16:00 break-out reset",
+  "evidence": "g.grids = 513100/518880/159915/510300 at cash_pct 0.30/0.30/0.20/0.20 (l.58-63); per-layer quota g.layer_pct 0.15 with progressive_spacing_mult/target_mult/amount_mult 1.3/1.3/1.26 (l.66-75); per-asset grid state ref_price / positions / last_buy_price / base_shares (l.121-139); g.ma_period=200 with rebalance_base_ratio_bear 0.60 vs bull 0.75 and rebalance_deviation 0.125 (l.81,110-112); after_close_reset moves ref_price when lp/ref_price leaves ±15% (l.201-208); schedule built by the nested loop run_daily(grid_routine, f'{h:02d}:{m:02d}') over 09:40-14:50 (l.171-179). That mechanism IS the 网格 family's declared edge (分档买卖围绕锚点, 均值回归). ⚠ Lineage NOT demonstrated: structure shares nothing with base 598050b9 (quarterly stock grid) or member 9498d93f (CONFIG dict, flat 2.5% percentage grid, every_bar) — 9498d93f is itself an independent ETF re-implementation admitted as familyRole: variant, which is the only precedent I am leaning on. No NEW proposed because the mechanism is not distinct from 网格.",
+  "confidence": "medium"
+ },
+ {
+  "sourceFile": "strategies/2026-10-27_红利类型选股策略-cf1ec5bd.py",
+  "family": "NEW:价值红利多腿",
+  "mechanism": "Four isolated 1-3 name fundamental sleeves: ROIC, yield+PEG, PB<1, CSI500 yield",
+  "universe": "全A",
+  "entry": "monthly on the 1st and 11th at 09:40/09:50/10:45; sleeve 4 weekly Monday 09:45",
+  "evidence": "Header declares the four sleeves at 25% each with a 虚拟账户 ledger (g.sub_cash / g.sub_holdings, sub_buy/sub_sell at l.133-180) instead of subportfolios, explicitly forbidding order_target_value(stock,0). s1: market_cap>100, pe 0-50, roa>0.15, liability/equity<0.5, revenue growth >0.3/0.2, then roic_ttm>0.06 via get_factor_values, 1 name (l.234-268). s2: _s2_dividend_filter sums finance.STK_XR_XD.bonus_amount_rmb over 2 years / market_cap and keeps the top 10% (l.359-401), then PEG 0.1-2 on 扣非 profit growth (l.334-356), revenue growth>4 and inc_return>4.5, 3 names (l.404-449). s3: pb_ratio<1 + operating cash flow > 0.8*net_profit + roa>0.15, 1 name, 511010.XSHG 国债ETF as the empty-slot fallback (l.72, 505-519). s4: CSI500 high-yield, 1 name, weekly (l.103). high_limit: held yesterday-limit-ups are NOT sold (g.s2_high_limit_list, l.289-302, 456-459) and limit-up/down names are filtered OUT of the candidate pool (_s2_filter_limitup/limitdown, l.412-413) — it screens, it does not chase. NEW rather than 红利低频: that family's base 93379f98 is 10 equal-weight names on 近一年股息率 x 20日低换手 every 25 days; no code or construction is shared, and three of these four sleeves are not dividend sleeves at all.",
+  "confidence": "medium"
+ },
+ {
+  "sourceFile": "strategies/2026-10-27_ETF低相关策略的聚宽实现_EPO优化器与资产配置实战-042aea4d.py",
+  "family": "NEW:资产配置-优化器",
+  "mechanism": "EPO shrinkage-covariance weights over a 10-ETF low-correlation pool",
+  "universe": "ETF",
+  "entry": "run_monthly(trade, 1, '10:00') — order_target_value to optimizer weights",
+  "evidence": "g.etf_pool = 10 cross-asset ETFs (159985 豆粕, 518800/159930 黄金, 513000 日经, 513100 纳指, 513030 德国, 159981 原油, 159980 有色, 510880 红利, 510230 金融) (l.18). epo() implements the Enhanced Portfolio Optimization shrinkage: shrunk_cor=((1-w)*I@corr)+(w*I), cov_tilde=std@shrunk_cor@std, epo=(1/lambda)*inv_shrunk_cov@signal with lambda_=10, w=0.6, negative weights clipped and renormalized (l.22-52). run_optimization uses 250 daily closes to previous_date and an inverse-variance signal a=(1/d)/(1/d).sum() (l.55-62). trade() then order_target_value(s, total_value*weights[s]) for every pool member (l.65-72); filter_new_stock drops names listed <30 days (l.74-76). No cross-sectional return ranking anywhere, so it is not ETF动量/七星高照; kept separate from the fixed-weight allocators because the weights are re-derived from the covariance each month.",
+  "confidence": "high"
+ },
+ {
+  "sourceFile": "strategies/2026-10-13_低利率时代的稳健选择_国债量化组合_后附PT版代码-b1531180.py",
+  "family": "NEW:资产配置-固定权重",
+  "mechanism": "Fixed 40/20/20/20 bond-dividend-Nasdaq-gold ETF monthly rebalance",
+  "universe": "ETF",
+  "entry": "run_daily(rebalance_portfolio,'09:35') gated to the 1st of each month",
+  "evidence": "g.target_weights = {511260 国债 0.40, 510880 红利 0.20, 513100 纳指 0.20, 518880 黄金 0.20} (l.14-19); rebalance_portfolio returns unless today.day==g.rebalance_day and the month changed (l.40-44), then computes diff = target_value - amount*price and issues sells before buys via order_target_value (l.50-74). handle_data is a pass (l.78-79). No selection, no ranking, no timing — the entire book is a constant weight vector plus a calendar. Lines 81+ are the same logic commented out as a 'PT版' (PTrade) port and are dead code; this is unrelated to the PT多策略 family, whose base fa0d3bd9 is an ETF NAV-discount sleeve.",
+  "confidence": "high"
+ },
+ {
+  "sourceFile": "strategies/2026-10-17_年化14_回撤16_对标美股SCHD的A股红利股息策略月频-d0a149b1.py",
+  "family": "NEW:红利质量",
+  "mechanism": "SCHD methodology: dividend-quality four-factor score, top 100 yield-weighted",
+  "universe": "全A",
+  "entry": "run_monthly(rebalance, 1, '09:35'); daily 10:00 limit-up-open sell",
+  "evidence": "_base_filter drops ST/退/科创(68)/北交(920,4,8)/创业板(300,301) and names listed <365 days (l.118-138). _screen_fundamentals requires circulating_market_cap >= pool P15 quantile, fcf = net_operate_cash_flow - fix_intan_other_asset_acqui_cash > 0, inc_return > 0, with total_debt built from four balance-sheet loan lines (l.141-170). Declared funnel (header l.10-12 + constants l.30-46): 10 consecutive dividend years (SCHD_MIN_DIVIDEND_YEARS=10), trailing yield 1%-15%, 5-year dividend growth >= 0, four equal-weight factors (FCF/total debt, ROE, yield, 5y growth), SCHD_TOP_N=100 weighted by yield with SCHD_MAX_SINGLE_WEIGHT 0.04 and SCHD_SECTOR_CAP 0.25. Risk block explicitly has no stop-loss and no drawdown overlay (l.15). high_limit: prepare_limit_list at 09:00 + check_limit_up at 10:00 SELL a held name once its limit-up opens (l.100-102) — an exit, not a chase. NEW rather than 红利低频: 100 names yield-weighted monthly off a quality score shares no code and no construction with base 93379f98's 10-name 股息率 x 低换手 25-day book; 'dividend' is a theme, not a lineage.",
+  "confidence": "high"
+ },
+ {
+  "sourceFile": "strategies/2026-10-21_一个适合上班族懒人定投的资产配置策略_年化13-c65b0c1e.py",
+  "family": "NEW:资产配置-固定权重",
+  "mechanism": "Fixed 6-ETF weights, daily drift-band rebalance to target value",
+  "universe": "ETF",
+  "entry": "run_daily(rebalance, time='14:00')",
+  "evidence": "g.assets = 518880 黄金 0.15 / 159985 豆粕 0.05 / 501018 原油 0.05 / 512890 红利 0.25 / 159941 纳指 0.20 / 511220 城投债 0.30 (l.20-27). rebalance() is the whole strategy: first pass trims any holding where current_value > target*1.01 and the gap exceeds min_trade_value=3000, second pass tops up where current_value < target*0.99 or the position is absent, both via order_target_value (l.33-65). 67 lines total — no selection, no signal, no indicator. Same mechanism class as b1531180 and c913387f (constant weight vector + a rebalance trigger), so the NEW name is deliberately reused; ⚠ the three are different authors and share no code, so if a family is registered they are three independent lineages implementing one mechanism, not one lineage.",
+  "confidence": "high"
+ },
+ {
+  "sourceFile": "strategies/2026-10-17_量化分享_ETF低波海龟法则与复利增强的验证-4a8bcfd5.py",
+  "family": "NEW:ETF低波海龟",
+  "mechanism": "Hold the single lowest-60d-vol ETF, turtle ATR unit pyramiding, 4N stop",
+  "universe": "ETF",
+  "entry": "run_daily(rebalance_trade, '09:35'), single holding",
+  "evidence": "Selection is LOW VOLATILITY, not momentum: get_vol_rank returns 60-day annualized log-return std sorted ASCENDING (l.106-133) and rebalance_trade takes best = vol.index[0] (l.393), enforcing one holding by liquidating held[1:] (l.403-407). Pool = 14 risk ETFs (g.all_risk_etfs l.43-58) plus two bond ETFs (g.safe_etfs l.60-63) admitted only when risk_vol_median > g.risk_vol_median_threshold 0.40 (l.376-386). Turtle sizing: get_atr_n computes N as the 20-day EMA of true range (l.136-165); add_position fires when price >= last_entry_price + 1.0*N, max_units 4, initial_units 3, stop at price - 4N, per-unit risk 1% capped at 4% total (l.82-91, 300-370). Take-profit at +30% of cost selling half the profit (l.73-74). Header cites 聚宽 post/78820 as the parent book, so a lineage may exist OUTSIDE the 13 registered families; within them, ETF动量/七星高照 rank by 25-day regression slope x R-squared, the opposite end of the vol ordering, so no existing family fits.",
+  "confidence": "high"
+ },
+ {
+  "sourceFile": "strategies/2026-10-17_哈利-布朗永久投资组合-平均年化11_最大回撤11-c913387f.py",
+  "family": "NEW:资产配置-固定权重",
+  "mechanism": "Permanent-portfolio fixed weights plus Nasdaq drawdown-triggered overweight",
+  "universe": "ETF",
+  "entry": "run_daily(daily_check_and_trade,'10:30'); trades only on first build or a trigger",
+  "evidence": "g.base_weights = 510880 红利 0.125+0.30*0.15, 511990 短融 0.30*0.85+0.25, 513100 纳指 0.125, 162411 油气LOF 0.10, 518880 黄金 0.10 (l.84-90), chosen as longer-history stand-ins for 512890/511360/513350 (l.63-67). Overlay: g.nasdaq_drawdown_steps [(-0.20,0.375),(-0.10,0.250)] lifts the Nasdaq target when its price falls that far below the YEAR peak, funded out of 短融; weights revert to base on an all-time Nasdaq high; a new calendar year only resets the year peak and does NOT rebalance (l.92-107, header l.25-37). daily_check_and_trade reads get_last_close (previous session close), so the trigger carries no intraday lookahead (l.110-130). Benchmark is set to 513100, not 000300 (l.47). Same fixed-weight class as b1531180 / c65b0c1e, with an event overlay rather than a calendar one; no code shared with either.",
+  "confidence": "high"
+ }
+]

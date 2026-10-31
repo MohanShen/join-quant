@@ -1,0 +1,52 @@
+[
+ {
+  "sourceFile": "strategies/2026-06-29_10年15000倍_无未来函数_但是没什么卵用-7be4bce3.py",
+  "objective": 2.1171,
+  "sharpe": 5.14
+ },
+ {
+  "sourceFile": "strategies/2026-10-28_主板小市值战法_7年半900_无未来-e5bf0a73.py",
+  "objective": 1.2828,
+  "sharpe": 3.51
+ },
+ {
+  "sourceFile": "strategies/2026-07-18_多策略-题材概念-35ce65d2.py",
+  "objective": 0.8792,
+  "sharpe": 4.96
+ },
+ {
+  "sourceFile": "strategies/2026-06-22_如何利用少量的模拟位模拟尽量多的策略-9c577879.py",
+  "objective": 0.7524,
+  "sharpe": 3.25
+ },
+ {
+  "sourceFile": "strategies/2026-10-17_小市值-白马-ETF组合_挺火的_模拟运行了半年多-92dbf9aa.py",
+  "objective": 0.75,
+  "sharpe": 4.14
+ },
+ {
+  "sourceFile": "strategies/2026-10-12_年化51_的晴雨双轨_小盘游击_ETF防御-0d1bbe83.py",
+  "objective": 0.7266,
+  "sharpe": 2.85
+ },
+ {
+  "sourceFile": "strategies/2026-10-20_稳健型涨停基因增强策略_v1_0-1d3cd900.py",
+  "objective": 0.5687,
+  "sharpe": 1.76
+ },
+ {
+  "sourceFile": "strategies/2026-07-01_穿越牛熊周期-多策略组合-20至今年化103_20-5511f8f0.py",
+  "objective": 0.4923,
+  "sharpe": 2.74
+ },
+ {
+  "sourceFile": "strategies/2026-10-17_六因子选股版破净策略_附PT迁移版在各时期的回测截图-e7c95ca1.py",
+  "objective": 0.3897,
+  "sharpe": 2.1
+ },
+ {
+  "sourceFile": "strategies/2026-10-12_7_8_极限回撤_用架构解耦重构多策略动态路由-c4f480e3.py",
+  "objective": 0.3777,
+  "sharpe": 2.89
+ }
+]

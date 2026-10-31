@@ -1,0 +1,92 @@
+[
+ {
+  "sourceFile": "strategies/2026-06-29_10年15000倍_无未来函数_但是没什么卵用-7be4bce3.py",
+  "family": "打板短线",
+  "mechanism": "首板次日9:26竞价买入，多腿（一进二/炸板/龙虎榜）情绪门控路由",
+  "universe": "全A",
+  "entry": "call auction / 9:26-9:30 (buy_auction_yiqian 9:26, v227一进二 9:26, rzq 9:27, zb 9:28, 天蝎座 9:30)",
+  "evidence": "CHASES limit-up successors, not screens them out: _scan_all() keeps boards==1 (昨日首板, close==high_limit, 前日未涨停) into g.yjj_candidates and buy_v227_一进二 runs at 9:26 the NEXT morning; buy_auction_yiqian L1480 'if market_cap < 70 or circ_cap > 520: continue' is 打板短线 base 439385b4's own 市值70-520亿 band, and _scan_all's money filter 6e8..20e8 is its 成交额5.5-20亿 band; auction_ratio gates 0.98-1.07 / y2 1.00-1.06 are the base's 高开/低开 modes; bear leg's (c60[-1]-l60)/(h60-l60) <= 0.5 is the base's 低开 '相对位置<50%' condition; extra legs are _rzq_prepare (龙虎榜 + 曾触板未封 + MA10放量) and _zb_prepare (昨日炸板 + 国九条 + MA3放量). Not a code match to any one base because it is a v218->v272->v273 private evolution, but the signature constants and the 9:26 entry are the family base's.",
+  "confidence": "high"
+ },
+ {
+  "sourceFile": "strategies/2026-10-28_主板小市值战法_7年半900_无未来-e5bf0a73.py",
+  "family": "UNKNOWN",
+  "mechanism": "主板最小市值两成 + PEG 打分，周一开盘买 2 只",
+  "universe": "全A",
+  "entry": "weekly Monday time='open' (9:30, order sized off current_data[s].last_price)",
+  "evidence": "run_weekly(select_and_rebalance, weekday=1, time='open'); cap_cutoff = df_val['market_cap'].quantile(0.2) then peg = pe_ratio/0.2, total_score = peg_norm + cap_norm, top2; universe = get_all_securities minus 300/688/8 prefixes (主板 only); month in [1,4,12] 强制空仓; check_sell_rule at close: +30% 止盈 or price > ma20*1.2. Mechanism is REDUNDANT with 小市值 (cap-ascending rotation + 1/4/12 blackout) but there is NO shared scaffold with that family's two known branches (no 399101 index pool, no 低开/tick-depth gate, no filter_stocks/today_is_between/yesterday_HL_list idioms, 2 slots not 6) — a 小市值 membership would be a mechanism-level assignment, which only a human should make.",
+  "confidence": "medium"
+ },
+ {
+  "sourceFile": "strategies/2026-07-18_多策略-题材概念-35ce65d2.py",
+  "family": "NEW:多策略分仓组合",
+  "mechanism": "四腿虚拟分仓：题材概念小市值 + 弱转强 + ETF反弹 + ETF动量",
+  "universe": "other",
+  "entry": "A: weekly Wed 14:30 (prepare 9:26); B: prepare 9:26, buy 9:30:05; ETF反弹 14:49/14:50; ETF轮动 10:00",
+  "evidence": "class BaseStrategy keeps a VIRTUAL cash/positions ledger per sleeve (order_target_value_ + get_effective_cash) with STRATEGY_A/B/ETF2/ETF3_WEIGHT = 0.35/0.35/0.1/0.2 and a MultiStrategyController global-drawdown switch. Leg A (new to the library): Category.stock_concepts_and_industry_ths_20240928 reads 同花顺 concept CSVs, category_score_and_pct_attacking ranks concepts by 9%+ 涨幅 counts, keeps the pairwise INTERSECTION of the top-3 hot concepts, then market_cap.asc 6-10 slots on 399101 in bear mode. Leg B is the 弱转强 template (rzq_list = 曾涨停但昨日未涨停, GJT_filter_stocks 国九条, filter_stocks close>MA10/vol>prev_vol, filter_stocks_by_b_s requires get_call_auction buymoney>sellmoney). Leg D is MOM = polyfit log-slope x R^2 over 18 ETFs. NEW is proposed for the capital-isolated composite ARCHITECTURE, which none of the 13 families is (PT多策略's title says 多策略 but its measured code is a single ETF-discount sleeve). ⚠ The three books I give this name to do not share one scaffold (virtual ledger here, g.portfolio_value_proportion in 92dbf9aa, set_subportfolios+scipy in 5511f8f0), so this is a mechanism GROUP, not a proven lineage.",
+  "confidence": "medium"
+ },
+ {
+  "sourceFile": "strategies/2026-06-22_如何利用少量的模拟位模拟尽量多的策略-9c577879.py",
+  "family": "七星高照",
+  "mechanism": "四个子账户并行跑 ETF 动量轮动（七星大池/小池/520 + 五福）",
+  "universe": "ETF",
+  "entry": "intraday afternoon per sleeve: P0 14:00/14:01, P1 14:02/14:03, P2 13:10, P3 13:10/13:11",
+  "evidence": "P0/P1/P3 config dicts are 七星高照's book as parameters: lookback_days 25, holdings_num 1, defensive_etf '511880.XSHG', min_score_threshold/max_score_threshold, enable_volume_check + volume_lookback 5 + volume_threshold 2, use_short_momentum_filter + short_lookback_days 10, enable_profit_protection + profit_protection_threshold 0.05, enable_premium_filter + premium_threshold 0.20 — the same 25日加权对数斜率xR^2 + 货币ETF退守 stack the family page describes, run over a 7-name small pool and a 38-name large pool. P2 ('五福3.5') carries a 114-name fixed_etf_pool containing 159323 / 159206 / 159218 / 159227 / 588790 / 159256 / 588170 — exactly the seven 2025-listed names CLAUDE.md records for 五福闹新春, so that sleeve is that lineage verbatim. Docstring: '结构模板：02_三马105-七星1.72.py 的多策略资金隔离思路', sleeves named 七星1.7大小池切换 / 五福3.5.py / 三马小市值策略.py. P4 小市值 is enabled=False, weight 0 — it allocates no cash and registers no task, so it does not trade in the measured run. This is a COMBINATION book embedding >=2 registered bases, which is exactly the case family-match.js abstains on by design; 3 of the 4 funded sleeves are 七星, hence the call.",
+  "confidence": "medium"
+ },
+ {
+  "sourceFile": "strategies/2026-10-17_小市值-白马-ETF组合_挺火的_模拟运行了半年多-92dbf9aa.py",
+  "family": "NEW:多策略分仓组合",
+  "mechanism": "三腿按比例分仓：399101 小市值 + 沪深300 白马 + ETF动量",
+  "universe": "other",
+  "entry": "小市值 weekly Tuesday 10:00 (pick 9:05); 白马 monthly 9:45 (pick 9:00); ETF daily 10:00",
+  "evidence": "g.portfolio_value_proportion = [0.4, 0.4, 0.2] with g.strategy_holdings{1,2} hand-kept per sleeve (no set_subportfolios). Sleeve 1: get_index_stocks('399101.XSHE') + market_cap.between(10,100) + roe>0.15/roa>0.10/operating_revenue>1e8 + turnover_ratio>0.5, order_by market_cap.asc, 5 slots, pass_months [1,4] plus 3/12月下半月 — the same shape as 小市值's registered 399101 周度轮动支 (周二, cap-ascending), and it shares that branch's idiom set (filter_stocks / today_is_between / yesterday_HL_list / check_limit_up 14:00 / up_price 50), so sleeve 1 plausibly descends from it. Sleeve 2 (白马攻防): Market_temperature cold/warm/hot off 000300 220-day position, then PB<1 + cash-flow/ROE/ROA screens (hot mode flips to PB>3), ranked by roe/roa rank weights, filtered by Moment_rank. Sleeve 3: get_etf_rank = polyfit log-slope x R^2 over an 8-ETF pool, hold top-1. Same NEW group as 35ce65d2 / 5511f8f0 on MECHANISM only — the three scaffolds differ, so a human should decide whether to split.",
+  "confidence": "medium"
+ },
+ {
+  "sourceFile": "strategies/2026-10-12_年化51_的晴雨双轨_小盘游击_ETF防御-0d1bbe83.py",
+  "family": "NEW:小盘ETF双轨切换",
+  "mechanism": "小盘离散度择时：偷鸡买低价小市值10只，摸狗退到ETF动量",
+  "universe": "other",
+  "entry": "daily 9:30 (consistent), 止损/补跌加仓 14:00",
+  "evidence": "Single capital pool with a TWO-STATE router, not parallel sleeves: DDDD() takes the 20 smallest circulating-cap names of 399101, normalises their 1-day returns and returns (variance, mean); consistent() sets g.type='偷鸡' when variance < 0.02 and mean > 0, else '摸狗'. 偷鸡 = choose_stocks -> filter_high_price_stock (last price < 10) + get_peg (roe>0.15, roa>0.10, order_by market_cap.asc), 10 slots, held for a fixed g.Counterattack_Days=30 before forced exit. 摸狗 = get_rank(g.etf_pool) by MOM (25-day weighted log-slope x R^2) over 4 ETFs (518880/513100/159915/510180), hold 1. Risk: 0.9 stop plus a martingale 补跌加仓 into the 3 worst holdings. Header declares a clone of post/49001 偷鸡摸狗策略 (author MarioC) — a lineage the library has not registered; the MOM helper is the corpus-wide 轮动 idiom and is NOT lineage evidence by itself.",
+  "confidence": "medium"
+ },
+ {
+  "sourceFile": "strategies/2026-10-20_稳健型涨停基因增强策略_v1_0-1d3cd900.py",
+  "family": "打板短线",
+  "mechanism": "历史涨停基因 + 启动点筛选的小市值周频 3 只",
+  "universe": "全A",
+  "entry": "weekly Monday 10:15 (equal-weight order_target_value)",
+  "evidence": "SCREENS BY limit-up history, does NOT chase one: filter_by_limit_up_history counts close==high_limit days over a 250-day window and keeps count>=2; filter_by_start_point requires the bar BEFORE the latest limit-up to be a down day on below-average volume (离上一次涨停启动点); then order_by(valuation.market_cap.asc()) to a 200-name pool, one name per sw_l1 industry, g.stock_num=3, bought weekly at 10:15 — and the sell side SKIPS a holding that is at high_limit (trade_logic / check_limit_open: only sells 'if last_price < high_limit'), i.e. it holds limit-ups rather than buying them. This is the 涨停基因 sub-lineage the 打板短线 page registers (base c9e0451d_带涨停基因的小市值, 'N年涨停次数 + 按离上一次涨停启动点的距离排序, 周频持有, 每行业1只, 最小市值'). Header declares descent: '克隆并重构自 .../post/64877 【2026新版】涨停基因+小市值增强策略（基于Loylee原版深度优化）'. ⚠ Rewritten, not copied, so Jaccard abstains; the alternative home is 小市值 (that page's 规模因子 edge is the same floor), which is a human call.",
+  "confidence": "medium"
+ },
+ {
+  "sourceFile": "strategies/2026-07-01_穿越牛熊周期-多策略组合-20至今年化103_20-5511f8f0.py",
+  "family": "NEW:多策略分仓组合",
+  "mechanism": "六腿子账户组合 + 周度均值方差权重优化",
+  "universe": "other",
+  "entry": "ST 9:23 (call auction); 高股息 monthly 9:40; ETF 11:25; 微盘 10:30; 国九条/科技 10:40",
+  "evidence": "set_subportfolios(7) with g.portfolio_value_proportion = [0, .10, .18, .22, .18, .22, .10] (account 0 is a non-trading cash hub), one class per sleeve (ST_Strategy / Dividend_Strategy / ETF_Rotation_Strategy / Microcap_SingleFactor_Strategy / Microcap_GJT_Strategy / Tech_Stock_Strategy), get_strategys_values daily 18:00 and calculate_optimal_weights weekly 19:00 using scipy.optimize.minimize over the recorded sleeve NAV paths (g.risk_free_rate 0.03) — an explicit portfolio-optimisation layer no registered family has. Legs overlap 打板短线 (ST 弱转强, buy 9:23 in the auction, sell 11:25), 红利低频 (高股息+PEG+扣非增速) and 小市值 (单因子微盘 + 国九条小市值), so it is another multi-family composite; the docstring states the six weights and the ST caveat itself.",
+  "confidence": "medium"
+ },
+ {
+  "sourceFile": "strategies/2026-10-17_六因子选股版破净策略_附PT迁移版在各时期的回测截图-e7c95ca1.py",
+  "family": "NEW:破净价值多因子",
+  "mechanism": "中证全指破净股 + 六个质量因子各取第一，月度持有",
+  "universe": "指数成分",
+  "entry": "monthly first trading day 9:32 (order_value at market)",
+  "evidence": "initial_list = get_index_stocks('000985.XSHG') (中证全指); the screen is valuation.pb_ratio.between(0,1) (破净) plus net_profit/adjusted_profit/operating cash-flow/ROA>1.5/ROE>3/inc_return>0/net_profit_margin>5/inc_net_profit_yoy>0; six independent rankers each contribute top_n=1 (get_roa_top, get_roag_top ROA-growth-of-growth, get_roic_top with hand-built invested capital, get_ebit_top, get_gross_margin_top, get_f_score_top = a 13-component Piotroski-style score) and the union is weighted by value_counts; run_monthly(trade_func, 1, '9:32'); 1月/4月 calendar-effect 空仓; check_limit_up 14:00/14:50 sells only when a held limit-up OPENS (holds limit-ups, never buys them) with an 8-day 冷静期. Distinct from all 13: 红利低频 is a 股息率 screen, 多因子ML is an ML ranker — this is PB<1 deep value + accounting quality, monthly, no registered family. The 'PT迁移版' in the title refers to a PTrade port of the same book, NOT to the PT多策略 family (whose measured code is an ETF-discount sleeve).",
+  "confidence": "high"
+ },
+ {
+  "sourceFile": "strategies/2026-10-12_7_8_极限回撤_用架构解耦重构多策略动态路由-c4f480e3.py",
+  "family": "NEW:单标的趋势择时",
+  "mechanism": "单只纳指ETF：三态分类后海龟突破与RSI反转切换，吊灯止损",
+  "universe": "ETF",
+  "entry": "daily 14:50 (order_target_value, deliberately late to avoid the open)",
+  "evidence": "g.security = '513100.XSHG' is the ONLY instrument — despite the title, '多策略动态路由' is three signal generators on one asset, not a multi-sleeve book. before_market_open: talib.EMA(close,90) trend + ATR(14)/SMA(ATR,90) ratio give regime 0/1/2 and g.strategy_weights, plus a volatility position scaler (1.2/vol_ratio). market_trade at 14:50: strategy A = 30-day Donchian breakout with a 10-day volume confirmation, strategy B = asymmetric RSI(14) (buy<32, sell>50), weighted sum clipped to [0,1], and a 3xATR chandelier stop on g.highest_since_buy; rebalances only when |target-current| > 10% of equity. Mechanistically adjacent to 趋势技术's champion branch (a single-instrument MA timer) but shares no code with that family's base 33b1b1e3 (沪深300 RPS cross-section + MA20 gate), so NEW rather than a lineage claim. ⚠ No set_option('avoid_future_data') and no set_slippage in this book, and the 14:50 signals read get_bars(...)[-1] on the in-progress daily bar.",
+  "confidence": "medium"
+ }
+]

@@ -1,0 +1,92 @@
+[
+ {
+  "sourceFile": "strategies/2026-10-26_自己搭建的一个10年230_收益率的银行股策略-2a323522.py",
+  "family": "NEW:银行股轮动",
+  "mechanism": "fixed 5-bank pool: PB+dividend+1M momentum score, Bollinger/MA250 timing",
+  "universe": "other",
+  "entry": "weekly (Friday, time='close')",
+  "evidence": "L22 g.stocks = 5 hardcoded banks (601398/601939/601288/601988/600036), no screen at all; L28 run_weekly(rebalance, weekday=5, time='close'); L124 scores[code]=0.30*(1/pb)+0.30*dy*100+0.40*mom_score with calc_dividend_yield() from finance.STK_XR_XD (L31-54); L137 only names with close <= Bollinger mid (20d MA) are eligible; L160-165 MA250 of 601398 sets exposure 0.5 vs 1.0; L177 -12% stop; max 3 of 5 held, 40% single-name cap (L204). No lineage to 红利低频 (base 93379f98 = 全A dividend x low-turnover joint rank, 10 names): different universe construction (hand list vs screen), a momentum leg, and an index-MA exposure switch.",
+  "confidence": "high"
+ },
+ {
+  "sourceFile": "strategies/2026-10-21_四合一_七星高照_搅屎棍_五境掘金_红利-e03a2ef1.py",
+  "family": "UNKNOWN",
+  "mechanism": "four capital-isolated sleeves: micro-cap, dividend-ETF band, two ETF momentum",
+  "universe": "other",
+  "entry": "daily 14:50 (stock sleeve acts Thursdays only)",
+  "evidence": "L1058 set_subportfolios(3 accounts), L1067-1072 four sleeve objects at weights 0.2/0.2/0.3/0.3, L1074 run_daily(main_trade,'14:50'). Sleeve11 = 中小板综 micro-cap (L208 get_index_stocks('399101.XSHE'), L219-223 order_by(market_cap.asc()).head(20), L107 pass_months=[1,4] empty months, L229-233 industry-breadth veto on 银行/煤炭/采掘/钢铁) + an ES-inverse-weight all-weather basket in empty months (L258-300 cal_stocks_ratio = 1/ExpectedShortfall weights). Sleeve12 = single ETF 512890 MA250 deviation band (L487-527, buy prev_low/ma250<0.988, sell prev_high/ma250>1.092). Sleeve13 = 5-ETF 20d-gain rotation with bias20/60/250 caps and 10d cooldown (L538-588). Sleeve14 = 25-day weighted log-regression slope x R^2 single-holding ETF momentum with defensive 511010 (L843-892) whose knob names min_score_threshold / use_short_momentum_filter / premium_threshold are verbatim the ones 七星高照's edge `test:` strings name — i.e. that sleeve is 七星高照 lineage code, while the stock sleeve is 小市值-shaped (399101 is also 小市值's own champion pool). At least two registered bases are embedded, which is exactly the case family-match abstains on; refusing to pick one. ⚠ limit-ups are SCREENED OUT, not chased: L70-73 refuses a buy when last_price >= high_limit, L199-205 filter_limitup_limitdown_stock keeps only names strictly inside the band; L340-357 check() SELLS a holding that closed at high_limit yesterday.",
+  "confidence": "high"
+ },
+ {
+  "sourceFile": "strategies/2026-10-21_核心资产轮动改进_中位数定仓_杠杆2-a0092e2d.py",
+  "family": "ETF动量",
+  "mechanism": "4-ETF daily momentum rotation, vol-median-scaled margin leverage to 2x",
+  "universe": "ETF",
+  "entry": "intraday 09:50 daily",
+  "evidence": "L80-85 scores_map: np.polyfit on log(close) over g.m_days=25, score = exp(slope)^250-1 times r_squared — byte-equivalent to the signal ETF动量's base 0aa4028d is documented as using (wiki/strategies/0aa4028d: '25日加权线性回归动量 score=年化xR^2, 取第1名满仓'); L54 fixed 4-ETF pool (518880 gold / 513100 nasdaq / 159915 创业板 / 510880 dividend); L89-98 pick_target holds top-1, switch only if lead > 1%; L70 run_daily(trade,'9:50'). Author declares the ancestor in code: L6-10 '基于 wywy1995《核心资产轮动》... get_rank 用 25 日对数收盘对时间回归, 得分=年化斜率xR²', i.e. the post this lineage descends from. New to the lineage, not a new mechanism: L30-34 stock_margin subportfolio, L117-128 exposure = min(2, median(252d vol)/vol20) with 2% deadband, L206-208 margincash_open for the un-funded part.",
+  "confidence": "high"
+ },
+ {
+  "sourceFile": "strategies/2026-10-28_使用标普500_60日均线乖离度增加超额收益的策略-648c2da3.py",
+  "family": "NEW:均线乖离择时",
+  "mechanism": "single S&P500 ETF: exit at +8.5% MA60 bias, re-enter at +4.5%",
+  "universe": "ETF",
+  "entry": "open 09:30 (market order, signal from previous close)",
+  "evidence": "L20-23 one instrument 513500.XSHG, ma_window 60, sell_bias 0.085, buy_bias 0.045; L66-69 bias = close/MA60 - 1 computed only from bars ending context.previous_date (L48-51); L72-78 next_target is a hysteresis band — flat above +8.5%, invested at/below +4.5%, hold state in between; L43 run_daily(trade_at_open,'09:30'); L128/L140 skips a buy/sell if the open is at limit (a guard, not a limit-up entry). No cross-sectional ranking and no second asset, so it is neither ETF动量 (ranks a pool) nor 趋势技术 (HS300 RPS cross-section) nor 网格 (ladder of anchored buy/sell rungs). Mechanism is the same shape as this batch's e03a2ef1 Strategy12 (512890 MA250 band), but no shared code — that one is a sleeve inside a composite.",
+  "confidence": "high"
+ },
+ {
+  "sourceFile": "strategies/2026-10-20_蓝筹大盘分红策略_超稳健-94888e61.py",
+  "family": "NEW:蓝筹分红持续性",
+  "mechanism": "HS300 names paying 3 straight years of cash dividends, monthly top-5",
+  "universe": "指数成分",
+  "entry": "monthly (1st trading day, 09:30)",
+  "evidence": "L29 get_index_stocks('000300.XSHG') with pe_ratio>0 (L35); L60-80 controlReport sums finance.STK_XR_XD.bonus_amount_rmb into three trailing 4-quarter buckets; L86 requires one_year > mcap*0.02 AND two_year > mcap*0.016 AND three_year > mcap*0.0128 AND the 3-year sum > 10% of market cap — a payout-PERSISTENCE filter, not a yield rank; L99-104 four-pass sort on gxl/gxl2/gxl3; L136 g.stock_num=5, equal weight; L15 run_monthly(main,1,time='9:30'). ⚠ Theme overlaps 红利低频 but there is no code ancestry and no shared signal: that family's measured edge is 股息率 x 20日低换手 joint ranking over 全A (base 93379f98), with no turnover leg and no index constraint here. A human may prefer to fold this into 红利低频 as a universe+signal variant; I will not assign it on theme alone.",
+  "confidence": "medium"
+ },
+ {
+  "sourceFile": "strategies/2026-10-26_多仓位再平衡22_77_年化_最大回撤11_17-4a67a7b0.py",
+  "family": "NEW:静态多资产再平衡",
+  "mechanism": "fixed 20% weights on 5 ETFs, rebalanced every 10 trading days",
+  "universe": "ETF",
+  "entry": "every 10th trading day, 09:40",
+  "evidence": "L30-36 g.etf_weights = {515450 红利低波, 513630 港股红利低波, 513100 纳指, 518880 黄金, 513650 标普} each 0.20 — hardcoded, never recomputed; L48 g.rebalance_interval=10, L60-66 counter-based trigger; L79-99 target_value = total_value * weight, sell overweights then buy underweights; L52 run_daily(rebalance,'09:40'). There is NO selection and NO timing signal anywhere in the file — the only logic besides weights is lot-rounding (order_target_by_lot, L104-225). Distinct from every registered family (all 13 either rank a cross-section or switch on a signal). Sibling in spirit to this batch's 4730554e (risk parity) but the weight rule is a constant, not a risk model.",
+  "confidence": "high"
+ },
+ {
+  "sourceFile": "strategies/2026-10-18_趋势捕捉加点低关联的ETF_烧token搞的换点分回测-5f2f36a9.py",
+  "family": "UNKNOWN",
+  "mechanism": "70% multi-factor rank-fusion stock book plus 30% ETF momentum sleeve",
+  "universe": "other",
+  "entry": "weekly Monday 09:30 (stocks); daily 11:00 (ETF); exits 14:50",
+  "evidence": "L64 g.sleeve_ratio {'trend':0.70,'etf':0.30}; Sleeve A = 中证全指 (L71 g.universe_index='000985.XSHG') trend-leader screen (L489 last>ma20>ma60, L492 within 12% of 20d high, L506-511 money filters, L731-739 ROE>=4 and market cap 30-800e8) scored by equal-weight rank fusion of ~17 features whose SIGNS are largely INVERTED to mean reversion (L797-813: ret_long/ret_mid/r2/pos60/obv/ma_stack all -1 with IC notes), L230 run_weekly(weekly_select_and_rebalance,1,'09:30'), regime from HS300 MA60/MA120 setting sleeve weight and slot count (L389-427). Sleeve B = 14-ETF momentum rotation, g.etf_lookback=25, holdings 1, defensive 511880 (L159-173), L233 run_daily(etf_rebalance,'11:00') — same 25-day slope x R^2 signal as ETF动量/七星高照. Sleeve C = benchmark 3-day crash rebound buy of 159915 (L1029-1112). Sleeve D 情绪龙头 is present but DISABLED (L187 g.emotion_enable=False), so the limit-up-streak code never runs. Composite spanning at least an ETF-momentum base plus a bespoke stock factor book; no single base can be named. ⚠ limit-ups are avoided, not chased: L943 skips a buy at >=high_limit*0.995, L984 declines to sell a holding at limit, L261 yesterday_HL is used to KEEP names, not to buy them.",
+  "confidence": "high"
+ },
+ {
+  "sourceFile": "strategies/2026-10-17_全天候风险平价策略的一点回测观察-4730554e.py",
+  "family": "NEW:全天候风险平价",
+  "mechanism": "risk-parity weights over 6 cross-asset ETFs, weekly rebalance",
+  "universe": "ETF",
+  "entry": "weekly (2nd trading day of the week) 09:48",
+  "evidence": "L214-248 get_risk_parity_weights: 120-day covariance (L31 COV_DAYS=120, L222 returns_df.cov()), SLSQP minimising dispersion of total risk contributions trc = w * (Cov w)/sigma, fallback to inverse-vol weights; L37-50 ASSET_DICT = 4 equity ETFs + 518880 gold + 510170 commodity, L52-55 bond ETFs behind INCLUDE_BONDS=False (L24); L57-60 REPLACE_DICT swaps in a proxy when a code lacks 1.5*COV_DAYS of history (L168-185 build_trade_list) — a point-in-time-ish availability rule, unusual in this corpus; L27-29 weekly 2nd trading day at 09:48; signals use context.previous_date only (L129). No ranking, no momentum: the only decision is the weight vector. Nothing in the 13 registered families allocates by a risk model.",
+  "confidence": "high"
+ },
+ {
+  "sourceFile": "strategies/2026-10-28_十年十倍_纳指_黄金全天候_动态杠杆网格系统-b5dd66eb.py",
+  "family": "NEW:回撤档位杠杆",
+  "mechanism": "70/30 nasdaq+gold; margin leverage ratchets up as drawdown deepens",
+  "universe": "ETF",
+  "entry": "daily 14:45",
+  "evidence": "L27-28 fixed 70% 513100 纳指 / 30% 518880 黄金; L46-63 drawdown = last_price / max(750-day high, now) - 1; L66-69 tiers -10%/-20%/-30% map to leverage 1.3/1.6/2.0; L71-74 RATCHET: g.max_leverage_locked only ever rises, and L57-61 resets to 1.0 only when a new all-time high prints; L76-100 targets = nav*0.30 shield and nav*0.70*locked_leverage with a 5% no-trade band; L17-19 stock_margin subportfolio, L106-115 execute_buy fills the shortfall with margincash_open, L117-123 repays debt; L33 run_daily(...,'14:45'). ⚠ The title says 网格 but the code has NO sell ladder — the ratchet forbids de-levering until a new high, so there is no round-trip rung profit, which is precisely the mechanism 网格's base 598050b9 is registered for (buy at -8/16/24/32%, sell back at +15/30/45/60%). Assigning 网格 on the title would be the 「再」-type title error; the mechanism is a drawdown-triggered leverage overlay on a static 2-asset core.",
+  "confidence": "medium"
+ },
+ {
+  "sourceFile": "strategies/2026-10-27_基于上一版本进行了适当调整_增加其攻击性-e79e9884.py",
+  "family": "NEW:突破ATR趋势跟踪",
+  "mechanism": "Bollinger upper-band breakout on 6 ETFs, ATR stops, 2%-risk sizing",
+  "universe": "ETF",
+  "entry": "open (run_daily time='open'), buys at day_open",
+  "evidence": "L23-30 fixed 6-ETF pool; L326-329 entry needs all four of close>upper band, previous day inside the band, band rising, close>MA60 — a per-asset event, never a cross-sectional rank; L335 entry at current_data[symbol].day_open; L39-40/L340 initial stop = entry - 2.5*ATR(14), L217 trailing exit when highest-close falls 4*ATR; L218 MA20-rollover exit; L345-354 size = 2% of equity / per-share risk, capped at 50% of equity, max 3 holdings (L52); L92-116 HS300 MA20/MA60 regime gate — defensive forces liquidation and blocks new entries; L267-297 consecutive-loss pause with two recovery conditions. Turtle-style breakout+ATR money management appears in none of the 13: ETF动量/七星高照/五福 rank a pool, 三进兵 is a 3-EMA overlay on 5 hand-picked 创业板 stocks, 趋势技术 is HS300 RPS cross-section.",
+  "confidence": "high"
+ }
+]
