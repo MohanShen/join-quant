@@ -100,9 +100,37 @@ function activeEpoch() {
  * READER fixes the whole class rather than this one instance. The blank epoch then blocks via the
  * unknown-epoch rule, which is the right answer.
  */
+/**
+ * ⚠⚠ A DECISION NOT TO VALIDATE IS NOT A VALIDATION, and the bare `/^val-/` pattern counted it as
+ * one — so recording a decline SPENT the very window it was declining to spend.
+ *
+ * Measured 2026-10-31: 资产配置's first research round decided against spending its VAL and
+ * recorded that as `stage: research, outcome: val-declined`, which is the documented way to make
+ * the loop converge. `priorValidations` matched it, `check()` returned VAL-BLOCKED ("already
+ * validated … as run-family-2026-10-31"), and a family with zero validation runs read as spent.
+ *
+ * This is the same bug `oos-budget` already fixed on its own side — "a NOTE about an OOS test must
+ * not look like one", where `stage: research, outcome: oos-recorded` pushed the bench to a false
+ * 2 of 2. The fix is the same shape: match the VERDICT SHAPES a completed run emits, not any
+ * string starting `val-`.
+ *
+ * ⚠ The breadth has to be kept for the reason it was introduced: `etfmom-005` is a real VAL filed
+ * under `stage: enhance` with `outcome: val-pass`, and a stage filter hid it for weeks. So run
+ * verdicts still count wherever they are filed. `val-dq` counts too — a disqualified run still
+ * saw the window. Only DECISIONS are excluded.
+ *
+ * ⚠ The data is not rewritten: `consumption.tsv` is append-only, so the reader is what gets fixed.
+ */
+const RAN = /^val-(pass|fail|sharpe|completed|dq)\b/i;
+const DECISION = /^val-(declined|skipped|deferred)\b/i;
+
 function priorValidations(key, kind = 'family') {
   const all = consumption.events({ kind, key });
-  return all.filter(e => e.stage === 'validate' || /^val-/i.test(String(e.outcome || '').trim()));
+  return all.filter(e => {
+    const out = String(e.outcome || '').trim();
+    if (DECISION.test(out)) return false;          // never a validation, whatever stage it is in
+    return e.stage === 'validate' || RAN.test(out);
+  });
 }
 
 /**

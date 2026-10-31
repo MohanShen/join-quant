@@ -161,6 +161,47 @@ test('VAL budget', async (t) => {
       `none of those outcomes is a validation: ${val.check('TEST家族').why}`);
   });
 
+  await t.test('a DECLINE is not a validation — recording one must not spend the window', () => {
+    // ⚠⚠ Live bug, 2026-10-31. 资产配置's first research round decided NOT to spend its VAL and
+    // recorded that as `stage: research, outcome: val-declined` — which is the documented way to
+    // make the loop converge instead of being re-dispatched daily. The filter was a bare
+    // `/^val-/`, so it counted the decline as a spend: check() returned
+    // "already validated … as run-family-2026-10-31" for a family with zero validation RUNS.
+    //
+    // Exactly the bug oos-budget already fixed on its own side ("a NOTE about an OOS test must not
+    // look like one", where stage: research / outcome: oos-recorded pushed the bench to a false
+    // 2 of 2). The decline is the one row whose whole purpose is to say the window was NOT used.
+    reset();
+    for (const outcome of ['val-declined', 'val-skipped', 'val-deferred']) {
+      consumption.record({ key: '家族A', kind: 'family', stage: 'research',
+                           runId: 'decision-' + outcome, outcome });
+    }
+    const v = val.check('家族A');
+    assert.strictEqual(v.allowed, true,
+      `a recorded decision not to validate must leave the window available: ${v.why}`);
+  });
+
+  await t.test('a decline filed under the validate stage is still not a validation', () => {
+    // The stage arm counts anything under `validate` regardless of outcome, which is right for a
+    // run but would re-open the hole if a round filed its DECISION there. The decision check runs
+    // first, so stage cannot override it.
+    reset();
+    consumption.record({ key: '家族A', kind: 'family', stage: 'validate',
+                         runId: 'mis-staged-decline', outcome: 'val-declined' });
+    assert.strictEqual(val.check('家族A').allowed, true,
+      'a decline is never a validation, whatever stage it was filed under');
+  });
+
+  await t.test('a DISQUALIFIED run still counts — it saw the window', () => {
+    // val-dq is a RUN verdict, not a decision: the backtest executed on VAL data. Live row exists
+    // (UNRESOLVED:jul12-023). Excluding it would hand back a window that was actually looked at.
+    reset();
+    consumption.record({ key: '家族A', kind: 'family', stage: 'enhance',
+                         runId: 'dq-run', outcome: 'val-dq' });
+    assert.strictEqual(val.check('家族A').allowed, false,
+      'a disqualified VAL run still spent the window');
+  });
+
   await t.test('an UNKNOWN epoch blocks, because VAL cannot be un-spent', () => {
     // Rows written before consumption.tsv gained its epoch column carry none. Blocking is visible
     // and a human clears it in one command; permitting silently re-spends the protected resource.
