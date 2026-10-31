@@ -2,7 +2,7 @@
 postId: 8b9cb8e2ce67b2e9708004cc61a5ef01
 title: 向导式 ATR指标择时测试 0.0.1
 sourceFile: strategies/2026-10-29_向导式_ATR指标择时测试_0_0_1-8b9cb8e2.py
-family: 其他
+family: 向导式低波价值
 concepts: [未分类]
 factors:
   风控: [止损线]

@@ -2,7 +2,7 @@
 postId: 0d1bbe83e05b19c73d1bfe9f4efda477
 title: 年化51%的晴雨双轨：小盘游击+ETF防御
 sourceFile: strategies/2026-10-12_年化51_的晴雨双轨_小盘游击_ETF防御-0d1bbe83.py
-family: 其他
+family: 小盘ETF双轨切换
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/49001
 concepts: [小市值因子, ETF轮动, 动量与趋势]
 factors:

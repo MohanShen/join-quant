@@ -2,7 +2,7 @@
 postId: e7c95ca1f1e6363e12c45a0f8554eec4
 title: 六因子选股版破净策略 附PT迁移版在各时期的回测截图
 sourceFile: strategies/2026-10-17_六因子选股版破净策略_附PT迁移版在各时期的回测截图-e7c95ca1.py
-family: 其他
+family: 破净价值多因子
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/57664
 concepts: [未分类]
 factors:

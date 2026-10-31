@@ -2,7 +2,7 @@
 postId: 4a8bcfd5092334a3a73493475f007f7a
 title: 【量化分享】ETF低波海龟法则与复利增强的验证
 sourceFile: strategies/2026-10-17_量化分享_ETF低波海龟法则与复利增强的验证-4a8bcfd5.py
-family: 其他
+family: ETF低波海龟
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/78820
 concepts: [ETF轮动]
 factors:
