@@ -373,8 +373,23 @@ test('a reasoned VAL decline is not reopened', async (t) => {
         `${fam}: reopened but the prior decline's REASONING was discarded — it still binds the run`);
       assert.ok(field(t2, 'valReopenedBasis').length > 40,
         `${fam}: a reopen needs a basis saying who decided it and what it does NOT grant`);
-      assert.strictEqual(field(t2, 'valDeclined'), '',
-        `${fam}: carries both an active decline and a reopen`);
+      // ⚠ A reopened page MAY carry a fresh active decline, and 七星高照 does. That is the
+      // mechanism working, not a conflict: the human reopen PERMITS a validation, the loop then
+      // looks again and may decline on its own new evidence (its basis says "DECLINED AGAIN at
+      // epoch 9, on a measurement taken this round — not inherited"). My first version of this
+      // assertion demanded `valDeclined === ''` on any reopened page and failed the moment the
+      // loop did the right thing — the test encoded "a reopen is final", which was never the rule.
+      //
+      // What must hold is that a NEW decline is its own judgement, not a silent restoration of the
+      // old one: it carries its own basis, and it is recorded at an epoch no older than the reopen.
+      const fresh = field(t2, 'valDeclined');
+      if (fresh) {
+        assert.ok(field(t2, 'valDeclinedBasis').length > 40,
+          `${fam}: re-declined after a reopen without its own basis`);
+        assert.ok(parseInt(fresh, 10) >= parseInt(field(t2, 'valReopened'), 10),
+          `${fam}: re-declined at epoch ${fresh}, older than the reopen ` +
+          `(${field(t2, 'valReopened')}) — that is the old decline restored, not a new judgement`);
+      }
     }
     assert.ok(declared + reopened >= 1,
       'expected at least one recorded VAL decision (declined or reopened)');

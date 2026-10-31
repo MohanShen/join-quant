@@ -36,7 +36,7 @@ valReopenedBasis: "human decision 2026-10-26: VAL reopened for every family that
 valDeclinedPrior: 9
 valDeclinedPriorBasis: "epoch-9 round 2026-10-25: every level number this family has on TRAIN 2024 is a hindsight-LIST number. A generated point-in-time pool sign-flips (q-e9-1: 1.1110 -> -0.3324); cut to its own N=11 by liquidity it still fails the gate (q-e9-5: sharpe 0.58, closing only 24% of the gap — 76% belongs to which names the author picked); the ranking is informative only inside the hand list (q-e9-2: inverted annual 126.22 -> -7.74); the champion 62c2664f loses 34% from one 2024-listed name alone (q-e9-3: 2.0078 -> 1.3247) and its pool holds two names (159550, 159378) that list in 2025, inside the VAL window. Separately, the VAL budget is human-blocked (etfmom-005 row has no recorded epoch). Clearing condition: a book whose list is built WITHOUT hindsight (e.g. the §4 per-asset-class point-in-time cut) that clears the 1.0 gate on TRAIN; validate that book with the pre-2025 cutoff, never the hand list. UPDATE 2026-10-26 (ffd92ab re-measured the shelf product etfmom-005 on epoch 9: objective 2.4187 / sharpe 7.23, and its pool has no 2025 listings): the decline STANDS, for a stronger reason. etfmom-005 is 22152780 with g.portfolio_value_proportion = [1, 0, 0, 0] (validated_strategies/etfmom-005.py L175) — 100% the 小市值 micro-cap stock leg, zero weight on every ETF leg. So a VAL on it would validate a 小市值 book under this family's name; this page's realizability 2 was scored on the ETF rotation (etf-m2), not on it, and 小市值 itself is measured R=1. The gate already blocks that case (a product candidate needs realizabilityScope: etfmom-005), so nothing here may be scored or validated by inference. Its 2.4187 belongs on the 小市值 ledger of evidence, not this family's."
 status: active
-updatedAt: 2026-10-30
+updatedAt: 2026-10-31
 bestObjectiveEpoch: 9
 ---
 
@@ -118,7 +118,7 @@ bestObjectiveEpoch: 9
 | 33 | [[02d397c0_简单的择时基金轮动策略]] | -0.1990 | 0.12 | 8.60 | 28.50 | ❌ | 9 |
 | 34 | [[24fd2813_行业ETF轮动研究代码]] | DQ/— | — | — | — | — | — |
 
-*24 gate-pass / 34 members. 快照 2026-10-30（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*24 gate-pass / 34 members. 快照 2026-10-31（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 - ⚠⚠ **【更正，2026-10-27】下面那条「点时池 → 未通过 ⇒ VAL 不该花」是 epoch-6 的结论，不适用于本台，且把两个不同的操作混成了一个。** 它引的 [[study-pit-pool]] 是在 **base 0aa4028d** 上把作者的名单换成一个**宽的生成池**（epoch 6，objective 0.1868→−0.0313）。那证伪的是 `动量` 排序，不是「去掉上市日期后见性」。

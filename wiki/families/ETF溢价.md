@@ -28,7 +28,7 @@ realism: "⚠⚠ 头条不可实现，且已定量：收益 ≈100% 是「在集
 realizability: 1
 realizabilityBasis: "own realism declares 不可实现 (matches integrate-queue's declaredUnrealizable)"
 status: active
-updatedAt: 2026-10-30
+updatedAt: 2026-10-31
 bestObjectiveEpoch: 9
 ---
 
@@ -87,7 +87,7 @@ bestObjectiveEpoch: 9
 | 2 | [[edd94ebc_ETF溢价回撤]] | 1.3862 | 6.93 | 144.30 | 5.68 | ✅ | 9 |
 | 3 | [[c002a821_分享一个我实战中高收益回撤还行的策略]] | 0.8536 | 4.04 | 93.78 | 8.42 | ✅ | 9 |
 
-*3 gate-pass / 3 members. 快照 2026-10-30（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*3 gate-pass / 3 members. 快照 2026-10-31（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 - **人类裁决：status → DQ-realizability？** 两条 edge 都 measured、VAL 也过（sharpe 7.60），但 u-1 + ep-imp-3 证明开盘折价与收盘折价两头都不可实现。与 [[PT多策略]] 同一裁决；本轮不改 status。整合层在裁决前不得引用本家族的任何 objective；`edge-redundancy.js` 会把两家族标为 INTEGRATION-REDUNDANT（两条 edge 同名同 status）。

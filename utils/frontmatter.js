@@ -43,7 +43,12 @@
  */
 function field(text, key) {
   if (!text) return '';
-  const m = String(text).match(new RegExp(`^${key}:\\s*(.*)$`, 'm'));
+  // ⚠ `[^\\S\\n]*`, NOT `\\s*`: \\s matches the NEWLINE, so an EMPTY field captured the NEXT
+  // line as its value. Measured 2026-10-30: `realizability:` with nothing after it returned
+  // "status: active", and `edge:` returns "- name: …" on all 14 family pages. The edge case is
+  // benign (nothing calls field() on a block key), but `realizability:` empty is the documented
+  // way to mark it UNSET, and unknown must BLOCK — returning a non-empty string defeats that.
+  const m = String(text).match(new RegExp(`^${key}:[^\\S\\n]*(.*)$`, 'm'));
   return m ? m[1].trim() : '';
 }
 

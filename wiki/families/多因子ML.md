@@ -36,7 +36,7 @@ valReopenedBasis: "human decision 2026-10-26: VAL reopened for every family that
 valDeclinedPrior: 8
 valDeclinedPriorBasis: "「没有 improve 候选；base 的 VAL 2024-25 对作者而言很可能是样本内（帖子 2026-02、ETF 池为事后组装）。epoch 6 的一次 VAL 预算留给未来的候选」(§4). The window is probably IN-sample for the author, so spending the family's one validation on it would buy a number that is not out-of-sample. Clearing condition: an improve candidate of our own."
 status: active
-updatedAt: 2026-10-30
+updatedAt: 2026-10-31
 bestObjectiveEpoch: 9
 ---
 
@@ -104,7 +104,7 @@ bestObjectiveEpoch: 9
 | 23 | [[c18e0923_BP单因子测试]] | DQ/— | — | — | — | — | — |
 | 24 | [[c748b9d5_价值投资低估选股]] | DQ/— | — | — | — | — | — |
 
-*5 gate-pass / 24 members. 快照 2026-10-30（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*5 gate-pass / 24 members. 快照 2026-10-31（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 - **家族归属**：base 是组合书，与 [[小市值]]、[[ETF动量]] 部分重叠；是否应将 d02cde29 改归或将本家族改名，是人工 / `/ingest-strategy` 决定（`family:` 不自动改）。真正的多因子/ML 成员（49efd264 / f9ca1d2e / 775faa4e / f8d8348c）全部不过闸。
