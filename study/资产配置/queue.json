@@ -1,0 +1,211 @@
+[
+  {
+    "id": "u-2",
+    "kind": "understand",
+    "title": "分解探针 + 基线复现对照 b-0：base 原样 + 每日记录 5 只 ETF 前收",
+    "hypothesis": "base 的 sharpe 来自跨资产低相关带来的降波动，而不是某一只资产本身。可证伪：若分散比 DR = σ_组合 / Σ w_i σ_i ≥ 0.85，或 base sharpe ≤ 1.15 × 加权平均单资产 sharpe，则「分散是 sharpe 来源」被削弱/证伪。同时这次运行必须复现台账行 annual 31.16 / sharpe 2.47 / maxDD 7.70（±0.15pp 重跑漂移），否则后面所有 Δ 都不可读",
+    "why": "排第一的理由：(1) 它是每个 Δ 都需要的复现对照，必须先跑；(2) 同一次 run 离线给出 5 只资产各自的 2024 sharpe，于是 u-1 的单资产 X 由测量决定而不用猜；(3) 它给出的相关矩阵会直接回答 513100/513650 是否实际上是同一个美股敞口（40% 只是一个资产），这是 imp-2 的前提。成本：1 次 ETF 回测，约 2 分钟。⚠ 日志超过 100 行要分页读（backtest-log.js 只读一页；用 study/小市值/pagelog.js 的方法，不要再写第三份）",
+    "design": "先建 study/资产配置/baseline.py = py2to3(strategies/2026-10-26_多仓位再平衡22_77_年化_最大回撤11_17-4a67a7b0.py) + strategy-normalize.js 导出的 OVERRIDE（照 study/网格/build-e9.js 的做法；raw 文件缺 order_volume_ratio，直接跑会 UNPINNED-STOP）。变体 = baseline.py + 在 before_market_open 里加一行日志：对 5 只 ETF 用 attribute_history(s, 1, '1d', ['close']) 取前收，打印一行 `DECOMP <date> <c1..c5>`。交易逻辑一个字符不改。--window train。离线：用记录的收盘价算每只 sharpe、5×5 日收益相关矩阵、DR、等权加权平均单资产 sharpe。用 ex-post 组合做的任何混合只能作筛选，不能引用为结果",
+    "from": [
+      "normalized:4a67a7b0",
+      "wiki/families/资产配置 edge.test"
+    ],
+    "edgeRef": "跨资产分散",
+    "rank": 1,
+    "status": "answered",
+    "note": "gatekeeper 2026-10-31：排第一，是复现对照 + 分解。没有任何 closure/finding/§2 行与它重复（新家族）",
+    "result": "over 241 common 2024 dates (rf 4%, convention reproduces JQ 2.47 on the full curve) per-asset sharpe is 515450 1.06 / 513630 1.21 / 513100 1.48 / 513650 1.74 / 518880 1.79 against base 2.52 on the same dates; DR = 0.630 and base/weighted-avg-single = 1.735, so the refutation bar (DR ≥ 0.85 or ratio "
+  },
+  {
+    "id": "u-5",
+    "kind": "understand",
+    "title": "三本固定权重书（b1531180 / c65b0c1e / c913387f）是不是同一本书——免费，用已存曲线",
+    "hypothesis": "三本书是同一机制的三个实现。可证伪：三对日收益相关系数里任意一对 < 0.80，就说明它们是三本不同的书，不能合并成一条，§3 也不能把它们放在一起排名",
+    "why": "0 回测分钟：五条 e9 TRAIN 曲线都已在 data/series/ 里（已核对）。另外免费给出 u-4 / imp-4 的先验：b1531180 是国债组合（sharpe 2.06），c913387f 是哈利·布朗永久组合（25% 债，sharpe 1.28）——它们的各资产类别权重和 sharpe 的对比，是「加债会不会抬 sharpe」的现成证据。与 u-2 不抢预算（不需要回测），可以同时做",
+    "design": "node utils/backtest-series.js --corr 对 {b1531180, c65b0c1e, c913387f} 三对，外加每本各自对 4a67a7b0 和 4730554e 的相关（作为参照）。读三份源码，把权重按资产类别（A股/债/金/海外股/商品/现金）列成表，旁边放各自的 e9 sharpe。只读不跑",
+    "from": [
+      "wiki/families/资产配置 §4 [结构]",
+      "normalized:b1531180",
+      "normalized:c65b0c1e",
+      "normalized:c913387f"
+    ],
+    "edgeRef": "跨资产分散",
+    "rank": 2,
+    "status": "queued"
+  },
+  {
+    "id": "u-1",
+    "kind": "understand",
+    "title": "edge test：权重换成 {X: 1.0} 单资产，X = 5 只里 2024 sharpe 事后最高的那只",
+    "hypothesis": "跨资产分散是 sharpe 的来源。可证伪：如果全仓单资产的对照组 sharpe ≥ 2.47，这条 claim 就被证伪（正是家族页 edge.test 写的那个判据：比 sharpe，不比 objective）",
+    "why": "这是本族 edge 从 proposed 变成 measured/refuted 的唯一一步，§4 写的是最高优先。之所以排在 u-2 后面：u-2 的分解会测出 X 是哪只，所以不需要先验；只有在 u-2 失败或拿不到日志时，才退回先声明的先验 518880 黄金。用事后最好的资产是故意从严：如果连事后最好的单资产都比不过，分散就站得住。⚠ 反过来，如果单资产赢了，这个证伪是在给控制组送了「事后挑选」这份优势的情况下得到的，记录时必须写明。预期：u-2 已经离线算出单资产 sharpe，所以这次运行主要是把结果在台上正式测一次；就算答案能猜到，它仍然是 edge 状态的依据。1 次回测，约 2 分钟",
+    "design": "baseline.py 中 g.etf_weights = {X: 1.0}，其余（10 日再平衡、按手下单、OVERRIDE）不变。X = u-2 中 2024 sharpe 最高的代码；u-2 拿不到日志则用 518880.XSHG。--window train。判据只看 sharpe",
+    "from": [
+      "wiki/families/资产配置 edge.test",
+      "u-2"
+    ],
+    "edgeRef": "跨资产分散",
+    "rank": 3,
+    "status": "answered",
+    "result": "edge test: 100% 518880 gold, the asset u-2 found to have the best 2024 sharpe, scores sharpe 1.79 against the base 2.47 (Δ −0.68) at a near-identical drawdown (7.49 vs 7.70); invested fraction averages 0.9997 so cash drag is ~0.03% and the control is clean. Control sharpe < base sharpe, so the refut"
+  },
+  {
+    "id": "liq-1",
+    "kind": "understand",
+    "title": "可成交性：base 在自身可行性下限上加流动性地板（1e6 / 5 仓 / 0.05 ⇒ 4e6 元/日）",
+    "hypothesis": "这个地板对 base 不起作用。可证伪：任何一次再平衡因为前一日成交额 < 4e6 而跳过某个仓位（出现 LIQFLOOR in≠out 的行），或者曲线偏离 base（max|Δcum| > 0），就说明它确实约束了。先验认为不起作用（都是宽基/跨资产 ETF），但先验不能代替测量：大小盘轮动的地板完全没剔掉名字，ETF溢价却从 8.44 掉到 1.10。最值得怀疑的是 513630：2023-12-08 才上市，2024 年初成交额可能很薄",
+    "why": "阻塞 exit gate：realizability 没有值就 BLOCK。地板无效 ⇒ R=2 成立（同 b3751277 / 大小盘轮动 liq-1 的读法）。1 次回测，约 2 分钟。它测的是 BASE，所以 realizabilityScope = base；以后如果改进出来的书成了候选，要重新打分",
+    "design": "baseline.py 的 rebalance() 开头：对每只 ETF 取 attribute_history(s, 1, '1d', ['money']) 的前一日成交额；< 4e6 的仓位本次不交易（保持现有持仓），打印 `LIQFLOOR <date> in=<n> out=<m> <被剔除代码>`。其余不变。--window train。和 u-2 的 b-0 对照比：曲线完全相同 + 所有 LIQFLOOR 行 in==out ⇒ 不起作用",
+    "from": [
+      "wiki/families/资产配置 §4 [阻塞 exit gate]",
+      "CLAUDE.md liq-1 precedents (大小盘轮动, b3751277, ETF溢价)"
+    ],
+    "edgeRef": "跨资产分散",
+    "rank": 4,
+    "status": "answered",
+    "result": "the base own feasibility floor is inert: at all 25 rebalances in=5 out=5 and the curve is bit-identical to the base. Tightest name 513650 at a minimum 20-day mean money of 1.05e7 (2.6× the floor), then 515450 2.9e7, 513630 6.3e7, 513100 4.3e8, 518880 4.6e8"
+  },
+  {
+    "id": "u-3",
+    "kind": "understand",
+    "title": "再平衡消融：rebalance_interval → 100000（第一天建仓后买入持有）",
+    "hypothesis": "定期拉回目标权重本身贡献 sharpe。可证伪：买入持有的 sharpe ≥ 2.37（与 base 相差在 0.10 以内，或高于 base），则「再平衡有贡献」被证伪。这个结果确实不确定：2024 年黄金和纳指都是趋势行情，任由权重漂向赢家，反而可能胜过再平衡",
+    "why": "决定 imp-3 值不值得跑：如果再平衡没有作用，那么改再平衡的方式（漂移带）几乎肯定也没有作用。1 次回测，约 2 分钟",
+    "design": "baseline.py 中 g.rebalance_interval = 100000（trade_day_count=0 那天照常建仓，之后再也不再平衡），其余不变。--window train",
+    "from": [
+      "normalized:4a67a7b0"
+    ],
+    "edgeRef": "跨资产分散",
+    "rank": 5,
+    "status": "answered",
+    "result": "buy-and-hold of the day-1 equal-weight mix scores sharpe 2.35 against the 10-day-rebalanced base 2.47 (Δ −0.12), just past the declared refutation threshold (B&H ≥ 2.37), so 「rebalancing contributes」 survives — barely. Almost all of the base sharpe comes from holding the mix, not from pulling it bac"
+  },
+  {
+    "id": "imp-2",
+    "kind": "improve",
+    "title": "等风险贡献权重（SLSQP），从 4730554e 移植，COV_DAYS=120",
+    "hypothesis": "base 实际上有 40% 在一个资产上（513100 纳指 + 513650 标普，大概率高度相关），ERC 会把这一对一起降权。预测：sharpe 高于 2.47。可证伪：sharpe ≤ 2.47",
+    "why": "在 improve 里最贴机制：它考虑的是协方差，而不只是各资产的波动率；新颖度高于 imp-1（imp-1 只是它的对角近似）。有依据：4730554e 是族内成员，ERC 用在另一个池子上，e9 sharpe 2.03，所以 SLSQP 在 JQ 运行环境里跑得通。前提依赖 u-2 的相关矩阵：如果 513100/513650 的相关系数 < 0.7，就把它的预期收益调低。约 2–3 分钟（每次再平衡都要做一次优化）",
+    "design": "baseline.py：每个再平衡日用 attribute_history 取 5 只 ETF 截至 previous_date 的 120 日日收益，算协方差，用 4730554e 原样的 SLSQP 目标（各资产风险贡献相等）+ 约束（权重和为 1，0 ≤ w ≤ 1）求出权重，替换 g.etf_weights 的取值。池子、10 日周期、按手下单都不变。--window train",
+    "from": [
+      "normalized:4730554e",
+      "normalized:4a67a7b0",
+      "u-2"
+    ],
+    "edgeRef": "跨资产分散",
+    "rank": 6,
+    "status": "answered",
+    "result": "ERC is active on only the last 14 of 25 rebalances (the 513630 120-day history guard holds equal weights before that); it cuts the 513100+513650 US pair to 0.338 combined vs 0.40, for +0.05 sharpe and −0.84pp drawdown"
+  },
+  {
+    "id": "imp-4",
+    "kind": "improve",
+    "title": "加入 511010 五年国债 ETF，6 只各 1/6",
+    "hypothesis": "加入一个与权益/黄金低相关的债券仓位会降低波动，抬高 sharpe。可证伪：sharpe ≤ 2.47",
+    "why": "预期收益中到高，新颖度低到中。⚠ 依赖窗口：2024 是中国债市大牛市（收益率大幅下行），所以任何提升都可能主要是 2024 年的水平效应；2025 年债市基本走平/走弱。这一点必须写在结果旁边，它会在 VAL 上被检验，而不只是在 TRAIN 上被奖励。和 u-4 的重叠：两条都保留，不合并。imp-4 在作者原池内只改一个变量（加债），正好是 u-4 的混淆变量（u-4 换了整个池子，而且其中有国债），所以 imp-4 的 Δ 是读 u-4 所需的输入。u-5 已有的 b1531180 / c913387f 证据是这一条的免费先验。1 次回测",
+    "design": "baseline.py 中 g.etf_weights 增加 '511010.XSHG'，6 只各 1/6（同时在 g.etf_names 里加名字），其余不变。--window train",
+    "from": [
+      "normalized:4a67a7b0",
+      "normalized:b1531180",
+      "normalized:c913387f",
+      "u-5"
+    ],
+    "edgeRef": "跨资产分散",
+    "rank": 7,
+    "status": "answered",
+    "result": "adding a bond leg at 1/6 trades return for drawdown (annual −4.51pp, maxDD −1.39pp) with sharpe flat (+0.01), even in 2024, a bond-rally year"
+  },
+  {
+    "id": "u-4",
+    "kind": "understand",
+    "title": "资产类别的事后性：换成教科书式池子（黄金 / 纳指 / 沪深300 / 十年国债 / 豆粕），等权",
+    "hypothesis": "base 的 sharpe 不是由作者 2026 年选的这几类资产事后挑出来的。可证伪：通用的五类全天候池子 sharpe < 2.0",
+    "why": "这是 §4 里「资产类别选择的事后性」那一项，决定以后的 VAL 值不值得花（作者 2026-06-15 发帖时已经看到了 TRAIN 和 VAL）。⚠ 有混淆：替换池子同时去掉了 2 只红利、1 只标普，加入了国债和豆粕；国债会机械地压低波动，所以即使存在事后性，结果也可能是高 sharpe。读法：结合 imp-4（作者原池 + 债）的 Δ 来读，只能把它当作「事后性的上界」，不能当作机制结论。阈值 2.0 是声明的，不是推导出来的。排在 imp-4 之后，好让它的混淆项先被测出来。1 次回测；159985 上市于 2019，不涉及窗口内新上市的问题",
+    "design": "baseline.py 中 g.etf_weights = {518880.XSHG, 513100.XSHG, 510300.XSHG, 511260.XSHG, 159985.XSHE} 各 0.2（g.etf_names 相应更新），其余不变。--window train",
+    "from": [
+      "wiki/families/资产配置 §4 [未测] 资产类别选择的事后性",
+      "imp-4"
+    ],
+    "edgeRef": "跨资产分散",
+    "rank": 8,
+    "status": "answered",
+    "result": "the class-canonical pool scores sharpe 1.36 against the author pool 2.47, below the declared 2.0 threshold, so the hypothesis 「hindsight does not explain the level」 is REFUTED. The author posted 2026-06-15, so both TRAIN 2024 and VAL 2025 were inside their view when the five classes were picked"
+  },
+  {
+    "id": "imp-1",
+    "kind": "improve",
+    "title": "倒数波动率权重（60 日 σ，截至 previous_date）",
+    "hypothesis": "按 1/σ 加权会把权重移向波动低的仓位，降低组合波动、抬高 sharpe。可证伪：sharpe ≤ 2.47",
+    "why": "它是 imp-2 的对角近似（不考虑相关性），所以新颖度更低；而且它会给纳指降权，而纳指是 2024 年收益最高的资产之一，所以预期收益不大。排在 imp-2 之后：如果 ERC 赢了，这一条可以区分收益来自「去相关」还是只来自「降波动」。1 次回测",
+    "design": "baseline.py：每个再平衡日取每只 ETF 截至 previous_date 的 60 日日收益，w_i ∝ 1/σ_i，归一化后替换 g.etf_weights 的取值，其余不变。--window train",
+    "from": [
+      "normalized:4a67a7b0",
+      "imp-2"
+    ],
+    "edgeRef": "跨资产分散",
+    "rank": 9,
+    "status": "answered",
+    "result": "inverse-vol is active on 20/25 rebalances and gives the best TRAIN improvement of the round (+0.12 sharpe, −0.59pp drawdown). The FIRST run was invalid: a Python sum over dict_values raised on JQ (sum shadowed by the star import), the weight function fell back to equal weights and reproduced the bas"
+  },
+  {
+    "id": "imp-3",
+    "kind": "improve",
+    "title": "漂移带再平衡：每日检查，任一仓位偏离 20% 目标超过 5pp 时才再平衡",
+    "hypothesis": "按条件触发的再平衡能更快捕捉到大幅偏离，同时省掉没有必要的交易，从而抬高 sharpe。可证伪：sharpe ≤ 2.47",
+    "why": "有前置条件：只有当 u-3 显示再平衡对 sharpe 的影响（不论方向）≥ 0.10 时才跑。如果买入持有和 base 差不多，说明再平衡方式本身不起作用，这一条几乎一定没有作用，跳过。5pp 的带宽对 20% 的权重来说很少触发，所以预期收益低。1 次回测",
+    "design": "baseline.py：before_market_open 每天都判断——如果 max_i |持仓市值_i / 总资产 − 0.2| > 0.05 就设 need_rebalance=True，去掉 10 日计数；rebalance() 不变。--window train",
+    "from": [
+      "normalized:4a67a7b0",
+      "u-3"
+    ],
+    "edgeRef": "跨资产分散",
+    "rank": 10,
+    "status": "dropped",
+    "note": "closed by u-3: rebalancing worth ≤0.12 sharpe total"
+  },
+  {
+    "id": "liq-2",
+    "kind": "understand",
+    "title": "容量：地板 10×（4e7 元/日）——R=3 要靠测出来",
+    "hypothesis": "这本固定权重跨资产 ETF 书能承受 10 倍资金。可证伪：地板起作用且 sharpe 跌破 1.0 的闸门，或者任何一年的 sharpe 跌破 1.0",
+    "why": "可选。exit gate 只要 R≥2，有 liq-1 就够；只有 liq-1 显示地板不起作用、并且预算还有剩余时才跑。只有 liq-1 的话，最多支持 R≥2，到不了 3（同 b3751277 的读法）。513630 最可能是会被这个地板约束的那只。1 次回测",
+    "design": "与 liq-1 相同，只把地板换成 4e7",
+    "from": [
+      "liq-1"
+    ],
+    "edgeRef": "跨资产分散",
+    "rank": 11,
+    "status": "answered",
+    "result": "at 10× the floor binds on 16/25 rebalances with 20 exclusions — 513650 ×8 (H1) and 515450 ×12 (mostly H2) — and costs 0.42 sharpe (2.47 → 2.05), still above the 1.0 gate. Excluded names are SOLD to zero by the clean-up loop rather than held, so the test adds churn in exactly the thin name: a harsher"
+  },
+  {
+    "id": "u-6",
+    "kind": "understand",
+    "title": "u-4 教科书池 + DECOMP 日志：在通用池上重跑 edge 分解与单资产对照",
+    "hypothesis": "通用池上 book sharpe 仍高于池中最佳单资产（edge test: 的强形式在两个池子上都成立）。可证伪：最佳单资产 2024 sharpe ≥ book",
+    "why": "u-4 证明 2.47 主要是池子水平；edge 的强形式只在作者池上测过，需在通用池上再判一次。交易逻辑不改，只加日志",
+    "design": "u-4-textbook-pool.py + before_market_open 记录 5 只 ETF 前收（同 u-2）。--window train。离线算单资产 sharpe、相关矩阵、DR",
+    "from": [
+      "u-4"
+    ],
+    "edgeRef": "跨资产分散",
+    "rank": 12,
+    "status": "answered",
+    "result": "per-asset 2024 sharpe 511260 1.84 (best) / 518880 1.79 / 513100 1.48 / 510300 0.59 / 159985 −1.21; DR 0.518, i.e. stronger vol reduction than the base 0.630; book sharpe 1.56× the weighted-avg member; max |corr| 0.34 (510300/511260, negative). The best single asset (1.84) BEATS the book (1.36, 1.40 "
+  },
+  {
+    "id": "liq-3",
+    "kind": "understand",
+    "title": "可成交性：u-4 教科书池上加 4e6 元/日地板",
+    "hypothesis": "地板在通用池上同样惰性。可证伪：任一 LIQFLOOR in≠out 或曲线偏离 u-4",
+    "why": "换池子的变体在被引用前必须重新打分 realizability（liq-1 只覆盖 base 池）",
+    "design": "同 liq-1，池子换成 u-4 的五只",
+    "from": [
+      "u-4"
+    ],
+    "edgeRef": "跨资产分散",
+    "rank": 13,
+    "status": "answered",
+    "result": "the feasibility floor is inert on the canonical pool: curve bit-identical to u-4, thinnest name 159985 at 6.9e7, 17× the floor"
+  }
+]

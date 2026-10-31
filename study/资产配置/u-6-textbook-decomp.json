@@ -1,0 +1,142 @@
+{
+ "expId": "u-6",
+ "family": "资产配置",
+ "epoch": 9,
+ "window": "train 2024-01-01..2024-12-31",
+ "log": {
+  "backtestId": "ca1774e9ea978c089c2d9c601ae93e68",
+  "state": "2",
+  "pages": 7,
+  "lines": 536,
+  "decompLines": 242,
+  "nanCount": 0,
+  "firstDecomp": "2024-01-02",
+  "lastDecomp": "2024-12-31"
+ },
+ "control": {
+  "controlKey": "study_资产配置_variants_u-4-textbook-pool__train__e9",
+  "sameDates": true,
+  "points": [
+   242,
+   242
+  ],
+  "curveMaxAbsDiffCumPct": 0
+ },
+ "convention": {
+  "rf": 0.04,
+  "annualizeDays": 250,
+  "returnDates": "2024-01-02..2024-12-30 (241 days)"
+ },
+ "perAsset": {
+  "518880.XSHG": {
+   "total": 0.2743,
+   "annual": 0.2859,
+   "vol": 0.1373,
+   "sharpe": 1.791,
+   "maxdd": 0.0749
+  },
+  "513100.XSHG": {
+   "total": 0.3512,
+   "annual": 0.3665,
+   "vol": 0.2212,
+   "sharpe": 1.476,
+   "maxdd": 0.1792
+  },
+  "510300.XSHG": {
+   "total": 0.1678,
+   "annual": 0.1745,
+   "vol": 0.2273,
+   "sharpe": 0.592,
+   "maxdd": 0.1244
+  },
+  "511260.XSHG": {
+   "total": 0.0868,
+   "annual": 0.0901,
+   "vol": 0.0272,
+   "sharpe": 1.842,
+   "maxdd": 0.0151
+  },
+  "159985.XSHE": {
+   "total": -0.1681,
+   "annual": -0.1738,
+   "vol": 0.1766,
+   "sharpe": -1.21,
+   "maxdd": 0.2563
+  }
+ },
+ "base_sameDates": {
+  "total": 0.1487,
+  "annual": 0.1547,
+  "vol": 0.0818,
+  "sharpe": 1.401,
+  "maxdd": 0.0575
+ },
+ "base_fullCurve": {
+  "total": 0.1457,
+  "annual": 0.1509,
+  "vol": 0.0817,
+  "sharpe": 1.357,
+  "maxdd": 0.0575
+ },
+ "exPostEqualWeightDailyRebal": {
+  "total": 0.1398,
+  "annual": 0.1454,
+  "vol": 0.0823,
+  "sharpe": 1.281,
+  "maxdd": 0.0573
+ },
+ "corr": {
+  "codes": [
+   "518880.XSHG",
+   "513100.XSHG",
+   "510300.XSHG",
+   "511260.XSHG",
+   "159985.XSHE"
+  ],
+  "matrix": [
+   [
+    1,
+    0.167,
+    0.044,
+    -0.003,
+    0.016
+   ],
+   [
+    0.167,
+    1,
+    -0.061,
+    -0.025,
+    0.032
+   ],
+   [
+    0.044,
+    -0.061,
+    1,
+    -0.339,
+    0.159
+   ],
+   [
+    -0.003,
+    -0.025,
+    -0.339,
+    1,
+    -0.04
+   ],
+   [
+    0.016,
+    0.032,
+    0.159,
+    -0.04,
+    1
+   ]
+  ]
+ },
+ "sumWSigma": 0.1579,
+ "sigmaPort": 0.0818,
+ "DR": 0.5181,
+ "sigmaEW_fromCov": 0.0823,
+ "weightedAvgSharpe": 0.898,
+ "ratioBaseSharpeOverWavg": 1.561,
+ "bestSharpeAsset": "511260.XSHG",
+ "bestSharpe": 1.842
+}
