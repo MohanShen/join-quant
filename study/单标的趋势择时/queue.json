@@ -1,0 +1,78 @@
+[
+  {
+    "id": "u-1",
+    "kind": "understand",
+    "title": "buy-and-hold control: 100% 513100 from day 1",
+    "hypothesis": "Always-long 513100 over TRAIN 2024 matches the baseline, so the timing machinery adds nothing over asset beta in a strong Nasdaq year.",
+    "why": "REFUTES the edge if B&H obj >= 0.30 or sharpe near 2.89. Supports it if B&H is clearly lower. Highest-information entry: every other ablation is uninterpretable without this level control. Cost ~1-2 backtest-min (single ETF, daily).",
+    "design": "Add target_ratio=1.0 before the target_value line in market_trade, bypassing stop/signals. Optional second control (exposure-matched constant weight) is a SEPARATE entry if wanted. Merges improve-generator ab-3.",
+    "from": [
+      "c4f480e3 epoch-9 normalize row (obj 0.3777 / sharpe 2.89)"
+    ],
+    "edgeRef": "单只纳指ETF：三态分类后海龟突破与RSI反转切换，吊灯",
+    "rank": 1,
+    "status": "answered",
+    "note": "gatekeeper: ranked first as the level control; all ablations need the B&H number. No VAL queued.",
+    "result": "100% 513100 held through 2024 scores objective 0.1668 / sharpe 1.45 / annual 34.60 / maxDD 17.92; the timed book beats it on all four, incl. +7.8pp annual with 13.3pp less drawdown."
+  },
+  {
+    "id": "u-2",
+    "kind": "understand",
+    "title": "router ablation: force strategy_weights={0:0,1:0,2:1}",
+    "hypothesis": "The three-state router adds nothing over a single signal leg.",
+    "why": "REFUTES the router claim if objective/sharpe stays within ~0.05 of baseline with the router forced. A null is strong information. Interpret only after u-1.",
+    "design": "Force weights in before_market_open; log regime day counts. One run. Merges improve-generator ab-1.",
+    "from": [
+      "c4f480e3 epoch-9 normalize row (obj 0.3777 / sharpe 2.89)"
+    ],
+    "edgeRef": "单只纳指ETF：三态分类后海龟突破与RSI反转切换，吊灯",
+    "rank": 2,
+    "status": "answered",
+    "result": "Forcing breakout-only weights in every regime costs 9.53pp annual and 0.65 sharpe but leaves maxDD at exactly 4.60 (objective 0.2224, still above buy-and-hold 0.1668)."
+  },
+  {
+    "id": "u-3",
+    "kind": "understand",
+    "title": "RSI-leg ablation: regime-1 weights {2:1,1:0}",
+    "hypothesis": "The RSI reversal leg contributes nothing in 2024.",
+    "why": "REFUTES the RSI leg if sharpe/objective is unchanged without it; supported if it drops. Likely-null is still good information.",
+    "design": "Set regime-1 weights to {2:1,1:0}. One run.",
+    "from": [
+      "c4f480e3 epoch-9 normalize row (obj 0.3777 / sharpe 2.89)"
+    ],
+    "edgeRef": "单只纳指ETF：三态分类后海龟突破与RSI反转切换，吊灯",
+    "rank": 3,
+    "status": "answered",
+    "result": "Turning off only the regime-1 RSI weighting reproduces u-2 exactly (32.84 / 2.24 / 4.60), so regime 0 changed nothing in 2024 and the whole 9.53pp annual gap belongs to the RSI leg."
+  },
+  {
+    "id": "u-4",
+    "kind": "understand",
+    "title": "chandelier ablation: g.stop_loss_atr_multi=99.0",
+    "hypothesis": "The chandelier stop does nothing (or hurts) on 2024.",
+    "why": "REFUTES the stop leg if objective is unchanged or higher. No prior closure is recorded for this family, so nothing is stale or binding. Merges improve-generator ab-2.",
+    "design": "Set g.stop_loss_atr_multi=99.0. One run.",
+    "from": [
+      "c4f480e3 epoch-9 normalize row (obj 0.3777 / sharpe 2.89)"
+    ],
+    "edgeRef": "单只纳指ETF：三态分类后海龟突破与RSI反转切换，吊灯",
+    "rank": 4,
+    "status": "answered",
+    "result": "Disabling the chandelier stop costs 2.5pp annual, 0.26 sharpe and adds 0.69pp drawdown (objective 0.3457), so the stop is mildly positive in 2024 but the book keeps maxDD near 5% without it."
+  },
+  {
+    "id": "u-5",
+    "kind": "understand",
+    "title": "vol scaler ablation: g.position_scale=1.0 always",
+    "hypothesis": "The ATR-ratio vol scaler adds nothing over full sizing.",
+    "why": "REFUTES the scaler if objective/sharpe is unchanged. Ranked last: a sizing modifier, peripheral to the named edge claim.",
+    "design": "Force g.position_scale=1.0. One run.",
+    "from": [
+      "c4f480e3 epoch-9 normalize row (obj 0.3777 / sharpe 2.89)"
+    ],
+    "edgeRef": "单只纳指ETF：三态分类后海龟突破与RSI反转切换，吊灯",
+    "rank": 5,
+    "status": "answered",
+    "result": "Removing the volatility scaler moves objective by +0.0039 (annual +0.64pp, maxDD +0.25pp, sharpe -0.12), i.e. the scaler is inert on objective in 2024."
+  }
+]
