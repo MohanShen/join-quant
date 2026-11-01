@@ -537,3 +537,23 @@ strategies/2026-11-01_融券卖出是保证金比例好像起不到作用-a83805
 strategies/2026-11-01_多因子策略选股模板计算出来的因子值和单因子分析中计算出来的因子值不一样_计算因子的代码是一样-10de6f9a.py	10de6f9a8c34adbf7c4af1499adc01c6	多因子策略选股模板计算出来的因子值和单因子分析中计算出来的因子值不一样，计算因子的代码是一样	compile-error										9
 strategies/2026-11-01_帮忙加个过滤条件-a4907eab.py	a4907eab5580d2f9149d3809b585d283	帮忙加个过滤条件	compile-error										9
 strategies/2026-11-01_求解答这个策略怎么模拟盘-e3ce49aa.py	e3ce49aa4484750ec2175a3bbd40598f	求解答这个策略怎么模拟盘	compile-error										9
+strategies/2026-11-01_请问如何通过研究中创建回测函数方式实现初始持仓功能-b4bf6db6.py	b4bf6db6239cd8db4899096c66bec3d7	请问如何通过研究中创建回测函数方式实现初始持仓功能	compile-error										9
+strategies/2026-11-01_33天均线大于233均线且macd金叉时下单-01a6feb3.py	01a6feb3cbb18cb70a578a5f5b340ecc	33天均线大于233均线且macd金叉时下单	compile-error										9
+strategies/2026-11-01_回测有个bug啊_无量一字板怎么还能买的进去呢-a2e9b54e.py	a2e9b54e9bd8f526fe28934330cb5077	回测有个bug啊？无量一字板怎么还能买的进去呢？	normalized	2024-01-01	2024-12-31	365	-34.99	-34.99	-0.41	77.44	-1.1243	fail	9
+strategies/2026-11-01_五福ETF策略有没有pt版本的-8f68c571.py	8f68c571015b2b3706110b999c036bb1	五福ETF策略有没有pt版本的？？	normalized	2024-01-01	2024-12-31	365	180.90	180.90	5.96	13.29	1.6761	pass	9
+strategies/2026-11-01_来自17年炒股生涯的量化新手之提问贴-3138195d.py	3138195d202ab64be847f2a9ff59da63	来自17年炒股生涯的量化新手之提问贴	compile-error										9
+strategies/2026-11-01_聚宽接入9db试了好多遍怎么不行-6f32304d.py	6f32304d7579501b8d7b7108bd59a228	聚宽接入9db试了好多遍怎么不行	normalized	2024-01-01	2024-12-31	365	152.99	152.99	4.42	20.16	1.3283	pass	9
+strategies/2026-11-01_朋友们_你们能忍受策略多久不赚钱-20cfa178.py	20cfa178e93511598608a0b56ffc067e	朋友们，你们能忍受策略多久不赚钱？	compile-error										9
+strategies/2026-11-01_网格分钟版_有错误_自己没有找出来_请大家更正_谢谢-4cde4c71.py	4cde4c71ce75e6d333f70c90365dd79f	网格分钟版，有错误，自己没有找出来，请大家更正，谢谢！	normalized	2024-01-01	2024-12-31	365	14.92	14.92	1.25	4.70	0.1022	pass	9
+strategies/2026-11-01_RSRS策略改写的一些困惑_请各位大神们帮忙解答-b5c1da6f.py	b5c1da6fc7b6867d324186c4de2c92f6	RSRS策略改写的一些困惑，请各位大神们帮忙解答	compile-error										9
+strategies/2026-11-01_求助_关于AH溢价策略的修改-62a573cf.py	62a573cfc1ad17491d330142893790dd	求助：关于AH溢价策略的修改	normalized	2024-01-01	2024-12-31	365	39.47	39.47	2.14	13.57	0.259	pass	9
+strategies/2026-11-01_有谁告诉我_这是为什么-4af5cb4b.py	4af5cb4b10167a604dfde25fcbeb52f3	有谁告诉我，这是为什么？	normalized	2024-01-01	2024-12-31	365	9.77	9.77	0.22	18.91	-0.0914	fail	9
+strategies/2026-11-01_涨停板策略_为什么编译成功却没有执行交易-df109f60.py	df109f60433390b074ce8dbd8dd85ad1	涨停板策略，为什么编译成功却没有执行交易？	compile-error										9
+strategies/2026-11-01_get_valuation存在的一个问题-b5705b08.py	b5705b08f4cd9e1dc73d92c37c692d51	get_valuation存在的一个问题	compile-error										9
+strategies/2026-11-01_场外基金回测时的问题-3fc17a2b.py	3fc17a2b6143772e0a54c295596c234e	场外基金回测时的问题	normalized	2024-01-01	2024-12-31	365	0.04	0.04	-27.24	0.11	-0.0007	fail	9
+strategies/2026-11-01_大家帮忙看看那块有问题出不来-b83ac26a.py	b83ac26ab73cf4531f65fc1b416652b1	大家帮忙看看那块有问题出不来?	compile-error										9
+strategies/2026-11-01_请高人写一个PETTM_PB最小值的策略_仅限银行板块_单独买入一个股票不择时不止损不止盈-f0632a31.py	f0632a318de7b29ef712de477b605b2b	请高人写一个PETTM*PB最小值的策略(仅限银行板块） 单独买入一个股票不择时不止损不止盈。	compile-error										9
+strategies/2026-11-01_一个简单的趋势线策略_编译出错_请大神指点-c00eaff6.py	c00eaff6850a2850e9824962a596a269	【一个简单的趋势线策略，编译出错】【请大神指点】	normalized	2024-01-01	2024-12-31	365	0.50	0.50	-0.15	13.00	-0.125	fail	9
+strategies/2026-11-01_求助_请帮我看看那里出问题了-b360f946.py	b360f946a9001efef27c8275184ce420	求助 ，请帮我看看那里出问题了。	compile-error										9
+strategies/2026-11-01_判断MACD的DIF和DEA金叉死叉_得出的DIF和DEA与实际不同-8d2b71c0.py	8d2b71c01104030af61953d00462b6df	判断MACD的DIF和DEA金叉死叉 ，得出的DIF和DEA与实际不同	normalized	2024-01-01	2024-12-31	365	-16.31	-16.31	-0.97	18.22	-0.3453	fail	9
+strategies/2026-11-01_请教一下大神_每天回测怎么保存一个变量-7abd13a2.py	7abd13a29f8f93f989c97f808cc87834	请教一下大神，每天回测怎么保存一个变量	normalized	2024-01-01	2024-12-31	365	1.59	1.59	-1.67	0.91	0.0068	fail	9

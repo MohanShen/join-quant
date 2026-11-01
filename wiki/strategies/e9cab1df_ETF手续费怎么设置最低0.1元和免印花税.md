@@ -2,6 +2,7 @@
 postId: e9cab1df1b8013b268a67937a77e9551
 title: ETF手续费怎么设置最低0.1元和免印花税
 sourceFile: strategies/2026-10-31_ETF手续费怎么设置最低0_1元和免印花税-e9cab1df.py
+family: 其他
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/2116
 concepts: [ETF轮动]
 factors:

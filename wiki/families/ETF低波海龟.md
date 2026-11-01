@@ -22,7 +22,7 @@ realism: "⚠ **注册时零研究**：没有 study、没有 enhance、没有可
 # ⚠ realizability 故意未设：从未测量。未知 BLOCK 而非 PERMIT，所以本族在 exit gate 上显示 blocked，
 # 这是正确状态。键整个省略而不是写成空值（空值会被 frontmatter.field() 读成下一行）。
 status: active
-updatedAt: 2026-10-31
+updatedAt: 2026-11-01
 ---
 
 # ETF低波海龟
@@ -49,7 +49,7 @@ screener 的依据：Selection is LOW VOLATILITY, not momentum: get_vol_rank ret
 |---|---|---|---|---|---|---|---|
 | **1** | **[[4a8bcfd5_【量化分享】ETF低波海龟法则与复利增强的验证]]** | 0.0955 | 1.22 | 22.51 | 12.96 | ✅ | 9 |
 
-*1 gate-pass / 1 members. 快照 2026-10-31（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*1 gate-pass / 1 members. 快照 2026-11-01（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 

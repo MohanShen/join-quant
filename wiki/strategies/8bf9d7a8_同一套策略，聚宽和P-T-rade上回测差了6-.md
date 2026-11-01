@@ -2,6 +2,7 @@
 postId: 8bf9d7a8b4713846516d97c34d585948
 title: 同一套策略，聚宽和P-T-rade上回测差了6-7倍收益
 sourceFile: strategies/2026-11-01_同一套策略_聚宽和P-T-rade上回测差了6-7倍收益-8bf9d7a8.py
+family: 小市值
 concepts: [小市值因子]
 factors:
   选股: [规模价值·小市值]
