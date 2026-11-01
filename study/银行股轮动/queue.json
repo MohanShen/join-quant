@@ -1,0 +1,219 @@
+[
+  {
+    "id": "u-e9-ew",
+    "kind": "understand",
+    "title": "edge.test 大行高股息板块贝塔: same 5-bank pool, equal-weight 20%×5 held, weekly Friday-close rebalance, no score / Bollinger / MA250 / stop",
+    "hypothesis": "Most of the TRAIN-2024 return comes from the 2024 rise of the big-bank sector itself, not from in-pool rotation or timing.",
+    "why": "type: edge ablation, family §4 [第一步]. The ONLY test written into the family page edge.test, and it decides how the other edge claim (池内轮动) should be read. DECISION RULE (declared before the number): CONFIRM beta if sharpe >= 1.9 AND objective >= 0.27; REFUTE if sharpe <= 1.6 OR objective <= 0.20; anything between = partial. Report BOTH maxDDs (base 11.83 vs EW). Either outcome is information. Cost ~2-4 backtest-min.",
+    "design": "Base study/银行股轮动/baseline.py (strategies/…2a323522.py + OVERRIDE, epoch-9 pins). Replace the body of rebalance() with: for each of the 5 g.stocks, order_target_value(s, context.portfolio.total_value*0.20). Keep run_weekly(rebalance, weekday=5, time='close') and initialize verbatim. Remove scoring, Bollinger, MA250 ratio and the -12% stop; nothing else changes. Control: the base reproduces 0.3371 / 2.37 / 45.54 / 11.83 on TRAIN 2024.",
+    "from": [
+      "wiki/families/银行股轮动.md edge[0].test",
+      "wiki §4 [第一步] 机制消融",
+      "base TRAIN 2024 45.54 / 2.37 / 11.83 / 0.3371"
+    ],
+    "edgeRef": "大行高股息板块贝塔",
+    "rank": 1,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 1, ACTIVE — dispatch first. Falsifiable, one run, no prior finding or closure (0 findings, 0 closures binding, 0 stale). The family page names the edge test as step one, and it sets how inv/nobb/noma should be read: if beta is confirmed, those three break down a small residual.",
+    "result": "CONFIRM (rule sharpe>=1.9 AND obj>=0.27). EW 20%x5 TRAIN 2024 e9: total/annual 44.16, sharpe 2.23, maxDD 12.31, obj 0.3185 vs base 45.54/2.37/11.83/0.3371 (Δobj -0.0186, 94%); maxDD EW 12.31 vs base 11.83; daily corr 0.9618 n=242. algorithmId 361c7efd45b6424dbecbdba1106a55cc, curve study_银行股轮动_variants_u-e9-ew__train__e9."
+  },
+  {
+    "id": "liq-cap",
+    "kind": "understand",
+    "title": "realizability: base + liquidity floor at 10× the book own feasibility (8e7 CNY/day, 20-bar MEDIAN money, previous_date) + log each name min 20d money over 2024",
+    "hypothesis": "Five mega-cap banks absorb this book at 10× its size with no change, so R=3.",
+    "why": "type: realizability. BLOCKS the exit gate (realizability unset ⇒ blocked), and nothing else can set it. Floor derivation: capital 1,000,000 × 40% single-name cap = 400k; /0.05 order_volume_ratio = 8e6 = 1× feasibility, which is certainly inert against mega-cap banks, so 1× is not run; 10× = 8e7. DECISION RULE: R=3 if the curve is bit-identical to base (max|Δcum| = 0) AND every name's min 20-bar median money over 2024 >= 8e7; R=2 if the floor bites (any LIQFLOOR out<in) but sharpe stays >= 1.0; R=1 is not reachable from this test. Expect R=3; a likely answer is not a reason to skip it, because this is the only thing that can set realizability. ⚠ Use the 20-bar MEDIAN (precedent study/大小盘轮动/build-liq.js), not the generator's 20-day average. One spike day must not admit a name. ⚠ Pool hindsight is NOT a fill question, so it does not count against R (that is bank-imp-pit). Cost ~2-4 min.",
+    "design": "Base study/银行股轮动/baseline.py. Copy filter_liquidity_floor and the LIQFLOOR log format VERBATIM from study/大小盘轮动/build-liq.js with LIQ_FLOOR = 8e7; apply it to eligible_stocks right after the L157 sort (order-preserving), exactly one asserted edit. Add one log line per rebalance: LIQMIN date=<d> <code>=<median20 money> for all 5 names; report each name's minimum over 2024. Expect roughly one LIQFLOOR line per rebalance that reaches L157 (not every week does — L154 returns early). Zero lines means the floor never ran, which is not the same as inert. Page the log with study/小市值/pagelog.js (100 lines/page). Report max|Δcum| vs the base curve.",
+    "from": [
+      "wiki §4 [阻塞 exit gate] realizability 未测",
+      "wiki §1 读码要点 (3): 5 只全是超大市值",
+      "precedent study/大小盘轮动 liq-1 / e9-r1 (build-liq.js)",
+      "precedent study/小盘ETF双轨切换 liq-1 / liq-2"
+    ],
+    "edgeRef": "大行高股息板块贝塔",
+    "rank": 2,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 2. Blocking, cheap, and the only route to R. Ranked below u-e9-ew because the family page puts ablation first, and the answer here is close to certain while ew is genuinely open. Changed average→median per precedent.",
+    "result": "R=3 (rule: bit-identical AND every name's min 20-bar median money >= 8e7). TRAIN 2024 e9 base + 8e7 floor: 45.54 / 2.37 / 11.83 / 0.3371 identical to base, max|Δcum|=0 over 242 days. 28 LIQFLOOR lines all in==out (fewer than Fridays: L154 early return), 0 errors; 51 LIQMIN lines. 2024 min 20-bar median money: 工行 1.064e9, 建行 4.19e8 (thinnest, 2024-01-04, 5.2x the floor), 农行 1.145e9, 中行 6.42e8, 招行 1.338e9. build-liq.js (slots = g.max_holdings; g.stock_num refused) -> variants/liq-cap.py; backtestId 1644fe7b32dc68eaad9fdefe07476126; curve study_银行股轮动_variants_liq-cap__train__e9."
+  },
+  {
+    "id": "u-e9-inv",
+    "kind": "understand",
+    "title": "score informativeness: invert the sort (reverse=False) at L147 and L157, all else verbatim, log eligible-set size weekly",
+    "hypothesis": "The 0.30/0.30/0.40 PB+dividend+momentum score chooses better names within the pool than its inverse.",
+    "why": "type: component ablation of edge[1]. DECISION RULE: CONFIRM score if inverted sharpe <= 1.8 OR Δobjective <= -0.08; REFUTE if inverted sharpe is within ±0.3 of 2.37 — but ONLY if the score was BINDING. ⚠ Inversion can only change the book in weeks where len(eligible) >= 3: with max_holdings 3 it changes the SET only when len(eligible) > 3, and the 40/40/20 WEIGHT order when it is >= 3. If binding weeks are fewer than ~8 of ~52, the verdict is 'untested on this bench', not refuted. So the executor must log len(eligible) and the chosen order on every rebalance. Cost ~2-4 min.",
+    "design": "Base study/银行股轮动/baseline.py. Two asserted edits: L147 sorted(..., reverse=True) → reverse=False and L157 eligible_stocks.sort(..., reverse=True) → reverse=False. Add log line INV date=<d> n_eligible=<k> order=<codes> per rebalance. Nothing else changes.",
+    "from": [
+      "wiki edge[1].test (打分换成随机/等权)",
+      "wiki §1 管线 L102-124 / L130-157"
+    ],
+    "edgeRef": "池内 PB+股息+1M 动量轮动",
+    "rank": 3,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 3, with a binding-week requirement added. Without it, an inert result from a filter that seldom leaves >3 names eligible would read as 'score refuted'. Read alongside u-e9-ew.",
+    "result": "CONFIRM (rule: inv sharpe<=1.8 OR Δobj<=-0.08; met via Δobj). INV reverse=False TRAIN 2024 e9: 35.66/sharpe 1.87/maxDD 11.46/obj 0.2420 vs base 45.54/2.37/11.83/0.3371 (Δobj -0.0951, Δsharpe -0.50); corr 0.9636. Binding: 51 rebal, 28 reached sort, n_elig>=3 in 17 wks, >3 in 14 wks. algorithmId cbd6319a045c389147cc46bc9fb6b41e, curve study_银行股轮动_variants_inv__train__e9."
+  },
+  {
+    "id": "u-e9-nobb",
+    "kind": "understand",
+    "title": "Bollinger mid-band filter off: every scored bank eligible (also unblocks the -12% stop that the L154 early return skips)",
+    "hypothesis": "Buying only names at or below their 20-day MA adds return or cuts drawdown versus always holding the top-3 by score.",
+    "why": "type: component ablation of edge[1] timing. DECISION RULE: REFUTE the filter if sharpe >= 2.2 AND maxDD rises by <= 2pp; CONFIRM if sharpe <= 1.9 OR maxDD rises by >= 3pp; between = partial. ⚠ It is one edit but changes two things: removing the filter also makes the stop reachable every week, because the L154 '有持仓但无新标的' return can no longer fire. Log STOP triggers so the two can be told apart. If there are 0 stop triggers, the delta belongs entirely to the filter. Cost ~2-4 min.",
+    "design": "Base study/银行股轮动/baseline.py. One asserted edit: L137 condition → always append (eligible_stocks = all scored stocks, in g.stocks order before the L157 sort). Log STOP date=<d> code=<c> loss=<pct> inside the L177 branch and NBB date=<d> n_eligible=<k>. Nothing else changes.",
+    "from": [
+      "wiki edge[1].test (单独关布林过滤)",
+      "wiki §1 管线 L130-154"
+    ],
+    "edgeRef": "池内 PB+股息+1M 动量轮动",
+    "rank": 4,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 4. Stop logging added to separate the confound.",
+    "result": "REFUTE Bollinger filter (rule sharpe>=2.2 AND ΔmaxDD<=+2pp). NOBB if True: at L137, TRAIN 2024 e9: 50.35/sharpe 2.54/maxDD 12.36/obj 0.3799 vs base 45.54/2.37/11.83/0.3371 (Δobj +0.0428, Δsharpe +0.17, ΔmaxDD +0.53pp); corr 0.9523. n_eligible=5 all 51 wks; STOP triggers 0 (confound empty). Informative, NOT adopted (risk-control removal on a one-year uptrend). curve study_银行股轮动_variants_nobb__train__e9."
+  },
+  {
+    "id": "u-e9-dyla",
+    "kind": "understand",
+    "title": "CONDITIONAL lookahead probe: calc_dividend_yield reads STK_XR_XD rows with a_bonus_date >= now-365 and no upper bound / no pub_date — log rows dated after current_dt",
+    "hypothesis": "On some 2024 rebalance dates the TTM dividend sum includes rows whose a_bonus_date (or publication) is after the simulated date. 2024 is the year the big banks first paid interim dividends (paid late 2024 / early 2025), so a future-dated row is plausible.",
+    "why": "type: lookahead probe, logging only. RUN ONLY IF u-e9-inv CONFIRMS the score is informative. If the score does not choose names, a contaminated input to it cannot matter, so drop the probe in that case and record why. DECISION RULE: CONFIRM lookahead if any rebalance row has a_bonus_date > context.current_dt (or a publication date after it) contributing to dy; REFUTE if 0 such rows over 2024. Control: must be bit-identical to base, otherwise the logged values are not the book's own. The dy<=0 exclusion at L110 is a second channel, so log excluded names too. Cost ~2-4 min.",
+    "design": "Base study/银行股轮动/baseline.py. No logic edit. In calc_dividend_yield also select a_bonus_date (and pub_date if the table has it) and log DYROW date=<current_dt> code=<c> a_bonus_date=<d> bonus=<x> future=<0|1>. Page with study/小市值/pagelog.js. Must reproduce 0.3371 / 2.37 / 45.54 / 11.83 exactly.",
+    "from": [
+      "generator A + generator B: calc_dividend_yield L31-54 has no upper bound on a_bonus_date",
+      "CLAUDE.md: avoid_future_data shown to bind get_price; untested for finance.run_query"
+    ],
+    "edgeRef": "池内 PB+股息+1M 动量轮动",
+    "rank": 5,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01: ACCEPTED as CONDITIONAL on u-e9-inv confirming the score. Raised by both generators and recorded here so it is not raised again. | TRIGGER MET 2026-11-01: u-e9-inv CONFIRMED the score informative (Δobj -0.0951, ~5x the EW residual 0.0186, value concentrated in avoiding low scorers 中行/建行). Probe is LIVE — the dy term is the likely carrier of that exclusion value, so a future-dated STK_XR_XD row would bear directly on it.",
+    "result": "LOOKAHEAD PRESENT: finance.STK_XR_XD not bounded by avoid_future_data; 1198/1460 DYLA rows future-dated, dy inflated ~3.5-4x (varies by bank/week). Control bit-identical (max|Δcum|=0). backtestId 02770e0424aef12c3bbc5e98fd7fe91f, curve study_银行股轮动_variants_dyla__train__e9."
+  },
+  {
+    "id": "u-e9-dypit",
+    "kind": "understand",
+    "title": "honest-dividend baseline: add finance.STK_XR_XD.a_bonus_date <= context.current_dt.date() to calc_dividend_yield (TTM = paid in the last 365 days, nothing future); all else verbatim; log per-rebalance holdings and honest-vs-leaky score rank",
+    "hypothesis": "Part of the base level (0.3371) was bought by the STK_XR_XD lookahead (dy inflated ~3.5-4x, varying by bank and week). With honest dividends the score ranks differently on some weeks and the book falls toward or below equal-weight beta (u-e9-ew 0.3185).",
+    "why": "type: lookahead removal and new family reference baseline. Spawned by u-e9-dyla (lookahead measured, 1198/1460 rows future-dated). It is the honest book every later Δ (inv-h, nobb-h, pit, eqw) is measured against, and the only route to a VAL candidate without contamination. A likely \"the leak bought most of the residual\" is a GOOD outcome: it is information either way. DECISION RULE (declared before the number): report Δobj/Δsharpe vs base 0.3371/2.37 AND vs u-e9-ew 0.3185/2.23, plus leak share = (0.3371 - dypit)/(0.3371 - 0.3185). (a) dypit obj < 0.3185 => the honest score adds NOTHING over beta (rotation residual <= 0). (b) 0.3185 <= dypit < 0.3385 (within +0.02 of EW, which is the size of the original base-EW gap) => residual indistinguishable from beta on this bench; record it as that, not as support. (c) dypit >= 0.3385 => honest residual positive, provisional until inv-h. Holdings: count the weeks where the dypit target set (and order) differs from the base twin. 0 differing weeks plus a bit-identical curve => \"the leak moved dy but not decisions on 2024\". ⚠ Second channel: the L110 dy<=0 exclusion. An honest 365-day window can miss a bank's annual payment near its anniversary (e.g. paid 2023-07-10, next on 2024-07-11), which drops the name for a week for a DEFINITIONAL reason rather than the leak. Log it (DYZERO) and report the count separately. Cost ~1 min (two ~30s runs).",
+    "design": "Base study/银行股轮动/baseline.py (2a323522 + py2to3 + OVERRIDE, epoch 9). ONE asserted logic edit in calc_dividend_yield: the filter gains `finance.STK_XR_XD.a_bonus_date <= context.current_dt.date()` beside the existing `>= start_date` (lower bound verbatim). Observation only, in try/except that log.error's any exception (build-dyla.js pattern): (1) RANK date=<d> code=<c> pb=<> dy_h=<honest> dy_l=<leaky, from a second query without the upper bound> s_h=<honest score> s_l=<leaky score> for each scored name; (2) DYZERO date=<d> code=<c> when honest dy <= 0 (name excluded at L110); (3) HOLD date=<d> n_elig=<k> target=<ordered codes> just before the 调仓 block, and HOLD ... target=KEEP on the L154 early-return path. CONTROL TWIN (same builder, second file variants/u-e9-dypit-ctl.py): the base with ONLY the identical HOLD line and no logic edit. It must reproduce 0.3371 / 2.37 / 45.54 / 11.83 bit-identically, and it supplies the base holdings for the diff (the base never logged them). Page logs with study/小市值/pagelog.js (100 lines/page; expect >1000 lines). Report: dypit metrics, Δ vs base and EW, leak share, weeks with a different target set / order, weeks where the same-state honest vs leaky rank differs (from RANK), DYZERO count, daily corr vs base.",
+    "from": [
+      "u-e9-dyla implication (2): u-e9-dypit is the next experiment and the new reference baseline",
+      "wiki §4 [下一步 / 新基线] u-e9-dypit",
+      "u-e9-ew 0.3185 (beta reference)",
+      "base TRAIN 2024 0.3371 / 2.37 / 45.54 / 11.83"
+    ],
+    "edgeRef": "池内 PB+股息+1M 动量轮动",
+    "rank": 1,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01 (round 2, post-dyla): ACCEPTED, rank 1, ACTIVE. Falsifiable (declared bands vs EW). One experiment: the twin is its control, not a second question. Grounded in a measured lookahead. Not answered yet: dyla measured the leak in the INPUT, not its effect on the book. Added the base HOLD-logging twin (the base never logged holdings, so a diff needs one) and the DYZERO channel. ⚠ Its RANK log can make inv-h / nobb-h zero-cost (see their notes).",
+    "result": "band (b) indistinguishable from beta: obj 0.3363 vs base 0.3371 (Δ-0.0008) / EW 0.3185 (+0.0178); sharpe 2.38; maxDD 13.13; leak share 0.043; holdings differ 18/51 weeks; honest vs leaky order differs 51/51 (17/28 eligible) -> inv-h/nobb-h zero-cost path closed; DYZERO 0; control bit-identical. NEW REFERENCE BASELINE. curve study_银行股轮动_variants_u-e9-dypit__train__e9, algorithmId 650f8b3ecc4c0a8c6a6785467d48275a"
+  },
+  {
+    "id": "u-e9-inv-h",
+    "kind": "understand",
+    "title": "score informativeness on HONEST dividends: u-e9-inv (reverse=False at L147 and L157) rebuilt on the dypit book; log n_eligible + order per rebalance",
+    "hypothesis": "With honest dividends, the PB+dy+1M score still picks better banks within the 5-name pool than its inverse does.",
+    "why": "type: re-measure of a withdrawn conclusion (u-e9-inv ran on leaky dy; dyla says it may not be cited). Decides whether the score half of 池内轮动 exists at all, which sets how pit / eqw / the VAL candidate are read, so it carries the most information after dypit. A refutation (score has no sign once honest) is a strong, useful result: the family is then beta only. DECISION RULE re-anchored to dypit (not base): CONFIRM score if Δobj(inv-h - dypit) <= -0.08 OR Δsharpe <= -0.55; REFUTE if |Δsharpe| <= 0.3 AND |Δobj| <= 0.03; anything between = partial. Valid only if binding: n_eligible >= 3 in >= 8 weeks, otherwise \"untested on this bench\". ZERO-COST PATH: if u-e9-dypit's RANK log shows the honest score order == the leaky order on EVERY rebalance AND DYZERO = 0, this book is identical to the leaky run by construction (eligibility and every downstream decision are the same). Record the leaky result as re-confirmed on honest dividends with no backtest (u-e9-noma precedent). Cost ~30s.",
+    "design": "Base = variants/u-e9-dypit.py (baseline + a_bonus_date upper bound), NOT baseline.py. Two asserted edits identical to build-inv.js: L147 sorted(..., reverse=True) -> reverse=False; L157 eligible_stocks.sort(..., reverse=True) -> reverse=False. Keep INV date=<d> n_eligible=<k> order=<codes>. Nothing else changes. Control: dypit's own metrics.",
+    "from": [
+      "u-e9-dyla implication (1): u-e9-inv withdrawn, re-measure on honest dividends",
+      "u-e9-inv (leaky) Δobj -0.0951, binding 17/14 weeks",
+      "u-e9-dypit (new reference baseline)"
+    ],
+    "edgeRef": "池内 PB+股息+1M 动量轮动",
+    "rank": 2,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01 (round 2, post-dyla): ACCEPTED, rank 2. Not a duplicate of u-e9-inv: that measurement is contaminated (dyla) and the family page withdraws its conclusion. Rule re-anchored to the dypit baseline. Conditional zero-cost path declared.",
+    "result": "CONFIRM score sign on honest dividends: obj 0.2208 vs dypit 0.3363 (Δ-0.1155), sharpe 1.65 (Δ-0.73), maxDD 10.44 (Δ-2.69pp), corr 0.9184; binding 17/14 weeks; leaky inv was -0.0951 so not a leak artifact. Asymmetric: inverted is -0.0977 vs EW, forward +0.0178. curve study_银行股轮动_variants_u-e9-inv-h__train__e9, algorithmId 67820476a422a51cfd4b8cde928b0cd5"
+  },
+  {
+    "id": "u-e9-nobb-h",
+    "kind": "understand",
+    "title": "Bollinger mid-band filter off on HONEST dividends: u-e9-nobb (L137 -> if True) rebuilt on the dypit book; log STOP / NBB / HOLD",
+    "hypothesis": "On the honest-dividend book, always holding the top 3 by score still beats the dip-entry filter, so the leaky nobb result survives.",
+    "why": "type: re-measure of a withdrawn conclusion. The filter's eligibility does not read dy, but its Δ does: removing the filter hands every week to the score's top 3, so the leaky ordering decided which names nobb bought. The one BINDING closure on this family (u-e9-nobb, closedAtEpoch 9) rests on that contaminated ordering, so this is NOT a duplicate: same bench, invalidated evidence. DECISION RULE re-anchored to dypit: REFUTE the filter if Δsharpe(nobb-h - dypit) >= 0 AND ΔmaxDD <= +2pp; CONFIRM the filter if Δsharpe <= -0.3 OR ΔmaxDD >= +3pp; anything between = partial. Log STOP triggers (0 in the leaky runs) so the stop confound stays separable. ZERO-COST PATH: if u-e9-dypit's RANK log shows the honest score order == the leaky order on EVERY rebalance AND DYZERO = 0, this book is identical to the leaky run by construction (eligibility and every downstream decision are the same). Record the leaky result as re-confirmed on honest dividends with no backtest (u-e9-noma precedent). Not adoptable on TRAIN alone either way (it removes a risk control on a one-year uptrend). Cost ~30s.",
+    "design": "Base = variants/u-e9-dypit.py, NOT baseline.py. One asserted edit identical to build-nobb.js: the L137 condition -> if True:. Keep the STOP / NBB / MA log lines. Nothing else changes. Control: dypit's own metrics.",
+    "from": [
+      "u-e9-dyla implication (1): u-e9-nobb withdrawn",
+      "u-e9-nobb (leaky) Δobj +0.0428; binding closure closedAtEpoch 9 rests on the contaminated ordering",
+      "u-e9-dypit (new reference baseline)"
+    ],
+    "edgeRef": "池内 PB+股息+1M 动量轮动",
+    "rank": 3,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01 (round 2, post-dyla): ACCEPTED, rank 3. Judged the binding closure u-e9-nobb: its REASONING depends on the leaky score order, so it does not bind the honest book. Rank 3, not 4 (the orchestrator suggested pit first), on the information axis: this question is open, while pit is expected to come back inert on TRAIN. Neither blocks the other and both will run, so swap them freely if VAL sequencing matters more.",
+    "result": "REFUTE Bollinger filter on honest dividends (narrow): obj 0.3672 vs dypit 0.3363 (Δ+0.0309), sharpe 2.43 (Δ+0.05), maxDD 14.55 (Δ+1.42pp), corr 0.9553; filter binds 41/51 weeks in dypit; STOP 0, MA250 half 0. Not adopted (Δsharpe ~noise, removes a risk control). curve study_银行股轮动_variants_u-e9-nobb-h__train__e9, algorithmId 94217fbbab192bfe061a5a156bfffa38"
+  },
+  {
+    "id": "bank-imp-pit",
+    "kind": "improve",
+    "title": "point-in-time pool: top-5 banks by market cap (bank industry, ex-ST) recomputed each rebalance date; everything else verbatim",
+    "hypothesis": "The 2026-written 5-name pool is what the point-in-time top-5 by market cap would have chosen anyway, so the book survives without hindsight and becomes an honest VAL candidate.",
+    "why": "REBUILT ON THE DYPIT BOOK (u-e9-dyla: the raw base carries a dividend lookahead and may never be a VAL candidate, so a pit test on it would validate the wrong book). Expected gain ~0 on TRAIN: 工/建/农/中/招 are very likely the 2024 top 5 by market cap throughout. Its value is removing the hindsight caveat before VAL. Novelty low, VAL value high. DECISION RULE (re-anchored): ADOPT as the VAL-candidate pool if sharpe >= 1.0 AND objective falls by < 0.05 vs dypit; quote dypit/pit as a PAIR (CLAUDE.md q-e9-pit). Report the weeks where the pit set differs from the hardcoded 5 and which names they were (e.g. 邮储 601658). If no week differs, record \"pool is pit-equivalent on 2024\". ⚠ Any new name enters with HONEST dy (the dypit filter applies to it too); confirm in the log that the a_bonus_date upper bound covers every scored name. The 2025 check is still owed before VAL (no VAL-window run here). Cost ~1 min (weekly industry fetch).",
+    "design": "Base = variants/u-e9-dypit.py (baseline + a_bonus_date <= current_dt.date()), NOT baseline.py. At the top of rebalance: g.stocks = top 5 of get_industry_stocks(<JQ bank industry code>, date=context.previous_date) minus ST names (is_st on previous_date), ordered by valuation.market_cap desc via get_fundamentals(date=context.previous_date). The hardcoded ICBC MA250 reference stays (it is a timing input, not the pool). Log PIT date=<d> pool=<codes>. Nothing else changes. Control: dypit's own metrics.",
+    "from": [
+      "wiki §1 池子即事后选择",
+      "CLAUDE.md point-in-time pool rule (q-e9-pit; quote as a PAIR)",
+      "generator B",
+      "u-e9-dyla: raw base is not a VAL candidate",
+      "u-e9-dypit (new reference baseline)"
+    ],
+    "edgeRef": "大行高股息板块贝塔",
+    "rank": 4,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 6, placed ABOVE u-e9-noma on purpose. It is shaped like an understand question (pool hindsight) and is a precondition for VAL, while noma is expected to come back 'untested on this bench'. This bends the instruction to run understand first, and that is deliberate. ‖ gatekeeper 2026-11-01 (round 2, post-dyla): RE-GATED: base switched from baseline.py to the dypit book, rule re-anchored to dypit, pair-quoting required. Rank 4 (behind nobb-h on information; see the nobb-h note). ‖ recorder 2026-11-01: done, ADOPTED (pit-equivalent on TRAIN 2024, Δ0). Family VAL candidate = variants/bank-imp-pit.py; 2025 pool unchecked, so read the VAL run's PIT log.",
+    "result": "ADOPT as the VAL-candidate pool (rule sharpe>=1.0 AND Δobj>-0.05 vs dypit). Pool is pit-equivalent on 2024: top 5 of 申万银行 801780 by market_cap ex-ST == 工/建/农/中/招, same order, 51/51 weeks (42 names/week, all non-ST, 0 PIT-ERR/SHORT/ORPHAN). 46.76/2.38/13.13/0.3363 = dypit exactly, max|Δcum|=0 over 242d. PAIR dypit 0.3363 / pit 0.3363. 招行 cap 7013.6亿-9956.8亿; 6th-largest not logged (margin unknown). variants/bank-imp-pit.py, curve study_银行股轮动_variants_bank-imp-pit__train__e9, algorithmId 709ef24eaf849f40d4be774d15131028."
+  },
+  {
+    "id": "u-e9-noma",
+    "kind": "understand",
+    "title": "MA250 half-exposure switch off (target_position_ratio = 1.0 always); log the weeks the base would have been at 0.5",
+    "hypothesis": "The ICBC-below-MA250 half-exposure switch contributes to sharpe or drawdown on 2024.",
+    "why": "type: component ablation. DECISION RULE: CONFIRM if |Δsharpe| > 0.15 with >= 8 half-exposure weeks. With <8 half weeks, record 'untested on this bench', NOT refuted (ICBC was very likely above MA250 for most of 2024). Lowest-value understand entry: the likely outcome is uninformative by construction. Cost ~2-4 min.",
+    "design": "Base study/银行股轮动/baseline.py. One asserted edit: target_position_ratio = 1.0 unconditionally; keep the MA250 computation and log MA250 date=<d> below=<0|1>. Nothing else changes.",
+    "from": [
+      "wiki edge[1].test (单独关 MA250 半仓开关)",
+      "wiki §1 管线 L160-168"
+    ],
+    "edgeRef": "池内 PB+股息+1M 动量轮动",
+    "rank": 7,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 7 (last understand entry). If any earlier run already logs ICBC vs MA250 weekly, count the half-exposure weeks from that log first and skip this run when it is <8. ‖ recorder 2026-11-01: NOT RUN (no backtest). nobb MA log: ICBC above MA250 on all 51 Fridays of 2024 (0 half-exposure weeks, rule needs >=8), so removal is bit-identical by construction. Untested on this bench, NOT refuted; needs a window with ICBC < MA250 (check a VAL 2025 log first).",
+    "result": "UNTESTED on this bench (window never asked the question): 0 of 51 half-exposure weeks in TRAIN 2024 (ICBC > MA250 every Friday, e.g. 4.87 vs 4.51 on 01-05, 6.92 vs 5.53 on 12-27). Not run, not refuted."
+  },
+  {
+    "id": "bank-imp-eqw",
+    "kind": "improve",
+    "title": "sizing fix: per-name target = total×ratio/len(target_holdings) (40% cap kept) instead of /min_holdings, so 3 names = 33/33/33",
+    "hypothesis": "The book is ~80% or 40/40/20 invested by accident. Equal weighting the chosen names raises objective without lowering sharpe.",
+    "why": "REBUILT ON THE DYPIT BOOK (u-e9-dyla). Expected gain: probably positive on objective in a rising 2024 bank year, but that is exposure/beta, not mechanism. With 2 names the 40% cap still holds 80%, so the change bites only in 3-name weeks. u-e9-ew already CONFIRMED beta, so this mostly re-buys beta. Novelty low. DECISION RULE (re-anchored): ADOPT only if sharpe >= dypit sharpe (does not fall) AND objective rises > 0.02 vs dypit; otherwise reject. Report the number of 3-name weeks (the only weeks it can change). If inv-h REFUTES the score, read this as an exposure knob on a beta book and prefer the EW reference over it. The cap is KEPT so this stays one change. Cost ~30s.",
+    "design": "Base = variants/u-e9-dypit.py, NOT baseline.py. One asserted edit: compute target_per_stock_value = total_value*target_position_ratio/max(1,len(target_holdings)) after target_holdings is final instead of at L168; the 40% cap in the 调仓 loop is unchanged. Log EQW date=<d> n_target=<k>. Nothing else changes. Control: dypit's own metrics.",
+    "from": [
+      "wiki §1 读码要点 (1): 事实上的权重约 40/40/20",
+      "generator B",
+      "u-e9-ew CONFIRM beta",
+      "u-e9-dypit (new reference baseline)"
+    ],
+    "edgeRef": "大行高股息板块贝塔",
+    "rank": 5,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 8 (last). No edge is measured yet, so the off-mechanism rule does not bind, but the gain is a leverage/exposure effect. ‖ gatekeeper 2026-11-01 (round 2, post-dyla): RE-GATED: base switched to dypit, rule re-anchored to dypit sharpe/objective. Rank 5 (last): an exposure change, and beta is already measured.",
+    "result": "REJECT: 45.39 / sharpe 2.32 / maxDD 12.83 / obj 0.3256 vs dypit 0.3363 (Δobj -0.0107, Δsharpe -0.06, ΔmaxDD -0.30pp), corr 0.9977; holdings identical 51/51; bites only in 17 3-name weeks where it shifts 40/40/20 -> 33/33/33 toward the 3rd scorer. Direction closed. curve study_银行股轮动_variants_bank-imp-eqw__train__e9"
+  },
+  {
+    "id": "bank-imp-drop2",
+    "kind": "improve",
+    "title": "exclusion rule: drop the bottom 1-2 eligible names by score, equal-weight the rest",
+    "hypothesis": "Since ~85% of the score value is in avoiding low scorers (inv-h), excluding the bottom 1-2 and equal-weighting the rest beats dypit.",
+    "why": "Spawned by u-e9-inv-h implication (1). CLOSED WITHOUT A RUN by the recorder: already measured by u-e9-nobb-h (always hold top 3 of 5 = drop bottom 2) and bracketed by bank-imp-eqw.",
+    "design": "Not built. u-e9-nobb-h is the drop-bottom-2 book (n_eligible=5 on 51/51 weeks, holds the top 3); bank-imp-eqw measured the equal-weight tilt.",
+    "from": [
+      "u-e9-inv-h implication (1): exclusion not concentration",
+      "u-e9-nobb-h (n_eligible=5 every week => top-3 = drop bottom 2)",
+      "bank-imp-eqw (tilt toward the 3rd name costs)"
+    ],
+    "edgeRef": "池内 PB+股息+1M 打分",
+    "rank": 6,
+    "status": "done",
+    "note": "recorder 2026-11-01: closed without a run as already measured (u-e9-nobb-h + bank-imp-eqw); see finding bank-imp-drop2.",
+    "result": "CLOSED WITHOUT A RUN: = u-e9-nobb-h (top 3 of 5 every week, 0.3672 / Δsharpe +0.05, declined) plus an EW tilt measured negative by bank-imp-eqw (-0.0107). No new information; not adopted."
+  }
+]
