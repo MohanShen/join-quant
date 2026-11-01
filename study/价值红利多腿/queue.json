@@ -1,0 +1,295 @@
+[
+  {
+    "id": "q-e9-s4-pit",
+    "kind": "understand",
+    "title": "Data integrity: does s4's STK_XR_XD query read dividend plans published after the rebalance? (board_plan_pub_date upper bound)",
+    "hypothesis": "s4 ranks CSI500 names by bonus_amount_rmb summed over STK_XR_XD rows with board_plan_pub_date > current_dt−365 and NO upper bound (l.639-646); finance.run_query is not covered by avoid_future_data, so each Jan/Jun reselection can sum plans published later (2024 annual plans in January, 2024 interim plans in June, and anything after). LEAK BINDS if the honest book's [s4] 目标股票 differ from the base log at ≥1 reselection; MATERIAL if |Δobjective| > 0.03 vs control. REFUTED (leak present in code but inert) if the target list is identical at every reselection and the curve is bit-identical. Either outcome settles which book every later entry mutates from.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 1, ACTIVE. RECLASSIFIED from improve (generator B's I1) to understand: it is a correctness/data-integrity question, not an expected-gain bet, and it must PRECEDE the sleeve decomposition — if s4 leaks, every attribution and ablation on the raw base measures the leak inside the 股息率 edge. Leak confirmed in source by the gatekeeper (l.644 `board_plan_pub_date > dt_3y`, no `<=`; note dt_3y is actually 365 days). Prior: 蓝筹分红持续性 u-e9-dxla/u-e9-dxpit measured the same table/class — leak CONFIRMED and binding (47 rows with future board_plan_pub_date), yet the honest book scored HIGHER (0.2352→0.2630); so sign is not presumed. Here it is likely larger in exposure: the window has no upper bound at all (it can sum years of future plans), and s4 reselects EVERY Monday of Jan and Jun (~9 reselections, l.590), not once. Free half: the base run's log already prints `[s4] 目标股票` each Monday, so the pick diff costs nothing beyond the fixed run. Cost ~4 backtest-min. Single TRAIN year ⇒ sharpe SE≈1: a |Δsharpe|<1 is UNRESOLVED as an objective claim; the binding question (do picks change) is resolved by the log, not the sharpe. ⚠ Base posted 2026-05-12: TRAIN 2024 is inside the author's view.",
+    "design": "Base strategies/2026-10-27_红利类型选股策略-cf1ec5bd.py + py2to3 + OVERRIDE (epoch-9 pins). ONE asserted edit in _s4_choice_stocks' finance.run_query filter (l.643-645): add `finance.STK_XR_XD.board_plan_pub_date <= context.previous_date` (use u-e9-dxpit's null fallback only if nulls occur: log the count of rows with null board_plan_pub_date; if >0, report it rather than silently dropping them). Everything else verbatim. Report objective/sharpe/annual/maxDD vs control = base cf1ec5bd epoch-9 ledger row 0.1678 / sharpe 1.36 / annual 33.34 / maxDD 16.56; diff the [s4] 目标股票 sequence against the base run's log (locate the base run by source hash; logs page 100 lines/request — use study/小市值/pagelog.js); first divergence date of the curve vs the stored base TRAIN curve. ADOPTION RULE (declared now): if the s4 picks differ at any reselection, the honest book becomes the family REFERENCE base for every later entry (its row is the new control), regardless of sign — an honest book is the reference, not the better one.",
+    "from": [
+      "generator B I1 (source l.639-646, verified by gatekeeper)",
+      "study/蓝筹分红持续性/findings.tsv u-e9-dxla (leak confirm) + u-e9-dxpit (honest book 0.2352→0.2630)",
+      "wiki/families/价值红利多腿.md §1 s4 row"
+    ],
+    "edgeRef": "股息率",
+    "rank": 1,
+    "status": "done",
+    "result": "BINDS + MATERIAL: picks differ Jun 11 / Jun 24 (601717 held H2 on future-published plans); honest 0.1217 / sh 1.32 / maxDD 20.76 vs base 0.1678 / 1.36 / 16.56. ADOPTED AS REFERENCE BASE: study/价值红利多腿/variants/q-e9-s4-pit.py"
+  },
+  {
+    "id": "q-e9-orphan-fix",
+    "kind": "understand",
+    "title": "Correctness: reconcile the virtual sub-ledger with the real position after a 送转 (600368 10送3 orphan shares)",
+    "hypothesis": "The sub-ledger g.sub_holdings never sees 送转, so 600368's 2024-06-20 10送3 left 18,000 real shares that s3 never sells (¥85,860 at year end, ~55% of s3 P&L). BINDS if, in the fixed run, s3 sells 78,000 shares of 600368 on 2024-08-15 (real position 0 after that day) instead of 60,000. MATERIAL if |Δobjective| > 0.03 vs the reference row 0.1217. REFUTED-as-inert only if the curve is bit-identical (not expected: ~¥80k of cash re-enters s3 on 08-15). Sign is not presumed. ADOPTION RULE (declared now, same as q-e9-s4-pit): if it binds, the fixed book becomes the family REFERENCE whatever the sign — an honest book is the reference, not the better one. EDGE RE-READ (declared now): the s3 sleeve curve is then derived by subtraction (fixed − q-e9-s1-only − q-e9-div-only curves), valid ONLY if every ORPHANSYNC line is s3-tagged (otherwise other sleeve curves moved and the subtraction is void — say so; do not spend more runs). On that derived s3 curve, 价值因子（破净） is SUPPORTED if s3 ≥ 25% of the fixed book's net P&L AND s3 own-capital sharpe ≥ 1.0; REFUTED if ≤ 10%; between = unresolved. The likely answer — s3 falls toward ~7pp of book and the edge stays unresolved — is information, not a reason to skip.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 1, ACTIVE. Spawned by q-e9-pb-only (its implication names this entry). Ranked above everything that reads s3, the book level, the liq floor or a VAL decision: half of the strongest leg is a bookkeeping artefact, so promoting 破净, scoring liq, re-reading integration ρ or deciding VAL on the current reference would all be done on a book the strategy does not intend to hold. Not a duplicate: closedDirections 0, staleClosures 0, rejected §2 0 for this family, and nothing covers sub-ledger corporate actions. Falsifiable by the 08-15 sell amount in the log. Cost ~4 backtest-min (full four-sleeve book, 242 days); budget 10/180 used. ⚠ Single TRAIN year ⇒ sharpe SE≈1; the binding question is answered by the log, not by Δsharpe. ⚠ Base posted 2026-05-12: 2024 is inside the author's view — irrelevant to a correctness fix, which is adopted on the rule, not the number.",
+    "design": "Base = study/价值红利多腿/variants/q-e9-s4-pit.py (current reference; already py2to3 + OVERRIDE). ONE asserted insertion: a helper reconcile_sub_holdings(context) called at the end of daily_init (run_daily 9:00, every day, before any sleeve trades). For each code in context.portfolio.positions: virt = sum over sleeves of g.sub_holdings[sid].get(code, 0); real = positions[code].total_amount. If virt > 0 and real != virt: if exactly ONE sleeve holds it, set that sleeve's amount = real; if ≥ 2 sleeves hold it, scale each pro rata (int floor, remainder to the largest holder). Log `ORPHANSYNC date sid code virt real` for every adjustment and `ORPHANREAL date code real` for a real position with virt == 0 (should be none on a fresh run). Nothing else moves; the builder asserts the diff vs q-e9-s4-pit.py is exactly the helper + one call line. Expected first ORPHANSYNC: s3 600368 60000→78000 on the ex-date (~2024-06-20); report every other one (any other 送转, any sleeve). Report: objective/sharpe/annual/maxDD vs 0.1217 / 1.32 / 32.93 / 20.76; the 08-15 [s3][卖出] 600368 amt; first curve divergence vs data/series/study_价值红利多腿_variants_q-e9-s4-pit__train__e9.json; the derived s3 curve (share of net, own-capital sharpe by the page's formula) and its ρ vs enhance_candidates_pbm-e9-2__train__e9. Page the log in steps of 100 (study/小市值/pagelog.js).",
+    "from": [
+      "study/价值红利多腿/findings.tsv q-e9-pb-only (implication + spawned: q-e9-orphan-fix)",
+      "study/价值红利多腿/findings.tsv q-e9-sleeve-attrib (orphan 600368 18,000 shares, ¥85,860)",
+      "wiki/families/价值红利多腿.md §4 [正确性缺口] + [腿隔离破口]",
+      "q-e9-s4-pit (adoption-rule precedent)"
+    ],
+    "edgeRef": "价值因子（破净）",
+    "rank": 1,
+    "status": "done",
+    "result": "BINDS, NOT MATERIAL (|Δobj| 0.0152<0.03): 08-15 s3 sells 78,000 600368; one ORPHANSYNC (06-20 s3 60000→78000). 0.1369 / sh 1.35 / 33.87 / maxDD 20.18 vs 0.1217 / 1.32 / 32.93 / 20.76. Derived s3 49.3% of net, own sh 1.94 ⇒ 破净 SUPPORTED by rule (status proposed: name unregistered). CORRECTS q-e9-pb-only's '~7.2pp ex-orphan' (wrong: shares compensate the ex-date adjustment). ADOPTED AS REFERENCE BASE: study/价值红利多腿/variants/q-e9-orphan-fix.py"
+  },
+  {
+    "id": "q-e9-sleeve-attrib",
+    "kind": "understand",
+    "title": "Free per-sleeve / per-name P&L from the reference run's log (sleeve-tagged buy/sell lines)",
+    "hypothesis": "The book's level is a few single-name events. SUPPORTED if the top-2 names supply ≥50% of net P&L; REFUTED if no name supplies >25%. Also report each sleeve's share of net P&L and s3's % of days parked in 511010. VALID only if the reconstruction (fills from the sub_buy/sub_sell log lines at l.159/202 + daily closes) lands within 2pp of the ledger's total return; otherwise the finding is void and the sleeve-only runs below carry the decomposition alone.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 2. Zero backtest cost. Ranked BELOW q-e9-s4-pit only because it must read the REFERENCE run's log: if the s4 fix changes picks, use the fixed run's log, else the base's — attributing on a leaking s4 would apportion the leak. Either outcome informs: concentration decides how much any later Δsharpe means (破净价值多因子's base was 63% top-2), and per-sleeve shares tell which sleeve-only runs are worth their minutes. Sleeves are isolated virtual accounts (g.sub_cash/sub_holdings), so per-sleeve P&L is in principle exactly recoverable from the log; caveat: two sleeves may hold the same code — attribute by sleeve tag, not by position.",
+    "design": "No backtest. Locate the reference run (q-e9-s4-pit's fixed run if it was adopted, else base cf1ec5bd) by source hash, never by id. Page the full log in steps of 100 (study/小市值/pagelog.js) until a short page. Parse sleeve-tagged buy/sell lines; value open positions with daily closes (get_price via the research API or the stored curve's dates). Output per-name and per-sleeve net P&L, top-1/top-2 share of net and gross, and s3 days-in-511010 fraction. State the reconstruction error vs the ledger total explicitly.",
+    "from": [
+      "generator A U1",
+      "wiki/families/价值红利多腿.md §1 读码疑点 (~6 names, a year's level is probably a few single-name events)",
+      "study/破净价值多因子/queue.json q-e9-attrib-probe (top-2 = 63% there)"
+    ],
+    "edgeRef": null,
+    "rank": 2,
+    "status": "done",
+    "result": "VALID (0.00pp). Net share s1 22.2 / s2 22.6 / s3 47.8 / s4 7.4%; s2+s4 30.0%. Top-2 600938 (s1) 25.1% + 601677 (s3) 22.3% = 47.4% -> neither supported nor refuted. s3 in 511010 10/242 days. Orphan 600368 bonus shares (18,000, ¥85,860) unmanaged in real book, credited to s3.",
+    "note": "q-e9-s4-pit adopted: reference run = study/价值红利多腿/variants/q-e9-s4-pit.py (stored curve data/series/study_价值红利多腿_variants_q-e9-s4-pit__train__e9.json); use its log/curve, not cf1ec5bd."
+  },
+  {
+    "id": "q-e9-liq-1",
+    "kind": "understand",
+    "title": "Realizability liq-1: liquidity feasibility floor 5e6 CNY/day at the book's own largest order",
+    "hypothesis": "At the book's own size the floor removes nothing. FLOOR: capital 1,000,000 × 25% per sleeve; s1/s3/s4 hold 1 name ⇒ largest single order ≈ ¥250k (s3 bought ¥268k in the log as its sleeve grew); s2 3 names ≈ ¥83k; order_volume_ratio 0.05 ⇒ 250,000 / 0.05 = 5e6 CNY/day, applied uniformly (the largest order sets the book's floor). R=1 REFUTED if the curve is bit-identical to the reference (max|Δcum| 0 over 242 days). R=1 SUPPORTED if any sleeve's pick changes AND (|Δobjective| > 0.03 or sharpe falls below the 1.0 gate). Picks change but |Δobj| ≤ 0.03 ⇒ R≥2 with the change stated as a capacity caveat.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 2, BLOCKED on q-e9-orphan-fix — must run on whichever book is the reference after it (a floor on a book carrying unmanaged orphan shares scores the wrong book). Blocks the exit gate: realizability is unset and unknown BLOCKS. Inertness is a prior, not an assumption: s1 is mega-cap, but s3 is a 破净 sieve buying ~¥4 names such as 600368 五洲交通, and s4 is a single CSI500 name. 破净价值多因子's q-e9-liq was inert at 3.33e6 / 1e7 on overlapping names — a different book. Not a duplicate (no liq finding in this family). Cost ~4 backtest-min.",
+    "design": "Base = reference after q-e9-orphan-fix. Adapt study/破净价值多因子/build-liq.js into study/价值红利多腿/build-liq.js (a builder, not a hand edit): one helper filter_liquidity_floor(context, stock_list, sid) with LIQ_FLOOR = 1e6 * 0.25 / 0.05 (= 5e6), 20-bar median daily money ending context.previous_date, log `LIQFLOOR sid floor date in out removed=…`. ONE call per sleeve on its CANDIDATE list BEFORE the top-N cut, never after (an after-cut filter leaves empty slots and measures something else): s1 on the get_fundamentals result before `final_list = list(df['code'])[:g.s1_stock_num]`; s2 before `[:g.s2_stock_num]`; s3 on the check_out list before `[:g.s3_stock_num]`; s4 inside _s4_choice_stocks before the yield-rank cut. 511010 (s3 fallback ETF) exempt and logged as such. Existing holdings not exempt (precedent). Builder asserts variant = base + helper + exactly 4 call lines; CLI --floor / --out so liq-2 moves one literal. Report metrics vs the reference row, max|Δcum|, per-sleeve LIQFLOOR in/out counts, and every removed name that was ever a pick.",
+    "from": [
+      "wiki/families/价值红利多腿.md §4 [阻塞 exit gate] realizability 未测",
+      "study/破净价值多因子/build-liq.js + wiki/families/破净价值多因子.md q-e9-liq (precedent, R=2)",
+      "CLAUDE.md liq-1 pattern (大小盘轮动 / b3751277 inert; ETF溢价 8.44→1.10 biting)"
+    ],
+    "edgeRef": null,
+    "rank": 2,
+    "status": "done",
+    "note": "UNBLOCKED (q-e9-orphan-fix done). [2026-11-01 q-e9-orphan-fix] REFERENCE BASE is now study/价值红利多腿/variants/q-e9-orphan-fix.py (control 0.1369 / sharpe 1.35 / annual 33.87 / maxDD 20.18); build on it, never q-e9-s4-pit.",
+    "result": "INERT, bit-identical (max|Δcum| 0): 81 LIQFLOOR lines in==out, 0 removed, all 124 picks identical, same 19 511010 sub-lot failures ⇒ R=1 refuted. Run on study/价值红利多腿/variants/q-e9-orphan-fix.py."
+  },
+  {
+    "id": "q-e9-corr-allA",
+    "kind": "understand",
+    "title": "Is this book redundant with what 全A already ships? Daily-return correlation vs pbm-e9-2, 93379f98, e7c95ca1",
+    "hypothesis": "REDUNDANT if ρ(daily returns, TRAIN 2024) ≥ 0.6 with the promoted 全A candidate pbm-e9-2; ORTHOGONAL if < 0.4; 0.4–0.6 = partial. Same reading reported against 93379f98 (红利低频) and e7c95ca1 (破净价值多因子 base), because s2/s4 are dividend sleeves and s3 is the 破净 sieve.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 3. Free. Decides whether this family has any route through integration (全A's incumbent pbm-e9-2 already contains 红利低频 + 破净价值多因子). It does not need to wait for the s4 fix to be informative on the raw base, but run it on the reference curve if q-e9-s4-pit changed the book. A likely 'redundant' answer is as useful as 'orthogonal' — it tells the orchestrator not to spend VAL here later.",
+    "design": "No backtest. node utils/backtest-series.js --list to find pbm-e9-2's stored TRAIN curve key (it is a merged candidate: key under its expId/sourceFile, check `ls -a data/series/` for hidden keys), plus …93379f98__train__e9, …e7c95ca1__train__e9 and this book's reference curve. Report ρ for each pair via --corr (dailyReturns chains cumulative %; never difference the percentages). If pbm-e9-2's curve is absent, say so — do not substitute a parent.",
+    "from": [
+      "generator A U4",
+      "commit a12a955 (pbm-e9-2 promoted in 全A, supersedes 93379f98)"
+    ],
+    "edgeRef": null,
+    "rank": 3,
+    "status": "done",
+    "result": "PARTIAL: ρ vs pbm-e9-2 0.4759; vs 93379f98 0.7518; vs e7c95ca1 0.6127 (pbm-e9-2 vs those parents 0.6064 / 0.3418).",
+    "note": "q-e9-s4-pit adopted: reference run = study/价值红利多腿/variants/q-e9-s4-pit.py (stored curve data/series/study_价值红利多腿_variants_q-e9-s4-pit__train__e9.json); use its log/curve, not cf1ec5bd."
+  },
+  {
+    "id": "q-e9-liq-2",
+    "kind": "understand",
+    "title": "Realizability liq-2: 5× floor 2.5e7 CNY/day (≈ ¥5M capital)",
+    "hypothesis": "Capacity at 5× the book's own floor (2.5e7/day ≈ ¥5M of capital at the same weights). Bit-identical ⇒ R=2 with capacity ≥ ¥5M (R=3 still not earned without a 10× point, per precedent). Biting with |Δobj| > 0.03 or sharpe < 1.0 ⇒ capacity < ¥5M, scored R=2 with that ceiling stated. s3's ~¥4 破净 names are where this floor most plausibly binds.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 3, BLOCKED on q-e9-liq-1 — run ONLY if liq-1 is inert or near-inert (if liq-1 already bites, the score is decided and the 5× point has nothing to discriminate). Separate entry because it is a second run. Cost ~4 backtest-min.",
+    "design": "Same builder as q-e9-liq-1 with --floor \"1e6 * 0.25 * 5 / 0.05\" (2.5e7) --out liq-2_floor-2.5e7.py; only the LIQ_FLOOR literal and its gloss move. Same reporting.",
+    "from": [
+      "q-e9-liq-1",
+      "study/破净价值多因子 q-e9-liq liq-2 (precedent: capacity above ~¥2M unmeasured ⇒ R=2 not 3)"
+    ],
+    "edgeRef": null,
+    "rank": 3,
+    "status": "done",
+    "note": "blocked on q-e9-liq-1 being inert/near-inert. [2026-11-01 q-e9-orphan-fix] REFERENCE BASE is now study/价值红利多腿/variants/q-e9-orphan-fix.py (control 0.1369 / sharpe 1.35 / annual 33.87 / maxDD 20.18); build on it, never q-e9-s4-pit. Still blocked on q-e9-liq-1 being inert/near-inert.",
+    "result": "NEAR-INERT: 0.1219 / sh 1.31 / 32.97 / maxDD 20.78 vs 0.1369 / 1.35 / 33.87 / 20.18 (Δobj −0.0150). 12 removals (s2 8, s3 4), ONE pick changed (s2 09-02 002884→601168), no sleeve emptied ⇒ R=2; R=3 not earned (5e7 unmeasured). Capacity ≥ ~¥5M; binds on s2/s3 mid-caps at ¥15–25M/day."
+  },
+  {
+    "id": "q-e9-div-only",
+    "kind": "understand",
+    "title": "Edge test 股息率: s2+s4 only (s1=s3=0, their capital idle) — do the dividend sleeves carry the book?",
+    "hypothesis": "If 股息率 is the edge, the s2+s4-only book supplies ≥50% of the reference book's net P&L on its own 50% capital AND its sharpe ≥ 1.0 (idle cash scales return and vol together, so sharpe is the sleeve pair's own). REFUTED if s2+s4 supply ≤25% of P&L, or their sharpe is no better than a passive 510880 hold over the same year (see q-e9-div-passive). Between = unresolved. Equivalent to the page's edge.test (s2=s4=0) by sleeve isolation, but reads the edge's own level directly.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 4. The family's first edge and its §4 [第一步]. Generator A's U2 (four single-sleeve runs, 16 min) was SPLIT: one experiment per entry, and grouped by edge claim (s2+s4 together = 股息率) so three runs (this, q-e9-pb-only, q-e9-s1-only) cover all three claims and still allow the additivity check. A likely refute is a reason to run it, not to rank it down. ⚠ Partly answerable for free by q-e9-sleeve-attrib's P&L shares — the run is still needed for the sleeve pair's own SHARPE (needs a daily curve). If q-e9-sleeve-attrib is valid and shows s2+s4 ≤10% of P&L, this may be closed from the free result; the executor should check before spending. Cost ~4 min. Single-year SE≈1 on sharpe.",
+    "design": "Base = reference book from q-e9-s4-pit (fixed if adopted, else cf1ec5bd) + py2to3 + OVERRIDE. ONE asserted edit: g.strategy_weights → {'s1': 0.0, 's2': 0.25, 's3': 0.0, 's4': 0.25} (l.51-56). Everything else verbatim (sub_buy returns at sub_cash<=100, so s1/s3 never trade). Report objective/sharpe/annual/maxDD vs the reference row, net P&L as a share of the reference's, and monthly split vs the reference curve.",
+    "from": [
+      "wiki/families/价值红利多腿.md edge[0].test + §4 [第一步]",
+      "generator A U2 (split)"
+    ],
+    "edgeRef": "股息率",
+    "rank": 4,
+    "status": "done",
+    "note": "unblocked 2026-11-01 by q-e9-s4-pit: base = study/价值红利多腿/variants/q-e9-s4-pit.py (honest s4); control = its row 0.1217 / sharpe 1.32 / annual 32.93 / maxDD 20.76. [2026-11-01 q-e9-sleeve-attrib] Free attribution: s2+s4 = 30.0% of net (s2 22.6%, s4 7.4%) — above the 10% free-close bar, so the run stays, but below the 50% SUPPORT share clause: expect at most UNRESOLVED on share; the run's remaining value is the sleeve pair's sharpe and the passive-510880 refutation route. A share far from 30% here signals an additivity break, not a new result. [q-e9-corr-allA] report ρ vs enhance_candidates_pbm-e9-2__train__e9: ≥0.6 means the dividend legs are redundant with 全A.",
+    "result": "UNRESOLVED: 30% of net, pair sharpe 0.61 (s2 1.15 / s4 0.16). Implied s2=s4=0: Δsharpe −0.04 (support bar ≤−1.0 not met), maxDD 20.76→9.82. ρ vs pbm-e9-2 0.3247, vs 93379f98 0.6292."
+  },
+  {
+    "id": "q-e9-free-subsets",
+    "kind": "understand",
+    "title": "Free: sleeve-subset table on the post-orphan-fix reference by curve subtraction (s1+s3, s3 alone) — information, not candidates",
+    "hypothesis": "With exact additivity every subset of {s1, s3, s2+s4} is a sum of stored curves. Pre-registered reading: if s1+s3's sharpe exceeds the full reference by < 1.0 (SE≈1 on one year), the dividend legs are NOT shown harmful — they only add drawdown; ≥ 1.0 ⇒ shown harmful on TRAIN. Valid only if q-e9-orphan-fix's ORPHANSYNC lines are all s3-tagged (else the s1-only / div-only curves are stale and the table is void). s2 alone and s4 alone are NOT derivable from stored curves (they share one run): report them only if attrib.js can rebuild per-sleeve daily marks from the log; otherwise state 'not derivable' — do NOT spend a run on them.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 4, ZERO backtest cost, BLOCKED on q-e9-orphan-fix (the pre-fix answer is already known: s1+s3 sharpe 1.28 / maxDD 9.82 / obj ≈0.132; only the post-fix version is new). This is where the orchestrator's 'drop s4' / 's1+s3 only' question lands, as information. ⚠ Must NOT be read as choosing a book: picking sleeves on TRAIN 2024 for a 2026-05-12 post is selection inside the author's view, and a subset search on one year is the cheapest overfit available — see dvl-imp-5 (dropped as a candidate). Follows q-e9-s1-only's implication (base-minus-sleeve is free by subtraction).",
+    "design": "No backtest. Curves: fixed reference (q-e9-orphan-fix), study_价值红利多腿_variants_q-e9-s1-only__train__e9, study_价值红利多腿_variants_q-e9-div-only__train__e9; s3 = fixed − s1 − div. Chain cumulative % to daily values (never difference the percentages); sum CNY P&L per day; report subset total/annual/sharpe/maxDD/objective and ρ vs enhance_candidates_pbm-e9-2__train__e9; state the additivity residual.",
+    "from": [
+      "study/价值红利多腿/findings.tsv q-e9-s1-only (implication: base-minus-sleeve free by subtraction)",
+      "study/价值红利多腿/findings.tsv q-e9-div-only (implied s2=s4=0: sh 1.28 / maxDD 9.82)",
+      "orchestrator 2026-11-01 (drop s4 / s1+s3 question)"
+    ],
+    "edgeRef": null,
+    "rank": 4,
+    "status": "done",
+    "note": "UNBLOCKED (q-e9-orphan-fix done); NO BACKTEST. [2026-11-01 q-e9-orphan-fix] REFERENCE BASE is now study/价值红利多腿/variants/q-e9-orphan-fix.py (control 0.1369 / sharpe 1.35 / annual 33.87 / maxDD 20.18); build on it, never q-e9-s4-pit. The pre-fix s1+s3 numbers (sharpe 1.28 / maxDD 9.82 / obj ≈0.132) are SUPERSEDED — recompute every subset by subtraction on the fixed curve (derived s3 = fixed − s1-only − div-only; valid because all ORPHANSYNC lines are s3-tagged). Information only, not a book choice.",
+    "result": "VALID (formula reproduces JQ; s2/s4 split exact). s1+s3 Δsh −0.02 (dividend legs not shown harmful, but double maxDD 9.13→20.17); minus-s4 sh 1.52 / maxDD 11.12 (s4 = drawdown source); s3 only leg with sh ≥1.0 and ρ<0.35 vs pbm-e9-2. Information only, not a candidate. Exact edge.test ⇒ 股息率 refuted."
+  },
+  {
+    "id": "q-e9-pb-only",
+    "kind": "understand",
+    "title": "Edge test 价值因子（破净）: s3 only — does the PB<1 sleeve carry return?",
+    "hypothesis": "SUPPORTED if s3 alone supplies ≥25% of the reference book's net P&L (its fair share) with sleeve sharpe ≥1.0; REFUTED if s3 supplies ≤10%. Report days in 511010 — a sleeve that sits in bonds most of the year cannot be the edge however it scores.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 5. Second edge claim. Ranked below the dividend test because its MARGINAL information is lower: the 破净 sieve was already measured in 破净价值多因子 (q-e9-pb-ablate, sharpe 2.10→0.83, thin and name-concentrated) and ships inside 全A's pbm-e9-2. NOT a duplicate — this s3 is a different sieve (cash-flow quality + ROA rank, 1 name, 511010 fallback, 14:00/14:50 limit-up exits). ⚠ 1-name sleeve: read via q-e9-sleeve-attrib's per-name split; a Δ that is one stock is an event, not mechanism. Cost ~4 min.",
+    "design": "Base = reference book + py2to3 + OVERRIDE. ONE asserted edit: g.strategy_weights → {'s1': 0.0, 's2': 0.0, 's3': 0.25, 's4': 0.0}. Report metrics vs reference row, P&L share, days in 511010, names held.",
+    "from": [
+      "wiki/families/价值红利多腿.md edge[1].test",
+      "generator A U2 (split)",
+      "study/破净价值多因子/queue.json q-e9-pb-ablate"
+    ],
+    "edgeRef": "价值因子（破净）",
+    "rank": 5,
+    "status": "done",
+    "note": "unblocked 2026-11-01 by q-e9-s4-pit: base = study/价值红利多腿/variants/q-e9-s4-pit.py (honest s4); control = its row 0.1217 / sharpe 1.32 / annual 32.93 / maxDD 20.76. [2026-11-01 q-e9-sleeve-attrib] Free attribution already gives s3 = 47.8% of net (157,439; 63.0% on its own ¥250k; 11 names; 601677 alone 22.3% of total net) and 511010 on only 10/242 days — the P&L-share half of SUPPORT is met by the attribution, so this run is for s3's own sharpe and the additivity check. s3 owns the 18,000 orphan 600368 bonus shares (¥85,860 at year end): verify they reappear in this run; if not, the ≈8.6pp residual is explained, not a void. [q-e9-corr-allA] also report ρ of this curve vs enhance_candidates_pbm-e9-2__train__e9. Ranking suggestion for the next gatekeeper: above q-e9-div-only on information.",
+    "result": "SUPPORTED-BY-RULE (47.8% of net, sleeve sharpe 1.87) but ~55% of sleeve P&L = 18,000 orphan 600368 bonus shares the sub-ledger never sold; ex-orphan ~7.2pp of book. ρ vs pbm-e9-2 0.3574. Edge kept proposed pending q-e9-orphan-fix."
+  },
+  {
+    "id": "q-e9-s2-order",
+    "kind": "understand",
+    "title": "Is s2's pick arbitrary? last-3 instead of first-3 of the unsorted final list",
+    "hypothesis": "s2's top-3 cut takes get_fundamentals return order (≈ by code), not any rank (l.448). If s2's P&L is selection, a different arbitrary 3 from the same qualified list should do about as well; REFUTED-as-arbitrary (the pick order matters) if s2-sleeve P&L changes by more than half. Expected: P&L moves a lot, because 3 names × 1 year is a handful of events — that likely answer is information (the sleeve's level is code-order luck), not a reason to drop it.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 8, conditional on q-e9-div-only / q-e9-sleeve-attrib showing s2 carries P&L. Same lever as dvl-imp-2 but a different question (is the measured level luck vs. does a principled sort help); kept both. Cost ~4 min. Report the qualified-list length per rebalance — if it is ≤3 most months, first-3 = last-3 and the test is vacuous; say so instead of reporting a null. [gatekeeper 2026-11-01 re-rank] UNBLOCKED (condition met: s2 sharpe 1.15, 29.8% on own capital), rank 5. The likely answer (s2's level is code-order luck over 15 names) is information, and it decides whether dvl-imp-2 is a principled fix or vacuous. Below orphan-fix/liq because it does not touch the exit gate. MUST be built on the post-orphan-fix reference. Read at SLEEVE level (s2 P&L from the log / by subtraction against div-only), not book Δsharpe — a 25% leg cannot move book sharpe by one SE.",
+    "design": "Base = reference book after q-e9-orphan-fix (its variant if adopted per its rule; otherwise study/价值红利多腿/variants/q-e9-s4-pit.py) + py2to3 + OVERRIDE. ONE asserted edit l.448: `list(df['code'])[:g.s2_stock_num]` → `list(df['code'])[-g.s2_stock_num:]`. Log `S2LEN date n` beside it. Report vs reference row and s2-sleeve P&L from the log.",
+    "from": [
+      "generator A U5",
+      "wiki/families/价值红利多腿.md §1 读码疑点 (s2 前 3 不排序)",
+      "study/价值红利多腿/findings.tsv q-e9-div-only (s2 sharpe 1.15)"
+    ],
+    "edgeRef": "股息率",
+    "rank": 5,
+    "status": "done",
+    "note": "blocked on q-e9-div-only / q-e9-sleeve-attrib (s2 must carry P&L). [2026-11-01 q-e9-div-only] condition MET: s2 carries P&L (29.79% on own ¥250k, sharpe 1.15; the substantive dividend leg). Unblock for the gatekeeper. [2026-11-01 q-e9-orphan-fix] REFERENCE BASE is now study/价值红利多腿/variants/q-e9-orphan-fix.py (control 0.1369 / sharpe 1.35 / annual 33.87 / maxDD 20.18); build on it, never q-e9-s4-pit.",
+    "result": "REFUTED-AS-ARBITRARY: last-3 vs first-3 moves s2 −75% (29.79%/1.15 → 7.35%/0.12); S2LEN 4–12 on 24/24 (not vacuous), overlap 8/72. Book 0.0719 / 1.06 / 28.26 / 21.07. s2 level is code-order luck."
+  },
+  {
+    "id": "q-e9-s1-only",
+    "kind": "understand",
+    "title": "Edge test 盈利质量: s1 only, with log-only instrumentation of the roa>0.15 and retained_profit top-3 cuts; plus the 3-run additivity check",
+    "hypothesis": "SUPPORTED if s1 alone supplies ≥25% of net P&L with sleeve sharpe ≥1.0; REFUTED if ≤10%. Instrumentation (folded U3): roa>0.15 is NON-BINDING if the candidate count with and without it is identical at every rebalance (JQ roa is %, so 0.15 means 0.15%); s1 is a SIZE pick if the three retained_profit-top names are the same mega-caps across ≥80% of rebalances. ADDITIVITY: sum of the three sleeve-only runs' daily P&L must match the reference curve within 1pp total; a larger residual means sleeves interact (shared codes, lot rounding, volume cap) and the decomposition is void.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 6. Third edge claim, lowest prior (the 盈利质量 filters look non-binding by unit reading). Generator A's U3 accepted only as LOGGING folded into this run — not a separate entry and not folded into s3 (one instrumented run is enough to answer whether roa binds; the s3 roa>0.15 is the same unit question). The bit-identical requirement is restated: the instrumentation adds a log-only side query, so the s1-only run's trades must equal an uninstrumented s1-only run — verify by checking the sleeve's trade lines against q-e9-sleeve-attrib's s1 lines (same picks, same dates); a mismatch voids the instrumentation, not the metrics. Cost ~4 min.",
+    "design": "Base = reference book + py2to3 + OVERRIDE. Edit 1 (asserted): g.strategy_weights → {'s1': 0.25, 's2': 0.0, 's3': 0.0, 's4': 0.0}. Edit 2 (log-only, additive): inside strategy_1's selection, a second get_fundamentals with the same filters minus `indicator.roa > 0.15` and without the limit; log `S1CNT date n_with n_without` and `S1TOP3 date codes market_cap`. No change to trading logic. Report metrics, P&L share, the S1 lines, and the additivity residual using q-e9-div-only + q-e9-pb-only + this run vs the reference curve.",
+    "from": [
+      "wiki/families/价值红利多腿.md edge[2].test + §1 读码疑点 (roa % units)",
+      "generator A U2 (split) + U3 (folded as logging)"
+    ],
+    "edgeRef": "盈利质量（ROA/ROIC）",
+    "rank": 6,
+    "status": "done",
+    "note": "unblocked 2026-11-01 by q-e9-s4-pit: base = study/价值红利多腿/variants/q-e9-s4-pit.py (honest s4); control = its row 0.1217 / sharpe 1.32 / annual 32.93 / maxDD 20.76. Run last of the three sleeve-only entries so the additivity check can be computed. [2026-11-01 q-e9-sleeve-attrib] s1 = 22.2% of net, and 600938 中国海油 alone is 25.1% (21.5% ex dividends) — more than s1's total, so the other two s1 names lost: read this run as one energy name, not 盈利质量, unless the names show otherwise. ADDITIVITY: the 18,000 orphan 600368 bonus shares belong to s3 only (¥85,860); allow for them explicitly in the residual rather than inside the 1pp tolerance. [q-e9-corr-allA] report ρ vs enhance_candidates_pbm-e9-2__train__e9 (prior: s1 is the likeliest low-ρ leg).",
+    "result": "REFUTES 盈利质量 by U3 rule: roa>0.15 near-inert (pool +≤3.4%), all picks top ~1% by mcap (600938 ×18/24). 22.1% of net, sleeve sharpe 0.75, ρ vs pbm-e9-2 0.4231. Additivity exact (±¥100/day, 242 days)."
+  },
+  {
+    "id": "dvl-imp-2",
+    "kind": "improve",
+    "title": "Sort s2's final 3 by the dividend-yield rank instead of query order",
+    "hypothesis": "Taking the 3 highest-yield names that pass s2's PEG/growth chain (rather than the first 3 by code) raises the book's sharpe. SUPPORT: sharpe ≥ reference + 1.0 (single-year SE≈1); REFUTE: sharpe ≤ reference. Between = unresolved.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 9. On-mechanism (股息率) and it removes an arbitrary choice rather than adding a knob. Expected gain modest — the yield rank is already a top-10% pre-filter, so the within-filter spread is narrow and Δsharpe is plausibly <1 ⇒ likely UNRESOLVED; that, plus the edge still being proposed, puts it below the edge tests. Better after q-e9-s2-order (if order is luck, this is the principled fix; if the list is ≤3 long, this is vacuous). Cost ~4 min. [gatekeeper 2026-11-01] BLOCKED on q-e9-s2-order: drop as vacuous if S2LEN ≤ 3 on most rebalances; drop if first-3 vs last-3 moves s2 P&L by < half (a sort has no room to help). ⚠ The book-level bar (+1.0 sharpe) is essentially unreachable from a 25% leg; re-scoped bar = s2 own-capital sharpe vs 1.15. Any gain is still selection inside the author's view (2024 vs post 2026-05-12) and is not a VAL argument.",
+    "design": "Base = reference book + py2to3 + OVERRIDE. ONE asserted edit around l.440-448: carry `dividend_ratio` from _s2_dividend_filter's DR through the chain and sort df by it descending before `[:g.s2_stock_num]` (reindex df on the DR order: `df = df.set_index('code').reindex([c for c in stock_list if c in set(df['code'])]).reset_index()` where stock_list is DR's sorted order). Assert the edit touches only the ordering. Report vs reference row and names picked per rebalance vs the reference log.",
+    "from": [
+      "generator B I2",
+      "wiki/families/价值红利多腿.md §1 读码疑点 (s2 前 3 不排序)"
+    ],
+    "edgeRef": "股息率",
+    "rank": 6,
+    "status": "done",
+    "note": "Prefer to run after q-e9-s2-order. Must use the reference base from q-e9-s4-pit. Reference base is now study/价值红利多腿/variants/q-e9-s4-pit.py. [2026-11-01 q-e9-div-only] s2 is the substantive dividend leg (sharpe 1.15); still prefer after q-e9-s2-order. [2026-11-01 q-e9-orphan-fix] REFERENCE BASE is now study/价值红利多腿/variants/q-e9-orphan-fix.py (control 0.1369 / sharpe 1.35 / annual 33.87 / maxDD 20.18); build on it, never q-e9-s4-pit.",
+    "result": "REJECTED (pre-registered REFUTE): book 0.0837 / 1.20 / 31.33 / 22.96 (Δobj −0.0532, Δsh −0.15); s2 own sharpe 0.60 < 1.15. Yield order carries no information within the pool. Reference unchanged: study/价值红利多腿/variants/q-e9-orphan-fix.py",
+    "verdict": "rejected"
+  },
+  {
+    "id": "q-e9-div-passive",
+    "kind": "understand",
+    "title": "Passive control: hold 510880 (红利ETF) all of TRAIN 2024 — do the dividend sleeves beat owning the factor?",
+    "hypothesis": "If the s2+s4 sleeve pair's sharpe exceeds a passive 510880 hold's by ≥1.0, the stock selection adds something beyond factor exposure; if ≤ the passive sharpe, the 股息率 'edge' is the 2024 dividend beta, not selection. |Δ|<1 = unresolved at SE≈1.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 7, conditional. Needed only to discharge q-e9-div-only's refutation clause. Cost ~1 min. Run only if q-e9-div-only's sleeve sharpe ≥1.0 (if the pair already fails, the control has nothing to discriminate).",
+    "design": "Minimal pinned strategy from enhance/strategy_template.py: on the first trading day order_target_value('510880.XSHG', total) and hold; epoch-9 pins. TRAIN window. Report sharpe/annual/maxDD only; this is a control, not a family member, and must not enter §3.",
+    "from": [
+      "generator A U2 (510880 control clause)"
+    ],
+    "edgeRef": "股息率",
+    "rank": 7,
+    "status": "dropped",
+    "note": "blocked on q-e9-div-only (run only if its sharpe ≥1.0). [2026-11-01 q-e9-div-only] NOT TRIGGERED by its own condition: pair sharpe 0.61 < 1.0, so the passive-510880 control has nothing to discriminate. Dropped, not run.",
+    "result": null
+  },
+  {
+    "id": "dvl-imp-3b",
+    "kind": "improve",
+    "title": "s1_stock_num 1 → 3 (ROIC sleeve holds three names)",
+    "hypothesis": "Widening s1 to 3 names raises sharpe. SUPPORT: sharpe ≥ reference + 1.0; REFUTE: sharpe ≤ reference. ⚠ s1's candidate pool is `.limit(g.s1_stock_num * 3)` (l.244), so this also widens the retained_profit cut from 3 to 9 — two effects; report both the pool and the picks.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED as SPLIT, rank 11 (lowest improve): the 盈利质量 edge has the weakest prior, the change is confounded with the pool widening, and the breadth prior from pbn-imp-1 is unfavourable. Cost ~4 min. Drop without running if q-e9-s1-only refutes the 盈利质量 claim.",
+    "design": "Base = reference book + py2to3 + OVERRIDE. ONE asserted edit l.64: g.s1_stock_num = 1 → 3. Report vs reference row, the 9-name pool and 3 picks per rebalance.",
+    "from": [
+      "generator B I3 (split)"
+    ],
+    "edgeRef": "盈利质量（ROA/ROIC）",
+    "rank": 11,
+    "status": "dropped",
+    "result": null,
+    "note": "[2026-11-01 q-e9-s1-only] DROPPED per the gatekeeper condition (drop without running if q-e9-s1-only refutes 盈利质量): 盈利质量 refuted — roa>0.15 near-inert, s1 is a retained-profit-ranked mega-cap pick (600938 ×18/24); widening 1→3 only adds more mega-caps."
+  },
+  {
+    "id": "dvl-imp-4",
+    "kind": "improve",
+    "title": "3-year dividend-persistence gate on s4 (borrowed from 蓝筹分红持续性)",
+    "hypothesis": "Requiring a cash dividend in each of the last 3 fiscal years (point-in-time, board_plan_pub_date ≤ rebalance) before the yield rank removes one-off payers and raises sharpe. SUPPORT: sharpe ≥ reference + 1.0; REFUTE: sharpe ≤ reference, or the gate leaves the s4 pick unchanged at every reselection (inert — report as such).",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 12, conditional on s4 carrying return (q-e9-sleeve-attrib / q-e9-div-only). On-mechanism (股息率), grounded in a sibling family's design. MUST be built on the honest (q-e9-s4-pit) base — a persistence gate on a leaking query would filter on future dividends. Cost ~5 min. [gatekeeper 2026-11-01] DROPPED by its own condition ('conditional on s4 carrying return'): s4 = 7.4% of net at sleeve sharpe 0.16, carried by one name each way (603156 +45.9k vs 600398 −35.9k) — that is not carrying return. Novelty is real (persistence gate from 蓝筹分红持续性) but expected gain × information on this book is low for dvl-imp-3a's reasons. Reopen if a future member puts weight on a CSI500 yield leg.",
+    "design": "Base = reference book (the q-e9-s4-pit fixed version is required) + py2to3 + OVERRIDE. ONE asserted edit in _s4_choice_stocks: after the point-in-time STK_XR_XD query, keep only codes with bonus_amount_rmb > 0 in each of the 3 prior report years (extend the query window to 3×365 for the gate only; the ranking window stays 365). Report vs reference row and s4 picks per reselection.",
+    "from": [
+      "generator B I4",
+      "study/蓝筹分红持续性 (dividend persistence design, u-e9-dxpit point-in-time rule)"
+    ],
+    "edgeRef": "股息率",
+    "rank": 97,
+    "status": "dropped",
+    "note": "q-e9-s4-pit half CLEARED (honest base = study/价值红利多腿/variants/q-e9-s4-pit.py); still blocked on s4 carrying return (q-e9-sleeve-attrib / q-e9-div-only). [2026-11-01 q-e9-div-only] s4 carries 7.4% of net with sharpe 0.16 — the carry-return condition is weak; gatekeeper to decide. Same bar note as dvl-imp-3a.",
+    "result": null
+  },
+  {
+    "id": "dvl-imp-3a",
+    "kind": "improve",
+    "title": "s4_stock_num 1 → 3 (CSI500 yield sleeve holds three names)",
+    "hypothesis": "Widening the 1-name s4 sleeve to 3 diversifies single-name risk and raises sharpe. SUPPORT: sharpe ≥ reference + 1.0; REFUTE: sharpe ≤ reference.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED as SPLIT. Generator B's I3 changed s1 AND s4 in one run — two levers, two entries. Rank 10: a breadth/sizing change, not an edge lever; sibling prior is unfavourable (破净价值多因子 pbn-imp-1 top_n 1→2 LOWERED sharpe 2.10→1.90). Expected Δ <1 ⇒ probably unresolved. Run only after q-e9-div-only, and it is pointless if s4 carries ~0 P&L. Cost ~4 min. [gatekeeper 2026-11-01] DROPPED: s4 is net harmful at book level (sleeve sharpe 0.16, maxDD 42.47, one name each way), so its bar is the s4=0 book, which has no curve; breadth prior negative (破净价值多因子 pbn-imp-1 2.10→1.90); a 25% leg cannot reach the +1.0 book bar; tuning a leg on TRAIN 2024 for a 2026-05 post is selection in the author's view. Reopen only with a new member.",
+    "design": "Base = reference book + py2to3 + OVERRIDE. ONE asserted edit l.77: g.s4_stock_num = 1 → 3. Report vs reference row and s4 picks per reselection.",
+    "from": [
+      "generator B I3 (split)",
+      "study/破净价值多因子/queue.json pbn-imp-1 (breadth prior)"
+    ],
+    "edgeRef": "股息率",
+    "rank": 98,
+    "status": "dropped",
+    "result": null,
+    "note": "[2026-11-01 q-e9-div-only] s4 alone sharpe 0.16 / maxDD 42.47, one name carries it (603156 +45.9k, 600398 −35.9k): its bar is the s4=0 book, not the reference — a leg that is net harmful at book level."
+  },
+  {
+    "id": "dvl-imp-5",
+    "kind": "improve",
+    "title": "Ship the s1+s3 book (drop the dividend legs, s2=s4=0) as the family candidate",
+    "hypothesis": "s1+s3 beats the reference by ≥ 1.0 sharpe on TRAIN. On pre-fix curves it does not (1.28 vs 1.32); it only halves maxDD (20.76→9.82).",
+    "why": "gatekeeper 2026-11-01: REJECTED as a candidate (recorded so it is not re-proposed). (1) Selection inside the author's view: a sleeve subset chosen on TRAIN 2024 for a book posted 2026-05-12. (2) No expected gain: pre-fix Δsharpe −0.04 at SE≈1 — a drawdown story, not a return one. (3) Its numbers are free and are reported as INFORMATION by q-e9-free-subsets, so no backtest is ever needed. (4) The strongest leg (s3) is half orphan shares until q-e9-orphan-fix lands. 'Drop s4 alone' is folded here: same objection, and not derivable from stored curves without a run that would itself be selection. Reopen only with a new member or a non-TRAIN reason.",
+    "design": "None — not to be built.",
+    "from": [
+      "study/价值红利多腿/findings.tsv q-e9-div-only",
+      "orchestrator 2026-11-01"
+    ],
+    "edgeRef": "价值因子（破净）",
+    "rank": 99,
+    "status": "dropped",
+    "result": null
+  }
+]

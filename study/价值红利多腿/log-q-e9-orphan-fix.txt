@@ -1,0 +1,437 @@
+2024-01-02 09:00:00 - INFO  - [初始化] 总资产=1000000.00, 分配: s1=250000.00, s2=250000.00, s3=250000.00, s4=250000.00
+2024-01-02 09:06:00 - INFO  - [s3] 选股池: ['600023.XSHG']
+2024-01-02 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-01-02 09:40:00 - INFO  - [s2] 目标股票: ['000333.XSHE', '000429.XSHE', '002027.XSHE']
+2024-01-02 09:40:00 - INFO  - [s2][买入] 000333.XSHE amt=1500 px=54.67 val=82005.00
+2024-01-02 09:40:00 - INFO  - [s2][买入] 000429.XSHE amt=9700 px=8.54 val=82838.00
+2024-01-02 09:40:00 - INFO  - [s2][买入] 002027.XSHE amt=13200 px=6.28 val=82896.00
+2024-01-02 09:45:00 - INFO  - S4PIT 2024-01-02 null_pub=0 future_pub=188 future_codes=['000630.XSHE', '000729.XSHE', '000975.XSHE', '002028.XSHE', '002056.XSHE', '002128.XSHE', '002138.XSHE', '002223.XSHE', '002262.XSHE', '002273.XSHE', '002463.XSHE', '002508.XSHE', '002518.XSHE', '002557.XSHE', '002568.XSHE', '002572.XSHE', '002595.XSHE', '002653.XSHE', '002865.XSHE', '300144.XSHE', '300394.XSHE', '300487.XSHE', '300529.XSHE', '300866.XSHE', '301029.XSHE', '600161.XSHG', '600398.XSHG', '600497.XSHG', '600529.XSHG', '600598.XSHG', '600873.XSHG', '601058.XSHG', '603127.XSHG', '603156.XSHG', '603338.XSHG', '603589.XSHG', '603596.XSHG', '603786.XSHG', '603816.XSHG', '688006.XSHG', '688099.XSHG', '688120.XSHG', '688169.XSHG', '688188.XSHG', '688390.XSHG', '688516.XSHG']
+2024-01-02 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-01-02 09:45:00 - INFO  - [s4][买入] 603156.XSHG amt=11600 px=21.32 val=247312.00
+2024-01-02 09:50:00 - INFO  - [s3][买入] 600023.XSHG amt=52500 px=4.76 val=249900.00
+2024-01-02 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-01-02 10:45:00 - INFO  - [s1][买入] 600938.XSHG amt=11800 px=21.09 val=248862.00
+2024-01-08 09:45:00 - INFO  - S4PIT 2024-01-08 null_pub=0 future_pub=188 future_codes=['000630.XSHE', '000729.XSHE', '000975.XSHE', '002028.XSHE', '002056.XSHE', '002128.XSHE', '002138.XSHE', '002223.XSHE', '002262.XSHE', '002273.XSHE', '002463.XSHE', '002508.XSHE', '002518.XSHE', '002557.XSHE', '002568.XSHE', '002572.XSHE', '002595.XSHE', '002653.XSHE', '002865.XSHE', '300144.XSHE', '300394.XSHE', '300487.XSHE', '300529.XSHE', '300866.XSHE', '301029.XSHE', '600161.XSHG', '600398.XSHG', '600497.XSHG', '600529.XSHG', '600598.XSHG', '600873.XSHG', '601058.XSHG', '603127.XSHG', '603156.XSHG', '603338.XSHG', '603589.XSHG', '603596.XSHG', '603786.XSHG', '603816.XSHG', '688006.XSHG', '688099.XSHG', '688120.XSHG', '688169.XSHG', '688188.XSHG', '688390.XSHG', '688516.XSHG']
+2024-01-08 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-01-15 09:45:00 - INFO  - S4PIT 2024-01-15 null_pub=0 future_pub=188 future_codes=['000630.XSHE', '000729.XSHE', '000975.XSHE', '002028.XSHE', '002056.XSHE', '002128.XSHE', '002138.XSHE', '002223.XSHE', '002262.XSHE', '002273.XSHE', '002463.XSHE', '002508.XSHE', '002518.XSHE', '002557.XSHE', '002568.XSHE', '002572.XSHE', '002595.XSHE', '002653.XSHE', '002865.XSHE', '300144.XSHE', '300394.XSHE', '300487.XSHE', '300529.XSHE', '300866.XSHE', '301029.XSHE', '600161.XSHG', '600398.XSHG', '600497.XSHG', '600529.XSHG', '600598.XSHG', '600873.XSHG', '601058.XSHG', '603127.XSHG', '603156.XSHG', '603338.XSHG', '603589.XSHG', '603596.XSHG', '603786.XSHG', '603816.XSHG', '688006.XSHG', '688099.XSHG', '688120.XSHG', '688169.XSHG', '688188.XSHG', '688390.XSHG', '688516.XSHG']
+2024-01-15 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-01-16 09:06:00 - INFO  - [s3] 选股池: ['600368.XSHG']
+2024-01-16 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-01-16 09:40:00 - INFO  - [s2] 目标股票: ['000333.XSHE', '000429.XSHE', '002027.XSHE']
+2024-01-16 09:50:00 - INFO  - [s3][卖出] 600023.XSHG amt=52500 px=5.12 val=268800.00
+2024-01-16 09:50:00 - INFO  - [s3][买入] 600368.XSHG amt=64600 px=4.15 val=268090.00
+2024-01-16 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-01-22 09:45:00 - INFO  - S4PIT 2024-01-22 null_pub=0 future_pub=188 future_codes=['000630.XSHE', '000729.XSHE', '000975.XSHE', '002028.XSHE', '002056.XSHE', '002128.XSHE', '002138.XSHE', '002223.XSHE', '002262.XSHE', '002273.XSHE', '002463.XSHE', '002508.XSHE', '002518.XSHE', '002557.XSHE', '002568.XSHE', '002572.XSHE', '002595.XSHE', '002653.XSHE', '002865.XSHE', '300144.XSHE', '300394.XSHE', '300487.XSHE', '300529.XSHE', '300866.XSHE', '301029.XSHE', '600161.XSHG', '600398.XSHG', '600497.XSHG', '600529.XSHG', '600598.XSHG', '600873.XSHG', '601058.XSHG', '603127.XSHG', '603156.XSHG', '603338.XSHG', '603589.XSHG', '603596.XSHG', '603786.XSHG', '603816.XSHG', '688006.XSHG', '688099.XSHG', '688120.XSHG', '688169.XSHG', '688188.XSHG', '688390.XSHG', '688516.XSHG']
+2024-01-22 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-01-29 09:45:00 - INFO  - S4PIT 2024-01-29 null_pub=0 future_pub=188 future_codes=['000630.XSHE', '000729.XSHE', '000975.XSHE', '002028.XSHE', '002056.XSHE', '002128.XSHE', '002138.XSHE', '002223.XSHE', '002262.XSHE', '002273.XSHE', '002463.XSHE', '002508.XSHE', '002518.XSHE', '002557.XSHE', '002568.XSHE', '002572.XSHE', '002595.XSHE', '002653.XSHE', '002865.XSHE', '300144.XSHE', '300394.XSHE', '300487.XSHE', '300529.XSHE', '300866.XSHE', '301029.XSHE', '600161.XSHG', '600398.XSHG', '600497.XSHG', '600529.XSHG', '600598.XSHG', '600873.XSHG', '601058.XSHG', '603127.XSHG', '603156.XSHG', '603338.XSHG', '603589.XSHG', '603596.XSHG', '603786.XSHG', '603816.XSHG', '688006.XSHG', '688099.XSHG', '688120.XSHG', '688169.XSHG', '688188.XSHG', '688390.XSHG', '688516.XSHG']
+2024-01-29 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-02-01 09:06:00 - INFO  - [s3] 选股池: ['601518.XSHG']
+2024-02-01 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-02-01 09:40:00 - INFO  - [s2] 目标股票: ['000429.XSHE', '002027.XSHE', '002032.XSHE']
+2024-02-01 09:40:00 - INFO  - [s2][卖出] 000333.XSHE amt=1500 px=58.97 val=88455.00
+2024-02-01 09:40:00 - INFO  - [s2][买入] 002032.XSHE amt=1600 px=50.39 val=80624.00
+2024-02-01 09:50:00 - INFO  - [s3][卖出] 600368.XSHG amt=64600 px=3.87 val=250002.00
+2024-02-01 09:50:00 - INFO  - [s3][买入] 601518.XSHG amt=104500 px=2.39 val=249755.00
+2024-02-01 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-02-05 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-02-19 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-02-23 09:06:00 - INFO  - [s3] 选股池: ['601518.XSHG']
+2024-02-23 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-02-23 09:40:00 - INFO  - [s2] 目标股票: ['000429.XSHE', '002027.XSHE', '002032.XSHE']
+2024-02-23 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-02-26 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-03-01 09:06:00 - INFO  - [s3] 选股池: ['601518.XSHG']
+2024-03-01 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-03-01 09:40:00 - INFO  - [s2] 目标股票: ['000429.XSHE', '002027.XSHE', '002032.XSHE']
+2024-03-01 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-03-04 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-03-11 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-03-15 09:06:00 - INFO  - [s3] 选股池: ['601518.XSHG']
+2024-03-15 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-03-15 09:40:00 - INFO  - [s2] 目标股票: ['000429.XSHE', '002027.XSHE', '002032.XSHE']
+2024-03-15 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-03-18 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-03-25 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-04-01 09:06:00 - INFO  - [s3] 选股池: ['600097.XSHG']
+2024-04-01 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-04-01 09:40:00 - INFO  - [s2] 目标股票: ['002027.XSHE', '002032.XSHE', '002043.XSHE']
+2024-04-01 09:40:00 - INFO  - [s2][卖出] 000429.XSHE amt=9700 px=9.93 val=96321.00
+2024-04-01 09:40:00 - INFO  - [s2][买入] 002043.XSHE amt=9700 px=9.75 val=94575.00
+2024-04-01 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-04-01 09:50:00 - INFO  - [s3][卖出] 601518.XSHG amt=104500 px=2.41 val=251845.00
+2024-04-01 10:45:00 - INFO  - [s1] 目标股票: ['000858.XSHE']
+2024-04-01 10:45:00 - INFO  - [s1][卖出] 600938.XSHG amt=11800 px=29.11 val=343498.00
+2024-04-01 10:45:00 - INFO  - [s1][买入] 000858.XSHE amt=2100 px=158.01 val=331821.00
+2024-04-01 14:00:00 - INFO  - [s3][买入] 511010.XSHG amt=1800 px=134.87 val=242773.20
+2024-04-01 14:50:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558591 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-01 14:50:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-02 14:00:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558592 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-02 14:00:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-02 14:50:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558593 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-02 14:50:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-03 14:00:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558594 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-03 14:00:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-03 14:50:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558595 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-03 14:50:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-08 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-04-08 14:00:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558596 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-08 14:00:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-08 14:50:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558597 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-08 14:50:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-09 14:00:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558598 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-09 14:00:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-09 14:50:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558599 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-09 14:50:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-10 14:00:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558600 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-10 14:00:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-10 14:50:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558601 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-10 14:50:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-11 14:00:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558602 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-11 14:00:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-11 14:50:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558603 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-11 14:50:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-12 14:00:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558604 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-12 14:00:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-12 14:50:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558605 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-12 14:50:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-15 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-04-15 14:00:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558606 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-15 14:00:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-15 14:50:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558607 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-15 14:50:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-16 14:00:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558608 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-16 14:00:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-16 14:50:00 - ERROR - 订单委托失败：StockOrder(entrust_id=1793558609 security=511010.XSHG mode=OrderValue: _value=8823.803440000058 style=MarketOrderStyle: _limit_price=0.0 side=long action=open margin=False entrust_time=2024-04-16 14:50:00 cancel_time=None finish_time=None comment= error=开仓数量不能小于 100)
+2024-04-17 09:06:00 - INFO  - [s3] 选股池: ['600097.XSHG']
+2024-04-17 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-04-17 09:40:00 - INFO  - [s2] 目标股票: ['002027.XSHE', '002043.XSHE', '002555.XSHE']
+2024-04-17 09:40:00 - INFO  - [s2][卖出] 002032.XSHE amt=1600 px=58.43 val=93488.00
+2024-04-17 09:40:00 - INFO  - [s2][买入] 002555.XSHE amt=5700 px=16.78 val=95646.00
+2024-04-17 09:50:00 - INFO  - [s3][卖出] 511010.XSHG amt=1800 px=135.50 val=243891.00
+2024-04-17 09:50:00 - INFO  - [s3][买入] 600097.XSHG amt=29300 px=8.60 val=251980.00
+2024-04-17 10:45:00 - INFO  - [s1] 目标股票: ['000858.XSHE']
+2024-04-22 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-04-29 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-05-06 09:06:00 - INFO  - [s3] 选股池: ['600368.XSHG']
+2024-05-06 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-05-06 09:40:00 - INFO  - [s2] 目标股票: ['002027.XSHE', '002267.XSHE', '600398.XSHG']
+2024-05-06 09:40:00 - INFO  - [s2][卖出] 002043.XSHE amt=9700 px=10.88 val=105536.00
+2024-05-06 09:40:00 - INFO  - [s2][卖出] 002555.XSHE amt=5700 px=17.29 val=98553.00
+2024-05-06 09:40:00 - INFO  - [s2][买入] 002267.XSHE amt=13100 px=7.60 val=99560.00
+2024-05-06 09:40:00 - INFO  - [s2][买入] 600398.XSHG amt=11100 px=8.96 val=99456.00
+2024-05-06 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-05-06 09:50:00 - INFO  - [s3][卖出] 600097.XSHG amt=29300 px=9.18 val=268974.00
+2024-05-06 09:50:00 - INFO  - [s3][买入] 600368.XSHG amt=60000 px=4.48 val=268800.00
+2024-05-06 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-05-06 10:45:00 - INFO  - [s1][卖出] 000858.XSHE amt=2100 px=155.55 val=326655.00
+2024-05-06 10:45:00 - INFO  - [s1][买入] 600938.XSHG amt=11600 px=29.09 val=337444.00
+2024-05-13 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-05-20 09:06:00 - INFO  - [s3] 选股池: ['600368.XSHG']
+2024-05-20 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-05-20 09:40:00 - INFO  - [s2] 目标股票: ['000333.XSHE', '002027.XSHE', '002267.XSHE']
+2024-05-20 09:40:00 - INFO  - [s2][卖出] 600398.XSHG amt=11100 px=9.45 val=104895.00
+2024-05-20 09:40:00 - INFO  - [s2][买入] 000333.XSHE amt=1500 px=67.69 val=101535.00
+2024-05-20 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-05-20 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-05-27 09:45:00 - INFO  - [s4] 目标股票: ['603156.XSHG']
+2024-06-03 09:06:00 - INFO  - [s3] 选股池: ['600368.XSHG']
+2024-06-03 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-06-03 09:40:00 - INFO  - [s2] 目标股票: ['000333.XSHE', '002027.XSHE', '002267.XSHE']
+2024-06-03 09:45:00 - INFO  - S4PIT 2024-06-03 null_pub=0 future_pub=110 future_codes=['000155.XSHE', '000423.XSHE', '000683.XSHE', '000975.XSHE', '001286.XSHE', '002032.XSHE', '002155.XSHE', '002262.XSHE', '002422.XSHE', '002444.XSHE', '002463.XSHE', '002557.XSHE', '002558.XSHE', '002595.XSHE', '300251.XSHE', '300357.XSHE', '300394.XSHE', '300487.XSHE', '300502.XSHE', '300866.XSHE', '600062.XSHG', '600066.XSHG', '600167.XSHG', '600398.XSHG', '600563.XSHG', '600566.XSHG', '600885.XSHG', '601717.XSHG', '601958.XSHG', '603317.XSHG', '603338.XSHG', '603355.XSHG', '603658.XSHG', '603786.XSHG', '688188.XSHG', '688516.XSHG']
+2024-06-03 09:45:00 - INFO  - [s4] 目标股票: ['600066.XSHG']
+2024-06-03 09:45:00 - INFO  - [s4][卖出] 603156.XSHG amt=11600 px=25.32 val=293712.00
+2024-06-03 09:45:00 - INFO  - [s4][买入] 600066.XSHG amt=11900 px=24.53 val=291907.00
+2024-06-03 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-06-11 09:45:00 - INFO  - S4PIT 2024-06-11 null_pub=0 future_pub=110 future_codes=['000155.XSHE', '000423.XSHE', '000683.XSHE', '000975.XSHE', '001286.XSHE', '002032.XSHE', '002155.XSHE', '002262.XSHE', '002422.XSHE', '002444.XSHE', '002463.XSHE', '002557.XSHE', '002558.XSHE', '002595.XSHE', '300251.XSHE', '300357.XSHE', '300394.XSHE', '300487.XSHE', '300502.XSHE', '300866.XSHE', '600062.XSHG', '600066.XSHG', '600167.XSHG', '600398.XSHG', '600563.XSHG', '600566.XSHG', '600885.XSHG', '601717.XSHG', '601958.XSHG', '603317.XSHG', '603338.XSHG', '603355.XSHG', '603658.XSHG', '603786.XSHG', '688188.XSHG', '688516.XSHG']
+2024-06-11 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-06-11 09:45:00 - INFO  - [s4][卖出] 600066.XSHG amt=11900 px=24.76 val=294644.00
+2024-06-11 09:45:00 - INFO  - [s4][买入] 600398.XSHG amt=32300 px=9.12 val=294576.00
+2024-06-17 09:45:00 - INFO  - S4PIT 2024-06-17 null_pub=1 future_pub=118 future_codes=['000155.XSHE', '000423.XSHE', '000683.XSHE', '001286.XSHE', '002155.XSHE', '002262.XSHE', '002444.XSHE', '002557.XSHE', '002558.XSHE', '002595.XSHE', '002984.XSHE', '300002.XSHE', '300251.XSHE', '300357.XSHE', '300394.XSHE', '300487.XSHE', '300866.XSHE', '600062.XSHG', '600066.XSHG', '600398.XSHG', '600563.XSHG', '600566.XSHG', '600612.XSHG', '600872.XSHG', '600885.XSHG', '601717.XSHG', '601958.XSHG', '603298.XSHG', '603317.XSHG', '603338.XSHG', '603345.XSHG', '603486.XSHG', '603658.XSHG', '603786.XSHG', '688188.XSHG', '688516.XSHG', '688617.XSHG']
+2024-06-17 09:45:00 - INFO  - [s4] 目标股票: ['600066.XSHG']
+2024-06-17 09:45:00 - INFO  - [s4][卖出] 600398.XSHG amt=32300 px=9.54 val=308142.00
+2024-06-17 09:45:00 - INFO  - [s4][买入] 600066.XSHG amt=12300 px=24.92 val=306516.00
+2024-06-18 09:06:00 - INFO  - [s3] 选股池: ['600368.XSHG']
+2024-06-18 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-06-18 09:40:00 - INFO  - [s2] 目标股票: ['000333.XSHE', '002027.XSHE', '002267.XSHE']
+2024-06-18 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-06-20 09:00:00 - INFO  - ORPHANSYNC 2024-06-20 s3 600368.XSHG 60000 78000
+2024-06-24 09:45:00 - INFO  - S4PIT 2024-06-24 null_pub=1 future_pub=118 future_codes=['000155.XSHE', '000423.XSHE', '000683.XSHE', '001286.XSHE', '002155.XSHE', '002262.XSHE', '002444.XSHE', '002557.XSHE', '002558.XSHE', '002595.XSHE', '002984.XSHE', '300002.XSHE', '300251.XSHE', '300357.XSHE', '300394.XSHE', '300487.XSHE', '300866.XSHE', '600062.XSHG', '600066.XSHG', '600398.XSHG', '600563.XSHG', '600566.XSHG', '600612.XSHG', '600872.XSHG', '600885.XSHG', '601717.XSHG', '601958.XSHG', '603298.XSHG', '603317.XSHG', '603338.XSHG', '603345.XSHG', '603486.XSHG', '603658.XSHG', '603786.XSHG', '688188.XSHG', '688516.XSHG', '688617.XSHG']
+2024-06-24 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-06-24 09:45:00 - INFO  - [s4][卖出] 600066.XSHG amt=12300 px=25.95 val=319185.00
+2024-06-24 09:45:00 - INFO  - [s4][买入] 600398.XSHG amt=35300 px=9.07 val=320171.00
+2024-07-01 09:06:00 - INFO  - [s3] 选股池: ['600368.XSHG']
+2024-07-01 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-07-01 09:40:00 - INFO  - [s2] 目标股票: ['000333.XSHE', '002027.XSHE', '002833.XSHE']
+2024-07-01 09:40:00 - INFO  - [s2][卖出] 002267.XSHE amt=13100 px=7.64 val=100084.00
+2024-07-01 09:40:00 - INFO  - [s2][买入] 002833.XSHE amt=5200 px=18.41 val=95732.00
+2024-07-01 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-07-01 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-07-08 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-07-15 09:06:00 - INFO  - [s3] 选股池: ['600368.XSHG']
+2024-07-15 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-07-15 09:40:00 - INFO  - [s2] 目标股票: ['000333.XSHE', '002027.XSHE', '002833.XSHE']
+2024-07-15 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-07-15 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-07-22 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-07-29 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-08-01 09:06:00 - INFO  - [s3] 选股池: ['600368.XSHG']
+2024-08-01 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-08-01 09:40:00 - INFO  - [s2] 目标股票: ['000333.XSHE', '002027.XSHE', '002267.XSHE']
+2024-08-01 09:40:00 - INFO  - [s2][卖出] 002833.XSHE amt=5200 px=16.73 val=86996.00
+2024-08-01 09:40:00 - INFO  - [s2][买入] 002267.XSHE amt=12700 px=7.38 val=93726.00
+2024-08-01 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-08-05 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-08-12 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-08-15 09:06:00 - INFO  - [s3] 选股池: ['000923.XSHE']
+2024-08-15 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-08-15 09:40:00 - INFO  - [s2] 目标股票: ['000333.XSHE', '002267.XSHE', '002833.XSHE']
+2024-08-15 09:40:00 - INFO  - [s2][卖出] 002027.XSHE amt=13200 px=5.90 val=77880.00
+2024-08-15 09:40:00 - INFO  - [s2][买入] 002833.XSHE amt=5600 px=16.08 val=90048.00
+2024-08-15 09:50:00 - INFO  - [s3][卖出] 600368.XSHG amt=78000 px=3.76 val=293280.00
+2024-08-15 09:50:00 - INFO  - [s3][买入] 000923.XSHE amt=22000 px=13.28 val=292160.00
+2024-08-15 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-08-19 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-08-26 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-09-02 09:06:00 - INFO  - [s3] 选股池: ['601677.XSHG']
+2024-09-02 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-09-02 09:40:00 - INFO  - [s2] 目标股票: ['000333.XSHE', '002555.XSHE', '002884.XSHE']
+2024-09-02 09:40:00 - INFO  - [s2][卖出] 002267.XSHE amt=12700 px=6.68 val=84836.00
+2024-09-02 09:40:00 - INFO  - [s2][卖出] 002833.XSHE amt=5600 px=14.99 val=83944.00
+2024-09-02 09:40:00 - INFO  - [s2][买入] 002555.XSHE amt=6100 px=13.84 val=84424.00
+2024-09-02 09:40:00 - INFO  - [s2][买入] 002884.XSHE amt=4700 px=17.82 val=83754.00
+2024-09-02 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-09-02 09:50:00 - INFO  - [s3][卖出] 000923.XSHE amt=22000 px=13.25 val=291500.00
+2024-09-02 09:50:00 - INFO  - [s3][买入] 601677.XSHG amt=24400 px=11.95 val=291580.00
+2024-09-02 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-09-09 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-09-18 09:06:00 - INFO  - [s3] 选股池: ['601677.XSHG']
+2024-09-18 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-09-18 09:40:00 - INFO  - [s2] 目标股票: ['000683.XSHE', '002555.XSHE', '002884.XSHE']
+2024-09-18 09:40:00 - INFO  - [s2][卖出] 000333.XSHE amt=1500 px=64.44 val=96660.00
+2024-09-18 09:40:00 - INFO  - [s2][买入] 000683.XSHE amt=17800 px=4.97 val=88466.00
+2024-09-18 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-09-18 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-09-23 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-09-30 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-10-08 09:06:00 - INFO  - [s3] 选股池: ['002608.XSHE']
+2024-10-08 09:40:00 - INFO  - [s2] 目标股票: ['002315.XSHE', '002555.XSHE', '002884.XSHE']
+2024-10-08 09:40:00 - INFO  - [s2][买入] 002315.XSHE amt=300 px=32.20 val=9660.00
+2024-10-08 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-10-08 09:50:00 - INFO  - [s3][卖出] 601677.XSHG amt=24400 px=15.90 val=387960.00
+2024-10-08 09:50:00 - INFO  - [s3][买入] 002608.XSHE amt=45300 px=8.54 val=386862.00
+2024-10-08 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-10-14 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-10-21 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-10-22 09:06:00 - INFO  - [s3] 选股池: ['600731.XSHG']
+2024-10-22 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-10-22 09:40:00 - INFO  - [s2] 目标股票: ['002315.XSHE', '002555.XSHE', '002884.XSHE']
+2024-10-22 09:40:00 - INFO  - [s2][卖出] 000683.XSHE amt=17800 px=6.23 val=110894.00
+2024-10-22 09:50:00 - INFO  - [s3][卖出] 002608.XSHE amt=45300 px=7.48 val=338844.00
+2024-10-22 09:50:00 - INFO  - [s3][买入] 600731.XSHG amt=63900 px=5.30 val=338670.00
+2024-10-22 10:45:00 - INFO  - [s1] 目标股票: ['600938.XSHG']
+2024-10-28 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-11-01 09:06:00 - INFO  - [s3] 选股池: ['600219.XSHG']
+2024-11-01 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-11-01 09:40:00 - INFO  - [s2] 目标股票: ['002315.XSHE', '002884.XSHE', '002895.XSHE']
+2024-11-01 09:40:00 - INFO  - [s2][卖出] 002555.XSHE amt=6100 px=16.24 val=99064.00
+2024-11-01 09:40:00 - INFO  - [s2][买入] 002895.XSHE amt=4800 px=21.62 val=103776.00
+2024-11-01 09:50:00 - INFO  - [s3][卖出] 600731.XSHG amt=63900 px=6.26 val=400014.00
+2024-11-01 09:50:00 - INFO  - [s3][买入] 600219.XSHG amt=96300 px=4.15 val=399645.00
+2024-11-01 10:45:00 - INFO  - [s1] 目标股票: ['601919.XSHG']
+2024-11-01 10:45:00 - INFO  - [s1][卖出] 600938.XSHG amt=11600 px=27.13 val=314708.00
+2024-11-01 10:45:00 - INFO  - [s1][买入] 601919.XSHG amt=20000 px=15.70 val=314000.00
+2024-11-04 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-11-11 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-11-15 09:06:00 - INFO  - [s3] 选股池: ['600219.XSHG']
+2024-11-15 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-11-15 09:40:00 - INFO  - [s2] 目标股票: ['002884.XSHE', '002895.XSHE', '601168.XSHG']
+2024-11-15 09:40:00 - INFO  - [s2][卖出] 002315.XSHE amt=300 px=39.24 val=11772.00
+2024-11-15 09:40:00 - INFO  - [s2][买入] 601168.XSHG amt=5800 px=17.46 val=101268.00
+2024-11-15 10:45:00 - INFO  - [s1] 目标股票: ['601919.XSHG']
+2024-11-18 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-11-25 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-12-02 09:06:00 - INFO  - [s3] 选股池: ['601919.XSHG']
+2024-12-02 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-12-02 09:40:00 - INFO  - [s2] 目标股票: ['002884.XSHE', '002895.XSHE', '300628.XSHE']
+2024-12-02 09:40:00 - INFO  - [s2][卖出] 601168.XSHG amt=5800 px=16.78 val=97324.00
+2024-12-02 09:40:00 - INFO  - [s2][买入] 300628.XSHE amt=2700 px=37.98 val=102546.00
+2024-12-02 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-12-02 09:50:00 - INFO  - [s3][卖出] 600219.XSHG amt=96300 px=4.04 val=389052.00
+2024-12-02 09:50:00 - INFO  - [s3][买入] 601919.XSHG amt=28200 px=13.77 val=388314.00
+2024-12-02 10:45:00 - INFO  - [s1] 目标股票: ['601919.XSHG']
+2024-12-09 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-12-16 09:06:00 - INFO  - [s3] 选股池: ['600219.XSHG']
+2024-12-16 09:40:00 - WARNING - /tmp/strategy/user_code.py:433: FutureWarning: Sorting because non-concatenation axis is not aligned. A future version
+of pandas will change to not sort by default.
+
+To accept the future behavior, pass 'sort=False'.
+
+To retain the current behavior and silence the warning, pass 'sort=True'.
+
+  DR = pd.concat([dividend, cap], axis=1).dropna()
+
+2024-12-16 09:40:00 - INFO  - [s2] 目标股票: ['002884.XSHE', '002895.XSHE', '300628.XSHE']
+2024-12-16 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-12-16 09:50:00 - INFO  - [s3][卖出] 601919.XSHG amt=28200 px=14.76 val=416232.00
+2024-12-16 09:50:00 - INFO  - [s3][买入] 600219.XSHG amt=104400 px=3.98 val=415512.00
+2024-12-16 10:45:00 - INFO  - [s1] 目标股票: ['601919.XSHG']
+2024-12-23 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
+2024-12-30 09:45:00 - INFO  - [s4] 目标股票: ['600398.XSHG']
