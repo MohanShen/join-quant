@@ -242,12 +242,21 @@ function build() {
     // rejected at this exact candidateId. Ordered by champion TRAIN sharpe — the sequence the
     // spec makes load-bearing.
     const promotedIds = new Set(current.map(c => c.candidateId));
+    // A parent of a CURRENT merged candidate lives on inside it (outcome 2), so it is not an
+    // arrival. Keyed to the exact candidateId: a new best variant is a new id and re-arrives.
+    const absorbedBy = new Map();
+    for (const c of current) for (const pid of (c.parents || [])) absorbedBy.set(pid, c.candidateId);
     const arrivals = [], notEligible = [], dispositioned = [];
     for (const f of group) {
       const a = assessed.get(f.family);
       if (!a || !a.eligible) { notEligible.push({ family: f.family, status: a ? a.status : 'unknown', why: a ? a.why : '' }); continue; }
       const id = a.champion.sourceFile;
       if (promotedIds.has(id)) { dispositioned.push({ family: f.family, candidateId: id, state: 'already promoted' }); continue; }
+      if (absorbedBy.has(id)) {
+        dispositioned.push({ family: f.family, candidateId: id,
+                             state: `absorbed into merged ${absorbedBy.get(id)} — a NEW best variant re-arrives` });
+        continue;
+      }
       if (promoted.isRejected(universe, id)) {
         dispositioned.push({ family: f.family, candidateId: id,
                              state: 'rejected at this champion — a NEW best variant reopens it' });

@@ -434,6 +434,44 @@ test('the incremental round', async t => {
     });
   });
 
+  await t.test('outcome 2: both PARENTS of a merged candidate are absorbed, not re-offered', () => {
+    const w = world({
+      A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base' },
+      B: { u: 'U', obj: 0.4, sharpe: 1.8, val: 2.1, R: 3, valOn: 'base' },
+    });
+    inWorld(w, ({ queue, promoted }) => {
+      promoted.record({ universe: 'U', action: 'promote', candidateId: 'strategies/A.py', sharpe: 2.0 });
+      promoted.record({ universe: 'U', action: 'promote', candidateId: 'enhance/candidates/m-1.py',
+                        kind: 'merged', members: ['A', 'B'], sharpe: 2.5,
+                        parents: ['strategies/A.py', 'strategies/B.py'] });
+      promoted.record({ universe: 'U', action: 'supersede', candidateId: 'strategies/A.py' });
+      const r = row('U', queue.build());
+      // Without `parents`, the superseded incumbent AND the arrival both read as fresh arrivals and
+      // the next round merges a family against a book that already contains it.
+      assert.strictEqual(r.action, 'idle');
+      assert.strictEqual(r.arrival, null);
+      for (const f of ['A', 'B']) {
+        assert.ok(r.dispositioned.some(d => d.family === f && /absorbed into merged/.test(d.state)), f);
+      }
+    });
+  });
+
+  await t.test('outcome 2: a parent family\'s NEW best variant re-arrives', () => {
+    const w = world({
+      A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base' },
+      B: { u: 'U', obj: 0.4, sharpe: 1.8, val: 2.1, R: 3, valOn: 'base' },
+    });
+    inWorld(w, ({ queue, promoted }) => {
+      // The merge absorbed an OLDER B champion; B's current champion is a different id.
+      promoted.record({ universe: 'U', action: 'promote', candidateId: 'enhance/candidates/m-1.py',
+                        kind: 'merged', members: ['A', 'B'], sharpe: 2.5,
+                        parents: ['strategies/A.py', 'strategies/B-old.py'] });
+      const r = row('U', queue.build());
+      assert.strictEqual(r.action, 'integrate');
+      assert.strictEqual(r.arrival.family, 'B');
+    });
+  });
+
   await t.test('an ineligible family never becomes an arrival, and says why', () => {
     const w = world({
       Good: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base' },

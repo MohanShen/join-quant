@@ -1,0 +1,48 @@
+{
+  "type": "全A",
+  "expId": "pbm-e9-1",
+  "weights": "equal",
+  "_note": "INCREMENTAL merge, 全A, epoch 9. Arrival 破净价值多因子 (pbn-val-base-e9) vs promoted incumbent 红利低频 (93379f98). DIFFERENT measured edge sets {股息率, 流动性溢价} x {价值因子（破净）} -> combine inside ONE pipeline (the incumbent). Not a blend, so rules 2/3 are structurally inert. E1: incumbent pool restricted to PB in (0,1) (the arrival line ablated by q-e9-pb-ablate); dividend x low-turnover rank, 10 names, 25d, 14:50 verbatim. Round is after level+consistency in 2024: bar = best parent 2024 curve sharpe.",
+  "candidate": {
+    "annual": 44.76,
+    "sharpe": 2.3,
+    "maxdd": 10.62,
+    "objective": 0.3414,
+    "sourceFile": "enhance/candidates/pbm-e9-1.py",
+    "seriesKey": "enhance_candidates_pbm-e9-1__train__e9",
+    "window": "train",
+    "epoch": 9
+  },
+  "members": [
+    {
+      "family": "红利低频",
+      "candidateId": "strategies/2026-07-05_低换手红利策略-93379f98.py",
+      "kind": "family",
+      "promoted": true,
+      "_member": "promoted incumbent; champion = base 93379f98 (base == bestVariant); pinned runnable form study/红利低频/baseline.py (its e9 VAL hlld-e9-base-val ran that body)",
+      "annual": 44.93,
+      "sharpe": 2.31,
+      "maxdd": 10.75,
+      "objective": 0.3418,
+      "realizability": 3,
+      "_realizability": "family page realizability 3 (qa-merge-2 basis; no unrealizability declaration)",
+      "sourceFile": "strategies/2026-07-05_低换手红利策略-93379f98.py",
+      "window": "train",
+      "epoch": 9
+    },
+    {
+      "family": "破净价值多因子",
+      "candidateId": "validated_strategies/pbn-val-base-e9.py",
+      "_member": "arrival; champion = base e7c95ca1 (base == bestVariant), product body = study/破净价值多因子/baseline.py pinned, zero edits",
+      "annual": 54.17,
+      "sharpe": 2.1,
+      "maxdd": 15.2,
+      "objective": 0.3897,
+      "realizability": 2,
+      "_realizability": "R=2 measured by q-e9-liq (liq-1 3.33e6 / liq-2 1e7 both bit-identical); realizabilityScope pbn-val-base-e9",
+      "sourceFile": "strategies/2026-10-17_六因子选股版破净策略_附PT迁移版在各时期的回测截图-e7c95ca1.py",
+      "window": "train",
+      "epoch": 9
+    }
+  ]
+}

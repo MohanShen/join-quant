@@ -38,7 +38,13 @@
  * read-modify-write, it survives page regeneration, and "what has this universe ever shipped" is
  * one scan. Never rewrite or delete a row; supersession is itself a row.
  *
- *   at  universe  action  candidateId  kind  members  sharpe  objective  epoch  note
+ *   at  universe  action  candidateId  kind  members  sharpe  objective  epoch  note  parents
+ *
+ * `parents` (appended last, so older 10-cell rows read it as empty) names the candidateIds a
+ * MERGED promotion absorbed — the superseded incumbent and the arrival's champion. Without it
+ * outcome 2 left both parents looking like fresh arrivals: neither id is promoted or rejected, so
+ * the queue offered each family a merge against a book that already contains it, every round.
+ * Keyed to candidateIds (not families), so a parent family's NEW best variant still re-arrives.
  *
  * `action` is `promote` | `supersede` | `reject`.
  *
@@ -46,7 +52,7 @@
  *   const p = require('./promoted');
  *   p.current('ETF')                       // the promoted set now, strongest first
  *   p.isRejected('ETF', '<candidateId>')   // has this exact candidate already been refused?
- *   p.record({ universe, action, candidateId, kind, members, sharpe, objective, note })
+ *   p.record({ universe, action, candidateId, kind, members, sharpe, objective, note, parents })
  */
 
 const fs = require('fs');
@@ -60,7 +66,7 @@ const FILE = () => process.env.JQ_PROMOTED_FILE
   || path.join(process.env.JQ_DAILY_STATE_DIR || path.join(ROOT, 'data'), 'promoted.tsv');
 
 const COLS = ['at', 'universe', 'action', 'candidateId', 'kind', 'members',
-              'sharpe', 'objective', 'epoch', 'note'];
+              'sharpe', 'objective', 'epoch', 'note', 'parents'];
 
 const ACTIONS = new Set(['promote', 'supersede', 'reject']);
 
@@ -111,6 +117,7 @@ function record(ev) {
     objective: ev.objective == null ? '' : ev.objective,
     epoch: harness.config().epoch,
     note: ev.note || '',
+    parents: Array.isArray(ev.parents) ? ev.parents.join('+') : (ev.parents || ''),
   };
   fs.appendFileSync(p, COLS.map(k => clean(row[k])).join('\t') + '\n');
   return row;
@@ -135,6 +142,7 @@ function current(universe) {
         sharpe: e.sharpe === '' ? null : parseFloat(e.sharpe),
         objective: e.objective === '' ? null : parseFloat(e.objective),
         epoch: e.epoch, at: e.at, note: e.note,
+        parents: e.parents ? e.parents.split('+') : [],
       });
     } else if (e.action === 'supersede') {
       live.delete(e.candidateId);
