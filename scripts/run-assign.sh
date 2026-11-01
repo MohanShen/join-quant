@@ -15,6 +15,12 @@
 # Usage: scripts/run-assign.sh [--dry]
 #
 set -uo pipefail
+
+# Pin the model. The wrappers used to pass no --model at all, so each fire inherited
+# whatever the CLI default happened to be — rounds in this repo carry Fable 5.1,
+# Sonnet 5.5 and Opus 5.5 co-author lines depending on when they ran, which makes a
+# round's reasoning quality a function of the clock. Overridable: MODEL=sonnet ...
+MODEL="${MODEL:-opus}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="${REPO:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 LOG_DIR="$REPO/data/autoresearch-logs"
@@ -48,7 +54,7 @@ if [ "${1:-}" = "--dry" ]; then echo "$PROMPT"; exit 0; fi
 SID="$(uuidgen | tr 'A-Z' 'a-z')"
 RUN_LOG="$LOG_DIR/assign-$(date '+%Y%m%d-%H%M%S').log"
 log "assign: $PENDING pending -> new session ${SID:0:8} -> $RUN_LOG"
-claude -p --session-id "$SID" "$PROMPT" --permission-mode acceptEdits >"$RUN_LOG" 2>&1
+claude -p --model "$MODEL" --session-id "$SID" "$PROMPT" --permission-mode acceptEdits >"$RUN_LOG" 2>&1
 rc=$?
 tail -n 3 "$RUN_LOG" | sed 's/^/    /' | tee -a "$LOG_DIR/wrapper.log" >/dev/null
 log "assign: rc=$rc; $(node -e 'process.stdout.write(String(require("./utils/family-assign").pending().length))' 2>/dev/null) still unassigned"

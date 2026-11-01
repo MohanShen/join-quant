@@ -38,6 +38,11 @@ set -uo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="${REPO:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 USAGE_LIMIT="${USAGE_LIMIT:-55}"
+# Pin the model. The wrappers used to pass no --model at all, so each fire inherited
+# whatever the CLI default happened to be — rounds in this repo carry Fable 5.1,
+# Sonnet 5.5 and Opus 5.5 co-author lines depending on when they ran, which makes a
+# round's reasoning quality a function of the clock. Overridable: MODEL=sonnet ...
+MODEL="${MODEL:-opus}"
 JQ_CDP_URL="${JQ_CDP_URL:-http://localhost:9225}"
 PIN_DIR="$REPO/data/oos-sessions"
 LOG_DIR="$REPO/data/autooos-logs"
@@ -177,15 +182,15 @@ log "$MODE session ${SID:0:8} | family $FAMILY | candidate $CANDIDATE | run $RUN
 [ -n "$FLAGS" ] && log "  ⚠ $FLAGS"
 
 if [ "${DRY:-0}" = "1" ]; then
-  log "DRY=1 — would run: claude -p $( [ "$MODE" = resume ] && echo "--resume $SID" || echo "--session-id $SID" )"
+  log "DRY=1 — would run: claude -p --model $MODEL $( [ "$MODE" = resume ] && echo "--resume $SID" || echo "--session-id $SID" )"
   echo "--- prompt ---"; echo "$PROMPT"
   exit 0
 fi
 
 if [ "$MODE" = "resume" ]; then
-  JQ_USAGE_LIMIT="$USAGE_LIMIT" claude -p --resume "$SID" "$PROMPT" $PERM_FLAG >"$RUN_LOG" 2>&1
+  JQ_USAGE_LIMIT="$USAGE_LIMIT" claude -p --model "$MODEL" --resume "$SID" "$PROMPT" $PERM_FLAG >"$RUN_LOG" 2>&1
 else
-  JQ_USAGE_LIMIT="$USAGE_LIMIT" claude -p --session-id "$SID" "$PROMPT" $PERM_FLAG >"$RUN_LOG" 2>&1
+  JQ_USAGE_LIMIT="$USAGE_LIMIT" claude -p --model "$MODEL" --session-id "$SID" "$PROMPT" $PERM_FLAG >"$RUN_LOG" 2>&1
 fi
 rc=$?
 tail -n 3 "$RUN_LOG" 2>/dev/null | sed 's/^/    /' | tee -a "$LOG_DIR/wrapper.log" >/dev/null
