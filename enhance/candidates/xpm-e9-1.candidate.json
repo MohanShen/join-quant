@@ -1,0 +1,49 @@
+{
+  "type": "小盘",
+  "expId": "xpm-e9-1",
+  "weights": "equal",
+  "_note": "INCREMENTAL merge, 小盘, epoch 9. Arrival 小盘ETF双轨切换 (xpetf-e9-base) vs promoted incumbent 多因子ML (xp-val-liq1-e9). Identical measured edge set {规模因子} -> better-implementation merge: arrival small-cap selection pieces transplanted into the incumbent small_cap sleeve; one strategy, not a blend, so rules 2/3 are structurally inert. Round is after consistency: 2024 sharpe vs 5.89.",
+  "candidate": {
+    "annual": 126.77,
+    "sharpe": 4.52,
+    "maxdd": 9.3,
+    "objective": 1.1747,
+    "sourceFile": "enhance/candidates/xpm-e9-1.py",
+    "seriesKey": "enhance_candidates_xpm-e9-1__train__e9",
+    "window": "train",
+    "epoch": 9
+  },
+  "members": [
+    {
+      "family": "多因子ML",
+      "candidateId": "validated_strategies/xp-val-liq1-e9.py",
+      "kind": "family",
+      "promoted": true,
+      "_member": "promoted incumbent; body byte-identical (sha e955f897) to study/多因子ML/variants/q-e9-liq-1.py, whose TRAIN curve is the seriesKey",
+      "annual": 165.79,
+      "sharpe": 5.89,
+      "maxdd": 9.36,
+      "objective": 1.5643,
+      "realizability": 2,
+      "_realizability": "R=2 measured on this exact book by q-e9-liq-1 (realizabilityScope xp-val-liq1-e9); capacity unmeasured",
+      "seriesKey": "study_多因子ML_variants_q-e9-liq-1__train__e9",
+      "sourceFile": "study/多因子ML/variants/q-e9-liq-1.py",
+      "window": "train",
+      "epoch": 9
+    },
+    {
+      "family": "小盘ETF双轨切换",
+      "candidateId": "validated_strategies/xpetf-e9-base.py",
+      "_member": "arrival; champion = base 0d1bbe83 (base == bestVariant), product body = baseline.py pinned, zero edits",
+      "annual": 89.75,
+      "sharpe": 2.85,
+      "maxdd": 17.09,
+      "objective": 0.7266,
+      "realizability": 2,
+      "_realizability": "R=2 measured by liq-1 (2e6 bit-identical) / liq-2 (1e7 keeps 94.4%); realizabilityScope xpetf-e9-base",
+      "sourceFile": "strategies/2026-10-12_年化51_的晴雨双轨_小盘游击_ETF防御-0d1bbe83.py",
+      "window": "train",
+      "epoch": 9
+    }
+  ]
+}
