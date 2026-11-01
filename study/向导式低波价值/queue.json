@@ -1,0 +1,231 @@
+[
+  {
+    "id": "u-1",
+    "kind": "understand",
+    "title": "free: dump transactionInfo + positionInfo of the stored base run a9daf5b7c97c134ba40a2d903328296b — is the book a one-shot 5-name buy-and-hold?",
+    "hypothesis": "The base buys 5 names at the 2024-01-02 open and never sells, so the ATR>0.35 exit (L285) and every later buy day are inert and TRAIN 2024 is a single selection event.",
+    "why": "type: mechanism read, ZERO backtest minutes. DECISION RULE: CONFIRM if transactionInfo holds exactly 5 buys, all on the first trading day, and 0 sells; REFUTE on any sell or on more than 5 distinct names held over 2024. Partial: 5 names with refills/partial fills but no sells, which still means no exit fired. Everything downstream depends on it: if CONFIRMED, u-3..u-6 are read at pool level (generator A's argument), dxlv-imp-pesort is judged as one draw from a selection distribution, and dxlv-imp-screenexit becomes the only idea that adds a working exit. Also record: the 5 codes, each name's fill price and share count, and whether they are the code-order first names (000/001/002 before 600). That order claim is NOT verified: check_stocks_sort is called with g.check_out_lists_ascending='desc' and an empty input_dict, and the kuanke.wizard source is invisible, so it may reverse the list.",
+    "design": "node -e \"require('./study/价值红利多腿/dump-pos.js').main()\" -- a9daf5b7c97c134ba40a2d903328296b . The id is the one the stored base run was keyed under; ids are re-minted but old ones still dereference. If it fails, resolve the run through backtest-series against data/series/2026-10-29_向导式_ATR指标择时测试_0_0_1-8b9cb8e2__train__e9.json. Control: summed position value on 2024-12-31 must reproduce total 29.38% within 0.1pp. No backtest.",
+    "from": [
+      "wiki/families/向导式低波价值.md §1 读码要点 (1)(2)",
+      "free corr: base vs HS300 0.782, vs 蓝筹分红持续性 dxew 0.882, vs 银行股轮动 0.56-0.62; fully invested from day 1",
+      "ledger harness/normalize-train.tsv row 8b9cb8e2 e9: 29.38 / 1.19 / 10.80 / 0.1858"
+    ],
+    "edgeRef": "低价股效应",
+    "rank": 1,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 1, ACTIVE — dispatch first. It is free, falsifiable, and decides how every other entry is read. There are 0 findings, 0 binding closures, 0 stale closures and 0 §2 rejects, so nothing duplicates it. Added the sort-order check (ascending='desc' flag) and a reproduction control.",
+    "result": "REFUTED (one-shot buy-and-hold, exit inert). 7 transactions, all 09:30 market orders filled in full. 2024-01-02 buys 600018 上港集团 @4.90, 601006 大秦铁路 @7.19, 601117 中国化学 @6.39, 601319 中国人保 @4.84, 601669 中国电建 @4.89 (~¥200k each). 2024-10-21 601117 SOLD @8.18 (+28%, gains 61.4k) = ATR>0.35 exit firing af"
+  },
+  {
+    "id": "u-2",
+    "kind": "understand",
+    "title": "probe (logging only): survivor count after each filter on every check_stocks date + per-survivor close, talib ATR(14) yuan, ATR/close, PE, wizard booleans ATR_judge_xiaoyu(0.15)/dayu(0.35), and the buy_lists ORDER",
+    "hypothesis": "kuanke.wizard ATR_judge_xiaoyu compares raw talib ATR(14) in yuan, so ATR<0.15 selects low-nominal-price names (roughly under ~5 yuan) rather than low-relative-volatility names.",
+    "why": "type: unit probe, the premise of edge 低价股效应. DECISION RULE: YUAN if the wizard boolean xiaoyu equals [talib ATR < 0.15] on >= 95% of (date, name) rows; RELATIVE if it equals [ATR/close < 0.15] (or another named scale) on >= 95%; neither = report the best-fitting threshold, verdict unresolved. A RELATIVE result refutes the 低价股效应 premise outright: the recorder sends that edge to refuted and drops u-5. The run also logs what u-4 needs (does the PE band bind: count before/after L228, and how many ATR survivors the band removes) and what u-6/pesort need (day-1 PE and open for every eligible name, final-day close). Control REQUIRED: reproduce 29.38 / 1.19 / 10.80 / 0.1858 exactly, or the logged values are not the book's own. Cost ~3-5 min. About 25 check dates, so expect a few pagelog pages.",
+    "design": "Base = strategies/2026-10-29_向导式_ATR指标择时测试_0_0_1-8b9cb8e2.py + epoch-9 OVERRIDE, built the way study variants are. No logic edit. In check_stocks, after each filter, log CNT date=<d> stage=<universe|industry|st|delisted|pe|...> n=<k>. In trade(), before the ATR filter, for each buy_lists name log ATRU date=<d> code=<c> close=<prev close> atr14=<talib.ATR on attribute_history >=15 bars to previous_date> rel=<atr/close> pe=<pe_ratio> xiaoyu=<ATR_judge_xiaoyu(c,0.15,14)> dayu=<ATR_judge_dayu(c,0.35,14)>, and ORDER date=<d> codes=<first 15 of buy_lists after filters>. For u-6: on the first trading day log OPEN0 code=<c> open=<day open> for every name passing the ATR filter, and in a final-day handler log CLOSEN code=<c> close=<last close available under avoid_future_data> for the same names (state the price convention). Page with study/小市值/pagelog.js, not backtest-log.js (single 100-line page).",
+    "from": [
+      "wiki §1 读码要点 (3) ATR 单位不可见",
+      "wiki edge[1].test (先探针确认单位)",
+      "u-1"
+    ],
+    "edgeRef": "低价股效应",
+    "rank": 2,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 2 — the first BACKTEST to dispatch. Added: PE per name, buy_lists order, and day-1 open / final close for every eligible name, so u-6 and the off-line half of dxlv-imp-pesort ride on this run at no extra cost. A 95% agreement rule replaces 'identify the unit', which had no threshold. ‖ recorder 2026-11-01 after u-2: YUAN (98.6%/98.9%). Done.",
+    "result": "ATR UNIT = YUAN (decision rule met). Wizard xiaoyu(0.15) agrees with talib ATR(14) in yuan on 98.6% of 705 rows (60-bar Wilder; 97.4% with 15 bars) vs 20.1% for ATR/close; dayu(0.35) 98.9% yuan vs 55.2% relative (824 rows). Every PE survivor has ATR/close 0.006-0.068, so a relative 0.15 gate could n"
+  },
+  {
+    "id": "u-7",
+    "kind": "understand",
+    "title": "pool-EW CONTROL: yuan-ATR<0.15 ∩ PE 6-11 pool, equal cash, exit off (base screens under the pool-EW harness)",
+    "hypothesis": "The base is in effect this basket: the 6 day-1 names (600018 601006 601117 601319 601669 601800) at 1/6 each, held all year. It anchors u-3/u-4/u-5, and each of those changes exactly one screen relative to it.",
+    "why": "type: control, required before u-3/u-4/u-5 can be read. It is not an edge test, so it has no CONFIRM/REFUTE. DECISION RULE (validity): VALID if POOL0 lists exactly those 6 codes and day-1 EWDEPLOY cash is <= 5%; otherwise the run is void and its three dependants wait. Also report Δ vs base (sharpe 1.19, obj 0.1858) and the daily corr, labelled as the JOINT effect of exit-off + 601800 added; do NOT attribute it to either one. Price-only pre-estimate from u-2 OPEN0/CLOSEN: 6-name EW +28.0% vs +25.3% for the base 5 held static (dividends excluded), so expect roughly base-level. Cost ~3-5 min.",
+    "design": "Base = strategies/2026-10-29_向导式_ATR指标择时测试_0_0_1-8b9cb8e2.py + epoch-9 OVERRIDE. POOL-EW HARNESS (shared by u-7/u-3/u-4/u-5, identical in all four): (H1) exit off: the L289 sell filter becomes sell_lists = []; (H2) g.max_hold_stocknum 5 -> 1000 (L38); (H3) in buy(), Cash = context.portfolio.available_cash / len(buy_lists) instead of result[stock] from order_style. H3 is REQUIRED: order_style(context, buy_lists, g.max_hold_stocknum, by_cap_mean) is a hidden wizard call, and u-1 cannot tell whether it divides by len(buy_lists) or by max_hold-positions (both equal 5 on day 1 and 1 on 11-04). At max_hold 1000 the second reading would put 0.1% in each name. H1 is REQUIRED because the 0.35 exit is in YUAN (u-2): on 2024-01-02, 12 of the 26 PE survivors already read dayu=True (000408 000651 000792 002129 002459 002460 600332 600585 600803 601318 688303 688599). Any variant that admits higher-priced names would sell them on the first sell day and buy them back at the next buy (sell and buy share the 10-day cadence). That measures churn, not selection. Log EWDEPLOY date=<d> n_buy=<k> cash_before=<c> cash_after=<c> on every buy day, and POOL0 code=<c> for every day-1 buy. VALIDITY CONTROL: on day 1, cash_after/total_value must be <= 5%, or the run is void. With exits off and cash ~0 after day 1, each run is in effect a DAY-1 EQUAL-WEIGHT BUY-AND-HOLD. Later buy days only spread dividend cash (the base left it idle; a small known difference). No other edit: the yuan ATR<0.15 entry and the PE 6-11 band both stay.",
+    "from": [
+      "u-1 (2 selection events; exit fires once)",
+      "u-2 (day-1 pool 6, median 5; ATR unit = yuan; 12/26 PE survivors dayu=True on day 1)",
+      "u-3 re-gate"
+    ],
+    "edgeRef": "低价股效应",
+    "rank": 1,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01 (re-gate after u-1/u-2): NEW, rank 1, ACTIVE, dispatch next. It replaces the base as the control for the edge ladder. Every ladder variant must turn the yuan exit off (see harness), and the base cannot serve as that control.",
+    "result": "VALID control (decision rule met). POOL0 = exactly 600018 601006 601117 601319 601669 601800; day-1 EWDEPLOY cash_after 1894.66 / total 999700.66 = 0.19% (<=5%). With exits off it is a day-1 6-name EW buy-and-hold. Per-name 2024 price return: 600018 +24.9, 601006 -5.7, 601117 +29.7, 601319 +57.4, 60"
+  },
+  {
+    "id": "u-3",
+    "kind": "understand",
+    "title": "RE-SCOPED: PE 6-11 pool EW with NO price gate (yuan-ATR entry filter removed), under the pool-EW harness; control = u-7",
+    "hypothesis": "The book is a 2024 low-valuation large-cap basket, and the yuan-ATR gate (a nominal-price filter, per u-2) adds nothing. The whole PE 6-11 HS300 pool (26 names on day 1, 7 of them SZ, ¥4.8-42.8) does about as well as the cheap 6-name subset. Proposed edge: 「2024 低估值大盘风格贝塔」.",
+    "why": "type: edge ablation of the price gate. DECISION RULE vs u-7: PRICE GATE ADDS at Δsharpe <= -0.5 (supports 低价股效应 as a selection effect; whether it is price or low vol stays open, which is u-5); STYLE-BETA SUPPORTED at |Δsharpe| <= 0.3 AND daily corr >= 0.85; PRICE GATE HURTS at Δsharpe >= +0.5; otherwise partial. Report day-1 n_buy (expect 26) and both maxDDs. ⚠ Single cross-section: both legs are day-1 baskets, so the verdict rests on one date. Report the per-name total return of the 20 names u-3 adds beside the number. ⚠ 「2024 低估值大盘风格贝塔」 must be registered on the family page as proposed before the recorder may cite it. Cost ~3-5 min.",
+    "design": "u-7 build + exactly one asserted edit: the L196 entry filter becomes a pass-through (buy_lists unchanged). PE band, universe, industry and the ST/paused/high-limit filters are unchanged.",
+    "from": [
+      "u-2 (funnel: PE pool 21/27/43, day-1 26; yuan-ATR removes every SZ name on price)",
+      "u-7",
+      "free corr 0.882 with 蓝筹分红持续性 dxew"
+    ],
+    "edgeRef": "2024 低估值大盘风格贝塔",
+    "rank": 2,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 4, after u-2, which supplies the pool count that decides whether this can bind. Tightened 'refuted if <= 0.7', which did not say of what, into an explicit two-sided rule. Pinned the design to the single max_hold_stocknum edit so the mechanics stay identical to the base. ‖ recorder 2026-11-01 after u-2: day-1 ATR∩PE pool = 6, so the INERT clause (<=5) does not fire by the letter, but u-3 differs from the base essentially by adding 601800 (+41% open->close, already visible in u-2 OPEN0/CLOSEN) at 1/6 weight; with cash ~0 after day 1, later eligible names (pool up to 12) get almost nothing. Its Δ is largely pre-known and it cannot test a broad style-beta edge. Gatekeeper: re-scope (e.g. PE 6-11 pool EW with no ATR gate, ~21-43 names) or drop and let u-4/u-5 run against the base. ‖ gatekeeper 2026-11-01 (re-gate after u-1/u-2): RE-SCOPED in place (recorder proposal accepted). The original (max_hold 5->1000, gate kept) is DROPPED as near-inert. It adds only 601800 at 1/6 weight, whose +41% is already in the u-2 log, so its Δ was predictable and could not test a broad beta. Rewritten to remove the price gate instead, under the shared pool-EW harness (exit off is mandatory: 12 of 26 day-1 PE names read dayu=True in yuan). Control moved from the base to u-7.",
+    "result": "PRICE GATE ADDS by the pre-declared rule (Δsharpe -0.70 <= -0.5; style-beta clause |Δ|<=0.3 fails although corr 0.85 meets its corr leg). POOL0 = 26 names as expected, but 688303/688599 (STAR) were never filled (「科创板市价单需要指定保护限价」; 688223 hit the same refusal later), so day 1 held 24 names with 9.27% "
+  },
+  {
+    "id": "u-5",
+    "kind": "understand",
+    "title": "REDESIGNED: relative-ATR gate (ATR/close < k) at day-1 breadth 6 in place of yuan-ATR<0.15, under the pool-EW harness; control = u-7",
+    "hypothesis": "The edge is low NOMINAL PRICE, not low volatility: the 6 PE survivors with the lowest ATR/close do clearly worse than the 6 cheapest.",
+    "why": "type: edge ablation, family page edge[1].test (低价股效应). DECISION RULE vs u-7: CONFIRM 低价 at Δsharpe <= -0.5; REFUTE (low vol does as well) at |Δsharpe| <= 0.2; LOW-VOL BETTER at Δsharpe >= +0.5; otherwise partial. The day-1 set is a pre-run fact from u-2 rel15: {601006 600018 600332 600362 600104 601319}. It overlaps u-7 on 3 of 6 (601006 600018 601319), so the 3 swapped names (600332 600362 600104 in; 601117 601669 601800 out) decide the result. Report their per-name returns. VALIDITY: POOL0 must equal that set, or the run is void. k is knife-edge: 601319 (rel15 0.01638) is in and 601318 (0.01654) is out. ⚠ Why the harness matters here: 600332 (¥28.60, ATR 0.426 yuan) reads dayu=True on day 1. Under the original design (yuan exit kept) it would be sold on the first sell day and churned, so the original u-5 was contaminated by construction. Read u-5 AFTER u-3: if u-3 shows the gate adds nothing, a null here means neither reading of the gate matters. Cost ~3-5 min.",
+    "design": "u-7 build + exactly one asserted edit at L196: ATR_judge_xiaoyu(security,0.15,14) -> a local relative test using the SAME computation the u-2 probe logged as rel15 (talib.ATR timeperiod 14 on 15 daily bars up to previous_date, divided by the previous close), with k = 0.01646. The exit is off via the harness, so no exit-scale choice arises.",
+    "from": [
+      "wiki edge[1].test",
+      "u-2 (rel15 for all 26 day-1 PE survivors; lowest-6 overlap 3/6)",
+      "u-7",
+      "u-3"
+    ],
+    "edgeRef": "低价股效应",
+    "rank": 3,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 6, conditional on u-2 = YUAN and on u-3. Added an overlap guard and fixed k from first-buy-day data only. A negative result here is as valuable as a positive one. ‖ recorder 2026-11-01 after u-2: condition MET (YUAN). Day-1 rel values for all 26 PE survivors are in log-u-2.txt; at breadth 6 the relative-ATR set overlaps the yuan set 3/6 (k between 0.01638 and 0.01654 is knife-edge — state it). If u-3 is re-scoped, size k to whatever control is used. ‖ gatekeeper 2026-11-01 (re-gate after u-1/u-2): REDESIGNED. The original kept the wizard yuan exit while admitting higher-priced names. 600332 is dayu=True on day 1, so it would have tested churn, not selection. Moved onto the pool-EW harness with u-7 as control, and k pinned to the u-2 day-1 rel15 breakpoint. ‖ recorder 2026-11-01 after u-3: PRICE GATE ADDS vs u-7 (Δsharpe -0.70), so u-5 is not reading a null gate. PRE-KNOWN LEVEL from log-u-3.txt (same day-1 open fills, price only, dividends excluded): the pre-registered u-5 set EW +24.07% vs u-7 +25.95%. The swapped names are 600332 -0.7 / 600362 +15.4 / 600104 +53.1 in, and 601117 +29.7 / 601669 +11.7 / 601800 +37.7 out. Expect return near u-7. The verdict hinges on sharpe/path; declare this before the run. No 688 name is in the set, so the STAR market-order refusal cannot bite.",
+    "result": "VALID (decision rule met): U5GATE day 1 n_pre=26 n_in=6, POOL0 = exactly the pre-registered {600018 600104 600332 600362 601006 601319}; day-1 EWDEPLOY cash_after 2861.95 / total 999700.95 = 0.29% (<=5%); no 688 name admitted, so the STAR refusal did not bite. Result: Δsharpe +0.15 vs u-7, inside th"
+  },
+  {
+    "id": "u-4",
+    "kind": "understand",
+    "title": "REDESIGNED: yuan-ATR<0.15 gate on the full HS300 (PE 6-11 band removed), under the pool-EW harness; control = u-7. Does PE bind after the price gate?",
+    "hypothesis": "Even with the price gate in place, the PE 6-11 band still selects. Removing it admits cheap names outside the band (2024 big banks at PE ~5-6, very cheap cyclicals), and the basket does clearly worse.",
+    "why": "type: edge ablation, family page edge[0].test (低估值) at pool level. It also answers the binding question u-2 could not (ATR was computed only on PE survivors). DECISION RULE: NON-BINDING if day-1 POOL0 equals u-7's 6 codes (the curve should then be bit-identical; report max|Δcum|). That refutes 低估值 as a selection edge of this book, and no Δ is needed. Otherwise, vs u-7: CONFIRM 低估值 at Δsharpe <= -0.5; REFUTE at |Δsharpe| <= 0.2; otherwise partial. Log CNT stage=b_atr n and the PE of every day-1 buy, so the names the band had been excluding are visible. ⚠ The recorder must state that the control is u-7 (pool level), not the 5-name base the page names. Cost ~3-5 min.",
+    "design": "u-7 build + exactly one asserted edit: L232 financial_data_filter_qujian(security_list, valuation.pe_ratio, (6,11)) becomes a pass-through. Add a log line PE0 code=<c> pe=<pe_ratio at previous_date> for each day-1 buy (logging only).",
+    "from": [
+      "wiki edge[0].test",
+      "u-2 (PE-after-ATR binding not measurable)",
+      "u-7"
+    ],
+    "edgeRef": "低估值",
+    "rank": 4,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 5, conditional on u-2 (band binds) and on u-3 existing as its control. The non-binding branch is written in, so skipping the run still produces a verdict. ‖ recorder 2026-11-01 after u-2: binding condition NOT decidable from u-2 (ATR was computed only on PE survivors). Needs a full-HS300 ATR log on check dates or the u-4 run itself. Do not mark non-binding. ‖ gatekeeper 2026-11-01 (re-gate after u-1/u-2): REDESIGNED to \"yuan gate without the PE band\", as proposed. The run itself answers the binding question (the non-binding branch = bit-identical to u-7). Control moved from u-3 to u-7. The exit is off via the harness for comparability, not because the cheap names would churn.",
+    "result": "BINDING (the non-binding branch did not fire): day-1 gated pool 59 names vs u-7 6, EWDEPLOY cash_after 14535.60 / total 999703.60 = 1.45% (<=5%), no 688 name (the yuan gate still prices them out), no fill problems; gate admissions per check date median 39 (min 9, max 59, 25 dates) vs u-7 median 5. Δ"
+  },
+  {
+    "id": "liq-1",
+    "kind": "understand",
+    "title": "realizability: base + liquidity floor at 10x the book's own feasibility (4e7 CNY/day, 20-bar MEDIAN money, previous_date) + LIQMIN log of each held name's 2024 minimum",
+    "hypothesis": "HS300 low-PE names absorb this book at 10x its size with no change, so R=3.",
+    "why": "type: realizability. BLOCKS the exit gate (unset => blocked), and nothing else can set it. Floor: capital 1e6 / 5 names / order_volume_ratio 0.05 = 4e6 = 1x feasibility. 1x is near-certainly inert against HS300 names and could only ever earn R=2, so 10x = 4e7 is run directly, following the 银行股轮动 liq-cap precedent. DECISION RULE: R=3 if the curve is bit-identical to the base (max|Δcum| = 0) AND every held name's min 20-bar median money over 2024 >= 4e7; R=2 if the floor bites (any LIQFLOOR out<in) but sharpe stays >= 1.0; if it bites and sharpe < 1.0, re-run at 1x (4e6) before scoring. Zero LIQFLOOR lines means the floor never ran, which is not the same as inert. ORDER: after the understand entries and BEFORE any VAL (family §4: 消融 -> liq -> VAL). It does not depend on them, so it can also fill a gap in the budget. Cost ~3-5 min.",
+    "design": "Base = strategies/2026-10-29_向导式_ATR指标择时测试_0_0_1-8b9cb8e2.py + epoch-9 OVERRIDE. Copy filter_liquidity_floor + the LIQFLOOR log VERBATIM from study/大小盘轮动/build-liq.js with LIQ_FLOOR = 4e7. Apply it to buy_lists in trade() right after the ATR entry filter, order-preserving, as exactly one asserted edit. build-liq.js refuses g.stock_num; this book's slot variable is g.max_hold_stocknum. Add LIQMIN date=<d> <code>=<median20 money> for held names on each check date. Page with study/小市值/pagelog.js and report max|Δcum| against the base curve.",
+    "from": [
+      "wiki §4 [阻塞 exit gate] realizability 未测",
+      "precedent study/银行股轮动 liq-cap (R=3, bit-identical at 10x)",
+      "precedent study/大小盘轮动/build-liq.js"
+    ],
+    "edgeRef": null,
+    "rank": 5,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 7. Amended from a 1x floor (4e6), a near-certain no-op that could only earn R=2, to the 10x median-money design that set R=3 on 银行股轮动 in one run. Placed after understand and before any VAL, as requested. ‖ gatekeeper 2026-11-01 (re-gate after u-1/u-2): KEPT unchanged, rank 5: after the ladder and BEFORE any VAL. It is independent of the ladder, so it may fill a budget gap at any point. It runs on the BASE book (the candidate), not on a harness variant.",
+    "result": "INERT at 10x: bit-identical (max|Δcum|=0, 242 days), 25 LIQFLOOR out==in, thinnest held name 600018 min median money 8.81e7 (2.2x floor). R=3, scope base 8b9cb8e2."
+  },
+  {
+    "id": "dxlv-imp-screenexit",
+    "kind": "improve",
+    "title": "also sell a holding that leaves the entry screen (HS300 ∩ PE 6-11 ∩ non-ST) on a sell day; refill via the existing buy path",
+    "hypothesis": "A real exit (the ATR>0.35 one may be inert) rotates out of names whose valuation has normalised and lifts the objective.",
+    "why": "type: improve. Bar: the base, or pesort if adopted. DECISION RULE: IMPROVEMENT if Δobj > +0.03 AND Δsharpe >= 0; INERT if fewer than 3 screen-exits over 2024 (log SCREENEXIT date code reason pe). Most informative if u-1 confirms no exit ever fires. If u-1 REFUTES (the ATR exit is live), keep it but expect less. ⚠ It turns a buy-and-hold into a turnover book: report the trade count and cost drag beside the number. Cost ~3-5 min. ⚠ RE-GATED: base is the original book (pesort dropped). CONDITIONAL on the ladder: run only if u-3 or u-4 shows a selection effect (Δsharpe <= -0.5 against u-7). If neither screen selects, exiting a name that leaves the screen has no premise, and this entry is dropped with that reason. The refill pool is small (median 5, 0 on 2024-10-21), so a screen-exit may leave cash idle: log idle-cash days.",
+    "design": "Base = the pesort book if adopted, else strategies/2026-10-29_向导式_ATR指标择时测试_0_0_1-8b9cb8e2.py + epoch-9 OVERRIDE. One asserted edit in sell(): sell_lists = [s for s in positions if ATR_judge_dayu(s,0.35,14) or s not in g.check_out_lists]. g.check_out_lists is the fresh screen output; check_stocks and trade run on separate 10-day counters, so verify on the log that they align, else recompute the screen inline.",
+    "from": [
+      "u-1 (exit inertness)",
+      "wiki §1 读码要点 (2)"
+    ],
+    "edgeRef": "低估值",
+    "rank": 6,
+    "status": "dropped",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 10, last. Its base depends on pesort's verdict. Added a counter-alignment check: if check_stocks and trade fall out of step, a stale screen would read as an exit. ‖ gatekeeper 2026-11-01 (re-gate after u-1/u-2): KEPT, rank 6 (last), now conditional on the edge ladder. u-1 showed the ATR exit is live (it fired once), so the \"add a working exit\" motivation is weaker than drafted. ‖ recorder 2026-11-01 after u-4: its edgeRef 低估值 is now REFUTED (u-4: removing PE 6-11 under the gate, Δsharpe +0.14). Its run condition (u-3 or u-4 selects at Δsharpe <= -0.5) is met ONLY through u-3 (price/ATR gate, -0.70), never through PE. An exit on 「leaves PE 6-11」 therefore has no premise; if the gatekeeper keeps it, it should key on leaving the ATR gate alone and re-cite 低波动 (proposed), otherwise drop. ‖ recorder 2026-11-01 after u-9: its last possible premise is gone. u-9 attributes u-3's gate value (the only selection effect its condition can cite) to avoiding 2024 电气设备/房地产 losers, not to low volatility, so 低波动 is refuted too and the family edge is none-found. Its literal run condition (u-3 <= -0.5) is still met, so status is left for the gatekeeper; recommend DROP — an exit keyed on leaving a screen whose rules each fail their own ablation would only re-time 2024 sector exposure. ‖ gatekeeper 2026-11-01 (final gate): DROPPED, recorder recommendation accepted. Reason: no premise survives — its edgeRef 低估值 is refuted (u-4, Δsharpe +0.14), and the only selection effect its run condition can cite (u-3, -0.70) is attributed by u-9 to 2024 电气设备/房地产 avoidance, not to any rule (低价 u-5, 低波 u-9 both refuted; edge none-found). An exit on leaving those screens would only re-time 2024 sector exposure, and as a TRAIN-2024-tuned change it could never become the VAL candidate (that is the base 8b9cb8e2 as written). Not run; ~4 min saved. Do not re-propose on this bench without a new mechanism that passes a pre-registered test."
+  },
+  {
+    "id": "u-6",
+    "kind": "understand",
+    "title": "off-line: percentile of the base's 5 names among all C(n,5) EW buy-and-hold subsets of the day-1 eligible pool (from u-2 logs)",
+    "hypothesis": "Under code-order truncation the base's 5 names are a typical draw from the eligible pool. If so, its TRAIN number is pool beta plus selection noise, not a selection skill.",
+    "why": "type: selection-luck measurement, ZERO backtest minutes. Valid ONLY IF u-1 confirms a one-shot buy-and-hold; otherwise a static subset is not the book, and this is dropped with that reason. DECISION RULE: SUPPORTED (typical draw) if the base's total-return percentile is within 10-90; REFUTED if outside (the code-order pick was lucky or unlucky, so the top-5 number is not representative). Metric = buy-and-hold EW total return (day-1 open to final close), not sharpe, because the probe logs two prices per name. CONTROL: the same formula applied to the base's own 5 names must reproduce 29.38% within 1pp, or the price convention is wrong and the percentile is void. Report n, C(n,5) and the subset distribution's 10/50/90th percentiles.",
+    "design": "Script under study/向导式低波价值/ reading the paged u-2 log (OPEN0/CLOSEN). Enumerate exactly if C(n,5) <= ~2e6, else 1e6 uniform random subsets with a fixed seed. State that cash residual from board-lot rounding is ignored.",
+    "from": [
+      "u-1",
+      "u-2",
+      "generator A: single selection event => a top-5 swap is one draw of noise"
+    ],
+    "edgeRef": "低价股效应",
+    "rank": null,
+    "status": "dropped",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 3, conditional on u-1 CONFIRM and u-2 completing. Made into a reproduction-controlled off-line calculation on total return. It also prices dxlv-imp-pesort before any run (see that entry). ‖ recorder 2026-11-01 after u-1: the CONDITION FAILED — u-1 refuted one-shot buy-and-hold (601117 exited 2024-10-21 @8.18, 农业银行 refilled 2024-11-04). A static C(n,5) subset is no longer the book and the 1pp control cannot pass. Gatekeeper to decide: redesign to simulate the ATR>0.35 exit + next-buy-day refill from u-2 logs (needs ATR per name per check date, which u-2 logs only for buy_lists), or drop. ‖ gatekeeper 2026-11-01 (re-gate after u-1/u-2): DROPPED; a redesign is not worth it. With a day-1 pool of 6 there are only C(6,5) = 6 subsets, so the \"distribution\" is six points and the question collapses to \"which name was cut\", which u-2 already answers (601800). Gatekeeper arithmetic from u-2 OPEN0/CLOSEN, PRICE-ONLY (no dividends, no exit/refill, so it is NOT a finding and has no reproduction control): per name, 600018 +24.5, 601006 -5.3, 601117 +32.2, 601319 +61.4, 601669 +13.7, 601800 +41.4%. The 5-name subsets range from 21.3% (drop 601319) to 34.6% (drop 601006), and the base subset at 25.3% ranks 5th of 6. So code-order selection cost ~2.7pp against the 6-name EW, and selection noise spans ~13pp on a 29% book. u-7 measures the 6-name pool properly."
+  },
+  {
+    "id": "dxlv-imp-pesort",
+    "kind": "improve",
+    "title": "sort buy_lists by PE ascending before [:Num] (lowest-PE 5 of the eligible pool instead of code order)",
+    "hypothesis": "If 低估值 is the edge, choosing the cheapest 5 beats an arbitrary code-order 5.",
+    "why": "type: improve. Bar: base obj 0.1858 / sh 1.19 / maxDD 10.80. DECISION RULE: IMPROVEMENT if Δobj > +0.03 and Δsharpe >= -0.2; neutral if Δsharpe >= -0.2 otherwise; reject below that. ⚠ The proposed INERT rule (eligible>Num on fewer than 6 buy days) fires BY CONSTRUCTION if u-1 confirms a one-shot buy, so it is replaced. If u-1 CONFIRMS, this is ONE DRAW from u-6's subset distribution and is first PRICED OFF-LINE from u-2's logs (the PE-ascending top-5 subset's return and percentile). RUN only if that off-line Δ in total return implies Δobj > +0.03, and report the percentile beside the result: a single-draw 'improvement' inside the 10-90th band is noise. If u-1 REFUTES, the original INERT rule stands (needs >= 6 binding buy days). Ranked low on expected gain x novelty: low-PE large-cap selection already ships in 全A (pbm-e9-2 = 红利低频 + 破净价值多因子), and the 2024 bank/dividend style failed VAL 2025 in both close siblings (蓝筹分红持续性 sharpe 0.09, 银行股轮动 0.69). Cost ~3-5 min if run.",
+    "design": "Base = strategies/2026-10-29_向导式_ATR指标择时测试_0_0_1-8b9cb8e2.py + epoch-9 OVERRIDE. One asserted edit in trade() after the ATR entry filter: buy_lists = sorted(buy_lists, key=PE from get_fundamentals(valuation.pe_ratio, date=previous_date)). Sort here, not via check_stocks_sort, whose 'desc' behaviour is unverified.",
+    "from": [
+      "wiki §1 读码要点 (1) 按代码序取前 5",
+      "precedent 价值红利多腿 s2 (code-order top-3; taking the last 3 instead cost 75%)",
+      "u-1",
+      "u-6"
+    ],
+    "edgeRef": "低估值",
+    "rank": null,
+    "status": "dropped",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 8, conditional on u-1/u-6 as described. On-mechanism (cites 低估值; no edge is measured yet, so rule 5 does not bind). The INERT rule was rewritten because it fired by construction on a one-shot book. ‖ gatekeeper 2026-11-01 (re-gate after u-1/u-2): DROPPED. Priced off-line, it FAILS its own bar, and it is NOT inert. Day-1 PE (u-2): 601800 6.334, 601669 6.842, 601117 7.172, 600018 8.753, 601006 9.639, 601319 10.367. The PE-ascending top 5 cuts 601319 (+61.4%) and keeps 601800 (+41.4%), swapping the pool's best name for its second-best: Δtotal ≈ 0.2 x (41.4 - 61.4) = -4.0pp, price-only. The 11-04 refill is unchanged (601288 at PE 6.053 is the lowest of 601288/601988/601618), and so is the 601117 exit (same holding). Δobj ≈ -0.04 against an IMPROVEMENT bar of +0.03; maxDD would have to fall ~7pp to pass, which is implausible for a one-leg swap. Not run; ~4 min saved."
+  },
+  {
+    "id": "dxlv-imp-pesort-desc",
+    "kind": "improve",
+    "title": "sign-test twin: sort buy_lists by PE DESCENDING before [:Num] (highest-PE 5 within the 6-11 band)",
+    "hypothesis": "If the PE ranking carries information, the descending twin does worse than ascending by >= 0.3 sharpe.",
+    "why": "type: sign test for dxlv-imp-pesort, split out because one entry = one run. DECISION RULE: the PE ordering is INFORMATIVE if desc sharpe <= asc sharpe - 0.3; NOT INFORMATIVE if |desc - asc| <= 0.2, in which case any asc gain is noise and pesort is not adopted. RUN ONLY IF dxlv-imp-pesort was run and met IMPROVEMENT. If u-1 confirmed a one-shot book, price it off-line from u-6 first, as with pesort. Cost ~3-5 min.",
+    "design": "dxlv-imp-pesort with reverse=True in the same sorted() call; nothing else changes.",
+    "from": [
+      "dxlv-imp-pesort",
+      "u-6"
+    ],
+    "edgeRef": "低估值",
+    "rank": null,
+    "status": "dropped",
+    "note": "gatekeeper 2026-11-01: ACCEPTED as its own entry (it was bundled into pesort as a twin), rank 9, conditional on pesort IMPROVEMENT. ‖ gatekeeper 2026-11-01 (re-gate after u-1/u-2): DROPPED, because its condition (pesort IMPROVEMENT) cannot be met. For the record: the PE-descending top 5 cuts 601800, giving exactly the base's day-1 set. It differs only at the 11-04 refill (601618 at PE 9.658 vs 601288), a one-name single draw."
+  },
+  {
+    "id": "u-8",
+    "kind": "understand",
+    "title": "REBALANCED low-vol test: every check date hold EW the 6 lowest ATR/close among HS300 ∩ PE 6-11, vs the same rebalance on the whole PE pool EW (edge 低波动 test)",
+    "hypothesis": "The ATR gate earns because it selects LOW VOLATILITY, not because of 2024 sector avoidance on one date: across ~25 re-formed cross-sections, a lowest-ATR/close basket beats the full PE-pool basket on sharpe.",
+    "why": "type: edge test for the PROPOSED edge 低波动 (unregistered; proposed only). Spawned by the u-5 recorder: u-5 refuted the price reading, and u-3 (gate removed, -0.70) cannot separate low vol from sector avoidance because it is one day-1 cross-section with the gap carried by ~5 solar/lithium/property names. Every pool-EW run so far (u-7/u-3/u-5) is a day-1 buy-and-hold, so it can never give a second cross-section; a rebalancing harness is the only way this book yields a multi-date test inside TRAIN. PROPOSED DECISION RULE (gatekeeper to fix before dispatch): CONFIRM 低波动 at Δsharpe >= +0.5 vs the rebalanced PE-pool EW control AND the low-vol leg beats the control on >= 60% of the 10-day holding periods; REFUTE at |Δsharpe| <= 0.2; else partial. Report per-period sector mix of the low-vol leg so a result carried by avoiding one sector is visible. ⚠ Still one regime (2024) even with 25 dates; a CONFIRM here is 「低波 on 2024」, not a durable edge. ⚠ Rebalancing adds turnover and costs the buy-and-hold legs never paid; report both legs' trade counts. Rank behind u-4 and liq-1 (those block the exit gate). Cost ~2 runs x 3-5 min.",
+    "design": "Two runs on a new REBALANCE harness (not the pool-EW harness): on each existing 10-day check date, target = EW over the selected set, sell anything not in it, buy to target. Leg A: rank PE 6-11 survivors by rel15 (talib ATR 14 on 15 bars to previous_date / previous close) ascending, take 6 (rank, not threshold, so breadth is fixed every date). Leg B (control): EW the whole PE 6-11 pool. Same universe/industry/ST/paused/high-limit filters. 688 names need protected limit orders (u-3 refusal), else Leg B measures idle cash. Log REBAL date n_pool codes sectors turnover.",
+    "from": [
+      "u-5 (price refuted, low-vol gate matches yuan gate on day 1)",
+      "u-3 (gate vs no gate -0.70, n=1 date, sector-concentrated)",
+      "u-7"
+    ],
+    "edgeRef": "低波动",
+    "rank": 4,
+    "status": "done",
+    "note": "recorder 2026-11-01 after u-5: PROPOSED, not gated. The gatekeeper should judge whether a rebalancing harness is worth ~8 min given that a CONFIRM would still be a single-regime result, and may drop it. ‖ recorder 2026-11-01 after u-4: u-8 is now the ONLY live edge test (低价股效应 refuted by u-5, 低估值 by u-4). A refute here sends the family to kind: none-found for its specific rules. ⚠ u-4 showed the band binds hard without PE (59 day-1 names, median 39 per date), so u-8 Leg B on the PE pool (21-43) is the right control; do not widen it to the gated pool. ‖ recorder 2026-11-01: DONE. Both CONFIRM clauses met (Δsharpe +0.85, curve +0.67; win 15/25 = 60.0%, knife-edge), but the rule was never fixed by the gatekeeper before dispatch, so it is read as supportive-not-confirming; sector-confounded (电气设备 B 14% vs A 2%). Spawned u-9 with a FIXED rule.",
+    "result": "Both CONFIRM clauses of the u-8 rule are met: Δsharpe +0.85 (curve +0.67) >= +0.5 and win share 60.0% >= 60%. ⚠ PROCEDURAL: that rule was still marked 「PROPOSED (gatekeeper to fix before dispatch)」 when the runs were made and was never fixed, so it is weaker than a pre-registered rule, and the win-s"
+  },
+  {
+    "id": "u-9",
+    "kind": "understand",
+    "title": "SECTOR-CONTROLLED low-vol test: u-8 Leg A and Leg B re-run with 电气设备 + 房地产 excluded symmetrically from the PE 6-11 pool before selection (edge 低波动 test, sector confound)",
+    "hypothesis": "u-8's Δsharpe +0.85 is low volatility, not avoidance of the 2024 solar/lithium/property losers: with those sectors removed from BOTH legs' candidate pool, the lowest-6 rel15 basket still beats the whole remaining pool EW.",
+    "why": "type: edge test for PROPOSED edge 低波动 (unregistered, wiki-schema §2.3; can never reach measured without registration). Spawned by the u-8 recorder. u-8 met its CONFIRM clauses, but its rule was never fixed before dispatch. Its gap was earned Jan-Apr (A +14.25 vs B +1.52) while the control held 6-10 电气设备 names (B 14% of slots vs A 2%), and A lost Sep-Dec 3/8. Exclusion set chosen from u-3 (BEFORE u-8 ran), which named 002129/002459 (solar) + 002460 (lithium) = 电气设备 and 000002/600048 = 房地产 as the carriers of the gate gap. 公用事业 (B 7% vs A 2%) and 有色 (6% vs 3%) are deliberately NOT excluded: picking exclusions from u-8's own control returns would fit the test to its answer. Bank overweight in A (21% vs 10%, Q4 4-5/6) is a tilt TOWARD a sector and is not removed by excluding from B; it is reported, not controlled (see §4). ⚠ HONEST PRIOR, declared before the run: even a SUPPORT here is a 2024-only fact on a rank-6 rebalanced harness that is not the book; the family's VAL candidate stays the base 8b9cb8e2 as written (the 2018 rule), so u-8/u-9 do NOT change what VAL would run. ⚠ A REFUTE sends the edge block toward kind: none-found (§4 u-4 note). Cost ~2 runs x 3-5 min.",
+    "design": "Reuse build-u-8.js with ONE added edit per leg: after the PE 6-11 filter and before _rb_select, drop names whose get_industry(sw_l1) at the rebalance date is 电气设备I or 房地产I (log RBEXCL date n_before n_after codes). Everything else verbatim from u-8, including rel15 basis, TOPN 6 / None, 688 protection-limit orders, REBAL/RBORD logging. Leg A_ex = lowest-6 rel15 of the reduced pool; Leg B_ex = the whole reduced pool EW. Re-run BOTH legs (A held 电气设备 on 2% of slots, so A_ex != A).\nFIXED DECISION RULE (recorder 2026-11-01, written before the run; the gatekeeper may tighten but not loosen it): primary statistic Δsharpe = JQ sharpe(A_ex) - JQ sharpe(B_ex); the curve-sharpe estimator must agree in band, else the verdict is the weaker of the two.\n  SUPPORT (low vol survives the sector control): Δsharpe >= +0.5 AND A_ex beats B_ex on >= 15 of the 25 holding periods.\n  SECTOR AVOIDANCE EXPLAINS u-8 (refute 低波动 for this family): Δsharpe <= +0.2.\n  PARTIAL (low vol adds something beyond those two sectors, below the bar): +0.2 < Δsharpe < +0.5, or Δsharpe >= +0.5 with fewer than 15/25 period wins.\nVALIDITY (else the run is void, not a verdict): rebalance dates identical across legs and equal to u-8's 25; B_ex day-1 pool >= 15 names and n_held == n_tgt on every date; cash <= 5% on every rebalance date; A_ex day-1 holds 6. Report: per-period A_ex/B_ex, per-third split (Jan-Apr / May-Aug / Sep-Dec), sector slot-share both legs, turnover, and the Δ vs u-8 (how much of +0.85 the exclusion removed).",
+    "from": [
+      "u-8 (Δsharpe +0.85, rule not fixed, gap concentrated Jan-Apr while control was 电气设备-heavy)",
+      "u-3 (gap carriers named: 002129/002459/002460 电气设备, 000002/600048 房地产)"
+    ],
+    "edgeRef": "低波动",
+    "rank": 1,
+    "status": "done",
+    "note": "recorder 2026-11-01 after u-8: decision rule FIXED before dispatch (see design). Does not change the VAL candidate. ‖ recorder 2026-11-01: DONE. All validity clauses met (B min pool 15, cash <= 2.3%, 25/25 dates identical). Verdict in the refute band on both estimators (JQ by 0.01). 低波动 refuted in the same write; none-found entry added; understand side closed for this bench.",
+    "result": "SECTOR AVOIDANCE EXPLAINS u-8 (refute band Δsharpe <= +0.2): A 32.01 / 1.35 / 14.05 vs B 28.45 / 1.16 / 14.25, Δsharpe +0.19 JQ / +0.147 curve, corr 0.9058, A wins 14/25. Exclusion removed ~78% of u-8's gap, almost all via B (0.55 -> 1.16); A same 6 names on 22/25 dates. 低波动 refuted; family edge -> none-found entry added."
+  }
+]

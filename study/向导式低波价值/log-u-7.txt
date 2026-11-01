@@ -1,0 +1,96 @@
+state=2 pages=2 lines=94
+matched=94
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600018.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601006.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601117.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601319.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601669.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601800.XSHG
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600018.XSHG cash=166666.67 amount=34000 filled=34000 price=4.9000
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601006.XSHG cash=166666.67 amount=23100 filled=23100 price=7.1900
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601117.XSHG cash=166666.67 amount=26000 filled=26000 price=6.3900
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601319.XSHG cash=166666.67 amount=34400 filled=34400 price=4.8400
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601669.XSHG cash=166666.67 amount=34000 filled=34000 price=4.8900
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601800.XSHG cash=166666.67 amount=21900 filled=21900 price=7.5900
+2024-01-02 09:30:00 - INFO  - EWDEPLOY date=2024-01-02 n_buy=6 cash_before=1000000.00 cash_after=1894.66 total_value=999700.66 first=True
+2024-01-16 09:30:00 - INFO  - EWDEPLOY date=2024-01-16 n_buy=0 cash_before=1894.66 cash_after=1894.66 total_value=996935.66 first=False
+2024-01-30 09:30:00 - INFO  - EWDEPLOY date=2024-01-30 n_buy=0 cash_before=1894.66 cash_after=1894.66 total_value=1075357.66 first=False
+2024-02-21 09:30:00 - INFO  - EWDEPLOY date=2024-02-21 n_buy=0 cash_before=1894.66 cash_after=1894.66 total_value=1072243.66 first=False
+2024-03-06 09:30:00 - INFO  - EWFILL date=2024-03-06 code=600219.XSHG cash=1894.66 amount=500 filled=500 price=3.1700
+2024-03-06 09:30:00 - INFO  - EWDEPLOY date=2024-03-06 n_buy=1 cash_before=1894.66 cash_after=304.66 total_value=1082362.66 first=False
+2024-03-20 09:30:00 - INFO  - EWDEPLOY date=2024-03-20 n_buy=0 cash_before=304.66 cash_after=304.66 total_value=1054936.66 first=False
+2024-04-03 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=601618.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-04-03 09:30:00 - INFO  - EWFILL date=2024-04-03 code=601618.XSHG cash=304.66 amount=0 filled=0 price=0.0000
+2024-04-03 09:30:00 - INFO  - EWDEPLOY date=2024-04-03 n_buy=1 cash_before=304.66 cash_after=304.66 total_value=1084538.66 first=False
+2024-04-19 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=601618.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-04-19 09:30:00 - INFO  - EWFILL date=2024-04-19 code=601618.XSHG cash=304.66 amount=0 filled=0 price=0.0000
+2024-04-19 09:30:00 - INFO  - EWDEPLOY date=2024-04-19 n_buy=1 cash_before=304.66 cash_after=304.66 total_value=1120963.66 first=False
+2024-05-08 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=601618.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-05-08 09:30:00 - INFO  - EWFILL date=2024-05-08 code=601618.XSHG cash=176.29 amount=0 filled=0 price=0.0000
+2024-05-08 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=601868.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-05-08 09:30:00 - INFO  - EWFILL date=2024-05-08 code=601868.XSHG cash=176.29 amount=0 filled=0 price=0.0000
+2024-05-08 09:30:00 - INFO  - EWDEPLOY date=2024-05-08 n_buy=2 cash_before=352.58 cash_after=352.58 total_value=1098936.58 first=False
+2024-05-22 09:30:00 - INFO  - EWFILL date=2024-05-22 code=600000.XSHG cash=2515.49 amount=200 filled=200 price=8.4100
+2024-05-22 09:30:00 - INFO  - EWFILL date=2024-05-22 code=601618.XSHG cash=2515.49 amount=700 filled=700 price=3.4000
+2024-05-22 09:30:00 - INFO  - EWDEPLOY date=2024-05-22 n_buy=2 cash_before=5030.98 cash_after=958.98 total_value=1144488.98 first=False
+2024-06-05 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=600039.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-06-05 09:30:00 - INFO  - EWFILL date=2024-06-05 code=600039.XSHG cash=479.49 amount=0 filled=0 price=0.0000
+2024-06-05 09:30:00 - INFO  - EWFILL date=2024-06-05 code=601868.XSHG cash=479.49 amount=200 filled=200 price=2.1700
+2024-06-05 09:30:00 - INFO  - EWDEPLOY date=2024-06-05 n_buy=2 cash_before=958.98 cash_after=519.98 total_value=1156174.98 first=False
+2024-06-20 09:30:00 - INFO  - EWDEPLOY date=2024-06-20 n_buy=0 cash_before=519.98 cash_after=519.98 total_value=1135400.98 first=False
+2024-07-04 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=601328.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-07-04 09:30:00 - INFO  - EWFILL date=2024-07-04 code=601328.XSHG cash=259.99 amount=0 filled=0 price=0.0000
+2024-07-04 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=601988.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-07-04 09:30:00 - INFO  - EWFILL date=2024-07-04 code=601988.XSHG cash=259.99 amount=0 filled=0 price=0.0000
+2024-07-04 09:30:00 - INFO  - EWDEPLOY date=2024-07-04 n_buy=2 cash_before=519.98 cash_after=519.98 total_value=1156335.98 first=False
+2024-07-18 09:30:00 - INFO  - EWFILL date=2024-07-18 code=601288.XSHG cash=16457.60 amount=3400 filled=3400 price=4.7300
+2024-07-18 09:30:00 - INFO  - EWDEPLOY date=2024-07-18 n_buy=1 cash_before=16457.60 cash_after=370.60 total_value=1134696.60 first=False
+2024-08-01 09:30:00 - INFO  - EWDEPLOY date=2024-08-01 n_buy=0 cash_before=4123.72 cash_after=4123.72 total_value=1154525.72 first=False
+2024-08-15 09:30:00 - INFO  - EWFILL date=2024-08-15 code=600039.XSHG cash=2807.00 amount=400 filled=400 price=6.1200
+2024-08-15 09:30:00 - INFO  - EWFILL date=2024-08-15 code=601328.XSHG cash=2807.00 amount=300 filled=300 price=7.5300
+2024-08-15 09:30:00 - INFO  - EWFILL date=2024-08-15 code=601988.XSHG cash=2807.00 amount=500 filled=500 price=4.7200
+2024-08-15 09:30:00 - INFO  - EWDEPLOY date=2024-08-15 n_buy=3 cash_before=8421.00 cash_after=1339.00 total_value=1142097.00 first=False
+2024-08-29 09:30:00 - INFO  - EWFILL date=2024-08-29 code=600795.XSHG cash=669.50 amount=100 filled=100 price=5.5100
+2024-08-29 09:30:00 - INFO  - EWFILL date=2024-08-29 code=601398.XSHG cash=669.50 amount=100 filled=100 price=6.4800
+2024-08-29 09:30:00 - INFO  - EWDEPLOY date=2024-08-29 n_buy=2 cash_before=1339.00 cash_after=130.00 total_value=1134204.00 first=False
+2024-09-12 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=600019.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-09-12 09:30:00 - INFO  - EWFILL date=2024-09-12 code=600019.XSHG cash=130.00 amount=0 filled=0 price=0.0000
+2024-09-12 09:30:00 - INFO  - EWDEPLOY date=2024-09-12 n_buy=1 cash_before=130.00 cash_after=130.00 total_value=1035634.00 first=False
+2024-09-30 09:30:00 - INFO  - EWDEPLOY date=2024-09-30 n_buy=0 cash_before=130.00 cash_after=130.00 total_value=1223060.00 first=False
+2024-10-21 09:30:00 - INFO  - EWDEPLOY date=2024-10-21 n_buy=0 cash_before=157.84 cash_after=157.84 total_value=1276012.84 first=False
+2024-11-04 09:30:00 - INFO  - EWDEPLOY date=2024-11-04 n_buy=0 cash_before=2552.66 cash_after=2552.66 total_value=1275875.66 first=False
+2024-11-18 09:30:00 - INFO  - EWFILL date=2024-11-18 code=601658.XSHG cash=2552.66 amount=400 filled=400 price=5.2800
+2024-11-18 09:30:00 - INFO  - EWDEPLOY date=2024-11-18 n_buy=1 cash_before=2552.66 cash_after=435.66 total_value=1331528.66 first=False
+2024-12-02 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=600023.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-12-02 09:30:00 - INFO  - EWFILL date=2024-12-02 code=600023.XSHG cash=225.83 amount=0 filled=0 price=0.0000
+2024-12-02 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=600027.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-12-02 09:30:00 - INFO  - EWFILL date=2024-12-02 code=600027.XSHG cash=225.83 amount=0 filled=0 price=0.0000
+2024-12-02 09:30:00 - INFO  - EWDEPLOY date=2024-12-02 n_buy=2 cash_before=451.66 cash_after=451.66 total_value=1268353.66 first=False
+2024-12-16 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=600023.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-12-16 09:30:00 - INFO  - EWFILL date=2024-12-16 code=600023.XSHG cash=150.55 amount=0 filled=0 price=0.0000
+2024-12-16 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=600027.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-12-16 09:30:00 - INFO  - EWFILL date=2024-12-16 code=600027.XSHG cash=150.55 amount=0 filled=0 price=0.0000
+2024-12-16 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=601939.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-12-16 09:30:00 - INFO  - EWFILL date=2024-12-16 code=601939.XSHG cash=150.55 amount=0 filled=0 price=0.0000
+2024-12-16 09:30:00 - INFO  - EWDEPLOY date=2024-12-16 n_buy=3 cash_before=451.66 cash_after=451.66 total_value=1280618.66 first=False
+2024-12-30 09:30:00 - INFO  - EWFILL date=2024-12-30 code=600023.XSHG cash=1811.66 amount=300 filled=300 price=5.6800
+2024-12-30 09:30:00 - INFO  - EWDEPLOY date=2024-12-30 n_buy=1 cash_before=1811.66 cash_after=102.66 total_value=1303668.66 first=False
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600018.XSHG amount=34000 avg_cost=4.6780 price=6.1200 value=208080.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601006.XSHG amount=23100 avg_cost=6.6789 price=6.7800 value=156618.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601117.XSHG amount=26000 avg_cost=6.2120 price=8.2900 value=215540.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601319.XSHG amount=34400 avg_cost=4.6840 price=7.6200 value=262128.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601669.XSHG amount=34000 avg_cost=4.7535 price=5.4600 value=185640.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601800.XSHG amount=21900 avg_cost=7.2974 price=10.4500 value=228855.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600219.XSHG amount=500 avg_cost=2.9702 price=3.9100 value=1955.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600000.XSHG amount=200 avg_cost=8.0890 price=10.2900 value=2058.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601618.XSHG amount=700 avg_cost=3.3280 price=3.3000 value=2310.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601868.XSHG amount=200 avg_cost=2.1440 price=2.2900 value=458.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601288.XSHG amount=3400 avg_cost=4.7300 price=5.3400 value=18156.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600039.XSHG amount=400 avg_cost=6.0830 price=7.2800 value=2912.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601328.XSHG amount=300 avg_cost=7.5300 price=7.7700 value=2331.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601988.XSHG amount=500 avg_cost=4.7200 price=5.5100 value=2755.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600795.XSHG amount=100 avg_cost=5.4200 price=4.5800 value=458.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601398.XSHG amount=100 avg_cost=6.4800 price=6.9200 value=692.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601658.XSHG amount=400 avg_cost=5.2800 price=5.6800 value=2272.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600023.XSHG amount=300 avg_cost=5.6800 price=5.6600 value=1698.00
+2024-12-31 15:30:00 - INFO  - EWFINALTOT date=2024-12-31 total_value=1295018.66 cash=102.66

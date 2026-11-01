@@ -1,0 +1,1190 @@
+state=2 pages=13 lines=1188
+matched=1188
+2024-01-02 09:30:00 - INFO  - U4CNT date=2024-01-02 n_checkout=284 stage=b_atr n=59
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=000069.XSHE pe=-1.7739 close=3.1100 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=000100.XSHE pe=50.7203 close=4.3000 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=000157.XSHE pe=18.9366 close=6.5300 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=000166.XSHE pe=38.9081 close=4.4400 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=000425.XSHE pe=14.4314 close=5.4600 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=000617.XSHE pe=13.0935 close=5.4000 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=000725.XSHE pe=44.7434 close=3.9000 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=000877.XSHE pe=109.5779 close=6.6800 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=003816.XSHE pe=14.4414 close=3.1100 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600000.XSHG pe=5.0216 close=6.6200 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600010.XSHG pe=135.0092 close=1.4600 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600015.XSHG pe=3.4515 close=5.6200 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600016.XSHG pe=4.6694 close=3.7400 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600018.XSHG pe=8.7533 close=4.9000 inband=True
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600019.XSHG pe=11.8455 close=5.9300 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600023.XSHG pe=16.7915 close=4.6100 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600029.XSHG pe=-7.5772 close=5.7600 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600039.XSHG pe=5.6344 close=7.4900 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600050.XSHG pe=17.3147 close=4.3800 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600061.XSHG pe=13.4162 close=6.7400 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600115.XSHG pe=-7.2822 close=3.8800 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600219.XSHG pe=12.2556 close=2.9400 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600515.XSHG pe=44.8540 close=3.7000 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600606.XSHG pe=-9.3042 close=2.3000 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600795.XSHG pe=21.7700 close=4.1600 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600905.XSHG pe=19.4080 close=4.3700 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600918.XSHG pe=30.7369 close=6.8600 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=600919.XSHG pe=4.0185 close=6.6900 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601006.XSHG pe=9.6395 close=7.2100 inband=True
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601009.XSHG pe=4.0775 close=7.3800 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601117.XSHG pe=7.1717 close=6.3600 inband=True
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601169.XSHG pe=3.7366 close=4.5300 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601186.XSHG pe=3.7862 close=7.6100 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601229.XSHG pe=3.7766 close=5.9700 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601236.XSHG pe=157.1620 close=7.5900 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601288.XSHG pe=4.7366 close=3.6400 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601319.XSHG pe=10.3668 close=4.8400 inband=True
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601328.XSHG pe=4.5627 close=5.7400 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601377.XSHG pe=20.7953 close=5.8700 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601390.XSHG pe=4.3551 close=5.6800 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601398.XSHG pe=4.6985 close=4.7800 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601600.XSHG pe=23.3468 close=5.6400 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601618.XSHG pe=5.3994 close=3.0600 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601658.XSHG pe=4.9563 close=4.3500 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601668.XSHG pe=3.9484 close=4.8100 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601669.XSHG pe=6.8416 close=4.8900 inband=True
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601728.XSHG pe=16.4192 close=5.4100 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601766.XSHG pe=12.8171 close=5.2600 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601800.XSHG pe=6.3342 close=7.6000 inband=True
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601816.XSHG pe=29.5144 close=4.9200 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601818.XSHG pe=3.7326 close=2.9000 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601868.XSHG pe=13.0893 close=2.1000 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601916.XSHG pe=4.6657 close=2.5200 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601939.XSHG pe=4.9087 close=6.5100 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601985.XSHG pe=13.7453 close=7.5000 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601988.XSHG pe=5.1044 close=3.9900 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601989.XSHG pe=-83.9791 close=4.1300 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=601998.XSHG pe=3.8992 close=5.2900 inband=False
+2024-01-02 09:30:00 - INFO  - U4PE date=2024-01-02 code=603993.XSHG pe=35.0535 close=5.2000 inband=False
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=000069.XSHE
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=000100.XSHE
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=000157.XSHE
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=000166.XSHE
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=000425.XSHE
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=000617.XSHE
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=000725.XSHE
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=000877.XSHE
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=003816.XSHE
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600000.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600010.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600015.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600016.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600018.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600019.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600023.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600029.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600039.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600050.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600061.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600115.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600219.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600515.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600606.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600795.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600905.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600918.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=600919.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601006.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601009.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601117.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601169.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601186.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601229.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601236.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601288.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601319.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601328.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601377.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601390.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601398.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601600.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601618.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601658.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601668.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601669.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601728.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601766.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601800.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601816.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601818.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601868.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601916.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601939.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601985.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601988.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601989.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=601998.XSHG
+2024-01-02 09:30:00 - INFO  - POOL0 date=2024-01-02 code=603993.XSHG
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=000069.XSHE cash=16949.15 amount=5400 filled=5400 price=3.1200
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=000100.XSHE cash=16949.15 amount=3900 filled=3900 price=4.2800
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=000157.XSHE cash=16949.15 amount=2500 filled=2500 price=6.5500
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=000166.XSHE cash=16949.15 amount=3800 filled=3800 price=4.4400
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=000425.XSHE cash=16949.15 amount=3100 filled=3100 price=5.4600
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=000617.XSHE cash=16949.15 amount=3100 filled=3100 price=5.4100
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=000725.XSHE cash=16949.15 amount=4300 filled=4300 price=3.8900
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=000877.XSHE cash=16949.15 amount=2500 filled=2500 price=6.6700
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=003816.XSHE cash=16949.15 amount=5400 filled=5400 price=3.1100
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600000.XSHG cash=16949.15 amount=2500 filled=2500 price=6.6300
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600010.XSHG cash=16949.15 amount=11500 filled=11500 price=1.4700
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600015.XSHG cash=16949.15 amount=3000 filled=3000 price=5.6300
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600016.XSHG cash=16949.15 amount=4500 filled=4500 price=3.7400
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600018.XSHG cash=16949.15 amount=3400 filled=3400 price=4.9000
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600019.XSHG cash=16949.15 amount=2800 filled=2800 price=5.9300
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600023.XSHG cash=16949.15 amount=3600 filled=3600 price=4.6200
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600029.XSHG cash=16949.15 amount=2900 filled=2900 price=5.7500
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600039.XSHG cash=16949.15 amount=2200 filled=2200 price=7.4700
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600050.XSHG cash=16949.15 amount=3800 filled=3800 price=4.3800
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600061.XSHG cash=16949.15 amount=2500 filled=2500 price=6.7300
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600115.XSHG cash=16949.15 amount=4300 filled=4300 price=3.9000
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600219.XSHG cash=16949.15 amount=5700 filled=5700 price=2.9500
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600515.XSHG cash=16949.15 amount=4500 filled=4500 price=3.7000
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600606.XSHG cash=16949.15 amount=7300 filled=7300 price=2.3000
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600795.XSHG cash=16949.15 amount=4000 filled=4000 price=4.1400
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600905.XSHG cash=16949.15 amount=3800 filled=3800 price=4.3700
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600918.XSHG cash=16949.15 amount=2400 filled=2400 price=6.8600
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=600919.XSHG cash=16949.15 amount=2500 filled=2500 price=6.7100
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601006.XSHG cash=16949.15 amount=2300 filled=2300 price=7.1900
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601009.XSHG cash=16949.15 amount=2200 filled=2200 price=7.4000
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601117.XSHG cash=16949.15 amount=2600 filled=2600 price=6.3900
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601169.XSHG cash=16949.15 amount=3700 filled=3700 price=4.5300
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601186.XSHG cash=16949.15 amount=2200 filled=2200 price=7.6100
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601229.XSHG cash=16949.15 amount=2800 filled=2800 price=5.9800
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601236.XSHG cash=16949.15 amount=2200 filled=2200 price=7.5800
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601288.XSHG cash=16949.15 amount=4600 filled=4600 price=3.6400
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601319.XSHG cash=16949.15 amount=3500 filled=3500 price=4.8400
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601328.XSHG cash=16949.15 amount=2900 filled=2900 price=5.7600
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601377.XSHG cash=16949.15 amount=2800 filled=2800 price=5.8700
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601390.XSHG cash=16949.15 amount=2900 filled=2900 price=5.7000
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601398.XSHG cash=16949.15 amount=3500 filled=3500 price=4.7800
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601600.XSHG cash=16949.15 amount=2900 filled=2900 price=5.6700
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601618.XSHG cash=16949.15 amount=5500 filled=5500 price=3.0600
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601658.XSHG cash=16949.15 amount=3800 filled=3800 price=4.3500
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601668.XSHG cash=16949.15 amount=3500 filled=3500 price=4.8200
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601669.XSHG cash=16949.15 amount=3400 filled=3400 price=4.8900
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601728.XSHG cash=16949.15 amount=3100 filled=3100 price=5.4000
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601766.XSHG cash=16949.15 amount=3200 filled=3200 price=5.2700
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601800.XSHG cash=16949.15 amount=2200 filled=2200 price=7.5900
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601816.XSHG cash=16949.15 amount=3400 filled=3400 price=4.9200
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601818.XSHG cash=16949.15 amount=5800 filled=5800 price=2.9100
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601868.XSHG cash=16949.15 amount=8000 filled=8000 price=2.1000
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601916.XSHG cash=16949.15 amount=6600 filled=6600 price=2.5300
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601939.XSHG cash=16949.15 amount=2600 filled=2600 price=6.5100
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601985.XSHG cash=16949.15 amount=2200 filled=2200 price=7.5100
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601988.XSHG cash=16949.15 amount=4200 filled=4200 price=3.9900
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601989.XSHG cash=16949.15 amount=4100 filled=4100 price=4.1300
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=601998.XSHG cash=16949.15 amount=3100 filled=3100 price=5.3000
+2024-01-02 09:30:00 - INFO  - EWFILL date=2024-01-02 code=603993.XSHG cash=16949.15 amount=3200 filled=3200 price=5.2100
+2024-01-02 09:30:00 - INFO  - EWDEPLOY date=2024-01-02 n_buy=59 cash_before=1000000.00 cash_after=14535.60 total_value=999703.60 first=True
+2024-01-16 09:30:00 - INFO  - U4CNT date=2024-01-16 n_checkout=284 stage=b_atr n=57
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=000069.XSHE pe=-1.7111 close=3.0000 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=000100.XSHE pe=50.4844 close=4.2800 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=000157.XSHE pe=19.3136 close=6.6600 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=000166.XSHE pe=36.8050 close=4.2000 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=000425.XSHE pe=14.6693 close=5.5500 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=000617.XSHE pe=12.7783 close=5.2700 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=000725.XSHE pe=42.6784 close=3.7200 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=000877.XSHE pe=106.1331 close=6.4700 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=003816.XSHE pe=15.8345 close=3.4100 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600000.XSHG pe=4.9382 close=6.5100 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600010.XSHG pe=132.2351 close=1.4300 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600015.XSHG pe=3.6112 close=5.8800 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600016.XSHG pe=4.6694 close=3.7400 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600018.XSHG pe=9.5393 close=5.3400 inband=True
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600019.XSHG pe=11.7656 close=5.8900 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600023.XSHG pe=18.7220 close=5.1400 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600029.XSHG pe=-7.7614 close=5.9000 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600039.XSHG pe=5.6870 close=7.5600 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600050.XSHG pe=16.0102 close=4.0500 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600061.XSHG pe=12.8788 close=6.4700 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600115.XSHG pe=-7.1508 close=3.8100 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600219.XSHG pe=12.2972 close=2.9500 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600515.XSHG pe=42.5507 close=3.5100 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600606.XSHG pe=-9.2233 close=2.2800 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600795.XSHG pe=22.1363 close=4.2300 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600905.XSHG pe=19.2747 close=4.3400 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600918.XSHG pe=29.5272 close=6.5900 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=600919.XSHG pe=4.1927 close=6.9800 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601006.XSHG pe=10.1081 close=7.3800 inband=True
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601009.XSHG pe=4.2488 close=7.6900 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601117.XSHG pe=6.9800 close=6.1900 inband=True
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601169.XSHG pe=3.8934 close=4.7200 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601186.XSHG pe=3.7415 close=7.5200 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601229.XSHG pe=3.9094 close=6.1800 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601236.XSHG pe=148.2582 close=7.1600 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601288.XSHG pe=4.8277 close=3.7100 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601319.XSHG pe=10.0884 close=4.7100 inband=True
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601328.XSHG pe=4.6342 close=5.8300 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601377.XSHG pe=19.1303 close=5.4000 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601390.XSHG pe=4.4318 close=5.7800 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601398.XSHG pe=4.7771 close=4.8600 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601600.XSHG pe=22.8086 close=5.5100 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601618.XSHG pe=5.3817 close=3.0500 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601658.XSHG pe=4.9905 close=4.3800 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601668.XSHG pe=3.9320 close=4.7900 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601669.XSHG pe=6.6597 close=4.7600 inband=True
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601728.XSHG pe=15.8729 close=5.2300 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601766.XSHG pe=13.0364 close=5.3500 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601816.XSHG pe=28.7345 close=4.7900 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601818.XSHG pe=3.8356 close=2.9800 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601868.XSHG pe=12.9023 close=2.0700 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601916.XSHG pe=4.8138 close=2.6000 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601939.XSHG pe=4.9615 close=6.5800 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601988.XSHG pe=5.1811 close=4.0500 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601989.XSHG pe=-83.9791 close=4.1300 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=601998.XSHG pe=4.1645 close=5.6500 inband=False
+2024-01-16 09:30:00 - INFO  - U4PE date=2024-01-16 code=603993.XSHG pe=35.9973 close=5.3400 inband=False
+2024-01-16 09:30:00 - INFO  - EWDEPLOY date=2024-01-16 n_buy=0 cash_before=14535.60 cash_after=14535.60 total_value=999257.60 first=False
+2024-01-30 09:30:00 - INFO  - U4CNT date=2024-01-30 n_checkout=284 stage=b_atr n=41
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=000069.XSHE pe=-1.7739 close=3.1100 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=000100.XSHE pe=50.1305 close=4.2500 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=000166.XSHE pe=39.1710 close=4.4700 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=000725.XSHE pe=42.9078 close=3.7400 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=003816.XSHE pe=16.8096 close=3.6200 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=600000.XSHG pe=5.2340 close=6.9000 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=600010.XSHG pe=135.0092 close=1.4600 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=600015.XSHG pe=3.7708 close=6.1400 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=600016.XSHG pe=4.9690 close=3.9800 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=600018.XSHG pe=9.8291 close=5.5300 inband=True
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=600019.XSHG pe=12.3848 close=6.2000 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=600029.XSHG pe=-7.9324 close=6.0300 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=600050.XSHG pe=18.0658 close=4.5700 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=600115.XSHG pe=-7.3385 close=3.9100 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=600219.XSHG pe=12.2972 close=2.9500 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=600515.XSHG pe=44.1267 close=3.6400 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=600606.XSHG pe=-9.4660 close=2.3400 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=600795.XSHG pe=22.9736 close=4.3900 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=600905.XSHG pe=17.3000 close=4.4400 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=600919.XSHG pe=4.3909 close=7.3100 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601006.XSHG pe=10.2313 close=7.4700 inband=True
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601009.XSHG pe=4.6024 close=8.3300 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601169.XSHG pe=4.1903 close=5.0800 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601229.XSHG pe=4.0613 close=6.4200 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601288.XSHG pe=5.0879 close=3.9100 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601319.XSHG pe=11.0308 close=5.1500 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601328.XSHG pe=4.8011 close=6.0400 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601377.XSHG pe=19.8388 close=5.6000 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601398.XSHG pe=5.0720 close=5.1600 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601618.XSHG pe=5.8581 close=3.3200 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601658.XSHG pe=5.4121 close=4.7500 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601668.XSHG pe=4.2685 close=5.2000 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601669.XSHG pe=7.2053 close=5.1500 inband=True
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601766.XSHG pe=14.0354 close=5.7600 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601816.XSHG pe=30.1143 close=5.0200 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601818.XSHG pe=4.0801 close=3.1700 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601868.XSHG pe=13.5256 close=2.1700 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601916.XSHG pe=5.0545 close=2.7300 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601939.XSHG pe=5.2028 close=6.9000 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601988.XSHG pe=5.5010 close=4.3000 inband=False
+2024-01-30 09:30:00 - INFO  - U4PE date=2024-01-30 code=601989.XSHG pe=-88.2492 close=4.3400 inband=False
+2024-01-30 09:30:00 - INFO  - EWDEPLOY date=2024-01-30 n_buy=0 cash_before=14535.60 cash_after=14535.60 total_value=1052844.60 first=False
+2024-02-21 09:30:00 - INFO  - U4CNT date=2024-02-21 n_checkout=284 stage=b_atr n=35
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=000069.XSHE pe=-1.7111 close=3.0000 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=000100.XSHE pe=51.4280 close=4.3600 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=000166.XSHE pe=39.0834 close=4.4600 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=000725.XSHE pe=45.4318 close=3.9600 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=003816.XSHE pe=18.5277 close=3.9900 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=600000.XSHG pe=5.3857 close=7.1000 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=600010.XSHG pe=139.6328 close=1.5100 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=600015.XSHG pe=3.8077 close=6.2000 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=600016.XSHG pe=5.0939 close=4.0800 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=600019.XSHG pe=12.0851 close=6.5600 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=600050.XSHG pe=18.7379 close=4.7400 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=600115.XSHG pe=-7.0945 close=3.7800 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=600219.XSHG pe=12.5057 close=3.0000 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=600515.XSHG pe=45.7026 close=3.7700 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=600606.XSHG pe=-8.4951 close=2.1000 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=600795.XSHG pe=24.3866 close=4.6600 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=600905.XSHG pe=18.1183 close=4.6500 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=600919.XSHG pe=4.5711 close=7.6100 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601006.XSHG pe=11.1052 close=7.7800 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601169.XSHG pe=4.2563 close=5.1600 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601229.XSHG pe=4.1119 close=6.5000 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601288.XSHG pe=5.4002 close=4.1500 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601319.XSHG pe=11.1165 close=5.1900 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601328.XSHG pe=5.0476 close=6.3500 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601398.XSHG pe=5.2588 close=5.3500 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601618.XSHG pe=5.7346 close=3.2500 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601658.XSHG pe=5.5146 close=4.8400 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601668.XSHG pe=4.2603 close=5.1900 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601669.XSHG pe=7.0235 close=5.0200 inband=True
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601816.XSHG pe=30.9541 close=5.1600 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601818.XSHG pe=4.1702 close=3.2400 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601868.XSHG pe=13.4010 close=2.1500 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601916.XSHG pe=5.0915 close=2.7500 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601988.XSHG pe=5.7952 close=4.5300 inband=False
+2024-02-21 09:30:00 - INFO  - U4PE date=2024-02-21 code=601989.XSHG pe=-89.2659 close=4.3900 inband=False
+2024-02-21 09:30:00 - INFO  - EWDEPLOY date=2024-02-21 n_buy=0 cash_before=14535.60 cash_after=14535.60 total_value=1076288.60 first=False
+2024-03-06 09:30:00 - INFO  - U4CNT date=2024-03-06 n_checkout=284 stage=b_atr n=36
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=000069.XSHE pe=-1.6598 close=2.9100 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=000166.XSHE pe=39.5215 close=4.5100 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=000725.XSHE pe=46.6938 close=4.0700 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=003816.XSHE pe=18.9456 close=4.0800 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=600000.XSHG pe=5.4312 close=7.1600 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=600010.XSHG pe=140.5576 close=1.5200 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=600015.XSHG pe=3.8636 close=6.4000 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=600016.XSHG pe=5.0814 close=4.0700 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=600018.XSHG pe=9.6158 close=5.4100 inband=True
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=600019.XSHG pe=12.3983 close=6.7300 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=600115.XSHG pe=-6.9068 close=3.6800 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=600219.XSHG pe=10.6503 close=3.1600 inband=True
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=600515.XSHG pe=44.2479 close=3.6500 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=600606.XSHG pe=-8.4951 close=2.1000 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=600795.XSHG pe=25.6949 close=4.9100 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=600905.XSHG pe=18.2741 close=4.6900 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=600919.XSHG pe=4.6552 close=7.7500 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601006.XSHG pe=10.7626 close=7.5400 inband=True
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601169.XSHG pe=4.3553 close=5.2800 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601229.XSHG pe=4.1878 close=6.6200 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601288.XSHG pe=5.6474 close=4.3400 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601319.XSHG pe=11.3521 close=5.3000 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601328.XSHG pe=5.0873 close=6.4000 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601377.XSHG pe=20.5119 close=5.7900 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601398.XSHG pe=5.3669 close=5.4600 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601618.XSHG pe=5.8228 close=3.3000 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601658.XSHG pe=5.5260 close=4.8500 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601668.XSHG pe=4.3521 close=5.3400 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601669.XSHG pe=7.0794 close=5.0600 inband=True
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601816.XSHG pe=30.4142 close=5.0700 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601818.XSHG pe=4.2088 close=3.2700 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601868.XSHG pe=13.4633 close=2.1600 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601916.XSHG pe=5.1656 close=2.7900 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601939.XSHG pe=5.3838 close=7.1400 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601988.XSHG pe=5.8848 close=4.6000 inband=False
+2024-03-06 09:30:00 - INFO  - U4PE date=2024-03-06 code=601989.XSHG pe=-98.8228 close=4.8600 inband=False
+2024-03-06 09:30:00 - INFO  - EWDEPLOY date=2024-03-06 n_buy=0 cash_before=14535.60 cash_after=14535.60 total_value=1098134.60 first=False
+2024-03-20 09:30:00 - INFO  - U4CNT date=2024-03-20 n_checkout=284 stage=b_atr n=39
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=000069.XSHE pe=-1.6154 close=2.8900 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=000100.XSHE pe=54.7307 close=4.6400 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=000166.XSHE pe=40.0473 close=4.5700 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=000725.XSHE pe=46.3496 close=4.0400 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=003816.XSHE pe=17.7383 close=3.8200 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=600000.XSHG pe=5.3175 close=7.0100 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=600010.XSHG pe=157.2025 close=1.7000 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=600015.XSHG pe=3.7730 close=6.2500 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=600016.XSHG pe=4.9316 close=3.9500 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=600018.XSHG pe=9.3492 close=5.2600 inband=True
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=600019.XSHG pe=12.1404 close=6.5900 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=600029.XSHG pe=-7.5509 close=5.7400 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=600050.XSHG pe=17.9945 close=4.6400 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=600115.XSHG pe=-7.0382 close=3.7500 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=600219.XSHG pe=11.2570 close=3.3400 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=600515.XSHG pe=44.7328 close=3.6900 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=600606.XSHG pe=-8.4951 close=2.1000 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=600905.XSHG pe=18.3910 close=4.7200 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=600919.XSHG pe=4.5711 close=7.6100 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601006.XSHG pe=10.3772 close=7.2700 inband=True
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601169.XSHG pe=4.4708 close=5.4200 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601229.XSHG pe=4.1561 close=6.5700 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601288.XSHG pe=5.3221 close=4.0900 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601319.XSHG pe=10.9023 close=5.0900 inband=True
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601328.XSHG pe=4.8727 close=6.1300 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601377.XSHG pe=20.3702 close=5.7500 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601398.XSHG pe=5.0622 close=5.1500 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601618.XSHG pe=5.9993 close=3.4000 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601658.XSHG pe=5.3665 close=4.7100 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601668.XSHG pe=4.2299 close=5.1900 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601669.XSHG pe=7.1494 close=5.1100 inband=True
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601728.XSHG pe=17.1617 close=5.7100 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601816.XSHG pe=29.9943 close=5.0000 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601818.XSHG pe=4.1573 close=3.2300 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601868.XSHG pe=13.4010 close=2.1500 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601916.XSHG pe=5.3322 close=2.8800 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601939.XSHG pe=5.0671 close=6.7200 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601988.XSHG pe=5.4882 close=4.2900 inband=False
+2024-03-20 09:30:00 - INFO  - U4PE date=2024-03-20 code=601989.XSHG pe=-93.9427 close=4.6200 inband=False
+2024-03-20 09:30:00 - INFO  - EWDEPLOY date=2024-03-20 n_buy=0 cash_before=14535.60 cash_after=14535.60 total_value=1088445.60 first=False
+2024-04-03 09:30:00 - INFO  - U4CNT date=2024-04-03 n_checkout=284 stage=b_atr n=48
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=000069.XSHE pe=-3.3426 close=2.7000 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=000166.XSHE pe=24.5162 close=4.5100 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=000617.XSHE pe=14.7043 close=5.7300 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=000725.XSHE pe=63.5564 close=4.3000 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=002252.XSHE pe=22.6036 close=7.0200 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=002736.XSHE pe=13.3806 close=8.6300 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=003816.XSHE pe=18.8818 close=4.0100 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600000.XSHG pe=5.8141 close=7.2700 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600010.XSHG pe=150.7295 close=1.6300 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600015.XSHG pe=3.9602 close=6.5600 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600016.XSHG pe=4.9621 close=4.0600 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600018.XSHG pe=9.6465 close=5.4700 inband=True
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600019.XSHG pe=12.3246 close=6.6900 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600029.XSHG pe=-24.4970 close=5.6900 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600039.XSHG pe=5.8523 close=7.7800 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600050.XSHG pe=18.3659 close=4.7200 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600061.XSHG pe=17.5570 close=6.4400 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600115.XSHG pe=-10.0158 close=3.6700 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600219.XSHG pe=11.7963 close=3.5000 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600515.XSHG pe=43.0356 close=3.5500 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600606.XSHG pe=-7.8074 close=1.9300 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600795.XSHG pe=26.1136 close=4.9900 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600837.XSHG pe=113.2293 close=8.7400 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600905.XSHG pe=18.5848 close=4.7700 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600918.XSHG pe=25.6707 close=6.6300 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=600919.XSHG pe=4.8054 close=8.0000 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601006.XSHG pe=11.2909 close=7.3900 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601009.XSHG pe=5.0168 close=9.0800 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601169.XSHG pe=4.7017 close=5.7000 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601229.XSHG pe=4.2913 close=6.8100 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601288.XSHG pe=5.5482 close=4.2700 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601319.XSHG pe=10.2535 close=5.2800 inband=True
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601328.XSHG pe=5.2056 close=6.5000 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601377.XSHG pe=19.6617 close=5.5500 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601398.XSHG pe=5.2287 close=5.3400 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601618.XSHG pe=7.8397 close=3.2800 inband=True
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601658.XSHG pe=5.4598 close=4.7500 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601668.XSHG pe=4.2543 close=5.2200 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601669.XSHG pe=7.1354 close=5.1000 inband=True
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601728.XSHG pe=18.0636 close=6.0100 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601816.XSHG pe=30.5342 close=5.0900 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601818.XSHG pe=4.4613 close=3.0800 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601868.XSHG pe=11.3806 close=2.1800 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601916.XSHG pe=5.4937 close=3.0100 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601939.XSHG pe=5.2309 close=6.9600 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601988.XSHG pe=5.7125 close=4.5000 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601989.XSHG pe=-94.5527 close=4.6500 inband=False
+2024-04-03 09:30:00 - INFO  - U4PE date=2024-04-03 code=601998.XSHG pe=4.9861 close=6.2700 inband=False
+2024-04-03 09:30:00 - INFO  - EWFILL date=2024-04-03 code=002252.XSHE cash=4845.20 amount=600 filled=600 price=7.0200
+2024-04-03 09:30:00 - INFO  - EWFILL date=2024-04-03 code=002736.XSHE cash=4845.20 amount=500 filled=500 price=8.6300
+2024-04-03 09:30:00 - INFO  - EWFILL date=2024-04-03 code=600837.XSHG cash=4845.20 amount=500 filled=500 price=8.7000
+2024-04-03 09:30:00 - INFO  - EWDEPLOY date=2024-04-03 n_buy=3 cash_before=14535.60 cash_after=1643.60 total_value=1114156.60 first=False
+2024-04-19 09:30:00 - INFO  - U4CNT date=2024-04-19 n_checkout=284 stage=b_atr n=39
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=000069.XSHE pe=-3.0331 close=2.4500 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=000166.XSHE pe=24.6793 close=4.5400 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=000725.XSHE pe=63.5564 close=4.3000 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=003816.XSHE pe=19.8236 close=4.2100 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=600000.XSHG pe=5.8621 close=7.3300 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=600010.XSHG pe=151.6542 close=1.6400 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=600015.XSHG pe=4.1232 close=6.8300 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=600016.XSHG pe=4.9621 close=4.0600 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=600018.XSHG pe=10.1756 close=5.7700 inband=True
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=600029.XSHG pe=-24.0665 close=5.5900 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=600050.XSHG pe=18.8328 close=4.8400 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=600061.XSHG pe=17.1481 close=6.2900 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=600115.XSHG pe=-9.6883 close=3.5500 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=600219.XSHG pe=12.2007 close=3.6200 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=600515.XSHG pe=40.9748 close=3.3800 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=600606.XSHG pe=-6.9983 close=1.7300 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=600905.XSHG pe=18.8575 close=4.8400 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=600919.XSHG pe=4.9496 close=8.2400 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601006.XSHG pe=11.5506 close=7.5600 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601169.XSHG pe=4.7857 close=5.8000 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601229.XSHG pe=4.4236 close=7.0200 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601236.XSHG pe=106.4878 close=7.0500 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601288.XSHG pe=5.8340 close=4.4900 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601319.XSHG pe=10.5059 close=5.4100 inband=True
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601328.XSHG pe=5.4859 close=6.8500 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601377.XSHG pe=19.4491 close=5.4900 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601398.XSHG pe=5.4049 close=5.5200 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601618.XSHG pe=8.2221 close=3.4400 inband=True
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601658.XSHG pe=5.6437 close=4.9100 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601668.XSHG pe=4.3847 close=5.3800 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601669.XSHG pe=7.3173 close=5.2300 inband=True
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601728.XSHG pe=18.6647 close=6.2100 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601816.XSHG pe=31.0141 close=5.1700 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601818.XSHG pe=4.6206 close=3.1900 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601868.XSHG pe=11.6938 close=2.2400 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601916.XSHG pe=5.4937 close=3.0100 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601939.XSHG pe=5.4864 close=7.3000 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601988.XSHG pe=5.9537 close=4.6900 inband=False
+2024-04-19 09:30:00 - INFO  - U4PE date=2024-04-19 code=601989.XSHG pe=-99.4329 close=4.8900 inband=False
+2024-04-19 09:30:00 - INFO  - EWDEPLOY date=2024-04-19 n_buy=0 cash_before=1643.60 cash_after=1643.60 total_value=1140928.60 first=False
+2024-05-08 09:30:00 - INFO  - U4CNT date=2024-05-08 n_checkout=284 stage=b_atr n=37
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=000069.XSHE pe=-3.3052 close=2.6900 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=000166.XSHE pe=29.3592 close=4.6700 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=000725.XSHE pe=50.7930 close=4.4300 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=003816.XSHE pe=18.9559 close=4.0700 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=600000.XSHG pe=5.9943 close=7.8200 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=600010.XSHG pe=256.8877 close=1.6300 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=600015.XSHG pe=3.9970 close=6.6300 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=600016.XSHG pe=4.8755 close=3.9000 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=600018.XSHG pe=9.8727 close=5.6600 inband=True
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=600029.XSHG pe=-65.7247 close=5.6400 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=600050.XSHG pe=17.7782 close=4.6700 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=600115.XSHG pe=-16.6392 close=3.8300 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=600219.XSHG pe=11.2285 close=3.6500 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=600515.XSHG pe=42.8344 close=3.5200 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=600606.XSHG pe=-2.2800 close=1.8600 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=600905.XSHG pe=18.7262 close=4.7000 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601006.XSHG pe=10.7990 close=6.9600 inband=True
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601169.XSHG pe=4.5222 close=5.5600 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601229.XSHG pe=4.5407 close=7.2400 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601236.XSHG pe=165.4112 close=7.2400 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601288.XSHG pe=5.7159 close=4.3800 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601319.XSHG pe=11.8431 close=5.3600 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601328.XSHG pe=5.4491 close=6.8300 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601377.XSHG pe=32.9116 close=5.5800 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601398.XSHG pe=5.3242 close=5.4000 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601618.XSHG pe=8.5469 close=3.2900 inband=True
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601658.XSHG pe=5.6092 close=4.8600 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601668.XSHG pe=4.1359 close=5.4100 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601669.XSHG pe=6.8045 close=5.1400 inband=True
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601728.XSHG pe=17.3829 close=5.9000 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601816.XSHG pe=20.6300 close=5.1600 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601818.XSHG pe=4.5862 close=3.1700 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601868.XSHG pe=10.9442 close=2.1900 inband=True
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601916.XSHG pe=5.3368 close=2.9800 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601939.XSHG pe=5.3823 close=7.1200 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601988.XSHG pe=5.7284 close=4.4800 inband=False
+2024-05-08 09:30:00 - INFO  - U4PE date=2024-05-08 code=601989.XSHG pe=-156.0584 close=4.8800 inband=False
+2024-05-08 09:30:00 - INFO  - EWDEPLOY date=2024-05-08 n_buy=0 cash_before=2189.88 cash_after=2189.88 total_value=1127513.88 first=False
+2024-05-22 09:30:00 - INFO  - U4CNT date=2024-05-22 n_checkout=284 stage=b_atr n=40
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=000069.XSHE pe=-3.6369 close=2.9600 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=000166.XSHE pe=29.1706 close=4.6400 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=000725.XSHE pe=49.9904 close=4.3600 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=003816.XSHE pe=18.6765 close=4.0100 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=600000.XSHG pe=6.4542 close=8.4200 inband=True
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=600010.XSHG pe=252.1597 close=1.6000 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=600015.XSHG pe=4.1658 close=6.9100 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=600016.XSHG pe=4.9881 close=3.9900 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=600018.XSHG pe=9.9948 close=5.7300 inband=True
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=600029.XSHG pe=-69.8034 close=5.9900 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=600050.XSHG pe=17.7782 close=4.6700 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=600061.XSHG pe=22.1305 close=6.3400 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=600115.XSHG pe=-17.3343 close=3.9900 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=600219.XSHG pe=11.6900 close=3.8000 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=600515.XSHG pe=43.9296 close=3.6100 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=600606.XSHG pe=-2.5620 close=2.0900 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=600795.XSHG pe=14.3856 close=5.2000 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=600905.XSHG pe=18.4871 close=4.6400 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=600918.XSHG pe=45.4346 close=6.3800 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601006.XSHG pe=11.0007 close=7.0900 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601169.XSHG pe=4.7093 close=5.7900 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601229.XSHG pe=4.8481 close=7.7300 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601236.XSHG pe=162.2126 close=7.1000 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601288.XSHG pe=5.7550 close=4.4100 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601319.XSHG pe=12.1746 close=5.5100 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601328.XSHG pe=5.6166 close=7.0400 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601377.XSHG pe=32.7937 close=5.5600 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601398.XSHG pe=5.4228 close=5.5000 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601618.XSHG pe=8.8587 close=3.4100 inband=True
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601658.XSHG pe=5.8516 close=5.0700 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601668.XSHG pe=4.4570 close=5.8300 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601669.XSHG pe=7.0692 close=5.3400 inband=True
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601728.XSHG pe=17.5008 close=5.9400 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601816.XSHG pe=20.8699 close=5.2200 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601818.XSHG pe=4.7164 close=3.2600 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601868.XSHG pe=11.1941 close=2.2400 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601916.XSHG pe=5.4800 close=3.0600 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601939.XSHG pe=5.3974 close=7.1400 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601988.XSHG pe=5.7668 close=4.5100 inband=False
+2024-05-22 09:30:00 - INFO  - U4PE date=2024-05-22 code=601989.XSHG pe=-162.1345 close=5.0700 inband=False
+2024-05-22 09:30:00 - INFO  - EWDEPLOY date=2024-05-22 n_buy=0 cash_before=2763.32 cash_after=2763.32 total_value=1155219.32 first=False
+2024-06-05 09:30:00 - INFO  - U4CNT date=2024-06-05 n_checkout=284 stage=b_atr n=46
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=000069.XSHE pe=-3.1086 close=2.5300 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=000100.XSHE pe=27.5694 close=4.4100 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=000166.XSHE pe=28.1647 close=4.4800 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=000617.XSHE pe=16.0255 close=5.6600 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=000725.XSHE pe=47.4679 close=4.1400 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=002252.XSHE pe=25.8840 close=7.0500 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=003816.XSHE pe=19.7943 close=4.2500 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600010.XSHG pe=233.2477 close=1.4800 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600015.XSHG pe=4.1296 close=6.8500 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600016.XSHG pe=4.8255 close=3.8600 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600018.XSHG pe=10.1169 close=5.8000 inband=True
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600019.XSHG pe=13.0048 close=7.0700 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600029.XSHG pe=-68.9876 close=5.9200 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600039.XSHG pe=8.8919 close=8.1900 inband=True
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600050.XSHG pe=17.5118 close=4.6000 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600061.XSHG pe=21.2928 close=6.1000 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600115.XSHG pe=-17.3343 close=3.9900 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600219.XSHG pe=11.9669 close=3.8900 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600515.XSHG pe=41.2525 close=3.3900 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600606.XSHG pe=-2.2310 close=1.8200 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600905.XSHG pe=18.5270 close=4.6500 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600918.XSHG pe=44.2952 close=6.2200 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=600958.XSHG pe=31.0380 close=8.0800 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601006.XSHG pe=10.9852 close=7.0800 inband=True
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601169.XSHG pe=4.6686 close=5.7400 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601186.XSHG pe=4.5275 close=8.7400 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601229.XSHG pe=4.8543 close=7.7400 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601236.XSHG pe=156.5009 close=6.8500 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601288.XSHG pe=5.7550 close=4.4100 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601319.XSHG pe=11.8431 close=5.3600 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601328.XSHG pe=5.7522 close=7.2100 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601377.XSHG pe=31.5551 close=5.3500 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601390.XSHG pe=4.9897 close=6.6700 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601398.XSHG pe=5.3932 close=5.4700 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601618.XSHG pe=8.5469 close=3.2900 inband=True
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601658.XSHG pe=5.8170 close=5.0400 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601668.XSHG pe=4.3347 close=5.6700 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601669.XSHG pe=7.1354 close=5.3900 inband=True
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601728.XSHG pe=17.4713 close=5.9300 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601816.XSHG pe=20.4301 close=5.1100 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601818.XSHG pe=4.6730 close=3.2300 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601868.XSHG pe=10.8443 close=2.1700 inband=True
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601916.XSHG pe=5.3189 close=2.9700 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601939.XSHG pe=5.3370 close=7.0600 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601988.XSHG pe=5.6773 close=4.4400 inband=False
+2024-06-05 09:30:00 - INFO  - U4PE date=2024-06-05 code=601989.XSHG pe=-162.7741 close=5.0900 inband=False
+2024-06-05 09:30:00 - INFO  - EWFILL date=2024-06-05 code=600958.XSHG cash=3255.32 amount=400 filled=400 price=8.0900
+2024-06-05 09:30:00 - INFO  - EWDEPLOY date=2024-06-05 n_buy=1 cash_before=3255.32 cash_after=14.32 total_value=1142721.32 first=False
+2024-06-20 09:30:00 - INFO  - U4CNT date=2024-06-20 n_checkout=284 stage=b_atr n=43
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=000100.XSHE pe=27.1318 close=4.3400 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=000166.XSHE pe=28.5419 close=4.5400 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=000617.XSHE pe=16.1105 close=5.6900 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=000725.XSHE pe=47.1208 close=4.1100 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=002027.XSHE pe=17.7084 close=6.0400 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=003816.XSHE pe=20.1669 close=4.3300 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=600000.XSHG pe=6.3009 close=8.2200 inband=True
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=600010.XSHG pe=223.7918 close=1.4200 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=600015.XSHG pe=4.0030 close=6.6400 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=600016.XSHG pe=4.7130 close=3.7700 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=600018.XSHG pe=9.8553 close=5.6500 inband=True
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=600029.XSHG pe=-68.0554 close=5.8400 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=600050.XSHG pe=17.3976 close=4.5700 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=600061.XSHG pe=20.7343 close=5.9400 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=600115.XSHG pe=-17.2474 close=3.9700 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=600219.XSHG pe=11.6285 close=3.7800 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=600515.XSHG pe=40.6440 close=3.3400 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=600905.XSHG pe=17.6504 close=4.4300 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=600918.XSHG pe=42.5861 close=5.9500 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=600958.XSHG pe=31.0380 close=8.0800 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601006.XSHG pe=11.0162 close=7.1000 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601111.XSHG pe=592.4916 close=7.3400 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601169.XSHG pe=4.5629 close=5.6100 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601186.XSHG pe=4.4706 close=8.6300 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601236.XSHG pe=152.3885 close=6.6700 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601288.XSHG pe=5.5071 close=4.2200 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601319.XSHG pe=11.4233 close=5.1700 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601328.XSHG pe=5.7044 close=7.1500 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601377.XSHG pe=31.0242 close=5.2600 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601390.XSHG pe=4.8775 close=6.5200 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601398.XSHG pe=5.4228 close=5.5000 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601618.XSHG pe=8.1053 close=3.1200 inband=True
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601658.XSHG pe=5.5400 close=4.8000 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601668.XSHG pe=4.2353 close=5.5400 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601669.XSHG pe=7.3605 close=5.5600 inband=True
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601728.XSHG pe=17.0294 close=5.7800 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601816.XSHG pe=20.7899 close=5.2000 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601818.XSHG pe=4.5139 close=3.1200 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601868.XSHG pe=10.6444 close=2.1300 inband=True
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601916.XSHG pe=5.0502 close=2.8200 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601939.XSHG pe=5.4352 close=7.1900 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601988.XSHG pe=5.7284 close=4.4800 inband=False
+2024-06-20 09:30:00 - INFO  - U4PE date=2024-06-20 code=601989.XSHG pe=-153.5001 close=4.8000 inband=False
+2024-06-20 09:30:00 - INFO  - EWFILL date=2024-06-20 code=002027.XSHE cash=1839.95 amount=300 filled=300 price=6.0300
+2024-06-20 09:30:00 - INFO  - EWFILL date=2024-06-20 code=601111.XSHG cash=1839.95 amount=200 filled=200 price=7.3300
+2024-06-20 09:30:00 - INFO  - EWDEPLOY date=2024-06-20 n_buy=2 cash_before=3679.89 cash_after=394.89 total_value=1119607.89 first=False
+2024-07-04 09:30:00 - INFO  - U4CNT date=2024-07-04 n_checkout=284 stage=b_atr n=46
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=000100.XSHE pe=26.9442 close=4.3100 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=000166.XSHE pe=27.2217 close=4.3300 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=000617.XSHE pe=15.6574 close=5.5300 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=000725.XSHE pe=47.3501 close=4.1300 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=002027.XSHE pe=18.4414 close=6.2900 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=003816.XSHE pe=22.3093 close=4.7900 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600000.XSHG pe=6.5385 close=8.5300 inband=True
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600010.XSHG pe=225.3677 close=1.4300 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600015.XSHG pe=3.9427 close=6.5400 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600016.XSHG pe=4.8255 close=3.8600 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600018.XSHG pe=10.5007 close=6.0200 inband=True
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600019.XSHG pe=12.8393 close=6.9800 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600029.XSHG pe=-69.3372 close=5.9500 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600050.XSHG pe=18.1589 close=4.7700 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600061.XSHG pe=19.5475 close=5.6000 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600115.XSHG pe=-17.3343 close=3.9900 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600219.XSHG pe=12.1207 close=3.9400 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600515.XSHG pe=40.5223 close=3.3300 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600905.XSHG pe=17.8895 close=4.4900 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600918.XSHG pe=40.2360 close=5.6500 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600919.XSHG pe=4.6788 close=7.5400 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=600958.XSHG pe=29.3479 close=7.6400 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601006.XSHG pe=11.6013 close=7.2400 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601111.XSHG pe=591.6844 close=7.3300 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601169.XSHG pe=4.8313 close=5.9400 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601186.XSHG pe=4.4809 close=8.6500 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601229.XSHG pe=4.6411 close=7.4000 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601236.XSHG pe=146.6768 close=6.4200 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601288.XSHG pe=5.8594 close=4.4900 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601319.XSHG pe=11.7327 close=5.3100 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601328.XSHG pe=6.0793 close=7.6200 inband=True
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601377.XSHG pe=29.8446 close=5.0600 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601390.XSHG pe=4.8850 close=6.5300 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601398.XSHG pe=5.8073 close=5.8900 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601618.XSHG pe=8.1573 close=3.1400 inband=True
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601658.XSHG pe=5.9093 close=5.1200 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601668.XSHG pe=4.1741 close=5.4600 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601669.XSHG pe=7.5326 close=5.6900 inband=True
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601728.XSHG pe=18.2373 close=6.1900 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601816.XSHG pe=22.0693 close=5.5200 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601818.XSHG pe=4.7309 close=3.2700 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601868.XSHG pe=10.5944 close=2.1200 inband=True
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601916.XSHG pe=5.0681 close=2.8300 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601939.XSHG pe=5.7527 close=7.6100 inband=False
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601988.XSHG pe=6.0225 close=4.7100 inband=True
+2024-07-04 09:30:00 - INFO  - U4PE date=2024-07-04 code=601989.XSHG pe=-155.7387 close=4.8700 inband=False
+2024-07-04 09:30:00 - INFO  - EWDEPLOY date=2024-07-04 n_buy=0 cash_before=4990.46 cash_after=4990.46 total_value=1149103.46 first=False
+2024-07-18 09:30:00 - INFO  - U4CNT date=2024-07-18 n_checkout=284 stage=b_atr n=41
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=000100.XSHE pe=25.3188 close=4.0500 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=000166.XSHE pe=27.1588 close=4.3200 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=000617.XSHE pe=15.2327 close=5.3800 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=000725.XSHE pe=46.6622 close=4.0700 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=600010.XSHG pe=223.7918 close=1.4200 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=600015.XSHG pe=3.9548 close=6.5600 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=600016.XSHG pe=4.7505 close=3.8000 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=600018.XSHG pe=10.4832 close=6.0100 inband=True
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=600019.XSHG pe=12.9313 close=7.0300 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=600029.XSHG pe=-68.6380 close=5.8900 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=600050.XSHG pe=18.0447 close=4.7400 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=600061.XSHG pe=20.0362 close=5.7400 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=600115.XSHG pe=-17.3343 close=3.9900 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=600219.XSHG pe=12.0899 close=3.9300 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=600515.XSHG pe=40.4006 close=3.3200 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=600905.XSHG pe=18.0489 close=4.5300 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=600918.XSHG pe=39.5238 close=5.5500 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=600919.XSHG pe=4.9022 close=7.9000 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=600958.XSHG pe=29.7320 close=7.7400 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601006.XSHG pe=11.0726 close=6.9100 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601111.XSHG pe=587.6483 close=7.2800 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601169.XSHG pe=4.6605 close=5.7300 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601186.XSHG pe=4.3773 close=8.4500 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601229.XSHG pe=4.7226 close=7.5300 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601288.XSHG pe=6.1596 close=4.7200 inband=True
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601319.XSHG pe=11.8873 close=5.3800 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601377.XSHG pe=30.1985 close=5.1200 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601390.XSHG pe=4.6755 close=6.2500 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601398.XSHG pe=5.8270 close=5.9100 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601618.XSHG pe=8.0793 close=3.1100 inband=True
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601658.XSHG pe=5.7939 close=5.0200 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601668.XSHG pe=4.1436 close=5.4200 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601669.XSHG pe=7.2413 close=5.4700 inband=True
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601728.XSHG pe=18.2668 close=6.2000 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601816.XSHG pe=22.6690 close=5.6700 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601818.XSHG pe=4.8756 close=3.3700 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601868.XSHG pe=10.7443 close=2.1500 inband=True
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601916.XSHG pe=5.1219 close=2.8600 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601939.XSHG pe=5.7225 close=7.5700 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601988.XSHG pe=5.9586 close=4.6600 inband=False
+2024-07-18 09:30:00 - INFO  - U4PE date=2024-07-18 code=601989.XSHG pe=-164.6928 close=5.1500 inband=False
+2024-07-18 09:30:00 - INFO  - EWDEPLOY date=2024-07-18 n_buy=0 cash_before=17185.32 cash_after=17185.32 total_value=1146358.32 first=False
+2024-08-01 09:30:00 - INFO  - U4CNT date=2024-08-01 n_checkout=284 stage=b_atr n=39
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=000100.XSHE pe=24.5061 close=3.9200 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=000166.XSHE pe=28.7934 close=4.5800 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=000617.XSHE pe=15.7990 close=5.5800 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=000725.XSHE pe=45.1717 close=3.9400 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=600010.XSHG pe=230.0957 close=1.4600 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=600015.XSHG pe=3.7860 close=6.2800 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=600016.XSHG pe=4.4380 close=3.5500 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=600018.XSHG pe=10.5356 close=6.0400 inband=True
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=600019.XSHG pe=12.4321 close=6.8000 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=600029.XSHG pe=-68.9876 close=5.9200 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=600050.XSHG pe=17.8925 close=4.7000 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=600061.XSHG pe=20.9786 close=6.0100 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=600115.XSHG pe=-17.3343 close=3.9900 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=600219.XSHG pe=11.1363 close=3.6200 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=600515.XSHG pe=41.6175 close=3.4200 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=600905.XSHG pe=19.3637 close=4.8600 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=600918.XSHG pe=43.0133 close=6.0400 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=600919.XSHG pe=4.7718 close=7.6900 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601006.XSHG pe=11.1687 close=6.9700 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601111.XSHG pe=588.4556 close=7.2900 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601169.XSHG pe=4.3351 close=5.3300 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601186.XSHG pe=4.3255 close=8.3500 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601229.XSHG pe=4.5721 close=7.2900 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601288.XSHG pe=5.9899 close=4.5900 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601319.XSHG pe=12.6607 close=5.7300 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601377.XSHG pe=32.2038 close=5.4600 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601390.XSHG pe=4.6531 close=6.2200 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601398.XSHG pe=5.7679 close=5.8500 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601618.XSHG pe=8.2092 close=3.1600 inband=True
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601658.XSHG pe=5.5746 close=4.8300 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601668.XSHG pe=4.2659 close=5.5800 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601669.XSHG pe=7.2811 close=5.5000 inband=True
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601800.XSHG pe=5.6444 close=8.4500 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601816.XSHG pe=22.8689 close=5.7200 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601818.XSHG pe=4.5718 close=3.1600 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601868.XSHG pe=11.0442 close=2.2100 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601916.XSHG pe=5.0502 close=2.8200 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601988.XSHG pe=5.9586 close=4.6600 inband=False
+2024-08-01 09:30:00 - INFO  - U4PE date=2024-08-01 code=601998.XSHG pe=4.9979 close=6.2700 inband=False
+2024-08-01 09:30:00 - INFO  - EWDEPLOY date=2024-08-01 n_buy=0 cash_before=20794.59 cash_after=20794.59 total_value=1141150.59 first=False
+2024-08-15 09:30:00 - INFO  - U4CNT date=2024-08-15 n_checkout=284 stage=b_atr n=43
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=000001.XSHE pe=4.1147 close=9.9200 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=000100.XSHE pe=23.1308 close=3.7000 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=000166.XSHE pe=29.0449 close=4.6200 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=000617.XSHE pe=15.2044 close=5.3700 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=000725.XSHE pe=42.6494 close=3.7200 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=600010.XSHG pe=223.7918 close=1.4200 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=600015.XSHG pe=3.6955 close=6.1300 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=600016.XSHG pe=4.2505 close=3.4000 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=600018.XSHG pe=10.5704 close=6.0600 inband=True
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=600019.XSHG pe=11.2071 close=6.1300 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=600029.XSHG pe=-66.1908 close=5.6800 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=600039.XSHG pe=6.6753 close=6.1500 inband=True
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=600050.XSHG pe=17.1311 close=4.5000 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=600061.XSHG pe=20.2107 close=5.7900 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=600115.XSHG pe=-16.3351 close=3.7600 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=600219.XSHG pe=10.7056 close=3.4800 inband=True
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=600515.XSHG pe=40.8874 close=3.3600 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=600905.XSHG pe=18.6067 close=4.6700 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=600918.XSHG pe=41.5891 close=5.8400 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=600919.XSHG pe=4.7098 close=7.5900 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601006.XSHG pe=10.9444 close=6.8300 inband=True
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601111.XSHG pe=581.1907 close=7.2000 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601169.XSHG pe=4.4083 close=5.4200 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601186.XSHG pe=4.2737 close=8.2500 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601229.XSHG pe=4.5658 close=7.2800 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601288.XSHG pe=6.0813 close=4.6600 inband=True
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601319.XSHG pe=12.0420 close=5.4500 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601328.XSHG pe=6.0075 close=7.5300 inband=True
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601377.XSHG pe=30.9652 close=5.2500 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601390.XSHG pe=4.4361 close=5.9300 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601398.XSHG pe=5.9355 close=6.0200 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601618.XSHG pe=8.3131 close=3.2000 inband=True
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601658.XSHG pe=5.5284 close=4.7900 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601668.XSHG pe=4.1971 close=5.4900 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601669.XSHG pe=7.2678 close=5.4900 inband=True
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601728.XSHG pe=17.0883 close=5.8000 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601816.XSHG pe=22.8290 close=5.7100 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601818.XSHG pe=4.5139 close=3.1200 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601868.XSHG pe=11.1941 close=2.2100 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601916.XSHG pe=5.0323 close=2.8100 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601939.XSHG pe=5.7754 close=7.6400 inband=False
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601988.XSHG pe=6.0353 close=4.7200 inband=True
+2024-08-15 09:30:00 - INFO  - U4PE date=2024-08-15 code=601998.XSHG pe=5.0377 close=6.3200 inband=False
+2024-08-15 09:30:00 - INFO  - EWFILL date=2024-08-15 code=000001.XSHE cash=22186.59 amount=2200 filled=2200 price=9.9200
+2024-08-15 09:30:00 - INFO  - EWDEPLOY date=2024-08-15 n_buy=1 cash_before=22186.59 cash_after=356.04 total_value=1120923.04 first=False
+2024-08-29 09:30:00 - INFO  - U4CNT date=2024-08-29 n_checkout=284 stage=b_atr n=46
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=000001.XSHE pe=4.2700 close=10.3300 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=000100.XSHE pe=24.6055 close=3.7600 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=000166.XSHE pe=28.1018 close=4.4700 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=000617.XSHE pe=14.6098 close=5.1600 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=000725.XSHE pe=35.1158 close=3.8200 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=002027.XSHE pe=15.6934 close=5.5300 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600010.XSHG pe=306.6562 close=1.4200 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600015.XSHG pe=3.8161 close=6.3300 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600016.XSHG pe=4.3505 close=3.4800 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600018.XSHG pe=10.9193 close=6.2600 inband=True
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600019.XSHG pe=11.0329 close=5.9900 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600029.XSHG pe=-65.2586 close=5.6000 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600039.XSHG pe=6.2085 close=5.7200 inband=True
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600050.XSHG pe=17.3731 close=4.7900 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600061.XSHG pe=19.5824 close=5.6100 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600115.XSHG pe=-16.1613 close=3.7200 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600219.XSHG pe=10.0137 close=3.7200 inband=True
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600515.XSHG pe=54.5947 close=3.1500 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600795.XSHG pe=10.4874 close=5.5100 inband=True
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600905.XSHG pe=18.4871 close=4.6400 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600918.XSHG pe=40.7345 close=5.7200 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=600919.XSHG pe=4.9220 close=8.1700 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601006.XSHG pe=10.6559 close=6.6500 inband=True
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601111.XSHG pe=552.1311 close=6.8400 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601169.XSHG pe=4.5385 close=5.5800 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601186.XSHG pe=4.1287 close=7.9700 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601229.XSHG pe=4.7853 close=7.6300 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601236.XSHG pe=147.8191 close=6.4700 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601238.XSHG pe=18.3496 close=7.2600 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601288.XSHG pe=6.4467 close=4.9400 inband=True
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601319.XSHG pe=12.7049 close=5.7500 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601328.XSHG pe=6.3346 close=7.9400 inband=True
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601377.XSHG pe=30.1395 close=5.1100 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601390.XSHG pe=4.3987 close=5.8800 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601398.XSHG pe=6.3989 close=6.4900 inband=True
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601618.XSHG pe=8.2352 close=3.1700 inband=True
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601658.XSHG pe=5.8978 close=5.1100 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601668.XSHG pe=4.1808 close=5.4700 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601669.XSHG pe=6.7383 close=5.0900 inband=True
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601728.XSHG pe=17.7287 close=6.2200 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601816.XSHG pe=22.2692 close=5.5700 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601818.XSHG pe=4.6586 close=3.2200 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601868.XSHG pe=10.8443 close=2.1700 inband=True
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601916.XSHG pe=4.8634 close=2.7100 inband=False
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601988.XSHG pe=6.5468 close=5.1200 inband=True
+2024-08-29 09:30:00 - INFO  - U4PE date=2024-08-29 code=601998.XSHG pe=5.2530 close=6.5900 inband=False
+2024-08-29 09:30:00 - INFO  - EWFILL date=2024-08-29 code=601238.XSHG cash=750.28 amount=100 filled=100 price=7.2300
+2024-08-29 09:30:00 - INFO  - EWDEPLOY date=2024-08-29 n_buy=1 cash_before=750.28 cash_after=22.28 total_value=1131087.28 first=False
+2024-09-12 09:30:00 - INFO  - U4CNT date=2024-09-12 n_checkout=284 stage=b_atr n=40
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=000100.XSHE pe=24.5401 close=3.7500 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=000166.XSHE pe=35.6315 close=4.2500 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=000617.XSHE pe=15.5526 close=5.0000 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=000725.XSHE pe=34.5642 close=3.7600 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=002027.XSHE pe=15.9488 close=5.6200 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=600010.XSHG pe=298.0180 close=1.3800 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=600015.XSHG pe=3.6944 close=6.2000 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=600016.XSHG pe=4.1474 close=3.2700 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=600019.XSHG pe=10.2778 close=5.5800 inband=True
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=600029.XSHG pe=-38.6891 close=5.4700 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=600050.XSHG pe=16.3213 close=4.5000 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=600061.XSHG pe=19.1084 close=5.7100 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=600115.XSHG pe=-17.3927 close=3.6500 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=600219.XSHG pe=9.3408 close=3.4700 inband=True
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=600515.XSHG pe=52.6883 close=3.0400 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=600795.XSHG pe=9.1931 close=4.8300 inband=True
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=600905.XSHG pe=17.3358 close=4.0600 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=600918.XSHG pe=68.9128 close=5.5600 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601006.XSHG pe=10.4068 close=5.8800 inband=True
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601111.XSHG pe=-288.3048 close=6.5700 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601169.XSHG pe=4.0063 close=4.9200 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601229.XSHG pe=4.2911 close=6.8500 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601236.XSHG pe=66.7366 close=6.6000 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601238.XSHG pe=25.4287 close=7.2900 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601288.XSHG pe=5.7384 close=4.4600 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601319.XSHG pe=10.3735 close=6.0000 inband=True
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601377.XSHG pe=39.6789 close=5.1000 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601390.XSHG pe=3.9967 close=5.0900 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601398.XSHG pe=5.4738 close=5.5400 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601618.XSHG pe=9.6912 close=2.6200 inband=True
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601658.XSHG pe=5.2293 close=4.5100 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601668.XSHG pe=3.6562 close=4.8100 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601669.XSHG pe=6.0541 close=4.4100 inband=True
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601728.XSHG pe=17.2442 close=6.0500 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601816.XSHG pe=20.0791 close=5.2200 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601818.XSHG pe=4.3160 close=3.0100 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601868.XSHG pe=10.4354 close=2.0300 inband=True
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601916.XSHG pe=4.4147 close=2.4600 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601988.XSHG pe=5.9156 close=4.6300 inband=False
+2024-09-12 09:30:00 - INFO  - U4PE date=2024-09-12 code=601998.XSHG pe=4.5862 close=5.7000 inband=False
+2024-09-12 09:30:00 - INFO  - EWDEPLOY date=2024-09-12 n_buy=0 cash_before=436.69 cash_after=436.69 total_value=1040222.69 first=False
+2024-09-30 09:30:00 - INFO  - U4CNT date=2024-09-30 n_checkout=284 stage=b_atr n=22
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=000100.XSHE pe=27.8775 close=4.2600 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=000166.XSHE pe=43.5962 close=5.2000 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=000725.XSHE pe=38.1494 close=4.1500 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=600010.XSHG pe=339.0495 close=1.5700 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=600016.XSHG pe=4.8196 close=3.8000 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=600050.XSHG pe=18.0259 close=4.9700 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=600115.XSHG pe=-18.7746 close=3.9400 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=600219.XSHG pe=10.9828 close=4.0800 inband=True
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=600515.XSHG pe=61.0075 close=3.5200 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=600795.XSHG pe=9.7261 close=5.1100 inband=True
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=600905.XSHG pe=19.1718 close=4.4900 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=601006.XSHG pe=11.5218 close=6.5100 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=601288.XSHG pe=6.0472 close=4.7000 inband=True
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=601377.XSHG pe=48.2371 close=6.2000 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=601618.XSHG pe=11.2817 close=3.0500 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=601658.XSHG pe=5.8554 close=5.0500 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=601669.XSHG pe=7.1111 close=5.1800 inband=True
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=601816.XSHG pe=21.5793 close=5.6100 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=601818.XSHG pe=4.9612 close=3.4600 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=601868.XSHG pe=11.5149 close=2.2400 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=601916.XSHG pe=4.9890 close=2.7800 inband=False
+2024-09-30 09:30:00 - INFO  - U4PE date=2024-09-30 code=601988.XSHG pe=6.2222 close=4.8700 inband=True
+2024-09-30 09:30:00 - INFO  - EWDEPLOY date=2024-09-30 n_buy=0 cash_before=738.67 cash_after=738.67 total_value=1228340.67 first=False
+2024-10-21 09:30:00 - INFO  - U4CNT date=2024-10-21 n_checkout=284 stage=b_atr n=9
+2024-10-21 09:30:00 - INFO  - U4PE date=2024-10-21 code=600010.XSHG pe=352.0068 close=1.6300 inband=False
+2024-10-21 09:30:00 - INFO  - U4PE date=2024-10-21 code=600016.XSHG pe=4.9591 close=3.9100 inband=False
+2024-10-21 09:30:00 - INFO  - U4PE date=2024-10-21 code=600115.XSHG pe=-17.2498 close=3.6200 inband=False
+2024-10-21 09:30:00 - INFO  - U4PE date=2024-10-21 code=600515.XSHG pe=57.8878 close=3.3400 inband=False
+2024-10-21 09:30:00 - INFO  - U4PE date=2024-10-21 code=600905.XSHG pe=19.2569 close=4.5100 inband=False
+2024-10-21 09:30:00 - INFO  - U4PE date=2024-10-21 code=601618.XSHG pe=12.2065 close=3.3000 inband=False
+2024-10-21 09:30:00 - INFO  - U4PE date=2024-10-21 code=601818.XSHG pe=5.0329 close=3.5100 inband=False
+2024-10-21 09:30:00 - INFO  - U4PE date=2024-10-21 code=601868.XSHG pe=12.0290 close=2.3400 inband=False
+2024-10-21 09:30:00 - INFO  - U4PE date=2024-10-21 code=601916.XSHG pe=5.3120 close=2.9600 inband=False
+2024-10-21 09:30:00 - INFO  - EWDEPLOY date=2024-10-21 n_buy=0 cash_before=1516.19 cash_after=1516.19 total_value=1250047.19 first=False
+2024-11-04 09:30:00 - INFO  - U4CNT date=2024-11-04 n_checkout=284 stage=b_atr n=11
+2024-11-04 09:30:00 - INFO  - U4PE date=2024-11-04 code=003816.XSHE pe=18.7160 close=4.0800 inband=False
+2024-11-04 09:30:00 - INFO  - U4PE date=2024-11-04 code=600010.XSHG pe=-179.3013 close=1.8800 inband=False
+2024-11-04 09:30:00 - INFO  - U4PE date=2024-11-04 code=600016.XSHG pe=5.0695 close=3.7900 inband=False
+2024-11-04 09:30:00 - INFO  - U4PE date=2024-11-04 code=600115.XSHG pe=-14.9910 close=3.8400 inband=False
+2024-11-04 09:30:00 - INFO  - U4PE date=2024-11-04 code=600515.XSHG pe=106.7017 close=3.5100 inband=False
+2024-11-04 09:30:00 - INFO  - U4PE date=2024-11-04 code=601288.XSHG pe=6.0531 close=4.7800 inband=True
+2024-11-04 09:30:00 - INFO  - U4PE date=2024-11-04 code=601618.XSHG pe=9.6576 close=3.4100 inband=True
+2024-11-04 09:30:00 - INFO  - U4PE date=2024-11-04 code=601818.XSHG pe=4.9100 close=3.4500 inband=False
+2024-11-04 09:30:00 - INFO  - U4PE date=2024-11-04 code=601868.XSHG pe=11.6501 close=2.3800 inband=False
+2024-11-04 09:30:00 - INFO  - U4PE date=2024-11-04 code=601916.XSHG pe=5.1316 close=2.8400 inband=False
+2024-11-04 09:30:00 - INFO  - U4PE date=2024-11-04 code=601988.XSHG pe=6.1708 close=4.8800 inband=True
+2024-11-04 09:30:00 - INFO  - EWDEPLOY date=2024-11-04 n_buy=0 cash_before=2938.38 cash_after=2938.38 total_value=1249253.38 first=False
+2024-11-18 09:30:00 - INFO  - U4CNT date=2024-11-18 n_checkout=284 stage=b_atr n=19
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=003816.XSHE pe=18.8536 close=4.1100 inband=False
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=600010.XSHG pe=-181.2088 close=1.9000 inband=False
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=600016.XSHG pe=5.0428 close=3.7700 inband=False
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=600018.XSHG pe=10.2642 close=6.0200 inband=True
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=600115.XSHG pe=-15.3814 close=3.9400 inband=False
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=600219.XSHG pe=10.1253 close=4.1700 inband=True
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=600795.XSHG pe=9.2530 close=4.7600 inband=True
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=600905.XSHG pe=19.5461 close=4.6700 inband=False
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=601006.XSHG pe=13.1775 close=6.8000 inband=False
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=601169.XSHG pe=4.5442 close=5.5900 inband=False
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=601288.XSHG pe=5.9518 close=4.7000 inband=False
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=601398.XSHG pe=5.9182 close=6.0500 inband=False
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=601618.XSHG pe=9.5726 close=3.3800 inband=True
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=601658.XSHG pe=6.0231 close=5.2500 inband=True
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=601816.XSHG pe=21.9777 close=5.6600 inband=False
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=601818.XSHG pe=4.9100 close=3.4500 inband=False
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=601868.XSHG pe=11.7480 close=2.4000 inband=False
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=601916.XSHG pe=5.1496 close=2.8500 inband=False
+2024-11-18 09:30:00 - INFO  - U4PE date=2024-11-18 code=601988.XSHG pe=6.1455 close=4.8600 inband=True
+2024-11-18 09:30:00 - INFO  - EWDEPLOY date=2024-11-18 n_buy=0 cash_before=3406.38 cash_after=3406.38 total_value=1259910.38 first=False
+2024-12-02 09:30:00 - INFO  - U4CNT date=2024-12-02 n_checkout=284 stage=b_atr n=27
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=000725.XSHE pe=33.4837 close=4.3000 inband=False
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=003816.XSHE pe=17.9362 close=3.9100 inband=False
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=600010.XSHG pe=-183.1162 close=1.9200 inband=False
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=600016.XSHG pe=5.2969 close=3.9600 inband=False
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=600018.XSHG pe=9.8891 close=5.8000 inband=True
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=600023.XSHG pe=9.9584 close=5.3900 inband=True
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=600027.XSHG pe=10.4051 close=5.2700 inband=True
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=600115.XSHG pe=-15.9279 close=4.0800 inband=False
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=600219.XSHG pe=9.7125 close=4.0000 inband=True
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=600515.XSHG pe=116.7334 close=3.8400 inband=False
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=600795.XSHG pe=8.8837 close=4.5700 inband=True
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=600905.XSHG pe=19.0857 close=4.5600 inband=False
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=601006.XSHG pe=13.1969 close=6.8100 inband=False
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=601169.XSHG pe=4.6498 close=5.7200 inband=False
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=601288.XSHG pe=6.0911 close=4.8100 inband=True
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=601328.XSHG pe=5.9006 close=7.3300 inband=False
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=601398.XSHG pe=6.0160 close=6.1500 inband=True
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=601618.XSHG pe=9.4593 close=3.3400 inband=True
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=601658.XSHG pe=6.0805 close=5.3000 inband=True
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=601669.XSHG pe=7.7842 close=5.5600 inband=True
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=601816.XSHG pe=22.2495 close=5.7300 inband=False
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=601818.XSHG pe=5.1235 close=3.6000 inband=False
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=601868.XSHG pe=11.4543 close=2.3400 inband=False
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=601916.XSHG pe=5.2400 close=2.9000 inband=False
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=601939.XSHG pe=5.9917 close=7.9800 inband=False
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=601988.XSHG pe=6.3352 close=5.0100 inband=True
+2024-12-02 09:30:00 - INFO  - U4PE date=2024-12-02 code=601989.XSHG pe=418.8305 close=4.8000 inband=False
+2024-12-02 09:30:00 - INFO  - EWFILL date=2024-12-02 code=600027.XSHG cash=4251.18 amount=800 filled=800 price=5.2700
+2024-12-02 09:30:00 - INFO  - EWDEPLOY date=2024-12-02 n_buy=1 cash_before=4251.18 cash_after=30.18 total_value=1243366.18 first=False
+2024-12-16 09:30:00 - INFO  - U4CNT date=2024-12-16 n_checkout=286 stage=b_atr n=30
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=000630.XSHE pe=15.4695 close=3.4500 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=000725.XSHE pe=33.9464 close=4.3600 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=003816.XSHE pe=18.3032 close=3.9900 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=600010.XSHG pe=-191.6998 close=2.0100 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=600011.XSHG pe=17.4566 close=7.0000 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=600016.XSHG pe=5.4307 close=4.0600 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=600018.XSHG pe=10.3153 close=6.0500 inband=True
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=600019.XSHG pe=15.6611 close=6.7500 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=600023.XSHG pe=10.6051 close=5.7400 inband=True
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=600027.XSHG pe=10.9381 close=5.5400 inband=True
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=600115.XSHG pe=-16.5916 close=4.2500 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=600219.XSHG pe=9.6097 close=3.9900 inband=True
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=600795.XSHG pe=9.0781 close=4.6700 inband=True
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=600905.XSHG pe=19.0020 close=4.5400 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601006.XSHG pe=13.3325 close=6.8800 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601169.XSHG pe=4.7718 close=5.8700 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601288.XSHG pe=6.3317 close=5.0000 inband=True
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601328.XSHG pe=5.8845 close=7.3100 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601398.XSHG pe=6.2508 close=6.3900 inband=True
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601618.XSHG pe=9.5160 close=3.3600 inband=True
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601658.XSHG pe=6.2067 close=5.4100 inband=True
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601668.XSHG pe=4.9207 close=5.9500 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601669.XSHG pe=7.6722 close=5.4800 inband=True
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601818.XSHG pe=5.2943 close=3.7200 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601868.XSHG pe=11.5522 close=2.3600 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601872.XSHG pe=11.4616 close=6.2600 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601916.XSHG pe=5.3303 close=2.9500 inband=False
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601939.XSHG pe=6.2320 close=8.3000 inband=True
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601988.XSHG pe=6.5501 close=5.1800 inband=True
+2024-12-16 09:30:00 - INFO  - U4PE date=2024-12-16 code=601989.XSHG pe=414.4677 close=4.7500 inband=False
+2024-12-16 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=000630.XSHE style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-12-16 09:30:00 - INFO  - EWFILL date=2024-12-16 code=000630.XSHE cash=168.90 amount=0 filled=0 price=0.0000
+2024-12-16 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=600011.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-12-16 09:30:00 - INFO  - EWFILL date=2024-12-16 code=600011.XSHG cash=168.90 amount=0 filled=0 price=0.0000
+2024-12-16 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=601872.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-12-16 09:30:00 - INFO  - EWFILL date=2024-12-16 code=601872.XSHG cash=168.90 amount=0 filled=0 price=0.0000
+2024-12-16 09:30:00 - INFO  - EWDEPLOY date=2024-12-16 n_buy=3 cash_before=506.69 cash_after=506.69 total_value=1264185.69 first=False
+2024-12-30 09:30:00 - INFO  - U4CNT date=2024-12-30 n_checkout=286 stage=b_atr n=37
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=000157.XSHE pe=16.1884 close=7.0700 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=000166.XSHE pe=33.7010 close=5.5300 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=000630.XSHE pe=14.8417 close=3.3100 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=000725.XSHE pe=33.7907 close=4.3400 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=003816.XSHE pe=18.9913 close=4.1400 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=600010.XSHG pe=-183.1162 close=1.9200 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=600011.XSHG pe=17.1324 close=6.8700 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=600016.XSHG pe=5.4842 close=4.1000 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=600018.XSHG pe=10.3153 close=6.0500 inband=True
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=600019.XSHG pe=16.3339 close=7.0400 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=600023.XSHG pe=10.5311 close=5.7000 inband=True
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=600027.XSHG pe=11.4712 close=5.8100 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=600050.XSHG pe=19.1163 close=5.3700 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=600115.XSHG pe=-15.9670 close=4.0900 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=600219.XSHG pe=9.4170 close=3.9100 inband=True
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=600515.XSHG pe=118.2534 close=3.8900 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=600795.XSHG pe=9.0586 close=4.6600 inband=True
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=600905.XSHG pe=18.6246 close=4.4500 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=600918.XSHG pe=117.1726 close=6.8800 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601006.XSHG pe=13.1775 close=6.8000 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601169.XSHG pe=4.9994 close=6.1500 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601288.XSHG pe=6.7243 close=5.3100 inband=True
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601377.XSHG pe=32.9062 close=6.4600 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601390.XSHG pe=5.3535 close=6.5000 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601398.XSHG pe=6.7692 close=6.9200 inband=True
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601618.XSHG pe=9.4876 close=3.3500 inband=True
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601658.XSHG pe=6.4132 close=5.5900 inband=True
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601668.XSHG pe=4.9951 close=6.0400 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601669.XSHG pe=7.7702 close=5.5500 inband=True
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601816.XSHG pe=24.1910 close=6.2300 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601818.XSHG pe=5.4366 close=3.8200 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601868.XSHG pe=11.4053 close=2.3300 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601872.XSHG pe=11.8461 close=6.4700 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601916.XSHG pe=5.3303 close=2.9500 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601988.XSHG pe=6.9295 close=5.4800 inband=True
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601989.XSHG pe=424.9385 close=4.8700 inband=False
+2024-12-30 09:30:00 - INFO  - U4PE date=2024-12-30 code=601998.XSHG pe=5.5696 close=6.9400 inband=False
+2024-12-30 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=000630.XSHE style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-12-30 09:30:00 - INFO  - EWFILL date=2024-12-30 code=000630.XSHE cash=317.27 amount=0 filled=0 price=0.0000
+2024-12-30 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=600011.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-12-30 09:30:00 - INFO  - EWFILL date=2024-12-30 code=600011.XSHG cash=317.27 amount=0 filled=0 price=0.0000
+2024-12-30 09:30:00 - ERROR - 下单失败，下单数量错误: Order(security=601872.XSHG style=MarketOrderStyle: _limit_price=0.0 side=long amount=0.0)
+2024-12-30 09:30:00 - INFO  - EWFILL date=2024-12-30 code=601872.XSHG cash=317.27 amount=0 filled=0 price=0.0000
+2024-12-30 09:30:00 - INFO  - EWDEPLOY date=2024-12-30 n_buy=3 cash_before=951.81 cash_after=951.81 total_value=1276785.81 first=False
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=000069.XSHE amount=5400 avg_cost=3.1200 price=2.6700 value=14418.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=000100.XSHE amount=3900 avg_cost=4.2000 price=5.0300 value=19617.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=000157.XSHE amount=2500 avg_cost=6.2300 price=7.2300 value=18075.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=000166.XSHE amount=3800 avg_cost=4.3670 price=5.3500 value=20330.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=000425.XSHE amount=3100 avg_cost=5.2800 price=7.9300 value=24583.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=000617.XSHE amount=3100 avg_cost=5.2930 price=6.8900 value=21359.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=000725.XSHE amount=4300 avg_cost=3.8600 price=4.3900 value=18877.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=000877.XSHE amount=2500 avg_cost=6.5560 price=5.6600 value=14150.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=003816.XSHE amount=5400 avg_cost=3.0160 price=4.1300 value=22302.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600000.XSHG amount=2500 avg_cost=6.3090 price=10.2900 value=25725.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600010.XSHG amount=11500 avg_cost=1.4700 price=1.8600 value=21390.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600015.XSHG amount=3000 avg_cost=5.2460 price=8.0100 value=24030.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600016.XSHG amount=4500 avg_cost=3.3940 price=4.1300 value=18585.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600018.XSHG amount=3400 avg_cost=4.6780 price=6.1200 value=20808.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600019.XSHG amount=2800 avg_cost=5.6263 price=7.0000 value=19600.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600023.XSHG amount=3600 avg_cost=4.3700 price=5.6600 value=20376.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600029.XSHG amount=2900 avg_cost=5.7500 price=6.4900 value=18821.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600039.XSHG amount=2200 avg_cost=6.9160 price=7.2800 value=16016.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600050.XSHG amount=3800 avg_cost=4.2340 price=5.3100 value=20178.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600061.XSHG amount=2500 avg_cost=6.6200 price=7.5200 value=18800.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600115.XSHG amount=4300 avg_cost=3.9000 price=4.0000 value=17200.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600219.XSHG amount=5700 avg_cost=2.7502 price=3.9100 value=22287.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600515.XSHG amount=4500 avg_cost=3.7000 price=3.7800 value=17010.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600606.XSHG amount=7300 avg_cost=2.3000 price=2.1000 value=15330.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600795.XSHG amount=4000 avg_cost=3.9800 price=4.5800 value=18320.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600905.XSHG amount=3800 avg_cost=4.2920 price=4.3700 value=16606.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600918.XSHG amount=2400 avg_cost=6.8200 price=6.5700 value=15768.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600919.XSHG amount=2500 avg_cost=6.2400 price=9.8200 value=24550.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601006.XSHG amount=2300 avg_cost=6.6789 price=6.7800 value=15594.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601009.XSHG amount=2200 avg_cost=6.5170 price=10.6500 value=23430.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601117.XSHG amount=2600 avg_cost=6.2120 price=8.2900 value=21554.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601169.XSHG amount=3700 avg_cost=4.2100 price=6.1500 value=22755.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601186.XSHG amount=2200 avg_cost=7.2600 price=9.1700 value=20174.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601229.XSHG amount=2800 avg_cost=5.2400 price=9.1500 value=25620.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601236.XSHG amount=2200 avg_cost=7.4730 price=8.4900 value=18678.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601288.XSHG amount=4600 avg_cost=3.4091 price=5.3400 value=24564.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601319.XSHG amount=3500 avg_cost=4.6840 price=7.6200 value=26670.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601328.XSHG amount=2900 avg_cost=5.3850 price=7.7700 value=22533.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601377.XSHG amount=2800 avg_cost=5.7400 price=6.2600 value=17528.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601390.XSHG amount=2900 avg_cost=5.4900 price=6.3900 value=18531.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601398.XSHG amount=3500 avg_cost=4.4736 price=6.9200 value=24220.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601600.XSHG amount=2900 avg_cost=5.5080 price=7.3500 value=21315.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601618.XSHG amount=5500 avg_cost=2.9880 price=3.3000 value=18150.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601658.XSHG amount=3800 avg_cost=4.0890 price=5.6800 value=21584.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601668.XSHG amount=3500 avg_cost=4.5486 price=6.0000 value=21000.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601669.XSHG amount=3400 avg_cost=4.7535 price=5.4600 value=18564.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601728.XSHG amount=3100 avg_cost=5.1429 price=7.2200 value=22382.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601766.XSHG amount=3200 avg_cost=5.0700 price=8.3800 value=26816.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601800.XSHG amount=2200 avg_cost=7.2974 price=10.4500 value=22990.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601816.XSHG amount=3400 avg_cost=4.8084 price=6.1600 value=20944.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601818.XSHG amount=5800 avg_cost=2.7370 price=3.8700 value=22446.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601868.XSHG amount=8000 avg_cost=2.0740 price=2.2900 value=18320.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601916.XSHG amount=6600 avg_cost=2.3660 price=2.9100 value=19206.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601939.XSHG amount=2600 avg_cost=6.1100 price=8.7900 value=22854.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601985.XSHG amount=2200 avg_cost=7.2950 price=10.4300 value=22946.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601988.XSHG amount=4200 avg_cost=3.7536 price=5.5100 value=23142.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601989.XSHG amount=4100 avg_cost=4.1200 price=4.8100 value=19721.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601998.XSHG amount=3100 avg_cost=4.7914 price=6.9800 value=21638.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=603993.XSHG amount=3200 avg_cost=5.0575 price=6.6500 value=21280.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=002252.XSHE amount=600 avg_cost=6.9530 price=7.2200 value=4332.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=002736.XSHE amount=500 avg_cost=8.3600 price=11.2000 value=5600.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600837.XSHG amount=500 avg_cost=8.5710 price=11.1200 value=5560.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600958.XSHG amount=400 avg_cost=7.8660 price=10.5600 value=4224.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=002027.XSHE amount=300 avg_cost=5.9300 price=7.0300 value=2109.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601111.XSHG amount=200 avg_cost=7.3300 price=7.9100 value=1582.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=000001.XSHE amount=2200 avg_cost=9.6740 price=11.7000 value=25740.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=601238.XSHG amount=100 avg_cost=7.2000 price=9.3400 value=934.00
+2024-12-31 15:30:00 - INFO  - EWFINAL date=2024-12-31 code=600027.XSHG amount=800 avg_cost=5.2700 price=5.6100 value=4488.00
+2024-12-31 15:30:00 - INFO  - EWFINALTOT date=2024-12-31 total_value=1267780.81 cash=951.81
