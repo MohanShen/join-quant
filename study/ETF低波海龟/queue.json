@@ -1,0 +1,195 @@
+[
+  {
+    "id": "q-e9-1",
+    "kind": "understand",
+    "title": "全年日志分页：事件计数 + 逐持仓归因，尤其 2024-09-23..10-08 持有什么、几个 Unit",
+    "hypothesis": "海龟叠加在 2024 上是活跃的（≥1 次止损或止盈或加仓到 4 Unit），且 9 月行情的 +21.6% 来自一只权益 ETF 在 ≥3 Unit 下的持有。证伪：止损=0 且止盈=0 ⇒ 叠加在本窗口只剩 75%↔100% 仓位，i-e9-1 必然逐位相同；避险买入=0 ⇒ 国债腿惰性（中位波动从未 >0.40）；若 9 月持有的是红利/银行而非高 beta 宽基，『年度 = 9 月 beta』的读法需改写为『9 月恰好低波且在涨』",
+    "why": "0 回测。门控 q-e9-3 的读法、i-e9-1 是否需要跑、i-e9-3 是否成立，并直接回答避险开关是否惰性。编排器已测：6 天贡献 +21.6%，其余全年 +0.76%——9 月持仓就是本书 2024 的全部内容。⚠ utils/backtest-log.js 只取 100 行/页，用 study/小市值/pagelog.js 按 offset 翻页至短页，不要写第三份 pager",
+    "design": "backtestId 0b949625ef74dc0c31a55273a8015bfb，study/小市值/pagelog.js 全量翻页；计数 建仓/换入/换回/加仓完成/止损/止盈/避险买入；逐日风险资产波动率中位数（最大值、>0.40 天数）；按持仓区间把 stored curve 的日收益归因到每只 ETF；列出 09-23..10-08 的持仓代码与 Unit 数。控制：日志末日净值须与 stored curve 末值 22.51% 一致，否则视为 instrumentation 失败而非『无事件』",
+    "from": [
+      "normalized:4a8bcfd5",
+      "series:2026-10-17_量化分享_ETF低波海龟法则与复利增强的验证-4a8bcfd5__train__e9",
+      "orchestrator:sep-rally-21.6pct"
+    ],
+    "edgeRef": "海龟加仓止损叠加",
+    "rank": 1,
+    "status": "done",
+    "result": "733 行 / 242 of 242 天读全，曲线末值 22.51% 控制通过。事件：建仓 4、换入 2、换仓 2、加仓完成 4（均 3→4 Unit）、止损 3（01-23 红利、06-13 50ETF、09-04 50ETF）、止盈 1（10-08 50ETF，成本 +34.29%，卖一半利润）、避险买入 0。风险池波动率中位数最大 39.63%（2024-12-03），>0.40 的天数 0/242。持仓链：红利 01-02..01-23 (3U, 止损 −1.63%) → 黄金 01-24..05-06 (→4U, +14.08%) → 50ETF 05-06..06-13 (→4U,"
+  },
+  {
+    "id": "q-e9-2",
+    "kind": "understand",
+    "title": "edge 测试：排序键 最低波动(base) vs 中位波动 vs 最高波动，其余逐字不动",
+    "hypothesis": "edge.test 原文：若低波动异象在此池成立，sharpe 最低波 > 中位 > 最高波，大致单调。证伪：最低波 sharpe ≤ 中位波 sharpe（或三者非单调且最低波不居首）⇒ 低波动异象在本池 2024 refuted；单调且最低波显著居首 ⇒ 仅可写为『本池 2024 在机制上成立』",
+    "why": "本族核心 edge 声明，两个方向都是信息。2 次 TRAIN（~5 min）。⚠ 已知混淆：2024 池内低波 ≈ 银行/红利/黄金 = 当年赢家，pass 不能区分『低波异象』与『池子里低波的恰好是赢家』——那一半由 q-e9-4 回答，pass 不得单独把 edge 升为 measured。⚠ 9 月是全年：高波排序在 9 月大概率持有创业板/芯片/香港证券，可能单凭那 6 天胜出——须报告剔除 09-23..10-08 后的分段 sharpe ‖ q-e9-1: 全年 = 黄金 H1 + 50ETF 一周（09-23..10-08 +21.86%，其余 +0.54%）⇒ 必须单独报该段贡献与剔除后的分段 sharpe",
+    "design": "从 baseline（4a8bcfd5 + 冻结 OVERRIDE）出发，l.393 选股改为 (a) 按 60 日年化波动升序取第 ceil(n/2) 名 (b) 降序取第 1 名；换仓 10% 阈值保持语义『候选比持仓更接近目标排名』；海龟/止盈/避险/节奏逐字不动。--window train 各一跑。对照 = ledger 4a8bcfd5 e9 行（obj 0.0955 / sharpe 1.22）",
+    "from": [
+      "normalized:4a8bcfd5",
+      "orchestrator:sep-rally-21.6pct"
+    ],
+    "edgeRef": "低波动异象",
+    "rank": 2,
+    "status": "done",
+    "result": "TRAIN 2024（242 点，曲线末值 −1.18 / −6.66 经 orchestrator 校验）：base 最低波 total 22.51 / sharpe 1.22 / maxDD 12.96 / obj 0.0955；中位 −1.18 / −0.14 / 29.50 / −0.3068；最高 −6.66 / −0.39 / 25.08 / −0.3174 ⇒ 全年 sharpe 单调 低 > 中 > 高。按 09-24..10-08 拆分：该两周 base +21.58% / 中位 +73.02% / 最高 +1.40%；其余 236 天 base +0.76%（sharpe "
+  },
+  {
+    "id": "q-e9-3",
+    "kind": "understand",
+    "title": "海龟叠加消融：建仓即 100%，持有至换仓，无加仓/止损/止盈",
+    "hypothesis": "edge.test 原文：若海龟叠加有正贡献，消融后 objective 下降、maxDD 抬高。证伪：objective ≥ base 且 maxDD ≤ base+1pp ⇒ 叠加 refuted（在本窗口只是削仓位）",
+    "why": "1 次 TRAIN。即使 q-e9-1 显示止损/止盈 0 次也不能逐位预判——75%→100% 的初始仓位差在 9 月行情里会被放大——所以仍要跑；q-e9-1 只决定读法（若 0 事件，差异全是仓位水平，sharpe 应近似不变而 annual 抬高）。排在 q-e9-1 之后 ‖ q-e9-1: 叠加活跃（3 止损/1 止盈/4 加仓）；9 月行情期只持 3U（最低波分支先于加仓检查 return），100% 建仓会直接放大那一周 ⇒ 必须单独报 09-24..10-08 段",
+    "design": "baseline 中：建仓 Unit 数 3→4（100%），删除加仓、止损、止盈三个分支的调用点（l.218–370），换仓/选股/避险逐字不动。--window train。报告 annual / sharpe / maxDD 与 9 月段贡献",
+    "from": [
+      "normalized:4a8bcfd5",
+      "q-e9-1"
+    ],
+    "edgeRef": "海龟加仓止损叠加",
+    "rank": 3,
+    "status": "done",
+    "result": "TRAIN 2024（242 点，曲线末值 20.82 经 orchestrator 校验）：叠加关闭 total 20.82 / sharpe 1.24 / maxDD 13.78 / obj 0.0704；base 22.51 / 1.22 / 12.96 / 0.0955。按 09-24..10-08 拆分：该两周 关闭 +7.09%（base +21.58%），其余 236 天 关闭 +12.82%（sharpe rf0 1.04；base +0.76% / 0.13）。持仓链：红利 01-02..01-30 → 黄金 ..05-06 → 50ETF ..09-25 → 黄金 ..12"
+  },
+  {
+    "id": "q-e9-4",
+    "kind": "understand",
+    "title": "池后见测试：手选 14 只风险池 → 事前可定义的 A 股权益 ETF 点时池，其余不动",
+    "hypothesis": "若 edge 是低波排序而非手选名单，换成事前池后 sharpe 仍 ≥ 1.0 且 objective ≥ base 的 ~60%。证伪：sharpe < 1.0 或 objective ≤ 0 ⇒ 收益由名单承载（ETF动量 q-3 的 −0.27 同形），低波动异象不得升级",
+    "why": "1 次 TRAIN。机制问题（后见）而非水平问题，跨台有效——是 q-e9-2 唯一不能回答的一半。帖子发布于 2026-09-11，池在 TRAIN/VAL 之后写成。⚠ 构造陷阱：全 ETF 点时池里最低波的是货币/短债 ETF，『最低波』会退化成现金——池必须限定权益类（排除债/货币/黄金/商品/跨境），逐月报告被选中代码与类别；若被选中的全是红利/银行，读数是『低波=红利』而非池中立。⚠ 同时改变了宽度（14→数百），与 ETF动量 q-e9-5 相同的混淆，写进 finding ‖ q-e9-1: 全年 = 黄金 H1 + 50ETF 一周（09-23..10-08 +21.86%，其余 +0.54%）⇒ 必须单独报该段贡献与剔除后的分段 sharpe",
+    "design": "复用 study/ETF动量/variants/pit-pool.py 的逐日 get_all_securities(date=d) 构造（上市 ≥250 日、成交额底 2e7），加权益类过滤（名称/跟踪指数排除 债|货币|现金|黄金|豆粕|商品|纳指|标普|日经|德国|恒生|港），取代 l.43–63 的 14 只；国债避险腿 511010/511260 原样保留；排序/海龟/换仓逐字不动。--window train。断言 diff 只落在池构建",
+    "from": [
+      "normalized:4a8bcfd5",
+      "study/ETF动量:q-3_ashare-pool",
+      "study/ETF动量:pit-pool"
+    ],
+    "edgeRef": "低波动异象",
+    "rank": 4,
+    "status": "done",
+    "result": "PIT 权益池（152–294 只）on q-e9-3：19.78 / sh 1.14 / maxDD 9.34 / obj 0.1044 vs q-e9-3 20.82 / 1.24 / 13.78 / 0.0704；行情两周 +15.39% / 其余 +3.80%（rest sh 0.38）vs +7.09% / +12.82% / 1.04。持仓全为红利/银行，10-10 起国债。预声明规则 PASS ⇒ 低波动异象 measured（作用域：排序不由名单承载；行情外避损主要是黄金；与 2024 防御行情不可分）。⚠ 静态 4 只臂 q-e9-4s 为 orchestrator 设计偏离，单独记录"
+  },
+  {
+    "id": "liq-e9-1",
+    "kind": "understand",
+    "title": "realizability：本书自身尺寸的可行性下限（1M / 1 只 / ovr 0.05 ⇒ 2e7 元/日）",
+    "hypothesis": "若下限惰性（持仓 ETF 在每个买入日的 20 日均成交额 ≥ 2e7），曲线逐位相同 ⇒ R≥2。证伪：下限改变 ≥1 次选择或 objective 变动 > 0.01 ⇒ 下限有约束，报告被剔除代码与 Δ；sharpe 跌破 1.0 ⇒ R=1",
+    "why": "exit gate 的阻塞项（realizability 未设 = BLOCK）。1 次 TRAIN。⚠ 不能先验当惰性：单持仓 4 Unit 即 100% 资金压在一只 ETF 上，下限 2e7/日是 大小盘轮动（2e6）的 10 倍，豆粕/化工/地产/煤炭 ETF 在 2024 可能低于它——这次是真可能咬的",
+    "design": "参照 study/五福闹新春/build-e9-liq.js：断言 parent sha256 + stored curve 末值 22.51；下限 = capital / 1 / order_volume_ratio，从 harness 读不手抄；仅作买入侧筛选（候选池剔除 20 日均成交额 < floor），其余逐字不动；打印 LIQFLOOR in/out 计数。--window train",
+    "from": [
+      "normalized:4a8bcfd5",
+      "study/五福闹新春:build-e9-liq",
+      "study/大小盘轮动:liq-1"
+    ],
+    "edgeRef": null,
+    "rank": 5,
+    "status": "done",
+    "result": "2e7 下限 on base：逐位相同（max|Δcum| 0；22.51 / 1.22 / 12.96 / 0.0955）。只剔除 159768 地产（79/242 天，从未被选）；最薄可选 159870 化工 24.9M ≈1.25×；持仓日额 227M–1.7B ⇒ R=2（3 未挣得，5×/10× 未跑）"
+  },
+  {
+    "id": "q-e9-5",
+    "kind": "understand",
+    "title": "给 post 78820「开源一个年化超25%的ETF策略」（被克隆的内核）定日期",
+    "hypothesis": "内核发布于 2024-01-01 之前 ⇒ 14 只池的选择早于 TRAIN，后见只来自本帖的改动；发布于 2024 之后 ⇒ 池与 TRAIN/VAL 同在作者样本内。任一侧即答案",
+    "why": "0 回测，但未必 0 成本：标题不在 data/discovered.json，data/post-bodies.json 也无 78820——需 listV2 按 TITLE 检索（HTTP，免费，可能很深）。只影响 q-e9-4 的先验与 VAL 污染叙述，不门控任何跑。按标题匹配，不得用 postId（每次重铸）",
+    "design": "先在 4a8bcfd5 帖子正文里找原帖链接/日期；否则沿用 utils/postedat-backfill.js 的逻辑按标题检索 listV2。找不到则记『未定日期』，不猜",
+    "from": [
+      "normalized:4a8bcfd5"
+    ],
+    "edgeRef": null,
+    "rank": 6,
+    "status": "queued"
+  },
+  {
+    "id": "q-e9-6",
+    "kind": "understand",
+    "title": "参照：14 只风险池等权买入持有，无排序无叠加",
+    "hypothesis": "若低波排序+叠加有贡献，base sharpe 显著高于池等权 B&H。证伪：等权 B&H sharpe ≥ base ⇒ 整套规则不加值，2024 收益是池本身",
+    "why": "1 次 TRAIN，构造不同于 q-e9-2（不是同一旋钮），按『一条一实验』单列。edge.test 原文提到『池内等权』。排在 q-e9-2/q-e9-4 之后：二者若已一致指向 refuted，本条的边际信息很小 ‖ q-e9-2: 排序在行情外的作用是避损（base 其余 236 天 +0.76% / sharpe rf0 0.13 vs 中位 −42.89% / 最高 −7.95%）⇒ 本条是低波动异象的决定性对照；必须拆 09-24..10-08 段，并报等权在其余 236 天的收益/sharpe 与 base 0.13 比较",
+    "design": "新文件：首日 14 只等权买入、年内不调仓，冻结 OVERRIDE 与成本。--window train",
+    "from": [
+      "normalized:4a8bcfd5"
+    ],
+    "edgeRef": "低波动异象",
+    "rank": 7,
+    "status": "done",
+    "result": "TRAIN 2024（242 点，曲线末值 15.45 经 orchestrator 校验）：池等权 B&H total 15.45 / sharpe 0.65 / maxDD 13.65 / obj 0.0180；base 22.51 / 1.22 / 12.96 / 0.0955。按 09-24..10-08 拆分：该两周 等权 +25.82%（base +21.58%），其余 236 天 等权 −8.24%（sharpe rf0 −0.52；base +0.76% / 0.13）。即最低波排序在 sharpe 上胜等权（1.22 vs 0.65），决定性的差距在行情外（+0.76% vs"
+  },
+  {
+    "id": "i-e9-1",
+    "kind": "improve",
+    "title": "去掉『30% 卖一半利润』止盈，其余不动",
+    "hypothesis": "止盈在趋势中途减仓，去掉后 objective 上升。证伪：objective ≤ base",
+    "why": "条件项：q-e9-1 若显示止盈 0 次，本条逐位相同 ⇒ 直接记 answered（free），不跑。否则 1 次 TRAIN。edge 未测，排在 understand 之后 ‖ q-e9-1 (2026-11-01): 止盈触发 1 次（10-08 50ETF，行情顶部），条件已决定 ⇒ 须真跑，不得 free-answered",
+    "design": "删除 l.218–269 止盈调用点，--window train",
+    "from": [
+      "normalized:4a8bcfd5",
+      "q-e9-1"
+    ],
+    "edgeRef": "海龟加仓止损叠加",
+    "rank": 8,
+    "status": "dropped",
+    "note": "rejected-by-finding q-e9-3 (2026-11-01): 整个海龟叠加消融后 sharpe 不降（1.24 vs 1.22），edge 海龟加仓止损叠加 refuted；只去止盈是被否定叠加的一个子件，不再值一次回测"
+  },
+  {
+    "id": "i-e9-2",
+    "kind": "improve",
+    "title": "选股用下行半方差替代总标准差（只改排序键）",
+    "hypothesis": "下行波动更贴近低波异象的风险含义，objective 上升。证伪：objective ≤ base，或选择序列与 base 相同（惰性）",
+    "why": "on-mechanism（低波动异象）。1 次 TRAIN。q-e9-2 若 refute 低波排序，本条降为 off-mechanism 并重评",
+    "design": "l.106–133 波动率函数改为 sqrt(mean(min(r,0)^2))×√252，换仓阈值/海龟逐字不动；报告与 base 选择序列不同的天数",
+    "from": [
+      "normalized:4a8bcfd5"
+    ],
+    "edgeRef": "低波动异象",
+    "rank": 9,
+    "status": "done",
+    "result": "rejected：下行半方差 on base 34.85 / sh 1.75 / maxDD 10.14 / obj 0.2471 vs 22.51 / 1.22 / 12.96 / 0.0955；rank-1 不同 18/242 天、持有不同 42/242 天；增益 = 黄金早换入 + 09-05 止损重置后第 4 Unit 的路径偶然。仅在叠加开的 base 上测，未在 q-e9-3/i-e9-3 上测"
+  },
+  {
+    "id": "i-e9-3",
+    "kind": "improve",
+    "title": "（条件于 q-e9-3 显示叠加近似惰性）最低波 3 只逆波动加权，从 q-e9-3 变体出发",
+    "hypothesis": "单持仓使 2024 = 9 月 6 天；分散到 3 只逆波动加权后 sharpe 上升。证伪：sharpe ≤ q-e9-3 变体",
+    "why": "条件项：q-e9-3 若显示叠加有显著贡献则本条作废（另起一条在 base 上做）。1 次 TRAIN ‖ q-e9-3 (2026-11-01): 条件满足——叠加 refuted（sharpe 1.24 vs 1.22，行情外 +12.82% / 1.04）⇒ 本条 LIVE，从 variants/q-e9-3.py 构建，对照 = q-e9-3（obj 0.0704 / sharpe 1.24），须拆 09-24..10-08 段",
+    "design": "q-e9-3 变体中选股取升序前 3，权重 ∝ 1/vol，换仓按集合比较，--window train",
+    "from": [
+      "q-e9-3",
+      "orchestrator:sep-rally-21.6pct"
+    ],
+    "edgeRef": "低波动异象",
+    "rank": 10,
+    "status": "done",
+    "note": "live after q-e9-3",
+    "result": "adopted（TRAIN only）：3 只 1/vol on q-e9-3 25.05 / sh 1.78 / maxDD 9.03 / obj 0.1602 vs 20.82 / 1.24 / 13.78 / 0.0704；行情两周 +13.03% / 其余 +10.64%（rest sh 1.08）vs +7.09% / +12.82% / 1.04。黄金持有 ~8.5/12 月 ⇒ 非 VAL 候选（手选含金池），开 i-e9-4（点时权益池）"
+  },
+  {
+    "id": "q-e9-7",
+    "kind": "understand",
+    "title": "黄金在/不在：手选 14 只池去掉 518880 黄金ETF，跑在 q-e9-3 上，其余逐字不动",
+    "hypothesis": "q-e9-4 推论：手选池的行情外避损（q-e9-3 其余天 +12.82%）主要来自黄金。若成立，去掉黄金后行情外收益落到 PIT 池附近（≈ +3.8%），全年 sharpe 降向 ~1.1。证伪：行情外收益仍 ≥ ~+10% ⇒ 手选池的行情外优势不是黄金，而是名单中其他名字，需另找",
+    "why": "1 次 TRAIN。把 q-e9-4 中由持仓归因推出的「黄金 ≈ +9pp 行情外」变成测量；它决定 VAL 读数时池效应如何拆读（VAL 2025 黄金同样大涨，若黄金承载池效应，VAL 的强数字是黄金而不是低波排序）。不是 improve：不会据此改池",
+    "design": "从 variants/q-e9-3.py 出发，仅删除 g.all_risk_etfs 中 \"518880.XSHG\" 一行（断言 diff 恰为该行）；--window train；报告 09-24..10-08 与其余天的收益/rest sharpe、持仓链，与 q-e9-3 和 q-e9-4 对照",
+    "from": [
+      "q-e9-4",
+      "q-e9-1",
+      "q-e9-3"
+    ],
+    "edgeRef": "低波动异象",
+    "rank": 5,
+    "status": "done",
+    "result": "去黄金 on q-e9-3：19.47 / sh 0.84 / maxDD 10.71 / obj 0.0876 vs 20.82 / 1.24 / 13.78 / 0.0704；行情两周 +23.75% / 其余 −3.46%（rest sh −0.15）vs +7.09% / +12.82% / 1.04。避险腿放行 50 天（中位峰值 41.32%），国债 19 天。⇒ 手选池行情外避损全部是黄金；VAL 2025 在 14 只池 base 上将被读成黄金；obj 升而 sharpe 跌破闸"
+  },
+  {
+    "id": "i-e9-4",
+    "kind": "improve",
+    "title": "i-e9-3 的 3 只 1/vol 构造搬到 q-e9-4 点时权益 ETF 池（不含黄金）",
+    "hypothesis": "3 只逆波动加权在点时权益池上 sharpe ≥ 1.0 且 ≥ q-e9-4 的 1.14。证伪：sharpe < 1.0",
+    "why": "on-mechanism（低波动异象）。i-e9-3 在手选含金池上 adopted 但不是 VAL 候选（q-e9-7：手选池行情外优势全部是黄金；黄金持有 ~8.5/12 月）。点时权益池是本族唯一不依赖黄金的读数（q-e9-4 sh 1.14），本条决定本族是否有可送 VAL 的书。1 次 TRAIN；须拆 09-24..10-08 段并报避险腿放行天数；改池 ⇒ 引用数字前须重跑 liq",
+    "design": "以 variants/i-e9-3.py 为母本，把 g.all_risk_etfs 手选 14 只替换为 variants/q-e9-4-pit.py 的池构建块（逐日 get_all_securities etf、上市 ≥250 日、20 日成交额中位 ≥2e7、权益类正则 + 511/513/518 前缀排除 + 手工 159980/159831），3 只 1/vol / 集合变化再平衡 / 逐名 20 日最短持有 + 10% 带 / 国债腿逐字不动；对照 = q-e9-4（19.78 / 1.14 / 9.34 / 0.1044）与 i-e9-3；--window train",
+    "from": [
+      "i-e9-3",
+      "q-e9-4"
+    ],
+    "edgeRef": "低波动异象",
+    "rank": 1,
+    "status": "done",
+    "result": "adopted as VAL candidate：点时权益池 3 只 1/vol 24.88 / sh 1.34 / maxDD 9.90 / obj 0.1498（vs q-e9-4 1.14、i-e9-3 1.78）；两周 +19.35% / 其余 +4.64%（rest sh 0.42）；liq-i-e9-4 惰性。VAL elhg-i-e9-4-val：sharpe 0.33 / obj 0.0138 FAIL（300 +17.66%，落后全在 Q3）⇒ 族 BLOCKED"
+  }
+]
