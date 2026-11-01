@@ -44,8 +44,8 @@
     ],
     "edgeRef": "价值因子（破净）",
     "rank": 3,
-    "status": "queued",
-    "result": null
+    "status": "answered",
+    "result": "Dividing available_cash only over not-yet-held names lowers sharpe 2.10→1.77 (Δ−0.33), objective 0.3897→0.3386, annual 54.17→49.43, maxDD 15.20→15.57. Daily return corr 0.98 with base; the whole gap is Oct −4.79pp and Dec +3.20pp, every other month within 0.6pp. The fix did NOT bring the book to 6 n"
   },
   {
     "id": "q-e9-attrib-probe",
@@ -59,8 +59,8 @@
     ],
     "edgeRef": null,
     "rank": 4,
-    "status": "queued",
-    "result": null
+    "status": "answered",
+    "result": "Net P&L +541,696 over 15 distinct names. 五洲交通 600368 +210,170 (38.8%, held 152 days), 中远海控 601919 +132,866 (24.5%, 41 days), 明泰铝业 +91,780 (16.9%), 孚日股份 8.1%, 甘肃能源 7.3%, … 江苏国信 −61,877 (−11.4%). Top-1 = 38.8%, top-2 = 63.3% of net (55.8% of gross). Dec +202.5k was 五洲交通 +167.9k (≈half the book) + 中远海控"
   },
   {
     "id": "pbn-imp-1",
@@ -74,8 +74,9 @@
     ],
     "edgeRef": "价值因子（破净）",
     "rank": 5,
-    "status": "blocked",
-    "result": null
+    "status": "answered",
+    "result": "top_n 1→2 lowers sharpe 2.10→1.90 (Δ−0.20), objective 0.3897→0.2966, annual 54.17→46.08, maxDD 15.20→16.42; daily corr 0.956 with base. Distinct targets widened only in Feb (5→8) and Sep (4→7); Oct–Dec stayed at 2–3 names because the six rankers converge on the same stocks. Invested fraction Feb–Dec",
+    "note": "UNBLOCKED 2026-11-01 by pbn-imp-3 (recorder): the divisor fix moved sharpe only −0.33 (corr 0.98, gap confined to Oct/Dec) and was rejected, so run on the RAW base e7c95ca1 — the confound named in why is measured small. Ranker overlap (2–5 distinct targets, e.g. 五洲交通 = 5 of 6 rankers in Nov) is the real cause of the small book, which makes top_n the only breadth lever. Report distinct target names per rebalance alongside the metrics; a Δ that leaves Oct–Dec at 1–2 names has not tested breadth."
   },
   {
     "id": "q-e9-ranker-isolate",
@@ -91,8 +92,9 @@
     ],
     "edgeRef": "价值因子（破净）",
     "rank": 6,
-    "status": "queued",
-    "result": null
+    "status": "answered",
+    "result": "Taking the 6 cheapest-PB qualifiers instead of the six rankers lowers sharpe 2.10→1.87 (Δ−0.23), objective 0.3897→0.3028, annual 54.17→46.08, maxDD 15.20→15.80; daily corr 0.942. LOW POWER: the qualified list (破净 + quality chain) held only 2/2/3/3/5/9/6/9/3/2 names at the 10 rebalances, so in 6 of 1",
+    "note": "2026-11-01 recorder (pbn-imp-1): NEXT RUN. top_n 1→2 was rejected (sharpe 2.10→1.90) and did not widen Oct–Dec (still 2–3 targets — ranker convergence), so this is now the ONLY remaining breadth test of 破净. Report 五洲交通 P&L share and distinct names per rebalance; sharpe well above 0.83 with 五洲交通 diluted is what would make 破净 a mechanism rather than one name."
   },
   {
     "id": "pbn-imp-2",
