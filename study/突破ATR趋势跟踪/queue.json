@@ -1,0 +1,163 @@
+[
+  {
+    "id": "q-e9-atr-bb-ablate",
+    "kind": "understand",
+    "title": "Edge ablation: entry = cond4 only (drop Bollinger first-breakout cond1–3)",
+    "hypothesis": "If 布林上轨突破 is the edge, entering on cond4 (close>MA60) alone, everything else verbatim, lowers sharpe. SUPPORT: Δsharpe ≤ −0.5 AND ≥30% of the lost return falls outside 2024-09. REFUTE: Δsharpe ≥ 0, OR ablation Sep return ≥80% of base Sep (+23.2%) with full-year |Δannual| < 3pp. Anything else = unresolved.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 1, ACTIVE. The family page's edge[0].test and §4 [第一步]; until it runs the edge may not be cited. Either outcome is information. Not a duplicate (0 findings, 0 closures binding or stale, 0 §2 rejects). Cost ~3 backtest-min. ⚠ cond4-only re-enters the day after any exit while close>MA60 and fills slots in pool order, so trade count rises — report trades and fees beside the Δ; that churn IS part of what the breakout event prevents, not a confound to correct. Single TRAIN year ⇒ sharpe SE≈1: |Δsharpe|<1 is UNRESOLVED, not a null — report it as such. ⚠ Author posted 2026-09-12: TRAIN 2024 is inside the author's view and 2024-09 supplies +23.2 of 28.45% — every result carries the monthly split.",
+    "design": "Base strategies/2026-10-27_基于上一版本进行了适当调整_增加其攻击性-e79e9884.py + py2to3 + OVERRIDE, epoch-9 pins. ONE asserted edit at L331: `if not (cond1 and cond2 and cond3 and cond4):` → `if not cond4:` (exactly-one match). Exits/sizing/regime/pool/schedule verbatim. Report vs control = base e79e9884 epoch-9 ledger row 0.2007 / sharpe 1.54 / annual 28.45 / maxDD 8.38 (curve data/series/…e79e9884__train__e9.json); plus monthly return split, trade count, flat-day count vs 131.",
+    "from": [
+      "wiki/families/突破ATR趋势跟踪.md edge[0].test + §4 [第一步]",
+      "free curve read: 131/242 flat days; 2024-09 = +23.20 of 28.45%"
+    ],
+    "edgeRef": "布林上轨突破（时序动量）",
+    "rank": 1,
+    "status": "answered",
+    "result": "Entering on cond4 (close>MA60) alone lowers sharpe 1.54->1.21, objective 0.2007->0.1523, annual 28.45->25.43, maxDD 8.38->10.20. September is identical (23.20 base vs 23.21 variant; both open 510300/510500/159915 on 2024-09-25 at the same prices). Monthly base/variant: Feb 1.34/1.50, Mar 3.93/5.70, "
+  },
+  {
+    "id": "q-e9-atr-liq",
+    "kind": "understand",
+    "title": "Realizability: entry-scan liquidity floor on 20-day mean money, floors 1e7 and 1e8",
+    "hypothesis": "R≥2 if the 1e7 floor (own feasibility: 50%×1e6/0.05) is bit-identical to base with LIQFLOOR lines in==out on every scan; R=3 if 1e8 keeps sharpe ≥1.0. REFUTE R≥2: the 1e7 floor changes the curve.",
+    "why": "gatekeeper 2026-11-01 re-rank after 3 findings: RANK 1, ACTIVE. Only open item that clears an exit-gate block (realizability unset => blocked); no finding touched it. Two floors in one entry is accepted as ONE score (R) read off a declared ladder, same shape as 大小盘轮动/b3751277 liq-1. ~6 min. Prior favours inert (broad ETFs); a prior is not a score. Absent LIQFLOOR lines = instrumentation failure, not inert. gatekeeper 2026-11-01: ACCEPTED, rank 4. Blocks the exit gate (realizability unset ⇒ blocked), §4 [阻塞 exit gate]. Two runs, ~6 min. Prior favours inert (six large ETFs) but a prior is not a score (大小盘轮动 inert vs ETF溢价 8.44→1.10). Optional 1e9 floor DROPPED: R tops out at 3, so it cannot change the score. ⚠ Absent LIQFLOOR lines = instrumentation failure, not 'inert'.",
+    "design": "Base strategies/2026-10-27_基于上一版本进行了适当调整_增加其攻击性-e79e9884.py + py2to3 + OVERRIDE. Two variants, each ONE asserted insertion in the entry loop before the cond checks: skip a symbol whose mean `money` over the last 20 daily bars (attribute_history, excludes today) < FLOOR; log `LIQFLOOR date in=<n> out=<n>` per scan. FLOOR=1e7 (liq-1), 1e8 (liq-2). Report each vs control 0.2007 / 1.54 / 28.45 / 8.38 and max|Δcum| vs the base curve.",
+    "from": [
+      "wiki/families/突破ATR趋势跟踪.md §4 [阻塞 exit gate]",
+      "CLAUDE.md liq-1 precedents (大小盘轮动, b3751277)"
+    ],
+    "edgeRef": null,
+    "rank": 1,
+    "status": "answered",
+    "result": "Both floors reproduce the control exactly: objective 0.2007, sharpe 1.54, annual 28.45, maxDD 8.38, max|Δcum| = 0 over 242/242 dates, for 1e7 (the book own feasibility floor 0.5x1e6/0.05) and 1e8 (10x). 54 LIQFLOOR lines per run, 0 errors, in=6 out=6 on all 54 scans (the entry loop runs only on offe"
+  },
+  {
+    "id": "q-e9-atr-regime-ablate",
+    "kind": "understand",
+    "title": "Edge ablation: get_index_regime() always returns 'offensive'",
+    "hypothesis": "If the HS300 MA20/MA60 regime is what keeps maxDD at 8.38%, removing it raises maxDD. SUPPORT: maxDD +≥3pp AND sharpe −≥0.3. REFUTE: sharpe ≥ 1.54 (timing only keeps the book out of the market). TIGHTENED: maxDD +≥3pp with sharpe ≥1.54 is reported as 'risk-only' (neither support nor refute), since the sharpe leg alone sits inside SE.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 2. Second proposed edge, edge[1].test verbatim; ~3 min. Also conditions how atr-imp-regime-ashare is read. ⚠ Removes the L219 defensive forced liquidation as well as the no-open rule — that is the claim under test. Single TRAIN year ⇒ sharpe SE≈1: |Δsharpe|<1 is UNRESOLVED, not a null.",
+    "design": "Base strategies/2026-10-27_基于上一版本进行了适当调整_增加其攻击性-e79e9884.py + py2to3 + OVERRIDE. ONE asserted edit: first statement of get_index_regime() body becomes `return 'offensive'` (rest left as dead code). Report vs control 0.2007 / 1.54 / 28.45 / 8.38; flat-day count vs 131; monthly split (Jan, Jun–Aug are the base's regime-off months).",
+    "from": [
+      "wiki/families/突破ATR趋势跟踪.md edge[1].test",
+      "source L92–116, L219, L302 (read)"
+    ],
+    "edgeRef": "大盘 MA20/MA60 择时",
+    "rank": 2,
+    "status": "answered",
+    "result": "Always-offensive regime lowers sharpe 1.54->1.25, objective 0.2007->0.1190, annual 28.45->16.94 AND lowers maxDD 8.38->5.04 (vol 16.56->10.79, flat days 132->57, corr 0.785). Monthly base/variant: Jan 0/-0.21, Feb 1.34/2.78, Mar 3.93/2.47, Apr 2.13/-1.08, May -1.72/-1.72, Jun 0/1.42, Jul 0/0.75, Aug"
+  },
+  {
+    "id": "atr-imp-cap-third",
+    "kind": "improve",
+    "title": "MAX_POSITION_PCT 0.50 → 1/3",
+    "hypothesis": "With a 50% cap, 510300+510500 took ~99.7% of capital on 2024-09-25 and 159915 (the +38% mover) got ~6%; 1/3 slots let all three size equally. SUPPORT (improve): sharpe > 1.54. REFUTE: Δsharpe ≤ 0. Also reads edge[2] (择时=现金储备/集中开关): if concentration in the first two signals is the return, Sep falls and Δsharpe ≤ 0. |Δsharpe|<1 is inside SE on one year: report it as unresolved, and decide the mechanism by the 9/25 share counts and Sep return.",
+    "why": "gatekeeper 2026-11-01 re-rank after 3 findings: RANK 2 (was 7). Raised: cash starvation is now MEASURED on the base (q-e9-atr-attrib), so this is the most informative improve test and doubles as the first test of the proposed edge[2]. ~3 min. Lower annual on non-Sep months is mechanical; judge on sharpe + 9/25 share counts. Author-view: 2024-09 is inside the author window.",
+    "design": "Base strategies/2026-10-27_基于上一版本进行了适当调整_增加其攻击性-e79e9884.py + py2to3 + OVERRIDE. ONE asserted edit L51: `MAX_POSITION_PCT  = 0.50` → `MAX_POSITION_PCT  = 1.0/3`. Report vs control 0.2007 / 1.54 / 28.45 / 8.38; days holding 3 names vs base.",
+    "from": [
+      "source L346–360 sizing (read): risk size ≈53% ⇒ usually cap-bound",
+      "q-e9-atr-attrib (159915 got ~6% of capital on 9/25)",
+      "q-e9-atr-regime-ablate (regime = cash reserve for full-size entries)"
+    ],
+    "edgeRef": "布林上轨突破（时序动量）",
+    "rank": 2,
+    "status": "answered",
+    "result": "Capping each position at 1/3 instead of 50% lowers sharpe 1.54->1.28 and objective 0.2007->0.1926 while RAISING annual 28.45->31.06 and maxDD 8.38->11.80. The 13 trades are identical in dates, symbols and exit reasons - only sizes change; the 1/3 cap binds on almost every entry and the 2%-risk size ",
+    "note": "recorder 2026-11-01 (q-e9-atr-attrib): cash starvation measured on the base: on 9/25 510300+510500 took ~99.7% of capital and 159915 (+38% move) got ~6% (36,400 sh ≈59k); equal 1/3 slots would have given it ~33%. Now the most informative improve test; gatekeeper may rank it up. Report 9/25 share counts per ETF."
+  },
+  {
+    "id": "q-e9-atr-attrib",
+    "kind": "understand",
+    "title": "Per-ETF P&L attribution from the base run's own 开仓/卖出 log lines",
+    "hypothesis": "One ETF supplies >50% of TRAIN P&L (SUPPORT). REFUTE: ≥3 ETFs each supply ≥15%. Control must reproduce 28.45 / 8.38 / 1.54 exactly, else void.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 3. Says whether the Sep capture is one name (likely 512880 or 159915), which conditions how the two ablations and q-e9-atr-pool-broad are read. No instrumentation edit: base logs every 卖出 with 盈亏 (L258) plus a 交易明细 block at end. ⚠ FREE ROUTE FIRST: try utils/backtest-log.js on the existing epoch-9 normalize run of e79e9884, paged with study/小市值/pagelog.js (100 lines/page); if retrievable this costs 0 min and needs no control. Only if reaped, rerun base unchanged (~3 min). Do not write a third pager.",
+    "design": "Base strategies/2026-10-27_基于上一版本进行了适当调整_增加其攻击性-e79e9884.py + py2to3 + OVERRIDE, no edit (or no run if the existing log is retrievable). Page the full log; pair 开仓/卖出 per symbol; sum 盈亏 per ETF, overall and within 2024-09; value year-end open positions from the end report. Control vs 0.2007 / 1.54 / 28.45 / 8.38.",
+    "from": [
+      "free curve read: 2024-09 = +23.20 of 28.45%",
+      "source L258/L441 log every trade with pnl"
+    ],
+    "edgeRef": null,
+    "rank": 3,
+    "status": "answered",
+    "result": "Re-paged log of the ledger run 5e3c1028 (log end equity 1,284,494.51 = 28.45%, so the control holds by construction; logged P&L exceeds ledger by 1,241 = fees + open-vs-fill, immaterial). Per-ETF net P&L of 285,736: 510300 +108,060 (37.8%, 4 trades), 510500 +94,012 (32.9%), 518880 gold +67,449 (23.6"
+  },
+  {
+    "id": "q-e9-atr-reentry-cooldown",
+    "kind": "understand",
+    "title": "cond4-only entry + no re-entry for 1 trading day after an exit",
+    "hypothesis": "q-e9-atr-bb-ablate: Sep identical without Bollinger, −0.33 sharpe concentrated in Oct–Dec same-day re-entries. If cond1–3 act ONLY as a re-entry filter, cond4 + 1-day cooldown recovers base sharpe (≥1.44). If the breakout event selects better timing beyond churn, sharpe stays ≤1.30. Between = unresolved. Decisive trace evidence beside the pooled number: Oct–Dec re-entry count and their summed P&L vs the ablation.",
+    "why": "gatekeeper 2026-11-01 re-rank after 3 findings: RANK 3, trimmed to N=1 (one experiment). N=5 is a SECOND experiment — re-propose only if N=1 is unresolved. Still informative: it is the only test that separates edge[0]'s two possible roles (event timing vs churn filter); the Δ it decomposes (−0.33) is inside SE, so the trade-level trace, not pooled sharpe, carries the verdict. ~3 min.",
+    "design": "Start from variants/q-e9-atr-bb-ablate.py (cond4-only). ONE asserted insertion: record exit date per symbol in the sell path; in the entry loop skip a symbol whose last exit is within 1 trading day. Everything else verbatim. Controls: base 0.2007/1.54/28.45/8.38 and ablation 0.1523/1.21/25.43/10.20. Report trade count, same-day re-entries, monthly split.",
+    "from": [
+      "q-e9-atr-bb-ablate"
+    ],
+    "edgeRef": "布林上轨突破（时序动量）",
+    "rank": 3,
+    "status": "answered",
+    "result": "cond4-only entry plus a no-re-entry rule on D and D+1 after an exit scores objective 0.2361, sharpe 1.62, annual 30.98, maxDD 7.37 - Δsharpe +0.08 vs base (inside SE≈1) and +0.41 vs the bb-ablate. Opens 27 vs base 13 vs ablate 34. September is 23.20 in all three books (identical 9/25 entries). Oct-D"
+  },
+  {
+    "id": "atr-imp-512100",
+    "kind": "improve",
+    "title": "Replace 512880 证券 with 512100 中证1000",
+    "hypothesis": "Asset-class pool without the sector bet.",
+    "why": "gatekeeper 2026-11-01: REJECTED (dropped), merged into q-e9-atr-pool-broad. As an improve its expected gain on 2024 is negative (removes the 9·24 证券 leg); the question it really asks — is 证券 hindsight — is answered by q-e9-atr-attrib + q-e9-atr-pool-broad. Re-propose only if attribution shows 证券 is NOT the Sep driver.",
+    "design": null,
+    "from": [
+      "generator B I3"
+    ],
+    "edgeRef": null,
+    "rank": 90,
+    "status": "dropped",
+    "result": null,
+    "note": "recorder 2026-11-01 (q-e9-atr-attrib): re-propose condition settled NO. 证券 is not the Sep driver (not held in Sep) and lost -32,513 in 2024, so dropping it is TRAIN pool-tuning, not a hindsight test. Stays dropped."
+  },
+  {
+    "id": "atr-imp-1450",
+    "kind": "improve",
+    "title": "Run at 14:50 using last_price as today's close for signals and fills",
+    "hypothesis": "Same-day signal at near-close instead of next-day open.",
+    "why": "gatekeeper 2026-11-01: REJECTED (dropped) — not one experiment. Splicing last_price into BB/MA/ATR history rewrites indicator construction at several sites (high build risk) and moves signal timing AND fill timing together, so a Δ cannot be attributed. (last_price is live at 14:50 — not a lookahead issue — a design issue.) Re-proposable as ONE edit: run_daily(main_logic, time='14:50') with signals unchanged on T−1 bars — a pure fill-timing test; the day_open-based entry/stop bookkeeping would then need the same handling.",
+    "design": null,
+    "from": [
+      "generator B I4"
+    ],
+    "edgeRef": null,
+    "rank": 91,
+    "status": "dropped",
+    "result": null
+  },
+  {
+    "id": "q-e9-atr-pool-broad",
+    "kind": "understand",
+    "title": "Pool hindsight: swap 证券/黄金/纳指 for broad A-share index ETFs",
+    "hypothesis": "ETF_POOL → 510300, 510500, 159915, 510050, 512100, 588000 (drop 512880/518880/513100), all else verbatim. SUPPORT (pool is not the edge): sharpe ≥ 1.0. REFUTE (the hand-picked 2024–25 winners carry the book): sharpe < 0.5. Between = unresolved.",
+    "why": "gatekeeper 2026-11-01 re-rank after 3 findings: DROPPED — answered by q-e9-atr-attrib. The swap keeps 510300/510500 (70.7% of net, the 9/25 legs) and removes gold+Nasdaq, which are measured to be the ONLY non-Sep earners (32.8% of net) while 证券 lost. So the outcome is fixed by attribution arithmetic up to what the three replacement names (510050/512100/588000) do — that residual is pool tuning, not a hindsight test. Name-level hindsight for 2024 is closed (concentration is in time, not name). Re-propose as a pre-2025 pool check only if the family reaches VAL with new 2025-listed names. gatekeeper 2026-11-01: ACCEPTED, rank 5. The page flags selection hindsight as 未排除 (证券+黄金+纳指 written in 2026). ~3 min. All replacements listed pre-2021, so no availability hindsight. ⚠ It removes the diversifiers AND 证券 at once — accepted as one experiment because the question is the pool as a whole; run after q-e9-atr-attrib, which says which half to read it by. ⚠ 588000/159915 were the hottest 9·24 names, so a pass may still be a Sep capture: monthly split required. Absorbs improve idea atr-imp-512100. Single TRAIN year ⇒ sharpe SE≈1.",
+    "design": "Base strategies/2026-10-27_基于上一版本进行了适当调整_增加其攻击性-e79e9884.py + py2to3 + OVERRIDE. ONE asserted edit: the ETF_POOL literal (L23–30) replaced by 510300.XSHG, 510500.XSHG, 159915.XSHE, 510050.XSHG, 512100.XSHG, 588000.XSHG. Report vs control 0.2007 / 1.54 / 28.45 / 8.38; monthly split, per-ETF entries.",
+    "from": [
+      "wiki/families/突破ATR趋势跟踪.md §1 池子 row (选择事后性未排除)",
+      "CLAUDE.md q-e9-pit: pool bonus splits by mechanism"
+    ],
+    "edgeRef": null,
+    "rank": 92,
+    "status": "dropped",
+    "result": null,
+    "note": "recorder 2026-11-01 (q-e9-atr-attrib): 证券 lost -32,513 in 2024 and was not held in Sep, so this run is NOT a 证券-hindsight test. What it removes that matters is gold+Nasdaq = 32.8% of net, the only earners outside Sep; 510300/510500 (70.7% of net, the 9/25 legs) stay. Expect Sep ≈ unchanged and the rest of the year worse; read by the monthly split and pre-declare the non-Sep comparison."
+  },
+  {
+    "id": "atr-imp-regime-ashare",
+    "kind": "improve",
+    "title": "HS300 regime gates only A-share ETFs; 518880 gold and 513100 Nasdaq ungated",
+    "hypothesis": "An HS300 regime has no bearing on gold or Nasdaq; the base sits flat 131 days (Jan, Jun–Aug HS300 < MA60) while both rallied in 2024. SUPPORT: sharpe > 1.54 with maxDD ≤ 11.38. REFUTE: Δsharpe ≤ 0.",
+    "why": "gatekeeper 2026-11-01 re-rank after 3 findings: DROPPED — expected gain now negative (q-e9-atr-regime-ablate): ungated 513100/518880 tie up the 50%-capped capital and starve the 9/25 broad-ETF entries (510500 1,000 vs 96,700 sh; 159915 never opened). An improve idea with a measured negative mechanism ranks out. Re-propose ONLY combined with the winning cap from atr-imp-cap-third (equal slots remove the starvation channel), as a new entry citing both. gatekeeper 2026-11-01: ACCEPTED, rank 6. On-mechanism (edgeRef 大盘择时), clear causal story, plausibly the largest gain in the set; ~3 min. Run after q-e9-atr-regime-ablate. ⚠ Gold/Nasdaq are last in pool order, so the 50% cap and cash constraint often fill slots before they are scanned — report how often each actually enters. ⚠ Author-view: 2024 gold/Nasdaq strength was known to the author, so a gain here is in-view. Single TRAIN year ⇒ sharpe SE≈1.",
+    "design": "Base strategies/2026-10-27_基于上一版本进行了适当调整_增加其攻击性-e79e9884.py + py2to3 + OVERRIDE. One rule, two asserted sites: NON_EQUITY = {'518880.XSHG','513100.XSHG'}; defensive_hit (L219) and the non-offensive no-open check (~L302) apply only to symbols not in NON_EQUITY. Report vs control 0.2007 / 1.54 / 28.45 / 8.38; per-ETF entries, flat-day count vs 131.",
+    "from": [
+      "wiki/families/突破ATR趋势跟踪.md edge[1].evidence (regime-off months = zero-return months)"
+    ],
+    "edgeRef": "大盘 MA20/MA60 择时",
+    "rank": 93,
+    "status": "dropped",
+    "result": null,
+    "note": "recorder 2026-11-01 (q-e9-atr-regime-ablate): ungating gold/Nasdaq is now expected to HURT 2024-09 - in the always-offensive run 513100/518880 held capital under the 50% cap and starved the 9/25 broad-ETF entries (510500 1,000 vs 96,700 shares; 159915 never opened). Gatekeeper: reframe or rank down before running. ‖ recorder 2026-11-01 (atr-imp-cap-third): the re-propose condition (combine with a WINNING cap-third) is settled NO - cap-third was rejected (sharpe 1.54->1.28). Stays dropped."
+  }
+]
