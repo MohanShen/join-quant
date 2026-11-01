@@ -1,0 +1,228 @@
+[
+  {
+    "id": "liq-1",
+    "kind": "understand",
+    "title": "liq-1 realizability: 2e6 liquidity floor (20-bar median money, previous_date) on the 偷鸡 candidate list at the book own feasibility minimum",
+    "hypothesis": "The 偷鸡 leg buys the smallest <¥10 names after ROE/ROA; if those trade below the fill-feasibility minimum, the measured 规模因子 return is funded by names this book could not fill (the 小市值 7/8 不可成交 / ETF溢价 8.44→1.10 pattern) and R=1.",
+    "why": "type: realizability. BLOCKS the exit gate (realizability unset ⇒ blocked) and is the only test that can REJECT the family outright. Floor derivation: harness capital 1,000,000 (epoch-9 config) / g.stock_num 10 = 100,000 per full position; order_volume_ratio 0.05 ⇒ 100,000/0.05 = 2e6 CNY/day = the feasibility MINIMUM, not a comfort level. DECISION RULE (declared before the number): R=1 if the floor removes most held names — heldRemoved >= 6 of 10 on >= 2 of the 3 entry days — OR the summed 偷鸡 return collapses below +32% (half the base +63.90, u-3 accounting) OR the book drops below the 1.0 sharpe gate; R>=2 if near-inert — heldRemoved <= 1 on every entry day AND |Δobjective| < 0.05 vs 0.7266 (bit-identical, as 大小盘轮动 e9-r1/e9-r2, is the clean case); between = partial bite, R=2 only if the gate still passes, and liq-2 then decides nothing about 3. Either outcome is information; a likely-R=1 result is a strong reason to RUN it, not to skip it (§4 u-3 note: 偷鸡 holds 002247-type micro-caps, so the floor is probably NOT inert here, unlike 大小盘轮动 whose dividend chain incidentally excluded illiquid names). ⚠ Caveats to carry into the score: (a) the 14:00 补跌 add-on puts cash/3 into a held loser, so positions can exceed 100k; (b) the book compounds (+~60% by the 11-21 entry), so the true per-position need at entry 3 is ~1.5×2e6 — liq-2 covers both; (c) zero-slippage bench. Cost ~3-6 backtest-min (one extra 20-bar money fetch on 3 days).",
+    "design": "Base 0d1bbe83 (strategies/2026-10-12_年化51_的晴雨双轨_小盘游击_ETF防御-0d1bbe83.py) + py2to3 + OVERRIDE, epoch-9 pins — same builder shape as build-u3.js (ONE asserted edit + an appended helper). Copy study/大小盘轮动/build-liq.js VERBATIM for the helper: LIQ_FLOOR = 2e6; filter_liquidity_floor(context, stock_list) keeps names whose TRAILING-20-BAR MEDIAN daily `money` (get_price(..., count=20, end_date=context.previous_date, fields=[\"money\"], frequency=\"1d\", panel=False), groupby code median) is >= LIQ_FLOOR — median not mean, previous_date so the traded bar is never read (no lookahead); on exception log \"LIQFLOOR ERROR ...\" and return the list unchanged (loud, never silent). Insertion point (asserted exactly-one match), in choose_stocks: after `    stocks = get_peg(stocks, context.previous_date)\\n` and before `    return stocks[:g.stock_num]` add `    stocks = filter_liquidity_floor(context, stocks)  # liq-1: ONLY change vs base`. get_peg returns the FULL list already sorted market_cap.asc(), and an order-preserving filter before the [:10] slice selects exactly the set that filtering before the sort would — while fetching money only for the post-ROE/ROA survivors (precedent: floor placed last in the chain). LIQFLOOR line format identical to 大小盘轮动 (log.error, \"LIQFLOOR floor=%.0f date=%s in=%d out=%d removedFrac=%.4f slots=%d\") PLUS one appended field heldRemoved=<k> = how many of the PRE-floor stock_list[:g.stock_num] (the 10 names the base would buy) the floor drops — needed because here the decisive quantity is held names, not pool fraction. choose_stocks runs only on g.Days==0 at 偷鸡 entry, so expect EXACTLY 3 LIQFLOOR lines (decision days 2024-02-20 / 09-30 / 11-21, entry prints 02-21/10-08/11-22); fewer = the floor never executed, not \"inert\". DDDD reads 399101 independently, so entry dates are unchanged and the read is NOT exposed to the ~0.6 lock-phase noise; 摸狗 leg untouched. Report per-偷鸡-period return vs base (u-3 accounting), max|Δcum| vs data/series/…0d1bbe83__train__e9.json, and the 3 LIQFLOOR lines. Log is 100 lines/page — use study/小市值/pagelog.js.",
+    "from": [
+      "u-3 (规模因子 measured: asc→desc collapses 偷鸡 +63.90→+6.49 ⇒ the leg is the micro-cap end)",
+      "u-9 (动量 refuted, always-摸狗 sharpe 0.70 ⇒ the family stands on the 偷鸡 micro-cap leg alone)",
+      "wiki/families/小盘ETF双轨切换.md §4: [阻塞 exit gate] realizability 未测 — liq on the 偷鸡 leg at the book own feasibility floor",
+      "precedent study/大小盘轮动 liq-1 / e9-r1 / e9-r2 (build-liq.js, 2e6 20-bar median money, LIQFLOOR in/out/slots)"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 1,
+    "status": "answered",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 1, ACTIVE — blocks the exit gate; family §4 names it the next blocking step. Not a duplicate (no liquidity closure, binding or stale). Spawned from u-3 / u-9 (their findings rows still read spawned=none — the lint keys on the FINDING spawned column, not on this from[]).",
+    "result": "Feasibility floor at the book own size (variant liq-1-floor2e6, builder build-liq.js, algorithmId 0fdb4d0dbc9ff895f29fad36c0d8ce63, curve study_小盘ETF双轨切换_variants_liq-1-floor2e6__train__e9) is bit-identical to base 0d1bbe83: 242 points, same dates, max|Δcum| = 0, final 89.75. Exactly 3 LIQFLOOR line"
+  },
+  {
+    "id": "liq-2",
+    "kind": "understand",
+    "title": "liq-2 capacity: same floor at 5× (1e7) on the 偷鸡 candidate list",
+    "hypothesis": "At 5× headroom (≈¥5M book, or this book after compounding plus the 补跌 add-on) the 偷鸡 micro-cap return survives — the capacity point that decides whether R=3 is earnable.",
+    "why": "type: realizability / capacity. Second point of the declared sensitivity curve (大小盘轮动 precedent: 2e6 / 1e7 / 2e7, reported whatever they say, no extra point added to improve the shape). Read ONLY after liq-1: if liq-1 is R=1, liq-2 is moot (drop it — a stricter floor cannot rescue a book the minimum already breaks). DECISION RULE: 3 is NOT earnable if at 1e7 sharpe < 1.0, or objective retains < 80% of base (< 0.58), or heldRemoved >= 3 on any entry day; 3 is a candidate only if 1e7 is near-inert (|Δobjective| < 0.05, heldRemoved <= 1). ⚠ Precedent warning: 大小盘轮动 passed the gate at 1e7 and was still held at 2, because capacity is what a book can ABSORB, not how much sharpe it has spare — a gate-passing 1e7 with a material Δ is 2, not 3. 2e7 (10×) is NOT queued: only run it if 1e7 is near-inert. Cost ~3-6 backtest-min.",
+    "design": "Base 0d1bbe83 (strategies/2026-10-12_年化51_的晴雨双轨_小盘游击_ETF防御-0d1bbe83.py) + py2to3 + OVERRIDE, epoch-9 pins — same builder shape as build-u3.js (ONE asserted edit + an appended helper). Copy study/大小盘轮动/build-liq.js VERBATIM for the helper: LIQ_FLOOR = 1e7; filter_liquidity_floor(context, stock_list) keeps names whose TRAILING-20-BAR MEDIAN daily `money` (get_price(..., count=20, end_date=context.previous_date, fields=[\"money\"], frequency=\"1d\", panel=False), groupby code median) is >= LIQ_FLOOR — median not mean, previous_date so the traded bar is never read (no lookahead); on exception log \"LIQFLOOR ERROR ...\" and return the list unchanged (loud, never silent). Insertion point (asserted exactly-one match), in choose_stocks: after `    stocks = get_peg(stocks, context.previous_date)\\n` and before `    return stocks[:g.stock_num]` add `    stocks = filter_liquidity_floor(context, stocks)  # liq-2: ONLY change vs base`. get_peg returns the FULL list already sorted market_cap.asc(), and an order-preserving filter before the [:10] slice selects exactly the set that filtering before the sort would — while fetching money only for the post-ROE/ROA survivors (precedent: floor placed last in the chain). LIQFLOOR line format identical to 大小盘轮动 (log.error, \"LIQFLOOR floor=%.0f date=%s in=%d out=%d removedFrac=%.4f slots=%d\") PLUS one appended field heldRemoved=<k> = how many of the PRE-floor stock_list[:g.stock_num] (the 10 names the base would buy) the floor drops — needed because here the decisive quantity is held names, not pool fraction. choose_stocks runs only on g.Days==0 at 偷鸡 entry, so expect EXACTLY 3 LIQFLOOR lines (decision days 2024-02-20 / 09-30 / 11-21, entry prints 02-21/10-08/11-22); fewer = the floor never executed, not \"inert\". DDDD reads 399101 independently, so entry dates are unchanged and the read is NOT exposed to the ~0.6 lock-phase noise; 摸狗 leg untouched. Report per-偷鸡-period return vs base (u-3 accounting), max|Δcum| vs data/series/…0d1bbe83__train__e9.json, and the 3 LIQFLOOR lines. Log is 100 lines/page — use study/小市值/pagelog.js. Identical builder to liq-1, only LIQ_FLOOR differs; build both variants in one builder (build-liq.js pattern).",
+    "from": [
+      "liq-1 (must run first; liq-2 is read only if liq-1 is not R=1)",
+      "u-3 (规模因子 measured: asc→desc collapses 偷鸡 +63.90→+6.49 ⇒ the leg is the micro-cap end)",
+      "u-9 (动量 refuted, always-摸狗 sharpe 0.70 ⇒ the family stands on the 偷鸡 micro-cap leg alone)",
+      "wiki/families/小盘ETF双轨切换.md §4: [阻塞 exit gate] realizability 未测 — liq on the 偷鸡 leg at the book own feasibility floor",
+      "precedent study/大小盘轮动 liq-1 / e9-r1 / e9-r2 (build-liq.js, 2e6 20-bar median money, LIQFLOOR in/out/slots)"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 2,
+    "status": "answered",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 2, conditional on liq-1 not returning R=1.",
+    "result": "Capacity point at 5× the book own feasibility floor (variant liq-2-floor1e7, builder build-liq.js, algorithmId 2d19f70334cf8cf39181b90be26afc5e, curve study_小盘ETF双轨切换_variants_liq-2-floor1e7__train__e9, 242 points, final 85.67 / maxDD 17.08 verified). Exactly 3 LIQFLOOR lines: 02-20 in=1199 out=1199"
+  },
+  {
+    "id": "u-5",
+    "kind": "understand",
+    "title": "ROE/ROA unit probe: log candidate counts pre/post filter + raw indicator.roe/roa (logging only)",
+    "hypothesis": "indicator.roe/roa are in %, so `roe > 0.15 and roa > 0.10` is a ~0.15%/0.10% quarterly bar and the filter is near-inert — the same class of unit misreading as 小市值's x100 bug.",
+    "why": "REFUTES the unit-misreading claim if, on the 3 entry days, the filter removes > 50% of the <¥10 candidates or raw roe values sit in the 0.0x-0.3 range (decimal units); CONFIRMS if it removes < 10% and raw values are in the 1-20 range. Control: must reproduce 0.7266 / 2.85 / 89.75 / 17.09 exactly, else the logged values are not the book's. Cheap and decides whether imp-2 is worth a run. Log is paged at 100 lines/request — use study/小市值/pagelog.js, do not write a third pager. Cost ~3-6 min.",
+    "design": "Base 0d1bbe83, no logic edit. In get_peg, log len(candidates) before and after each indicator filter and the raw roe/roa of the pre-filter set on each 偷鸡 entry day.",
+    "from": [
+      "wiki §1: suspected % unit on indicator.roe/roa (stated as unverified)",
+      "CLAUDE.md 小市值 x100 tick-depth unit bug"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 3,
+    "status": "answered",
+    "note": "gatekeeper 2026-11-01: rank 5. Logging-only probe; gates imp-2. Must reproduce 0.7266/2.85/89.75/17.09. | gatekeeper 2026-11-01 (re-rank after liq-1/liq-2 added): rank 3, KEPT. u-3 closed the stock-picking reading of the ROE/ROA screen, but the unit question is still a real uncertainty and it gains a second use: 大小盘轮动 showed a fundamentals chain can be what INCIDENTALLY keeps a micro-cap list liquid, so u-5 says whether liq-1 inertness (if found) is incidental to a filter that may itself be a % unit misreading. Read LIQFLOOR in= from liq-1 alongside it (in = post-filter pool size on the same 3 days). Judged as understand: a likely null result (filter inert) is fine.",
+    "result": "ROE/ROA unit probe (variant u-5-roe-probe, builder build-u5.js, algorithmId eee253a9de7b675b50006210e0e372d7, curve study_小盘ETF双轨切换_variants_u-5-roe-probe__train__e9) is bit-identical to base 0d1bbe83 (max|Δcum| 0, final 89.75), so the logged values are the base book own. Candidates before → after t"
+  },
+  {
+    "id": "imp-1",
+    "kind": "improve",
+    "title": "drop the 补跌 martingale add-on (skip the `num >= 1` branch)",
+    "hypothesis": "The cash/3 add-to-the-3-biggest-losers rule adds drawdown without return; removing it lowers maxDD and raises objective.",
+    "why": "Expected gain: maxDD reduction on a 17.09% book; modest. Novelty: medium. It is risk control, not on any proposed edge (edgeRef 规模因子 is nominal) — no edge is MEASURED yet so the off-mechanism rule does not bind, but it ranks below the ablations. Refuted if objective does not rise by > 0.05 (noise floor at n=3) or maxDD does not fall. Implement as a SKIP of the branch, never rebalance_top_n=0 (division by zero). Cost ~3-6 min.",
+    "design": "Base 0d1bbe83. In check_limit_up, skip the add-on block guarded by `num >= 1`; keep the stop-loss and the open-limit-up sell.",
+    "from": [
+      "wiki §1: 14:00 check_limit_up martingale add-on"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 4,
+    "status": "queued",
+    "note": "gatekeeper 2026-11-01: rank 6. Off-mechanism risk control; changes sizing, not entry timing, so the u-2 ~0.6 timing-noise floor does not apply directly — but if skipping the add-on alters any lock/exit date, read the delta against ~0.6, not 0.05. | gatekeeper 2026-11-01 (re-rank): rank 4, KEPT but CONDITIONAL — run only if liq-1 is not R=1 (an R=1 family is rejected at the gate and an improve on it is moot). Now off-mechanism with a measured edge (规模因子) — edgeRef is nominal, expected gain modest. Secondary relevance: the add-on is the one path that sizes a micro-cap position ABOVE the 100k feasibility basis, so removing it also tightens realizability; report maxDD and per-偷鸡-period return."
+  },
+  {
+    "id": "imp-2",
+    "kind": "improve",
+    "title": "remove the ROE/ROA filter from get_peg",
+    "hypothesis": "If size is the edge and the filter is near-inert (units), removing it leaves objective within noise.",
+    "why": "Generator itself predicts |Δobjective| small, so expected gain is ~0 — low as an improve. Refuted (filter matters) if |Δobjective| > 0.05. CONDITIONAL on u-5: if u-5 shows the filter removes < 10% of candidates, the outcome is predictable and this entry should be dropped rather than run. Cost ~3-6 min.",
+    "design": "Base 0d1bbe83. Delete the two indicator.roe / indicator.roa filters in get_peg; nothing else.",
+    "from": [
+      "wiki §1 suspected % unit on roe/roa"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 99,
+    "status": "dropped",
+    "note": "gatekeeper 2026-11-01: rank 7. Run only if u-5 shows the filter is NOT inert; expected gain ~0 otherwise. | gatekeeper 2026-11-01: DROPPED (recorded, not silent). (1) The generator itself predicts |Δobjective| ≈ 0 — an improve with ~0 expected gain; (2) u-3 closed the reading that 偷鸡 return comes from the <¥10/ROE/ROA screen, and family §4 (u-3 note a) sets the prior for ROE/ROA/price-threshold improves LOW; (3) loosening the selection chain reopens the liquidity axis (大小盘轮动 §4: any variant loosening the chain must re-run liq-1), so it would cost a PAIRED run for ~0 gain. Reopen only if u-5 shows the filter removes > 50% of candidates AND liq-1 is near-inert — then as a paired imp-2 + liq run."
+  },
+  {
+    "id": "u-1",
+    "kind": "understand",
+    "title": "always-偷鸡: DDDD trigger forced true (line 188 condition -> True)",
+    "hypothesis": "The 微盘广度推力 trigger is the edge: re-entering 偷鸡 every 30-day lock regardless of breadth (never 摸狗 except transition days) scores clearly worse, because 2024 contains the Jan-Feb micro-cap stampede.",
+    "why": "This is the family's own declared edge.test. CONFIRMS the timing edge if objective <= 0.36; REFUTES it if objective >= 0.545 (base 0.7266). Between = inconclusive (n=3 trigger episodes; objective deltas < ~0.05 are noise). Ranked first because it is also the level control that makes u-2 decomposable: u-2 (calendar) is close to always-偷鸡 minus Jan/Apr, so u-2 alone cannot separate 'DDDD informative' from 'any timing that skips January works' — u-1 supplies that reference. Not redundant given u-2. Cost ~3-6 backtest-min.",
+    "design": "Base 0d1bbe83, epoch-9 pins. Line 188 `if variance < g.regime_variance_threshold and mean > 0:` -> `if True:`. Keep the 30-day Counterattack lock and everything else verbatim. Log each 偷鸡 entry date and per-period return.",
+    "from": [
+      "0d1bbe83 epoch-9 normalize row (obj 0.7266 / sharpe 2.85 / total 89.75 / maxDD 17.09)",
+      "wiki/families/小盘ETF双轨切换.md §1: 3 triggers in 2024, 88 days +52.96%, 摸狗 154 days +24.05%",
+      "edge 微盘广度推力择时 .test"
+    ],
+    "edgeRef": "微盘广度推力择时",
+    "rank": 1,
+    "status": "answered",
+    "note": "gatekeeper 2026-11-01: dispatched first. Declared edge test + reference control for u-2.",
+    "result": "always-偷鸡 (variant u-1-always-touji, backtestId 76be8f47…, curve study_小盘ETF双轨切换_variants_u-1-always-touji__train__e9) scores objective −0.2040 / sharpe 0.37 / total 18.01% / maxDD 38.41 vs base 0.7266 / 2.85 / 89.75 / 17.09; fails the 1.0 gate and lands below the queue confirm-threshold 0.36. Per 3"
+  },
+  {
+    "id": "u-6",
+    "kind": "understand",
+    "title": "placebo +5: base entries hard-coded at 2024-02-27 / 10-14 / 11-28 (base DECISION days 02-20/09-30/11-21 +5 trading days), DDDD removed",
+    "hypothesis": "If the DDDD cosine signal carries information, the same 3 entries 5 trading days later lose most of the base's excess.",
+    "why": "The edge test's declared second half. u-1/u-2 showed the outcome is dominated by WHERE each 30-day lock lands, so exposure-matched timing controls cannot separate signal from luck; a time-shifted placebo with the base's own n=3 entries can. Read u-6 and u-7 TOGETHER: CONFIRMS signal (weakly) if BOTH shifted books score objective <= 0.36; \"lucky days / phase\" if EITHER stays >= 0.6. Between = inconclusive. n=3, so this can only WEAKEN the claim, never establish it — a pass keeps the edge proposed-with-support, it does not license measured. Cost ~3-6 backtest-min each.",
+    "design": "Base 0d1bbe83, epoch-9 pins. Replace the DDDD entry condition with `context.current_dt.strftime('%Y-%m-%d') in ('2024-02-27', '2024-10-14', '2024-11-28')` (base DECISION days 02-20/09-30/11-21 +5 trading days, verified on the base e9 curve's date list; consistent() logs 当前模式 BEFORE deciding, so the first 偷鸡 print 02-21/10-08/11-22 is the day after the decision — the original 02-28/10-15/11-29 were shifted from the print dates). Keep the 30-day lock, exit-to-摸狗, selection, 14:00 check_limit_up verbatim. Log each 偷鸡 entry and per-period return.",
+    "from": [
+      "u-2 (calendar substitute, obj −0.8056: lock PHASE alone moved objective 0.60 vs u-1)",
+      "u-1 (always-偷鸡, obj −0.2040)",
+      "edge 微盘广度推力择时 .test second half (same 3 entries, dates shifted)"
+    ],
+    "edgeRef": "微盘广度推力择时",
+    "rank": 1,
+    "status": "answered",
+    "result": "Placebo +5 (variant u-6-shift-plus5, builder build-u6.js, algorithmId fbfaee25…, curve study_小盘ETF双轨切换_variants_u-6-shift-plus5__train__e9, final cum 44.17 / maxDD 17.63 verified) scores total 44.17% / sharpe 1.25 / maxDD 17.63 / objective 0.2654; all three hard-coded entries fired per the log. Per ",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 1, dispatched. Edge test part 2 for the family primary edge, opened by u-2 implication; not a duplicate of the closed exposure-matched controls (same n=3 entries, only dates shifted). Falsifiable, one run, ~45s. Read jointly with u-7."
+  },
+  {
+    "id": "u-8",
+    "kind": "understand",
+    "title": "摸狗 -> cash: the 摸狗 branch skips the ETF buy (keeps the sell of non-target holdings)",
+    "hypothesis": "The 摸狗 leg contributes positive return beyond being out of micro-caps; holding cash on 摸狗 days loses a material part of the base objective.",
+    "why": "The 动量 edge's own declared test (摸狗 -> cash), which u-4 did NOT run: u-4 inverted the ranking within the 4-ETF pool, and the inverted leg stayed positive (+2.92 over the strict 摸狗 split), so part of 摸狗 is pool beta and inversion cannot separate ranking from beta. SUPPORTS 动量 as a contributor if the base beats u-8 by >= 0.1 objective; < 0.05 = 摸狗 is mere risk-off (动量 refuted as a return source). Between = inconclusive. 偷鸡 decision days are unchanged (DDDD reads 399101 independently), so the read is not exposed to the ~0.6 lock-phase noise. Report 摸狗-day return on the strict interior split AND the 5-boundary-day split, as u-4 did. Cost ~3-6 backtest-min.",
+    "design": "Base 0d1bbe83, epoch-9 pins. In the 摸狗 branch, keep the sell of every holding that is not the target (so stocks and ETFs are still liquidated on 偷鸡 exit) but skip the ETF order_target_value buy. 偷鸡 logic, DDDD, 30-day lock and 14:00 check_limit_up verbatim. Log daily mode so the 摸狗/偷鸡 split is reproducible.",
+    "from": [
+      "u-4 (momentum inversion: 摸狗 +15.77 -> +2.92 strict / 53% kept on boundary-inclusive split; inverted leg still positive)",
+      "edge 动量 .test (摸狗 -> cash)"
+    ],
+    "edgeRef": "动量",
+    "rank": 1,
+    "status": "answered",
+    "note": "recorder 2026-11-01 (after u-4): spawned as the declared 动量 test; inversion was ambiguous as the gatekeeper anticipated.",
+    "result": "Cash-on-摸狗 (variant u-8-mogou-cash, builder build-u8.js, algorithmId 3244539c7db37a5d5b096151357ae413, curve study_小盘ETF双轨切换_variants_u-8-mogou-cash__train__e9, final cum 70.86 / maxDD 17.08 verified) scores total 70.86% / sharpe 2.49 / maxDD 17.08 / objective 0.5378. Decision days unchanged; 0 of 1"
+  },
+  {
+    "id": "u-9",
+    "kind": "understand",
+    "title": "always-摸狗: DDDD entry condition forced False (line 188 condition -> False), 偷鸡 never entered",
+    "hypothesis": "The 4-ETF momentum rotation alone, run all of 2024, clears sharpe >= 1 — the remaining arm of the 动量 edge test.",
+    "why": "The 动量 edge's declared test has TWO arms: (a) 摸狗-period return significantly > 0 vs cash — run as u-8 (+15.77 vs 0.00 strict, Δobjective 0.1888, PASS); (b) the always-摸狗 book (偷鸡 off) has sharpe >= 1 — NOT run. Recorder held 动量 at proposed on that basis. COMPLETES the test (→ measured) if sharpe >= 1.0; REFUTES the standalone-edge reading if sharpe < 1.0 (摸狗 then contributes inside the book but is not an edge on its own). Also the clean standalone number the integration layer needs to compare this leg with [[ETF动量]] / [[七星高照]]. Cost ~3 backtest-min.",
+    "design": "Base 0d1bbe83, epoch-9 pins. Replace the DDDD entry condition `if variance < g.regime_variance_threshold and mean > 0:` with `if False:`. Everything else verbatim (摸狗 ranking, 4-ETF pool; 14:00 check_limit_up is inert with no stocks). Verify in log: 0 偷鸡 entries, an ETF held every day. Report sharpe, objective, per-ETF holding spans.",
+    "from": [
+      "u-8 (摸狗→cash, obj 0.5378, Δ 0.1888)",
+      "u-4 (inversion, obj 0.5590)",
+      "edge 动量 .test arm: 常摸狗书 sharpe ≥1"
+    ],
+    "edgeRef": "动量",
+    "rank": 1,
+    "status": "answered",
+    "note": "recorder 2026-11-01 (after u-8): spawned to finish the declared 动量 test; promotion to measured waits on it.",
+    "result": "Always-摸狗 (variant u-9-always-mogou, builder build-u9.js, algorithmId e4e74b604ae6f365bffccdd6b44d4dad, curve study_小盘ETF双轨切换_variants_u-9-always-mogou__train__e9, final cum 22.95 / maxDD 23.01 verified) scores total 22.95% / sharpe 0.70 / maxDD 23.01 (10-08→11-18) / objective −0.0006; fails the 1.0"
+  },
+  {
+    "id": "u-2",
+    "kind": "understand",
+    "title": "calendar substitute: DDDD condition -> month not in (1,4), keep 30-day lock",
+    "hypothesis": "The breadth trigger's value is a calendar effect (avoiding January/April micro-cap weakness), as 小市值's January-cash channel suggests, not information in the breadth signal itself.",
+    "why": "Imports a mechanism measured in another family (小市值 q-e9-champ-emptymonth) and tests whether it explains this one. DDDD ADDS INFORMATION beyond calendar if objective <= 0.36; PURE CALENDAR EFFECT if objective >= 0.69. Read against u-1: u-1 bad + u-2 good => calendar explains the timing; both bad => DDDD is informative; u-1 good => timing barely matters and u-2 measures only the calendar increment. Likely-negative is fine. Cost ~3-6 min.",
+    "design": "Base 0d1bbe83. Replace the DDDD entry condition with `context.current_dt.month not in (1, 4)`; keep the 30-day lock, the exit-to-摸狗 rule and all selection verbatim. Log entry dates and per-period returns.",
+    "from": [
+      "study/小市值 q-e9-champ-emptymonth (January-cash channel)",
+      "0d1bbe83 epoch-9 normalize row (obj 0.7266)"
+    ],
+    "edgeRef": "微盘广度推力择时",
+    "rank": 2,
+    "status": "answered",
+    "note": "gatekeeper: kept alongside u-1 (not a duplicate; interpretation depends on u-1).",
+    "result": "Calendar substitute (variant u-2-calendar, builder build-u2.js, algorithmId b81302eb…, curve study_小盘ETF双轨切换_variants_u-2-calendar__train__e9, final cum −26.20 verified) scores total −26.20% / sharpe −0.80 / maxDD 54.36 / objective −0.8056. 摸狗 through January; first 偷鸡 entered 02-01 (just before the"
+  },
+  {
+    "id": "u-7",
+    "kind": "understand",
+    "title": "placebo −5: base entries hard-coded at 2024-02-05 / 09-23 / 11-14 (base DECISION days 02-20/09-30/11-21 −5 trading days), DDDD removed",
+    "hypothesis": "Mirror of u-6; together they bracket the base's entry dates.",
+    "why": "The edge test's declared second half. u-1/u-2 showed the outcome is dominated by WHERE each 30-day lock lands, so exposure-matched timing controls cannot separate signal from luck; a time-shifted placebo with the base's own n=3 entries can. Read u-6 and u-7 TOGETHER: CONFIRMS signal (weakly) if BOTH shifted books score objective <= 0.36; \"lucky days / phase\" if EITHER stays >= 0.6. Between = inconclusive. n=3, so this can only WEAKEN the claim, never establish it — a pass keeps the edge proposed-with-support, it does not license measured. Cost ~3-6 backtest-min each. ⚠ Asymmetry: the −5 dates are not neutral — 02-06 sits at the Feb 2024 micro-cap crash low and 09-24 is the policy-announcement day, so u-7 can score WELL by its own luck. A strong u-7 therefore reads as \"phase/luck dominates\", not as evidence for DDDD.",
+    "design": "Base 0d1bbe83, epoch-9 pins. Replace the DDDD entry condition with `context.current_dt.strftime('%Y-%m-%d') in ('2024-02-05', '2024-09-23', '2024-11-14')` — base DECISION days 02-20/09-30/11-21 −5 trading days, verified on the base e9 curve date list (0d1bbe83__train__e9: idx 24/175/208; Spring Festival closure 02-09..02-18 is skipped, so 02-20 −5 = 02-05). Everything else verbatim as u-6 (same builder pattern as build-u6.js). Lock arithmetic (Days==30 exit, re-entry possible the next trading day): 02-05 lock exits 03-26; 09-23 lock exits 11-11, re-entry eligible 11-12, so the 11-14 entry CAN fire; 11-14 lock exits 12-26 (base's third lock is still open at year-end — u-7's is not). Verify in the log that all three fired. Report per-偷鸡-period return against base (+33.83 / +16.56 / +5.06) as u-6 did.",
+    "from": [
+      "u-2 (calendar substitute, obj −0.8056: lock PHASE alone moved objective 0.60 vs u-1)",
+      "u-1 (always-偷鸡, obj −0.2040)",
+      "edge 微盘广度推力择时 .test second half (same 3 entries, dates shifted)"
+    ],
+    "edgeRef": "微盘广度推力择时",
+    "rank": 2,
+    "status": "answered",
+    "result": "Placebo −5 (variant u-7-shift-minus5, builder build-u7.js, algorithmId 9507f981de441fca2c459f4cbb3ccaaa, curve study_小盘ETF双轨切换_variants_u-7-shift-minus5__train__e9, final cum 43.46 / maxDD 20.46 verified) scores total 43.46% / sharpe 1.25 / maxDD 20.46 / objective 0.2300; all three hard-coded entrie",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 2, run immediately after u-6 (joint read). Asymmetry is declared in why: 02-06 crash low / 09-24 policy day bias u-7 upward, so a strong u-7 reads as phase/luck, never as support for DDDD. Likely-negative for DDDD, which is fine for an understand idea. | recorder 2026-11-01 (after u-6): dates CORRECTED from 02-06/09-24/11-15 (which were print days −5) to decision days −5 = 02-05/09-23/11-14. ⚠ Phase: 02-05 enters INSIDE the Feb-2024 micro-cap stampede (before the 02-08 rebound) — the mirror of u-6, where the 1-week-late entry missed the rebound and lost ~33pp on period 1; 09-23 is the trading day BEFORE the 9·24 PBOC announcement, so period 2 starts one day ahead of the policy rally. Both are non-neutral; a strong u-7 still reads as phase/luck."
+  },
+  {
+    "id": "u-3",
+    "kind": "understand",
+    "title": "size ablation: market_cap.asc() -> desc() in 偷鸡 selection (line 354)",
+    "hypothesis": "偷鸡's return comes from holding the smallest caps, not from the price/ROE/ROA screen.",
+    "why": "The 规模因子 edge's declared test. CONFIRMS size if the summed 偷鸡-period return < +26% (base +52.96%); REFUTES if >= +40%. Entry dates (02-21, 10-08, 11-22) are unchanged by this edit because DDDD reads 399101's own smallest-20 independently of the selection, so the three periods are directly comparable — report each (+30.09 / +12.62 / +4.41 in base). Cost ~3-6 min.",
+    "design": "Base 0d1bbe83. Line 354 `market_cap.asc()` -> `market_cap.desc()`. Nothing else. Log per-period 偷鸡 return and the 10 names held at each entry.",
+    "from": [
+      "wiki §1 per-period 偷鸡 returns +30.09 / +12.62 / +4.41",
+      "edge 规模因子 .test"
+    ],
+    "edgeRef": "规模因子",
+    "rank": 3,
+    "status": "answered",
+    "note": "gatekeeper 2026-11-01: rank 3 (was 3). 规模因子 declared test; entry dates unchanged, so not exposed to the ~0.6 lock-phase noise.",
+    "result": "Size ablation (variant u-3-mcap-desc, builder build-u3.js, algorithmId 17687305caf412ddf970f7b978ad214f, curve study_小盘ETF双轨切换_variants_u-3-mcap-desc__train__e9, final cum 23.30 / maxDD 10.92 verified) scores total 23.30% / sharpe 1.05 / maxDD 10.92 / objective 0.1238. Same 3 decision days as base ("
+  },
+  {
+    "id": "u-4",
+    "kind": "understand",
+    "title": "momentum inversion: 摸狗 get_rank ascending=False -> True (pick worst of 4 ETFs)",
+    "hypothesis": "The 摸狗 leg earns from momentum ranking, not merely from being out of micro-caps.",
+    "why": "CONFIRMS 动量 if 摸狗-period return < +12% (base +24.05%); REFUTES if >= +18%. ETF动量 q-e9-2 used the same inversion design. Caveat: with only 4 ETFs (gold/Nasdaq/创业板/上证180) all of which rose in parts of 2024, inversion is a weaker test than replacing 摸狗 with cash; that cash control is the edge's declared test and is NOT yet queued — recommend generator A propose it if this one is ambiguous. Cost ~3-6 min.",
+    "design": "Base 0d1bbe83. In the 摸狗 ranking, `ascending=False` -> `ascending=True`. Everything else verbatim; 偷鸡 dates unchanged. Report 摸狗-period return separately.",
+    "from": [
+      "wiki §1: 摸狗 154 days +24.05%",
+      "study/ETF动量 q-e9-2 (inversion design)"
+    ],
+    "edgeRef": "动量",
+    "rank": 4,
+    "status": "answered",
+    "note": "gatekeeper 2026-11-01: rank 4. Inversion is the weaker 动量 test; if ambiguous, generator A should propose the 摸狗->cash control.",
+    "result": "Momentum inversion (variant u-4-mom-inverted, builder build-u4.js, algorithmId ce3c071f9111f4339de0b161361def48, curve study_小盘ETF双轨切换_variants_u-4-mom-inverted__train__e9, final cum 74.06 / maxDD 18.16 verified) scores total 74.06% / sharpe 2.11 / maxDD 18.16 / objective 0.5590. 偷鸡 decision days an"
+  }
+]
