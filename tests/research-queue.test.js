@@ -254,3 +254,62 @@ sct('closures are split by the bench that made them', async t => {
     sca.match(gk, /REOPENABLE, not duplicates/i, 'the gatekeeper must not hard-reject them');
   });
 });
+
+/**
+ * The research queue deregisters a family ONLY if a `stage: research` row is appended — and until
+ * 2026-11-01 nothing owned that append.
+ *
+ * `family-queue` decides `due` from consumption.staleFor(), and the daily chain's no-progress
+ * guard measures a stage's OWN queue delta, so one unrecorded round cedes research for the entire
+ * chain. Measured that day: 打板短线 recorded (queue 13 -> 12, stage stayed eligible), then
+ * 五福闹新春 did not (12 -> 12 -> NO-PROGRESS), leaving 11 families untouched and 59 of 127
+ * backtest-minutes unspent. 单标的趋势择时 had 5 findings committed and still read
+ * "never researched".
+ *
+ * Neither run-family.sh, nor the /run-family skill, nor family-recorder.md mentioned
+ * consumption.record for this stage. Ownership now sits in the wrapper, which is the only
+ * component that always runs and knows both the family and the exit code.
+ */
+test('run-family.sh owns the research deregistration', async (t) => {
+  const fs = require('fs');
+  const path = require('path');
+  const sh = fs.readFileSync(path.join(__dirname, '../scripts/run-family.sh'), 'utf8');
+
+  await t.test('it records a research event on a clean exit', () => {
+    assert.match(sh, /consumption'\)\.record\(/,
+      'the wrapper must append the research row itself, not rely on the agent remembering');
+    assert.match(sh, /stage: 'research'/, 'the row must be stamped stage: research');
+  });
+
+  await t.test('and ONLY on rc=0 — a rate-limited fire must not mark a family seen', () => {
+    // rc=1 happened on 2026-10-31 ("You're out of usage credits"). The pin is kept and the next
+    // fire resumes the family, so recording there would silently skip it.
+    const idx = sh.indexOf("consumption')");
+    const elseIdx = sh.lastIndexOf('else', idx);
+    const rcIdx = sh.lastIndexOf('if [ $rc -ne 0 ]', idx);
+    assert.ok(rcIdx !== -1 && elseIdx > rcIdx && elseIdx < idx,
+      'the record call must sit in the rc=0 branch of the rc check');
+  });
+
+  await t.test('the outcome cannot be miscounted as a VAL or an OOS test', () => {
+    // The bug class this repo has paid for twice: `val-declined` counted as a spent validation,
+    // and `oos-recorded` counted as a spent held-out test. A wrapper row fires on EVERY clean
+    // round, so an outcome starting val-/oos- would be the most expensive possible version of it.
+    const m = sh.match(/outcome: '([^']+)'/);
+    assert.ok(m, 'the record call must state an explicit outcome');
+    assert.ok(!/^(val|oos)-/.test(m[1]),
+      `outcome "${m[1]}" would be counted by val-budget or oos-budget`);
+    const vb = fs.readFileSync(path.join(__dirname, '../utils/val-budget.js'), 'utf8');
+    assert.ok(!new RegExp(m[1]).test(vb), 'val-budget must not match the wrapper outcome');
+  });
+
+  await t.test('recording means SEEN, not DONE — a new member must reopen the family', () => {
+    // record() stamps the current memberHash and staleFor() compares it, so this cannot retire a
+    // lineage. Without that, a wrapper row would permanently silence a family the moment any
+    // round exited 0, including a no-op one.
+    const cons = fs.readFileSync(path.join(__dirname, '../utils/consumption.js'), 'utf8');
+    assert.match(cons, /memberHash/, 'record() must stamp the membership hash');
+    const fq = fs.readFileSync(path.join(__dirname, '../utils/family-queue.js'), 'utf8');
+    assert.match(fq, /staleFor/, 'family-queue must reopen on a changed member set');
+  });
+});

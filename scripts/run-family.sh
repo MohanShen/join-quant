@@ -248,6 +248,49 @@ if [ $rc -ne 0 ]; then
   log "claude exited rc=$rc (likely rate-limited — the pin is kept, next fire resumes this family)"
 else
   log "$FAMILY: run complete rc=0 — check its ledger, exit 0 is not proof work happened"
+  # ── Deregister the family from the research queue ─────────────────────────
+  # ⚠⚠ NOBODY OWNED THIS, and it was the pipeline's throughput ceiling.
+  #
+  # `family-queue` decides `due` from data/consumption.tsv via consumption.staleFor(), so a round
+  # that does not append a `stage: research` row leaves its family due — and the daily chain's
+  # no-progress guard measures a stage's OWN queue delta, so ONE unrecorded round cedes research
+  # for the whole chain. Measured 2026-11-01:
+  #
+  #   round 1  打板短线    recorded      queue 13 -> 12   (progress, stage stays eligible)
+  #   round 2  五福闹新春   NOT recorded  queue 12 -> 12   -> NO-PROGRESS, research ceded
+  #
+  # …leaving 11 families untouched with 59 of 127 backtest-minutes unspent. Leak rate over the
+  # last four rounds was 2 of 4: 单标的趋势择时 has 5 findings committed and still reads
+  # "never researched", and 五福闹新春 still reads "4 new members since last research".
+  #
+  # Neither this wrapper, nor the /run-family skill, nor .claude/agents/family-recorder.md
+  # mentioned consumption.record for this stage — the two rounds that did record it did so on
+  # their own initiative. Same shape as the wiki-stub/pending-queue bookkeeping that lived only
+  # in normalize-daily until normalize-sync took ownership: it belongs to the step that always
+  # runs, not to one caller who may forget.
+  #
+  # ⚠ Recorded ONLY on rc=0. A rate-limited fire (rc=1, seen 2026-10-31) must not mark a family
+  # seen — the pin is kept and the next fire resumes it.
+  #
+  # ⚠ "Seen", not "done". record() stamps the current memberHash, and staleFor() compares it, so a
+  # NEW MEMBER reopens the family automatically. This cannot retire a lineage.
+  #
+  # ⚠ The outcome is deliberately `wrapper-recorded`: it does not start with `val-` or `oos-`, so
+  # it can never be miscounted as a spent validation or held-out test — the bug class that made a
+  # decline consume the VAL window (utils/val-budget.js) and a note consume an OOS test.
+  if ! grep -q "^$FAMILY	family	research	$SID	" "$REPO/data/consumption.tsv" 2>/dev/null; then
+    node -e "
+      require('$REPO/utils/consumption').record({
+        key: process.argv[1], kind: 'family', stage: 'research', runId: process.argv[2],
+        outcome: 'wrapper-recorded',
+        note: 'session exited rc=0; recorded by run-family.sh so the family deregisters from the ' +
+              'research queue. Says the round LOOKED at this member set, not that it produced ' +
+              'work — read the round commit for that.',
+      });
+    " "$FAMILY" "$SID" 2>>"$LOG_DIR/wrapper.log" \
+      && log "$FAMILY: recorded a research event (queue deregistration)" \
+      || log "⚠ $FAMILY: consumption.record FAILED — the family stays due and will be re-dispatched"
+  fi
 fi
 
 # ── Orphan sweep ────────────────────────────────────────────────────────────
