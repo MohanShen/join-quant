@@ -1,0 +1,190 @@
+[
+  {
+    "id": "q-e9-funnel",
+    "kind": "understand",
+    "title": "免费：分页读 base 日志，按月列选股漏斗（MIN_LOTS 前→后、分红门槛、股息率门限、增速门槛、候选N → 目标TopM）",
+    "hypothesis": "TRAIN 2024 的大多数月份里，达标候选数 ≤ 100（SCHD_TOP_N），所以 Top100 吃下整个池，四因子综合分排序并不决定持仓（只影响股息率加权之外的东西）。如果候选数在 12 个月中至少 6 个月 > 100，就推翻这个假设，排序在起作用。",
+    "why": "成本 0 回测分钟（日志已在服务器上），却决定四个下游条目的取舍：rankinv / i-2 / i-3 只有在排序真正生效时才有意义（池 ≤ 100 时 df.head(100) 就是整个 df，换分数或加因子完全不起作用）；minlots 只有 MIN_LOTS 每月真正剔除名字时才有意义。资金容量裁剪（l.371-400）在 100 万、价 < 约 20 元时不会生效（100 只 × 1 手 ≤ 20 万），所以 TopN 是否起约束只取决于候选数。日志较多（每日【监控】一行加执行行），要翻几十页，所以必须用 pagelog.js，不能用 backtest-log.js（只读一页）。",
+    "design": "node -e \"require('./study/小市值/pagelog.js').main()\" -- 4227d84763151b6179ea1d2bebf3310e '【筛选】|【监控】候选|【容量】|【1手保底】'。抽取每次调仓（每月 1 日）的：财务初筛后 / 流动性筛选后 / MIN_LOTS预筛 before→after 和价格上限 / 涨停筛选 / 分红门槛后 / 股息率门限 / 增速门槛 before→after / 候选N → 目标TopM / 容量裁剪。输出 12 行月度表格。控制检查：必须找到 12 条『候选N → 目标TopM』行；行数缺失属于日志读取失败，不能当作推翻。",
+    "from": [
+      "normalized:d0a149b1",
+      "series:d0a149b1__train__e9"
+    ],
+    "edgeRef": "股息质量四因子",
+    "rank": 1,
+    "status": "answered",
+    "note": "gatekeeper 2026-11-01：首个派发条目。同时服务于『低价倾斜（非设计）』（MIN_LOTS 剔除数量）和『分红持续性』（分红/增速门槛的 before→after，为 q-e9-persist 提供解读）。",
+    "result": "Candidates exceed SCHD_TOP_N=100 in 8 of 12 months (Jan-Apr 137/147/140/139, Sep-Dec 155/151/164/174 -> Top100, so the four-factor score discards 27-43% of candidates); in May-Aug only 79/78/85/91 candidates, because the fundamentals screen (市值P15+FCF>0+ROE>0) falls ~1202-1276 -> 754-768 after the A"
+  },
+  {
+    "id": "q-e9-beta510880",
+    "kind": "understand",
+    "title": "买入持有 510880（红利ETF），TRAIN 2024，pinned：本书超出红利 beta 的部分有多少",
+    "hypothesis": "本书 2024 的超额只是红利风格 beta：相对 510880 的年化超额 < 3pp，且与 510880 的日收益相关 > 0.85。若超额 ≥ 3pp 或相关 ≤ 0.85，则推翻（本书在红利 ETF 之外还有东西）。",
+    "why": "1 次很便宜的回测（单只 ETF，约 1 分钟）。本书相对 HS300 的相关是 0.854、beta 0.839，超额集中在 2024 年 1 月、3–5 月、11–12 月，看起来是防御型低 beta 特征，而这正是红利 ETF 提供的东西。这个测试回答的问题与成分消融无关：如果答案是『只是 beta』，那三条 edge 的消融都在拆一个可以直接买到的东西。注意：510880 持有的是高价大盘红利股，本书受价格上限约束（MIN_LOTS），所以超额为正也可能是低价倾斜，需要和 q-e9-minlots 一起解读。",
+    "design": "enhance/strategy_template.py 风格的最小策略：首日全仓 510880.XSHG 持有到底，冻结 pin（fund 成本、order_volume_ratio、avoid_future_data），--window train。用存储的曲线计算 corr(本书, 510880)，以及年化差 25.94 − annual(510880)。",
+    "from": [
+      "series:d0a149b1__train__e9",
+      "normalized:d0a149b1"
+    ],
+    "edgeRef": "股息质量四因子",
+    "rank": 2,
+    "status": "answered",
+    "result": "510880 buy-and-hold TRAIN 2024: annual 19.72 / sharpe 0.85 / maxDD 14.05 / vol 19.26. Base book d0a149b1: 25.94 / 1.09 / 13.73 / vol 20.96. Excess +6.22pp annual (compounded relative +6.03%). Daily corr book~510880 0.788, beta 0.858. Corr 510880~93379f98 (红利低频 champion) 0.763; corr book~93379f98 0.8"
+  },
+  {
+    "id": "q-e9-minlots",
+    "kind": "understand",
+    "title": "关闭价格上限：SCHD_MIN_LOTS 5→0，记录实际 TopM 和持仓价格分布",
+    "hypothesis": "2024 的超额来自 MIN_LOTS 隐含的低价倾斜（100 万下价 < 约 20 元）。若 Δsharpe ≤ −0.3 且实际持仓 M ≥ 80，则支持；若 |Δsharpe| < 0.15，则推翻；若 M < 80，说明测试没有真正放开价格约束，判为无效而不是推翻。",
+    "why": "执行 edge『低价倾斜（非设计）』的 test，一次回测。它同时也是容量问题：价格上限随资金规模变化，所以结论是支持时，本书的表现与资金规模挂钩。⚠ 本条依赖 q-e9-funnel：如果 MIN_LOTS 在大多数月份剔除 0 只，这个测试就是惰性的，不必跑。⚠ 执行层会把价格上限重新加回来：权重 1% 对应约 1 万元，而 1 手高价股（比如约 15 万元的那种）会触发『【1手保底】…超预算，跳过』（l.594）。所以 M 和被跳过的名字都要记录，否则『推翻』可能只是因为高价股根本没买进来。SCHD_MIN_PRICE=0.0，所以关闭 l.296 这个代码块只去掉了价格上限，没有同时改动别的东西。",
+    "design": "baseline 只改 l.32 SCHD_MIN_LOTS=0，--window train。从日志统计每月的『候选N → 目标TopM』、『【1手保底】…跳过』的条数，以及每月持仓价格的中位数和最大值（每次调仓后对持仓 log 一行，或者从日志的成交记录推算）。",
+    "from": [
+      "normalized:d0a149b1",
+      "wiki:红利质量#edge.低价倾斜（非设计）"
+    ],
+    "edgeRef": "低价股效应",
+    "rank": 3,
+    "status": "answered",
+    "note": "等 q-e9-funnel：MIN_LOTS 至少要在多数月份实际剔除名字。若在 ≥ 9 个月中剔除数为 0，则 drop 为惰性。 ‖ recorder 2026-11-01：q-e9-funnel 已答——MIN_LOTS 每月剔除 121–258 只（13.9–22.6%，12/12 个月），非惰性，解锁。放开后候选增加，May–Aug 的排序也会生效，需记录每月 候选N→TopM。",
+    "result": "Removing the MIN_LOTS price cap drops sharpe 1.09 -> 0.41 (Δ −0.68), annual 25.94 -> 12.02, maxDD 13.73 -> 18.18, objective 0.1221 -> −0.0616; the uncapped book trails buy-and-hold 510880 (19.72 / 0.85 / 14.05) on every metric. Daily corr with base 0.962 and the variant is below base in 10 of 12 mon"
+  },
+  {
+    "id": "q-e9-cap10x",
+    "kind": "understand",
+    "title": "base 原样在 10× 资金（--capital 10000000）重跑：价格上限 权益/500 随资金上移到 ≈¥200，测本书是否收敛到无上限变体",
+    "hypothesis": "本书的水平由自身规则绑定在 ¥1M：¥10M 下 MIN_LOTS 上限 ≈¥200，持仓价位上移，书收敛到 q-e9-minlots（sharpe 0.41）。SUPPORTED：sharpe ≤ 0.7 且与 q-e9-minlots 曲线日相关 ≥ 0.95。REFUTED：sharpe ≥ 1.0（闸），即超额在 10× 资金下仍在。0.7–1.0 判为不确定。INVALID（不是推翻）：日志『MIN_LOTS预筛…即价<X元』首月 X 不在 150–250 之间，说明资金参数没有生效。",
+    "why": "容量 / realizability 测量，一次回测（~2–3 分钟）。§4 规定在本条出结果前 R 不能给到 3，q-e9-liq（¥1M 地板）单独也不能打分，所以它直接决定 exit gate 上的 realizability 能写什么。可表达性已核对：harness 把资金钉在 1,000,000（epoch-9.json capital），但执行器有 --capital N（strategy-post-backtest.js l.16/131/208，经 /algorithm/index/new 的 baseCapital URL 参数），所以选用真实的 10× 资金，而不是改除数：在 ¥1M 下改除数，执行层的『【1手保底】1手超预算，跳过』（l.594，预算 = 权益/100 ≈ 1 万）仍会挡掉 ¥100 以上的名字，只能部分放开上限；只有真实资金能同时放开两层。⚠ 本条是脱离台的测量（资金不是钉住值），所以是 study 变体，绝不写入 ledger。⚠ 混杂，都标在结果旁：①最低佣金 ¥5 在 ¥10M 下几乎不起作用，而在 ¥1M 下对 1 手 ¥1000 级的小单是重负担，所以 10× 有费用顺风，方向是**不利于**假设，若仍崩溃则证据更强；②order_volume_ratio 0.05 在每只约 10 万元时可能开始限制成交，这正是容量问题的一部分，需要记录。⚠ 作者在样本内（2020–2026-08）：不影响本条，因为作者只在一个资金规模下调参，资金规模扩展是他没有拟合过的维度。",
+    "design": "把 study/红利质量/baseline.py 原样复制为 study/红利质量/variants/q-e9-cap10x.py（只加一行头部注释说明 capital=10000000；代码不改动，这样曲线不会覆盖 base 的 series key）。node utils/strategy-post-backtest.js study/红利质量/variants/q-e9-cap10x.py --window train --capital 10000000。控制检查：首月 MIN_LOTS 行的价格上限应约为 ¥200（INVALID 规则见 hypothesis）。记录：每月 MIN_LOTS before→after、候选N→TopM、【1手保底】跳过条数、每月持仓 1 手均价（对比 base ¥10.0 / minlots ¥39.7 / ¥37.7）、日志里的部分成交提示条数。用存储曲线计算 corr(cap10x, q-e9-minlots) 和 corr(cap10x, base)。",
+    "from": [
+      "research-q-e9-minlots",
+      "wiki:红利质量#4",
+      "normalized:d0a149b1",
+      "series:study_红利质量_variants_q-e9-minlots__train__e9"
+    ],
+    "edgeRef": "低价股效应",
+    "status": "answered",
+    "note": "gatekeeper 2026-11-01（re-rank after q-e9-minlots）：排第 1 并派发。它是 §4 点名的 realizability 前置测量，结果同时决定 q-e9-cap20at10x 是否需要跑。",
+    "rank": 4,
+    "result": "At ¥10M the book scores annual 21.25 / sharpe 0.86 / maxDD 16.26 / objective 0.0499, against the ¥1M base 25.94 / 1.09 / 13.73 / 0.1221 and the uncapped minlots variant at sharpe 0.41. Control passed: first-month MIN_LOTS cap ¥200.0 (inside the 150–250 validity band), and at that level it removes on"
+  },
+  {
+    "id": "q-e9-rankinv",
+    "kind": "understand",
+    "title": "四因子综合分反序：sort ascending=True（取池底 Top100）",
+    "hypothesis": "超额来自综合分排序。若 Δsharpe ≤ −0.3 则支持；若 |Δsharpe| < 0.15 则推翻；介于两者之间判为不确定。",
+    "why": "执行 edge『股息质量四因子』自带的 test，一次回测。⚠ 只有在池 > 100 时才可能产生信息：池 ≤ 100 时 head(100) 是整个池，反序后持仓完全相同（权重按股息率而不是综合分），结果一定逐位相同。这种『推翻』不是测出来的，是由构造决定的。所以本条依赖 q-e9-funnel。",
+    "design": "baseline 只改 l.368 ascending=False → True，--window train。附带记录每月持仓与 base 的重合率，用来证明测试真正改变了持仓。",
+    "from": [
+      "normalized:d0a149b1",
+      "wiki:红利质量#edge.股息质量四因子"
+    ],
+    "edgeRef": "股息质量四因子",
+    "rank": 5,
+    "status": "answered",
+    "note": "等 q-e9-funnel：如果候选数 > 100 的月份少于 6 个，则 drop，理由是『由构造决定惰性』，并把这一点作为对股息质量四因子的结构性发现记录下来（排序不决定持仓）。 ‖ recorder 2026-11-01：q-e9-funnel 已答——候选>100 的月份 8/12（≥6），不是构造性惰性，解锁。May–Aug（候选 78–91）排序惰性、持仓应与 base 逐位相同，作为控制；Δ 约被稀释 1/3。 ‖ recorder 2026-11-01（q-e9-minlots）：+6.22pp 超额已全部由价格上限承载，四因子排序最多解释上限内剩余部分——先验削弱，null 为预期。仍是该 edge 的 test；Δ 对着上限内的书读，不对着 6.22pp。 ‖ gatekeeper 2026-11-01（re-rank after q-e9-minlots）：排第 2。决定 edge『股息质量四因子』的状态。先验已削弱，null 是预期结果，而 understand 不按结果方向排名；这是该 edge 自带的 test。May–Aug 作为逐位相同的控制。",
+    "result": "Inverting the four-factor composite (bottom of the pool instead of the top) scores annual 24.94 / sharpe 1.00 / maxDD 13.20 / objective 0.1174 against base 25.94 / 1.09 / 13.73 / 0.1221: Δsharpe −0.09, Δobjective −0.0047. The test genuinely changed the book: in the 8 months where candidates exceed 1"
+  },
+  {
+    "id": "q-e9-persist",
+    "kind": "understand",
+    "title": "关闭分红持续性门槛：SCHD_MIN_DIVIDEND_YEARS 10→1 且 SCHD_DIVIDEND_GROWTH_MIN → -1",
+    "hypothesis": "『连续 10 年分红 + 5 年增速 ≥ 0』这道门本身就是 edge。若 Δsharpe ≤ −0.3 则支持；若 |Δsharpe| < 0.15 或 sharpe 上升则推翻；介于两者之间判为不确定。",
+    "why": "直接执行 edge『分红持续性』自带的 test，一次回测。⚠ 偏差方向：作者在 2020-01~2026-08（包含 TRAIN 2024）上对 3/5/10 做过扫描，并在 l.35 注释写了增速门槛『消融：≥0 净增益 +0.27pp』。所以在样本内消融这个门槛会偏向『支持』：结果为支持时证据弱，为推翻时证据强。⚠ 这里改了两个参数，但 edge 的定义就是二者合一；如果结论是支持，归因到年数还是增速需要再拆成两条。⚠ 关门后候选数会增加，Top100 可能开始生效，所以必须记录每月候选数，用 q-e9-funnel 的基线数字来解读。",
+    "design": "baseline 只改 l.30 SCHD_MIN_DIVIDEND_YEARS=1、l.35 SCHD_DIVIDEND_GROWTH_MIN=-1（l.354 的 `>= 0` 判断因此跳过增速过滤）。注意 1–4 月的豁免会让 required 变成空集，即这几个月门槛完全关闭，属于预期行为。近 12 月股息率 1%–15% 的门限保留不动。--window train。记录每月『分红门槛后』和『候选N → 目标TopM』。",
+    "from": [
+      "normalized:d0a149b1",
+      "wiki:红利质量#edge.分红持续性"
+    ],
+    "edgeRef": "分红持续性",
+    "rank": 6,
+    "status": "answered",
+    "note": "recorder 2026-11-01（q-e9-minlots）：同 rankinv——+6.22pp 由价格上限承载，持续性门最多解释上限内剩余，先验削弱。 ‖ gatekeeper 2026-11-01（re-rank after q-e9-minlots）：排第 3，理由同 rankinv，对应 edge『分红持续性』。在样本内消融这个门偏向『支持』，所以『推翻』才是有力的结果。结果同时决定 i-1 是否 drop。 ‖ recorder 2026-11-01（q-e9-rankinv）：排序已 refuted，本条是唯一剩下的「质量」test；若也推翻，本族 edge 只剩池内低价倾斜（低价股效应）。",
+    "result": "Removing the 10-year continuous-dividend gate and the 5y growth>=0 gate scores annual 16.82 / sharpe 0.59 / maxDD 19.59 / objective −0.0277 against base 25.94 / 1.09 / 13.73 / 0.1221: Δsharpe −0.50, Δobjective −0.1498, below the 1.0 gate. The post-gate pool is 2.5–3.5× larger (N 301–611 vs 78–174) s"
+  },
+  {
+    "id": "q-e9-liq",
+    "kind": "understand",
+    "title": "liq-1：在本书自己的可行性下限加流动性地板（realizability 测量）",
+    "hypothesis": "本书在 100 万 / 100 只 / order_volume_ratio 0.05 下的可行性地板约为 2e5/日（每只 1 万 ÷ 0.05）。如果 P5 成交额过滤已经排除了薄名字，地板是惰性的（曲线逐位相同）⇒ R ≥ 2。若地板在任一个月剔除持仓名字，且 Δsharpe ≤ −0.15，则推翻惰性假设。",
+    "why": "由 gatekeeper 根据 §4『[阻塞 exit gate] realizability 未测』添加，两个生成器都没有提出这一条。本族在 exit gate 上 blocked 的原因就是 realizability 未知，§4 规定的顺序是 消融 → liq → VAL。只算 1 次回测（liq-1）；liq-2 / liq-3（5× / 10×）等 liq-1 的结果出来后再各自作为单独条目入队，因为一次实验只测一件事。",
+    "design": "沿用大小盘轮动 liq-1 的做法：在 _liquidity_filter 之后加一层『近 20 日日均成交额 ≥ 2e5』，并对每次调仓 log『LIQFLOOR in→out』。--window train。逐日比较与 base 的曲线 max|Δcum|。",
+    "from": [
+      "wiki:红利质量#4",
+      "normalized:d0a149b1"
+    ],
+    "edgeRef": null,
+    "rank": 7,
+    "status": "answered",
+    "note": "recorder 2026-11-01（q-e9-minlots）：本书价格上限 = 权益/500，随资金变化；¥10M 下上限 ≈¥200，书趋近 minlots 变体（sharpe 0.41 < 闸）。所以本条在 ¥1M 下地板惰性只证明 ¥1M 可成交，不能单独给 realizability 打分；须配合资金扩展视角（候选：base 10× 资金重跑，见 §4，未入队）。 ‖ gatekeeper 2026-11-01（re-rank after q-e9-minlots）：排第 4。¥1M 下的可行性地板仍是 exit gate 的标准输入，但只能和 q-e9-cap10x 一起读，不能单独给 R 打分。仍为 1 次回测。 ‖ recorder 2026-11-01（q-e9-cap20at10x）：固定 ¥20 上限在 ¥10M 下 sharpe 1.22、0 次跳过、order_volume_ratio 从未约束 ⇒ cap10x 的下滑是 权益/500 规则放松，不是容量。本条现在是唯一剩下的容量问题（流动性），在 base（家族候选 = ledger 成员 d0a149b1）上、¥1M 下跑；读法与 cap10x + cap20at10x 合并。 ‖ recorder 2026-11-01（q-e9-persist）：持续性门 measured、排序 refuted、价格上限 measured ⇒ 机制已分解完，本条是 exit gate 剩下的唯一输入，下一跑。",
+    "result": "Both liquidity floors are fully inert: at F=2e5 (the book own feasibility floor) and F=2e6 (10x) the curve is bit-identical to the base on 242/242 days (max|Δcum| = 0, Δobjective 0.0000) and LIQFLOOR reports in == out at all 12 rebalances. The reason is structural: the book own P5 turnover filter (5"
+  },
+  {
+    "id": "q-e9-cap20at10x",
+    "kind": "understand",
+    "title": "固定 ¥20 价格上限（替代 权益/500），在 10× 资金下运行：低价股效应在规模放大后是否仍在",
+    "hypothesis": "低价股效应是价位效应而不是相对资金的人为产物：在 ¥10M 资金下用固定『股价 < ¥20』上限，sharpe 恢复到 ≥ 1.0，且与 ¥1M base 的日相关 ≥ 0.9。若 sharpe < 0.7，则推翻：在 10× 资金下即使保持同一价位，效应也不在（问题在于流动性 / 成交，而不是上限）。0.7–1.0 判为不确定。",
+    "why": "由 §4 的『与资金无关的显式价格上限』想法改写。生成器的原始版本是 improve（在 ¥1M 下换固定 ¥20 上限），gatekeeper 否掉了这个形式：¥1M 下 权益/500 本来就约为 ¥20（随 2024 年 +26% 收益漂到约 ¥25），两种规则选出的书几乎相同，预期增益约等于 0，而且作者在样本内，TRAIN 上的提升也买不到前瞻证据。这个想法的信息量只在资金放大之后才出现，所以改为 understand 并放到 10× 资金下运行：它把『上限随资金移动』和『低价名字在规模下可成交』这两件事分开，后者才是 realizability 的输入。一次回测。BLOCKED 条件：只有在 q-e9-cap10x 为 SUPPORTED 或不确定时才跑。若 cap10x 被推翻（10× 下超额仍在），本条就是冗余的，应 drop，并引用 cap10x。⚠ 同为脱离台测量（--capital），不写入 ledger。",
+    "design": "baseline 只改 l.296–318 的预筛上限：把『5 手 × 价 < 权益/SCHD_TOP_N』换成固定『价 < 20.0』（新常量 SCHD_FIXED_PRICE_CAP=20.0，日志行同样打印上限），其他一切不变。存为 study/红利质量/variants/q-e9-cap20at10x.py，--window train --capital 10000000。记录项与 q-e9-cap10x 相同，另加持仓 1 手均价（应约为 ¥10，若不是说明上限没生效 → INVALID）。",
+    "from": [
+      "wiki:红利质量#4",
+      "research-q-e9-minlots"
+    ],
+    "edgeRef": "低价股效应",
+    "status": "answered",
+    "note": "gatekeeper 2026-11-01（re-rank after q-e9-minlots）：由 improve 改写为 understand（原形式在 ¥1M 下构造性近惰性）。等 q-e9-cap10x。 ‖ recorder 2026-11-01（q-e9-cap10x）：cap10x 判 UNCERTAIN（sharpe 0.86，介于 0.7 与 1.0 之间），满足本条 BLOCKED 条件「SUPPORTED 或不确定」→ 解锁为 queued。本条直接区分「价格水平」与「资金/费用」：若固定 ¥20 上限在 ¥10M 下恢复 sharpe ≈1.09，效应来自价位而非资金/费用。",
+    "rank": 8,
+    "result": "With a fixed ¥20 per-share cap at ¥10M the book scores annual 28.83 / sharpe 1.22 / maxDD 13.23 / objective 0.1560, against cap10x (same capital, equity-scaled cap ≈¥200) 21.25 / 0.86 / 16.26 / 0.0499 and the ¥1M base 25.94 / 1.09 / 13.73 / 0.1221; daily corr with base 0.9987. Control passed: the lo"
+  },
+  {
+    "id": "i-2",
+    "kind": "improve",
+    "title": "加入 20 日低换手排名作为第 5 个等权因子（借红利低频的流动性溢价）",
+    "hypothesis": "在综合分中加入 rank(-turnover_20d) 能提升 sharpe。若 Δsharpe ≥ +0.15 则保留；否则 reject。同时报告持仓市值的中位数。",
+    "why": "预期收益为中等：93379f98 在 epoch 9 上 sharpe 2.31，而本书是 1.09，红利低频 q-2 / q-8 / q-10 测出低换手是那本书的主要来源。⚠ 这三条证据都是 epoch-6 / 2022–23 台上的结论（stale），但 93379f98 在 2024 仍然有效，这支持机制可以迁移。⚠ 新颖性低：本书与 93379f98 的相关已达 0.816，加换手因子是在把本书改造成一本更差的红利低频副本，而红利低频的产品 OOS 是 −0.51，所以对 integration 的边际信息很少。⚠ 样本内问题：作者在 2020–2026-08 上调过参，TRAIN 2024 和 VAL 2025 都在他的样本里，一个仅凭 TRAIN 的提升几乎买不到前瞻证据。⚠ 排序只有在池 > 100 时才生效（见 q-e9-funnel）。",
+    "design": "在 l.367 之前计算 20 日平均换手率（get_valuation turnover_ratio，取到 previous_date），rank_turn = (-turnover).rank(pct=True)，composite = 5 个因子的平均。其余不动，--window train。",
+    "from": [
+      "红利低频:q-2",
+      "红利低频:q-8",
+      "红利低频:q-10",
+      "normalized:93379f98",
+      "series:d0a149b1__train__e9"
+    ],
+    "edgeRef": "股息质量四因子",
+    "rank": 9,
+    "status": "dropped",
+    "note": "等 q-e9-funnel：若候选数 ≤ 100 的月份居多，则 drop（加因子在构造上就是惰性的）。 ‖ recorder 2026-11-01：q-e9-funnel 已答——排序在 8/12 个月生效，解锁；Δ 约被稀释 1/3。 ‖ gatekeeper 2026-11-01（re-rank after q-e9-minlots）：排第 6（improve 排在全部 understand 之后）。低价股效应已被测量，所以本条没有 edgeRef 指向它，属于在上限内重排序，作用于已被削弱的『股息质量四因子』；与 93379f98 相关 0.82，作者在样本内，所以新颖性和前瞻价值都低。建议在 rankinv 为 null 时 drop：排序本身既然无效，加一个因子也没有理由起作用。 ‖ recorder 2026-11-01（q-e9-rankinv）：DROPPED。反序综合分（约半本书换成池底名字）Δsharpe 仅 −0.09、月度 Δ 无一致方向 ⇒ edge 股息质量四因子 refuted，排序方向在本台关闭；本条只是给惰性排序换因子，没有理由起作用。引用 [[study-q-e9-rankinv]]。"
+  },
+  {
+    "id": "i-3",
+    "kind": "improve",
+    "title": "综合分去掉 rank_grow（只保留 FCF / ROE / 股息率三个因子）",
+    "hypothesis": "5 年股息增速因子在排序中是噪声或者有害，去掉后 sharpe 提升。若 Δsharpe ≥ +0.15 则保留；否则 reject。",
+    "why": "⚠ 引用更正：红利低频 i-3 不是『去掉增速因子』，而是『加盈利质量 / 增速过滤』（epoch 6，obj 0.1348 → −0.2126）。它支持的是『在红利书上加质量 / 增速约束有害』这个方向，作为类比可以接受，但证据来自 stale 台，而且是另一本书。预期收益低，作者在样本内选定了四因子等权。⚠ 排序只有在池 > 100 时才生效（见 q-e9-funnel）。⚠ 增速门槛（l.354）依然保留，所以本条只测排序中的增速，不测门槛。原定在 i-1 之后跑，因为 i-1 改变了 growth_5y 的计算。",
+    "design": "l.367 composite = (rank_fcf + rank_roe + rank_dy) / 3，其余不动，--window train。",
+    "from": [
+      "红利低频:i-3",
+      "normalized:d0a149b1"
+    ],
+    "edgeRef": "股息质量四因子",
+    "rank": 10,
+    "status": "dropped",
+    "note": "等 q-e9-funnel（排序必须生效）；如果 i-1 被保留，就以 i-1 为 base 来跑。 ‖ recorder 2026-11-01：q-e9-funnel 已答——排序在 8/12 个月生效，解锁（funnel 条件已满足；若 i-1 保留仍以 i-1 为 base）。 ‖ gatekeeper 2026-11-01（re-rank after q-e9-minlots）：排第 7。同 i-2；若 rankinv 为 null，同样 drop。 ‖ recorder 2026-11-01（q-e9-rankinv）：DROPPED。反序综合分（约半本书换成池底名字）Δsharpe 仅 −0.09、月度 Δ 无一致方向 ⇒ edge 股息质量四因子 refuted，排序方向在本台关闭；本条只是给惰性排序换因子，没有理由起作用。引用 [[study-q-e9-rankinv]]。"
+  },
+  {
+    "id": "i-1",
+    "kind": "improve",
+    "title": "修正 5 年股息增速的送转稀释：每股股息按送转比例复权",
+    "hypothesis": "l.217 用 bonus_ratio_rmb/10 计算未复权的每股股息，送转之后每股股息会被机械性摊薄，导致 growth_5y 误判为负，从而被 ≥ 0 门槛误剔除。修正后若每月发生 ≥ 3 个名字的进出变化，就值得看 Δsharpe；若每月变化 < 3 个名字，判为惰性并 reject。",
+    "why": "本质上是一个正确性修复，预期收益小，生成器提出的设计需要改：用『累计 bonus_amount_rmb』代替每股股息，会引入相反方向的偏差，因为总派息额会随增发 / 股本扩张而增长，把稀释股东的公司误读成股息增长。所以按送转比例复权每股股息才是改动单一变量的做法。⚠ 本条依赖 q-e9-persist：若分红持续性门槛被证实是惰性的，修正它的输入也就几乎没有意义（rank_grow 只有在池 > 100 时才生效）。参考：价值红利多腿也遇到过送转相关的记账问题（commit ea8c7ea）。",
+    "design": "_dividend_metrics 额外查询 STK_XR_XD 的送股 / 转增比例字段（字段名请执行者先用一次免费的 run_query 核对，不要猜），对每个 code 按登记日把更早年份的 ps 乘以累计 (1+送转/10) 得到复权后的每股股息，其余不动。每月 log 一行：门槛的进出名单，以及被修正的名字数。--window train。",
+    "from": [
+      "normalized:d0a149b1",
+      "wiki:红利质量#edge.分红持续性"
+    ],
+    "edgeRef": "分红持续性",
+    "rank": 11,
+    "status": "queued",
+    "note": "等 q-e9-persist 的结果：若推翻（门槛惰性），则 drop。设计已由 gatekeeper 改为送转复权（生成器原来的 bonus_amount 求和方案有增发偏差）。 ‖ gatekeeper 2026-11-01（re-rank after q-e9-minlots）：排第 8，依旧 blocked 在 q-e9-persist 上。 ‖ recorder 2026-11-01（q-e9-persist）：门槛被 SUPPORTED（Δsh −0.50），解锁 blocked→queued；但低优先：作者样本内调过此门，支持是弱方向；且年数 vs 增速尚未拆分，先拆再修增速输入。"
+  }
+]
