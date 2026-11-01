@@ -1,0 +1,170 @@
+[
+  {
+    "id": "u-bh",
+    "kind": "understand",
+    "title": "Free: base vs buy-and-hold 513500 from the stored TRAIN curve (edge.test for 美股贝塔)",
+    "hypothesis": "If 美股贝塔 is the return source, buy-and-hold 513500 earns about the base's 34.90 annual and the timing only trims drawdown. Refuted if B&H total differs from base by more than the flat-spell arithmetic (|Δtotal| > ~5pp) or if B&H drawdown is no worse than the base's.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 1, 0 backtest-min, READY-TO-RECORD (recorder, not executor). Both generators already measured it from the stored curve. The result supports 美股贝塔: the timing layer adds ~0 return and cuts drawdown by ~3pp. ⚠ It is an approximation and the finding must say so: benchCum is close-to-close B&H with no fund costs and no open-price entry, while edge.test asked for a sell_bias=inf run at the same costs. One round trip of fund cost is ~0.03pp, so the gap does not matter, but label it 'curve-derived B&H', not 'B&H run'. ⚠ 61 of 242 days flat is 25% of days, not 「少数日子」 as the edge claim says. Fix that wording when promoting the claim. Not a duplicate (0 findings, 0 closures, 0 §2 rejects).",
+    "design": "No run. data/series/2026-10-28_…-648c2da3__train__e9.json: compare cum with benchCum (benchCum = 513500 B&H, because the base benchmarks itself). Record total, maxDD, flat days and the B&H return over each of the three episodes.",
+    "from": [
+      "wiki/families/均线乖离择时.md edge[0].test",
+      "generators A+B free measurement 2026-11-01 on the stored e9 TRAIN curve"
+    ],
+    "edgeRef": "美股贝塔",
+    "rank": 1,
+    "status": "answered",
+    "result": "Base total 34.90 vs curve-derived B&H 34.85; maxDD 9.98 vs 13.05. ~61 of 242 days flat in 3 episodes: 02-20→04-08 gave up +4.0%; 07-05→07-23 avoided the 07-17..22 slide; 11-27→12-20 avoided −1.7%. The flat spells cost ~2.6pp net, offset by open-vs-close gaps on the ~6 trade days. Return ≈ beta; the timing contributed drawdown reduction (−3.07pp), not return.",
+    "note": "0 backtest. Recorded as finding q-e9-bh (2026-11-01); 美股贝塔 → measured. ⚠ Re-derived from the file, flat spells cost ~0.7pp net (log), not ~2.6pp as the result line above says; episode B&H spans are +4.01 / +0.31 / −1.71.",
+    "findingId": "q-e9-bh"
+  },
+  {
+    "id": "u-replay",
+    "kind": "understand",
+    "title": "Free: offline hysteresis replay of (sell_bias, buy_bias) from the run log's daily bias line",
+    "hypothesis": "If 乖离过热回避 is real and not fitted to 8.5%, replaying sell_bias ∈ {0.06, 0.07, 0.085, 0.10, 0.11} (buy_bias fixed at 0.045) on the logged daily bias gives a smooth, same-signed Δ vs B&H. Refuted if the base's drawdown saving holds only near 0.085 (adjacent points flip sign, or the episode set changes abruptly, e.g. 0.11 never exits). Either outcome is information, and it decides whether u-sweep-* spends any minutes.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 2, ACTIVE, top dispatchable. Costs 0 backtest-min on a 42-min day, and it gates u-sweep-06/u-sweep-11. Source L110 logs signal date, close, MA60 and bias every day, so the input exists. ⚠ This is an approximation: P&L is close-to-close (opens are in neither the log nor the curve), and the open-gap offset is exactly what u-close tests. Report replay results as episode sets plus close-to-close Δ, never as a level. ⚠ One TRAIN year with ~3 exits: report the EPISODE SET per threshold first, because a Δ built from 1–3 episodes is anecdote. ⚠ The author's own L22 comment names 0.06 as 「另一候选」, so include it explicitly.",
+    "design": "Read the base's e9 TRAIN run log. Logs serve 100 lines per request, so page with study/小市值/pagelog.js and resolve the run via utils/backtest-log.js --algorithm. Parse the L110 line into (date, close, ma, bias). Replay next_target() verbatim for each sell_bias. Before trusting any other point, check that the replay reproduces the base's 3 flat episodes at 0.085; a mismatch voids the replay. Take Δ vs B&H from the curve's benchCum. FALLBACK if JQ has reaped the run's log: do not re-run the base for it. The u-premium probe's own run log carries the same L110 line, so fold this replay into u-premium's output instead.",
+    "from": [
+      "wiki/families/均线乖离择时.md edge[1].test (three-point sweep)",
+      "u-bh (3 episodes identified)",
+      "source L22 author comment: 0.06 as alternative candidate"
+    ],
+    "edgeRef": "乖离过热回避",
+    "rank": 2,
+    "status": "answered",
+    "findingId": "q-e9-replay",
+    "result": "Replay valid (242/242 days match logged target at 0.085). approx Δtotal vs B&H: 0.06 −15.02 / 0.07 −5.32 / 0.085 +0.52 (actual +0.05) / 0.10 +5.45 (Dec only) / 0.11 +0.68 (never exits). Not same-signed, not smooth ⇒ 乖离过热回避 refuted. Flat days 66–67, not 61 (start-up spell 01-02→01-04).",
+    "note": "0 backtest. Recorded as q-e9-replay (2026-11-01). Episode starts one day earlier than u-bh = dating convention (signal day vs first zero-return day), not a mismatch."
+  },
+  {
+    "id": "u-premium",
+    "kind": "understand",
+    "title": "Probe: log QDII premium (close/NAV − 1) and a NAV-based MA60 bias beside the unchanged book",
+    "hypothesis": "If 'overheating' is partly PREMIUM overheating (a QDII quota squeeze), the three exit dates line up with premium spikes: premium at exit ≥ its TRAIN median + 2pp, and NAV-based bias stays < 0.085 on at least 1 of the 3 exits. Refuted if NAV-bias crosses 0.085 on all 3 exits within ±3 trading days of price-bias, which means the signal is index overheating. The control must reproduce 0.2492 / 2.02 / 34.90 / 9.98 exactly; otherwise the probe changed the book and is void.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 3, ~3 backtest-min. It resolves the family page's own named prior (§1 先验警示 2), and either way it tells us what the signal IS, which is the question i-navbias would answer by trading. MERGED with the observation half of i-navbias. Observe-only goes first because the NAV-bias column logged here lets i-navbias's episode set be replayed offline, which may make that run unnecessary. ⚠ QDII NAV is published with a T+1/T+2 lag. Log each NAV's own date beside the reading. A same-day NAV does no harm in an observe-only probe, but it is the lookahead any trading rule built on it must avoid. Missing PREM lines mean instrumentation failure, not 'no premium'.",
+    "design": "Base strategies/2026-10-28_使用标普500_60日均线乖离度增加超额收益的策略-648c2da3.py + OVERRIDE, epoch-9 pins. Append one helper, scheduled run_daily(..., '09:31'), that logs 'PREM date nav_date close nav premium navbias'. It uses get_extras('unit_net_value', '513500.XSHG', end_date=context.previous_date, count=62) for the NAV series and its MA60. No trading change. Report premium and NAV-bias at each of the 3 exits and re-entries, the premium distribution, and the control check. Page the log (pagelog.js).",
+    "from": [
+      "wiki/families/均线乖离择时.md §1 先验警示 (QDII premium inflates bias)",
+      "u-bh (3 exit episodes)"
+    ],
+    "edgeRef": "乖离过热回避",
+    "rank": 3,
+    "status": "answered",
+    "findingId": "q-e9-premium",
+    "result": "Control exact (34.90/2.02/9.98, curve bit-identical). Premium 2024 mean 3.95% sd 2.23pp max 11.77. navBias max 6.79%, never ≥8.5%. Sell signal days 02-08/07-03/11-25: priceBias 9.06/8.98/8.93 vs navBias 5.60/5.34/5.05, premium 4.12/7.18/7.04 (z +0.08/+1.45/+1.38). Jul+Nov = premium overheating; Feb = pre-Spring-Festival gap jump. NAV-bias replay = no exits = B&H (also 1-day lagged).",
+    "note": "~1 backtest-min. Recorded as q-e9-premium (2026-11-01). Hypothesis supported (navBias < 0.085 on all 3 exits). NAV dated T−1 on 242/242, but QDII T−1 NAV publishes ~evening of T ⇒ any NAV trading rule needs ≥1-day lag."
+  },
+  {
+    "id": "liq-1",
+    "kind": "understand",
+    "title": "Realizability: liquidity floor at the book's own feasibility floor (capital / 1 name / 0.05 = 2e7 CNY/day)",
+    "hypothesis": "513500 trades far above 2e7 CNY/day, so the floor removes the instrument on 0 days and the curve is bit-identical (supports R≥2). Refuted (evidence for R=1) if the floor blocks entry on any trade day or moves the curve at all.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 4, ~3 backtest-min. The exit gate requires it: realizability is unset and BLOCKS. The prior strongly expects the floor to be inert, but the gate still needs a measurement (大小盘轮动's floor was inert, ETF溢价's went 8.44→1.10, and a prior is no substitute). It sits after the two edge understands because §4 orders 消融 → liq → VAL, and an inert result changes nothing about what to study. ⚠ An inert 1× floor earns R=2, not 3. 5× and 10× points would be separate entries if ever wanted.",
+    "design": "Base 648c2da3 + OVERRIDE. ONE edit: before any buy, skip if the 20-day mean money volume of 513500 (get_price ... fields=['money'], end_date=previous_date) is < 2e7, and log 'LIQFLOOR date money pass/fail'. Report the count of failing days, max|Δcum| vs the base curve, and the four metrics vs 0.2492 / 2.02 / 34.90 / 9.98.",
+    "from": [
+      "wiki/families/均线乖离择时.md §4 [阻塞 exit gate]",
+      "CLAUDE.md liq-1 precedent (大小盘轮动, b3751277)"
+    ],
+    "edgeRef": null,
+    "rank": 4,
+    "status": "dropped",
+    "note": "Dropped for now (2026-11-01, after q-e9-premium): only needed to clear the exit gate, and the VAL is being declined (see valDeclined); single highly liquid ETF. Re-open if a candidate ever reaches VAL. No realizability score is inferred from this — it stays unset."
+  },
+  {
+    "id": "u-close",
+    "kind": "understand",
+    "title": "Isolate execution time: run_daily 09:30 → 14:55, signal (prior-close bias) unchanged",
+    "hypothesis": "If the open-gap capture on trade days is what offsets the ~2.6pp flat-spell cost (u-bh), moving execution to 14:55 lowers total by about that offset (≥1.5pp) with the same episode set. Refuted if total moves < 0.5pp. The episode set must match the base; otherwise the run changed the signal and the comparison is void.",
+    "why": "gatekeeper 2026-11-01: ACCEPTED, rank 5, ~3 backtest-min. It decomposes the free u-bh result: why the base ≈ B&H with 25% of days flat. MERGED with the timing half of i-1455. u-close is the one-change version; i-1455 changes timing AND signal source, so it waits behind this. ⚠ n ≈ 6 trade days, so |Δ| below ~1pp is unresolved, not a null. ⚠ On this bench, last_price at 14:55 is the live near-close price (CLAUDE.md q-e9-bench-lastprice), so a 14:55 fill is realistic. Orders must still size off last_price, not day_open.",
+    "design": "Base 648c2da3 + OVERRIDE. ONE asserted edit: run_daily(trade_at_open, '09:30') → '14:55' (L43). In the sizing path, replace day_open with last_price; this is the only consequence of the move, since day_open at 14:55 is a stale price. Signal function untouched. Report total/annual/maxDD/sharpe and the open-vs-14:55 price difference on each trade day.",
+    "from": [
+      "u-bh (open-vs-close gaps offset flat-spell cost)"
+    ],
+    "edgeRef": "乖离过热回避",
+    "rank": 5,
+    "status": "dropped",
+    "findingId": "q-e9-premium",
+    "note": "Dropped after q-e9-premium: it would only decompose the open-gap effect (~0.5pp scale, n≈6 trade days) of an edge already refuted (q-e9-replay, strengthened by q-e9-premium); it cannot revive it."
+  },
+  {
+    "id": "u-sweep-06",
+    "kind": "understand",
+    "title": "Real sweep point: sell_bias 0.085 → 0.06 (author's named alternative)",
+    "hypothesis": "Same test as edge[1]: Δ vs B&H at 0.06 has the same sign as at 0.085. Refuted if the sign is opposite. The 0.085 control point is the base row, so it needs no run.",
+    "why": "gatekeeper 2026-11-01: BLOCKED on u-replay. Run only if the replay is non-trivial, meaning the episode set changes at 0.06 AND the close-to-close Δ is within the open-gap error, so the replay cannot decide it. If the replay is decisive, mark this answered from the replay at 0 cost. Split from the 3-point u-sweep: 0.085 is the base row, so the sweep is two runs and therefore two entries. ~3 min.",
+    "design": "Base 648c2da3 + OVERRIDE; ONE asserted edit g.sell_bias = 0.085 → 0.06 (L22). Report vs base 0.2492 / 2.02 / 34.90 / 9.98 and the episode set.",
+    "from": [
+      "wiki/families/均线乖离择时.md edge[1].test",
+      "u-replay"
+    ],
+    "edgeRef": "乖离过热回避",
+    "rank": 6,
+    "status": "dropped",
+    "findingId": "q-e9-replay",
+    "note": "Answered free by q-e9-replay: 0.06 approx Δ −15.02pp vs B&H, ~30× the ~0.5pp replay error, so a real run cannot flip the sign. Do not spend minutes."
+  },
+  {
+    "id": "u-sweep-11",
+    "kind": "understand",
+    "title": "Real sweep point: sell_bias 0.085 → 0.11",
+    "hypothesis": "Same test as edge[1]: Δ vs B&H at 0.11 has the same sign as at 0.085 (smaller magnitude expected). Refuted if the sign is opposite. If 0.11 never triggers in 2024 the run equals B&H and u-bh already answers it, so check the replay first.",
+    "why": "gatekeeper 2026-11-01: BLOCKED on u-replay, same conditions as u-sweep-06. A likely 'never exits ⇒ = B&H' outcome can be answered free from the replay and must not be bought. ~3 min.",
+    "design": "Base 648c2da3 + OVERRIDE; ONE asserted edit g.sell_bias = 0.085 → 0.11 (L22). Report vs base and the episode set.",
+    "from": [
+      "wiki/families/均线乖离择时.md edge[1].test",
+      "u-replay"
+    ],
+    "edgeRef": "乖离过热回避",
+    "rank": 7,
+    "status": "dropped",
+    "findingId": "q-e9-replay",
+    "note": "Answered free by q-e9-replay: max 2024 bias 10.15% ⇒ 0.11 never exits, run would equal B&H (u-bh). Do not spend minutes."
+  },
+  {
+    "id": "i-navbias",
+    "kind": "improve",
+    "title": "Trade on NAV-based MA60 bias (T-2 lagged NAV), thresholds verbatim",
+    "hypothesis": "If the price-bias exits are premium spikes, a NAV-bias signal avoids premium-driven exits and improves sharpe vs base 2.02. Support: sharpe ≥ base + 1.0. Refute: sharpe ≤ base.",
+    "why": "gatekeeper 2026-11-01: BLOCKED on u-premium. u-premium covers the diagnostic half (observe-only, one run, no lookahead risk), and because it also logs NAV-bias, this rule's episode set can be replayed offline. Run only if u-premium shows premium-driven exits AND the offline replay of a NAV rule differs from the base by at least 1 episode. If u-premium refutes the premium story, drop this (predicted ≈ base). ⚠ The T-2 lag is mandatory: QDII NAV is published late, and using get_extras NAV dated previous_date in a trading rule is lookahead. ⚠ Expected |Δsharpe| < 1 on ~3 episodes, so it is probably unresolvable at SE≈1. That is why it does not run on speculation.",
+    "design": "Base 648c2da3 + OVERRIDE. Replace the close series in the signal with get_extras('unit_net_value', ..., end_date=<two trading days before today>, count=60). Thresholds, execution and sizing verbatim. Report vs base and the episode set.",
+    "from": [
+      "wiki/families/均线乖离择时.md §1 先验警示",
+      "u-premium"
+    ],
+    "edgeRef": "乖离过热回避",
+    "rank": 8,
+    "status": "dropped",
+    "findingId": "q-e9-premium",
+    "note": "Answered free by q-e9-premium: offline replay of next_target() on the logged navBias (thresholds verbatim, also with 1-day-lagged NAV) gives no overheating exits = buy-and-hold. Nothing to buy."
+  },
+  {
+    "id": "i-1455",
+    "kind": "improve",
+    "title": "Decide and trade at 14:55 on a last_price-based bias",
+    "hypothesis": "Using today's near-close price for both signal and fill raises sharpe vs base. Support: sharpe ≥ base + 1.0. Refute: sharpe ≤ base.",
+    "why": "gatekeeper 2026-11-01: BLOCKED on u-close. As proposed it makes TWO changes (execution time + signal source), so the Δ could not be attributed. u-close isolates the timing half. This entry then becomes the signal-source-only change, built on whichever execution time u-close favours. Low prior: ~6 trade days in the year, so moving the signal by one day changes at most a handful of fills.",
+    "design": "On the u-close variant: bias = last_price / MA60(previous 59 closes + last_price) − 1 at 14:55. One edit relative to u-close.",
+    "from": [
+      "u-close"
+    ],
+    "edgeRef": "乖离过热回避",
+    "rank": 9,
+    "status": "dropped",
+    "findingId": "q-e9-premium",
+    "note": "Dropped with u-close (it was blocked on it): a signal-source/timing tweak of a refuted edge, ~6 trade days, cannot revive it."
+  },
+  {
+    "id": "i-mmf",
+    "kind": "improve",
+    "title": "Hold 511880 when flat",
+    "hypothesis": "Parking cash in a money-market ETF on flat days raises objective by ~+0.004.",
+    "why": "gatekeeper 2026-11-01: REJECTED (dropped), recorded so it is not re-proposed. Arithmetic answers it without a backtest: 61/242 flat days × ~1.7% annual MMF yield ≈ +0.4pp annual ≈ +0.004 objective, ~0.03 sharpe. That is two orders of magnitude below the SE≈1 of one TRAIN year, so a run cannot resolve it. It is also off-mechanism, since cash yield is neither edge. Reopen only as a product-finishing step after the edges are settled, never as research.",
+    "design": null,
+    "from": [
+      "u-bh (61 flat days)"
+    ],
+    "edgeRef": null,
+    "rank": 99,
+    "status": "dropped"
+  }
+]
