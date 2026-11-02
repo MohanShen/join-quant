@@ -926,9 +926,28 @@ function runChain({ dry = false, maxStages = 40, stageOverride = null } = {}) {
       }
     }
 
-    // ⚠ `discover` ADMITS work; it does not consume it. Its own limit is 20 fetches per RUN, so
-    // without this brake a chain would re-run it to maxStages and admit up to 800 in a day.
-    if (r.stage === 'discover') stalled.add('discover');
+    // ⚠ `discover` ADMITS work; it does not consume it. Its own limit is 20 fetches per RUN.
+    //
+    // This used to stall discover UNCONDITIONALLY after one run — a hard once-per-chain brake,
+    // added because "a chain would re-run it to maxStages and admit up to 800 in a day". Relaxed
+    // 2026-11-02 (user's call) because that reasoning was stronger than the mechanism warrants:
+    //
+    // `discover` is LAST in PRIORITY, so it is only ever picked when every stage above it is empty
+    // or stalled. The moment it admits 20 strategies, `normalize` has a queue and OUTRANKS it — so
+    // repeated discover does not burst, it ALTERNATES discover -> normalize -> discover, which is
+    // precisely the behaviour "run until the budget is gone" wants. Measured 2026-11-02: a chain
+    // ended EXHAUSTED with research drained, assign stalled and discover already spent, leaving
+    // normalize with nothing to measure while backtest minutes remained.
+    //
+    // The 800-fetch case needs normalize to be STALLED while discover keeps admitting, and that is
+    // exactly what this now tests. Note discover can never self-stall via the no-progress guard the
+    // way other stages do: its queue is the uncopied count, which always drops by 20, so it always
+    // looks productive — which is why it needs an explicit rule at all.
+    //
+    // ⚠ A spent budget is already handled elsewhere: discover is a FREE stage (isFreeStage), and a
+    // free stage on a spent budget runs ALONE rather than chaining, so it cannot admit repeatedly
+    // once the minutes are gone.
+    if (r.stage === 'discover' && stalled.has('normalize')) stalled.add('discover');
     // In dry mode nothing actually changed, so a second pass would replan identically.
     if (dry) break;
   }

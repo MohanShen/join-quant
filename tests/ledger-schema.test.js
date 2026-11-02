@@ -1124,12 +1124,21 @@ test('the daily chain stops only for the budget, a lock, or an empty board', asy
       `maxStages=${m[1]} is too low to let a draining stage finish — normalize takes 40 files a pass`);
   });
 
-  await t.test('DISCOVER runs at most once per chain', () => {
-    // It ADMITS work rather than consuming it, its own strategy-daily limit is 20 fetches per RUN
-    // (raised from 3 on 2026-10-17), and it costs no backtest minutes — so an unbounded chain would
-    // re-run it to maxStages and admit up to 800 in a day. The raise makes this brake the only
-    // thing bounding the daily total, so it matters MORE than when the per-run cap was 3.
-    assert.match(src, /if \(r\.stage === 'discover'\) stalled\.add\('discover'\)/);
+  await t.test('DISCOVER may repeat, but ONLY while normalize can consume what it admits', () => {
+    // Was an unconditional once-per-chain brake, on the reasoning that an unbounded chain would
+    // re-run discover to maxStages and admit up to 800 strategies in a day. Relaxed 2026-11-02
+    // (user's call) because the mechanism does not permit that burst: discover is LAST in
+    // PRIORITY, so the moment it admits 20 the normalize queue is non-empty and OUTRANKS it —
+    // repeated discover ALTERNATES with normalize rather than stacking.
+    //
+    // The 800 case needs normalize STALLED while discover keeps admitting, which is what the
+    // condition now tests. ⚠ discover can never self-stall through the no-progress guard: its
+    // queue is the uncopied count, which always drops by 20, so it always looks productive.
+    // That is why it needs an explicit rule and why removing the rule outright is not safe.
+    assert.match(src, /r\.stage === 'discover' && stalled\.has\('normalize'\)/,
+      'discover must stop repeating once normalize is stalled');
+    assert.ok(!/if \(r\.stage === 'discover'\) stalled\.add\('discover'\);/.test(src),
+      'the unconditional brake must be gone, or discover still runs only once');
   });
 
   await t.test('the budget gate is still the one that matters, and still exempts free stages', () => {
