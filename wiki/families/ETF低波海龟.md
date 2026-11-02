@@ -30,7 +30,7 @@ realism: "⚠ **注册时零研究**：没有 study、没有 enhance、没有可
 realizability: 2
 realizabilityBasis: "liq-e9-1（e9 TRAIN 2024）：base 加买入侧下限 2e7 元/日（capital 1e6 / 1 只持仓 / order_volume_ratio 0.05，从 harness 读；20 日均成交额）⇒ 曲线与 base 逐位相同（max|Δcum| = 0 over 242 pts；22.51 / sharpe 1.22 / maxDD 12.96 / obj 0.0955）。下限只剔除 159768 房地产ETF银华（79/242 天，从未被选中）；最薄可选名 159870 化工 20 日均额最低 24.9M（≈1.25× 下限）；实际持有的 红利/黄金/50ETF 日成交 227M–1.7B（>10× 余量）。R=1 被测量否定、R≥2 挣得；R=3 未挣得——5×/10× 下限未跑，容量上限未测。注意：零滑点台、单只 100% 持仓、09:35 入场，均为大流动 ETF。 ‖ liq-i-e9-4（e9 TRAIN 2024，产品 elhg-i-e9-4 = variants/i-e9-4.py，点时权益池 3 只）：下限 capital/3/0.05 = 6.67e6（20 日均额）⇒ 逐位相同（max|Δcum| 0）；池自身 2e7 20 日中位门槛蕴含 ≥1e7 均额，风险名字按构造惰性；国债 ≥2.82e8 ⇒ R=2 对产品同样成立（产品 VAL 已 FAIL，此分数不再门控任何事）"
 status: active
-updatedAt: 2026-11-01
+updatedAt: 2026-11-02
 ---
 
 # ETF低波海龟
@@ -86,7 +86,7 @@ screener 的原始依据（`screen/qita/verdicts.json`, confidence high）：Sel
 |---|---|---|---|---|---|---|---|
 | **1** | **[[4a8bcfd5_【量化分享】ETF低波海龟法则与复利增强的验证]]** | 0.0955 | 1.22 | 22.51 | 12.96 | ✅ | 9 |
 
-*1 gate-pass / 1 members. 快照 2026-11-01（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*1 gate-pass / 1 members. 快照 2026-11-02（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 
