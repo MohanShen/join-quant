@@ -1,0 +1,229 @@
+[
+  {
+    "id": "u-e9-dxla",
+    "kind": "understand",
+    "title": "lookahead probe (log-only): which STK_XR_XD rows counted at L60-80 were announced after the rebalance date, and does excluding them change who qualifies / who is held",
+    "hypothesis": "On some 2024 monthly rebalances the one/two/three_year sums include dividend plans whose board_plan_pub_date is after current_dt (report_date <= statDate bounds the report PERIOD, not the announcement), and excluding them changes qualification or the held top-5.",
+    "why": "type: lookahead probe, logging only. Family §4 [第零步 / 阻塞一切 Δ]: every later Δ needs a reference book, and whether that is the base or an honest rebuild is what this run decides. finance.run_query is NOT bound by avoid_future_data (银行股轮动 u-e9-dyla measured). DECISION RULES, declared before the number: (a) LEAK — CONFIRM if >=1 row counted by the book has any pub date > current_dt.date(), else REFUTE. (b) BINDS if DXFLIP>=1 OR bfive differs in >=1 month OR bten differs in >=1 month (bten matters: names 6-10 are bought when the top-5 are already held, L124-131), else INERT. A REFUTE is as useful as a CONFIRM: it licenses the base as reference. Also answers for free whether the <=10-qualifier empty-month rule (L95) fires in 2024, which confounds u-e9-dxpers and i-3. COST: base runtime plus a second finance query per name per month (~300 names x 12) — expect ~1.5-2x a plain run; flag it if it passes ~10 min.",
+    "design": "Base strategies/2026-10-20_蓝筹大盘分红策略_超稳健-94888e61.py + OVERRIDE epoch-9 pins (build study/蓝筹分红持续性/baseline.py). Purely additive edit after L60-63: a SECOND run_query with the same code filter and report_date <= statDate, selecting bonus_amount_rmb, report_date, board_plan_pub_date, shareholders_plan_pub_date, implementation_pub_date, a_bonus_date, plan_progress, ordered report_date desc, limit 16 — NOT 12: the honest set must be filtered BEFORE the 12-row cut, otherwise a dropped future row is not replaced by the older row an honest query would return. Log DXLA date code report_date bonus pub_dates whenever a row counted by the book has any date > current_dt.date(). Recompute one/two/three_year from rows with board_plan_pub_date <= d0 (null -> earliest non-null pub date; all null -> log pub=null and treat as known), applying the 12-row cut after the filter; log DXFLIP code when qualify(book) != qualify(honest). Per month log DXMON date n_qual_book n_qual_honest bfive_book bfive_honest bten_book bten_honest empty=<1 if n<=10>. ADDITIONAL additive logs that resolve the improve preconditions in the same run (no extra backtest): DXG5 date bfive_gxlonly (top-5 of the book's qualifiers by gxl alone, no cascade) — for i-1; DXIND date code industry_id for bfive_book via STK_COMPANY_INFO — for i-2; DXPOS date code value at each main() entry — for i-4 P&L concentration. CONTROL: must reproduce 39.00 / sharpe 1.81 / maxDD 15.48 / obj 0.2352 (TRAIN 2024, e9) bit-identical, else the logged values are not the book's own and the probe is void. Page the log with study/小市值/pagelog.js (100 lines/page); absent DXMON lines = instrumentation failure, not 'no leak'.",
+    "from": [
+      "wiki/families/蓝筹分红持续性.md §4 [第零步]",
+      "wiki §1 读码风险: report_date 界而非公告日界",
+      "银行股轮动 u-e9-dyla -> u-e9-dypit (run_query not bound by avoid_future_data)",
+      "ledger 94888e61 e9 39.00 / 1.81 / 15.48 / 0.2352"
+    ],
+    "edgeRef": "股息率",
+    "rank": 1,
+    "status": "done",
+    "note": "gatekeeper 2026-11-01: ACCEPTED, rank 1, ACTIVE — dispatch first. Falsifiable (two separate verdicts), one run, no prior finding or closure (0 findings, 0 binding, 0 stale, 0 §2 rejects). Gatekeeper changes: limit 12 -> 16 with the cut applied after the pub filter; bten added to the BINDS rule; three free logs (DXG5 / DXIND / DXPOS) added so one probe settles the preconditions of i-1 / i-2 / i-4 instead of spending runs later.",
+    "result": "LEAK CONFIRM + BINDS. 1064 counted rows with a future date (47 with board_plan_pub_date > rebalance: May 1, Sep 13, Oct 7, Nov 15, Dec 11). DXFLIP 4 (600926 Sep/Oct, 000568 Nov/Dec); bfive+bten differ Sep, Oct. Empty-month rule inert (n_qual min 47). Control bit-identical. algorithmId 131f9d6384c2f0c5a1755d75e2dcc7c3, curve study_蓝筹分红持续性_variants_dxla__train__e9."
+  },
+  {
+    "id": "u-e9-dxpit",
+    "kind": "understand",
+    "title": "honest baseline: add board_plan_pub_date <= current_dt.date() (null rule as in dxla) to the L60-63 filter, 12-row cut after the filter",
+    "hypothesis": "Part of the base level is lookahead dividend information; the honest book scores lower.",
+    "why": "type: reference rebuild. PRECONDITION: u-e9-dxla CONFIRM leak AND BINDS. If dxla is REFUTE or INERT, mark this entry dropped (reason: base already honest / leak cannot move the book) — do not spend a run proving a bit-identical curve. DECISION RULE: |Δobj| <= 0.03 vs base -> leak immaterial (book still becomes the reference); Δobj <= -0.03 -> base level is partly lookahead and the raw base is disqualified as a VAL candidate; Δobj >= +0.03 -> the leak was hurting, record it. Every outcome makes this book the reference for all later Δ. Cost ~ one plain run (few min).",
+    "design": "Base study/蓝筹分红持续性/baseline.py. One asserted edit to the run_query filter: add finance.STK_XR_XD.board_plan_pub_date <= the rebalance date (pass d0 into controlReport), with dxla's null fallback; keep order_by + limit(12). Nothing else changes. Log the same DXMON line so the bfive sequence can be diffed against dxla's honest replay — they should agree; disagreement means the probe's replay was wrong.",
+    "from": [
+      "u-e9-dxla (CONFIRM + BINDS)",
+      "wiki §4 [第零步]: 原始 base 不可作 VAL 候选",
+      "银行股轮动 u-e9-dypit"
+    ],
+    "edgeRef": "股息率",
+    "rank": 1,
+    "status": "done",
+    "note": "recorder 2026-11-01 (u-e9-dxpit): done. recorder 2026-11-01 (u-e9-dxla): precondition MET (CONFIRM: 47 rows with board_plan_pub_date after the rebalance; BINDS: DXFLIP 4, bfive/bten differ Sep+Oct). QUEUED, head of queue. Cross-check: dxpit DXMON bfive must equal dxla bfive_honest in Jan-Aug and Nov-Dec exactly; Sep/Oct may differ only through path (held names), not through the qualifier set — n_qual_honest should read 68 (Sep) / 51 (Oct) / 54 (Nov, Dec). gatekeeper 2026-11-01: ACCEPTED, BLOCKED on u-e9-dxla CONFIRM+BINDS. Added the DXMON cross-check against the probe's replay.",
+    "result": "IMMATERIAL leak, honest book HIGHER: 0.2352 -> 0.2630 (Δ+0.0278, inside ±0.03), sharpe 1.81 -> 2.02, maxDD 15.48 -> 14.61; corr 0.9923, diverges 2024-09-02. DXMON 12/12 equal to dxla honest replay. Now the family REFERENCE baseline. P&L ~96% in 4 names (601229 29.8% price / ~31.6% w/ dividends). algorithmId ec695c55324dc20ec48ed7facda19925, curve study_蓝筹分红持续性_variants_dxpit__train__e9."
+  },
+  {
+    "id": "u-e9-dxinv",
+    "kind": "understand",
+    "title": "edge.test 股息率: flip all four sort directions (L99 / L102 / L103 / L104 ascending=True) on the reference book",
+    "hypothesis": "Within the qualifying pool, the highest-yield names beat the lowest-yield qualifiers; the yield RANK carries the edge.",
+    "why": "type: edge ablation — the family page edge[0].test verbatim. REFERENCE BOOK = the base if u-e9-dxla REFUTEs the leak or finds it INERT; the u-e9-dxpit book if dxla CONFIRMs+BINDS. BINDING CHECK (else verdict = untested, not refuted): bfive differs from the reference in >=6 of 12 months. DECISION RULE: CONFIRM rank if Δsharpe <= -0.5; REFUTE (rank uninformative within qualifiers) if |Δsharpe| < 0.25 AND |Δobj| <= 0.03; otherwise partial. ⚠ Scope: this tests the rank WITHIN a pool that already cleared >=2% yield; whether the pool itself (a 红利 style basket) carries the return is u-e9-dxew's question — read the two together. The L100-101 '<20 qualifiers -> drop last 10' cut now drops the HIGHEST-yield tail; that is part of a faithful inversion, so log n_qual to make it visible. Cost ~few min.",
+    "design": "Reference book. Four asserted edits: ascending=False -> True at L99, L102, L103, L104. Nothing else. Log DXINV date n_qual bfive bten per month.",
+    "from": [
+      "wiki edge[0].test",
+      "wiki §1 排序 L93-107",
+      "u-e9-dxla (reference decision)"
+    ],
+    "edgeRef": "股息率",
+    "rank": 3,
+    "status": "done",
+    "note": "recorder 2026-11-01 (u-e9-dxinv): done. recorder 2026-11-01 (u-e9-dxpit): reference measured: dxpit 0.2630 / sharpe 2.02 / maxDD 14.61 / annual 40.91. Read every Δ against it, and name the months/names that differ (P&L ~96% in 4 names, so Δ is n-small). recorder 2026-11-01 (u-e9-dxla): reference book is RESOLVED: the u-e9-dxpit book (dxla CONFIRM+BINDS), never the raw base. Runs after dxpit. gatekeeper 2026-11-01: ACCEPTED, rank 3. Queued, not blocked: runnable as soon as dxla (and dxpit, if triggered) settle the reference. Not ranked down for a likely-negative outcome — on a one-year 红利大年 'the rank does nothing' is a real possibility and is exactly the information wanted.",
+    "result": "CONFIRM rank (Δsharpe -1.10 <= -0.5): dxpit 0.2630/2.02/14.61 -> 0.1093/0.92/14.34; bfive 0/5 and bten 0/10 overlap all 12 months, n_qual identical, <20 cut never fires. SECTOR-CONFOUNDED: ref = coal+banks, inverted = insurers/brokers/cyclicals. Gap in Jan/May/Nov; inversion won Sep. maxDD unchanged. Inverted still beat HS300 (25.27 vs 14.68). algorithmId 9468ba3c7c3a302da48610cceea1ee6b, curve study_蓝筹分红持续性_variants_dxinv__train__e9."
+  },
+  {
+    "id": "u-e9-dxpers",
+    "kind": "understand",
+    "title": "edge.test 分红持续性: L86 -> one_year > comp_value only, and drop the gxl2/gxl3 passes (L102-103); rank by gxl only",
+    "hypothesis": "The three-year persistence gate + cascade selects a better (steadier) top-5 than last-12-month yield alone.",
+    "why": "type: edge ablation — edge[1].test verbatim (gate and cascade removed together because both encode persistence; i-1-gxlonly splits them). REFERENCE BOOK = the base if u-e9-dxla REFUTEs the leak or finds it INERT; the u-e9-dxpit book if dxla CONFIRMs+BINDS. BINDING CHECK: bfive differs in >=4 of 12 months, else untested. DECISION RULE, evaluated IN THIS ORDER: CONFIRM if Δsharpe <= -0.3 OR ΔmaxDD >= +2pp; else REFUTED-drag if Δobj >= +0.03; else REFUTED-proxy if |Δobj| <= 0.03; else partial. ⚠ CONFOUND: loosening the gate raises n_qual, which changes how often the L95 empty-month rule (n<=10) fires. Log empty months for both books; if the reference has 0 empty months (from dxla) and this variant also has 0, the confound is empty; otherwise report the Δ with the empty months named. Cost ~few min.",
+    "design": "Reference book. Two asserted edits: L86 condition -> one_year > comp_value; delete L102 and L103 (the gxl head(80) -> (cut) -> gxl head(10) path otherwise verbatim). Log DXPERS date n_qual empty bfive per month.",
+    "from": [
+      "wiki edge[1].test",
+      "screen/qita/verdicts.json (payout-PERSISTENCE filter reading)",
+      "u-e9-dxla (empty-month count)"
+    ],
+    "edgeRef": "分红持续性",
+    "rank": 4,
+    "status": "done",
+    "note": "recorder 2026-11-01 (u-e9-dxpers): done. recorder 2026-11-01 (u-e9-dxpit): reference measured: dxpit 0.2630 / sharpe 2.02 / maxDD 14.61 / annual 40.91. Read every Δ against it, and name the months/names that differ (P&L ~96% in 4 names, so Δ is n-small). recorder 2026-11-01 (u-e9-dxla): reference = u-e9-dxpit book. Empty-month confound: reference side has 0 empty months (dxla n_qual min 47, base and honest replay); this variant loosens the gate so n_qual only rises — the confound is empty unless the variant logs an empty month. gatekeeper 2026-11-01: ACCEPTED, rank 4. Rule made ORDERED (the generator's CONFIRM and REFUTED-proxy bands overlapped when sharpe drops at flat obj). Empty-month confound added.",
+    "result": "CONFIRM (both clauses: Δsharpe -1.81 <= -0.3, ΔmaxDD +14.19pp >= +2pp): dxpit 0.2630/2.02/14.61 -> -0.1982/0.21/28.80, total 8.98 < HS300 14.68; corr 0.7496. bfive differs 12/12 (overlap 0,0,0,0,2,1,1,2,2,3,4,3); n_qual 120..162 vs 47..68; empty=0 both books -> confound empty. Entering = one-off/cyclical payers (601919, 601699, 688303, 600438, 601225, ...); leaving = banks/steady payers. Caveat: 688303 STAR market buy rejected Jan-Mar (bten fallback filled, unquantified). algorithmId 0ecbfc2c9bf9055c14d63f3d5eb76b36, curve study_蓝筹分红持续性_variants_dxpers__train__e9."
+  },
+  {
+    "id": "u-e9-dxew",
+    "kind": "understand",
+    "title": "style-basket test: hold ALL qualifiers equal-weight, rebalanced monthly; keep the L95 empty-month rule verbatim",
+    "hypothesis": "Most of the return is the 2024 HS300 high-dividend style basket, not the top-5 concentration.",
+    "why": "type: edge ablation (decomposes edge[0]: basket vs rank/concentration). REFERENCE BOOK = the base if u-e9-dxla REFUTEs the leak or finds it INERT; the u-e9-dxpit book if dxla CONFIRMs+BINDS. DECISION RULE on objective ratio to the reference: ew_obj >= 0.8 x ref -> the edge is the style basket (top-5 adds little); ew_obj < 0.5 x ref -> rank/concentration carry it; between = partial. Report HS300 2024 total alongside (context for edge[0]'s 'not beta' clause, not part of the verdict). Pairs with dxinv: basket CONFIRM + rank REFUTE would say the edge is the 红利 style, which a single 2024 year cannot separate from sector/style beta — record that limit explicitly rather than calling the edge measured. Cost ~few min; more names = more orders but still monthly.",
+    "design": "Reference book. Replace orderStock's target list: target = all qualifier codes, each total_value/len(target); sell anything not in target; keep L95 (n<=10 -> empty) verbatim so selection is the only change. Log DXEW date n_target per month.",
+    "from": [
+      "wiki edge[0].claim (not HS300 beta)",
+      "wiki §1 下单 L109-131",
+      "u-e9-dxla (reference decision)"
+    ],
+    "edgeRef": "股息率",
+    "rank": 5,
+    "status": "done",
+    "note": "recorder 2026-11-01 (u-e9-dxew): done. recorder 2026-11-01 (u-e9-dxinv): dxinv CONFIRMED the rank half (0.1093 vs ref 0.2630). dxew now carries the remaining half of edge[0] (basket vs HS300 beta): report HS300 2024 = +14.68 beside it; note the inverted low-yield book already beat HS300 by ~10.6pp, so a high dxew is expected and does NOT by itself contradict the rank result. recorder 2026-11-01 (u-e9-dxpit): reference measured: dxpit 0.2630 / sharpe 2.02 / maxDD 14.61 / annual 40.91. Read every Δ against it, and name the months/names that differ (P&L ~96% in 4 names, so Δ is n-small). recorder 2026-11-01 (u-e9-dxla): reference book is RESOLVED: the u-e9-dxpit book (dxla CONFIRM+BINDS), never the raw base. Runs after dxpit. gatekeeper 2026-11-01: ACCEPTED, rank 5. Pinned that the empty-month rule stays, so the Δ is selection only.",
+    "result": "PARTIAL (ratio 0.742): dxpit 0.2630/2.02/14.61 -> 0.1952/1.65/12.30, total 31.82 vs HS300 14.68 (+17.1pp); corr ref 0.8614, HS300 0.8328 (ref-HS300 0.6340). Gap entirely Jan (4.54 vs 9.80) + May (2.93 vs 11.36); basket net ahead elsewhere. 47-68 names/month. Confound: monthly EW re-weight vs reference never-resize drift. STAR market orders rejected 4x (688303 Jul-Sep, 688036 Sep). algorithmId fbb76c2ed75a6dca112fffbdfee917e3, curve study_蓝筹分红持续性_variants_dxew__train__e9."
+  },
+  {
+    "id": "i-1-gxlonly",
+    "kind": "improve",
+    "title": "collapse the cascade: keep the L86 persistence gate, rank qualifiers by gxl only, top-5 (delete L102-103)",
+    "hypothesis": "The gxl2/gxl3 passes add nothing over the gate; a simpler rank scores >= the reference.",
+    "why": "type: simplification (REMOVES knobs — the right direction when TRAIN and VAL are both inside the author's sample, post 2026-06-19). DISTINCT from u-e9-dxpers: that removes gate+cascade together; this keeps the gate, so the pair attributes the persistence effect to gate vs cascade. PRECONDITIONS: (1) reference book exists; (2) dxla's DXG5 shows bfive_gxlonly != bfive in >=6 of 12 months — fewer means the variant is near-identical and a run would learn nothing (record dropped); (3) run after dxpers, whose verdict sets its reading. DECISION RULE: adopt-candidate if Δobj >= +0.03 AND Δsharpe >= 0; REFUTE if Δobj <= -0.03; else neutral (prefer the simpler book only with an explicit note, never on one-year TRAIN noise). Cost ~few min.",
+    "design": "Reference book. One asserted edit: delete L102-L103. Nothing else.",
+    "from": [
+      "generator B i-1",
+      "u-e9-dxpers (overlap — gate kept here)",
+      "u-e9-dxla DXG5 (precondition)"
+    ],
+    "edgeRef": "分红持续性",
+    "rank": 6,
+    "status": "done",
+    "note": "recorder 2026-11-01 (i-1-gxlonly): done/rejected. recorder 2026-11-01 (u-e9-dxpers): precondition (3) MET — dxpers CONFIRMED (gate+cascade removed together: 0.2630 -> -0.1982, maxDD 14.61 -> 28.80). All three preconditions now met -> QUEUED. Reading set by dxpers: i-1 is the gate-vs-cascade ATTRIBUTION. Report its Δ beside the dxpers gap (Δobj -0.4612): within ±0.03 of dxpit => the gate is the whole selector and the cascade is removable (prefer the simpler book only with an explicit note, per the rule); a material loss => the cascade carries part of the persistence result. Watch for STAR names (688xxx) in bfive: dxpers had market buys rejected for 688303 — name any rejected order in the finding. recorder 2026-11-01 (u-e9-dxpit): precondition (1) reference MET (dxpit 0.2630 / sharpe 2.02 / maxDD 14.61 / annual 40.91). Still BLOCKED on (3) the dxpers verdict. recorder 2026-11-01 (u-e9-dxla): precondition (2) MET: DXG5 gxl-only top-5 differs from the cascade bfive in 12/12 months (overlap 1-4 of 5). Still BLOCKED on (1) dxpit reference and (3) dxpers verdict. gatekeeper 2026-11-01: ACCEPTED as distinct from dxpers (gate kept vs gate removed), BLOCKED on reference + DXG5 binding count + dxpers verdict.",
+    "result": "REJECTED (REFUTE: Δobj -0.2484 <= -0.03): dxpit 0.2630/2.02/14.61 -> 0.0146/0.89/23.17, total 24.63 (HS300 14.68); corr 0.8413. Gate untouched (n_qual identical), bfive differs 12/12 (overlap 1,1,1,2,2,1,2,2,3,4,4,4). In: 600039, 601699, 601225, 000001, 002555; out: 601229 (7/12), 601006, 601166, 000895. Wins Jan/Feb/Sep only. ~54% of dxpers's -0.4612 -> cascade carries about half of the persistence effect. 0 failed orders. algorithmId 2a932a684f23299d71332ef2536df600, curve study_蓝筹分红持续性_variants_gxlonly__train__e9.",
+    "verdict": "rejected"
+  },
+  {
+    "id": "i-2-indcap",
+    "kind": "improve",
+    "title": "industry cap <= 2 per industry_id: un-quote the author's cc_industry (L185-211) and apply it to the cascade output before the final head(10)",
+    "hypothesis": "The top-5 clusters in one industry (banks / coal); capping it lowers maxDD without giving up the yield rank.",
+    "why": "type: concentration control. ⚠ cc_industry is DEAD CODE in the source — its whole body sits inside a ''' docstring and nothing calls it, so 'enable the author's own' means un-quoting it AND choosing the call site; the site is pinned below so this stays one experiment, not a placement search. Industry comes from STK_COMPANY_INFO (current classification — mild hindsight, tolerable for HS300 blue chips; note it in the finding). PRECONDITION: reference exists AND dxla's DXIND shows >=3 of 5 bfive sharing one industry_id in >=1 month; otherwise the cap is inert — record dropped. DECISION RULE: adopt-candidate if ΔmaxDD <= -2pp AND Δsharpe >= 0; REFUTE if Δsharpe <= -0.25; else neutral. Cost ~few min.",
+    "design": "Reference book. Un-quote cc_industry; call it on the cascade df immediately after L103 (before the final gxl sort / head(10) at L104), order-preserving. One asserted call site. Log DXIND date bfive industry_id.",
+    "from": [
+      "generator B i-2",
+      "source L185-211 (cc_industry, inside a docstring)",
+      "u-e9-dxla DXIND (precondition)"
+    ],
+    "edgeRef": "股息率",
+    "rank": 7,
+    "status": "done",
+    "note": "recorder 2026-11-01 (i-2-indcap): done/rejected; yield-vs-sector NOT answered (confounded by gxl3-order cut + 601229). recorder 2026-11-01 (i-1-gxlonly): keep the gxl->gxl2->gxl3->gxl cascade VERBATIM — i-1 measured it load-bearing (removing it alone: Δobj -0.2484), so any edit to it confounds this variant's Δ. recorder 2026-11-01 (u-e9-dxinv): now ALSO the yield-vs-sector attribution for 股息率: dxinv's rank split coincides with a sector split (coal+banks vs insurers/brokers/cyclicals). In the finding, report Δsharpe against the dxinv gap (-1.10): a cap that costs most of that gap says the edge is substantially sector, and the 股息率 evidence line must be re-scoped. Decision rule unchanged. recorder 2026-11-01 (u-e9-dxpit): QUEUED — both preconditions met: reference exists (dxpit 0.2630 / sharpe 2.02 / maxDD 14.61 / annual 40.91); industry re-check on dxpit holdings shows >=3 of 5 bfive in J66 in 6 of 12 months (Jan-Mar, Oct-Dec; Sep now J66 2 / B06 2). recorder 2026-11-01 (u-e9-dxla): precondition MET on the base: >=3 of 5 bfive in J66 金融业 in 7 of 12 months (Jan-Mar, Sep-Dec); 60 name-months J66 30 / B06 18, so a cap of 2 binds. On the honest replay Sep reads J66 2 / B06 2 — re-check from dxpit DXMON. Still BLOCKED on the dxpit reference. STK_COMPANY_INFO is current classification (mild hindsight). gatekeeper 2026-11-01: ACCEPTED, BLOCKED. Flagged that the author's code is dead (docstring) and pinned the call site.",
+    "result": "REJECTED (REFUTE: Δsharpe -0.90 <= -0.25): dxpit 0.2630/2.02/14.61 -> 0.0988/1.12/13.72, total 23.61 (HS300 14.68); corr 0.9454. Cap binds: gxl3 pool 20 -> 12-15, 58 of 77 dropped name-months J66; bfive differs 12/12 (overlap 3-4). Composition J66 29->18, B06 18->17, G53 4->11 (banks swapped for 601006). 601229 out 7 months (cut in gxl3 order). Δsharpe = 82% of dxinv gap (arithmetic) but CONFOUNDED — yield-vs-sector remains OPEN. algorithmId 1a43a0f2bfd0031c5a8ea5f166ed5537, curve study_蓝筹分红持续性_variants_indcap__train__e9.",
+    "verdict": "rejected"
+  },
+  {
+    "id": "i-3-relthr",
+    "kind": "improve",
+    "title": "relative threshold: replace the absolute 2% / 1.6% / 1.28% / 10% gate with 'paid in each of the 3 years AND TTM yield >= HS300 cross-sectional median that month'",
+    "hypothesis": "Absolute yield thresholds push the pool toward the L95 empty-month line when yields compress; a relative gate keeps the book invested without loosening persistence.",
+    "why": "type: rule replacement (one rule, NOT a sweep — no threshold value is tuned). Lowest-evidence of the three structural ideas: on one in-sample year a rewrite that keeps the book invested more is close to fitting 2024. PRECONDITION: reference exists AND dxla DXMON shows n_qual <= 15 in >=1 month or any empty month; if n_qual stays well above 10 all year the absolute gate never sits near the line and this tests nothing — record dropped. DECISION RULE: adopt-candidate only if Δobj >= +0.03 AND the gain comes from months the reference held cash or was near-empty (attribute by month); REFUTE if Δobj <= -0.03; else neutral. Implementation note: yields must be computed for ALL HS300 pe>0 names to get the median (the base only keeps qualifiers). Cost ~few min.",
+    "design": "Reference book. controlReport computes gxl for every scanned name; gate = one_year>0 and two_year>0 and three_year>0 and gxl >= median(gxl over all scanned names). Cascade and ordering verbatim. Log DXREL date n_qual empty.",
+    "from": [
+      "generator B i-3",
+      "wiki §1 持续性门槛 L82-88 / 隐性择时 L95",
+      "u-e9-dxla DXMON (precondition)"
+    ],
+    "edgeRef": "分红持续性",
+    "rank": 8,
+    "status": "dropped",
+    "note": "recorder 2026-11-01 (u-e9-dxla): dropped (precondition unmet, see result). gatekeeper 2026-11-01: ACCEPTED, BLOCKED, ranked below i-1 / i-2 for in-sample-fit risk.",
+    "result": "DROPPED by precondition: dxla n_qual_book min 47 (Mar) / max 69, 0 empty months on base and honest replay — the absolute gate never approaches the L95 line in 2024, so a relative gate tests nothing on this bench. Re-open only on a window where n_qual approaches 10."
+  },
+  {
+    "id": "i-4-top10ew",
+    "kind": "improve",
+    "title": "top-10 equal weight in the ORDER step only: hold all of bten at total_value/10; cascade and g.stock_num untouched",
+    "hypothesis": "P&L is concentrated in one or two names; doubling breadth keeps most of the return with lower drawdown.",
+    "why": "type: breadth. Weakest (generator ranked it last). PRECONDITION: reference exists AND dxla DXPOS shows one name >30% of 2024 P&L. SUBSUMPTION check: if u-e9-dxew lands >= 0.8 x ref, breadth is already shown to be cheap and this is a level tweak between two measured points — run it only if dxew is partial. ⚠ g.stock_num drives the cascade sizes (x16 / x8 / x4 / x2) and the L95 empty rule, so changing it globally would be several knobs; the edit is restricted to order sizing. DECISION RULE: adopt-candidate if ΔmaxDD <= -2pp AND Δobj >= -0.01; else REFUTE. Cost ~few min.",
+    "design": "Reference book. orderStock: sell anything not in bten; buy all of bten at total_value/10. Cascade untouched.",
+    "from": [
+      "generator B i-4",
+      "u-e9-dxla DXPOS (precondition)",
+      "u-e9-dxew (overlap)"
+    ],
+    "edgeRef": "股息率",
+    "rank": null,
+    "status": "dropped",
+    "note": "gatekeeper 2026-11-01 (round 1, second pass): DROPPED on re-judgement (improve axis: expected gain x novelty, both low). (1) Novelty: it interpolates between two MEASURED points on the same breadth axis — top-5 (dxpit 0.2630 / maxDD 14.61) and all-qualifier EW (u-e9-dxew 0.1952 / 12.30, Δobj -0.0678, ΔmaxDD -2.31) — so its likely result is already bracketed. (2) Expected gain: the adopt rule needs ΔmaxDD <= -2pp AND Δobj >= -0.01, i.e. nearly the FULL basket's drawdown cut while keeping almost all of top-5's Jan/May return; halving the weight on the top-5 names gives back roughly half of the Jan/May gap (dxew: the whole -0.0678 is Jan+May), so the prior is REFUTE at an obj loss of order -0.03, and dxinv already measured that the rank does not buy drawdown (14.34 vs 14.61). (3) Even an adopt would be n-small: ~96% of 2024 P&L is 4 names. The breadth question that IS live — whether the level is one name — is asked directly and more cheaply by u-e9-dxno601229. REOPEN only with a new reason, e.g. dxno601229 lands ONE-NAME-DEPENDENT and breadth is wanted as ROBUSTNESS (judged on that axis with its own rule), or a window where top-5 and basket diverge on drawdown. recorder 2026-11-01 (i-2-indcap): unaffected; reference still dxpit. 601229 explains part of both i-1 and i-2 Δs — name the 601229 months when reading this Δ. recorder 2026-11-01 (i-1-gxlonly): keep the gxl->gxl2->gxl3->gxl cascade VERBATIM — i-1 measured it load-bearing (removing it alone: Δobj -0.2484), so any edit to it confounds this variant's Δ. recorder 2026-11-01 (u-e9-dxew): subsumption rule MET — dxew landed PARTIAL (0.742 x ref), so per this entry's own rule i-4 runs (the borderline >30% one-name precondition is superseded by the dxew gate, as recorded at dxpit). -> QUEUED. Reading set by dxew: full breadth gave Δobj -0.0678 / ΔmaxDD -2.31pp, with the whole gap in Jan/May (top-5 coal+bank months). The adopt rule (ΔmaxDD <= -2pp AND Δobj >= -0.01) therefore needs top-10 to keep nearly all of top-5's Jan/May return while getting most of the basket's drawdown cut — report which months/names differ. ⚠ Keep the reference's never-resize order logic (sell outside bten, buy missing at total_value/10, no monthly re-weight) so the Δ is breadth only — dxew confounded breadth with monthly re-weighting. Use protective-price orders if a 688 name enters bten. recorder 2026-11-01 (u-e9-dxpit): precondition now MEASURED but BORDERLINE: top name 601229 = 29.8% of exact price P&L, ~31.6% only with heuristic dividend attribution; top-2 ~56%, top-4 ~96%. The >30% rule is not cleanly met, so do NOT run on it — stays BLOCKED on the dxew subsumption rule (run only if dxew lands partial; if dxew >= 0.8 x ref, drop). recorder 2026-11-01 (u-e9-dxla): precondition NOT MEASURABLE from dxla: DXPOS logs position value at main() entry only — cash dividends land in cash, the Dec period is unlogged, and a naive buy/sell/DXPOS reconstruction recovers only 128k of the 317k gain to 2024-12-02, so no >30% one-name claim can be made either way. Holdings are dominated by 601229 / 600188 / 000983 / 601166 by frequency, not by measured P&L. Stays BLOCKED; resolve via dxew subsumption (run only if dxew is partial) or add an end-of-period + dividend log to the dxpit run. gatekeeper 2026-11-01: ACCEPTED, BLOCKED, rank last. Edit pinned to order sizing because g.stock_num also sets the cascade and the empty-month rule.",
+    "result": "DROPPED (gatekeeper re-judgement): bracketed by dxpit (top-5) and u-e9-dxew (full breadth, Δobj -0.0678); adopt rule unreachable on prior; superseded as a breadth/robustness question by u-e9-dxno601229. No run spent."
+  },
+  {
+    "id": "u-e9-dxno601229",
+    "kind": "understand",
+    "title": "one-name robustness: dxpit with 601229.XSHG (上海银行) removed from the qualifier set before the cascade",
+    "hypothesis": "The reference level (0.2630 / 2.02) and the rank's margin over the basket do not depend on one bank: with 601229 never eligible, the cascade's replacement name keeps the book within Δobj -0.05.",
+    "why": "type: robustness / n-small attribution. Family §4 [升级：601229 单名问题]: i-1 (Δobj -0.2484) and i-2 (Δobj -0.1642) BOTH pushed 601229 out of bfive for 7/12 months and both lost big, and 601229 is 29.8% of dxpit's price P&L — so it is open whether those rejections (and the cascade's 'half the persistence effect') are mechanism or one name. Either answer is wanted: NOT-ONE-NAME licenses reading i-1/i-2 as mechanism and the candidate VAL as evidence about a rule; ONE-NAME-DEPENDENT says a VAL would test a stock, not a strategy. ⚠ Hindsight by construction (601229 is chosen BECAUSE it was the top earner): this book is a diagnostic, never a candidate, and some drop is mechanical (best winner replaced by the next name) — the -0.05 band allows for that. DECISION RULE (declared before the number), evaluated in order vs dxpit 0.2630 / sharpe 2.02: (a) NOT-ONE-NAME if Δobj >= -0.05 AND sharpe >= 1.0; (b) ONE-NAME-DEPENDENT if Δobj <= -0.10 OR sharpe < 1.0 — flag on the family page that the candidate's VAL is weak evidence of mechanism; (c) else PARTIAL. Secondary readings, reported not voted: (i) RANK-MARGIN — if obj <= 0.1952 (u-e9-dxew basket), the top-5 rank's whole advantage over the basket was 601229; (ii) i-1/i-2 attribution — this Δobj as a fraction of i-1's -0.2484 and i-2's -0.1642 (arithmetic ratio, not a decomposition; they removed 601229 for 7 months, this removes it for 12). BINDING CHECK: bfive must differ from dxpit in every month dxpit held 601229, else instrumentation failure. Cost ~ one plain dxpit run (few min).",
+    "design": "Reference book study/蓝筹分红持续性/variants/dxpit.py (new build-dxno601229.js: dxpit build + one edit). ONE asserted edit in main(), immediately after `df=controlReport(df, context.current_dt.date())`: `df=df[df.code!='601229.XSHG'].reset_index(drop=True)  # u-e9-dxno601229`. Assert exactly one match; cascade, L102 empty rule, orderStock never-resize logic and every other line verbatim. Guard the empty-DataFrame case (controlReport returns a frame with no 'code' column if nothing qualifies — never happens in 2024, n_qual >= 47, but must not raise). Keep dxpit's DXMON line and add `DXNO date in_qual=<0|1>` (whether 601229 qualified that month, read before the drop). Report the months/names whose bfive differs from dxpit's, per §4's n-small rule.",
+    "from": [
+      "wiki/families/蓝筹分红持续性.md §4 [升级：601229 单名问题] + [新空白 / n-small]",
+      "i-1-gxlonly (601229 out of bfive 7/12, Δobj -0.2484)",
+      "i-2-indcap (601229 out 7 months, Δobj -0.1642)",
+      "u-e9-dxpit (601229 = 29.8% price P&L; top-4 ~96%)",
+      "u-e9-dxew (basket 0.1952 = the RANK-MARGIN comparator)"
+    ],
+    "edgeRef": "股息率",
+    "rank": 1,
+    "status": "done",
+    "note": "recorder 2026-11-01 (u-e9-dxno601229): done. gatekeeper 2026-11-01 (round 1, second pass): ACCEPTED, rank 1, ACTIVE — dispatch first. Falsifiable (ordered three-way rule with a declared comparator), one run, one asserted edit, not answered (no binding closure covers it, 0 stale closures on this family, §4 names it as unqueued). Ranked ABOVE liq-1 because it resolves the larger open uncertainty and its outcome bears on whether the family's one VAL is worth spending at all, whereas liq-1's likely answer (inert at 4e6 on HS300 names) is cheap either way and its order relative to this run changes nothing. Gatekeeper additions: ordered rule, sharpe >= 1.0 joined to clause (a), RANK-MARGIN comparator vs dxew, binding check, hindsight caveat, empty-frame guard.",
+    "result": "NOT-ONE-NAME (clause a): dxpit 0.2630/2.02/14.61 -> 0.2554/2.00/14.81 (Δobj -0.0076), total 40.35; corr 0.9876. 601229 qualified 12/12, removed 12/12; bfive differs only in the 10 months dxpit held it, one name each, 8/10 replaced by another bank. Rank margin over dxew basket +0.0602 (~89% of +0.0678). Δ = 3.1% of i-1 / 4.6% of i-2 Δobj. Diagnostic (hindsight-selected), never a candidate. algorithmId 04e7fb0c3aad4bd090664d1af20a694c, curve study_蓝筹分红持续性_variants_dxno601229__train__e9.",
+    "verdict": "informative"
+  },
+  {
+    "id": "liq-1",
+    "kind": "understand",
+    "title": "realizability at the book's own feasibility floor: 20-bar median money >= 4e6 applied to dxpit's qualifier set before the cascade, every qualifier's median logged per rebalance",
+    "hypothesis": "On HS300 pe>0 dividend qualifiers the 1x feasibility floor (1e6 / 5 / 0.05 = 4e6 CNY/day) removes no name on any of the 12 rebalances, so the curve is bit-identical to dxpit.",
+    "why": "type: realizability (exit gate requires realizability >= 2; unknown BLOCKS; family §4 [阻塞 exit gate]). A prior cannot substitute — 大小盘轮动's floor was inert, ETF溢价's took 8.44 -> 1.10. KEY PROPERTY that lets one run do the work of several: controlReport's qualifier set is PATH-INDEPENDENT (depends only on the date, never on holdings), so logging every qualifier's 20-bar median money each month makes in==out at ANY floor exactly computable from this one log — a floor that removes no qualifier in any month leaves the book's inputs, and hence its curve, identical. That is a deterministic measurement, not a projection. It also covers the u-e9-dxew basket book (same qualifier set, smaller positions: 1e6/~50/0.05 ≈ 4e5), so realizabilityScope may name both books if the log clears them. ⚠ Capital grows to ~1.41M by year end, so the end-of-year 1x floor is ~5.6e6 — read it off the same log. DECLARED SCORING RULE for R (before the number): R=1 if the 4e6 floor removes >=1 qualifier in >=1 month AND (sharpe < 1.0 OR Δobj <= -0.05 vs dxpit); R=2 if it binds but sharpe >= 1.0 and Δobj > -0.05, OR it is inert (max|Δcum| = 0 vs dxpit, LIQFLOOR in==out 12/12) but some name that enters bten has a median below 4e7 (10x) in some month; R=3 iff inert AND every bten name's median >= 4e7 in every month (same 10x-headroom rule as 银行股轮动 liq-cap). Also report, free from the log: the all-qualifier minimum per month, and for each of 4e7 / 2e8 / 1e9 which months and names it would remove — that is liq-2's precondition. CONTROL: if inert, curve must equal dxpit bit-for-bit (0.2630 / 2.02 / 14.61); absent LIQMIN/LIQFLOOR lines = instrumentation failure, not 'inert'. Cost ~ one dxpit run plus one get_price(count=20) call per month.",
+    "design": "Reference book dxpit. New study/蓝筹分红持续性/build-liq.js modelled on study/银行股轮动/build-liq.js and study/大小盘轮动/build-liq.js (dxpit source + edits + OVERRIDE). (1) ONE asserted behavioural edit in main(), right after `df=controlReport(df, context.current_dt.date())`: `df=filter_liquidity_floor(context, df)  # liq-1: ONLY behavioural change vs dxpit` — filters DataFrame rows on df.code, order-preserving, reset_index(drop=True), LIQ_FLOOR = 4e6. (2) Observation in the same helper, BEFORE filtering: one `LIQMIN date=<previous_date> code=<median> ...` line covering EVERY qualifier, and the standard `LIQFLOOR floor= date= in= out= removedFrac= slots=` line (slots = min(g.stock_num, out) — this book HAS g.stock_num, unlike 银行股轮动). 20-bar MEDIAN of `money`, end_date=context.previous_date, panel=False. On exception: log LIQFLOOR ERROR and return df unchanged — ERROR count must be 0 or the run is void (a swallowed except silently reproduces dxpit). Keep dxpit's DXMON line. Asserts: order_target_value count unchanged, run_monthly unchanged. Page the log with study/小市值/pagelog.js.",
+    "from": [
+      "wiki/families/蓝筹分红持续性.md §4 [阻塞 exit gate] realizability 未测",
+      "study/银行股轮动/build-liq.js (liq-cap: 10x-headroom R=3 rule)",
+      "study/大小盘轮动/build-liq.js (LIQFLOOR format; inert-floor precedent)",
+      "ETF溢价 liq (8.44 -> 1.10: floors can bind)",
+      "u-e9-dxpit (reference book) + u-e9-dxew (basket shares the qualifier set)"
+    ],
+    "edgeRef": "股息率",
+    "rank": 2,
+    "status": "done",
+    "note": "recorder 2026-11-01 (liq-1): done; realizability: 2 written with scope dxpit.py. recorder 2026-11-01 (u-e9-dxno601229): one-name objection to a dxpit VAL removed (NOT-ONE-NAME); liq-1 is now the remaining precondition before VAL. gatekeeper 2026-11-01 (round 1, second pass): ACCEPTED, rank 2 — dispatch second (after u-e9-dxno601229). Falsifiable (declared 3-level R rule + bit-identical control), one run. Not answered: no finding, no closure, realizability unset on the page. Design choice on the orchestrator's 'at most 2 runs': ONE run at the book floor with all-qualifier medians logged settles R and, because the qualifier set is path-independent, also tells exactly which higher floors would bite — so the second run is a separate CONDITIONAL entry (liq-2) instead of a blind 4e7 that is very likely inert on HS300 names and would waste the run.",
+    "result": "R=2 by the declared rule: 4e6 floor removes one qualifier once (601211, median money 0 = suspended, Oct rebalance prev 2024-09-30; never in bten), bfive/bten identical to dxpit 12/12, curve bit-identical (0.2630/2.02/14.61). bten min median 601229 122.4M (~30x floor); 4e7 inert on bten; 2e8 removes bten names in 6/12 months; 1e9 removes 5-10/10 every month. dxew basket floor (~4e5) also clear except 601211. algorithmId 4106e8e92e3bd505d9aff07b19bfec73, curve study_蓝筹分红持续性_variants_liq-1__train__e9.",
+    "verdict": "informative"
+  },
+  {
+    "id": "liq-2",
+    "kind": "understand",
+    "title": "capacity point: rerun liq-1 at the lowest declared high floor that liq-1's LIQMIN log shows actually removes a qualifier (ladder 2e8, then 1e9)",
+    "hypothesis": "dxpit stays above the 1.0 gate with Δobj >= -0.05 at a floor that genuinely removes names, i.e. gate-passing capacity >= floor/4 CNY (2e8 -> ~¥50M, 1e9 -> ~¥250M).",
+    "why": "type: realizability / capacity curve. Does NOT feed the R score (liq-1 settles R); it bounds capacity, which §4 needs to choose between dxpit and the u-e9-dxew basket before VAL and which integration needs. FLOORS DECLARED NOW, picked from liq-1's log by a fixed rule (not a sweep): ladder {2e8 = 50x initial-capital floor, 1e9 = 250x}. Run the LOWEST rung that removes >=1 qualifier in >=1 month per liq-1's LIQMIN. If neither rung removes anything, DO NOT RUN — record 'capacity >= ~¥250M, inert by log' (deterministic, path-independent qualifier set). If 2e8 removes names, 1e9 is not run (one run max). PRECONDITION: liq-1 done with R >= 2 (if R=1 at 1x, higher floors can only be worse — drop). DECISION RULE: CAPACITY-OK if sharpe >= 1.0 AND Δobj >= -0.05 vs dxpit => gate-passing capacity >= floor/4; CAPACITY-BOUND if sharpe < 1.0 => capacity < floor/4; between = degraded-but-passing, report both. Log empty months: a floor that pushes n_qual <= 10 triggers the L102 cash rule — a real capacity consequence, name it. ⚠ As in 大小盘轮动, the floor models a manager DECLINING unfillable names, not partial fills. Cost ~ one dxpit run, or zero if skipped.",
+    "design": "Same builder as liq-1 with LIQ_FLOOR set to the chosen rung; nothing else differs. Same LIQMIN / LIQFLOOR / DXMON logs; LIQFLOOR ERROR must be 0.",
+    "from": [
+      "liq-1 (LIQMIN log is the precondition and selects the rung)",
+      "wiki §4 [候选提示] 篮子书容量 vs dxpit",
+      "大小盘轮动 liq capacity curve (1e6 -> 2.68, 5e6 -> 2.23, 1e7 -> 1.32)"
+    ],
+    "edgeRef": "股息率",
+    "rank": 3,
+    "status": "dropped",
+    "note": "recorder 2026-11-01 (lcfh-dxpit-val-e9): DROPPED as moot — the candidate failed VAL 2025 (sharpe 0.09) and the family has no candidate on epoch 9; capacity of a failed book informs no decision (integration and dxpit-vs-dxew both moot). Reopen only with a new candidate on a new bench. recorder 2026-11-01 (liq-1): UNBLOCKED; precondition met (liq-1 R=2). Rung fixed by its own declared rule from liq-1 LIQMIN: 2e8 is the lowest rung that removes >=1 qualifier (bten names in 6/12 months: prev Dec-29 x2, Mar, Jun, Jul, Aug x3, Sep), so run 2e8 ONLY; 1e9 not run. OPTIONAL — not an exit-gate precondition (realizability already scored); it bounds capacity (~¥50M) for integration and the dxpit-vs-dxew choice, and is the only evidence that could later justify R=3. Do not let it block VAL. gatekeeper 2026-11-01 (round 1, second pass): ACCEPTED, rank 3, BLOCKED on liq-1. Separate entry because it is a separate run (one experiment per entry). Rung choice is a declared rule over liq-1's log, so it is neither a sweep nor a post-hoc floor pick.",
+    "result": null,
+    "floor": 200000000,
+    "optional": true
+  }
+]

@@ -1,0 +1,431 @@
+# ===== VALIDATED STRATEGY (run-family archive) — join-quant epoch 9 =====
+# expId:            lcfh-dxpit-val-e9
+# runId:            lcfh-dxpit-val-e9   (the VAL recorded in data/consumption.tsv by the executor; algorithmId 5d2e296d2c63f3135ebaf46732679efd)
+# ideaId:           u-e9-dxpit  (honest-dividend reference book, TRAIN-selected as the family VAL candidate; finding lcfh-dxpit-val-e9)
+# family:           蓝筹分红持续性   (source base: strategies/2026-10-20_蓝筹大盘分红策略_超稳健-94888e61.py — NOT this book: the base counts unannounced dividend plans)
+# lineage:          base 94888e61 -> u-e9-dxla (lookahead probe) -> u-e9-dxpit (finance.STK_XR_XD gains board_plan_pub_date <= rebalance date, filtered in SQL before limit(12); build-dxpit.js)
+# train_objective:  0.2630   (TRAIN 2024-01-01..2024-12-31: total 40.91% / annual 40.91% / maxDD 14.61% / sharpe 2.02)
+# val_objective:    -0.0923  (VAL   2025-01-01..2025-12-31, 243 trading days: total 5.36% / annual 5.38% / maxDD 14.61% / sharpe 0.09)
+# sharpe_val:       0.09
+# gate_val:         fail     (sharpe 0.09 < 1.0, epoch-9 stageGate('validate'))
+# harness_epoch:    9
+# ranAt:            2026-11-01
+# val_curve:        data/series/study_蓝筹分红持续性_variants_dxpit__val__e9.json  (243 points, 2025-01-02..2025-12-31, has benchCum)
+# source_file:      study/蓝筹分红持续性/variants/dxpit.py — the EXACT file the VAL ran. Everything below this header
+#                   is byte-identical to it: sha256 7846fdbb252560a497b0da2cb2ec1916b8846db6aaca3e31020574388f55dbf1 (17242 bytes, verified at archive time).
+# realizability:    2   (realizabilityScope: liq-1 measured on dxpit = this book; 4e6/day floor removed one suspended,
+#                   never-selected name in 1 of 12 TRAIN months, curve bit-identical; bten min median money 1.22e8)
+#
+# flags / honest caveats — carry these with any quotation of the numbers above:
+#   ⚠⚠ VAL FAILED. This family has NO candidate on epoch 9, and its one VAL per (family, bench) is SPENT. A new variant
+#      validated on 2025 would be selection on VAL; only a human JQ_ALLOW_REVAL could permit it, and none should.
+#   ⚠⚠ NO HINDSIGHT RESCUE: the post was published 2026-06-19, so 2025 was INSIDE the author's sample — and it still failed.
+#      A pass here would have been weak evidence; this fail is a strong negative for forward use.
+#   ⚠  maxDD 14.61 is JQ's OWN figure (stats endpoint max_drawdown 0.14607, period 2025-01-02 -> 2025-04-07, re-fetched
+#      2026-11-01), NOT a scrape artefact, even though it equals the TRAIN maxDD to 2dp (coincidence: the TRAIN DD is
+#      2024-05-29 -> 09-13). The book lost 3.06% on its first day, so JQ's initial-capital peak and a first-point peak
+#      differ here: component-scan.maxDrawdownPct (peak from the first curve point, 01-06) gives 12.48 / objective
+#      -0.0710. The ledger convention is JQ's, so -0.0923 is the comparable objective; the gate is sharpe and fails either way.
+#   ⚠  2025 shape: -12.3pp vs 沪深300 (5.36 vs +17.66); beta 0.48, alpha -5.3%. Lost Jan-Apr (-5.8/-2.9/-0.4/-4.0 by month,
+#      trough 04-07), +5.5 May, Oct +7.6; i.e. a high-dividend book in a broad-rally year where 红利 lagged.
+#   ⚠  The TRAIN edges (股息率 rank, 分红持续性 gate+cascade) were measured on 2024 ONLY; VAL did not re-run their tests,
+#      so they remain 2024-scoped readings, not forward-valid edges.
+#   ⚠  QUOTE TRAIN AND VAL AS A PAIR: 0.2630 / sharpe 2.02 (2024) and -0.0923 / sharpe 0.09 (2025). Zero-slippage bench.
+# ================================================================================
+# Clone from JoinQuant
+# postId: 94888e61be61ce9dce51c6d30d0327d3
+# backtestId: c8365d0b74826c671c96201aace59832
+# title: 蓝筹大盘分红策略【超稳健】
+
+# 导入函数库
+from jqdata import *
+import pandas as pd
+import numpy as np
+# 初始化函数，设定基准等等
+def initialize(context):
+    set_option("avoid_future_data", True)
+    set_param()
+    
+    run_monthly(main,1,time='9:30')
+    
+def main(context):
+    #1、设置大股票池,返回df，包括code、statDate
+    df=getBigStocks()
+    #2、财报质量控制,返回code,lrzl,yszzl,zcfzl,ejdtb,ejdhb
+    df=controlReport(df, context.current_dt.date())  # u-e9-dxpit: pass d0
+    #3、设置下单列表
+    setSmallStocks(df)
+    _dxp_mon(context, df)  # u-e9-dxpit obs
+    #4、下单
+    _dxp_pos(context, 'DXPRE')  # u-e9-dxpit obs
+    orderStock(context)
+    _dxp_pos(context, 'DXPOST')  # u-e9-dxpit obs
+
+#1、设置大股票池,返回df，包括code、statDate    
+def getBigStocks():
+    stocks = get_index_stocks('000300.XSHG')
+    q=query(
+               income.statDate,
+               income.code
+             ).filter(
+                #income.net_profit>100000000,
+                valuation.pe_ratio>0,
+                income.code.in_(stocks)#,
+                #income.code.in_(['601918.XSHG','601899.XSHG','601958.XSHG','600170.XSHG',
+                #    '600631.XSHE','600585.XSHG','600023.XSHG','000333.XSHE','002157.XSHE',
+                #    '600104.XSHG'])
+                 )
+                 
+    rets=get_fundamentals(q)#.reset_index(drop=True)
+    return rets
+def controlReport(df, d0):  # u-e9-dxpit: d0 = rebalance date
+    df_qc=pd.DataFrame()
+    for i in range(0,len(df)):
+        statDate=df.loc[i].statDate
+        q=int(int(statDate[5:7]) / 3)
+        year=int(statDate[:4])
+        statqs=[]
+        for kk in range(0,12):
+            statq=str(year) + 'q' + str(q)
+            statqs.append(statq)
+            q=q -1
+            if q==0 : 
+                q=4
+                year= year - 1
+        code=df.loc[i].code
+        #只看现金分红
+        gx=finance.run_query(query(finance.STK_XR_XD.bonus_amount_rmb,finance.STK_XR_XD.report_date).filter(
+            finance.STK_XR_XD.code==code,
+            finance.STK_XR_XD.report_date<=statDate,
+            # u-e9-dxpit: announcement bound (dxla null rule), BEFORE the 12-row limit
+            (finance.STK_XR_XD.board_plan_pub_date<=d0) | ((finance.STK_XR_XD.board_plan_pub_date==None) & (
+                (finance.STK_XR_XD.shareholders_plan_pub_date<=d0) | (finance.STK_XR_XD.implementation_pub_date<=d0) |
+                ((finance.STK_XR_XD.shareholders_plan_pub_date==None) & (finance.STK_XR_XD.implementation_pub_date==None))))
+            ).order_by(finance.STK_XR_XD.report_date.desc()).limit(12))
+       
+        gx=gx.fillna(0)
+        #统计分红
+        one_year=0.0
+        two_year=0.0
+        three_year=0.0
+        for j in range(0,len(gx)):
+            report_date=gx.loc[j].report_date
+            q=report_date.month//3
+            year=report_date.year
+            statq=str(year) + 'q' + str(q)
+            if statq in (statqs[0],statqs[1],statqs[2],statqs[3]):
+                one_year=one_year+gx.loc[j].bonus_amount_rmb
+            if statq in (statqs[4],statqs[5],statqs[6],statqs[7]):
+                two_year=two_year+gx.loc[j].bonus_amount_rmb
+            if statq in (statqs[8],statqs[9],statqs[10],statqs[11]):
+                three_year=three_year+gx.loc[j].bonus_amount_rmb
+         #市值
+        qcap=query(valuation.market_cap).filter(valuation.code==code)
+        market_cap=get_fundamentals(qcap).loc[0,'market_cap']*10000 
+        
+        comp_value=market_cap*0.02
+        if one_year>comp_value and two_year>comp_value*0.8 and three_year>comp_value*0.64 and (one_year+two_year+three_year)>market_cap*0.1:
+            cc=pd.DataFrame([[code,one_year/market_cap,two_year/market_cap,three_year/market_cap]],columns=['code','gxl','gxl2','gxl3']) 
+            df_qc=df_qc.append(cc,ignore_index=True)
+    
+ 
+    return df_qc.reset_index(drop=True)
+
+def setSmallStocks(df):
+    log.info(df.shape[0])
+    if df.shape[0]<=g.stock_num*2: 
+        g.bten=[]
+        g.bfive=[]
+        return 
+    df=df.sort_values(by='gxl',ascending=False).head(g.stock_num*16)
+    if len(df)<g.stock_num*4:
+        df=df.head(len(df) -g.stock_num*2)
+    df=df.sort_values(by='gxl2',ascending=False).head(g.stock_num*8)
+    df=df.sort_values(by='gxl3',ascending=False).head(g.stock_num*4)
+    df=df.sort_values(by='gxl',ascending=False).head(g.stock_num*2)
+    #
+    g.bten=list(df.head(g.stock_num*2)['code'])
+    g.bfive=list(df.head(g.stock_num)['code'])
+    #moreinfo(df)
+def orderStock(context):
+    
+    bfive=g.bfive
+    bten=g.bten
+    
+    all_value=context.portfolio.total_value
+    for sell_code in context.portfolio.long_positions.keys():
+        if sell_code not in bfive:
+            #卖掉
+            log.info('sell all:',sell_code)
+            order_target_value(sell_code,0)
+        #else:
+        #    log.info('sell part:'+sell_code)
+        #    order_target_value(sell_code,all_value/g.stock_num)
+            
+    for buy_code in bten:
+        if buy_code not in context.portfolio.long_positions.keys():
+            cash_value=context.portfolio.available_cash
+            buy_value=all_value/g.stock_num
+    
+            if cash_value > buy_value/2 :
+                log.info('buy:'+buy_code+'   ' +str(buy_value))
+                order_target_value(buy_code,buy_value)
+                       
+def set_param():
+    g.bten=[]
+    g.bfive=[]
+    g.stock_num = 5
+    g.fin=pd.DataFrame()
+     #显示所有列
+    pd.set_option('display.max_columns', None)
+    #显示所有行
+    pd.set_option('display.max_rows', None)
+    #设置value的显示长度为100，默认为50
+    pd.set_option('max_colwidth',100)
+   
+
+    # 设定沪深300作为基准
+    set_benchmark('000300.XSHG')
+    # 开启动态复权模式(真实价格)
+    set_option('use_real_price', True)
+    
+    # 过滤掉order系列API产生的比error级别低的log
+    log.set_level('order', 'error')
+    
+     ### 股票相关设定 ###
+    # 股票类每笔交易时的手续费是：买入时佣金万分之三，卖出时佣金万分之三加千分之一印花税, 每笔交易佣金最低扣5块钱
+    set_order_cost(OrderCost(close_tax=0.001, open_commission=0.0003, close_commission=0.0003, min_commission=5), type='stock')
+
+def giveScore():
+    '''
+    #给环比打分
+    #scored_list['ejdhb'][scored_list['ejdhb']>1.5]=1.5
+    scored_list=scored_list.sort_values(by='ejdhb', ascending=False).reset_index(drop=True)
+    scored_list=scored_list.head(40)
+    
+    #给同比打分
+    #scored_list['ejdtb'][scored_list['ejdtb']>1.5]=1.5
+    scored_list=scored_list.sort_values(by='ejdtb', ascending=False).reset_index(drop=True)
+    scored_list=scored_list.head(20)
+    
+    scored_list=scored_list.sort_values(by='kfsyl', ascending=True).reset_index(drop=True)
+    scored_list['kfsyl_score']=100 - scored_list.index*100/20
+    scored_list=scored_list.sort_values(by='ejdhb', ascending=False).reset_index(drop=True)
+    scored_list['ejdhb_score']=100 - scored_list.index*100/20
+    scored_list=scored_list.sort_values(by='ejdtb', ascending=False).reset_index(drop=True)
+    scored_list['ejdtb_score']=100 - scored_list.index*100/20
+    
+    #算总分
+    scored_list['all_score']=scored_list['kfsyl_score'] + scored_list['ejdhb_score']*0.5+scored_list['ejdtb_score']*0.3
+     
+    scored_list=scored_list.sort_values(by='all_score', ascending=False).reset_index(drop=True)
+    '''
+    
+
+#行业控制   
+def cc_industry(stock_list):
+    '''
+    stocks=list(stock_list['code'])
+    
+    compinfo=finance.run_query(
+        query(
+            finance.STK_COMPANY_INFO.code,
+            finance.STK_COMPANY_INFO.short_name,
+            finance.STK_COMPANY_INFO.industry_2,
+            finance.STK_COMPANY_INFO.industry_id).filter(
+                finance.STK_COMPANY_INFO.code.in_(stocks)
+                ))
+                
+    stock_list=pd.merge(stock_list,compinfo,on='code')
+    
+    
+    p=dict.fromkeys(set(compinfo['industry_id']),0)
+    rets=pd.DataFrame()
+    
+    for index in list(stock_list.index):
+        industry_id=stock_list.loc[index].industry_id
+        num=p.get(industry_id,0)
+        if num<2: 
+           rets=rets.append(stock_list.loc[index])
+        p[industry_id]=num+1
+        
+    return rets
+    '''
+## 
+def  moreinfo(df):
+    code=list(df.code)
+    
+    compinfo=finance.run_query(query(finance.STK_COMPANY_INFO.code,finance.STK_COMPANY_INFO.short_name,finance.STK_COMPANY_INFO.industry_id
+        ).filter(finance.STK_COMPANY_INFO.code.in_(code)))
+    dd=pd.merge(df,compinfo)
+    log.info(dd)
+    
+    
+    
+ 
+
+# ===== u-e9-dxpit observation helpers (nothing below feeds an order) =====
+def _dxp_mon(context, df):
+    try:
+        log.info('DXMON date=%s n_qual=%d bfive=%s bten=%s' % (str(context.current_dt.date()), df.shape[0], ','.join(g.bfive), ','.join(g.bten)))
+    except Exception as _e:
+        log.error('DXP-ERR mon err=%r' % (_e,))
+
+def _dxp_pos(context, tag):
+    try:
+        _d = str(context.current_dt.date())
+        _t = 0.0
+        for _c in sorted(context.portfolio.long_positions.keys()):
+            _p = context.portfolio.long_positions[_c]
+            _t += _p.value
+            log.info('%s date=%s code=%s amount=%d price=%.4f value=%.2f' % (tag, _d, _c, _p.total_amount, _p.price, _p.value))
+        log.info('%sTOT date=%s total=%.2f pos=%.2f cash=%.2f n=%d' % (tag, _d, context.portfolio.total_value, _t, context.portfolio.available_cash, len(context.portfolio.long_positions)))
+    except Exception as _e:
+        log.error('DXP-ERR pos err=%r' % (_e,))
+
+def after_trading_end(context):
+    try:
+        _d = context.current_dt.date()
+        _ds = str(_d)
+        if not hasattr(g, 'dxp_pnl'):
+            g.dxp_pnl = {}
+            g.dxp_prev = {}
+            g.dxp_amt = {}
+            g.dxp_cash = None
+        _flow = {}
+        _os = get_orders()
+        for _k in _os:
+            _o = _os[_k]
+            try:
+                _f = _o.filled
+            except Exception:
+                _f = 0
+            if not _f:
+                continue
+            _px = _o.price
+            _cm = getattr(_o, 'commission', 0.0) or 0.0
+            _cf = (-(_f * _px) - _cm) if _o.is_buy else ((_f * _px) - _cm)
+            _flow[_o.security] = _flow.get(_o.security, 0.0) + _cf
+            log.info('DXFILL date=%s code=%s buy=%d filled=%d price=%.4f commission=%.2f cashflow=%.2f' % (_ds, _o.security, 1 if _o.is_buy else 0, _f, _px, _cm, _cf))
+        _vals = {}
+        _amts = {}
+        for _c in context.portfolio.long_positions.keys():
+            _p = context.portfolio.long_positions[_c]
+            _vals[_c] = _p.value
+            _amts[_c] = _p.total_amount
+            log.info('DXVAL date=%s code=%s amount=%d price=%.4f value=%.2f' % (_ds, _c, _p.total_amount, _p.price, _p.value))
+        _cash = context.portfolio.available_cash
+        log.info('DXCASH date=%s cash=%.2f total=%.2f' % (_ds, _cash, context.portfolio.total_value))
+        _names = set(_vals.keys()) | set(g.dxp_prev.keys()) | set(_flow.keys())
+        for _c in _names:
+            g.dxp_pnl[_c] = g.dxp_pnl.get(_c, 0.0) + _vals.get(_c, 0.0) - g.dxp_prev.get(_c, 0.0) + _flow.get(_c, 0.0)
+        if g.dxp_cash is not None:
+            _resid = _cash - g.dxp_cash - sum(_flow.values())
+            if abs(_resid) > 0.5:
+                _held = list(set(g.dxp_amt.keys()) | set(_amts.keys()))
+                _exp = {}
+                if _held:
+                    S = finance.STK_XR_XD
+                    _xr = finance.run_query(query(S.code, S.bonus_ratio_rmb, S.a_xr_date, S.a_bonus_date).filter(
+                        S.code.in_(_held)).order_by(S.report_date.desc()).limit(200))
+                    for _i in range(len(_xr)):
+                        _r = _xr.iloc[_i]
+                        _xd = str(_r['a_xr_date'])[:10]
+                        _bd = str(_r['a_bonus_date'])[:10]
+                        if _xd == _ds or _bd == _ds:
+                            _br = _r['bonus_ratio_rmb']
+                            _br = 0.0 if _br is None or _br != _br else float(_br)
+                            _am = g.dxp_amt.get(_r['code'], _amts.get(_r['code'], 0))
+                            _e = _am * _br / 10.0
+                            _exp[_r['code']] = _exp.get(_r['code'], 0.0) + _e
+                            log.info('DXDIV date=%s code=%s ratio=%.4f amount=%d exp=%.2f xr=%s pay=%s' % (_ds, _r['code'], _br, _am, _e, _xd, _bd))
+                _se = sum(_exp.values())
+                if _se > 0:
+                    for _c in _exp:
+                        g.dxp_pnl[_c] = g.dxp_pnl.get(_c, 0.0) + _resid * _exp[_c] / _se
+                else:
+                    g.dxp_pnl['_unattr'] = g.dxp_pnl.get('_unattr', 0.0) + _resid
+                log.info('DXRESID date=%s resid=%.2f exp_sum=%.2f attributed=%d' % (_ds, _resid, _se, 1 if _se > 0 else 0))
+        g.dxp_prev = _vals
+        g.dxp_amt = _amts
+        g.dxp_cash = _cash
+        _last = (_ds == '2024-12-31')
+        try:
+            import datetime as _dtm
+            _nx = [x for x in get_trade_days(start_date=_d, end_date=_d + _dtm.timedelta(days=12)) if x > _d]
+            if len(_nx) == 0 or _nx[0].month != _d.month:
+                _last = True
+        except Exception as _e2:
+            log.error('DXP-ERR tradedays err=%r' % (_e2,))
+        if _last:
+            _tot = sum(g.dxp_pnl.values())
+            for _c in sorted(g.dxp_pnl.keys(), key=lambda k: -g.dxp_pnl[k]):
+                log.info('DXPNL date=%s code=%s pnl=%.2f share=%.4f' % (_ds, _c, g.dxp_pnl[_c], (g.dxp_pnl[_c] / _tot) if _tot else 0.0))
+            log.info('DXPNLTOT date=%s pnl=%.2f total_value=%.2f' % (_ds, _tot, context.portfolio.total_value))
+    except Exception as _e:
+        log.error('DXP-ERR ate err=%r' % (_e,))
+# ===== end u-e9-dxpit observation helpers =====
+
+
+# ===== AUTORESEARCH NORMALIZATION OVERRIDE (appended; strategies/ file untouched) =====
+# harness/harness.md §2 — force the frozen execution settings regardless of what the
+# raw strategy sets, even if it re-sets costs every bar. Values are pinned in
+# harness/config/epoch-<n>.json; utils/harness-config.js --verify checks this block
+# still matches, because Python running on JQ's servers cannot read that JSON.
+__jq_set_slippage = set_slippage
+def set_slippage(*a, **k):
+    __jq_set_slippage(FixedSlippage(0))
+__jq_set_commission = set_commission
+def set_commission(*a, **k):
+    __jq_set_commission(PerTrade(buy_cost=0.0003, sell_cost=0.0013, min_cost=5))
+# epoch 4: set_commission does NOT govern funds, so 170 held strategies were running
+# ETF trades on their own costs. Pin the fund table too, and neutralise re-sets.
+# epoch 6: it does not govern STOCKS either. JQ deprecated set_commission in favour of
+# set_order_cost, so a strategy's own type='stock' call won outright and 95 of 215 held
+# strategies were being charged their AUTHOR's fees. Measured by probe: a 5%/side stock
+# commission injected into int-001 moved total return +64.44% -> -11.33% (-75.77pp), i.e.
+# the bench had no control over stock fees at all. Both tables are now pinned, and the
+# fall-through forwards only the types we do not model (futures, mmf, ...).
+# Guarded: unlike set_slippage/set_commission, set_order_cost is NOT bound at module
+# scope in every JQ runtime — rebinding it unguarded raised NameError at import and
+# the whole strategy came back compile-error.
+try:
+    __jq_set_order_cost = set_order_cost
+    def __jq_cost_type(a, k):
+        t = k.get('type')
+        if t is None and len(a) > 1:
+            t = a[1]
+        return t
+    def set_order_cost(*a, **k):
+        __t = __jq_cost_type(a, k)
+        if __t == 'fund':
+            __jq_set_order_cost(OrderCost(open_commission=0.0003, close_commission=0.0003, close_tax=0, min_commission=5), type='fund')
+        elif __t == 'stock':
+            __jq_set_order_cost(OrderCost(open_commission=0.0003, close_commission=0.0003, close_tax=0.001, min_commission=5), type='stock')
+        else:
+            __jq_set_order_cost(*a, **k)
+except NameError:
+    pass
+try:
+    __jq_orig_initialize = initialize
+    def initialize(context):
+        __jq_orig_initialize(context)
+        set_option('use_real_price', True)
+        # epoch 4 pins, applied AFTER the strategy's own initialize so they win
+        set_option('avoid_future_data', True)
+        set_option('order_volume_ratio', 0.05)
+        set_slippage(FixedSlippage(0))
+        set_commission(PerTrade(buy_cost=0.0003, sell_cost=0.0013, min_cost=5))
+        try:
+            set_order_cost(OrderCost(open_commission=0.0003, close_commission=0.0003, close_tax=0, min_commission=5), type='fund')
+        except Exception:
+            pass
+        # epoch 6: pin the stock table too, AFTER the strategy's own initialize so it wins
+        # even when the strategy set its costs there rather than at module scope.
+        try:
+            set_order_cost(OrderCost(open_commission=0.0003, close_commission=0.0003, close_tax=0.001, min_commission=5), type='stock')
+        except Exception:
+            pass
+except NameError:
+    pass
+# ===== END OVERRIDE =====

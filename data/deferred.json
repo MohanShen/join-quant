@@ -86,5 +86,29 @@
     "lastCapMin": 45,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-10-30T21:41:54.672Z"
+  },
+  "strategies/2026-11-01_系统出问题了_积分为负了-64ea0f72.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-11-01T02:38:22.190Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-11-01T02:38:22.190Z"
+  },
+  "strategies/2026-11-02_为什么限价单卖出按比限价低的价格成交了-6941bfbe.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-11-02T01:22:01.747Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-11-02T01:22:01.747Z"
+  },
+  "strategies/2026-11-02_我这个底部起兵的策略怎样判定它是在底部-f032cfdc.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-11-02T01:22:01.748Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-11-02T01:22:01.748Z"
   }
 }

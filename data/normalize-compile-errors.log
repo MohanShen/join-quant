@@ -152,3 +152,62 @@
 2026-10-31T18:28:14.459Z	strategies/2026-11-01_多因子策略选股模板计算出来的因子值和单因子分析中计算出来的因子值不一样_计算因子的代码是一样-10de6f9a.py	AttributeError: 'Series' object has no attribute 'order'
 2026-10-31T18:29:04.661Z	strategies/2026-11-01_帮忙加个过滤条件-a4907eab.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 tradestat
 2026-10-31T18:29:59.352Z	strategies/2026-11-01_求解答这个策略怎么模拟盘-e3ce49aa.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-10-31T21:24:50.924Z	strategies/2026-11-01_请问如何通过研究中创建回测函数方式实现初始持仓功能-b4bf6db6.py	statsmodels.tools.sm_exceptions.MissingDataError: exog contains inf or nans
+2026-10-31T21:25:33.478Z	strategies/2026-11-01_33天均线大于233均线且macd金叉时下单-01a6feb3.py	TypeError: float() argument must be a string or a number, not 'PerTrade'
+2026-10-31T21:29:34.493Z	strategies/2026-11-01_来自17年炒股生涯的量化新手之提问贴-3138195d.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时, 当天开盘前不能获取当日的{'open'}字段数据, current_dt=2024-01-02 09:25:00, end_date=2024-01-02
+2026-10-31T21:33:04.613Z	strategies/2026-11-01_朋友们_你们能忍受策略多久不赚钱-20cfa178.py	jqboson.core.exception.ReadRemoteFileError: read_file signal_table_4.json: 文件'/opt/research-files/655/65568519426/signal_table_4.json'不存在
+2026-10-31T21:34:32.010Z	strategies/2026-11-01_RSRS策略改写的一些困惑_请各位大神们帮忙解答-b5c1da6f.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数
+2026-10-31T21:41:15.419Z	strategies/2026-11-01_涨停板策略_为什么编译成功却没有执行交易-df109f60.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'close'}字段数据, current_dt=2024-01-02 09:30:00, end_date=2024-01-02 09:30:00
+2026-10-31T21:41:58.117Z	strategies/2026-11-01_get_valuation存在的一个问题-b5705b08.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时, get_valuation只能在盘后15:00之后才能获取标的的市值数据，current_dt= 2024-01-02 09:30:00
+2026-10-31T21:43:50.051Z	strategies/2026-11-01_大家帮忙看看那块有问题出不来-b83ac26a.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:00:00
+2026-10-31T21:44:32.843Z	strategies/2026-11-01_请高人写一个PETTM_PB最小值的策略_仅限银行板块_单独买入一个股票不择时不止损不止盈-f0632a31.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-10-31T21:46:25.517Z	strategies/2026-11-01_求助_请帮我看看那里出问题了-b360f946.py	AttributeError: 'StrategyGlobals' object has no attribute 'stocks'
+2026-11-01T01:11:15.891Z	strategies/2026-11-01_Bug-7198a3de.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:30:00
+2026-11-01T02:16:14.640Z	strategies/2026-11-01_如何做选股程序_新手_请高手指教_这次我知道分享代码了-f15dbc1c.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数
+2026-11-01T02:21:11.449Z	strategies/2026-11-01_回测中的收益计算有误-170b7233.py	Exception: 该接口仅能用于查询财务单季度表和估值表!
+2026-11-01T02:27:05.332Z	strategies/2026-11-01_策略需要更新到python3_请各位大神帮忙-d843b52e.py	statsmodels.tools.sm_exceptions.MissingDataError: exog contains inf or nans
+2026-11-01T02:36:43.620Z	strategies/2026-11-01_聚宽收益率的计算是否有BUG-203e4a96.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-11-01T02:38:15.875Z	strategies/2026-11-01_在策略环境里取MSCI股票池无法取出-0e3b5d9e.py	jqdata.exceptions.ParamsError: 概念板块 'GN240' 不存在
+2026-11-02T00:26:46.849Z	strategies/2026-11-02_为什么会出现回测多扣积分的情况-1ff0798d.py	KeyError: datetime.date(2023, 12, 29)
+2026-11-02T00:27:45.714Z	strategies/2026-11-02_请帮忙改进买卖策略-c163e703.py	jqboson.core.exception.ReadRemoteFileError: read_file 20202021.json: 文件'/opt/research-files/655/65568519426/20202021.json'不存在
+2026-11-02T00:28:33.362Z	strategies/2026-11-02_求助-1de42998.py	SyntaxError: invalid syntax
+2026-11-02T00:32:55.877Z	strategies/2026-11-02_求助大佬帮助优化策略-ba39c544.py	jqdata.exceptions.ParamsError: 找不到标的300060.XSHE
+2026-11-02T11:32:41.113Z	strategies/2026-11-02_聚宽成交规则诡异-c968747a.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'low', 'high'}字段数据, current_dt=2024-01-02 09:30:00, end_date=2024-01-02
+2026-11-02T11:34:07.135Z	strategies/2026-11-02_5日上窜30日_按照昨天以前都一收盘价位准_今天的一分钟价_来统计_为什么不准啊-b44a7b39.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时，get_price的end_date(2026-11-02 19:33:33.443095)不能大于当前日期(2024-01-02 09:30:00)
+2026-11-02T11:37:58.253Z	strategies/2026-11-02_关于聚宽模拟交易的一些问题_代码附上-e7113e8d.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:30:00
+2026-11-02T11:39:51.321Z	strategies/2026-11-02_为什么会回测失败呢-0e9b4ae3.py	AttributeError: 'numpy.ndarray' object has no attribute 'index'
+2026-11-02T18:05:18.765Z	strategies/2026-11-02_关于position中avg_cost计算持仓平均成本的问题-31625ec3.py	jqboson.data.interfaces.SecurityNotExist: 159915.OF
+2026-11-02T18:41:02.672Z	strategies/2026-11-03_如何获取竞价期间_不同时间的匹配价格呢-b7793743.py	KeyError: 'time'
+2026-11-02T18:41:47.901Z	strategies/2026-11-03_从py2到py3只改了一个排序函数回测结果差好多-bffce886.py	AttributeError: 'Series' object has no attribute 'order'
+2026-11-02T18:42:33.778Z	strategies/2026-11-03_有没有人帮忙修改策略的-857c7167.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时, 当天开盘前不能获取当日的{'low', 'high', 'open', 'money', 'close'}字段数据, current_dt=2024-01-02 09:00:00, end_date=2024-01-02
+2026-11-02T18:47:31.556Z	strategies/2026-11-03_我想测一个单因子回测_在研究环境里能跑_回测出问题-ae8c40f2.py	UnboundLocalError: local variable 'Speech_level' referenced before assignment
+2026-11-02T18:50:04.999Z	strategies/2026-11-03_回测失败_请问是什么原因-b645c5df.py	TypeError: handle_data() takes 1 positional argument but 2 were given
+2026-11-02T19:18:24.732Z	strategies/2026-11-03_高手来改下策略-af4a2dcc.py	jqdata.exceptions.ParamsError: 概念板块 'GN189' 不存在
+2026-11-02T19:21:44.035Z	strategies/2026-11-03_请教各位大神_开仓数量不能小于100_这个代码行在哪里-3fe362d6.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'open_interest', 'high', 'low', 'close', 'money', 'volume'}字段数据, current_dt=2024-01-02 14:50:00, end_date=2024-01-02 14:50:00
+2026-11-02T19:23:33.208Z	strategies/2026-11-03_求助_场外基金购买错误-162c60be.py	jqboson.core.exception.ReadRemoteFileError: read_file fund_outof_market.csv: 文件'/opt/research-files/655/65568519426/fund_outof_market.csv'不存在
+2026-11-02T19:24:25.631Z	strategies/2026-11-03_求助_不知道为什么_运行过程中出现这个错误_怎么都解决不了-42265328.py	jqdata.exceptions.ParamsError: 找不到标的501006.OF
+2026-11-02T19:25:11.116Z	strategies/2026-11-03_融资可用保证金为什么出现负值-73f7a8e3.py	TypeError: 'KeysView' object does not support indexing
+2026-11-02T19:29:59.946Z	strategies/2026-11-03_请问今天50ETF盘中价格怎么不正常-1d43f5be.py	SyntaxError: invalid syntax
+2026-11-02T19:33:38.650Z	strategies/2026-11-03_基金回测出现的问题_出现两次赎回-e7e1b4f4.py	jqdata.exceptions.ParamsError: 找不到标的160219.OF
+2026-11-02T19:34:45.200Z	strategies/2026-11-03_有几个关键语句写不出来-10462767.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:00:00
+2026-11-02T19:35:30.935Z	strategies/2026-11-03_回测和研究不一致-a8dbcaaa.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数
+2026-11-02T19:36:15.721Z	strategies/2026-11-03_pe指标计算问题-1e2458a2.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数
+2026-11-02T19:37:00.520Z	strategies/2026-11-03_print_列表中有中文_就打印错误-663fa834.py	TypeError: 'builtin_function_or_method' object is not subscriptable
+2026-11-02T20:15:11.002Z	strategies/2026-11-03_PE-百分位策略网格化投资-47201557.py	KeyError: 'the label [2023-12-29] is not in the [index]'
+2026-11-02T20:19:24.296Z	strategies/2026-11-03_悬赏分钟止损-838d19b8.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:00:00
+2026-11-02T20:27:38.397Z	strategies/2026-11-03_融券函数出错-f8ac10bf.py	ValueError: zero-size array to reduction operation maximum which has no identity
+2026-11-02T20:29:12.010Z	strategies/2026-11-03_基金分红后收益错误-c8e056ad.py	jqboson.data.interfaces.SecurityNotExist: 163406.OF
+2026-11-02T20:48:09.019Z	strategies/2026-11-03_问问这个策略_狂飙的那段是因为啥状况-1a73b404.py	AttributeError: 'Series' object has no attribute 'sort'
+2026-11-02T20:48:54.269Z	strategies/2026-11-03_请问策略回测时间巨长是怎么回事-def07769.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:30:00
+2026-11-02T20:53:26.871Z	strategies/2026-11-03_现有策略_想按照申万一级行业分散选股_每个请问如何修改-ede9c82e.py	statsmodels.tools.sm_exceptions.MissingDataError: exog contains inf or nans
+2026-11-02T20:54:12.476Z	strategies/2026-11-03_悬赏_让代码剔除ST_停牌_退市的股票-07b3f945.py	ModuleNotFoundError: 您是否想导入研究中的自定义库? 自定义库暂时不支持文件夹, 请把库文件放在研究根目录: pandas.stats.api
+2026-11-02T20:54:58.313Z	strategies/2026-11-03_策略用python3回测报错_请问怎么修改-73551d28.py	ModuleNotFoundError: 您是否想导入研究中的自定义库? 自定义库暂时不支持文件夹, 请把库文件放在研究根目录: pandas.stats.api
+2026-11-02T20:55:44.300Z	strategies/2026-11-03_回测可以_模拟运行出错了-9864b066.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-11-02T20:57:17.683Z	strategies/2026-11-03_为什么程序能跑通但是没有交易的动作-74f0468a.py	TabError: inconsistent use of tabs and spaces in indentation
+2026-11-02T20:59:54.815Z	strategies/2026-11-03_为什么我写的策略会报下面的错误-ecc692d1.py	SyntaxError: invalid syntax
+2026-11-02T21:00:42.835Z	strategies/2026-11-03_因子分析结果与实际回测差异-6b83a761.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-11-02T21:05:13.928Z	strategies/2026-11-03_为什么在策略环境里面不可以调用statsmodels_api下面的UnobservedComponents包_而在研究环-9cad7a7b.py	jqboson.core.exception.InvalidParam: 每个仓位的资金之和，必须等于初始资金
+2026-11-02T21:05:59.315Z	strategies/2026-11-03_请问_基金数据中有加仓_持仓_持仓比例数据吗-eaa22991.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:30:00
+2026-11-02T21:53:24.773Z	strategies/2026-11-03_请问为什么会出现那么多买入100只-c0c41a84.py	jqboson.core.exception.InvalidParam: 股票必须是字符串
+2026-11-02T21:54:10.535Z	strategies/2026-11-03_发现平台API的bug_还是-a1560e04.py	jqdata.exceptions.FutureDataError: 设置avoid_future_data=True之后, get_bars的end_dt(2024-01-02 17:00:00)不能大于当前时间current_dt(2024-01-02 09:30:00)
+2026-11-02T21:55:43.562Z	strategies/2026-11-03_向大神求助_编译运行正常_模拟交易无任何响应-b051b215.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 RunTimePoint

@@ -1,0 +1,28 @@
+---
+postId: 76263d789a0dc231273a551e87a7a18e
+title: Brinson归因似乎有问题？
+sourceFile: strategies/2026-11-03_Brinson归因似乎有问题-76263d78.py
+concepts: [未分类]
+factors:
+  选股: [未分类]
+familyProposal: ~
+familyProposalNote: below MIN_SCORE
+ingestedAt: 2026-11-02
+codeLines: 73
+stats: { 绩效未公开: true }
+normalized: { epoch: 9, window: "TRAIN 2024", annualReturn: 0.1340, sharpe: 0.59, maxDrawdown: 0.0869, objective: 0.0471, gate: fail }
+autoStub: true
+---
+
+# Brinson归因似乎有问题？
+
+**一句话**：⚙ 自动桩页（daily 归一化生成），概念为启发式推断，忠实翻译待 `/ingest-strategy` 补全。
+
+## 绩效
+📊 归一化（TRAIN 2024，零滑点）：年化 13.4% | 夏普 0.59 | 最大回撤 8.7% | objective 0.0471（未过门槛 夏普<1）。自报绩效未公开。
+
+## 涉及概念
+- [[未分类]]
+
+## 备注
+- ⚙ **自动桩页**（`autoStub: true`）：概念/因子为源码启发式推断，未做忠实翻译。运行 `/ingest-strategy strategies/2026-11-03_Brinson归因似乎有问题-76263d78.py` 可补全并去除该标记。

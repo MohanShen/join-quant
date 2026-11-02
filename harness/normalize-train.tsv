@@ -557,3 +557,179 @@ strategies/2026-11-01_一个简单的趋势线策略_编译出错_请大神指�
 strategies/2026-11-01_求助_请帮我看看那里出问题了-b360f946.py	b360f946a9001efef27c8275184ce420	求助 ，请帮我看看那里出问题了。	compile-error										9
 strategies/2026-11-01_判断MACD的DIF和DEA金叉死叉_得出的DIF和DEA与实际不同-8d2b71c0.py	8d2b71c01104030af61953d00462b6df	判断MACD的DIF和DEA金叉死叉 ，得出的DIF和DEA与实际不同	normalized	2024-01-01	2024-12-31	365	-16.31	-16.31	-0.97	18.22	-0.3453	fail	9
 strategies/2026-11-01_请教一下大神_每天回测怎么保存一个变量-7abd13a2.py	7abd13a29f8f93f989c97f808cc87834	请教一下大神，每天回测怎么保存一个变量	normalized	2024-01-01	2024-12-31	365	1.59	1.59	-1.67	0.91	0.0068	fail	9
+strategies/2026-11-01_Bug-7198a3de.py	7198a3de9f53572f5c093c4cd37064bc	Bug？	compile-error										9
+strategies/2026-11-01_小白求助-d2d40ea8.py	d2d40ea8b9c4eb8719bd33ef2ed12d2f	小白求助	normalized	2024-01-01	2024-12-31	365	158.01	158.01	4.40	22.23	1.3578	pass	9
+strategies/2026-11-01_模拟交易信号微信推送延迟问题-bd771016.py	bd7710167b741e402df230dd96e7d6cc	模拟交易信号微信推送延迟问题。	normalized	2024-01-01	2024-12-31	365	250.48	250.48	4.25	28.44	2.2204	pass	9
+strategies/2026-11-01_聚宽里面怎么获取股票的实时流通市值啊-c78946a4.py	c78946a4c9b6ad0e3229471f718bc370	聚宽里面怎么获取股票的实时流通市值啊	normalized	2024-01-01	2024-12-31	365	11.98	11.98	0.23	29.51	-0.1753	fail	9
+strategies/2026-11-01_我这个夏普比率到了18了_这个正常吗-84122210.py	8412221008f1a9bfe9215d689c62366b	我这个夏普比率到了18了，这个正常吗？	normalized	2024-01-01	2024-12-31	365	-36.12	-36.12	-1.71	40.11	-0.7623	fail	9
+strategies/2026-11-01_能帮我看看这个数据正常吗_为什么夏普比率这么高-6f297177.py	6f297177c5f041e520dd0803e0bf8ba1	能帮我看看这个数据正常吗？为什么夏普比率这么高	normalized	2024-01-01	2024-12-31	365	-36.12	-36.12	-1.71	40.11	-0.7623	fail	9
+strategies/2026-11-01_系统出问题了_积分为负了-64ea0f72.py	64ea0f728b6d6e7c8094e42b8dab43e7	系统出问题了？积分为负了！！！	slow-skipped										9
+strategies/2026-11-01_如何做选股程序_新手_请高手指教_这次我知道分享代码了-f15dbc1c.py	f15dbc1cc5fa893ccd2d3b715f882b5a	如何做选股程序。新手，请高手指教？这次我知道分享代码了	compile-error										9
+strategies/2026-11-01_RSRS使用的加权最小二乘法是不是出了问题-5e914b32.py	5e914b320c686b46f7de7643bb8b9884	RSRS使用的加权最小二乘法是不是出了问题？	normalized	2024-01-01	2024-12-31	365	11.43	11.43	0.41	10.99	0.0044	fail	9
+strategies/2026-11-01_大神看看这个策略为什么运行不了-1c491049.py	1c491049bed97d80329cbf19b69e4c70	大神看看这个策略为什么运行不了	normalized	2024-01-01	2024-12-31	365	15.23	15.23	0.48	20.40	-0.0517	fail	9
+strategies/2026-11-01_回测中的收益计算有误-170b7233.py	170b723320b48f7576ffc171b2d26da9	回测中的收益计算有误	compile-error										9
+strategies/2026-11-01_谁帮我看看策略满足购买条件了_回测的时候却不给我买-8982d1a3.py	8982d1a3027a9b09ad6d1ec89e57525c	谁帮我看看策略满足购买条件了，回测的时候却不给我买	normalized	2024-01-01	2024-12-31	365	45.23	45.23	1.09	29.21	0.1602	pass	9
+strategies/2026-11-01_如何每分钟一次-791ed453.py	791ed45364aef5ea33ef1cb53099eff3	如何每分钟一次	normalized	2024-01-01	2024-12-31	365	7.82	7.82	0.19	14.33	-0.0651	fail	9
+strategies/2026-11-01_网格交易策略修改-bdd6aa9f.py	bdd6aa9fa28f46952dbacb2448a6f3a2	网格交易策略修改	normalized	2024-01-01	2024-12-31	365	14.14	14.14	0.26	42.31	-0.2817	fail	9
+strategies/2026-11-01_策略需要更新到python3_请各位大神帮忙-d843b52e.py	d843b52e12fe47c55f1e12e910f4a081	策略需要更新到python3，请各位大神帮忙	compile-error										9
+strategies/2026-11-01_关于交易频率问题-77258b2b.py	77258b2be9fe3dd485e0b1f0de412923	关于交易频率问题	normalized	2024-01-01	2024-12-31	365	-9.45	-9.45	-0.40	31.92	-0.4137	fail	9
+strategies/2026-11-01_求帮助写策略_我想运行一下看看结果_谢谢各位-a2cebe66.py	a2cebe66e0a1fddc60d2414de130d0f4	求帮助写策略~我想运行一下看看结果。谢谢各位~	normalized	2024-01-01	2024-12-31	365	-3.02	-3.02	-0.21	25.62	-0.2864	fail	9
+strategies/2026-11-01_求帮忙看一下我这个代码问题出在哪_出处是一个彼得林奇的PEG选股-6cd8593d.py	6cd8593d65463246232efbbb17b9963f	求帮忙看一下我这个代码问题出在哪，出处是一个彼得林奇的PEG选股	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-01_聚宽收益率的计算是否有BUG-203e4a96.py	203e4a966a63575688644059b41119b3	聚宽收益率的计算是否有BUG	compile-error										9
+strategies/2026-11-01_在策略环境里取MSCI股票池无法取出-0e3b5d9e.py	0e3b5d9efb9246e06f7830931c125a3e	在策略环境里取MSCI股票池无法取出	compile-error										9
+strategies/2026-11-02_为什么限价单卖出按比限价低的价格成交了-6941bfbe.py	6941bfbeb4f8ed72175c9aad284faa28	为什么限价单卖出按比限价低的价格成交了？	slow-skipped										9
+strategies/2026-11-02_根据分钟和日获取的数据不一致-26c4af73.py	26c4af73b28de500a9e2e3e7c46e4e14	根据分钟和日获取的数据不一致	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-02_量化高手来_请教一个问题-5277145c.py	5277145c5360aac8ecf765208c5b219b	量化高手来，请教一个问题	normalized	2024-01-01	2024-12-31	365	52.21	52.21	2.36	9.07	0.4314	pass	9
+strategies/2026-11-02_6月29日至今数据异常_请技术人员给出专业答复-c3330e61.py	c3330e61cead364717358518c51d239b	6月29日至今数据异常，请技术人员给出专业答复！	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-02_为什么看不到当日的实时调仓-6f398ce9.py	6f398ce93791679cf079ee2b015ccd78	为什么看不到当日的实时调仓？	normalized	2024-01-01	2024-12-31	365	-40.95	-40.95	-0.87	56.10	-0.9705	fail	9
+strategies/2026-11-02_望赐教_策略开始时间只差两个月_但是最后结果却相差很多-49497b1b.py	49497b1bb3501d7e75a03da68b341674	望赐教，策略开始时间只差两个月，但是最后结果却相差很多	normalized	2024-01-01	2024-12-31	365	-8.19	-8.19	-0.28	32.47	-0.4066	fail	9
+strategies/2026-11-02_为什么会出现回测多扣积分的情况-1ff0798d.py	1ff0798d62c6babfa053dc218ec3dc83	为什么会出现回测多扣积分的情况	compile-error										9
+strategies/2026-11-02_请帮忙改进买卖策略-c163e703.py	c163e7032a0fb60a784b60eee43318e6	请帮忙改进买卖策略	compile-error										9
+strategies/2026-11-02_求助-1de42998.py	1de42998437944acde36ace8cf88f73a	求助~~~	compile-error										9
+strategies/2026-11-02_一个仓位下买入同一个期货合约两次_平仓时系统计算的盈亏值问题-269ddda1.py	269ddda14014a018e4715f41949c7c88	一个仓位下买入同一个期货合约两次，平仓时系统计算的盈亏值问题	incompatible-futures										9
+strategies/2026-11-02_求_如何把智习老师的回撤更小的etf轮动_放到一创聚宽中-ac64ab14.py	ac64ab14c0d9fe9027ad029e76059f9d	求：如何把智习老师的回撤更小的etf轮动，放到一创聚宽中？	normalized	2024-01-01	2024-12-31	365	11.73	11.73	0.21	25.51	-0.1378	fail	9
+strategies/2026-11-02_如何加入股息率因子-c1999b06.py	c1999b06d1d06a80dc536a41aa4585d7	如何加入股息率因子	normalized	2024-01-01	2024-12-31	365	4.17	4.17	0.02	14.21	-0.1004	fail	9
+strategies/2026-11-02_场外基金回测问题-d889d80f.py	d889d80fbf9ba3c6f37911c5bb3924bb	场外基金回测问题	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-02_求助大佬帮助优化策略-ba39c544.py	ba39c5442398d74160fe49099cb2887f	求助大佬帮助优化策略	compile-error										9
+strategies/2026-11-02_模拟盘怎么没交易-8641787d.py	8641787d8023ae65bfaeb66b6857d5f1	模拟盘怎么没交易？	normalized	2024-01-01	2024-12-31	365	23.32	23.32	0.51	21.22	0.021	fail	9
+strategies/2026-11-02_铁矿石期货回测出问题-0072a523.py	0072a5234fc37d2e002786289e780518	铁矿石期货回测出问题	incompatible-futures										9
+strategies/2026-11-02_求教高手帮忙解决问题_打板策略_运行到后面没有交易了-c7a8aa43.py	c7a8aa43d9df00e9a1cd304738f2c7e9	求教高手帮忙解决问题：打板策略，运行到后面没有交易了	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-02_求编写冲高回落判断插到这里_先卖一半-dca901d6.py	dca901d6eadbdafced3adfbd0f3958a0	求编写冲高回落判断插到这里，先卖一半	normalized	2024-01-01	2024-12-31	365	9.20	9.20	0.74	5.02	0.0418	fail	9
+strategies/2026-11-02_我这个底部起兵的策略怎样判定它是在底部-f032cfdc.py	f032cfdc1af83994031f0ea468e0116b	我这个底部起兵的策略怎样判定它是在底部？	slow-skipped										9
+strategies/2026-11-02_这个高频策略哪里出问题了导致成交记录只有一条且开了两手-9b94f0d6.py	9b94f0d6dbfbe84d583b42fb0502a637	这个高频策略哪里出问题了导致成交记录只有一条且开了两手？	incompatible-futures										9
+strategies/2026-11-02_高频交易策略为何每天只有两手交易记录-2f86bb5b.py	2f86bb5b5b4f0044058e401d95b637d6	高频交易策略为何每天只有两手交易记录？	incompatible-futures										9
+strategies/2026-11-02_最简单的股债平衡策略_小白求指正-6b79e09c.py	6b79e09ce3815e415892662b8e8bdf0b	最简单的股债平衡策略，小白求指正	normalized	2024-01-01	2024-12-31	365	12.76	12.76	0.85	5.71	0.0705	fail	9
+strategies/2026-11-02_在回测交易过程中_发现有股票停牌一段时间后就退市_可是股票还在持仓中_无法卖出_怎么处理呢-3ae4f4be.py	3ae4f4be4eebde66bf1a0c460092fdf3	在回测交易过程中，发现有股票停牌一段时间后就退市，可是股票还在持仓中，无法卖出，怎么处理呢？	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-02_在每分钟回测时限价单按市价单成交的问题-0054dc92.py	0054dc92eb02c74788c30f2d0116c3eb	在每分钟回测时限价单按市价单成交的问题	normalized	2024-01-01	2024-12-31	365	3.49	3.49	-0.09	2.78	0.0071	fail	9
+strategies/2026-11-02_聚宽成交规则诡异-c968747a.py	c968747adabef5d82a78e8479436c5ef	聚宽成交规则诡异····	compile-error										9
+strategies/2026-11-02_5日上窜30日_按照昨天以前都一收盘价位准_今天的一分钟价_来统计_为什么不准啊-b44a7b39.py	b44a7b39075f9474cb6b20571f4ea5e4	5日上窜30日，按照昨天以前都一收盘价位准，今天的一分钟价，来统计，为什么不准啊？	compile-error										9
+strategies/2026-11-02_过滤st_st还是选到st欣泰-df8d77b8.py	df8d77b8c4f5a64e89a12fa55d5ccb07	过滤st、*st还是选到st欣泰	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-02_找不到tick数据是什么原因-711bb3a5.py	711bb3a5d29ddbe0d0c4d3f71ce4b6ae	找不到tick数据是什么原因	incompatible-futures										9
+strategies/2026-11-02_期货成交价格问题_望大佬帮帮忙-85f7d2af.py	85f7d2afec92a3194a8809a46a217161	期货成交价格问题，望大佬帮帮忙	incompatible-futures										9
+strategies/2026-11-02_关于position中avg_cost计算持仓平均成本的问题-31625ec3.py	31625ec3d2713deee4ea01678770f239	关于position中avg_cost计算持仓平均成本的问题	crash										9
+strategies/2026-11-02_关于聚宽模拟交易的一些问题_代码附上-e7113e8d.py	e7113e8dbed2de8b25360bbfd853876e	关于聚宽模拟交易的一些问题，代码附上	compile-error										9
+strategies/2026-11-02_请教如何判断期货账户持仓-cb1d31c2.py	cb1d31c2f68bee81e421b072028ef9ee	请教如何判断期货账户持仓？	incompatible-futures										9
+strategies/2026-11-02_为什么会回测失败呢-0e9b4ae3.py	0e9b4ae3b63bba821ca95221afe7d997	为什么会回测失败呢	compile-error										9
+strategies/2026-11-02_请问为什么这个沪深300等权策略收益几乎是_-100-a7bb87c8.py	a7bb87c84bb9f8d96954ae6d99f834be	请问为什么这个沪深300等权策略收益几乎是 -100%？	normalized	2024-01-01	2024-12-31	365	-50.55	-50.55	-3.34	50.55	-1.011	fail	9
+strategies/2026-11-02_平台数据问题_OR_策略问题-ec6fd76d.py	ec6fd76ded67745d4ea9cc863c893dd0	平台数据问题 OR 策略问题？	normalized	2024-01-01	2024-12-31	365	-9.20	-9.20	-0.62	19.40	-0.286	fail	9
+strategies/2026-11-02_回测时下订单后什么时候交易成功-d0a1887e.py	d0a1887e985da86ab1ab2426ddf85668	回测时下订单后什么时候交易成功	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-02_军工B历史数据有问题啊-49fc406d.py	49fc406da85c7f0b67df5963356a311d	军工B历史数据有问题啊	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-02_一进二策略左压函数咨询-6e532250.py	6e5322507527b1970f69b4c46b183b57	一进二策略左压函数咨询	normalized	2024-01-01	2024-12-31	365	1163.33	1163.33	16.81	33.33	11.3	pass	9
+strategies/2026-11-02_关于position中avg_cost计算持仓平均成本的问题-31625ec3.py	31625ec3d2713deee4ea01678770f239	关于position中avg_cost计算持仓平均成本的问题	compile-error										9
+strategies/2026-11-02_北京炒家-9e257c05.py	9e257c05f6b0dddd84bc2c86e72af7a1	北京炒家	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_如何获取竞价期间_不同时间的匹配价格呢-b7793743.py	b779374336dca85d50a377d2c46e8277	如何获取竞价期间，不同时间的匹配价格呢	compile-error										9
+strategies/2026-11-03_从py2到py3只改了一个排序函数回测结果差好多-bffce886.py	bffce88654f04b8f25185b2a064ddaa7	从py2到py3只改了一个排序函数回测结果差好多	compile-error										9
+strategies/2026-11-03_有没有人帮忙修改策略的-857c7167.py	857c716760cf1d6ebec0905c0c9b9774	有没有人帮忙修改策略的	compile-error										9
+strategies/2026-11-03_为什么不能回测-688c1db2.py	688c1db27a595b326510264370e04e9d	为什么不能回测？	incompatible-notrunnable										9
+strategies/2026-11-03_想请人写一创量化程序-e55fa5a7.py	e55fa5a7bba96a1fe01a510166a06840	想请人写一创量化程序	normalized	2024-01-01	2024-12-31	365	3.08	3.08	-0.01	56.48	-0.534	fail	9
+strategies/2026-11-03_为什么回测时_系统会自动做一些小额交易-26edc678.py	26edc678da82015c0bc8c7825edf7b6d	为什么回测时，系统会自动做一些小额交易？	normalized	2024-01-01	2024-12-31	365	1.45	1.45	-1.33	1.46	-0.0001	fail	9
+strategies/2026-11-03_我想测一个单因子回测_在研究环境里能跑_回测出问题-ae8c40f2.py	ae8c40f2902cb7a45f723f6b9ccc64df	我想测一个单因子回测，在研究环境里能跑，回测出问题！	compile-error										9
+strategies/2026-11-03_求助_期货策略中的一些疑问-23888668.py	23888668e147fe1901fd45b5a9998e81	【求助】期货策略中的一些疑问	incompatible-futures										9
+strategies/2026-11-03_为什么按天回测没有结果_只能按分钟回测才有结果呢-f657c518.py	f657c518af442b238a6005e095b09553	为什么按天回测没有结果，只能按分钟回测才有结果呢	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_关于每日换手率获取的疑问-951ab33d.py	951ab33d1cc2d8e24e62853d2644eddf	关于每日换手率获取的疑问	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_回测失败_请问是什么原因-b645c5df.py	b645c5df356f1c81374926c56243a70f	回测失败 请问是什么原因	compile-error										9
+strategies/2026-11-03_基金交易函数有很多问题-105c5257.py	105c525776484ca905fe39b02f3d3d67	基金交易函数有很多问题	normalized	2024-01-01	2024-12-31	365	-20.34	-20.34	-1.06	26.04	-0.4638	fail	9
+strategies/2026-11-03_修改-4e138766.py	4e138766f6ebd06c405713df33bc4ebd	修改	normalized	2024-01-01	2024-12-31	365	-36.38	-36.38	-1.53	42.03	-0.7841	fail	9
+strategies/2026-11-03_高手来改下策略-af4a2dcc.py	af4a2dcccc6ac8e1483d291c72bf7eb2	高手来改下策略。	compile-error										9
+strategies/2026-11-03_Brinson归因似乎有问题-76263d78.py	76263d789a0dc231273a551e87a7a18e	Brinson归因似乎有问题？	normalized	2024-01-01	2024-12-31	365	13.40	13.40	0.59	8.69	0.0471	fail	9
+strategies/2026-11-03_请高手改macd为5分钟级别的交易方式-1e303909.py	1e30390912ad1c76f72c00d0a1e65a05	请高手改macd为5分钟级别的交易方式	normalized	2024-01-01	2024-12-31	365	-0.79	-0.79	-0.13	30.21	-0.31	fail	9
+strategies/2026-11-03_请帮我把条件选股换成自选资格股票-8ccac723.py	8ccac7234a3932c6e49574bb95640451	请帮我把条件选股换成自选资格股票？	normalized	2024-01-01	2024-12-31	365	13.29	13.29	0.18	41.68	-0.2839	fail	9
+strategies/2026-11-03_请教各位大神_开仓数量不能小于100_这个代码行在哪里-3fe362d6.py	3fe362d602e7c4bebda37c5c3b8c8bd2	请教各位大神 “开仓数量不能小于100” 这个代码行在哪里？	compile-error										9
+strategies/2026-11-03_这个tick策略的回测进度一直都是0_怎么回事-dddb354e.py	dddb354e642c922d5ecec578c10c19b4	这个tick策略的回测进度一直都是0%，怎么回事？	incompatible-futures										9
+strategies/2026-11-03_求助_场外基金购买错误-162c60be.py	162c60be54f900d1270cf21de584bc01	求助：场外基金购买错误	compile-error										9
+strategies/2026-11-03_期货9_00开盘价数据出错-aed45d1d.py	aed45d1d38aaedc2c2f4b7037db3bbde	期货9：00开盘价数据出错。	incompatible-futures										9
+strategies/2026-11-03_求助_不知道为什么_运行过程中出现这个错误_怎么都解决不了-42265328.py	42265328d541498c47401c14574c702f	求助，不知道为什么，运行过程中出现这个错误，怎么都解决不了	compile-error										9
+strategies/2026-11-03_融资可用保证金为什么出现负值-73f7a8e3.py	73f7a8e39236eea6594839d7b5c66579	融资可用保证金为什么出现负值？	compile-error										9
+strategies/2026-11-03_策略用来回测海天味业没问题_但改为招商银行却出现问题_求解决-09f18048.py	09f18048288a88a9ccc7610ee541b05e	策略用来回测海天味业没问题，但改为招商银行却出现问题，求解决	normalized	2024-01-01	2024-12-31	365	16.84	16.84	0.49	18.44	-0.016	fail	9
+strategies/2026-11-03_怎么查看实时数据-65d2f9c5.py	65d2f9c59cf1fd733fa24b90cc235214	怎么查看实时数据？	normalized	2024-01-01	2024-12-31	365	-1.50	-1.50	-0.14	24.04	-0.2554	fail	9
+strategies/2026-11-03_我只说一句_为什么按照官方教程的都做不对-f2aa5cd9.py	f2aa5cd95410c3fbb303972848a1b214	我只说一句，为什么按照官方教程的都做不对	normalized	2024-01-01	2024-12-31	365	3.50	3.50	-0.09	2.77	0.0073	fail	9
+strategies/2026-11-03_请问今天50ETF盘中价格怎么不正常-1d43f5be.py	1d43f5be8b7164a047c4f1feeb4125ca	请问今天50ETF盘中价格怎么不正常？	compile-error										9
+strategies/2026-11-03_融资帐号问题-9635c3aa.py	9635c3aa562dc6e81ba59241a5dfef1b	融资帐号问题	normalized	2024-01-01	2024-12-31	365	7.82	7.82	0.19	14.33	-0.0651	fail	9
+strategies/2026-11-03_向导式策略的下单程序有BUG_请管理员检查一下-655d359e.py	655d359e27447a0094045a07b95f4332	向导式策略的下单程序有BUG！请管理员检查一下	normalized	2024-01-01	2024-12-31	365	8.14	8.14	0.26	11.39	-0.0325	fail	9
+strategies/2026-11-03_基金回测出现的问题_出现两次赎回-e7e1b4f4.py	e7e1b4f4ddf140db5194f07ed7a2f92d	基金回测出现的问题，出现两次赎回	compile-error										9
+strategies/2026-11-03_tick回测限价单如何撮合-2177794d.py	2177794db35d6e60e3f3e2de4152b436	tick回测限价单如何撮合？	incompatible-futures										9
+strategies/2026-11-03_数据问题_用_get_current_data_获取2018年1月8日开盘价数据错误-7c186687.py	7c1866879ff3e51aa654e066cef8ac71	【数据问题】用 get_current_data()获取2018年1月8日开盘价数据错误	incompatible-futures										9
+strategies/2026-11-03_请问期货分钟回测如何解决10_15-10_30暂停时间段_发出交易失败的_问题-e75392ac.py	e75392acfc64de3578725d0a7f4dfcd8	请问期货分钟回测如何解决10:15-10:30暂停时间段，发出交易失败的 问题	incompatible-futures										9
+strategies/2026-11-03_有几个关键语句写不出来-10462767.py	10462767a29759cef45c042d9e6c9a9b	有几个关键语句写不出来	compile-error										9
+strategies/2026-11-03_算不算bug-9e7c5b0a.py	9e7c5b0ad5ce44aecc6d51bfcfd8a610	算不算bug?	incompatible-futures										9
+strategies/2026-11-03_回测和研究不一致-a8dbcaaa.py	a8dbcaaac926268e45bd2f82b13b5a0e	回测和研究不一致	compile-error										9
+strategies/2026-11-03_pe指标计算问题-1e2458a2.py	1e2458a2973d701dca23fc3fe9d4c6bc	pe指标计算问题	compile-error										9
+strategies/2026-11-03_print_列表中有中文_就打印错误-663fa834.py	663fa83446483a65a47cc1ff6dff96a2	print 列表中有中文，就打印错误？	compile-error										9
+strategies/2026-11-03_右侧趋势策略-836ac95c.py	836ac95c6539037bfbd3e5ec9a4679ed	右侧趋势策略	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_关于大盘择时的问题-ec05935a.py	ec05935a101c1975a308b521447555ef	关于大盘择时的问题	normalized	2024-01-01	2024-12-31	365	2.85	2.85	-0.03	27.66	-0.2481	fail	9
+strategies/2026-11-03_聚宽研究环境中上传文件有什么限制-bce47523.py	bce47523c927b3587cd99452d0bd6cc8	聚宽研究环境中上传文件有什么限制？	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_请教一下策略始终执行不了的问题-15582f8d.py	15582f8d340448954f358bc781dcd55b	请教一下策略始终执行不了的问题	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_关于实测模拟无法进行问题-23f682db.py	23f682db89b66bfa522617653c1b4935	关于实测模拟无法进行问题	normalized	2024-01-01	2024-12-31	365	162.47	162.47	4.65	21.11	1.4136	pass	9
+strategies/2026-11-03_小市值的流动性问题-b48567e7.py	b48567e7becbcbe3adb5af45e4ef189d	小市值的流动性问题	normalized	2024-01-01	2024-12-31	365	44.27	44.27	0.85	42.55	0.0172	fail	9
+strategies/2026-11-03_如何避免过大的最大回撤_新手求问-150b9389.py	150b9389c8c7b055ba917e127e443133	如何避免过大的最大回撤（新手求问）	normalized	2024-01-01	2024-12-31	365	-28.27	-28.27	-0.97	40.79	-0.6906	fail	9
+strategies/2026-11-03_运行回测出现问题-32fca4b9.py	32fca4b938bacbb523477b8b98b38a69	运行回测出现问题。	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_回测收益率为0问题-64dfbd8c.py	64dfbd8c126c0427c14cca37a21f05d4	回测收益率为0问题	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_已解决_关于聚宽成交价格_复权的问题_求助各位盼回复-32b3258e.py	32b3258e378abb2a82120b93208e1765	【已解决】关于聚宽成交价格、复权的问题，求助各位盼回复	normalized	2024-01-01	2024-12-31	365	-12.88	-12.88	-0.33	42.65	-0.5553	fail	9
+strategies/2026-11-03_请问该如何使用聚宽量化系统-ddb2bc1d.py	ddb2bc1d69cc46014e0de410aeb45f05	请问该如何使用聚宽量化系统	normalized	2024-01-01	2024-12-31	365	7.82	7.82	0.19	14.33	-0.0651	fail	9
+strategies/2026-11-03_完善策略代码-011b59dd.py	011b59ddb5dabde78fe845133afc85ea	完善策略代码	normalized	2024-01-01	2024-12-31	365	1.31	1.31	-0.05	48.51	-0.472	fail	9
+strategies/2026-11-03_如何复现出因子看板的绩效_因子组合具体的构建流程-aa812400.py	aa8124002a68252cb4776968ea70bc1b	如何复现出因子看板的绩效？【因子组合具体的构建流程】	normalized	2024-01-01	2024-12-31	365	4.62	4.62	0.03	22.69	-0.1807	fail	9
+strategies/2026-11-03_不知是系统计算问题还是我理解问题-4b442a03.py	4b442a03e086afae36a50436b07cf46d	不知是系统计算问题还是我理解问题？	normalized	2024-01-01	2024-12-31	365	3.50	3.50	-0.09	2.77	0.0073	fail	9
+strategies/2026-11-03_请大神帮我补一个转换中文名字的代码-f6597225.py	f65972254f10be6963b5c684df458d7e	请大神帮我补一个转换中文名字的代码	incompatible-notrunnable										9
+strategies/2026-11-03_请大神帮一把_这个_buylist_39_自动转换成中文名称-657c1463.py	657c14633f31cda8ad8de181d93046aa	请大神帮一把：这个’buylist&#39;自动转换成中文名称	incompatible-notrunnable										9
+strategies/2026-11-03_请问_复刻上涨突破5日均价1_策略_但收益率为0_错在哪里-8d39ca44.py	8d39ca441805993c9b765dedffb08356	请问，复刻上涨突破5日均价1%策略，但收益率为0，错在哪里？	incompatible-notrunnable										9
+strategies/2026-11-03_关于持仓资金在11月3日为什么突然增长了近70多万-52f2512b.py	52f2512b3650b0cbaa4c9b595c53b9e8	关于持仓资金在11月3日为什么突然增长了近70多万？	incompatible-futures										9
+strategies/2026-11-03_因子BIAS5在指定的钢铁股票池里回测_为啥效果那么好-68a9fe59.py	68a9fe59553afec5f02c09817470d601	因子BIAS5在指定的钢铁股票池里回测，为啥效果那么好	normalized	2024-01-01	2024-12-31	365	157.00	157.00	4.39	11.74	1.4526	pass	9
+strategies/2026-11-03_PE-百分位策略网格化投资-47201557.py	4720155708a8afedaa2d62ddbe9eac92	PE-百分位策略网格化投资	compile-error										9
+strategies/2026-11-03_回测的BUG-a215f653.py	a215f65388f6592c1fd69a00541951c1	回测的BUG	normalized	2024-01-01	2024-12-31	365	3.10	3.10	-0.19	2.25	0.0085	fail	9
+strategies/2026-11-03_有偿求助_网格策略参数调整-af52da8b.py	af52da8b62b26a70f6b1154423426593	【有偿求助】网格策略参数调整	normalized	2024-01-01	2024-12-31	365	-1.87	-1.87	-0.70	6.01	-0.0788	fail	9
+strategies/2026-11-03_基金回测中001938数据错误-3e53b837.py	3e53b837889a775d7886abc0d9e54903	基金回测中001938数据错误	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_悬赏分钟止损-838d19b8.py	838d19b8034c2d7aafdf78831471751d	悬赏分钟止损	compile-error										9
+strategies/2026-11-03_场外基金申购_为什么总是会出现空单的问题-eee5453a.py	eee5453a5a3684309bc3af31468a6b38	场外基金申购，为什么总是会出现空单的问题	normalized	2024-01-01	2024-12-31	365	9.56	9.56	0.28	15.11	-0.0555	fail	9
+strategies/2026-11-03_想写一个30分钟级别的简易版海龟策略_但是下不了单-d69211d0.py	d69211d0d638aac62f791e9dbc866c25	想写一个30分钟级别的简易版海龟策略，但是下不了单	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_融券函数出错-f8ac10bf.py	f8ac10bfef9da9452330d8223fc6566a	融券函数出错	compile-error										9
+strategies/2026-11-03_为什么2020年_5月6_号后没有变化了-dabf1f78.py	dabf1f782ce568388161d4225d56845a	为什么2020年 5月6 号后没有变化了	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_基金分红后收益错误-c8e056ad.py	c8e056adaf2aa7293eab276aa629d5e3	基金分红后收益错误	compile-error										9
+strategies/2026-11-03_策略买卖列表里_卖的列表一直为空-6672f997.py	6672f99766bb96dca8a718ffb63ce935	策略买卖列表里，卖的列表一直为空	normalized	2024-01-01	2024-12-31	365	-37.22	-37.22	-1.42	51.14	-0.8836	fail	9
+strategies/2026-11-03_关于融资融券的保证金比例-2d4c403b.py	2d4c403b822e8f972b724d7e7631e218	关于融资融券的保证金比例	normalized	2024-01-01	2024-12-31	365	-34.66	-34.66	-0.87	50.02	-0.8468	fail	9
+strategies/2026-11-03_回测结果中仓位的记录情况有些诡异-6ec6b418.py	6ec6b418c23122478f8e88ab58413e06	回测结果中仓位的记录情况有些诡异	normalized	2024-01-01	2024-12-31	365	19.87	19.87	0.25	55.83	-0.3596	fail	9
+strategies/2026-11-03_求助贴_进行融资融券交易后_无法平仓_怎么调整呢-4f46921e.py	4f46921e158a2c2a8e64d7c78e438085	求助贴：进行融资融券交易后，无法平仓，怎么调整呢？	normalized	2024-01-01	2024-12-31	365	0.86	0.86	-5.11	0.56	0.003	fail	9
+strategies/2026-11-03_均线策略_不交易_大神帮忙修改下-0e56f91b.py	0e56f91b3e3590b1ab2eb95f3f46ea51	均线策略，不交易，大神帮忙修改下。	incompatible-notrunnable										9
+strategies/2026-11-03_为什么这个策略没有交易记录_tick数据一直重复-c07bac9f.py	c07bac9f64b5cbbc9a77c38ce7908d46	为什么这个策略没有交易记录？tick数据一直重复	incompatible-futures										9
+strategies/2026-11-03_png文件无法写入到研究环境的根目录下面-ba4ba214.py	ba4ba214f4c1465fdb24dad6da8a5404	png文件无法写入到研究环境的根目录下面	incompatible-notrunnable										9
+strategies/2026-11-03_为什么handle_data中现价和成交价不一样-3b3e3add.py	3b3e3adde9277defbd0863253d413c31	为什么handle_data中现价和成交价不一样	normalized	2024-01-01	2024-12-31	365	9.63	9.63	0.30	11.29	-0.0166	fail	9
+strategies/2026-11-03_为什么回测时总出现_下单目标数量_lt_0_执行清仓处理-add092b7.py	add092b7c12cc5a4b39b2e33d2bf9130	为什么回测时总出现：下单目标数量 &lt; 0: 执行清仓处理	normalized	2024-01-01	2024-12-31	365	-1.98	-1.98	-5.24	2.06	-0.0404	fail	9
+strategies/2026-11-03_ipynb都正常的转换成_py作为头文件策略里导入就出错了-2f984f60.py	2f984f605a383a2b8a261348c1d5c2c6	.ipynb都正常的转换成.py作为头文件策略里导入就出错了	normalized	2024-01-01	2024-12-31	365	0.25	0.25	-18.57	0.10	0.0015	fail	9
+strategies/2026-11-03_问问这个策略_狂飙的那段是因为啥状况-1a73b404.py	1a73b4043f335ad32d40e578916bba59	问问这个策略，狂飙的那段是因为啥状况？	compile-error										9
+strategies/2026-11-03_请问策略回测时间巨长是怎么回事-def07769.py	def077698a85c2db33b2044033c97f4c	请问策略回测时间巨长是怎么回事？	compile-error										9
+strategies/2026-11-03_系统自带双均线策略_回测中有数据丢失导致策略收益曲线失真-c61bb173.py	c61bb173332a013e8594a1821c9c75a0	系统自带双均线策略。回测中有数据丢失导致策略收益曲线失真	normalized	2024-01-01	2024-12-31	365	11.70	11.70	0.45	11.15	0.0055	fail	9
+strategies/2026-11-03_2019年8月30日换手率取不到-5f8433f1.py	5f8433f15b4a04c6990720f779fd9239	2019年8月30日换手率取不到	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_期货RU_CU个别时段回测不能开仓或者不能平仓是怎么回事-4b6d969b.py	4b6d969b4cdd19614f455ded091750f8	期货RU、CU个别时段回测不能开仓或者不能平仓是怎么回事	incompatible-futures										9
+strategies/2026-11-03_R-breaker策略_没有收益-d23502e6.py	d23502e69d0133cafd5ba3bd9c89ccbd	R-breaker策略，没有收益	incompatible-futures										9
+strategies/2026-11-03_关于回测结果-归因分析-滑点对净值曲线的影响-7c55548e.py	7c55548e7c25ac38db8f995a44936f8b	关于回测结果-归因分析-滑点对净值曲线的影响	incompatible-futures										9
+strategies/2026-11-03_策略列表_Dual_Thrust_想改一下_哪位高手指点-12b93bf7.py	12b93bf706fdd7737088cb78f0bf6921	策略列表（Dual_Thrust）想改一下，哪位高手指点	incompatible-futures										9
+strategies/2026-11-03_想根据RSRS的择时做海天味业_麻烦帮忙修改一下-1e851818.py	1e851818c12475b714d019bf253230db	想根据RSRS的择时做海天味业，麻烦帮忙修改一下	normalized	2024-01-01	2024-12-31	365	18.19	18.19	0.72	14.86	0.0333	fail	9
+strategies/2026-11-03_现有策略_想按照申万一级行业分散选股_每个请问如何修改-ede9c82e.py	ede9c82e0bfce81a23fa23f65d6c4c7d	现有策略，想按照申万一级行业分散选股，每个请问如何修改	compile-error										9
+strategies/2026-11-03_悬赏_让代码剔除ST_停牌_退市的股票-07b3f945.py	07b3f945f4e798598bdc894cc24a147a	悬赏  让代码剔除ST 停牌 退市的股票	compile-error										9
+strategies/2026-11-03_策略用python3回测报错_请问怎么修改-73551d28.py	73551d28b185c8dc4df3dcc58fa75592	策略用python3回测报错，请问怎么修改？？	compile-error										9
+strategies/2026-11-03_回测可以_模拟运行出错了-9864b066.py	9864b06644dc1c5f1f4dc269fa4b3de8	回测可以，模拟运行出错了	compile-error										9
+strategies/2026-11-03_新手_第一次在聚宽上写策略_麻烦看下对不对-612a2fd3.py	612a2fd3e4084f13d8418c095e3db214	新手，第一次在聚宽上写策略，麻烦看下对不对？	normalized	2024-01-01	2024-12-31	365	23.58	23.58	1.26	9.33	0.1425	pass	9
+strategies/2026-11-03_当沪深300指数调入权重股时_get_index_weights的api函数没有来得及更新相关权重股信息_请管理员协助核-49176efb.py	49176efb32b9afd12a39fc2eb6f6d4ae	当沪深300指数调入权重股时，get_index_weights的api函数没有来得及更新相关权重股信息，请管理员协助核实	incompatible-futures										9
+strategies/2026-11-03_为什么程序能跑通但是没有交易的动作-74f0468a.py	74f0468a5a71ecf57d664c97c72c7385	为什么程序能跑通但是没有交易的动作	compile-error										9
+strategies/2026-11-03_怎么写成为策略啊_求大神把代码详细出来可以吗_可以回测的-36ab75ca.py	36ab75ca3f7e1cba2208aac5c5a3e317	怎么写成为策略啊？求大神把代码详细出来可以吗？可以回测的	normalized	2024-01-01	2024-12-31	365	7.82	7.82	0.19	14.33	-0.0651	fail	9
+strategies/2026-11-03_如何用context_portfolio_returns计算组合当天的总收益呢-8306d4d0.py	8306d4d03a8f3f05ee36e3dc7f5dc004	如何用context.portfolio.returns计算组合当天的总收益呢？	incompatible-futures										9
+strategies/2026-11-03_为什么我写的策略会报下面的错误-ecc692d1.py	ecc692d15870333242b51e33ddd93b53	为什么我写的策略会报下面的错误	compile-error										9
+strategies/2026-11-03_因子分析结果与实际回测差异-6b83a761.py	6b83a761968fcca4da7a9567030a661a	因子分析结果与实际回测差异	compile-error										9
+strategies/2026-11-03_在_positions_中不存在-ae02768b.py	ae02768be567c9fe6643ced0ed76e484	在 positions 中不存在	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_请高手帮助_聚宽不能获得可转债_债券数据_能否通过外部获得_谢谢-a78ada34.py	a78ada34044704475391a7899497987b	请高手帮助，聚宽不能获得可转债、债券数据，能否通过外部获得，谢谢。	normalized	2024-01-01	2024-12-31	365	50.73	50.73	1.09	21.27	0.2946	pass	9
+strategies/2026-11-03_请大神帮忙看下为什么在我的交易_还没成功买入-511831ca.py	511831cac790dd27ccea1cf13f09d30e	请大神帮忙看下为什么在我的交易，还没成功买入？	normalized	2024-01-01	2024-12-31	365	6.73	6.73	0.26	7.32	-0.0059	fail	9
+strategies/2026-11-03_为什么在策略环境里面不可以调用statsmodels_api下面的UnobservedComponents包_而在研究环-9cad7a7b.py	9cad7a7b5870eaea6d2004f02194ed8b	为什么在策略环境里面不可以调用statsmodels.api下面的UnobservedComponents包，而在研究环境可以？	compile-error										9
+strategies/2026-11-03_请问_基金数据中有加仓_持仓_持仓比例数据吗-eaa22991.py	eaa22991d6043ba6ba9a60087520d0a9	请问，基金数据中有加仓、持仓、持仓比例数据吗	compile-error										9
+strategies/2026-11-03_策略没有回测收益_日志显示的都正常-df8311aa.py	df8311aa9986cdbd9d9db93f36010dce	策略没有回测收益，日志显示的都正常	incompatible-futures										9
+strategies/2026-11-03_固定滑点0_01_限价卖出滑点判断无效-b7780099.py	b778009930765884f5c90c23a3d13242	固定滑点0.01，限价卖出滑点判断无效？	failed										9
+strategies/2026-11-03_请问为什么会出现那么多买入100只-c0c41a84.py	c0c41a84d8c16e79aa982ecd069d0700	请问为什么会出现那么多买入100只？	compile-error										9
+strategies/2026-11-03_发现平台API的bug_还是-a1560e04.py	a1560e04d7263583797c7ed0f41edcd8	发现平台API的bug?还是？	compile-error										9
+strategies/2026-11-03_持仓显示不出来-31ef5108.py	31ef51080e34367cc653cd76c1419f1b	持仓显示不出来	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_向大神求助_编译运行正常_模拟交易无任何响应-b051b215.py	b051b21587324b0c779874ae99b2cfa8	向大神求助：编译运行正常，模拟交易无任何响应	compile-error										9
+strategies/2026-11-03_get_current_data在morning的使用问题-46524c38.py	46524c381c909fcf899d9ec9cdcb4b3e	get_current_data在morning的使用问题	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_成交量的回测数据有错误_已解答-ed503d5e.py	ed503d5e7466b6720e57a2da21e991c4	成交量的回测数据有错误？！？！[已解答]	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_这个策略为何回测正确_模拟就不对-92a611f8.py	92a611f89bec552c0281038c00269667	这个策略为何回测正确,模拟就不对?	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_399006的数据有严重错误-f8c808fe.py	f8c808fee3060bef2277d36de385b041	399006的数据有严重错误	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_当天卖出股票的钱_当天不能再买进-ace8d89e.py	ace8d89ecd7fc2a3fe08b274c6f50f1d	当天卖出股票的钱，当天不能再买进？	normalized	2024-01-01	2024-12-31	365	5.93	5.93	0.09	20.14	-0.1421	fail	9
+strategies/2026-11-03_请教当期EMA的调用方法以及N期前EMA数值的调用方法-688a1c5c.py	688a1c5c5f1f9c86e8c1c68f49b4036c	请教当期EMA的调用方法以及N期前EMA数值的调用方法	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-03_如何避免因为停牌而导致无法下单-442d9600.py	442d9600b7ac8e37b1dfe97e205c84a0	如何避免因为停牌而导致无法下单？	incompatible-notrunnable										9
+strategies/2026-11-03_固定滑点0_01_限价卖出滑点判断无效-b7780099.py	b778009930765884f5c90c23a3d13242	固定滑点0.01，限价卖出滑点判断无效？	failed										9
