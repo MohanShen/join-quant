@@ -182,6 +182,7 @@ study 做到穷尽、又跑过 enhance 的 ETF动量。知识库一直记着「�
 | 股息率 | risk-premium | edge pass 2026-09-21（[[红利低频]]） | 红利、高股息、dividend yield |
 | 风格轮动择时 | anomaly | edge pass 2026-09-21（[[大小盘轮动]] q-1，**已证伪**；epoch 6 u-1 复证伪） | 大小盘切换、风格投票 |
 | 低价股效应 | anomaly | [[大小盘轮动]] u-7（2026-09-22）：同等小市值上删去 <¥9 上限，年化腰斩；[[红利质量]] q-e9-minlots（2026-11-01，epoch 9）：删去随资金变化的 MIN_LOTS 价格上限（¥1M 下 ≈¥20），sharpe 1.09→0.41 | 低价股、低价小盘、nominal price、低价倾斜（非设计） |
+| 分红持续性 | risk-premium | [[蓝筹分红持续性]] u-e9-dxpers（2026-11-01，epoch 9）：删去三年连续分红门槛+级联、只按最近一年股息率取前 5，sharpe 2.02→0.21、maxDD 14.61→28.80 | 连续分红、分红稳定性、dividend persistence、股息陷阱回避 |
 
 > **edge pass 2026-09-21**：14 个家族一次性定名，0 回测。产出见 `node utils/edge-redundancy.js`。
 > 最重要的一条结论是**冗余**：**5 个家族**（[[小市值]]、[[七星高照]]、[[多因子ML]]、[[ETF动量]]、
