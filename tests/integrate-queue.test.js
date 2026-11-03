@@ -456,6 +456,24 @@ test('the incremental round', async t => {
     });
   });
 
+  await t.test('outcome 2: a later re-promote that omits parents does not resurrect them', () => {
+    const w = world({
+      A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base' },
+      B: { u: 'U', obj: 0.4, sharpe: 1.8, val: 2.1, R: 3, valOn: 'base' },
+    });
+    inWorld(w, ({ queue, promoted }) => {
+      promoted.record({ universe: 'U', action: 'promote', candidateId: 'enhance/candidates/m-1.py',
+                        kind: 'merged', members: ['A', 'B'], sharpe: 2.5,
+                        parents: ['strategies/A.py', 'strategies/B.py'] });
+      // e.g. a row recorded only to carry the candidate's OOS number
+      promoted.record({ universe: 'U', action: 'promote', candidateId: 'enhance/candidates/m-1.py',
+                        kind: 'merged', members: ['A', 'B'], sharpe: 2.5, note: 'OOS result recorded' });
+      const r = row('U', queue.build());
+      assert.strictEqual(r.action, 'idle');
+      assert.deepStrictEqual(promoted.current('U')[0].parents, ['strategies/A.py', 'strategies/B.py']);
+    });
+  });
+
   await t.test('outcome 2: a parent family\'s NEW best variant re-arrives', () => {
     const w = world({
       A: { u: 'U', obj: 0.5, sharpe: 2.0, val: 2.1, R: 3, valOn: 'base' },

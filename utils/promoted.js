@@ -136,6 +136,11 @@ function current(universe) {
   for (const e of events({ universe })) {
     if (e.action === 'promote') {
       if (!harness.measurementValid(e.epoch || null)) continue;
+      // A re-promote of a live candidate (e.g. a row carrying its OOS number) that leaves
+      // `parents` blank keeps the ones already recorded. Replacing them with nothing made both
+      // absorbed parents read as fresh arrivals again (2026-11-03, after pbm-oos-1's re-promote).
+      const prior = live.get(e.candidateId);
+      if (!e.parents && prior && prior.parents.length) e.parents = prior.parents.join('+');
       live.set(e.candidateId, {
         universe, candidateId: e.candidateId, kind: e.kind || 'family',
         members: e.members ? e.members.split('+') : [],
