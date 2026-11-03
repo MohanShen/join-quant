@@ -1,648 +1,8 @@
 {
-  "lastUpdated": "2026-11-02T22:47:58.156Z",
+  "lastUpdated": "2026-11-03T23:20:07.570Z",
   "queue": [
     {
       "rank": 21,
-      "band": "unscreened",
-      "priority": null,
-      "key": "9bc880cbe5bfac4546efbe3ab675f359",
-      "uniqueKey": "9bc880cbe5bfac4546efbe3ab675f359",
-      "postId": "5ef9d209382bdd8f2523dd29ab37704b",
-      "backtestId": "93d68f99b4ea6784ab05909a0558735f",
-      "title": "tushare和聚宽的数据不一致？",
-      "url": "https://www.joinquant.com/view/community/detail/5ef9d209382bdd8f2523dd29ab37704b",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 22,
-      "band": "unscreened",
-      "priority": null,
-      "key": "a2713fcd26dfac626eec13eb706add48",
-      "uniqueKey": "a2713fcd26dfac626eec13eb706add48",
-      "postId": "29a5e6079fd582bf61745caa58e34ac1",
-      "backtestId": "d086b50b36e1a31cf61d3a8fa461dcbf",
-      "title": "为什么取MAC60指定值的股票为0？",
-      "url": "https://www.joinquant.com/view/community/detail/29a5e6079fd582bf61745caa58e34ac1",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 23,
-      "band": "unscreened",
-      "priority": null,
-      "key": "b007854a1b2c00334826818ce8ebdedb",
-      "uniqueKey": "b007854a1b2c00334826818ce8ebdedb",
-      "postId": "eba8c354dac7d9d61a1bf44664edf4cb",
-      "backtestId": "d5e5abe4a33fc718208baa6639f4fa1e",
-      "title": "聚宽能运行，一创聚宽不能运行 报错，哪个大神懂",
-      "url": "https://www.joinquant.com/view/community/detail/eba8c354dac7d9d61a1bf44664edf4cb",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 24,
-      "band": "unscreened",
-      "priority": null,
-      "key": "85a8ee9783fd6e590127b322dc27d981",
-      "uniqueKey": "85a8ee9783fd6e590127b322dc27d981",
-      "postId": "d92a544cd52d55a13e3e7bad138a3f44",
-      "backtestId": "d8149b226c80ac22df68083d741da5f9",
-      "title": "回测策略超过了30M的限制如何解决",
-      "url": "https://www.joinquant.com/view/community/detail/d92a544cd52d55a13e3e7bad138a3f44",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 25,
-      "band": "unscreened",
-      "priority": null,
-      "key": "e871b6415f8690820f316628d60745c6",
-      "uniqueKey": "e871b6415f8690820f316628d60745c6",
-      "postId": "e4a6d4f5ab1ad42c6075903a8ba9e3dd",
-      "backtestId": "0f9d996773dc51b3f66385f59c88c692",
-      "title": "Statsmodels 统计包之 OLS 回归疑问",
-      "url": "https://www.joinquant.com/view/community/detail/e4a6d4f5ab1ad42c6075903a8ba9e3dd",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 26,
-      "band": "unscreened",
-      "priority": null,
-      "key": "9422360b833baebe6a2e92e20861e6eb",
-      "uniqueKey": "9422360b833baebe6a2e92e20861e6eb",
-      "postId": "c6126cc2044ad1461ce4a9edc047f7d6",
-      "backtestId": "2a525a07722d9391f96632512ba1eca5",
-      "title": "一创聚宽无法使用requests 爬虫",
-      "url": "https://www.joinquant.com/view/community/detail/c6126cc2044ad1461ce4a9edc047f7d6",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 27,
-      "band": "unscreened",
-      "priority": null,
-      "key": "87d87273f65fa81db50884d94e6a09c9",
-      "uniqueKey": "87d87273f65fa81db50884d94e6a09c9",
-      "postId": "10816e4753f6118f445303f524bbdd97",
-      "backtestId": "89ad51f97c00d558d66d3e85ac7a59df",
-      "title": "新手求救，交易无法正常执行！！",
-      "url": "https://www.joinquant.com/view/community/detail/10816e4753f6118f445303f524bbdd97",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 28,
-      "band": "unscreened",
-      "priority": null,
-      "key": "c091ba3906baa032ebde7bc5b9d31598",
-      "uniqueKey": "c091ba3906baa032ebde7bc5b9d31598",
-      "postId": "d8bdd38d02484ae91d3beb4370eda808",
-      "backtestId": "2e48f8774182acf5e08910c11a435cac",
-      "title": "分层分组的结构为什么不同组都是一样的结果",
-      "url": "https://www.joinquant.com/view/community/detail/d8bdd38d02484ae91d3beb4370eda808",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 29,
-      "band": "unscreened",
-      "priority": null,
-      "key": "3926001db68fb27991d27c4891852245",
-      "uniqueKey": "3926001db68fb27991d27c4891852245",
-      "postId": "4d33c1a0d2aa84b3223b533d5ee99851",
-      "backtestId": "5339d64e564fe1da3bf0a901dd3cd8c7",
-      "title": "可转债买入一直显示下单失败，证券代码错误",
-      "url": "https://www.joinquant.com/view/community/detail/4d33c1a0d2aa84b3223b533d5ee99851",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 30,
-      "band": "unscreened",
-      "priority": null,
-      "key": "8ec8c1b4e52c4e08a9197e528168bb17",
-      "uniqueKey": "8ec8c1b4e52c4e08a9197e528168bb17",
-      "postId": "969b716f360d34cb9f9db3178e87723d",
-      "backtestId": "5b9ca031ad14bd45b2929d3bfedf3e3c",
-      "title": "回测时价格不正确如何处理？",
-      "url": "https://www.joinquant.com/view/community/detail/969b716f360d34cb9f9db3178e87723d",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 31,
-      "band": "unscreened",
-      "priority": null,
-      "key": "4b0a54c71bdc349020872d3068bd8280",
-      "uniqueKey": "4b0a54c71bdc349020872d3068bd8280",
-      "postId": "6ddff0a29630b76e07a1390e6ccb48da",
-      "backtestId": "d4de575b7a9a1b6596565517ed283ecc",
-      "title": "510050标的回测交易数据不对",
-      "url": "https://www.joinquant.com/view/community/detail/6ddff0a29630b76e07a1390e6ccb48da",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 32,
-      "band": "unscreened",
-      "priority": null,
-      "key": "d395c61bb8020f79b01fad4640d518d4",
-      "uniqueKey": "d395c61bb8020f79b01fad4640d518d4",
-      "postId": "e3b0df8bb4d78b16260d69b12f5acb74",
-      "backtestId": "c75497e322fe79dcc51b32c73eb0ea43",
-      "title": "布林带代码问题",
-      "url": "https://www.joinquant.com/view/community/detail/e3b0df8bb4d78b16260d69b12f5acb74",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 33,
-      "band": "unscreened",
-      "priority": null,
-      "key": "c0ad835da5fe41ebd44841474cb289ef",
-      "uniqueKey": "c0ad835da5fe41ebd44841474cb289ef",
-      "postId": "80da895c195c5002d993a12a8cd7f240",
-      "backtestId": "cc5c61ade43d7eb333d17273829b28aa",
-      "title": "基于财务数据选股的简单尝试（作者：胖胖兵）",
-      "url": "https://www.joinquant.com/view/community/detail/80da895c195c5002d993a12a8cd7f240",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 34,
-      "band": "unscreened",
-      "priority": null,
-      "key": "b1a17f7770589a2aafc154ba23ae7fee",
-      "uniqueKey": "b1a17f7770589a2aafc154ba23ae7fee",
-      "postId": "d0d306bfd572a75739d980c5e836bc2a",
-      "backtestId": "ca5fc9357bc728a17d9824f49c0c2dfc",
-      "title": "复刻选取市值最小的10家公司，代码有个小问题。",
-      "url": "https://www.joinquant.com/view/community/detail/d0d306bfd572a75739d980c5e836bc2a",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 35,
-      "band": "unscreened",
-      "priority": null,
-      "key": "6a7d8ba942423d060de29a04fb01b7cb",
-      "uniqueKey": "6a7d8ba942423d060de29a04fb01b7cb",
-      "postId": "02009dd564789c12f9b2b59a0850938d",
-      "backtestId": "d18752c697e088a9b8ba914fb0b6a0a4",
-      "title": "怎样在策略回策的图表下面，加上多个股票同期的收益率曲线？",
-      "url": "https://www.joinquant.com/view/community/detail/02009dd564789c12f9b2b59a0850938d",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 36,
-      "band": "unscreened",
-      "priority": null,
-      "key": "a4ed4424210b4c4f08576c7ea34137c5",
-      "uniqueKey": "a4ed4424210b4c4f08576c7ea34137c5",
-      "postId": "ea4c7625a722cf0ec05ea5f2efa976f3",
-      "backtestId": "149c3f13597d4c4a68d6ee69cb23d666",
-      "title": "新手，大神能否帮找下编写错误，实在找不出了",
-      "url": "https://www.joinquant.com/view/community/detail/ea4c7625a722cf0ec05ea5f2efa976f3",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 37,
-      "band": "unscreened",
-      "priority": null,
-      "key": "c01dc26137577e6e610ec187e7150c95",
-      "uniqueKey": "c01dc26137577e6e610ec187e7150c95",
-      "postId": "21105ae31323b3331c219e4bedc2b744",
-      "backtestId": "cbecde76fc4853ed6994a869bceb2117",
-      "title": "实在是不清楚，两个代码完全不一样的策略，回测的结果一模一样",
-      "url": "https://www.joinquant.com/view/community/detail/21105ae31323b3331c219e4bedc2b744",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 38,
-      "band": "unscreened",
-      "priority": null,
-      "key": "7dc26d1e0eb6ed0265689aa156b9f8d4",
-      "uniqueKey": "7dc26d1e0eb6ed0265689aa156b9f8d4",
-      "postId": "975261d3668353475205078109831d74",
-      "backtestId": "aec3d928c770635c073ba15dd3a5cb74",
-      "title": "run_daily函数里面的every_bar不起作用吗？",
-      "url": "https://www.joinquant.com/view/community/detail/975261d3668353475205078109831d74",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 39,
-      "band": "unscreened",
-      "priority": null,
-      "key": "353fee929b5c049b4877af65fb06ec33",
-      "uniqueKey": "353fee929b5c049b4877af65fb06ec33",
-      "postId": "61f513b7d7ab28ac1e17022e92f36fab",
-      "backtestId": "2ec2c79d1039865e0c85fcec8bb3b4ce",
-      "title": "获取数据缺失",
-      "url": "https://www.joinquant.com/view/community/detail/61f513b7d7ab28ac1e17022e92f36fab",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 40,
-      "band": "unscreened",
-      "priority": null,
-      "key": "933e9e9b286f9b4f8ecd34ebe19327e7",
-      "uniqueKey": "933e9e9b286f9b4f8ecd34ebe19327e7",
-      "postId": "e66bbda5af95932fb4a453659b651ba4",
-      "backtestId": "5755ad43f339dbc3c5b61047fe3949ed",
-      "title": "期货交易中的order_value()函数",
-      "url": "https://www.joinquant.com/view/community/detail/e66bbda5af95932fb4a453659b651ba4",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 41,
-      "band": "unscreened",
-      "priority": null,
-      "key": "2eb1e2fbe96c3f2f50306afb2118063e",
-      "uniqueKey": "2eb1e2fbe96c3f2f50306afb2118063e",
-      "postId": "8d12a31c96e5471288f1854d56c528d6",
-      "backtestId": "945377dc160f104aa0f53c2a885389f0",
-      "title": "macd设置时间参数",
-      "url": "https://www.joinquant.com/view/community/detail/8d12a31c96e5471288f1854d56c528d6",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 42,
-      "band": "unscreened",
-      "priority": null,
-      "key": "07a6a6ddb3a7b5e32707e1d6381d0474",
-      "uniqueKey": "07a6a6ddb3a7b5e32707e1d6381d0474",
-      "postId": "8390b0f5885ad3228a6fd2039e0908a0",
-      "backtestId": "b6f0152c21ef61e24633c0c06d7c7356",
-      "title": "量化小白求助，单股策略改多股",
-      "url": "https://www.joinquant.com/view/community/detail/8390b0f5885ad3228a6fd2039e0908a0",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 43,
-      "band": "unscreened",
-      "priority": null,
-      "key": "9b895dc1eb14dc5d661b52ed0feeb5f9",
-      "uniqueKey": "9b895dc1eb14dc5d661b52ed0feeb5f9",
-      "postId": "6ed6c12858996b23092a0a973246c728",
-      "backtestId": "451b1a20e1e37e474777e31857f44b95",
-      "title": "请问如何检查有没有未来公式？",
-      "url": "https://www.joinquant.com/view/community/detail/6ed6c12858996b23092a0a973246c728",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 44,
-      "band": "unscreened",
-      "priority": null,
-      "key": "e3de98b860b3f98cc34eb39b063d360d",
-      "uniqueKey": "e3de98b860b3f98cc34eb39b063d360d",
-      "postId": "b1093215de039457758d9d1181222e0c",
-      "backtestId": "a0e03eaa65aa6a6e98bf377f01b3ed45",
-      "title": "融资融券保证金余额怎么算的",
-      "url": "https://www.joinquant.com/view/community/detail/b1093215de039457758d9d1181222e0c",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 45,
-      "band": "unscreened",
-      "priority": null,
-      "key": "0d8b28f96f4f23150254963cef85bc94",
-      "uniqueKey": "0d8b28f96f4f23150254963cef85bc94",
-      "postId": "f566f586736897a3b7c8f8e72d7c7243",
-      "backtestId": "9099a6bee68eec4e0ad4d829039adc2a",
-      "title": "回测失败",
-      "url": "https://www.joinquant.com/view/community/detail/f566f586736897a3b7c8f8e72d7c7243",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 46,
-      "band": "unscreened",
-      "priority": null,
-      "key": "8334c276e0f655cf56b40d987688aed2",
-      "uniqueKey": "8334c276e0f655cf56b40d987688aed2",
-      "postId": "27962eee63c569d3219834aca86eb832",
-      "backtestId": "d8d5de584140aed100efdce1595d75f1",
-      "title": "新手求助",
-      "url": "https://www.joinquant.com/view/community/detail/27962eee63c569d3219834aca86eb832",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 47,
-      "band": "unscreened",
-      "priority": null,
-      "key": "a3363ea3f722fdca3e6245b666f23190",
-      "uniqueKey": "a3363ea3f722fdca3e6245b666f23190",
-      "postId": "59b37ec029c49674b4b5a7d35dab1029",
-      "backtestId": "2d3c619f921725fa46d15524b49752fd",
-      "title": "新股无法购买..",
-      "url": "https://www.joinquant.com/view/community/detail/59b37ec029c49674b4b5a7d35dab1029",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 48,
-      "band": "unscreened",
-      "priority": null,
-      "key": "cecdad0fb51cbae7844fda72f518761c",
-      "uniqueKey": "cecdad0fb51cbae7844fda72f518761c",
-      "postId": "064d79b22145f1987a5921495b5a18f0",
-      "backtestId": "ced9b6a38680ef7995ab8582c2848bce",
-      "title": "求解",
-      "url": "https://www.joinquant.com/view/community/detail/064d79b22145f1987a5921495b5a18f0",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 49,
-      "band": "unscreened",
-      "priority": null,
-      "key": "17b21d8eb1a41ac337683226a602bf6a",
-      "uniqueKey": "17b21d8eb1a41ac337683226a602bf6a",
-      "postId": "a35bb7945d265eb4b76dc48466892da6",
-      "backtestId": "1c0cf98456b850aecce8bf81b77015c7",
-      "title": "研究MA这个栗子，时间不是当前时间的前5天均值！！！！",
-      "url": "https://www.joinquant.com/view/community/detail/a35bb7945d265eb4b76dc48466892da6",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 50,
-      "band": "unscreened",
-      "priority": null,
-      "key": "12b817e837462ee7781e83ddf0394d6c",
-      "uniqueKey": "12b817e837462ee7781e83ddf0394d6c",
-      "postId": "c717b57de1483eb4cdc3a96264811f79",
-      "backtestId": "37b85c3c8aafaf9feb0f5a5a579f04bd",
-      "title": "失败，请大神知道",
-      "url": "https://www.joinquant.com/view/community/detail/c717b57de1483eb4cdc3a96264811f79",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 51,
-      "band": "unscreened",
-      "priority": null,
-      "key": "b56fa9050d2756194596ac6abd0cb2cf",
-      "uniqueKey": "b56fa9050d2756194596ac6abd0cb2cf",
-      "postId": "2dfdad8fca7c083aea2cf6642a021f4d",
-      "backtestId": "bc3a7d9b85cc7cf8c022c56d5133dad2",
-      "title": "融券函数错误",
-      "url": "https://www.joinquant.com/view/community/detail/2dfdad8fca7c083aea2cf6642a021f4d",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 52,
-      "band": "unscreened",
-      "priority": null,
-      "key": "4309fe5fc59f1a91bef123bd99e073e9",
-      "uniqueKey": "4309fe5fc59f1a91bef123bd99e073e9",
-      "postId": "c556fa006f0e172d3430f428fc5d2bbc",
-      "backtestId": "54482e9f243a42183f30704500f51cdb",
-      "title": "很奇怪，回测正常，模拟失败",
-      "url": "https://www.joinquant.com/view/community/detail/c556fa006f0e172d3430f428fc5d2bbc",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 53,
-      "band": "unscreened",
-      "priority": null,
-      "key": "734fb9d20a338f960f1a5df764b0ec5f",
-      "uniqueKey": "734fb9d20a338f960f1a5df764b0ec5f",
-      "postId": "2c8189693329e254384907895bc6a073",
-      "backtestId": "8468ec2a9fbda6f5c835dfb886a36e55",
-      "title": "一个关于query的奇怪的问题",
-      "url": "https://www.joinquant.com/view/community/detail/2c8189693329e254384907895bc6a073",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 54,
-      "band": "unscreened",
-      "priority": null,
-      "key": "04fac498cffd1cabc1871d9ad1b52f08",
-      "uniqueKey": "04fac498cffd1cabc1871d9ad1b52f08",
-      "postId": "7c2bf75a7b6fcc449816862e8997700f",
-      "backtestId": "55c83c556a9c6aa9064911601f80d71f",
-      "title": "超额收益的计算",
-      "url": "https://www.joinquant.com/view/community/detail/7c2bf75a7b6fcc449816862e8997700f",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 55,
-      "band": "unscreened",
-      "priority": null,
-      "key": "fa2f904a34584c0b07ef68bf9d7825cb",
-      "uniqueKey": "fa2f904a34584c0b07ef68bf9d7825cb",
-      "postId": "3a9638574521da11d7d4c4f412f263a9",
-      "backtestId": "dbeb34e12e1edc03d5f47bb7596633e9",
-      "title": "均线策略回测收益为0，求帮忙看一下问题所在。",
-      "url": "https://www.joinquant.com/view/community/detail/3a9638574521da11d7d4c4f412f263a9",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 56,
-      "band": "unscreened",
-      "priority": null,
-      "key": "7610ca93fd9adc3eea512cb42f027394",
-      "uniqueKey": "7610ca93fd9adc3eea512cb42f027394",
-      "postId": "ba055b049ee4010ce9fb7d7fe0b99848",
-      "backtestId": "f6f249e0156c718ec67e48861a9d5e11",
-      "title": "请求帮忙搞个实盘的60分钟MACD",
-      "url": "https://www.joinquant.com/view/community/detail/ba055b049ee4010ce9fb7d7fe0b99848",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 57,
-      "band": "unscreened",
-      "priority": null,
-      "key": "d3ce18d3a063e4229c01220bd4006821",
-      "uniqueKey": "d3ce18d3a063e4229c01220bd4006821",
-      "postId": "00ecbaa398a355359a85ca5081c04db5",
-      "backtestId": "e944c474b89f923cf0d998e43352003a",
-      "title": "create_backtest能否改变security数值？",
-      "url": "https://www.joinquant.com/view/community/detail/00ecbaa398a355359a85ca5081c04db5",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 58,
-      "band": "unscreened",
-      "priority": null,
-      "key": "ee1caf55a7f6a9a13cd1177c36e8442d",
-      "uniqueKey": "ee1caf55a7f6a9a13cd1177c36e8442d",
-      "postId": "e96af38bbc39941a324251e5e77c6a28",
-      "backtestId": "d85b286f9d1c3497f8cbd1b765633920",
-      "title": "回测出错",
-      "url": "https://www.joinquant.com/view/community/detail/e96af38bbc39941a324251e5e77c6a28",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 59,
-      "band": "unscreened",
-      "priority": null,
-      "key": "c025c06edfd968b91e34800f3218ce51",
-      "uniqueKey": "c025c06edfd968b91e34800f3218ce51",
-      "postId": "ebf480bbf28c2ae9187a7e7c940f9328",
-      "backtestId": "a155ccab7a8bd88f0c2fd4bbf55b1c79",
-      "title": "请教！怎样解决同一条K线重复开仓问题？",
-      "url": "https://www.joinquant.com/view/community/detail/ebf480bbf28c2ae9187a7e7c940f9328",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 60,
-      "band": "unscreened",
-      "priority": null,
-      "key": "f38366e41a07bc2965ea396707a44f65",
-      "uniqueKey": "f38366e41a07bc2965ea396707a44f65",
-      "postId": "df116e09f2c5d975066dd11cb11aa714",
-      "backtestId": "e7cfb63080ecbcce8379bbf4674a489b",
-      "title": "一创平台策略问题",
-      "url": "https://www.joinquant.com/view/community/detail/df116e09f2c5d975066dd11cb11aa714",
-      "likes": 0,
-      "clones": 1,
-      "annualReturn": null,
-      "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
-    },
-    {
-      "rank": 61,
       "band": "unscreened",
       "priority": null,
       "key": "9392eb13e844ce249a39ae66276df708",
@@ -655,10 +15,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 62,
+      "rank": 22,
       "band": "unscreened",
       "priority": null,
       "key": "20648f1de0ed8cc4a37d839d43cf751e",
@@ -671,10 +31,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 63,
+      "rank": 23,
       "band": "unscreened",
       "priority": null,
       "key": "05852fa79efb237fe9ac24659c3d76db",
@@ -687,10 +47,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 64,
+      "rank": 24,
       "band": "unscreened",
       "priority": null,
       "key": "c7b82a14136ded8f0938d03790cf9279",
@@ -703,10 +63,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 65,
+      "rank": 25,
       "band": "unscreened",
       "priority": null,
       "key": "baa604811c4d9115de46f57eb3f7e922",
@@ -719,10 +79,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 66,
+      "rank": 26,
       "band": "unscreened",
       "priority": null,
       "key": "567758151e3554cd4812aacbbaad040b",
@@ -735,10 +95,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 67,
+      "rank": 27,
       "band": "unscreened",
       "priority": null,
       "key": "4a220923fb582d7ebcb9f7c5d470ea91",
@@ -751,10 +111,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 68,
+      "rank": 28,
       "band": "unscreened",
       "priority": null,
       "key": "4256607293fc9f05e208a3cbdb8ed847",
@@ -767,10 +127,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 69,
+      "rank": 29,
       "band": "unscreened",
       "priority": null,
       "key": "724d83030a768282e22d056891c7727c",
@@ -783,10 +143,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 70,
+      "rank": 30,
       "band": "unscreened",
       "priority": null,
       "key": "8960e437008a6f0da1e1074b703dd2cf",
@@ -799,10 +159,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 71,
+      "rank": 31,
       "band": "unscreened",
       "priority": null,
       "key": "484e6225e9a363a9adc10e8d2ebeb43c",
@@ -815,10 +175,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 72,
+      "rank": 32,
       "band": "unscreened",
       "priority": null,
       "key": "a925b20d2556ddb0a4d65aff7a06056e",
@@ -831,10 +191,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 73,
+      "rank": 33,
       "band": "unscreened",
       "priority": null,
       "key": "0b0e0ea180d10dcaab57117b764fc363",
@@ -847,10 +207,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 74,
+      "rank": 34,
       "band": "unscreened",
       "priority": null,
       "key": "e1870bea55edeb9e6dc3341575d55df8",
@@ -863,10 +223,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 75,
+      "rank": 35,
       "band": "unscreened",
       "priority": null,
       "key": "0efeabc9a88f1a3656a86b87e30b418e",
@@ -879,10 +239,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 76,
+      "rank": 36,
       "band": "unscreened",
       "priority": null,
       "key": "34e61b2af86f68d4930454668708bcbb",
@@ -895,10 +255,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 77,
+      "rank": 37,
       "band": "unscreened",
       "priority": null,
       "key": "f52f325df05d5dc2200bed62e75add72",
@@ -911,10 +271,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 78,
+      "rank": 38,
       "band": "unscreened",
       "priority": null,
       "key": "a25ded655d4fb8b3e19fcfcd5f54b679",
@@ -927,10 +287,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 79,
+      "rank": 39,
       "band": "unscreened",
       "priority": null,
       "key": "b0c6d85530f567a63ecd98dace92d8fd",
@@ -943,10 +303,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 80,
+      "rank": 40,
       "band": "unscreened",
       "priority": null,
       "key": "d592fc126cad50b19b7972e0f37d421d",
@@ -959,10 +319,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 81,
+      "rank": 41,
       "band": "unscreened",
       "priority": null,
       "key": "ae86566c06ac7a2f6e28c1d07e699b47",
@@ -975,10 +335,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 82,
+      "rank": 42,
       "band": "unscreened",
       "priority": null,
       "key": "aa42e85358e1fe17a6fe056978adad76",
@@ -991,10 +351,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 83,
+      "rank": 43,
       "band": "unscreened",
       "priority": null,
       "key": "577db5c4ee850a33d220bbcbe63d7fe3",
@@ -1007,10 +367,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 84,
+      "rank": 44,
       "band": "unscreened",
       "priority": null,
       "key": "4db04ce52b5c57594bcd070e26b8b735",
@@ -1023,10 +383,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 85,
+      "rank": 45,
       "band": "unscreened",
       "priority": null,
       "key": "48239551add45e7309f26b99197ce7ab",
@@ -1039,10 +399,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 86,
+      "rank": 46,
       "band": "unscreened",
       "priority": null,
       "key": "a0ac5020d27b6c2428e31c22458cf076",
@@ -1055,10 +415,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 87,
+      "rank": 47,
       "band": "unscreened",
       "priority": null,
       "key": "8a042e65d293c46dd791c5d75fa946b9",
@@ -1071,10 +431,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 88,
+      "rank": 48,
       "band": "unscreened",
       "priority": null,
       "key": "25f6bbfe638eda5b0c591b3a8bfdd6fe",
@@ -1087,10 +447,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 89,
+      "rank": 49,
       "band": "unscreened",
       "priority": null,
       "key": "49178563f2a1719b87ee78528c3846b8",
@@ -1103,10 +463,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 90,
+      "rank": 50,
       "band": "unscreened",
       "priority": null,
       "key": "a81c0d04f073c682fcbc9f23d40da214",
@@ -1119,10 +479,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 91,
+      "rank": 51,
       "band": "unscreened",
       "priority": null,
       "key": "9e224bad91354daae7a36a3e757d97d8",
@@ -1135,10 +495,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 92,
+      "rank": 52,
       "band": "unscreened",
       "priority": null,
       "key": "a7c6d101b4d2a35f6e97eb9d958643fa",
@@ -1151,10 +511,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 93,
+      "rank": 53,
       "band": "unscreened",
       "priority": null,
       "key": "84947b1fb9b57f9bdbab85737b2b4027",
@@ -1167,10 +527,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 94,
+      "rank": 54,
       "band": "unscreened",
       "priority": null,
       "key": "d8f0782a2b7b50af2f0021f437f6659e",
@@ -1183,10 +543,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 95,
+      "rank": 55,
       "band": "unscreened",
       "priority": null,
       "key": "18f0073434e4880d3676579acafde886",
@@ -1199,10 +559,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 96,
+      "rank": 56,
       "band": "unscreened",
       "priority": null,
       "key": "c1325d5134116371454f3fac9f21a285",
@@ -1215,10 +575,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 97,
+      "rank": 57,
       "band": "unscreened",
       "priority": null,
       "key": "5535a083a31d3144a56cf841974857de",
@@ -1231,10 +591,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 98,
+      "rank": 58,
       "band": "unscreened",
       "priority": null,
       "key": "b3c4bc1812f605f79ba97754eafc2ca8",
@@ -1247,10 +607,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 99,
+      "rank": 59,
       "band": "unscreened",
       "priority": null,
       "key": "1ba5a139b44c6b42ccb0504ddab0a03d",
@@ -1263,10 +623,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 100,
+      "rank": 60,
       "band": "unscreened",
       "priority": null,
       "key": "d1f18fac276ac572de5cd39daa1422ab",
@@ -1279,10 +639,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 101,
+      "rank": 61,
       "band": "unscreened",
       "priority": null,
       "key": "d8d523e73bdda28c5ae41b03ed2d9167",
@@ -1295,10 +655,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 102,
+      "rank": 62,
       "band": "unscreened",
       "priority": null,
       "key": "d72ef4e6e7f14548349f723b2eb94e61",
@@ -1311,10 +671,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 103,
+      "rank": 63,
       "band": "unscreened",
       "priority": null,
       "key": "6148b0cc0d25dde545bab184b1877400",
@@ -1327,10 +687,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 104,
+      "rank": 64,
       "band": "unscreened",
       "priority": null,
       "key": "aaad0e7f43475846d543e8c20cafcfb1",
@@ -1343,10 +703,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 105,
+      "rank": 65,
       "band": "unscreened",
       "priority": null,
       "key": "7881ef4a4bde842d2be040b4b2798f6e",
@@ -1359,10 +719,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 106,
+      "rank": 66,
       "band": "unscreened",
       "priority": null,
       "key": "73674cbbf4522da34877b5e954675aed",
@@ -1375,10 +735,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 107,
+      "rank": 67,
       "band": "unscreened",
       "priority": null,
       "key": "9fe04a69c1dc70dd783887fab350a270",
@@ -1391,10 +751,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 108,
+      "rank": 68,
       "band": "unscreened",
       "priority": null,
       "key": "1bcc95f68e3fea5f7b75b561a05d4781",
@@ -1407,10 +767,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 109,
+      "rank": 69,
       "band": "unscreened",
       "priority": null,
       "key": "5cc1776d43b4cf0c7c653a29a3d56bd8",
@@ -1423,10 +783,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 110,
+      "rank": 70,
       "band": "unscreened",
       "priority": null,
       "key": "a50d948df259cf77a64088506678868d",
@@ -1439,10 +799,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 111,
+      "rank": 71,
       "band": "unscreened",
       "priority": null,
       "key": "6b1b39ee8a526e1fef664effef29ce37",
@@ -1455,10 +815,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 112,
+      "rank": 72,
       "band": "unscreened",
       "priority": null,
       "key": "cba5c5b76b55843d26c48541115f4d24",
@@ -1471,10 +831,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 113,
+      "rank": 73,
       "band": "unscreened",
       "priority": null,
       "key": "ee0500ca0c2bdabccefaf9d7d6187162",
@@ -1487,10 +847,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 114,
+      "rank": 74,
       "band": "unscreened",
       "priority": null,
       "key": "b02fc53a1656e6ca8a55e8f3d80f6dfd",
@@ -1503,10 +863,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 115,
+      "rank": 75,
       "band": "unscreened",
       "priority": null,
       "key": "86ce8812d15f65d1d2d5c6646fac398c",
@@ -1519,10 +879,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 116,
+      "rank": 76,
       "band": "unscreened",
       "priority": null,
       "key": "8516068ece20e95d0c9c9a6d2a4d90c3",
@@ -1535,10 +895,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 117,
+      "rank": 77,
       "band": "unscreened",
       "priority": null,
       "key": "5668963abf47a5c13abfa05e45ffb510",
@@ -1551,10 +911,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 118,
+      "rank": 78,
       "band": "unscreened",
       "priority": null,
       "key": "e02215e11eeb6ab93afa8f8cc46352c0",
@@ -1567,10 +927,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 119,
+      "rank": 79,
       "band": "unscreened",
       "priority": null,
       "key": "c9113d3d39f7b11e0a930e5f442e4bc6",
@@ -1583,10 +943,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 120,
+      "rank": 80,
       "band": "unscreened",
       "priority": null,
       "key": "e9d7e73c6befc7ba5c6f0c3e233176e8",
@@ -1599,10 +959,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 121,
+      "rank": 81,
       "band": "unscreened",
       "priority": null,
       "key": "3cd67027d96fe7480c426c3edc9efcfe",
@@ -1615,10 +975,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 122,
+      "rank": 82,
       "band": "unscreened",
       "priority": null,
       "key": "b2ea3beae28fae1ace1878f880c957cd",
@@ -1631,10 +991,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 123,
+      "rank": 83,
       "band": "unscreened",
       "priority": null,
       "key": "a6edd3f33d8eeb2ef9eab49c7e752bab",
@@ -1647,10 +1007,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 124,
+      "rank": 84,
       "band": "unscreened",
       "priority": null,
       "key": "e36034af5de38525c0f95d2a60baa933",
@@ -1663,10 +1023,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 125,
+      "rank": 85,
       "band": "unscreened",
       "priority": null,
       "key": "cb49f79ef3a092221664474be6aa3ae2",
@@ -1679,10 +1039,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 126,
+      "rank": 86,
       "band": "unscreened",
       "priority": null,
       "key": "3c3f838912191e4db8bd15a7f369fa61",
@@ -1695,10 +1055,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 127,
+      "rank": 87,
       "band": "unscreened",
       "priority": null,
       "key": "28134776e369aa66ff132821d5738da7",
@@ -1711,10 +1071,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 128,
+      "rank": 88,
       "band": "unscreened",
       "priority": null,
       "key": "645b4bf416b066faf70dc54229c52066",
@@ -1727,10 +1087,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 129,
+      "rank": 89,
       "band": "unscreened",
       "priority": null,
       "key": "ba6495eb85181f25d5c6a15c66b52188",
@@ -1743,10 +1103,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 130,
+      "rank": 90,
       "band": "unscreened",
       "priority": null,
       "key": "9536916aee9fd6f5da0da528cf9816ca",
@@ -1759,10 +1119,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 131,
+      "rank": 91,
       "band": "unscreened",
       "priority": null,
       "key": "15da869a7b3a43a043b9d84d4cf64f75",
@@ -1775,10 +1135,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 132,
+      "rank": 92,
       "band": "unscreened",
       "priority": null,
       "key": "e45606d80e5e3683aad8c318293a19c4",
@@ -1791,10 +1151,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 133,
+      "rank": 93,
       "band": "unscreened",
       "priority": null,
       "key": "679e12f2b07b33bfb1f6317755b71382",
@@ -1807,10 +1167,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 134,
+      "rank": 94,
       "band": "unscreened",
       "priority": null,
       "key": "de9033c83cc4c55a2e69f32056dc2d5b",
@@ -1823,10 +1183,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 135,
+      "rank": 95,
       "band": "unscreened",
       "priority": null,
       "key": "2d6efce4c7ea81e997fb42d979074066",
@@ -1839,10 +1199,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 136,
+      "rank": 96,
       "band": "unscreened",
       "priority": null,
       "key": "ce1883d0f83a3bb54a26e5011324e1c7",
@@ -1855,10 +1215,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 137,
+      "rank": 97,
       "band": "unscreened",
       "priority": null,
       "key": "b77cb190a44e374c799124b36257cc01",
@@ -1871,10 +1231,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 138,
+      "rank": 98,
       "band": "unscreened",
       "priority": null,
       "key": "0410c3ac76fc7fcc4b172079500a65ab",
@@ -1887,10 +1247,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 139,
+      "rank": 99,
       "band": "unscreened",
       "priority": null,
       "key": "c8d089190cc9c4417d7b4d4090da3da2",
@@ -1903,10 +1263,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 140,
+      "rank": 100,
       "band": "unscreened",
       "priority": null,
       "key": "f51f33923e60601351b37d1422141774",
@@ -1919,10 +1279,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 141,
+      "rank": 101,
       "band": "unscreened",
       "priority": null,
       "key": "62f5f4f48d927a11405ab7b170c10af5",
@@ -1935,10 +1295,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 142,
+      "rank": 102,
       "band": "unscreened",
       "priority": null,
       "key": "c25713148f8193e5bb622c19ed3ab627",
@@ -1951,10 +1311,10 @@
       "clones": 1,
       "annualReturn": null,
       "compositeScore": "0.50",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 143,
+      "rank": 103,
       "band": "unscreened",
       "priority": null,
       "key": "4cf4cdeca951444cb8972effb689e220",
@@ -1967,10 +1327,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 144,
+      "rank": 104,
       "band": "unscreened",
       "priority": null,
       "key": "2c4d973a3154855bac8b0d15d8f420c9",
@@ -1983,10 +1343,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 145,
+      "rank": 105,
       "band": "unscreened",
       "priority": null,
       "key": "ce2601fc9696f37b2a2bb8db138d6ec6",
@@ -1999,10 +1359,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 146,
+      "rank": 106,
       "band": "unscreened",
       "priority": null,
       "key": "d2d23d4ed578095b08e284a76b171b39",
@@ -2015,10 +1375,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 147,
+      "rank": 107,
       "band": "unscreened",
       "priority": null,
       "key": "9912fb45d16d6e3327dca9494af5281a",
@@ -2031,10 +1391,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 148,
+      "rank": 108,
       "band": "unscreened",
       "priority": null,
       "key": "e74c39c00ecbf102bfa3bc3783d253ea",
@@ -2047,10 +1407,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 149,
+      "rank": 109,
       "band": "unscreened",
       "priority": null,
       "key": "739efda76629d5d5d6f246fe1b5c59bc",
@@ -2063,10 +1423,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 150,
+      "rank": 110,
       "band": "unscreened",
       "priority": null,
       "key": "c3098c6f079184db424bdb14633d2ec0",
@@ -2079,10 +1439,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 151,
+      "rank": 111,
       "band": "unscreened",
       "priority": null,
       "key": "bc8eb9f4e184fa5522a75fe95bd1b3be",
@@ -2095,10 +1455,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 152,
+      "rank": 112,
       "band": "unscreened",
       "priority": null,
       "key": "0184446802e4c7a48da2061beadd3311",
@@ -2111,10 +1471,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 153,
+      "rank": 113,
       "band": "unscreened",
       "priority": null,
       "key": "28408a6e3e972abb34b3cae1b7d4d9dd",
@@ -2127,10 +1487,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 154,
+      "rank": 114,
       "band": "unscreened",
       "priority": null,
       "key": "544dc31ba032bc191e1091867cde2bf0",
@@ -2143,10 +1503,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 155,
+      "rank": 115,
       "band": "unscreened",
       "priority": null,
       "key": "ea002a63260a2cbdddfcadb7e6478cfc",
@@ -2159,10 +1519,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 156,
+      "rank": 116,
       "band": "unscreened",
       "priority": null,
       "key": "3ba08a932a59e4122ce09f5b215fa3d5",
@@ -2175,10 +1535,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 157,
+      "rank": 117,
       "band": "unscreened",
       "priority": null,
       "key": "268ccd6b8842cbe412ceb557543a791e",
@@ -2191,10 +1551,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 158,
+      "rank": 118,
       "band": "unscreened",
       "priority": null,
       "key": "e2b5ccc4e72b58b77eed3ed07a414b20",
@@ -2207,10 +1567,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 159,
+      "rank": 119,
       "band": "unscreened",
       "priority": null,
       "key": "1a4c7d3570342a550553ac876cb0d0eb",
@@ -2223,10 +1583,26 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 160,
+      "rank": 120,
+      "band": "unscreened",
+      "priority": null,
+      "key": "0dd036e0682ec869c7cc8eed9ec93721",
+      "uniqueKey": "0dd036e0682ec869c7cc8eed9ec93721",
+      "postId": "3932d2a2071d6056bb4ef5eb00fbb0e2",
+      "backtestId": "b92945773b9c57ed18ddceb7f797db03",
+      "title": "求助帖",
+      "url": "https://www.joinquant.com/view/community/detail/3932d2a2071d6056bb4ef5eb00fbb0e2",
+      "likes": 0,
+      "clones": 0,
+      "annualReturn": null,
+      "compositeScore": "0.00",
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
+    },
+    {
+      "rank": 121,
       "band": "unscreened",
       "priority": null,
       "key": "4a87b3c640d77386731968889ac4ddb1",
@@ -2239,10 +1615,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 161,
+      "rank": 122,
       "band": "unscreened",
       "priority": null,
       "key": "54f6b09b31f18354951983e5e2ab6bfd",
@@ -2255,10 +1631,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 162,
+      "rank": 123,
       "band": "unscreened",
       "priority": null,
       "key": "0fdf441a7785260505c0c1345dfd5e14",
@@ -2271,10 +1647,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 163,
+      "rank": 124,
       "band": "unscreened",
       "priority": null,
       "key": "be2683cae026a16d5b6c3dcab2e1793b",
@@ -2287,10 +1663,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 164,
+      "rank": 125,
       "band": "unscreened",
       "priority": null,
       "key": "a08263c57027da11899223cd71e94d2b",
@@ -2303,10 +1679,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 165,
+      "rank": 126,
       "band": "unscreened",
       "priority": null,
       "key": "219c0c99f7cec2aebec7608ac801f32b",
@@ -2319,10 +1695,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 166,
+      "rank": 127,
       "band": "unscreened",
       "priority": null,
       "key": "9296ca9e6b0ba5f734d80f4154556211",
@@ -2335,10 +1711,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 167,
+      "rank": 128,
       "band": "unscreened",
       "priority": null,
       "key": "4807c57085b77396b28d183f7fd0a417",
@@ -2351,10 +1727,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 168,
+      "rank": 129,
       "band": "unscreened",
       "priority": null,
       "key": "2c0d5bb02290a853d11457fbcac99e50",
@@ -2367,10 +1743,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 169,
+      "rank": 130,
       "band": "unscreened",
       "priority": null,
       "key": "e62a570d9d1ca34bd53bfb466f762ba2",
@@ -2383,10 +1759,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 170,
+      "rank": 131,
       "band": "unscreened",
       "priority": null,
       "key": "8d2e83be94d762b8d61f473e76943eb3",
@@ -2399,10 +1775,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 171,
+      "rank": 132,
       "band": "unscreened",
       "priority": null,
       "key": "77eec8e7f6fa997bba2f7a9d4fdfd2cb",
@@ -2415,10 +1791,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 172,
+      "rank": 133,
       "band": "unscreened",
       "priority": null,
       "key": "2ef89a9500ef81f8532521dd579b4ced",
@@ -2431,10 +1807,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 173,
+      "rank": 134,
       "band": "unscreened",
       "priority": null,
       "key": "5180a58e58b924d3ba8b00492eb7ca14",
@@ -2447,10 +1823,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 174,
+      "rank": 135,
       "band": "unscreened",
       "priority": null,
       "key": "f920630e708268829701b6d025f5b182",
@@ -2463,10 +1839,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 175,
+      "rank": 136,
       "band": "unscreened",
       "priority": null,
       "key": "d0bd127a3d2c37df4594c8b62b3e6cc2",
@@ -2479,10 +1855,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 176,
+      "rank": 137,
       "band": "unscreened",
       "priority": null,
       "key": "28550476c1329778aa53552d0755045f",
@@ -2495,10 +1871,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 177,
+      "rank": 138,
       "band": "unscreened",
       "priority": null,
       "key": "1411a8d0ed17fd3c563aa2f6fd8ec65e",
@@ -2511,10 +1887,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 178,
+      "rank": 139,
       "band": "unscreened",
       "priority": null,
       "key": "de7d5c2f8e3635e041627d48190696b7",
@@ -2527,10 +1903,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 179,
+      "rank": 140,
       "band": "unscreened",
       "priority": null,
       "key": "95f31c306a78a669ad5c2a9c5f48ee1f",
@@ -2543,10 +1919,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 180,
+      "rank": 141,
       "band": "unscreened",
       "priority": null,
       "key": "9ee93bfeacc8d142c02a0ffdace7a5cc",
@@ -2559,10 +1935,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 181,
+      "rank": 142,
       "band": "unscreened",
       "priority": null,
       "key": "7019e622312e68fa0f4b78993d6743b4",
@@ -2575,10 +1951,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 182,
+      "rank": 143,
       "band": "unscreened",
       "priority": null,
       "key": "6e467f0b0be969c998208557a6f247e5",
@@ -2591,10 +1967,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 183,
+      "rank": 144,
       "band": "unscreened",
       "priority": null,
       "key": "2a19c96cfe57a784465564585bbe4660",
@@ -2607,10 +1983,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 184,
+      "rank": 145,
       "band": "unscreened",
       "priority": null,
       "key": "9963134fe16309b925bf35e652f69ec9",
@@ -2623,10 +1999,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 185,
+      "rank": 146,
       "band": "unscreened",
       "priority": null,
       "key": "03b97d1d9f5559f19dcea6c07e3bd887",
@@ -2639,10 +2015,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 186,
+      "rank": 147,
       "band": "unscreened",
       "priority": null,
       "key": "d1fc9d4c4f801fc9721d53cffc22b693",
@@ -2655,10 +2031,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 187,
+      "rank": 148,
       "band": "unscreened",
       "priority": null,
       "key": "1a9730aa1b7986ee6d4c5a7afc56a83c",
@@ -2671,10 +2047,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 188,
+      "rank": 149,
       "band": "unscreened",
       "priority": null,
       "key": "85c4f8813c51624584093b80cb205d83",
@@ -2687,10 +2063,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 189,
+      "rank": 150,
       "band": "unscreened",
       "priority": null,
       "key": "3869c8811c3931ed900eef79090becec",
@@ -2703,10 +2079,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 190,
+      "rank": 151,
       "band": "unscreened",
       "priority": null,
       "key": "c25845ba8c6cef8da049025aeee95aad",
@@ -2719,10 +2095,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 191,
+      "rank": 152,
       "band": "unscreened",
       "priority": null,
       "key": "4fcdbb195b56864f583350046c0602f0",
@@ -2735,10 +2111,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 192,
+      "rank": 153,
       "band": "unscreened",
       "priority": null,
       "key": "bc9238ee60f1b89ddd9d3c08ef3acc62",
@@ -2751,10 +2127,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 193,
+      "rank": 154,
       "band": "unscreened",
       "priority": null,
       "key": "b9912a4a8b974cb6aae4e19059ad9015",
@@ -2767,10 +2143,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 194,
+      "rank": 155,
       "band": "unscreened",
       "priority": null,
       "key": "4d92474e7e39015b2ec87b933db02902",
@@ -2783,10 +2159,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 195,
+      "rank": 156,
       "band": "unscreened",
       "priority": null,
       "key": "77d728a2e0e549040586f8e468f12e3c",
@@ -2799,10 +2175,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 196,
+      "rank": 157,
       "band": "unscreened",
       "priority": null,
       "key": "213874528469e2c21a7ba8b1f7f2545b",
@@ -2815,10 +2191,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 197,
+      "rank": 158,
       "band": "unscreened",
       "priority": null,
       "key": "aa532b862a8eb6656f045547b801eb2c",
@@ -2831,10 +2207,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 198,
+      "rank": 159,
       "band": "unscreened",
       "priority": null,
       "key": "3d05c3da513da25f4e3341ff4fc14f97",
@@ -2847,10 +2223,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 199,
+      "rank": 160,
       "band": "unscreened",
       "priority": null,
       "key": "2cb29c50fc27179781580b356d52f84e",
@@ -2863,10 +2239,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 200,
+      "rank": 161,
       "band": "unscreened",
       "priority": null,
       "key": "69a20d22339afc9f911313c42e1d0df2",
@@ -2879,10 +2255,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 201,
+      "rank": 162,
       "band": "unscreened",
       "priority": null,
       "key": "2548d013a6c1bb5a812d5f3ed448a662",
@@ -2895,10 +2271,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 202,
+      "rank": 163,
       "band": "unscreened",
       "priority": null,
       "key": "6334e4dd3ed70e826fae942c6c9f7d8c",
@@ -2911,10 +2287,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 203,
+      "rank": 164,
       "band": "unscreened",
       "priority": null,
       "key": "760f9e299cbd2cc9b7e6104a69633900",
@@ -2927,10 +2303,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 204,
+      "rank": 165,
       "band": "unscreened",
       "priority": null,
       "key": "c367bf54bc880010143b2b9583cef55b",
@@ -2943,10 +2319,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 205,
+      "rank": 166,
       "band": "unscreened",
       "priority": null,
       "key": "d3cb92de9ebd3887f7705f8238b382c0",
@@ -2959,10 +2335,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 206,
+      "rank": 167,
       "band": "unscreened",
       "priority": null,
       "key": "2becc0bbdfab460b2a9aef661089d7a1",
@@ -2975,10 +2351,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 207,
+      "rank": 168,
       "band": "unscreened",
       "priority": null,
       "key": "6d3f3a428cf42250443c43435544511e",
@@ -2991,10 +2367,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 208,
+      "rank": 169,
       "band": "unscreened",
       "priority": null,
       "key": "2a38b0d12937840b6c41100b143e983c",
@@ -3007,10 +2383,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 209,
+      "rank": 170,
       "band": "unscreened",
       "priority": null,
       "key": "8471185cae93bb44b027bd579f39a322",
@@ -3023,10 +2399,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 210,
+      "rank": 171,
       "band": "unscreened",
       "priority": null,
       "key": "d65ebb62590d2e0be313e05c535ee570",
@@ -3039,10 +2415,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 211,
+      "rank": 172,
       "band": "unscreened",
       "priority": null,
       "key": "acce43a54414d6303d8f73da36953bd4",
@@ -3055,10 +2431,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 212,
+      "rank": 173,
       "band": "unscreened",
       "priority": null,
       "key": "88c85bec7fbe831f54c6623d6d87cecf",
@@ -3071,10 +2447,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 213,
+      "rank": 174,
       "band": "unscreened",
       "priority": null,
       "key": "052ee239f13daddae6b3b1aea3a932b3",
@@ -3087,10 +2463,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 214,
+      "rank": 175,
       "band": "unscreened",
       "priority": null,
       "key": "5e850674114e0dda0276a6d805430c27",
@@ -3103,10 +2479,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 215,
+      "rank": 176,
       "band": "unscreened",
       "priority": null,
       "key": "8744fdeacc82a47a41b13eb8c193bd46",
@@ -3119,10 +2495,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 216,
+      "rank": 177,
       "band": "unscreened",
       "priority": null,
       "key": "59e65499987fd332d2d1d30dfd0c55fd",
@@ -3135,10 +2511,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 217,
+      "rank": 178,
       "band": "unscreened",
       "priority": null,
       "key": "f9f784d0fdca135cf7a26084d56336b5",
@@ -3151,10 +2527,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 218,
+      "rank": 179,
       "band": "unscreened",
       "priority": null,
       "key": "f1447a35e9560c352543b4b5ce5efad2",
@@ -3167,10 +2543,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 219,
+      "rank": 180,
       "band": "unscreened",
       "priority": null,
       "key": "c61e9ee03e7b26d7a5a52bd61d777889",
@@ -3183,10 +2559,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 220,
+      "rank": 181,
       "band": "unscreened",
       "priority": null,
       "key": "a0e4155dca6b20385e1e2d121679626f",
@@ -3199,10 +2575,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 221,
+      "rank": 182,
       "band": "unscreened",
       "priority": null,
       "key": "01f47d9a7ec1e2ba03a8912a9b8bcfa1",
@@ -3215,10 +2591,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 222,
+      "rank": 183,
       "band": "unscreened",
       "priority": null,
       "key": "c199a5153cb0a15c09de44fc9545ffab",
@@ -3231,10 +2607,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 223,
+      "rank": 184,
       "band": "unscreened",
       "priority": null,
       "key": "5538617ea13707f0999764ebd14cb03b",
@@ -3247,10 +2623,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 224,
+      "rank": 185,
       "band": "unscreened",
       "priority": null,
       "key": "dde28853d9e5be287336b752bda4008b",
@@ -3263,10 +2639,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 225,
+      "rank": 186,
       "band": "unscreened",
       "priority": null,
       "key": "5b28e7fc4c4cd2dead74b82be167ba5c",
@@ -3279,10 +2655,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 226,
+      "rank": 187,
       "band": "unscreened",
       "priority": null,
       "key": "0b35da61c3297c08dea4c9d98d26ee96",
@@ -3295,10 +2671,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 227,
+      "rank": 188,
       "band": "unscreened",
       "priority": null,
       "key": "912f2bd8734051d49d413b8d469c1066",
@@ -3311,10 +2687,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 228,
+      "rank": 189,
       "band": "unscreened",
       "priority": null,
       "key": "4f6c2448a74d546aeffb2e0bbd614526",
@@ -3327,10 +2703,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 229,
+      "rank": 190,
       "band": "unscreened",
       "priority": null,
       "key": "8e3a83916c010e239537196364b1505e",
@@ -3343,10 +2719,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 230,
+      "rank": 191,
       "band": "unscreened",
       "priority": null,
       "key": "9c19e31f16a42287cfd249443c1be91d",
@@ -3359,10 +2735,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 231,
+      "rank": 192,
       "band": "unscreened",
       "priority": null,
       "key": "9bbc2e171de8c7d4dcaf15d7758a0547",
@@ -3375,10 +2751,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 232,
+      "rank": 193,
       "band": "unscreened",
       "priority": null,
       "key": "eec5862fb8fa9d6f7ed52b6f3993b9d2",
@@ -3391,10 +2767,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 233,
+      "rank": 194,
       "band": "unscreened",
       "priority": null,
       "key": "534e1083fd93485bc66a49a232ed451f",
@@ -3407,10 +2783,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 234,
+      "rank": 195,
       "band": "unscreened",
       "priority": null,
       "key": "7b8fec5eb4e96ce4ddb77ae2e8b50d63",
@@ -3423,10 +2799,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 235,
+      "rank": 196,
       "band": "unscreened",
       "priority": null,
       "key": "ca2cb1ba62ea0c127230756722a83553",
@@ -3439,10 +2815,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 236,
+      "rank": 197,
       "band": "unscreened",
       "priority": null,
       "key": "0b825a72fd112d3853df40230af176b9",
@@ -3455,10 +2831,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 237,
+      "rank": 198,
       "band": "unscreened",
       "priority": null,
       "key": "011c016a8b55a4ad6b63a214134090df",
@@ -3471,10 +2847,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 238,
+      "rank": 199,
       "band": "unscreened",
       "priority": null,
       "key": "c11cd1c5cf4934df9529cfe1a33b8150",
@@ -3487,10 +2863,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 239,
+      "rank": 200,
       "band": "unscreened",
       "priority": null,
       "key": "6fe09c749d2a6d37f5393bf3aec40b95",
@@ -3503,10 +2879,10 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     },
     {
-      "rank": 240,
+      "rank": 201,
       "band": "unscreened",
       "priority": null,
       "key": "a8a31b06b78b2630fbe1a20eb9d8eb2e",
@@ -3519,7 +2895,7 @@
       "clones": 0,
       "annualReturn": null,
       "compositeScore": "0.00",
-      "addedToQueueAt": "2026-11-02T22:47:58.156Z"
+      "addedToQueueAt": "2026-11-03T23:20:07.570Z"
     }
   ],
   "copied": {
@@ -13653,6 +13029,526 @@
         "winRatio": 0.5,
         "tradingDays": 4,
         "periodLabel": "2019-01"
+      }
+    },
+    "9bc880cbe5bfac4546efbe3ab675f359": {
+      "fetchedAt": "2026-11-03T20:03:30.093Z",
+      "sourceFile": "2026-11-04_tushare和聚宽的数据不一致-5ef9d209.py",
+      "stats": {
+        "annualReturn": -0.012109306183685,
+        "cumulativeReturn": -0.034949652799996,
+        "maxDrawdown": 0.27090638387312,
+        "sharpe": -0.38282144556635,
+        "winRatio": null,
+        "tradingDays": 730,
+        "periodLabel": "2018-12"
+      }
+    },
+    "a2713fcd26dfac626eec13eb706add48": {
+      "fetchedAt": "2026-11-03T20:03:33.646Z",
+      "sourceFile": "2026-11-04_为什么取MAC60指定值的股票为0-29a5e607.py",
+      "stats": {
+        "annualReturn": -0.92159302912742,
+        "cumulativeReturn": -0.14165618801,
+        "maxDrawdown": 0.14235786997702,
+        "sharpe": -2.6043342277406,
+        "winRatio": null,
+        "tradingDays": 15,
+        "periodLabel": "2022-11"
+      }
+    },
+    "b007854a1b2c00334826818ce8ebdedb": {
+      "fetchedAt": "2026-11-03T20:03:36.402Z",
+      "sourceFile": "2026-11-04_聚宽能运行_一创聚宽不能运行_报错_哪个大神懂-eba8c354.py",
+      "stats": {
+        "annualReturn": 0.11045987299727,
+        "cumulativeReturn": 0.0707001686,
+        "maxDrawdown": 0.22148045608865,
+        "sharpe": 0.20331508427304,
+        "winRatio": 0.43478260869565,
+        "tradingDays": 163,
+        "periodLabel": "2022-09"
+      }
+    },
+    "85a8ee9783fd6e590127b322dc27d981": {
+      "fetchedAt": "2026-11-03T20:03:39.023Z",
+      "sourceFile": "2026-11-04_回测策略超过了30M的限制如何解决-d92a544c.py",
+      "stats": {
+        "annualReturn": -0.37453280598654,
+        "cumulativeReturn": -0.0093412250999999,
+        "maxDrawdown": 0.049553463700869,
+        "sharpe": -0.93060138768763,
+        "winRatio": null,
+        "tradingDays": 5,
+        "periodLabel": "2022-08"
+      }
+    },
+    "e871b6415f8690820f316628d60745c6": {
+      "fetchedAt": "2026-11-03T20:03:42.032Z",
+      "sourceFile": "2026-11-04_Statsmodels_统计包之_OLS_回归疑问-e4a6d4f5.py",
+      "stats": {
+        "annualReturn": null,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": 1,
+        "periodLabel": "2019-01"
+      }
+    },
+    "9422360b833baebe6a2e92e20861e6eb": {
+      "fetchedAt": "2026-11-03T20:03:44.724Z",
+      "sourceFile": "2026-11-04_一创聚宽无法使用requests_爬虫-c6126cc2.py",
+      "stats": {
+        "annualReturn": null,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": 118,
+        "periodLabel": "2019-06"
+      }
+    },
+    "87d87273f65fa81db50884d94e6a09c9": {
+      "fetchedAt": "2026-11-03T20:03:47.339Z",
+      "sourceFile": "2026-11-04_新手求救_交易无法正常执行-10816e47.py",
+      "stats": {
+        "annualReturn": -0.60336949810695,
+        "cumulativeReturn": -0.0678681571,
+        "maxDrawdown": 0.074289520670019,
+        "sharpe": -4.7132796658027,
+        "winRatio": 0.16666666666667,
+        "tradingDays": 19,
+        "periodLabel": "2022-01"
+      }
+    },
+    "c091ba3906baa032ebde7bc5b9d31598": {
+      "fetchedAt": "2026-11-03T20:03:50.212Z",
+      "sourceFile": "2026-11-04_分层分组的结构为什么不同组都是一样的结果-d8bdd38d.py",
+      "stats": {
+        "annualReturn": -0.14692380432739,
+        "cumulativeReturn": -0.3096590999,
+        "maxDrawdown": 0.4065036219275,
+        "sharpe": -0.80765614780643,
+        "winRatio": 0.31034482758621,
+        "tradingDays": 583,
+        "periodLabel": "2022-06"
+      }
+    },
+    "3926001db68fb27991d27c4891852245": {
+      "fetchedAt": "2026-11-03T20:03:52.910Z",
+      "sourceFile": "2026-11-04_可转债买入一直显示下单失败_证券代码错误-4d33c1a0.py",
+      "stats": {
+        "annualReturn": null,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": 828,
+        "periodLabel": "2022-06"
+      }
+    },
+    "8ec8c1b4e52c4e08a9197e528168bb17": {
+      "fetchedAt": "2026-11-03T20:03:55.606Z",
+      "sourceFile": "2026-11-04_回测时价格不正确如何处理-969b716f.py",
+      "stats": {
+        "annualReturn": -0.73808856836019,
+        "cumulativeReturn": -0.0159484416,
+        "maxDrawdown": 0.0296404416,
+        "sharpe": -2.7155081528836,
+        "winRatio": null,
+        "tradingDays": 3,
+        "periodLabel": "2019-01"
+      }
+    },
+    "4b0a54c71bdc349020872d3068bd8280": {
+      "fetchedAt": "2026-11-03T20:03:58.291Z",
+      "sourceFile": "2026-11-04_510050标的回测交易数据不对-6ddff0a2.py",
+      "stats": {
+        "annualReturn": 17.185419357921,
+        "cumulativeReturn": 0.0597281392,
+        "maxDrawdown": 0.0065434955856201,
+        "sharpe": 62.467196503538,
+        "winRatio": null,
+        "tradingDays": 5,
+        "periodLabel": "2021-01"
+      }
+    },
+    "d395c61bb8020f79b01fad4640d518d4": {
+      "fetchedAt": "2026-11-03T20:04:00.977Z",
+      "sourceFile": "2026-11-04_布林带代码问题-e3b0df8b.py",
+      "stats": {
+        "annualReturn": 0.16689067200258,
+        "cumulativeReturn": 0.075568908,
+        "maxDrawdown": 0.058612420220503,
+        "sharpe": 0.84404761557002,
+        "winRatio": 1,
+        "tradingDays": 118,
+        "periodLabel": "2019-06"
+      }
+    },
+    "c0ad835da5fe41ebd44841474cb289ef": {
+      "fetchedAt": "2026-11-03T20:04:03.678Z",
+      "sourceFile": "2026-11-04_基于财务数据选股的简单尝试_作者_胖胖兵-80da895c.py",
+      "stats": {
+        "annualReturn": null,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": 118,
+        "periodLabel": "2019-06"
+      }
+    },
+    "b1a17f7770589a2aafc154ba23ae7fee": {
+      "fetchedAt": "2026-11-03T20:04:06.370Z",
+      "sourceFile": "2026-11-04_复刻选取市值最小的10家公司_代码有个小问题-d0d306bf.py",
+      "stats": {
+        "annualReturn": null,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": 118,
+        "periodLabel": "2019-06"
+      }
+    },
+    "6a7d8ba942423d060de29a04fb01b7cb": {
+      "fetchedAt": "2026-11-03T20:04:09.007Z",
+      "sourceFile": "2026-11-04_怎样在策略回策的图表下面_加上多个股票同期的收益率曲线-02009dd5.py",
+      "stats": {
+        "annualReturn": 0.27117698543095,
+        "cumulativeReturn": 1.1529921403,
+        "maxDrawdown": 0.46187482498459,
+        "sharpe": 0.81964836725685,
+        "winRatio": null,
+        "tradingDays": 799,
+        "periodLabel": "2022-04"
+      }
+    },
+    "a4ed4424210b4c4f08576c7ea34137c5": {
+      "fetchedAt": "2026-11-03T20:04:11.692Z",
+      "sourceFile": "2026-11-04_新手_大神能否帮找下编写错误_实在找不出了-ea4c7625.py",
+      "stats": {
+        "annualReturn": -0.61778120696627,
+        "cumulativeReturn": -0.1226064509,
+        "maxDrawdown": 0.12977258718501,
+        "sharpe": -6.550051800487,
+        "winRatio": 0.36474820143885,
+        "tradingDays": 34,
+        "periodLabel": "2022-02"
+      }
+    },
+    "c01dc26137577e6e610ec187e7150c95": {
+      "fetchedAt": "2026-11-03T20:04:14.306Z",
+      "sourceFile": "2026-11-04_实在是不清楚_两个代码完全不一样的策略_回测的结果一模一样-21105ae3.py",
+      "stats": {
+        "annualReturn": -0.023761045512856,
+        "cumulativeReturn": -0.011286429999999,
+        "maxDrawdown": 0.11334187139854,
+        "sharpe": -0.35214561759717,
+        "winRatio": 0.46666666666667,
+        "tradingDays": 118,
+        "periodLabel": "2021-06"
+      }
+    },
+    "7dc26d1e0eb6ed0265689aa156b9f8d4": {
+      "fetchedAt": "2026-11-03T20:04:16.932Z",
+      "sourceFile": "2026-11-04_run_daily函数里面的every_bar不起作用吗-975261d3.py",
+      "stats": {
+        "annualReturn": 0.073992722468194,
+        "cumulativeReturn": 0.0011427839999998,
+        "maxDrawdown": 0.003897216,
+        "sharpe": 0.58547843013515,
+        "winRatio": null,
+        "tradingDays": 4,
+        "periodLabel": "2019-06"
+      }
+    },
+    "353fee929b5c049b4877af65fb06ec33": {
+      "fetchedAt": "2026-11-03T20:04:19.550Z",
+      "sourceFile": "2026-11-04_获取数据缺失-61f513b7.py",
+      "stats": {
+        "annualReturn": 0.27890950019066,
+        "cumulativeReturn": 0.00197,
+        "maxDrawdown": 0.00203,
+        "sharpe": 3.5389586265979,
+        "winRatio": null,
+        "tradingDays": 2,
+        "periodLabel": "2010-02"
+      }
+    },
+    "933e9e9b286f9b4f8ecd34ebe19327e7": {
+      "fetchedAt": "2026-11-03T20:04:22.163Z",
+      "sourceFile": "2026-11-04_期货交易中的order_value_函数-e66bbda5.py",
+      "stats": {
+        "annualReturn": 0.19159712238201,
+        "cumulativeReturn": 0.12186581970597,
+        "maxDrawdown": 0.16164792898388,
+        "sharpe": 0.7569733630552,
+        "winRatio": 0.44444444444444,
+        "tradingDays": 164,
+        "periodLabel": "2021-08"
+      }
+    },
+    "2eb1e2fbe96c3f2f50306afb2118063e": {
+      "fetchedAt": "2026-11-03T23:20:12.069Z",
+      "sourceFile": "2026-11-04_macd设置时间参数-8d12a31c.py",
+      "stats": {
+        "annualReturn": 1.0644230514789,
+        "cumulativeReturn": 0.110020534,
+        "maxDrawdown": 0.081182353067651,
+        "sharpe": 2.9650962451477,
+        "winRatio": 1,
+        "tradingDays": 36,
+        "periodLabel": "2021-03"
+      }
+    },
+    "07a6a6ddb3a7b5e32707e1d6381d0474": {
+      "fetchedAt": "2026-11-03T23:20:14.681Z",
+      "sourceFile": "2026-11-04_量化小白求助_单股策略改多股-8390b0f5.py",
+      "stats": {
+        "annualReturn": 1.7884392693338,
+        "cumulativeReturn": 0.8654327783,
+        "maxDrawdown": 0.27798494069617,
+        "sharpe": 3.1333936962605,
+        "winRatio": 0.71428571428571,
+        "tradingDays": 152,
+        "periodLabel": "2021-08"
+      }
+    },
+    "9b895dc1eb14dc5d661b52ed0feeb5f9": {
+      "fetchedAt": "2026-11-03T23:20:17.291Z",
+      "sourceFile": "2026-11-04_请问如何检查有没有未来公式-6ed6c128.py",
+      "stats": {
+        "annualReturn": 4.5366987624444,
+        "cumulativeReturn": 1.502548367,
+        "maxDrawdown": 0.14832535611344,
+        "sharpe": 13.467320457279,
+        "winRatio": 0.68072289156627,
+        "tradingDays": 134,
+        "periodLabel": "2021-07"
+      }
+    },
+    "e3de98b860b3f98cc34eb39b063d360d": {
+      "fetchedAt": "2026-11-03T23:20:19.909Z",
+      "sourceFile": "2026-11-04_融资融券保证金余额怎么算的-b1093215.py",
+      "stats": {
+        "annualReturn": 0.040524136887801,
+        "cumulativeReturn": 0.0060563999999999,
+        "maxDrawdown": 0.011290282306997,
+        "sharpe": 0.020691502165207,
+        "winRatio": 0.28571428571429,
+        "tradingDays": 38,
+        "periodLabel": "2017-01"
+      }
+    },
+    "0d8b28f96f4f23150254963cef85bc94": {
+      "fetchedAt": "2026-11-03T23:20:22.600Z",
+      "sourceFile": "2026-11-04_回测失败-f566f586.py",
+      "stats": {
+        "annualReturn": null,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": 2308,
+        "periodLabel": "2021-07"
+      }
+    },
+    "8334c276e0f655cf56b40d987688aed2": {
+      "fetchedAt": "2026-11-03T23:20:25.202Z",
+      "sourceFile": "2026-11-04_新手求助-27962eee.py",
+      "stats": {
+        "annualReturn": null,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": 121,
+        "periodLabel": "2021-06"
+      }
+    },
+    "a3363ea3f722fdca3e6245b666f23190": {
+      "fetchedAt": "2026-11-03T23:20:27.886Z",
+      "sourceFile": "2026-11-04_新股无法购买-59b37ec0.py",
+      "stats": {
+        "annualReturn": null,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": 14,
+        "periodLabel": "2021-05"
+      }
+    },
+    "cecdad0fb51cbae7844fda72f518761c": {
+      "fetchedAt": "2026-11-03T23:20:30.514Z",
+      "sourceFile": "2026-11-04_求解-064d79b2.py",
+      "stats": {
+        "annualReturn": null,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": null,
+        "periodLabel": null
+      }
+    },
+    "17b21d8eb1a41ac337683226a602bf6a": {
+      "fetchedAt": "2026-11-03T23:20:33.202Z",
+      "sourceFile": "2026-11-04_研究MA这个栗子_时间不是当前时间的前5天均值-a35bb794.py",
+      "stats": {
+        "annualReturn": 0.037717979311964,
+        "cumulativeReturn": 0.074946560000001,
+        "maxDrawdown": 0.3988080859208,
+        "sharpe": -0.0056028640906533,
+        "winRatio": null,
+        "tradingDays": 488,
+        "periodLabel": "2018-06"
+      }
+    },
+    "12b817e837462ee7781e83ddf0394d6c": {
+      "fetchedAt": "2026-11-03T23:20:35.835Z",
+      "sourceFile": "2026-11-04_失败_请大神知道-c717b57d.py",
+      "stats": {
+        "annualReturn": null,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": null,
+        "periodLabel": null
+      }
+    },
+    "b56fa9050d2756194596ac6abd0cb2cf": {
+      "fetchedAt": "2026-11-03T23:20:38.455Z",
+      "sourceFile": "2026-11-04_融券函数错误-2dfdad8f.py",
+      "stats": {
+        "annualReturn": null,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": null,
+        "periodLabel": null
+      }
+    },
+    "4309fe5fc59f1a91bef123bd99e073e9": {
+      "fetchedAt": "2026-11-03T23:20:41.068Z",
+      "sourceFile": "2026-11-04_很奇怪_回测正常_模拟失败-c556fa00.py",
+      "stats": {
+        "annualReturn": 0.4130457961363,
+        "cumulativeReturn": 0.235650409,
+        "maxDrawdown": 0.094149055324914,
+        "sharpe": 2.0507980153346,
+        "winRatio": 0.81818181818182,
+        "tradingDays": 153,
+        "periodLabel": "2021-01"
+      }
+    },
+    "734fb9d20a338f960f1a5df764b0ec5f": {
+      "fetchedAt": "2026-11-03T23:20:43.758Z",
+      "sourceFile": "2026-11-04_一个关于query的奇怪的问题-2c818969.py",
+      "stats": {
+        "annualReturn": 0.0014330622124195,
+        "cumulativeReturn": 0.0020700000000005,
+        "maxDrawdown": 0.0033595968483788,
+        "sharpe": -11.113746628307,
+        "winRatio": null,
+        "tradingDays": 361,
+        "periodLabel": "2019-06"
+      }
+    },
+    "04fac498cffd1cabc1871d9ad1b52f08": {
+      "fetchedAt": "2026-11-03T23:20:46.383Z",
+      "sourceFile": "2026-11-04_超额收益的计算-7c2bf75a.py",
+      "stats": {
+        "annualReturn": 0.14068560371857,
+        "cumulativeReturn": 1.7845253272017,
+        "maxDrawdown": 0.28016626971281,
+        "sharpe": 0.60120029462427,
+        "winRatio": 0.51702742720158,
+        "tradingDays": 1945,
+        "periodLabel": "2019-12"
+      }
+    },
+    "fa2f904a34584c0b07ef68bf9d7825cb": {
+      "fetchedAt": "2026-11-03T23:20:49.076Z",
+      "sourceFile": "2026-11-04_均线策略回测收益为0_求帮忙看一下问题所在-3a963857.py",
+      "stats": {
+        "annualReturn": null,
+        "cumulativeReturn": null,
+        "maxDrawdown": null,
+        "sharpe": null,
+        "winRatio": null,
+        "tradingDays": 1137,
+        "periodLabel": "2020-09"
+      }
+    },
+    "7610ca93fd9adc3eea512cb42f027394": {
+      "fetchedAt": "2026-11-03T23:20:51.681Z",
+      "sourceFile": "2026-11-04_请求帮忙搞个实盘的60分钟MACD-ba055b04.py",
+      "stats": {
+        "annualReturn": 0.95678622771171,
+        "cumulativeReturn": 0.332847826,
+        "maxDrawdown": 0.19230580865382,
+        "sharpe": 2.0884645333904,
+        "winRatio": 0.625,
+        "tradingDays": 107,
+        "periodLabel": "2020-06"
+      }
+    },
+    "d3ce18d3a063e4229c01220bd4006821": {
+      "fetchedAt": "2026-11-03T23:20:54.373Z",
+      "sourceFile": "2026-11-04_create_backtest能否改变security数值-00ecbaa3.py",
+      "stats": {
+        "annualReturn": -0.42237736922598,
+        "cumulativeReturn": -0.53111213166435,
+        "maxDrawdown": 0.59722149084501,
+        "sharpe": -1.0756197289695,
+        "winRatio": 0.325,
+        "tradingDays": 345,
+        "periodLabel": "2016-06"
+      }
+    },
+    "ee1caf55a7f6a9a13cd1177c36e8442d": {
+      "fetchedAt": "2026-11-03T23:20:56.982Z",
+      "sourceFile": "2026-11-04_回测出错-e96af38b.py",
+      "stats": {
+        "annualReturn": 0.28464626193749,
+        "cumulativeReturn": 1.36946649546,
+        "maxDrawdown": 0.66300623484159,
+        "sharpe": 0.50682084286847,
+        "winRatio": 0.33333333333333,
+        "tradingDays": 861,
+        "periodLabel": "2020-07"
+      }
+    },
+    "c025c06edfd968b91e34800f3218ce51": {
+      "fetchedAt": "2026-11-03T23:20:59.604Z",
+      "sourceFile": "2026-11-04_请教_怎样解决同一条K线重复开仓问题-ebf480bb.py",
+      "stats": {
+        "annualReturn": 0.12129457291101,
+        "cumulativeReturn": 0.056490182450001,
+        "maxDrawdown": 0.13469890969206,
+        "sharpe": 0.34196387457002,
+        "winRatio": 0.19191919191919,
+        "tradingDays": 120,
+        "periodLabel": "2020-06"
+      }
+    },
+    "f38366e41a07bc2965ea396707a44f65": {
+      "fetchedAt": "2026-11-03T23:21:02.222Z",
+      "sourceFile": "2026-11-04_一创平台策略问题-df116e09.py",
+      "stats": {
+        "annualReturn": 0.52536586222358,
+        "cumulativeReturn": 0.1780103896,
+        "maxDrawdown": 0.15948017332924,
+        "sharpe": 1.271832105335,
+        "winRatio": 0.76410256410256,
+        "tradingDays": 97,
+        "periodLabel": "2020-05"
       }
     }
   },

@@ -211,3 +211,8 @@
 2026-11-02T21:53:24.773Z	strategies/2026-11-03_请问为什么会出现那么多买入100只-c0c41a84.py	jqboson.core.exception.InvalidParam: 股票必须是字符串
 2026-11-02T21:54:10.535Z	strategies/2026-11-03_发现平台API的bug_还是-a1560e04.py	jqdata.exceptions.FutureDataError: 设置avoid_future_data=True之后, get_bars的end_dt(2024-01-02 17:00:00)不能大于当前时间current_dt(2024-01-02 09:30:00)
 2026-11-02T21:55:43.562Z	strategies/2026-11-03_向大神求助_编译运行正常_模拟交易无任何响应-b051b215.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 RunTimePoint
+2026-11-03T19:32:16.335Z	strategies/2026-11-03_小哥_为嘛我的策略选不到股呢_烦请指导-0bb616f3.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:50:00
+2026-11-03T19:33:07.730Z	strategies/2026-11-03_行业概念的资金净流入数据计算问题-cda77f38.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:40:00
+2026-11-03T19:45:08.715Z	strategies/2026-11-03_求帮助_这个代码哪里错了-a0ba35ad.py	jqboson.core.exception.InvalidParam: Invalid option 'ues_real_price', check API doc
+2026-11-03T19:56:11.353Z	strategies/2026-11-03_请问这个策略问题出在哪里_为什么一直回测失败啊-f72181d5.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 jqdatasdk
+2026-11-03T21:27:51.973Z	strategies/2026-11-04_实在是不清楚_两个代码完全不一样的策略_回测的结果一模一样-21105ae3.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'high', 'money', 'volume', 'low', 'close', 'open_interest'}字段数据, current_dt=2024-01-02 09:30:00, end_date=2024-01-02 09:30:00
