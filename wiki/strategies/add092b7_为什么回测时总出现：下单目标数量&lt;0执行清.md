@@ -2,6 +2,7 @@
 postId: add092b7c12cc5a4b39b2e33d2bf9130
 title: 为什么回测时总出现：下单目标数量 &lt; 0: 执行清仓处理
 sourceFile: strategies/2026-11-03_为什么回测时总出现_下单目标数量_lt_0_执行清仓处理-add092b7.py
+family: 其他
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/9311
 concepts: [网格交易]
 factors:

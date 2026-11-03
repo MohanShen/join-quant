@@ -36,7 +36,7 @@ realizabilityBasis: "3 — MEASURED 2026-11-01 on the base e79e9884 (the family'
 valDeclined: 9
 valDeclinedBasis: "round 1（2026-11-01）的决定，理由全部是本轮实测：(1) **没有被测到的机制可供验证**——两条被测的 edge 都 refuted：布林上轨突破 [[study-q-e9-atr-bb-ablate]] + [[study-q-e9-atr-reentry-cooldown]]（去掉突破、只加出场后 D/D+1 禁再入 → sharpe 1.62 vs base 1.54，9 月 23.20 三本书逐位相同）；大盘择时作为回撤保护 [[study-q-e9-atr-regime-ablate]]（去掉后 maxDD 8.38→5.04 反降）。剩下的「择时 = 现金储备/集中开关」仍是 proposed。(2) **水平是一次事件**：[[study-q-e9-atr-attrib]] 三笔 2024-09-25 入场 = 净 P&L 84.6%，[[study-atr-imp-cap-third]] 把仓位摊匀后升到 91.3% 且 sharpe 降——书是 9·24 上的集中贝塔。(3) **作者视野**：发帖 2026-09-12（data/discovered.json postedAt），VAL 2025 在作者样本内，对 base 花 VAL 验证的是「作者回测在本台复现」，不是前向表现（同 [[均线乖离择时]] / [[资产配置]] 的 decline）。**清除条件**：一名新成员（或本族构建的候选）在 TRAIN 上过 1.0 闸门、且去掉 2024-09 后剩余月份 sharpe 仍 ≥ 1.0（即水平不是一次事件）；或人工明知上述情况仍决定把这本 6-ETF 择时书作为 ETF 宇宙的一个低相关腿去验证。新成员按 new-members 规则自动重开本族。"
 status: active
-updatedAt: 2026-11-02
+updatedAt: 2026-11-03
 ---
 
 # 突破ATR趋势跟踪
@@ -86,7 +86,7 @@ updatedAt: 2026-11-02
 |---|---|---|---|---|---|---|---|
 | **1** | **[[e79e9884_基于上一版本进行了适当调整，增加其攻击性]]** | 0.2007 | 1.54 | 28.45 | 8.38 | ✅ | 9 |
 
-*1 gate-pass / 1 members. 快照 2026-11-02（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*1 gate-pass / 1 members. 快照 2026-11-03（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 

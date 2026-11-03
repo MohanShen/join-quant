@@ -2,6 +2,7 @@
 postId: af52da8b62b26a70f6b1154423426593
 title: 【有偿求助】网格策略参数调整
 sourceFile: strategies/2026-11-03_有偿求助_网格策略参数调整-af52da8b.py
+family: 其他
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/23340
 concepts: [网格交易]
 factors:

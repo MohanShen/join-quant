@@ -2,6 +2,7 @@
 postId: 3b3e3adde9277defbd0863253d413c31
 title: 为什么handle_data中现价和成交价不一样
 sourceFile: strategies/2026-11-03_为什么handle_data中现价和成交价不一样-3b3e3add.py
+family: 其他
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/9311
 concepts: [网格交易]
 factors:

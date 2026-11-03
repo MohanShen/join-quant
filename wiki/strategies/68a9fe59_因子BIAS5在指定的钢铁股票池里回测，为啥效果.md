@@ -2,6 +2,7 @@
 postId: 68a9fe59553afec5f02c09817470d601
 title: 因子BIAS5在指定的钢铁股票池里回测，为啥效果那么好
 sourceFile: strategies/2026-11-03_因子BIAS5在指定的钢铁股票池里回测_为啥效果那么好-68a9fe59.py
+family: 其他
 concepts: [未分类]
 factors:
   选股: [未分类]
