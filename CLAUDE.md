@@ -2282,3 +2282,31 @@ Only the directories whose contents aren't self-evident:
   ✅ Checked the four other previously-parked files: each reads `slow-skipped -> normalized` ONCE,
   so the 2026-10-24 drain's four new measurements were genuine first results, not re-runs. The pool
   did pay off; only 5511f8f0 was waste.
+- ⚠⚠ **"NO DUPLICATE LEDGER ROWS" WAS THE WRONG INVARIANT, and it sat red for ~10 days.** Two
+  assertions in `tests/normalize.test.js` demanded ZERO repeats of a `(sourceFile, status, epoch)`
+  triple. The design legitimately produces repeats by **three** separate documented paths, so the
+  suite was failing on the pipeline working correctly — and a check that is red for good reasons
+  teaches its reader to skip it, the same failure the deleted `limit-up-entry` flag had.
+  Measured 2026-11-04 over the 9 duplicate triples then present:
+  | duplicates | why it is LEGITIMATE | bound |
+  |---|---|---|
+  | 4 RETRIABLE (`failed` ×3, `crash` ×1) | the backlog is decided by the NEWEST row, so a `failed` file returns to it and a re-run appends a second `failed` | `MAX_RETRIES` escalates to `failed-final` |
+  | 4 `slow-skipped` | the deferred pool retries ONLY at a higher cap; a retry that is still too slow appends a second slow-skip | 3-attempt ceiling, then `exhausted` |
+  | 1 `normalized` (5511f8f0) | historical artifact of the `--seed-deferred` newest-row bug, **already fixed at source**; the row survives because the ledger is append-only | — |
+  So the real failure class is **UNBOUNDED** repetition — the no-trades loop re-billed the same
+  file on every batch forever. Both assertions now bound it instead of forbidding it: no triple
+  past the **retry ceiling (3)**, and `normalized` capped at **2** (one measurement + at most one
+  deliberate `--redo`, the only path to a lost curve). Verified on synthetic ledgers that all
+  three legitimate shapes pass and that `failed ×4` and `normalized ×3` both fail.
+  ⚠⚠ **Do NOT "fix" these duplicates by pruning rows.** `harness/normalize-*.tsv` is tracked and
+  append-only, newest-row-wins is what makes a recovered or re-run row authoritative, and the
+  surviving 5511f8f0 row is the evidence that the seeder bug happened. Deleting rows would destroy
+  the audit trail to silence a check that was itself wrong.
+  ⚠ **The duplicates harm nothing live, which is why no reader was changed.** Measured: `§3` of
+  多策略分仓组合 lists 5511f8f0 **once** and its `memberCount` reads **3** — `wiki-family-build`
+  already dedupes per file — and an identical duplicate cannot move a best-objective champion. The
+  only miscount is `ledger.normalized()` yielding **407 rows for 406 distinct files**. That was
+  left alone on purpose: `ledger.js` owns the **schema, not the iteration policy** (eight consumers
+  iterate deliberately differently), so collapsing it would risk all eight to fix a +1 nothing
+  reads. ⚠ An earlier claim in this session that 5511f8f0 was a **third** occurrence was WRONG —
+  lines 97 and 335 are exactly the two rows this file already documents.

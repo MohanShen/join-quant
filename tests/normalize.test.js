@@ -139,19 +139,23 @@ test('the rebuilt ledger', async t => {
     assert.ok(head.length === 13 || head[13] === 'epoch', `unexpected 14th column: ${head[13]}`);
   });
 
-  await t.test('holds no duplicate sourceFile+status pair WITHIN an epoch', { skip: !fs.existsSync(ledger) }, () => {
+  await t.test('repetition within an epoch stays BOUNDED', { skip: !fs.existsSync(ledger) }, () => {
     // Since epoch 4 the same file legitimately carries one row per epoch — that is the point
     // of the column, because a result only means something next to the bench that produced it.
-    // A repeat within ONE epoch is still a bug (it is what the no-trades loop used to cause).
-    const seen = new Set();
-    const dupes = [];
+    // ⚠ A repeat WITHIN one epoch is not automatically a bug either, which this assertion used
+    // to claim: a retriable status re-runs by design, and the deferred pool re-runs a slow-skip
+    // at a higher cap by design. The bug is UNBOUNDED repetition (the no-trades re-billing
+    // loop). See the fuller accounting on the sibling assertion, `repetition of a
+    // file+status+epoch triple stays BOUNDED`, which this one must not contradict.
+    const count = new Map();
     for (const l of fs.readFileSync(ledger, 'utf8').split('\n').slice(1)) {
       if (!l.trim()) continue;
       const c = l.split('\t');
       const k = `${c[0]} ${c[3]} epoch=${c[13] || '?'}`;
-      if (seen.has(k)) dupes.push(k); else seen.add(k);
+      count.set(k, (count.get(k) || 0) + 1);
     }
-    assert.deepStrictEqual(dupes, [], `duplicate ledger rows: ${dupes.join(', ')}`);
+    const runaway = [...count].filter(([, n]) => n > 3).map(([k, n]) => `${k} x${n}`);
+    assert.deepStrictEqual(runaway, [], `ledger rows repeated past the retry ceiling: ${runaway.join(', ')}`);
   });
 });
 
@@ -516,20 +520,39 @@ ddt('a file is normalized at most once per batch', async (t) => {
     dda.match(out, /1 duplicate\(s\) dropped/);
   });
 
-  await t.test('the ledger holds no duplicate file+status+epoch triple', () => {
-    // The invariant the run violated. Newest-wins makes a duplicate harmless to READ, but it
-    // inflates every count derived from the ledger.
+  await t.test('repetition of a file+status+epoch triple stays BOUNDED', () => {
+    // ⚠ This used to assert ZERO duplicates, and it was wrong — it flagged three documented
+    // design paths as bugs and sat red for ~10 days, which is how a check teaches its reader to
+    // ignore it. Measured 2026-11-04 over the 9 duplicate triples then present:
+    //   4 RETRIABLE (failed x3, crash x1) — a failed row returns the file to the backlog by
+    //     design ("the backlog is decided by the NEWEST ledger row"), so a re-run legitimately
+    //     appends a second one. Bounded by MAX_RETRIES escalating to `failed-final`.
+    //   4 slow-skipped — the deferred pool retries ONLY at a higher cap, and a retry that is
+    //     still too slow legitimately appends a second slow-skip. Bounded by the 3-attempt
+    //     ceiling, after which the row is listed as `exhausted`.
+    //   1 normalized (5511f8f0) — the historical artifact of the --seed-deferred newest-row bug,
+    //     already found and FIXED at source; the row survives because the ledger is append-only.
+    // So the real failure class is not "a repeat" but UNBOUNDED repetition: the no-trades loop
+    // re-billed the same file on every batch forever. Assert the bound, not its absence.
     const text = ddfs.readFileSync(ddpath.join(__dirname, '../harness/normalize-train.tsv'), 'utf8');
-    const seen = new Set();
-    const dupes = [];
+    const count = new Map();
     for (const l of text.split('\n').slice(1)) {
       if (!l.trim()) continue;
       const c = l.split('\t');
       const k = `${c[0]}|${c[3]}|${c[13] || ''}`;
-      if (seen.has(k)) dupes.push(k);
-      seen.add(k);
+      count.set(k, (count.get(k) || 0) + 1);
     }
-    dda.deepStrictEqual(dupes, [], `duplicate ledger rows: ${dupes.join(', ')}`);
+    const RETRY_CEILING = 3;   // deferred pool attempts / MAX_RETRIES escalation
+    const runaway = [...count].filter(([, n]) => n > RETRY_CEILING);
+    dda.deepStrictEqual(runaway.map(([k, n]) => `${k} x${n}`), [],
+      'a file+status+epoch triple repeated past the retry ceiling — this is the re-billing loop');
+
+    // A re-measured SUCCESS is the expensive one: a full backtest to reproduce a number the
+    // ledger already held. One deliberate `--redo` (the only path to a lost curve) is legal, so
+    // the bound is 2 — a third means something is re-measuring finished work again.
+    const reNormalized = [...count].filter(([k, n]) => k.split('|')[1] === 'normalized' && n > 2);
+    dda.deepStrictEqual(reNormalized.map(([k, n]) => `${k} x${n}`), [],
+      'a normalized row was re-measured more than once past its original');
   });
 });
 
