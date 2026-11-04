@@ -222,3 +222,7 @@
 2026-11-04T13:27:12.090Z	strategies/2026-11-04_缠论二买_简易版本-262198bc.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 chan_II_signal
 2026-11-04T13:34:34.748Z	strategies/2026-11-04_双线RSI择时轮动策略-b508712e.py	SyntaxError: invalid syntax
 2026-11-04T13:38:42.481Z	strategies/2026-11-04_行为金融因子_一_-基于处置效应的CGO因子-b66c364c.py	TypeError: unsupported operand type(s) for /: 'map' and 'map'
+2026-11-04T14:18:41.393Z	strategies/2026-11-04_祖鲁法则_选择成长股策略-fa95b106.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals不支持statDate参数，请使用date参数
+2026-11-04T14:20:09.850Z	strategies/2026-11-04_跟着港资_北向资金_买A股-57f44e89.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-11-04T14:27:49.241Z	strategies/2026-11-04_机器学习策略_非小市值-3fad61a4.py	jqboson.core.exception.ReadRemoteFileError: read_file model_v3.0.pkl: 文件'/opt/research-files/655/65568519426/model_v3.0.pkl'不存在
+2026-11-04T14:31:20.967Z	strategies/2026-11-04_五子策略_最新的shipan和中继系统代码和附件-a2ed56f3.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 redis_trade

@@ -4131,5 +4131,95 @@
     "postId": "b66c364c107987739cbec9db7be5ab7c",
     "sourceFile": "2026-11-04_行为金融因子_一_-基于处置效应的CGO因子-b66c364c.py",
     "registeredAt": "2026-11-04T12:58:37.488Z"
+  },
+  "45b7b21af6ca8625397808c64fd6ff9f73ff5abc103f891c4b080fcece795a09": {
+    "postId": "a8dca122bf3d0a9e49b30fd610a0d6ed",
+    "sourceFile": "2026-11-04_我的低开买高开卖-修改完毕-a8dca122.py",
+    "registeredAt": "2026-11-04T14:12:00.727Z"
+  },
+  "07aac9932c1fa02a0a9a49d8ef183625eb62a39d17d7df1549069a163aac6add": {
+    "postId": "d9420b920aa364c3ba35e03951b74046",
+    "sourceFile": "2026-11-04_桐峰小市值-debug第二版_10年千倍-d9420b92.py",
+    "registeredAt": "2026-11-04T14:12:04.732Z"
+  },
+  "0dc0b1ab14e7b331c3eb60b0d91e111ff37cb609986d39aa2d64409b675baa41": {
+    "postId": "2e055009e3630964faa3c23bb40748cd",
+    "sourceFile": "2026-11-04_查询指定指数的PE和PB的中位数历史数据的程序-2e055009.py",
+    "registeredAt": "2026-11-04T14:12:08.986Z"
+  },
+  "7eef07a3cd13632a3eb93c5fb80003b87090916692dc7b162887422e4518c14c": {
+    "postId": "fa95b106e3f634a2bab1748c930bc22a",
+    "sourceFile": "2026-11-04_祖鲁法则_选择成长股策略-fa95b106.py",
+    "registeredAt": "2026-11-04T14:12:15.649Z"
+  },
+  "a6aa264c1647592ad7cef538c260b14e4140fecf9b701fa9f26e85bab418bbb2": {
+    "postId": "57f44e89f66b9ee3d766e9d46c353453",
+    "sourceFile": "2026-11-04_跟着港资_北向资金_买A股-57f44e89.py",
+    "registeredAt": "2026-11-04T14:12:18.852Z"
+  },
+  "e74897daf4e07ddd62d8052a78b2fa1099d80ecab4fb42c469d2057e982675ee": {
+    "postId": "d3605b062d029f34b931cee1eaa1da95",
+    "sourceFile": "2026-11-04_你的量化策略真的靠谱吗_一份超级检测清单送给你-d3605b06.py",
+    "registeredAt": "2026-11-04T14:12:24.307Z"
+  },
+  "1401c916f648d8286dc95ea825df519f44847c332c1d234bd4ab6aac8599bc87": {
+    "postId": "90bb3ab411cca5d4807ac75bfa161103",
+    "sourceFile": "2026-11-04_低价小盘策略周四效应-90bb3ab4.py",
+    "registeredAt": "2026-11-04T14:12:28.468Z"
+  },
+  "73a7ba39712b0ebd1634b3a4ed1da80ca12b9ae2932b7acf7b037cfdf81465ab": {
+    "postId": "3fad61a41875edbfd4341fba1f5808e1",
+    "sourceFile": "2026-11-04_机器学习策略_非小市值-3fad61a4.py",
+    "registeredAt": "2026-11-04T14:12:32.390Z"
+  },
+  "54a7221372ae229b4ca2c8f78613e049311342e72f358220ef384ecaff671cca": {
+    "postId": "9cd4394306650da13a7564d693bc249c",
+    "sourceFile": "2026-11-04_搅屎棍小市值策略_小改_收益提升不少-9cd43943.py",
+    "registeredAt": "2026-11-04T14:12:35.636Z"
+  },
+  "835f1bfb9abf4be2440fa5b48accb94331dc690e858be90ddb60a013b2c67799": {
+    "postId": "a2ed56f36860fbfe06d6607ec4bb3ba4",
+    "sourceFile": "2026-11-04_五子策略_最新的shipan和中继系统代码和附件-a2ed56f3.py",
+    "registeredAt": "2026-11-04T14:12:39.625Z"
+  },
+  "3184e2b8eb3daa27f6f8790a71b36a8cf9a9b4e789f3958affaa153c4f33639d": {
+    "postId": "66416a8ad42803a90581ddf685e065cc",
+    "sourceFile": "2026-11-04_这个社区的某些人真可悲_又不了解市场_又自以为是-66416a8a.py",
+    "registeredAt": "2026-11-04T14:12:42.615Z"
+  },
+  "49cef9b7be60a90153a3c718668f2411518f0c8c9909c9ef4e55e178424cd21e": {
+    "postId": "c4fc448c21048c80eae714850294883a",
+    "sourceFile": "2026-11-04_以混沌之火_点亮投资之路_信息熵策略-c4fc448c.py",
+    "registeredAt": "2026-11-04T14:12:45.468Z"
+  },
+  "35ee48db2e7e6ff7a7cc50053c02ba18dc8dad952d17bece20aedec99ad98019": {
+    "postId": "c5188827afc4fea17eee2661221aad72",
+    "sourceFile": "2026-11-04_EPS_MS因子的大盘蓝筹策略-c5188827.py",
+    "registeredAt": "2026-11-04T14:12:48.411Z"
+  },
+  "e05fc9577ee43c4719b187509c240dd242b98cea4df280b7c5fcc905c1148f98": {
+    "postId": "8ce4beca2f48142f2e0ff344f569a1db",
+    "sourceFile": "2026-11-04_机器学习笔记014_对于因子选股_机器学习可以这样用-8ce4beca.py",
+    "registeredAt": "2026-11-04T14:12:51.705Z"
+  },
+  "53fc4a8798eb3855fd102d9b91d6773ca2cd15a2c621e7b5637b7c6c2cd70bfe": {
+    "postId": "42b92894d6286dde7ecc0f1546285185",
+    "sourceFile": "2026-11-04_养家糊口_年化38回撤5以内_用经典优化模型优化权重-42b92894.py",
+    "registeredAt": "2026-11-04T14:12:55.707Z"
+  },
+  "18c7ac4fc6e4ae5a78575ceaedbe5421406868447e93198afb2c0fbc7764503f": {
+    "postId": "e9faa0cf4ab4e6dd6cfd1eecb23023c0",
+    "sourceFile": "2026-11-04_七星高照V5_0_动量策略_五福V4_3和七星V5_0对比-e9faa0cf.py",
+    "registeredAt": "2026-11-04T14:12:59.471Z"
+  },
+  "ae7ce0befead05a4b08f19007fcb4898dc691436ef199aff72554e2a103cf377": {
+    "postId": "11a347d74cfdfb054e947f7282c358fe",
+    "sourceFile": "2026-11-04_稳健型ETF策略-11a347d7.py",
+    "registeredAt": "2026-11-04T14:13:03.287Z"
+  },
+  "47a45b983fa8ec59f99e8e3b5b227f1033bcd8a13acdc2a04a188f5d397b42ef": {
+    "postId": "6abe1fbb91a3167b9668120ea7f1d6b0",
+    "sourceFile": "2026-11-04_开源一个年化超25_的ETF策略-6abe1fbb.py",
+    "registeredAt": "2026-11-04T14:13:06.062Z"
   }
 }

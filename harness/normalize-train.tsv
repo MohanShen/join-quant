@@ -796,3 +796,14 @@ strategies/2026-11-04_双线RSI择时轮动策略-b508712e.py	b508712e8d6cbcbdb6
 strategies/2026-11-04_行为金融因子_一_-基于处置效应的CGO因子-b66c364c.py	b66c364c107987739cbec9db7be5ab7c	行为金融因子（一）-基于处置效应的CGO因子	crash										9
 strategies/2026-11-04_差不多得了-16a6414b.py	16a6414bca9dbedd84b27671472f293a	差不多得了	failed-final										9
 strategies/2026-11-04_行为金融因子_一_-基于处置效应的CGO因子-b66c364c.py	b66c364c107987739cbec9db7be5ab7c	行为金融因子（一）-基于处置效应的CGO因子	compile-error										9
+strategies/2026-11-04_我的低开买高开卖-修改完毕-a8dca122.py	a8dca122bf3d0a9e49b30fd610a0d6ed	我的低开买高开卖-修改完毕	crash										9
+strategies/2026-11-04_桐峰小市值-debug第二版_10年千倍-d9420b92.py	d9420b920aa364c3ba35e03951b74046	桐峰小市值-debug第二版，10年千倍	normalized	2024-01-01	2024-12-31	365	198.50	198.50	4.91	21.05	1.7745	pass	9
+strategies/2026-11-04_查询指定指数的PE和PB的中位数历史数据的程序-2e055009.py	2e055009e3630964faa3c23bb40748cd	查询指定指数的PE和PB的中位数历史数据的程序	crash										9
+strategies/2026-11-04_祖鲁法则_选择成长股策略-fa95b106.py	fa95b106e3f634a2bab1748c930bc22a	祖鲁法则：选择成长股策略	compile-error										9
+strategies/2026-11-04_跟着港资_北向资金_买A股-57f44e89.py	57f44e89f66b9ee3d766e9d46c353453	跟着港资（北向资金）买A股	compile-error										9
+strategies/2026-11-04_你的量化策略真的靠谱吗_一份超级检测清单送给你-d3605b06.py	d3605b062d029f34b931cee1eaa1da95	[!] 你的量化策略真的靠谱吗？   一份超级检测清单送给你	normalized	2024-01-01	2024-12-31	365	95.46	95.46	2.82	10.99	0.8447	pass	9
+strategies/2026-11-04_低价小盘策略周四效应-90bb3ab4.py	90bb3ab411cca5d4807ac75bfa161103	低价小盘策略周四效应	normalized	2024-01-01	2024-12-31	365	-18.65	-18.65	-0.47	56.09	-0.7474	fail	9
+strategies/2026-11-04_机器学习策略_非小市值-3fad61a4.py	3fad61a41875edbfd4341fba1f5808e1	机器学习策略（非小市值）	compile-error										9
+strategies/2026-11-04_搅屎棍小市值策略_小改_收益提升不少-9cd43943.py	9cd4394306650da13a7564d693bc249c	搅屎棍小市值策略，小改，收益提升不少！	crash										9
+strategies/2026-11-04_五子策略_最新的shipan和中继系统代码和附件-a2ed56f3.py	a2ed56f36860fbfe06d6607ec4bb3ba4	五子策略（最新的shipan和中继系统代码和附件）	compile-error										9
+strategies/2026-11-04_这个社区的某些人真可悲_又不了解市场_又自以为是-66416a8a.py	66416a8ad42803a90581ddf685e065cc	这个社区的某些人真可悲，又不了解市场，又自以为是	slow-skipped										9
