@@ -4221,5 +4221,375 @@
     "postId": "6abe1fbb91a3167b9668120ea7f1d6b0",
     "sourceFile": "2026-11-04_开源一个年化超25_的ETF策略-6abe1fbb.py",
     "registeredAt": "2026-11-04T14:13:06.062Z"
+  },
+  "c875875017724b9d69e65984264f4bfd7f3407a1152a8f3f4863303e713493de": {
+    "postId": "a5b00d7bcd935a5f0d819a75712e3bcb",
+    "sourceFile": "2026-11-05_菜场大妈策略回顾-a5b00d7b.py",
+    "registeredAt": "2026-11-04T19:27:55.730Z"
+  },
+  "6558ac45ffe576851939cf7b33d92ec3a4198cf6c03dabbffec6f7e5dfc8c7b2": {
+    "postId": "7606d2d71fbd9e8d34f7cdc0784c1caf",
+    "sourceFile": "2026-11-05_单均线策略_5日_2007-2016_深证指数基金-7606d2d7.py",
+    "registeredAt": "2026-11-04T19:27:58.426Z"
+  },
+  "2dec248f1a81de00a156c9c1ce93a44a3d671f1e5dbf74b4559bcd3a4f071571": {
+    "postId": "2dc8cb17c0796774a973d2e8639d5538",
+    "sourceFile": "2026-11-05_五福5_2_VS_五福V7_4_对比-2dc8cb17.py",
+    "registeredAt": "2026-11-04T19:28:01.146Z"
+  },
+  "d51c950fc894f1b8b9e54884245218b7e47376c0579f5bfa048488fa64c211ea": {
+    "postId": "ec04617bd9c683f1f90560990129ec3c",
+    "sourceFile": "2026-11-05_五子策略无shipan和中继系统_需要的去另一个帖子-ec04617b.py",
+    "registeredAt": "2026-11-04T19:28:04.066Z"
+  },
+  "ca795c2f187364fed9c5c4e116a3ec4f4045863c5fc9f371fb378c71f1feba52": {
+    "postId": "41b6501e61becd5896b9f04ed2ef1189",
+    "sourceFile": "2026-11-05_查尔斯_布兰德斯_价值投资策略-41b6501e.py",
+    "registeredAt": "2026-11-04T19:28:06.689Z"
+  },
+  "643d096e7c7cbd6fe60ba48181fe95dab44a4df58f6831f261f2d20d020d5f75": {
+    "postId": "1c9027523173a89c9b0665dc86248147",
+    "sourceFile": "2026-11-05_五福ETF候选池改成点时动态池_6328_7720-1c902752.py",
+    "registeredAt": "2026-11-04T19:28:09.557Z"
+  },
+  "fe58b1ca3673ba4364b3f884d96a8774da8ef5626b20d0361f22c3bf36529e0f": {
+    "postId": "53688ebf9e5af2746958b662f2705d7c",
+    "sourceFile": "2026-11-05_首版突破_一进二-53688ebf.py",
+    "registeredAt": "2026-11-04T19:28:12.179Z"
+  },
+  "f6fbc5e4a94be2296f516a22a6b7e8d04a7862559580af145f112daf19ffda06": {
+    "postId": "048a24594b7743f7e14c39c38f42cfa6",
+    "sourceFile": "2026-11-05_最近2年年化100_以上回撤12_的打板策略-验证策略-048a2459.py",
+    "registeredAt": "2026-11-04T19:28:17.427Z"
+  },
+  "fe18b87a8c4a5b7e3336440285844be356d62beeeddc40c02cde4b35a8a4af73": {
+    "postId": "e2798f3bf37914b0b7ef1be71c976f7b",
+    "sourceFile": "2026-11-05_海龟交易法则升级版---_分钟级回测_合约变更移仓-e2798f3b.py",
+    "registeredAt": "2026-11-04T19:28:20.065Z"
+  },
+  "acbed8c1f00036558ddb9b5f0efe72210b71ad626ec5140a5a833ae4dca491d4": {
+    "postId": "5a3499ea465064d0c05aa77ce56d8bdc",
+    "sourceFile": "2026-11-05_Deep_seek说这是七星的唯一真神-5a3499ea.py",
+    "registeredAt": "2026-11-04T19:28:22.706Z"
+  },
+  "23b68fb6f0016e93b983b7b02a08f86365f9f6ad96763b5de13de6f7223323f2": {
+    "postId": "17a1b93af9073eefee9504348e77411a",
+    "sourceFile": "2026-11-05_买入每个行业市值最大的股票-17a1b93a.py",
+    "registeredAt": "2026-11-04T19:28:25.361Z"
+  },
+  "554c04f78666e84a938ffc128d9f86ddcfae19ced1c09866b9f68e7e64a8ca84": {
+    "postId": "fdf13c81b5a8c8ef053b438798bd74f2",
+    "sourceFile": "2026-11-05_稳健型多因子轮动策略_风险控制与动态调仓逻辑详解-fdf13c81.py",
+    "registeredAt": "2026-11-04T19:28:27.981Z"
+  },
+  "7f19a4871844b03b5fa88d8735687df01329b7e1971099ab56b33ce65158b3cf": {
+    "postId": "bac6fb8d70e250b3ca844963f97472c6",
+    "sourceFile": "2026-11-05_向wywy学习_机器学习_批量生产策略-bac6fb8d.py",
+    "registeredAt": "2026-11-04T19:28:30.615Z"
+  },
+  "30ff8b2a0d6df32d6b7f50894f001eee4b876441cf6086eb5aa6a97add20fd79": {
+    "postId": "2e02fb4c347906333618966b3e67da10",
+    "sourceFile": "2026-11-05_回撤18_年化389_反狙击ETF轮动-2e02fb4c.py",
+    "registeredAt": "2026-11-04T19:28:33.257Z"
+  },
+  "34a6a6ea797ef4dc5b90447b51a21c0a367bdaaca0ff94960d80a7ec6406145f": {
+    "postId": "6a1afb7235a05f76846c4d6ee3a192eb",
+    "sourceFile": "2026-11-05_股息率实验-6a1afb72.py",
+    "registeredAt": "2026-11-04T19:28:35.881Z"
+  },
+  "5207cd6b3048f03b16a1955d5f90e4fcad5f13b8e373cf0bb65a3c0e5e51cf54": {
+    "postId": "7d40ea59d58ffdcd0603c431900a44ef",
+    "sourceFile": "2026-11-05_均值回归策略分享-7d40ea59.py",
+    "registeredAt": "2026-11-04T19:28:38.504Z"
+  },
+  "a13f397ade3d8ddd1f254a3a0fcdab51c334a8a5fd8a463e2fc66687277ce66c": {
+    "postId": "bf9bd2e72b55c146d256926ed24e6529",
+    "sourceFile": "2026-11-05_全球大类ETF轮动_年化68_距9月历史新高回撤2_6-bf9bd2e7.py",
+    "registeredAt": "2026-11-04T19:28:41.125Z"
+  },
+  "a8a1bdfc42dd4db2d626ebeef19d5cb757e2f1e537f0d36e71225d467d6600d5": {
+    "postId": "76f0df38f0efe63c81b3b7a605909282",
+    "sourceFile": "2026-11-05_策略研发_期货双均线策略-76f0df38.py",
+    "registeredAt": "2026-11-04T19:28:43.748Z"
+  },
+  "127eda113f4bb6da15da2cd7c20b5bce5d56f45b1f52378fe8f0473ae21379ec": {
+    "postId": "5c90a12c8440f65b7e675928ee0e24cf",
+    "sourceFile": "2026-11-05_大小盘轮动策略-5c90a12c.py",
+    "registeredAt": "2026-11-04T19:28:46.368Z"
+  },
+  "250e5d96d14bc8c7a7b93e40948be37fd217fa9575c289171e4f2055ad9aa33e": {
+    "postId": "724cf7e414044e4ca05e10c5075763d4",
+    "sourceFile": "2026-11-05_Q_MT限制后可继续使用方案_聚宽信号如何同步-724cf7e4.py",
+    "registeredAt": "2026-11-04T20:23:24.458Z"
+  },
+  "2a84fa0e1f3298708effe9e8fc9f4712909d8c5850d91ebc9105715eaf85ac5d": {
+    "postId": "e6345bc798de86376e1b57de5551b57a",
+    "sourceFile": "2026-11-05_基础研究_ETF池子构建V2_ETF收敛到104只-e6345bc7.py",
+    "registeredAt": "2026-11-04T20:23:27.089Z"
+  },
+  "12db4055e9f2ec23cac1beca1e68f5a6e1aded0a3bc4b290dcc462b4b94db3cb": {
+    "postId": "fac28838a2050bf27a87ddeb9af054d2",
+    "sourceFile": "2026-11-05_战法三_双创恐慌低吸策略_需要择时_7月翻倍策略-fac28838.py",
+    "registeredAt": "2026-11-04T20:23:34.912Z"
+  },
+  "3fcfa8e0d2b979cb624eeb11fda7ebcc7e731eb9a849102af239dda87cded7cc": {
+    "postId": "28bccac78066c35622a6afb2453c3164",
+    "sourceFile": "2026-11-05_年化358_回撤6_强到让人怀疑的策略-28bccac7.py",
+    "registeredAt": "2026-11-04T20:23:37.606Z"
+  },
+  "3c9faf79f7e05524257eaad2c4ceba26b5b1623a927512c089db21add948ecb7": {
+    "postId": "45a6c99756221122c6c6ea750222c952",
+    "sourceFile": "2026-11-05_策略研发_三进兵策略_变形版-45a6c997.py",
+    "registeredAt": "2026-11-04T20:23:40.276Z"
+  },
+  "08f30dba105bc75fa6c9d1e95c3d332bf9977129009bbfc7a8fddfaf0797c01a": {
+    "postId": "db583cfecee607941b94f9fc268573de",
+    "sourceFile": "2026-11-05_对MACD均线择时策略的改进-db583cfe.py",
+    "registeredAt": "2026-11-04T20:23:42.892Z"
+  },
+  "f0edebbeb4cdbd18b409b78051c085bd6c373f59aa83fec3e6c35b89cd497f03": {
+    "postId": "cdababc58681fcb2380244da37ca8bfc",
+    "sourceFile": "2026-11-05_红利动量增强_年化29_无未来函数_过拟合_附过拟合检验-cdababc5.py",
+    "registeredAt": "2026-11-04T20:23:45.546Z"
+  },
+  "35e396b2ff6eb43109c9d132bafbca7da638fcc7c2145788affe75f09b8dd251": {
+    "postId": "a221d4a4ad678e45b64b09f7dbacce65",
+    "sourceFile": "2026-11-05_高股息策略_基于芹菜大佬高股息低市盈率高增长的价投策略分析-a221d4a4.py",
+    "registeredAt": "2026-11-04T20:23:48.226Z"
+  },
+  "5f62803614d632790cc3a6de33fc56dce37e39bf2d52fec32d6669e4acf1bca9": {
+    "postId": "a9fd736af7fa3013aade2cc14ff9b71f",
+    "sourceFile": "2026-11-05_MACD单因子多头策略-a9fd736a.py",
+    "registeredAt": "2026-11-04T20:23:50.891Z"
+  },
+  "ecc25788bce2592ed7e655a283cbad11b83c2f07a84ff6f0ed7cc7d2cc711fed": {
+    "postId": "8a35249a271537b9e9afb9b3df184335",
+    "sourceFile": "2026-11-05_金纳油三选一_ETF策略复现之七-8a35249a.py",
+    "registeredAt": "2026-11-04T20:23:53.638Z"
+  },
+  "dba48c99fcf2778ecb8047cfa008ca2c6a64ba45dfa71a5a43baa93ceec206d4": {
+    "postId": "05b539a34b3d96a496f8fa235afdefb5",
+    "sourceFile": "2026-11-05_低回撤_稳定盈利_小盘股三因子加上RSRS择时-05b539a3.py",
+    "registeredAt": "2026-11-04T20:23:56.288Z"
+  },
+  "7ac7fde93ba58c9dc40b1fee9f329b966ce8570b25be4f31b3ee08d457f5905a": {
+    "postId": "64e80be97dd10f69a213e3ecee460ee1",
+    "sourceFile": "2026-11-05_均线策略改进测试-64e80be9.py",
+    "registeredAt": "2026-11-04T20:23:58.942Z"
+  },
+  "00eb76b12903e57b31c75e1dae0dc75a54ef5d32eacb7273d16df71003bbe01a": {
+    "postId": "51fdd5bdbec7678907855ead13668c32",
+    "sourceFile": "2026-11-05_向导式_价值分析_一_成功避开股灾_大盘震荡跌时小涨-51fdd5bd.py",
+    "registeredAt": "2026-11-04T20:24:01.614Z"
+  },
+  "1c13defbe5b19bd089d746ec4a6fb275062671b43f298b29e165dcce1344dfba": {
+    "postId": "05c5944d99d330471c567cd909144b1f",
+    "sourceFile": "2026-11-05_缠论初探_笔方向破坏的级别共振策略-05c5944d.py",
+    "registeredAt": "2026-11-04T20:24:04.237Z"
+  },
+  "15ce0ba5ce39b4f612b0ab5887ec99ae848545d4650d897b4a61eec7bf00ac89": {
+    "postId": "4285aad26539c214ec7730a76f6362b7",
+    "sourceFile": "2026-11-05_五福52V3-多ETF-2015年至今收益126倍回撤25-4285aad2.py",
+    "registeredAt": "2026-11-04T20:24:07.139Z"
+  },
+  "32ff45d6da22b7fa3cd89f82ea7cbe8d24f274ed53866170dbe76c5527f1cbd1": {
+    "postId": "7d9c00a7f131ac5db9d43c148ee64c73",
+    "sourceFile": "2026-11-05_简单的形态策略_不成熟-7d9c00a7.py",
+    "registeredAt": "2026-11-04T20:24:09.863Z"
+  },
+  "b9228db864ad22f78bb70f8e87d4a1c7c2a716e2711c8a4b24353a4813dc56ff": {
+    "postId": "95998f6fcdd14f296dfa584b266640be",
+    "sourceFile": "2026-11-05_ETF轮动系列_实盘_止损版V3_0-增强收益_降低回撤-95998f6f.py",
+    "registeredAt": "2026-11-04T20:24:12.505Z"
+  },
+  "e2f7ae7af3906aa6d0415998248d52d7a8e95367a5dcea5d21ad57908814ee3b": {
+    "postId": "eee27a2bf9c4b805496cae642a40e19b",
+    "sourceFile": "2026-11-05_定增破发策略的应用-eee27a2b.py",
+    "registeredAt": "2026-11-04T20:24:15.159Z"
+  },
+  "daf2f4fa5eb98c6b12858ecc642d7f017c67573feaeaa58fadd37523aa391006": {
+    "postId": "353f0f75d3c22568d2aca64b7eb01faf",
+    "sourceFile": "2026-11-05_低位三连阳首板优化_14_1_26年胜率85-353f0f75.py",
+    "registeredAt": "2026-11-04T20:24:17.828Z"
+  },
+  "1e2c3fea5968d2b5c9b6da29467c155b2bb105f5c24dc7cf16f6180d882c4637": {
+    "postId": "82ee9f2cb7a69780bb3e288e7d6cc0b1",
+    "sourceFile": "2026-11-05_次新_小市值_KAMA择时_轮动-82ee9f2c.py",
+    "registeredAt": "2026-11-04T20:24:20.487Z"
+  },
+  "2a2703427ae1c1b3aae9c322304570d5c1ce9a597e035171cd518bd743dd7e0e": {
+    "postId": "aee9097fabe9006d7581d3548d09dddb",
+    "sourceFile": "2026-11-05_基于机器学习SVM的应用-aee9097f.py",
+    "registeredAt": "2026-11-04T21:16:54.396Z"
+  },
+  "d17dd75f441db3d00979e59f5db4f61fd8c097c1abdbf07e0f7bd83cf0ace7f5": {
+    "postId": "2e3bd31df7e0567f4abed6bbb09ce14f",
+    "sourceFile": "2026-11-05_小市值超跌_大盘止损_请大神帮忙剔除st_st以及退市博元-2e3bd31d.py",
+    "registeredAt": "2026-11-04T21:16:57.032Z"
+  },
+  "b9a523dcbafa4b111dec940f98410ff1472802b5c57add390d43be8cdf672ae4": {
+    "postId": "1a3e2556385d294274abc50d51e1c75b",
+    "sourceFile": "2026-11-05_结合SMA和布林通道的选股策略--大市值优先-1a3e2556.py",
+    "registeredAt": "2026-11-04T21:16:59.666Z"
+  },
+  "a572afab99c65524508a6d06c13741060aa743a2e8fa2a6cccd4335fd15840ea": {
+    "postId": "7ddb4855abfc4049c9f182afc271cccb",
+    "sourceFile": "2026-11-05_加入了抱团因子控制的小市值策略_抛砖引玉-7ddb4855.py",
+    "registeredAt": "2026-11-04T21:17:02.378Z"
+  },
+  "19b101d18185e27dd0956a9c9b1ae43755443420358357c255644f11048852eb": {
+    "postId": "026ca994b02f40b79ea5a6e3a936fdc5",
+    "sourceFile": "2026-11-05_Delta对冲实现复制策略-026ca994.py",
+    "registeredAt": "2026-11-04T21:17:05.027Z"
+  },
+  "436d6bca30db2a96aff91445b548162bab4797baf005f84ccdf68cf5f8dbf6e6": {
+    "postId": "215cfc4ac6d82c4ebbbe6dca67f73a46",
+    "sourceFile": "2026-11-05_3连阳首板接力-收益2000_-第1版-215cfc4a.py",
+    "registeredAt": "2026-11-04T21:17:07.693Z"
+  },
+  "14ae8b30b609ae9521b4e62c43a03052b518322bcff046a3af726360dbc72832": {
+    "postId": "bf419547beaf8696ca9b8dc9c140da7b",
+    "sourceFile": "2026-11-05_两年200_收益_大神的这个策略还是很能打的-bf419547.py",
+    "registeredAt": "2026-11-04T21:17:10.383Z"
+  },
+  "38d6a41472984fdf7042a514c5fcd14e7a6a565e07e553a56d282c9edbd2ef6d": {
+    "postId": "9aca7ecdd1e09051403f691dcc5f82ef",
+    "sourceFile": "2026-11-05_多因子选股策略-9aca7ecd.py",
+    "registeredAt": "2026-11-04T21:17:13.005Z"
+  },
+  "c5083cb5a650bb1d7f0707871b8e7d72f48cb3f71eb3abf38499b7f5bf20ee96": {
+    "postId": "c0716eef49d68f6478002aec2a41127f",
+    "sourceFile": "2026-11-05_冰点热点择时_-_打板策略_今年37_回撤低-c0716eef.py",
+    "registeredAt": "2026-11-04T21:17:15.778Z"
+  },
+  "fa805d7a842eb36cfa14190fe3a44a6999cc489f38a05ddbe7c66bdfd990726c": {
+    "postId": "8abdec9f53d5884d0a2f6d4fe4f75fee",
+    "sourceFile": "2026-11-05_策略粉碎机_之模拟盘高开低开策略真面目-8abdec9f.py",
+    "registeredAt": "2026-11-04T21:17:18.433Z"
+  },
+  "261b8ca99aeb5b3abd8957be68d003d5e4c12391b68b6d0b971b7fe499153c67": {
+    "postId": "d274a9c9c83a8c188387448dce486930",
+    "sourceFile": "2026-11-05_红利策略改造记_年化_19_4_9_年超额全正-d274a9c9.py",
+    "registeredAt": "2026-11-04T21:17:21.169Z"
+  },
+  "2f2f2ed64bf8075688b3bd303207591fb77a26e9fb1edac5c5238ce865fbe312": {
+    "postId": "94c64f0683469fc3cbe323c4196f5f7f",
+    "sourceFile": "2026-11-05_小市值_26年-30收益-低回撤-94c64f06.py",
+    "registeredAt": "2026-11-04T21:17:23.868Z"
+  },
+  "fef622f9d0c0cec14fa6b101bb958440fe9ac9e8960da182f3121981148b81ff": {
+    "postId": "f07038e2fc35490aafb3c54b6345a9c1",
+    "sourceFile": "2026-11-05_PT多策略分仓隔离插件V1_5-f07038e2.py",
+    "registeredAt": "2026-11-04T21:17:26.883Z"
+  },
+  "58a145175e592b1a85afcc778d1222e15acc3f00c5c13d9c47a0d15fa16519f0": {
+    "postId": "25c2387e7156c62d847a6ea2068ed26c",
+    "sourceFile": "2026-11-05_向导式_财务因子优化策略二_已加佣金和滑点-25c2387e.py",
+    "registeredAt": "2026-11-04T21:17:29.576Z"
+  },
+  "ab5b0061d16f132e6be1107598ad854802c237f2be9b04a3275a92f0abd7a639": {
+    "postId": "3d2e689c83bd263256f7be06f6e1562a",
+    "sourceFile": "2026-11-05_无模型评估的多因子模型-3d2e689c.py",
+    "registeredAt": "2026-11-04T21:17:32.224Z"
+  },
+  "ac88e27fe660ac09ca2d884bf6b7ceddc61746fe8e9ee77264b069ca47d4f342": {
+    "postId": "9dfec96369836d9d308cc60f2f504ac9",
+    "sourceFile": "2026-11-05_纳指增强_纳指ETF溢价套利策略-9dfec963.py",
+    "registeredAt": "2026-11-04T21:17:34.912Z"
+  },
+  "5307b95c6c76644aed9db93c42a974f732388c87a6ccc87c0a002f64292f3eae": {
+    "postId": "e8e578c31d6944ac3fae2a1f0f5c1fc9",
+    "sourceFile": "2026-11-05_红利ETF反转策略_含email发送_年化16_胜率100-e8e578c3.py",
+    "registeredAt": "2026-11-04T21:17:37.576Z"
+  },
+  "f2d89d758f436b219b4525f1a895572f1b3934fd0559c1c88495d8eb848c35e6": {
+    "postId": "6a3cc7590b2c03ee4c8ea1e97b9818fa",
+    "sourceFile": "2026-11-05_选股策略-6a3cc759.py",
+    "registeredAt": "2026-11-04T21:17:43.006Z"
+  },
+  "76a0628d4bd737c9416f502760bccf167b6845c6f32bd1339aad52ec1831ff2a": {
+    "postId": "b4089243c616b50b979c1947ea3f989c",
+    "sourceFile": "2026-11-05_模拟了一个月的策略_分享给大家_至少9收益为正_太难了-b4089243.py",
+    "registeredAt": "2026-11-04T21:17:45.778Z"
+  },
+  "8fb9d768dd43e4ac6108e8bba69aef6cd498e37db63c0de04be79d387abbbcc3": {
+    "postId": "1b8329f4cc2925b3a4646633c59d5736",
+    "sourceFile": "2026-11-05_10_30月评_创业暴跌23_quot_喝酒吃药_quot_逆势回归-1b8329f4.py",
+    "registeredAt": "2026-11-04T22:21:56.251Z"
+  },
+  "8c220f78031d60a730f0afa3f064ec9cb9a09b6d3f5636d3977c05b6b603a51d": {
+    "postId": "392d10761c1078db77ada49a39aa3fee",
+    "sourceFile": "2026-11-05_社区总结一_传统多因子策略-392d1076.py",
+    "registeredAt": "2026-11-04T22:21:58.876Z"
+  },
+  "d5fdaa0112012cc84d9a2076dfe9afa0a40fb76fa999009801cabaace74e8c34": {
+    "postId": "030e70b9a6de522173d2386bba77ad75",
+    "sourceFile": "2026-11-05_二八原则的小代码确实不错_改的很好-030e70b9.py",
+    "registeredAt": "2026-11-04T22:22:04.153Z"
+  },
+  "30f653febb5b4cc7c39ddb283e73b35291db1492bc60ae0374e032f944d4f4a8": {
+    "postId": "6c777b99b1670b7a278cc5a1caf1c3bd",
+    "sourceFile": "2026-11-05_价投还是有点用处的-6c777b99.py",
+    "registeredAt": "2026-11-04T22:22:07.696Z"
+  },
+  "c3aa152fc7b0c86579d633d9f174921d437ef1a6437f49b3d4d7d48b3c28c44a": {
+    "postId": "10e2230ec4f94ac35fc518174e2ee757",
+    "sourceFile": "2026-11-05_想问下各位大佬_怎么把量化的选股调节成实时跟踪的-10e2230e.py",
+    "registeredAt": "2026-11-04T22:22:10.315Z"
+  },
+  "992c8467d6a8bc4d8894c373a1a7f347f72c1798e81e263fc37ccfb518ba2174": {
+    "postId": "0cfea7689a041aaf1e3fa08c7bd1ccb4",
+    "sourceFile": "2026-11-05_期货配对交易_小尝试-0cfea768.py",
+    "registeredAt": "2026-11-04T22:22:20.944Z"
+  },
+  "f9717a19343a27d32f5627291613e2fd3f8c845f4e58e63934c4fa1b1860690e": {
+    "postId": "b5218789b74b8af1629554bee83fea28",
+    "sourceFile": "2026-11-05_3连阳首板次日买-优化第4版-年化359-b5218789.py",
+    "registeredAt": "2026-11-04T22:22:23.626Z"
+  },
+  "ef6afe7c72bc869825c2a3ff2d71c6aa162cb96d58ab68ebefb626bf909b0a0c": {
+    "postId": "d1ac793b3f0da6c53de6856a76ff46de",
+    "sourceFile": "2026-11-05_发个分钟级打板策略_带来了个简化板的_年化123_无未来-d1ac793b.py",
+    "registeredAt": "2026-11-04T22:22:26.302Z"
+  },
+  "97f596f1c02c3171eed50f7fb4ab402c2123c57a010a7c64c7a5272f9b1ad0f0": {
+    "postId": "c0f0d2cab11259c89723191c2a552ac6",
+    "sourceFile": "2026-11-05_简单逻辑分散持仓30支小市值-c0f0d2ca.py",
+    "registeredAt": "2026-11-04T22:22:28.974Z"
+  },
+  "5f10ec8561f41169b99ec99c69bd63d5df8abf2b85b17b17e3fd6a48b7d4567a": {
+    "postId": "e1ad9ae48564e02ff3b0c60b0de1197f",
+    "sourceFile": "2026-11-05_ETF再平衡策略_胜率91_6_最大回撤8_57-e1ad9ae4.py",
+    "registeredAt": "2026-11-04T22:22:31.623Z"
+  },
+  "6f4bb63e38741b8affde7c41e4b2ec84d7081dc9550936ed7185b8f8bee98bd1": {
+    "postId": "18a1dbac3d2151cd4f2a169389bad14e",
+    "sourceFile": "2026-11-05_复刻金元顺安元启基金-18a1dbac.py",
+    "registeredAt": "2026-11-04T22:22:34.356Z"
+  },
+  "c9dbc2bab3b20d821935b4bb03ff8ba7a195c03fc795fe2b14640578d4abb47b": {
+    "postId": "a197e98c725be30c0e03d318a341655d",
+    "sourceFile": "2026-11-05_小市值策略_绝对没有未来函数_12年回测数值稳定-a197e98c.py",
+    "registeredAt": "2026-11-04T22:22:37.058Z"
+  },
+  "959c5bee409a18f787254a0e36c1b7076b960743a23531e0832a1c8a2311e80f": {
+    "postId": "e9eb4e128e37fd1b90c7821f18c72ec6",
+    "sourceFile": "2026-11-05_均现回调-e9eb4e12.py",
+    "registeredAt": "2026-11-04T22:22:39.749Z"
+  },
+  "cae648f962b7f317c83d1bbd34ea15d07ec47d09c05132ca10f820b7a5df2364": {
+    "postId": "9687d444b47af9f536374a3c75eff34c",
+    "sourceFile": "2026-11-05_类全天候_低波ETF组合-9687d444.py",
+    "registeredAt": "2026-11-04T22:22:42.391Z"
+  },
+  "52c92616bd4df5e265393b0f39a17ab95a69963687c0b57b65a12c5771c4a9f9": {
+    "postId": "298cbbb7ce2774e80a3d3e57c035e2f9",
+    "sourceFile": "2026-11-05_多形态趋势跟踪策略_年化收益60_49_最大回撤9_40-298cbbb7.py",
+    "registeredAt": "2026-11-04T22:22:45.560Z"
+  },
+  "34e3783825827f25a5a862e309a0ef81f4ffdf5968af615e8bdaaedd44939fee": {
+    "postId": "4fb61c9d88ec606bda8f84b0e9f53851",
+    "sourceFile": "2026-11-05_多策略动态调整仓位-模拟盘效果好-4fb61c9d.py",
+    "registeredAt": "2026-11-04T22:22:48.329Z"
   }
 }

@@ -226,3 +226,21 @@
 2026-11-04T14:20:09.850Z	strategies/2026-11-04_跟着港资_北向资金_买A股-57f44e89.py	AttributeError: 'DataFrame' object has no attribute 'sort'
 2026-11-04T14:27:49.241Z	strategies/2026-11-04_机器学习策略_非小市值-3fad61a4.py	jqboson.core.exception.ReadRemoteFileError: read_file model_v3.0.pkl: 文件'/opt/research-files/655/65568519426/model_v3.0.pkl'不存在
 2026-11-04T14:31:20.967Z	strategies/2026-11-04_五子策略_最新的shipan和中继系统代码和附件-a2ed56f3.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 redis_trade
+2026-11-04T19:18:27.019Z	strategies/2026-11-04_机器学习笔记014_对于因子选股_机器学习可以这样用-8ce4beca.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:00:00
+2026-11-04T19:34:35.955Z	strategies/2026-11-05_五子策略无shipan和中继系统_需要的去另一个帖子-ec04617b.py	jqboson.core.exception.InvalidParam: 每个仓位的资金之和，必须等于初始资金
+2026-11-04T19:35:23.457Z	strategies/2026-11-05_查尔斯_布兰德斯_价值投资策略-41b6501e.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-11-04T20:07:48.204Z	strategies/2026-11-05_买入每个行业市值最大的股票-17a1b93a.py	ImportError: cannot import name 'gta'
+2026-11-04T20:15:22.975Z	strategies/2026-11-05_股息率实验-6a1afb72.py	SyntaxError: invalid token
+2026-11-04T20:16:10.032Z	strategies/2026-11-05_均值回归策略分享-7d40ea59.py	SyntaxError: invalid syntax
+2026-11-04T20:31:05.565Z	strategies/2026-11-05_基础研究_ETF池子构建V2_ETF收敛到104只-e6345bc7.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 etf_pool
+2026-11-04T21:08:17.046Z	strategies/2026-11-05_低回撤_稳定盈利_小盘股三因子加上RSRS择时-05b539a3.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 utils
+2026-11-04T21:09:04.304Z	strategies/2026-11-05_均线策略改进测试-64e80be9.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 bee_stock_analysis_system
+2026-11-04T21:11:02.537Z	strategies/2026-11-05_缠论初探_笔方向破坏的级别共振策略-05c5944d.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时, 当天开盘前不能获取当日的{'high', 'low'}字段数据, current_dt=2024-01-02 09:00:00, end_date=2024-01-02 09:00:00
+2026-11-04T21:13:35.375Z	strategies/2026-11-05_定增破发策略的应用-eee27a2b.py	NameError: name 'gta' is not defined
+2026-11-04T21:18:31.855Z	strategies/2026-11-05_基于机器学习SVM的应用-aee9097f.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时, 当天开盘前不能获取当日的{'close'}字段数据, current_dt=2024-01-02 09:00:00, end_date=2024-01-02 09:00:00
+2026-11-04T21:19:40.936Z	strategies/2026-11-05_小市值超跌_大盘止损_请大神帮忙剔除st_st以及退市博元-2e3bd31d.py	jqdata.exceptions.FutureDataError: avoid_future_data=True的时候, 回测中get_fundamentals取市值表数据，15:00之后才能取当前交易日的市值表数据, date=2024-01-02, current_dt=2024-01-02 09:30:00
+2026-11-04T21:20:28.524Z	strategies/2026-11-05_结合SMA和布林通道的选股策略--大市值优先-1a3e2556.py	AttributeError: module 'pandas' has no attribute 'rolling_mean'
+2026-11-04T21:29:10.386Z	strategies/2026-11-05_多因子选股策略-9aca7ecd.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-11-04T21:58:15.845Z	strategies/2026-11-05_策略粉碎机_之模拟盘高开低开策略真面目-8abdec9f.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-11-04T22:09:22.890Z	strategies/2026-11-05_向导式_财务因子优化策略二_已加佣金和滑点-25c2387e.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-11-04T22:31:56.633Z	strategies/2026-11-05_二八原则的小代码确实不错_改的很好-030e70b9.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 tradestat
