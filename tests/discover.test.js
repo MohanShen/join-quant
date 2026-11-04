@@ -170,3 +170,89 @@ test('upsert', async t => {
     assert.strictEqual(Object.keys(m).length, 2);
   });
 });
+
+/**
+ * 问答 (cate=10) deferral in the strategy queue.
+ *
+ * Why this exists: on 2026-11-03 all 20 of that day's fetches were cate=10 help-desk posts
+ * ("新手求救，交易无法正常执行", "布林带代码问题", "获取数据缺失") and the normalizer spent
+ * real backtest minutes measuring them. A help-desk post ATTACHES a backtest in order to ask
+ * about it, so no payload rule catches it.
+ *
+ * The rule must stay a DEFERRAL: Q&A yielded the O'Neil pocket-pivot idea, so the row stays in
+ * the store and an explicit screening verdict overrides.
+ */
+const { applyVerdicts, QA_CATE } = require('../utils/strategy-discover');
+const fsQA = require('node:fs');
+
+// An unscreened item: a uniqueKey that cannot collide with a real screen/verdicts.json entry.
+let qaSeq = 0;
+const unscreened = (over = {}) => ({
+  postId: 'qa' + (++qaSeq),
+  uniqueKey: 'test-unscreened-key-' + qaSeq + '-' + Math.random().toString(36).slice(2),
+  title: 't' + qaSeq,
+  _score: 1,
+  ...over,
+});
+
+test('QA_CATE is 10 — 问答, the help-desk tab', () => {
+  assert.strictEqual(QA_CATE, 10);
+});
+
+test('unscreened cate=10 is kept out of the STRATEGY queue', () => {
+  const items = [unscreened({ cate: 10 }), unscreened({ cate: 3 }), unscreened({ cate: 14 })];
+  const r = applyVerdicts(items, { deferQA: true });
+  assert.strictEqual(r.deferredQA, 1, 'the one cate=10 post is deferred');
+  assert.strictEqual(r.ordered.length, 2, 'only the 文章 and 精华 posts remain queued');
+  assert.ok(!r.ordered.some(i => Number(i.cate) === 10), 'no cate=10 survives in the queue');
+});
+
+test('the deferral is OPT-IN — the RESOURCE queue keeps its Q&A', () => {
+  // cate=10 is where debunking and pitfall discussion lives, and resources cost no backtest
+  // minutes. Defaulting this on would strip the most useful material from the one queue
+  // that wants it.
+  const items = [unscreened({ cate: 10 }), unscreened({ cate: 3 })];
+  const r = applyVerdicts(items);                       // no options = the resource path
+  assert.strictEqual(r.deferredQA, 0, 'nothing is deferred without deferQA');
+  assert.strictEqual(r.ordered.length, 2, 'the Q&A post stays queued');
+});
+
+test('an unknown or missing cate is NEVER deferred', () => {
+  // A guess-based reject already cost this repo 287 of 549 strategies. Unknown must pass.
+  const items = [unscreened({}), unscreened({ cate: null }), unscreened({ cate: undefined })];
+  const r = applyVerdicts(items, { deferQA: true });
+  assert.strictEqual(r.deferredQA, 0);
+  assert.strictEqual(r.ordered.length, 3, 'every unknown-cate post stays queued');
+});
+
+test('a screening verdict OVERRIDES the cate rule (structural)', () => {
+  // The cate check must sit INSIDE the no-verdict branch, so a screener's fetch-now/fetch
+  // judgement on a Q&A post still reaches the queue. Asserted on the source because the
+  // verdicts come from a file on disk.
+  const src = fsQA.readFileSync(require.resolve('../utils/strategy-discover'), 'utf8');
+  const fn = src.slice(src.indexOf('function applyVerdicts'));
+  const body = fn.slice(0, fn.indexOf('\n}'));
+  const noVerdict = body.indexOf('if (!verdict)');
+  const qaCheck = body.indexOf('QA_CATE');
+  const bandCheck = body.indexOf("verdict.band === 'fetch-now'");
+  assert.ok(noVerdict >= 0 && qaCheck >= 0 && bandCheck >= 0, 'all three branches present');
+  assert.ok(qaCheck > noVerdict && qaCheck < bandCheck,
+    'the cate=10 check lives inside the no-verdict branch, before the band check');
+});
+
+test('only buildCopyQueue opts in; buildResourceQueue must not', () => {
+  const src = fsQA.readFileSync(require.resolve('../utils/strategy-discover'), 'utf8');
+  const copy = src.slice(src.indexOf('function buildCopyQueue'));
+  const resource = src.slice(src.indexOf('function buildResourceQueue'));
+  assert.ok(/applyVerdicts\(deduped,\s*\{\s*deferQA:\s*true/.test(copy.slice(0, copy.indexOf('\n}'))),
+    'buildCopyQueue passes deferQA: true');
+  assert.ok(!/deferQA/.test(resource.slice(0, resource.indexOf('\n}'))),
+    'buildResourceQueue never passes deferQA — Q&A is the point of the resource layer');
+});
+
+test('the deferral is reported, never silent', () => {
+  // A silent hold recreates the invisible-stranding failure this repo has hit repeatedly.
+  const src = fsQA.readFileSync(require.resolve('../utils/strategy-discover'), 'utf8');
+  assert.ok(/deferredQA > 0/.test(src) && /问答 deferred/.test(src),
+    'buildCopyQueue logs the deferred count');
+});

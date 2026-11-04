@@ -414,15 +414,47 @@ function dedupeByTitle(items, score) {
  *   fetch-now, fetch  -> lead the queue, by rubric priority
  *   unscreened        -> follow, in the old popularity order
  *   hold, drop        -> kept out of the queue (still in the store)
+ *
+ * ⚠ UNSCREENED 问答 (cate=10) is also kept out, for the same reason as `hold`: it is
+ * help-desk traffic. Measured on a 200-post screen, 94% of Q&A was dropped against 24-30%
+ * of 文章/精华, and a help-desk post ATTACHES a backtest in order to ask about it, so no
+ * payload rule catches it. Measured again 2026-11-03, which is why this exists: all 20 of
+ * that day's fetches were cate=10 ("新手求救，交易无法正常执行", "布林带代码问题",
+ * "获取数据缺失"), and the normalizer spent real backtest minutes measuring them — one of
+ * them was somebody's QUESTION about two different strategies returning identical results.
+ *
+ * ⚠⚠ It is DEFERRED, NOT REJECTED — Q&A yielded the O'Neil pocket-pivot idea, so a blanket
+ * drop would lose real material. Three things keep it reachable: the row stays in the store,
+ * an explicit `fetch-now`/`fetch` verdict OVERRIDES this rule (checked first, below), and
+ * `screen-prefilter.js --keys` can screen it at any time. The rule only stops a Q&A post
+ * being fetched and measured with NOBODY having judged it.
+ *
+ * ⚠ Only an explicit `cate === 10` defers. A missing/unknown cate does NOT — the repo has
+ * already paid for one guess-based rule that permanently discarded 287 of 549 strategies,
+ * and deferring on unknown would silently strand ordinary articles.
+ *
+ * ⚠⚠ `deferQA` is OPT-IN and only `buildCopyQueue` passes it. It must NEVER be set for the
+ * RESOURCE queue: cate=10 is 「where debunking and pitfall discussion lives」, resources are
+ * free prose costing no backtest minutes, and the waste this rule fixes is backtest minutes
+ * spent cloning and measuring a help-desk post. Defaulting it true would strip the most
+ * useful Q&A material out of the one queue that should want it.
  */
-function applyVerdicts(sorted) {
+const QA_CATE = 10;
+
+function applyVerdicts(sorted, { deferQA = false } = {}) {
   const v = (readJson(path.join(__dirname, '..', 'screen/verdicts.json'), {}).verdicts) || {};
   const screened = [];
   const unscreened = [];
   let held = 0;
+  let deferredQA = 0;
   for (const item of sorted) {
     const verdict = v[postKey(item)];
-    if (!verdict) { unscreened.push(item); continue; }
+    if (!verdict) {
+      // A screener's judgement wins over the blanket rule; absent one, Q&A waits to be screened.
+      if (deferQA && Number(item.cate) === QA_CATE) { deferredQA++; continue; }
+      unscreened.push(item);
+      continue;
+    }
     if (verdict.band === 'fetch-now' || verdict.band === 'fetch') {
       screened.push({ ...item, _verdict: verdict });
     } else {
@@ -430,7 +462,7 @@ function applyVerdicts(sorted) {
     }
   }
   screened.sort((a, b) => b._verdict.priority - a._verdict.priority);
-  return { ordered: [...screened, ...unscreened], held, screened: screened.length };
+  return { ordered: [...screened, ...unscreened], held, screened: screened.length, deferredQA };
 }
 
 function buildCopyQueue() {
@@ -440,7 +472,7 @@ function buildCopyQueue() {
 
   const pending = Object.values(store.strategies).filter(s => !copiedKeys.has(postKey(s)));
   const deduped = dedupeByTitle(pending, scoreOf);
-  const { ordered, held, screened } = applyVerdicts(deduped);
+  const { ordered, held, screened, deferredQA } = applyVerdicts(deduped, { deferQA: true });
 
   queueData.queue = ordered.map((s, idx) => ({
     rank: idx + 1,
@@ -465,6 +497,10 @@ function buildCopyQueue() {
 
   console.log(`[discover] Strategy queue: ${queueData.queue.length} pending, ${copiedKeys.size} copied` +
               ` (${screened} screened to fetch, ${held} held/dropped by screening)`);
+  if (deferredQA > 0) {
+    console.log(`[discover] 问答 deferred: ${deferredQA} unscreened cate=10 post(s) kept out of the queue` +
+                ` (help-desk traffic; still in the store — screen them to promote, a fetch verdict overrides)`);
+  }
   if (dupRemoved > 0) {
     console.log(`[discover] Title dedup: removed ${dupRemoved} duplicate posts (${pending.length} → ${deduped.length})`);
   }
@@ -623,6 +659,8 @@ module.exports = {
   enrichStrategies,
   buildCopyQueue,
   buildResourceQueue,
+  applyVerdicts,
+  QA_CATE,
   markCopied,
   markResourceIngested,
   showStatus,
