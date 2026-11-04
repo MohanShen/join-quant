@@ -918,7 +918,29 @@ function runChain({ dry = false, maxStages = 40, stageOverride = null } = {}) {
     // `dry` executes nothing, so its depth cannot move and asking would stall every stage.
     if (!dry) {
       const after = depth(p.stage, queues());
-      if (after >= before[p.stage]) {
+      // ⚠⚠ The SIGN of "progress" is not the same for every stage. A consuming stage makes
+      // progress by DRAINING (after < before); `discover` makes progress by ADMITTING, and its
+      // depth is the uncopied count, so a crawl that opens a backlog RAISES it. Judging it by
+      // `after >= before` penalises it for doing its job.
+      //
+      // Measured 2026-11-04: discover went **0 -> 530**, was stalled as no-progress, and with
+      // research/normalize drained and assign legitimately stalled the chain reported EXHAUSTED
+      // at used=147 of 180 — ending the day with 33 backtest-minutes unspent and 530 strategies
+      // one fetch away from being measurable. The stage that would have fetched them was
+      // disqualified for having found them.
+      //
+      // ⚠ The comment on the discover brake below used to assert this could not happen ("its
+      // queue is the uncopied count, which always drops by 20, so it always looks productive").
+      // That holds only while the crawl admits FEWER than the 20 it fetches per run — true for
+      // as long as the queue was stuffed with 问答, and false the moment the cate=10 filter
+      // (725d978) emptied it and the crawler came back with 530 real posts.
+      //
+      // This is the same error class as the interval bug this guard already carries a note about:
+      // 「a downstream queue growing because an upstream stage fed it is the funnel WORKING」.
+      // That fix corrected the INTERVAL; the SIGN stayed wrong for the one admitting stage.
+      const admits = p.stage === 'discover';
+      const moved = admits ? after !== before[p.stage] : after < before[p.stage];
+      if (!moved) {
         log.push({ stage: p.stage, outcome: 'no-progress',
                    note: `queue ${before[p.stage]} -> ${after} across its own run — ceding its ` +
                          `turn to the next stage (not repeated this chain)` });
@@ -940,9 +962,14 @@ function runChain({ dry = false, maxStages = 40, stageOverride = null } = {}) {
     // normalize with nothing to measure while backtest minutes remained.
     //
     // The 800-fetch case needs normalize to be STALLED while discover keeps admitting, and that is
-    // exactly what this now tests. Note discover can never self-stall via the no-progress guard the
-    // way other stages do: its queue is the uncopied count, which always drops by 20, so it always
-    // looks productive — which is why it needs an explicit rule at all.
+    // exactly what this now tests. This brake is therefore the ONLY thing bounding repeated
+    // discover — which is why it needs an explicit rule at all.
+    //
+    // ⚠ This comment used to claim discover "can never self-stall via the no-progress guard …
+    // its queue is the uncopied count, which always drops by 20, so it always looks productive".
+    // That was FALSE and cost a day's tail on 2026-11-04 (0 -> 530 read as no-progress, chain
+    // EXHAUSTED at used=147/180). The guard above now judges discover on whether its depth MOVED,
+    // not whether it fell, so the two rules no longer contradict each other.
     //
     // ⚠ A spent budget is already handled elsewhere: discover is a FREE stage (isFreeStage), and a
     // free stage on a spent budget runs ALONE rather than chaining, so it cannot admit repeatedly

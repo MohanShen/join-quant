@@ -1226,3 +1226,56 @@ sdt('--seed-deferred parks only genuinely stranded rows', async t => {
       'and it must be reported, not silently dropped');
   });
 });
+
+/**
+ * The SIGN of "progress" differs by stage, and reading it wrong cost a day's tail.
+ *
+ * Measured 2026-11-04: `discover` went 0 -> 530 (it ADMITTED 530 strategies, which is the funnel
+ * working), the guard read the growth as no-progress, and with research/normalize drained and
+ * assign legitimately stalled the chain reported EXHAUSTED at used=147/180 — 33 backtest-minutes
+ * unspent and 530 strategies one fetch away from measurable. The stage that would have fetched
+ * them was disqualified for having found them.
+ */
+dpt('progress is DRAINING for a consuming stage and MOVING for the admitting one', async (t) => {
+  const dpsrc = dpfs.readFileSync(dppath.join(__dirname, '../utils/daily-pipeline.js'), 'utf8');
+
+  await t.test('discover is judged on movement, never on shrinkage alone', () => {
+    const at = dpsrc.indexOf('const admits =');
+    dpa.ok(at > 0, 'the guard must special-case the admitting stage');
+    const branch = dpsrc.slice(at, at + 400);
+    dpa.match(branch, /p\.stage === 'discover'/, 'discover is the admitting stage');
+    dpa.match(branch, /after !== before\[p\.stage\]/,
+      'discover makes progress when its depth MOVES — a crawl that opens a backlog raises it');
+    dpa.match(branch, /after < before\[p\.stage\]/,
+      'a consuming stage still has to DRAIN to count as productive');
+  });
+
+  await t.test('a bare `after >= before` for every stage is forbidden', () => {
+    // That is the exact form that stalled discover at 0 -> 530.
+    const guard = dpsrc.slice(dpsrc.indexOf('did THIS run move THIS stage'), dpsrc.indexOf('const admits ='));
+    dpa.ok(!/if \(after >= before\[p\.stage\]\)/.test(guard),
+      'the one-size-fits-all comparison must not come back');
+  });
+
+  await t.test('the brake no longer claims discover cannot self-stall', () => {
+    // The stale assertion is what made this invisible: it told the reader the generic guard
+    // could never fire on discover, so nobody checked.
+    // ⚠ Do NOT assert the phrase is absent: the retraction QUOTES it, so that check fails on
+    // the correct code — the same way the stray-`*100` guard once rejected a correct build by
+    // matching its own explanatory comment. Assert instead that every occurrence is retracted.
+    const claim = /can never self-stall via the no-progress guard/g;
+    for (const m of dpsrc.matchAll(claim)) {
+      const context = dpsrc.slice(Math.max(0, m.index - 220), m.index + 260);
+      dpa.match(context, /used to claim|FALSE/,
+        'the claim may only appear as a retraction, never as a live statement');
+    }
+    dpa.match(dpsrc, /always drops by 20/,
+      'keep the retraction in place so the history of the bug is readable');
+  });
+
+  await t.test('the brake that really bounds repeated discover is still there', () => {
+    // Fixing the sign must not reopen the 800-fetch hazard the explicit brake exists for.
+    dpa.match(dpsrc, /r\.stage === 'discover' && stalled\.has\('normalize'\)/,
+      'discover still stops admitting once normalize cannot consume');
+  });
+});
