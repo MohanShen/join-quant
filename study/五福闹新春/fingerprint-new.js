@@ -5,7 +5,7 @@ const ROOT = path.join(__dirname, '../..');
 const tags = process.argv.slice(2);
 const all = fs.readdirSync(path.join(ROOT, 'strategies'));
 const norm = s => new Set(s.split('\n').map(l => l.replace(/#.*/, '').trim()).filter(l => l.length > 8));
-const KNOWN = ['bf30eb36', '17b3b439', '73b13d92', '1cc495be', 'bba95a11', 'b50e4387', 'fd5d388d', '7c2e9238', 'aaee3035'];
+const KNOWN = ['1c4d2393', 'a722ab8a', '7a0e0f18', 'fbe8656d', 'd93fc998', 'bf30eb36', '17b3b439', '73b13d92', '1cc495be', 'bba95a11', 'b50e4387', 'fd5d388d', '7c2e9238', 'aaee3035'];
 const known = KNOWN.map(t => [t, all.find(f => f.includes(t))]).filter(x => x[1])
   .map(([t, f]) => [t, norm(fs.readFileSync(path.join(ROOT, 'strategies', f), 'utf8'))]);
 for (const t of tags) {
