@@ -2,6 +2,7 @@
 postId: 539edf2a3e62eef0c38464eaed8b14a5
 title: 致敬市场(5)--定投ETF之躺平赢
 sourceFile: strategies/2026-11-04_致敬市场_5_--定投ETF之躺平赢-539edf2a.py
+family: 其他
 concepts: [未分类]
 factors:
   选股: [未分类]

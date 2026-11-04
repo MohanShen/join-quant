@@ -2,6 +2,7 @@
 postId: b6aed7dc26db318a76d94d8be11857ab
 title: 温度白马攻防策略-V2--&gt;更新成V2.1版
 sourceFile: strategies/2026-11-04_温度白马攻防策略-V2--_gt_更新成V2_1版-b6aed7dc.py
+family: 其他
 concepts: [ETF轮动, 动量与趋势, 择时-均线]
 factors:
   选股: [ETF动量, 动量]

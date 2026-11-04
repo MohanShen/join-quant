@@ -2,6 +2,7 @@
 postId: b06fc519268895db4ea62bf8345067ff
 title: 【量化课堂】RSRS(阻力支撑相对强度)择时策略（下）
 sourceFile: strategies/2026-11-04_量化课堂_RSRS_阻力支撑相对强度_择时策略_下-b06fc519.py
+family: 其他
 concepts: [择时-RSRS]
 factors:
   择时: [RSRS]
