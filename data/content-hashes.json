@@ -4051,5 +4051,85 @@
     "postId": "df116e09f2c5d975066dd11cb11aa714",
     "sourceFile": "2026-11-04_一创平台策略问题-df116e09.py",
     "registeredAt": "2026-11-03T23:21:02.215Z"
+  },
+  "c8813ad08c67439a5431fe3dacd7bc5a0600e88528d0a00ec43b8a0b2841c637": {
+    "postId": "16a6414bca9dbedd84b27671472f293a",
+    "sourceFile": "2026-11-04_差不多得了-16a6414b.py",
+    "registeredAt": "2026-11-04T12:57:24.377Z"
+  },
+  "d267e969fedecdbea074582b3cb55be05b1b174ea6308622e9b647c21205daba": {
+    "postId": "1e656cc753f9f2eee62d527a8c282f43",
+    "sourceFile": "2026-11-04_8年10倍_回撤小_有滑点_ETF动量简单轮动策略-1e656cc7.py",
+    "registeredAt": "2026-11-04T12:57:29.190Z"
+  },
+  "58638823f74083b23685e742f91ba4bac6b0d4c7bb7872a3a575568cf9c67e1b": {
+    "postId": "b06fc519268895db4ea62bf8345067ff",
+    "sourceFile": "2026-11-04_量化课堂_RSRS_阻力支撑相对强度_择时策略_下-b06fc519.py",
+    "registeredAt": "2026-11-04T12:57:34.919Z"
+  },
+  "78b40ed1fa05e90bd543a3c222c7321c826316503fee96cb06b0776093d3e5eb": {
+    "postId": "7f865cc907897314fe866aaab2f4b2c7",
+    "sourceFile": "2026-11-04_面向对象重构策略_二_次新小盘策略-7f865cc9.py",
+    "registeredAt": "2026-11-04T12:57:40.643Z"
+  },
+  "b329b51ba6b8fe7b0e3c9937e18a35ef018e983f60aa79fa7cda8b0ca7263650": {
+    "postId": "539edf2a3e62eef0c38464eaed8b14a5",
+    "sourceFile": "2026-11-04_致敬市场_5_--定投ETF之躺平赢-539edf2a.py",
+    "registeredAt": "2026-11-04T12:57:44.342Z"
+  },
+  "2e12b2fc757256c6261e971feabaa2d68ba95b105b4cac107238f5ab8a50cbfb": {
+    "postId": "3dcd31d460955f88cc455bcfa0fb0be6",
+    "sourceFile": "2026-11-04_量化缠论_应用之维克多1-2-3法则_回测提速版-3dcd31d4.py",
+    "registeredAt": "2026-11-04T12:57:48.334Z"
+  },
+  "6c97f780e994f055462a54072c1e4599bdc733a9c0234779e1fcf87092226e42": {
+    "postId": "b6aed7dc26db318a76d94d8be11857ab",
+    "sourceFile": "2026-11-04_温度白马攻防策略-V2--_gt_更新成V2_1版-b6aed7dc.py",
+    "registeredAt": "2026-11-04T12:57:52.437Z"
+  },
+  "9fb8fe9039f0c882387096ec6279c167489f98b45614a68c1499e3371b8210f9": {
+    "postId": "0cd4d07f59cff31346852916b7f5396c",
+    "sourceFile": "2026-11-04_次新股止损策略_回撤还是有26-0cd4d07f.py",
+    "registeredAt": "2026-11-04T12:57:56.832Z"
+  },
+  "98ddde384385458585a82bc537dd782ee081340341d404365bbdc8843f11617b": {
+    "postId": "4d811be0bd431d345fb8a4d220fd0a6b",
+    "sourceFile": "2026-11-04_我好像破解了聚宽擂台排第一的策略-4d811be0.py",
+    "registeredAt": "2026-11-04T12:57:59.880Z"
+  },
+  "6c104a2062b1f9ec37fbeb80fddf145399e21e8a1c4a86a6b4903c76d2d8b2a5": {
+    "postId": "8a68954fdbb90ef64235b007a6834c0f",
+    "sourceFile": "2026-11-04_5日均线策略_2006-2016_中信证券回测结果-8a68954f.py",
+    "registeredAt": "2026-11-04T12:58:03.716Z"
+  },
+  "4937e3b08c0f202630d470a917e5394878a4959bcaff73922af316d4e374aa5d": {
+    "postId": "1c1f1003203a51ca5bb23555d1990c19",
+    "sourceFile": "2026-11-04_单均线10日策略_中信证券_06----16-1c1f1003.py",
+    "registeredAt": "2026-11-04T12:58:06.904Z"
+  },
+  "d57d2929ef72b47d1dd1775feb45f39295dea15f28dd13527abc943dc8467f7a": {
+    "postId": "b508712e8d6cbcbdb606e1d189f71b2e",
+    "sourceFile": "2026-11-04_双线RSI择时轮动策略-b508712e.py",
+    "registeredAt": "2026-11-04T12:58:14.453Z"
+  },
+  "a9cadb226607d4a86e54efe5c9da2174526b631c3405fd2669b84a15f60a34ab": {
+    "postId": "e5863cc296cf154fd3cee88812caad4e",
+    "sourceFile": "2026-11-04_10年66990_收益_低回撤实盘一个月效果_供参考-e5863cc2.py",
+    "registeredAt": "2026-11-04T12:58:22.947Z"
+  },
+  "abf374d59ad03d514bd5fee536cfe578b9d10ee2a7446669d798a155ce734c2a": {
+    "postId": "f342e7aed774f116377eccb8f39f553e",
+    "sourceFile": "2026-11-04_分享一套散户可直接照搬_胜率超85_量化策略-f342e7ae.py",
+    "registeredAt": "2026-11-04T12:58:26.850Z"
+  },
+  "a22ea6b37ae3a2d5d371ee8305536ba63aab870b1c9eb342455cdad186035eaa": {
+    "postId": "262198bc862abe31635accc0d3cbda85",
+    "sourceFile": "2026-11-04_缠论二买_简易版本-262198bc.py",
+    "registeredAt": "2026-11-04T12:58:30.514Z"
+  },
+  "492f1e0bf05ab34b6bef4dcf634b7453471878a33b8cc602f93f1e55e3c72450": {
+    "postId": "b66c364c107987739cbec9db7be5ab7c",
+    "sourceFile": "2026-11-04_行为金融因子_一_-基于处置效应的CGO因子-b66c364c.py",
+    "registeredAt": "2026-11-04T12:58:37.488Z"
   }
 }

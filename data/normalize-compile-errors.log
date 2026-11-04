@@ -216,3 +216,9 @@
 2026-11-03T19:45:08.715Z	strategies/2026-11-03_求帮助_这个代码哪里错了-a0ba35ad.py	jqboson.core.exception.InvalidParam: Invalid option 'ues_real_price', check API doc
 2026-11-03T19:56:11.353Z	strategies/2026-11-03_请问这个策略问题出在哪里_为什么一直回测失败啊-f72181d5.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 jqdatasdk
 2026-11-03T21:27:51.973Z	strategies/2026-11-04_实在是不清楚_两个代码完全不一样的策略_回测的结果一模一样-21105ae3.py	jqdata.exceptions.FutureDataError: avoid_future_data=True，get_price取天行情时，盘中不能取当日的{'high', 'money', 'volume', 'low', 'close', 'open_interest'}字段数据, current_dt=2024-01-02 09:30:00, end_date=2024-01-02 09:30:00
+2026-11-04T13:04:13.485Z	strategies/2026-11-04_面向对象重构策略_二_次新小盘策略-7f865cc9.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 tradestat
+2026-11-04T13:09:13.408Z	strategies/2026-11-04_量化缠论_应用之维克多1-2-3法则_回测提速版-3dcd31d4.py	NameError: name 'xrange' is not defined
+2026-11-04T13:25:11.472Z	strategies/2026-11-04_分享一套散户可直接照搬_胜率超85_量化策略-f342e7ae.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 my_qmt
+2026-11-04T13:27:12.090Z	strategies/2026-11-04_缠论二买_简易版本-262198bc.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 chan_II_signal
+2026-11-04T13:34:34.748Z	strategies/2026-11-04_双线RSI择时轮动策略-b508712e.py	SyntaxError: invalid syntax
+2026-11-04T13:38:42.481Z	strategies/2026-11-04_行为金融因子_一_-基于处置效应的CGO因子-b66c364c.py	TypeError: unsupported operand type(s) for /: 'map' and 'map'

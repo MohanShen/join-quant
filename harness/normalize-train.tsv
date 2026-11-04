@@ -774,3 +774,27 @@ strategies/2026-11-04_run_daily函数里面的every_bar不起作用吗-975261d3.
 strategies/2026-11-04_获取数据缺失-61f513b7.py	61f513b7d7ab28ac1e17022e92f36fab	获取数据缺失	normalized	2024-01-01	2024-12-31	365	26.13	26.13	1.10	9.33	0.168	pass	9
 strategies/2026-11-04_期货交易中的order_value_函数-e66bbda5.py	e66bbda5af95932fb4a453659b651ba4	期货交易中的order_value()函数	failed										9
 strategies/2026-11-04_期货交易中的order_value_函数-e66bbda5.py	e66bbda5af95932fb4a453659b651ba4	期货交易中的order_value()函数	failed										9
+strategies/2026-11-04_期货交易中的order_value_函数-e66bbda5.py	e66bbda5af95932fb4a453659b651ba4	期货交易中的order_value()函数	failed-final										9
+strategies/2026-11-04_差不多得了-16a6414b.py	16a6414bca9dbedd84b27671472f293a	差不多得了	crash										9
+strategies/2026-11-04_8年10倍_回撤小_有滑点_ETF动量简单轮动策略-1e656cc7.py	1e656cc753f9f2eee62d527a8c282f43	8年10倍，回撤小，有滑点！ETF动量简单轮动策略！	normalized	2024-01-01	2024-12-31	365	15.26	15.26	0.29	25.51	-0.1025	fail	9
+strategies/2026-11-04_量化课堂_RSRS_阻力支撑相对强度_择时策略_下-b06fc519.py	b06fc519268895db4ea62bf8345067ff	【量化课堂】RSRS(阻力支撑相对强度)择时策略（下）	crash										9
+strategies/2026-11-04_面向对象重构策略_二_次新小盘策略-7f865cc9.py	7f865cc907897314fe866aaab2f4b2c7	面向对象重构策略(二):次新小盘策略	compile-error										9
+strategies/2026-11-04_致敬市场_5_--定投ETF之躺平赢-539edf2a.py	539edf2a3e62eef0c38464eaed8b14a5	致敬市场(5)--定投ETF之躺平赢	normalized	2024-01-01	2024-12-31	365	18.94	18.94	0.90	14.04	0.049	fail	9
+strategies/2026-11-04_量化缠论_应用之维克多1-2-3法则_回测提速版-3dcd31d4.py	3dcd31d460955f88cc455bcfa0fb0be6	【量化缠论】应用之维克多1-2-3法则(回测提速版)	compile-error										9
+strategies/2026-11-04_温度白马攻防策略-V2--_gt_更新成V2_1版-b6aed7dc.py	b6aed7dc26db318a76d94d8be11857ab	温度白马攻防策略-V2--&gt;更新成V2.1版	normalized	2024-01-01	2024-12-31	365	55.57	55.57	2.54	9.29	0.4628	pass	9
+strategies/2026-11-04_次新股止损策略_回撤还是有26-0cd4d07f.py	0cd4d07f59cff31346852916b7f5396c	次新股止损策略，回撤还是有26%？	crash										9
+strategies/2026-11-04_我好像破解了聚宽擂台排第一的策略-4d811be0.py	4d811be0bd431d345fb8a4d220fd0a6b	我好像破解了聚宽擂台排第一的策略？！	normalized	2024-01-01	2024-12-31	365	34.73	34.73	1.18	24.47	0.1026	pass	9
+strategies/2026-11-04_5日均线策略_2006-2016_中信证券回测结果-8a68954f.py	8a68954fdbb90ef64235b007a6834c0f	5日均线策略 2006-2016 中信证券回测结果	normalized	2024-01-01	2024-12-31	365	48.73	48.73	1.63	13.04	0.3569	pass	9
+strategies/2026-11-04_单均线10日策略_中信证券_06----16-1c1f1003.py	1c1f1003203a51ca5bb23555d1990c19	单均线10日策略 中信证券 06----16	normalized	2024-01-01	2024-12-31	365	47.53	47.53	1.53	13.97	0.3356	pass	9
+strategies/2026-11-04_双线RSI择时轮动策略-b508712e.py	b508712e8d6cbcbdb606e1d189f71b2e	双线RSI择时轮动策略	crash										9
+strategies/2026-11-04_10年66990_收益_低回撤实盘一个月效果_供参考-e5863cc2.py	e5863cc296cf154fd3cee88812caad4e	10年66990%收益，低回撤实盘一个月效果【供参考】	normalized	2024-01-01	2024-12-31	365	113.93	113.93	2.97	16.48	0.9745	pass	9
+strategies/2026-11-04_分享一套散户可直接照搬_胜率超85_量化策略-f342e7ae.py	f342e7aed774f116377eccb8f39f553e	分享一套散户可直接照搬、胜率超85%量化策略	compile-error										9
+strategies/2026-11-04_缠论二买_简易版本-262198bc.py	262198bc862abe31635accc0d3cbda85	缠论二买  （简易版本）	compile-error										9
+strategies/2026-11-04_行为金融因子_一_-基于处置效应的CGO因子-b66c364c.py	b66c364c107987739cbec9db7be5ab7c	行为金融因子（一）-基于处置效应的CGO因子	crash										9
+strategies/2026-11-04_差不多得了-16a6414b.py	16a6414bca9dbedd84b27671472f293a	差不多得了	crash										9
+strategies/2026-11-04_量化课堂_RSRS_阻力支撑相对强度_择时策略_下-b06fc519.py	b06fc519268895db4ea62bf8345067ff	【量化课堂】RSRS(阻力支撑相对强度)择时策略（下）	normalized	2024-01-01	2024-12-31	365	14.98	14.98	0.62	10.99	0.0399	fail	9
+strategies/2026-11-04_次新股止损策略_回撤还是有26-0cd4d07f.py	0cd4d07f59cff31346852916b7f5396c	次新股止损策略，回撤还是有26%？	no-trades	2024-01-01	2024-12-31	365	0.00	0.00	0.00	0.00			9
+strategies/2026-11-04_双线RSI择时轮动策略-b508712e.py	b508712e8d6cbcbdb606e1d189f71b2e	双线RSI择时轮动策略	compile-error										9
+strategies/2026-11-04_行为金融因子_一_-基于处置效应的CGO因子-b66c364c.py	b66c364c107987739cbec9db7be5ab7c	行为金融因子（一）-基于处置效应的CGO因子	crash										9
+strategies/2026-11-04_差不多得了-16a6414b.py	16a6414bca9dbedd84b27671472f293a	差不多得了	failed-final										9
+strategies/2026-11-04_行为金融因子_一_-基于处置效应的CGO因子-b66c364c.py	b66c364c107987739cbec9db7be5ab7c	行为金融因子（一）-基于处置效应的CGO因子	compile-error										9

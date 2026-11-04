@@ -1,106 +1,16 @@
 {
   "inFlight": null,
   "lastRun": {
-    "stage": "research",
-    "target": "小市值",
-    "budget": 142,
-    "at": "2026-11-04T12:15:13.095Z",
+    "stage": "normalize",
+    "target": null,
+    "budget": 147,
+    "at": "2026-11-04T13:35:45.265Z",
     "outcome": "ran",
-    "note": "resumed research session ce45da2b (exit 0 is NOT proof work happened — check its ledger)",
+    "note": "0 retry(--redo) + 2 fresh, 0 newly deferred at 30min",
     "minutesUsed": null,
-    "endedAt": "2026-11-04T12:35:03.566Z"
+    "endedAt": "2026-11-04T13:38:48.719Z"
   },
   "runs": [
-    {
-      "stage": "oos",
-      "target": "ETF动量",
-      "budget": 0,
-      "at": "2026-10-28T18:00:13.796Z",
-      "outcome": "ran",
-      "note": "resumed oos session new (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-10-28T18:12:09.684Z"
-    },
-    {
-      "stage": "integrate",
-      "target": "小盘",
-      "budget": 0,
-      "at": "2026-10-28T18:12:14.681Z",
-      "outcome": "ran",
-      "note": "resumed integrate session new (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-10-28T18:12:42.858Z"
-    },
-    {
-      "stage": "integrate",
-      "target": "混合",
-      "budget": 0,
-      "at": "2026-10-28T18:12:47.666Z",
-      "outcome": "ran",
-      "note": "resumed integrate session new (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-10-28T18:13:09.698Z"
-    },
-    {
-      "stage": "integrate",
-      "target": "全A",
-      "budget": 0,
-      "at": "2026-10-28T18:13:14.264Z",
-      "outcome": "ran",
-      "note": "resumed integrate session new (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-10-28T18:13:34.262Z"
-    },
-    {
-      "stage": "integrate",
-      "target": "宽基大盘",
-      "budget": 0,
-      "at": "2026-10-28T18:13:38.776Z",
-      "outcome": "ran",
-      "note": "resumed integrate session new (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-10-28T18:14:18.171Z"
-    },
-    {
-      "stage": "research",
-      "target": "趋势技术",
-      "budget": 0,
-      "at": "2026-10-28T18:14:22.480Z",
-      "outcome": "ran",
-      "note": "resumed research session 047699ff (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-10-28T18:21:35.976Z"
-    },
-    {
-      "stage": "assign",
-      "target": null,
-      "budget": 0,
-      "at": "2026-10-28T18:21:40.816Z",
-      "outcome": "ran",
-      "note": "family assignment over 23 pending",
-      "minutesUsed": null,
-      "endedAt": "2026-10-28T18:26:22.201Z"
-    },
-    {
-      "stage": "research",
-      "target": "小市值",
-      "budget": 0,
-      "at": "2026-10-28T18:26:26.941Z",
-      "outcome": "ran",
-      "note": "resumed research session ce45da2b (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-10-28T18:36:32.964Z"
-    },
-    {
-      "stage": "research",
-      "target": "ETF动量",
-      "budget": 0,
-      "at": "2026-10-28T18:36:37.357Z",
-      "outcome": "ran",
-      "note": "resumed research session ef242169 (exit 0 is NOT proof work happened — check its ledger)",
-      "minutesUsed": null,
-      "endedAt": "2026-10-28T18:38:47.356Z"
-    },
     {
       "stage": "research",
       "target": "多因子ML",
@@ -1210,6 +1120,96 @@
       "note": "resumed research session ce45da2b (exit 0 is NOT proof work happened — check its ledger)",
       "minutesUsed": null,
       "endedAt": "2026-11-04T12:35:03.566Z"
+    },
+    {
+      "stage": "research",
+      "target": "五福闹新春",
+      "budget": 144,
+      "at": "2026-11-04T12:48:37.465Z",
+      "outcome": "ran",
+      "note": "resumed research session a6b44bf4 (exit 0 is NOT proof work happened — check its ledger)",
+      "minutesUsed": null,
+      "endedAt": "2026-11-04T12:49:29.889Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 144,
+      "at": "2026-11-04T12:49:38.219Z",
+      "outcome": "ran",
+      "note": "family assignment over 51 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-11-04T12:51:39.813Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 144,
+      "at": "2026-11-04T12:51:55.689Z",
+      "outcome": "ran",
+      "note": "family assignment over 50 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-11-04T12:54:35.678Z"
+    },
+    {
+      "stage": "assign",
+      "target": null,
+      "budget": 144,
+      "at": "2026-11-04T12:54:47.258Z",
+      "outcome": "ran",
+      "note": "family assignment over 43 pending",
+      "minutesUsed": null,
+      "endedAt": "2026-11-04T12:55:15.017Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 144,
+      "at": "2026-11-04T12:55:24.999Z",
+      "outcome": "ran",
+      "note": "0 retry(--redo) + 1 fresh, 0 newly deferred at 30min",
+      "minutesUsed": null,
+      "endedAt": "2026-11-04T12:56:14.948Z"
+    },
+    {
+      "stage": "discover",
+      "target": null,
+      "budget": 144,
+      "at": "2026-11-04T12:56:27.883Z",
+      "outcome": "ran",
+      "note": "discover + fetch (normalize is its own stage)",
+      "minutesUsed": null,
+      "endedAt": "2026-11-04T12:58:38.022Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 144,
+      "at": "2026-11-04T12:58:49.175Z",
+      "outcome": "ran",
+      "note": "0 retry(--redo) + 20 fresh, 0 newly deferred at 30min",
+      "minutesUsed": null,
+      "endedAt": "2026-11-04T13:28:21.893Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 146,
+      "at": "2026-11-04T13:28:31.767Z",
+      "outcome": "ran",
+      "note": "0 retry(--redo) + 5 fresh, 0 newly deferred at 30min",
+      "minutesUsed": null,
+      "endedAt": "2026-11-04T13:35:35.609Z"
+    },
+    {
+      "stage": "normalize",
+      "target": null,
+      "budget": 147,
+      "at": "2026-11-04T13:35:45.265Z",
+      "outcome": "ran",
+      "note": "0 retry(--redo) + 2 fresh, 0 newly deferred at 30min",
+      "minutesUsed": null,
+      "endedAt": "2026-11-04T13:38:48.719Z"
     }
   ]
 }
