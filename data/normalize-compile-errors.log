@@ -244,3 +244,13 @@
 2026-11-04T21:58:15.845Z	strategies/2026-11-05_策略粉碎机_之模拟盘高开低开策略真面目-8abdec9f.py	AttributeError: 'DataFrame' object has no attribute 'sort'
 2026-11-04T22:09:22.890Z	strategies/2026-11-05_向导式_财务因子优化策略二_已加佣金和滑点-25c2387e.py	AttributeError: 'DataFrame' object has no attribute 'sort'
 2026-11-04T22:31:56.633Z	strategies/2026-11-05_二八原则的小代码确实不错_改的很好-030e70b9.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 tradestat
+2026-11-05T19:16:51.822Z	strategies/2026-11-05_均现回调-e9eb4e12.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-11-05T20:09:36.176Z	strategies/2026-11-06_股债再平衡研究-b8f2414b.py	jqdata.exceptions.ParamsError: security 必须是一个Security实例或者数组
+2026-11-05T20:10:24.867Z	strategies/2026-11-06_银行股-机器学习选股-中线持有-4abaded8.py	ModuleNotFoundError: 导入错误，未找到系统库或自定义库 mlbkstocks
+2026-11-05T20:17:36.189Z	strategies/2026-11-06_KD指标量化交易策略-43801e00.py	TypeError: '&gt;' not supported between instances of 'dict' and 'dict'
+2026-11-05T20:34:14.175Z	strategies/2026-11-06_基金定投价值平均计划-93ad2ba9.py	SyntaxError: invalid syntax
+2026-11-05T20:35:59.631Z	strategies/2026-11-06_预期PEG_分析师预测包含了增量信息-9466f6f6.py	jqboson.core.exception.ReadRemoteFileError: read_file NPG2Y_fwd.csv: 文件'/opt/research-files/655/65568519426/NPG2Y_fwd.csv'不存在
+2026-11-05T20:36:47.718Z	strategies/2026-11-06_次新小盘策略-a4777772.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-11-05T20:37:35.719Z	strategies/2026-11-06_收益模型与风险模型的比较-da1d065b.py	TabError: inconsistent use of tabs and spaces in indentation
+2026-11-05T20:38:23.979Z	strategies/2026-11-06_冰晶龙的策略_帮忙实现-0940ee77.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-11-05T20:43:19.926Z	strategies/2026-11-06_回测年化174_的创业板活跃股策略-d40cbb6a.py	jqboson.core.exception.ReadRemoteFileError: read_file res_data/sel_cyb.csv: 文件'/opt/research-files/655/65568519426/res_data/sel_cyb.csv'不存在

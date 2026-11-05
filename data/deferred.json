@@ -118,5 +118,21 @@
     "lastCapMin": 45,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-11-04T19:27:46.707Z"
+  },
+  "strategies/2026-11-05_多形态趋势跟踪策略_年化收益60_49_最大回撤9_40-298cbbb7.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-11-05T20:07:45.535Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-11-05T20:07:45.535Z"
+  },
+  "strategies/2026-11-06_开盘强势股五因子打分策略-90f5bfae.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-11-05T21:33:01.883Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-11-05T21:33:01.883Z"
   }
 }
