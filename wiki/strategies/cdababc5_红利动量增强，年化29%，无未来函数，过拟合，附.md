@@ -2,6 +2,7 @@
 postId: cdababc58681fcb2380244da37ca8bfc
 title: 红利动量增强，年化29%，无未来函数，过拟合，附过拟合检验
 sourceFile: strategies/2026-11-05_红利动量增强_年化29_无未来函数_过拟合_附过拟合检验-cdababc5.py
+family: 其他
 concepts: [动量与趋势]
 factors:
   选股: [动量]

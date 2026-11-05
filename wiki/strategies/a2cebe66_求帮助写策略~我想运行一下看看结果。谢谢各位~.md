@@ -2,6 +2,7 @@
 postId: a2cebe66e0a1fddc60d2414de130d0f4
 title: 求帮助写策略~我想运行一下看看结果。谢谢各位~
 sourceFile: strategies/2026-11-01_求帮助写策略_我想运行一下看看结果_谢谢各位-a2cebe66.py
+family: 趋势技术
 concepts: [未分类]
 factors:
   选股: [未分类]

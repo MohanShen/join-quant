@@ -2,6 +2,7 @@
 postId: 8e2cfcd2df50d08e3be8665b1ad9faad
 title: 新手请教，为什么我这个做T策略没有买卖信号的？
 sourceFile: strategies/2026-11-03_新手请教_为什么我这个做T策略没有买卖信号的-8e2cfcd2.py
+family: 其他
 concepts: [日内做T]
 factors:
   选股: [未分类]

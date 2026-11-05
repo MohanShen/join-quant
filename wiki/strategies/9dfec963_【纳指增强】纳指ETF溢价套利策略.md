@@ -2,6 +2,7 @@
 postId: 9dfec96369836d9d308cc60f2f504ac9
 title: 【纳指增强】纳指ETF溢价套利策略
 sourceFile: strategies/2026-11-05_纳指增强_纳指ETF溢价套利策略-9dfec963.py
+family: 其他
 concepts: [未分类]
 factors:
   选股: [未分类]

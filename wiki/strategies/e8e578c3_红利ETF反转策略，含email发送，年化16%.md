@@ -2,6 +2,7 @@
 postId: e8e578c31d6944ac3fae2a1f0f5c1fc9
 title: 红利ETF反转策略，含email发送，年化16%胜率100%
 sourceFile: strategies/2026-11-05_红利ETF反转策略_含email发送_年化16_胜率100-e8e578c3.py
+family: 其他
 concepts: [ETF轮动]
 factors:
   选股: [ETF动量]

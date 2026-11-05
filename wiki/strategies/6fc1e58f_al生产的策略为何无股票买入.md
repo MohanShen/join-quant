@@ -2,6 +2,7 @@
 postId: 6fc1e58f04e1bb374bdfe3766af9c660
 title: al生产的策略为何无股票买入
 sourceFile: strategies/2026-11-03_al生产的策略为何无股票买入-6fc1e58f.py
+family: 其他
 concepts: [未分类]
 factors:
   选股: [未分类]

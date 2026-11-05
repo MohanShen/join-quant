@@ -2,6 +2,7 @@
 postId: c00eaff6850a2850e9824962a596a269
 title: 【一个简单的趋势线策略，编译出错】【请大神指点】
 sourceFile: strategies/2026-11-01_一个简单的趋势线策略_编译出错_请大神指点-c00eaff6.py
+family: 趋势技术
 concepts: [未分类]
 factors:
   选股: [未分类]

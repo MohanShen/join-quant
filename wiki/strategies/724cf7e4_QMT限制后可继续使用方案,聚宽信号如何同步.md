@@ -2,6 +2,7 @@
 postId: 724cf7e414044e4ca05e10c5075763d4
 title: Q MT限制后可继续使用方案,聚宽信号如何同步
 sourceFile: strategies/2026-11-05_Q_MT限制后可继续使用方案_聚宽信号如何同步-724cf7e4.py
+family: 打板短线
 concepts: [小市值因子, 打板与涨停]
 factors:
   选股: [规模价值·小市值]

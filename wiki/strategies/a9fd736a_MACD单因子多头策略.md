@@ -2,6 +2,7 @@
 postId: a9fd736af7fa3013aade2cc14ff9b71f
 title: MACD单因子多头策略
 sourceFile: strategies/2026-11-05_MACD单因子多头策略-a9fd736a.py
+family: 其他
 concepts: [小市值因子]
 factors:
   选股: [规模价值·小市值]

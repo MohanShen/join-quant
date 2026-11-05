@@ -2,6 +2,7 @@
 postId: e3b0df8bb4d78b16260d69b12f5acb74
 title: 布林带代码问题
 sourceFile: strategies/2026-11-04_布林带代码问题-e3b0df8b.py
+family: 趋势技术
 concepts: [未分类]
 factors:
   选股: [未分类]

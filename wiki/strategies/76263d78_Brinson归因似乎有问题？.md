@@ -2,6 +2,7 @@
 postId: 76263d789a0dc231273a551e87a7a18e
 title: Brinson归因似乎有问题？
 sourceFile: strategies/2026-11-03_Brinson归因似乎有问题-76263d78.py
+family: 其他
 concepts: [未分类]
 factors:
   选股: [未分类]

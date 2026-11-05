@@ -2,6 +2,7 @@
 postId: bf9bd2e72b55c146d256926ed24e6529
 title: 全球大类ETF轮动：年化68%，距9月历史新高回撤2.6%
 sourceFile: strategies/2026-11-05_全球大类ETF轮动_年化68_距9月历史新高回撤2_6-bf9bd2e7.py
+family: ETF动量
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/75990
 concepts: [ETF轮动, 动量与趋势]
 factors:

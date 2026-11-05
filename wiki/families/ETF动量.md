@@ -22,7 +22,7 @@ universeSecondOpinion: 全A   # ⚠ disagrees — LLM wins, see universeBasis
 universeAt: 2026-10-07
 bestVariant: [[62c2664f_三部曲ETF动量3]]
 bestObjective: 2.0078
-memberCount: 35
+memberCount: 38
 sources: { normalized: 27, study: 0, enhance: 0 }
 realism: "⚠ epoch-6 base objective 0.1868 / sharpe 1.41（epoch 2 的 0.2965 高估 59%）；收益 85% 在 2022 一年；11 只池写于 2026（2022 年初只有约 6 只有行情），换成 A 股宽基池 objective −0.27——池子是事后选成的必要条件，VAL 2024–25 对它不是干净样本外；零滑点台仍偏乐观（单持仓日频换仓）"
 valRevalGranted: 9
@@ -36,7 +36,7 @@ valReopenedBasis: "human decision 2026-10-26: VAL reopened for every family that
 valDeclinedPrior: 9
 valDeclinedPriorBasis: "epoch-9 round 2026-10-25: every level number this family has on TRAIN 2024 is a hindsight-LIST number. A generated point-in-time pool sign-flips (q-e9-1: 1.1110 -> -0.3324); cut to its own N=11 by liquidity it still fails the gate (q-e9-5: sharpe 0.58, closing only 24% of the gap — 76% belongs to which names the author picked); the ranking is informative only inside the hand list (q-e9-2: inverted annual 126.22 -> -7.74); the champion 62c2664f loses 34% from one 2024-listed name alone (q-e9-3: 2.0078 -> 1.3247) and its pool holds two names (159550, 159378) that list in 2025, inside the VAL window. Separately, the VAL budget is human-blocked (etfmom-005 row has no recorded epoch). Clearing condition: a book whose list is built WITHOUT hindsight (e.g. the §4 per-asset-class point-in-time cut) that clears the 1.0 gate on TRAIN; validate that book with the pre-2025 cutoff, never the hand list. UPDATE 2026-10-26 (ffd92ab re-measured the shelf product etfmom-005 on epoch 9: objective 2.4187 / sharpe 7.23, and its pool has no 2025 listings): the decline STANDS, for a stronger reason. etfmom-005 is 22152780 with g.portfolio_value_proportion = [1, 0, 0, 0] (validated_strategies/etfmom-005.py L175) — 100% the 小市值 micro-cap stock leg, zero weight on every ETF leg. So a VAL on it would validate a 小市值 book under this family's name; this page's realizability 2 was scored on the ETF rotation (etf-m2), not on it, and 小市值 itself is measured R=1. The gate already blocks that case (a product candidate needs realizabilityScope: etfmom-005), so nothing here may be scored or validated by inference. Its 2.4187 belongs on the 小市值 ledger of evidence, not this family's."
 status: active
-updatedAt: 2026-11-04
+updatedAt: 2026-11-05
 bestObjectiveEpoch: 9
 ---
 
@@ -98,29 +98,32 @@ bestObjectiveEpoch: 9
 | 12 | [[be0c3a44_一切又是新的开始]] | 0.6854 | 2.46 | 84.90 | 16.36 | ✅ | 9 |
 | 13 | [[ebe4f410_实测25-26最好用的策略]] | 0.6854 | 2.46 | 84.90 | 16.36 | ✅ | 9 |
 | 14 | [[1c96e06b_核心资产轮动安全摸狗]] | 0.5839 | 2.04 | 71.39 | 13.00 | ✅ | 9 |
-| 15 | [[dc9f9dad_市场温度驱动极简ETF]] | 0.3422 | 1.35 | 53.84 | 19.62 | ✅ | 9 |
-| 16 | [[da82dd02_五境掘金全球ETF轮动（中频）]] | 0.3173 | 1.46 | 45.07 | 13.34 | ✅ | 9 |
-| 17 | [[77cabc3c_纳指增强]] | 0.3046 | 1.87 | 39.28 | 8.82 | ✅ | 9 |
-| 18 | [[d1cf57eb_三部曲吃透ETF动量1]] | 0.2793 | 1.22 | 53.80 | 25.87 | ✅ | 9 |
-| 19 | [[71117205_ETF动量轮动实盘反思]] | 0.2558 | 1.16 | 51.45 | 25.87 | ✅ | 9 |
-| 20 | [[7f7e13ee_gap创新离散度]] | 0.2189 | 1.26 | 39.94 | 18.05 | ✅ | 9 |
-| 21 | [[f95907c7_简单清晰的5只ETF低频轮动策略，6年半回测年化]] | 0.1520 | 0.95 | 35.42 | 20.22 | ❌ | 9 |
-| 22 | [[8781a24d_乖离率大类ETF]] | 0.1294 | 1.00 | 29.12 | 16.18 | ✅ | 9 |
-| 23 | [[01fa47a7_动态获取ETF池子策略-]] | 0.1008 | 0.93 | 29.45 | 19.37 | ❌ | 9 |
-| 24 | [[289177df_【文竹3.3更新】年化18.34%最大回撤10.]] | 0.0992 | 1.26 | 17.98 | 8.06 | ✅ | 9 |
-| 25 | [[1c50b3a3_【文竹3.4更新】年化17.6%最大回撤12.4]] | 0.0960 | 1.15 | 18.87 | 9.27 | ✅ | 9 |
-| 26 | [[fc6826b2_更新一下最近的表现，年化35%ETF轮动策略]] | 0.0887 | 0.82 | 24.89 | 16.02 | ❌ | 9 |
-| 27 | [[41553ad7_大道无形我无道]] | 0.0857 | 1.13 | 35.00 | 26.43 | ✅ | 9 |
-| 28 | [[9478e83f_已解决基金分拆打你个措手不及？]] | 0.0247 | 0.64 | 23.34 | 20.87 | ❌ | 9 |
-| 29 | [[6be8cff8_五福v2.3七只ETF]] | 0.0198 | 0.43 | 14.78 | 12.80 | ❌ | 9 |
-| 30 | [[223a137e_回测里的坑：你选的ETF那时候还没上市呢]] | 0.0117 | 0.49 | 14.84 | 13.67 | ❌ | 9 |
-| 31 | [[46f583dd_ETF双池动量轮动]] | -0.0663 | 0.63 | 29.20 | 35.83 | ❌ | 9 |
-| 32 | [[0717871e_全自动拟合神器别再当拟合怪的奴隶了我要让人人都能]] | -0.0950 | 0.29 | 15.91 | 25.41 | ❌ | 9 |
-| 33 | [[0593c701_大类ETF轮动回测]] | -0.1286 | 0.05 | 5.00 | 17.86 | ❌ | 9 |
-| 34 | [[02d397c0_简单的择时基金轮动策略]] | -0.1990 | 0.12 | 8.60 | 28.50 | ❌ | 9 |
-| 35 | [[24fd2813_行业ETF轮动研究代码]] | DQ/— | — | — | — | — | — |
+| 15 | [[95998f6f_【ETF轮动系列】【实盘】止损版V3.0-增强收]] | 0.3872 | 1.53 | 52.42 | 13.70 | ✅ | 9 |
+| 16 | [[dc9f9dad_市场温度驱动极简ETF]] | 0.3422 | 1.35 | 53.84 | 19.62 | ✅ | 9 |
+| 17 | [[da82dd02_五境掘金全球ETF轮动（中频）]] | 0.3173 | 1.46 | 45.07 | 13.34 | ✅ | 9 |
+| 18 | [[77cabc3c_纳指增强]] | 0.3046 | 1.87 | 39.28 | 8.82 | ✅ | 9 |
+| 19 | [[d1cf57eb_三部曲吃透ETF动量1]] | 0.2793 | 1.22 | 53.80 | 25.87 | ✅ | 9 |
+| 20 | [[bf9bd2e7_全球大类ETF轮动：年化68%，距9月历史新高回]] | 0.2717 | 1.23 | 42.35 | 15.18 | ✅ | 9 |
+| 21 | [[71117205_ETF动量轮动实盘反思]] | 0.2558 | 1.16 | 51.45 | 25.87 | ✅ | 9 |
+| 22 | [[7f7e13ee_gap创新离散度]] | 0.2189 | 1.26 | 39.94 | 18.05 | ✅ | 9 |
+| 23 | [[f95907c7_简单清晰的5只ETF低频轮动策略，6年半回测年化]] | 0.1520 | 0.95 | 35.42 | 20.22 | ❌ | 9 |
+| 24 | [[8781a24d_乖离率大类ETF]] | 0.1294 | 1.00 | 29.12 | 16.18 | ✅ | 9 |
+| 25 | [[01fa47a7_动态获取ETF池子策略-]] | 0.1008 | 0.93 | 29.45 | 19.37 | ❌ | 9 |
+| 26 | [[289177df_【文竹3.3更新】年化18.34%最大回撤10.]] | 0.0992 | 1.26 | 17.98 | 8.06 | ✅ | 9 |
+| 27 | [[1c50b3a3_【文竹3.4更新】年化17.6%最大回撤12.4]] | 0.0960 | 1.15 | 18.87 | 9.27 | ✅ | 9 |
+| 28 | [[11a347d7_稳健型ETF策略]] | 0.0931 | 1.61 | 12.79 | 3.48 | ✅ | 9 |
+| 29 | [[fc6826b2_更新一下最近的表现，年化35%ETF轮动策略]] | 0.0887 | 0.82 | 24.89 | 16.02 | ❌ | 9 |
+| 30 | [[41553ad7_大道无形我无道]] | 0.0857 | 1.13 | 35.00 | 26.43 | ✅ | 9 |
+| 31 | [[9478e83f_已解决基金分拆打你个措手不及？]] | 0.0247 | 0.64 | 23.34 | 20.87 | ❌ | 9 |
+| 32 | [[6be8cff8_五福v2.3七只ETF]] | 0.0198 | 0.43 | 14.78 | 12.80 | ❌ | 9 |
+| 33 | [[223a137e_回测里的坑：你选的ETF那时候还没上市呢]] | 0.0117 | 0.49 | 14.84 | 13.67 | ❌ | 9 |
+| 34 | [[46f583dd_ETF双池动量轮动]] | -0.0663 | 0.63 | 29.20 | 35.83 | ❌ | 9 |
+| 35 | [[0717871e_全自动拟合神器别再当拟合怪的奴隶了我要让人人都能]] | -0.0950 | 0.29 | 15.91 | 25.41 | ❌ | 9 |
+| 36 | [[0593c701_大类ETF轮动回测]] | -0.1286 | 0.05 | 5.00 | 17.86 | ❌ | 9 |
+| 37 | [[02d397c0_简单的择时基金轮动策略]] | -0.1990 | 0.12 | 8.60 | 28.50 | ❌ | 9 |
+| 38 | [[24fd2813_行业ETF轮动研究代码]] | DQ/— | — | — | — | — | — |
 
-*24 gate-pass / 35 members. 快照 2026-11-04（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*27 gate-pass / 38 members. 快照 2026-11-05（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 - ⚠⚠ **【更正，2026-10-27】下面那条「点时池 → 未通过 ⇒ VAL 不该花」是 epoch-6 的结论，不适用于本台，且把两个不同的操作混成了一个。** 它引的 [[study-pit-pool]] 是在 **base 0aa4028d** 上把作者的名单换成一个**宽的生成池**（epoch 6，objective 0.1868→−0.0313）。那证伪的是 `动量` 排序，不是「去掉上市日期后见性」。

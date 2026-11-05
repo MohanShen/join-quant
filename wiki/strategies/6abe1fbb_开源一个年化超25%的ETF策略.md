@@ -2,6 +2,7 @@
 postId: 6abe1fbb91a3167b9668120ea7f1d6b0
 title: 开源一个年化超25%的ETF策略
 sourceFile: strategies/2026-11-04_开源一个年化超25_的ETF策略-6abe1fbb.py
+family: 其他
 concepts: [ETF轮动]
 factors:
   选股: [ETF动量]

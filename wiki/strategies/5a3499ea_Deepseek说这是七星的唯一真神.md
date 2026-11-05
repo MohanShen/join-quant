@@ -2,6 +2,7 @@
 postId: 5a3499ea465064d0c05aa77ce56d8bdc
 title: Deep seek说这是七星的唯一真神
 sourceFile: strategies/2026-11-05_Deep_seek说这是七星的唯一真神-5a3499ea.py
+family: 七星高照
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/72706
 concepts: [ETF轮动, 动量与趋势]
 factors:

@@ -2,6 +2,7 @@
 postId: 8d2b71c01104030af61953d00462b6df
 title: 判断MACD的DIF和DEA金叉死叉 ，得出的DIF和DEA与实际不同
 sourceFile: strategies/2026-11-01_判断MACD的DIF和DEA金叉死叉_得出的DIF和DEA与实际不同-8d2b71c0.py
+family: 趋势技术
 concepts: [未分类]
 factors:
   选股: [未分类]

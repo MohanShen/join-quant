@@ -2,6 +2,7 @@
 postId: e9faa0cf4ab4e6dd6cfd1eecb23023c0
 title: 【七星高照V5.0】动量策略，五福V4.3和七星V5.0对比
 sourceFile: strategies/2026-11-04_七星高照V5_0_动量策略_五福V4_3和七星V5_0对比-e9faa0cf.py
+family: 七星高照
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/67371
 concepts: [ETF轮动, 动量与趋势]
 factors:

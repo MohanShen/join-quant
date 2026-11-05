@@ -2,6 +2,7 @@
 postId: 51fdd5bdbec7678907855ead13668c32
 title: 向导式 价值分析(一),成功避开股灾,大盘震荡跌时小涨
 sourceFile: strategies/2026-11-05_向导式_价值分析_一_成功避开股灾_大盘震荡跌时小涨-51fdd5bd.py
+family: 向导式低波价值
 concepts: [未分类]
 factors:
   风控: [止损线]

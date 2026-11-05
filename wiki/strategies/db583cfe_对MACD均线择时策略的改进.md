@@ -2,6 +2,7 @@
 postId: db583cfecee607941b94f9fc268573de
 title: 对MACD均线择时策略的改进
 sourceFile: strategies/2026-11-05_对MACD均线择时策略的改进-db583cfe.py
+family: 其他
 concepts: [小市值因子, 择时-均线]
 factors:
   选股: [规模价值·小市值]

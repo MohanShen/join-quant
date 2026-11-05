@@ -2,6 +2,7 @@
 postId: bac6fb8d70e250b3ca844963f97472c6
 title: 向wywy学习，机器学习，批量生产策略
 sourceFile: strategies/2026-11-05_向wywy学习_机器学习_批量生产策略-bac6fb8d.py
+family: 小市值
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/37025
 concepts: [小市值因子, 多因子模型]
 factors:
