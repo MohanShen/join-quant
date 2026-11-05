@@ -2310,3 +2310,39 @@ Only the directories whose contents aren't self-evident:
   iterate deliberately differently), so collapsing it would risk all eight to fix a +1 nothing
   reads. ⚠ An earlier claim in this session that 5511f8f0 was a **third** occurrence was WRONG —
   lines 97 and 335 are exactly the two rows this file already documents.
+- ✅ **THE 小市值 x100 FORWARD RISK IS NO LONGER A RISK — IT HAPPENED, AND IT IS NOW MEASURED.**
+  The warning above («FORWARD RISK — still live») said re-measuring a sibling as-written would mint
+  an inflated row that WOULD feed §3, `wiki/types/` and the champion. Epoch 9's re-measurement did
+  exactly that: all three x100 books carry valid epoch-9 gate-PASS rows and sat in 小市值's §3 at
+  ranks **19 / 23 / 24**. Re-measured 2026-11-05 with the units-fixed variants, each against its own
+  raw epoch-9 row as control (3 backtests, **~2 JQ min** — the controls were free because the raw
+  rows are now epoch-9 valid, where the epoch-8 exercise had to run its own `-ctl` legs):
+  | book | raw e9 row | units-fixed | retained | sharpe |
+  |---|---|---|---|---|
+  | 7a1c225f (base) | 1.1627 / 5.10 / dd 15.07 | **0.9885** / 4.39 / 9.38 | **85.0%** | 5.10 → 4.39 |
+  | 8dbd994c | 1.0116 / 4.06 / dd 19.43 | **0.3841** / 2.15 / 23.92 | **38.0%** | 4.06 → 2.15 |
+  | 5e874b5b | 0.9760 / 4.15 / dd 18.86 | **0.2973** / 2.13 / 11.93 | **30.5%** | 4.15 → 2.13 |
+  ⚠ **ALL THREE STILL CLEAR THE 1.0 GATE** (4.39 / 2.15 / 2.13), so the mechanism survives at a
+  depth gate that means what it says; only the MAGNITUDE was fiction. Same conclusion as epoch 6.
+  ⚠⚠ **The two siblings CONVERGE AGAIN — this time on SHARPE, to within 0.02** (2.15 vs 2.13) from
+  controls of 4.06 and 4.15. Epoch 6 found them converging on OBJECTIVE (0.2867 / 0.2858); here the
+  objectives differ (0.3841 vs 0.2973) only because maxDD does (23.92 vs 11.93). So 「this branch has
+  ONE performance level」 reproduces on a second, non-overlapping window — **§3 must GROUP the branch,
+  never rank its members on the raw rows**, because the 1.16 / 1.01 / 0.98 spread is produced by how
+  much untradeable volume each broken gate admits, not by stock selection. Fixed, 7a1c225f falls to
+  ~#23 and both siblings leave the listed top 30.
+  ⚠ **A retention ratio must name its window.** Epoch 6's were 47 / 23 / 33%; epoch 9's are
+  85 / 38 / 31%. Only the DIRECTION and the sibling convergence transfer — do not quote 47% on 2024.
+  ⚠ **Drawdown direction is NOT uniform here**, unlike epoch 6 where all three worsened: 7a1c225f
+  15.07 → 9.38 and 5e874b5b 18.86 → 11.93 both IMPROVE; only 8dbd994c worsens (19.43 → 23.92).
+  ⚠ The raw rows are NOT deleted — the ledger is append-only and its rows are claims about what the
+  AUTHOR wrote. They stay, carrying `realizabilityFlags: [tick-depth-x100!]`, and the honest numbers
+  live in §2 + finding `q-e9-units-refix`. **Do not re-measure the raw files again** expecting a
+  different answer; cite the fixed figures.
+  ⚠ Honest bound: the comparison is fixed-VARIANT against raw-LEDGER-ROW, so it carries an
+  unquantified build-path difference (study `py2to3`+OVERRIDE vs the normalizer's temp copy). The
+  epoch-6 base reproduced its ledger row exactly (1.3861), so it is believed small, but it is not
+  zero by construction. Three `-ctl` legs would eliminate it.
+  ⚠ The variants were **not rebuilt**: `strategies/` is immutable so the 2026-10-17 derivations are
+  still faithful, and `harness-config.js --verify` confirms epoch 9 (window + gate only) left the
+  frozen literals untouched.
