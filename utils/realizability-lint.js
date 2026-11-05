@@ -45,6 +45,37 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const code = line => String(line).split('#')[0];
 
+/** Any JQ order call — the thing a scheduled handler's NAME is only ever a proxy for. */
+const ORDER_CALL = /\border_value\s*\(|\border_target\w*\s*\(|\border_shares\s*\(|\border\s*\(/;
+
+/**
+ * Does the `def <fn>` in this file place an order?
+ *
+ * Used by `call-auction-entry` as the second arm of its test: a handler scheduled inside the
+ * auction window counts if its NAME looks like an order OR its BODY actually places one. That
+ * is what catches `auction_trade` (fac28838), whose name matches no order keyword.
+ *
+ * ⚠ Deliberately SHALLOW — it reads the function's own lines, not its callees. A handler that
+ * delegates (`st_buy`, `check_emergency_buy`: 3–5 line bodies) is therefore invisible here, which
+ * is exactly why the name arm has to stay. Measured: every scheduled handler in the corpus is
+ * defined in its own file, so this never returns a "cannot tell" that the caller must handle.
+ * ⚠ Returns false, not null, for a function defined elsewhere: the name arm is the fallback, and
+ * a flag that fires on "I could not parse this" is worse than one that stays quiet.
+ */
+function scheduledBodyOrders(lines, fn) {
+  const start = lines.findIndex(l => new RegExp(`^\\s*def\\s+${fn}\\s*\\(`).test(l));
+  if (start < 0) return false;
+  const outer = (lines[start].match(/^\s*/) || [''])[0].length;
+  for (let i = start + 1; i < lines.length; i++) {
+    const l = lines[i];
+    if (!l.trim()) continue;
+    const indent = (l.match(/^\s*/) || [''])[0].length;
+    if (indent <= outer && /^\s*(def|class)\s/.test(l)) break;   // next sibling definition
+    if (ORDER_CALL.test(code(l))) return true;
+  }
+  return false;
+}
+
 /**
  * @typedef {{id:string, severity:'measured'|'info', why:string, test:(lines:string[])=>string|null}} Pattern
  */
@@ -135,7 +166,36 @@ const PATTERNS = [
         // and they matched on the word "open" — 4 of the first 6 hits. Excluded by name, which
         // leaves the two real ones (`st_buy` at 09:23, `check_emergency_buy` at 9:15).
         if (!m || /_market_open$/.test(m[1])) return false;
-        return /buy|order|entry|建仓|买/i.test(m[1]);
+        const fn = m[1];
+        // ⚠ An EXIT inside the window is not what this flag claims. The union below otherwise
+        // pulls in four sell handlers (`sell_check_open` x2, `process_pending_sells`,
+        // `dapan_macd_check`), which would stretch the flag past its own name and past the
+        // a30641fb basis it is grounded in ("9:26 auction ENTRY").
+        if (/sell|卖|清仓|平仓/i.test(fn)) return false;
+        // ⚠⚠ THE NAME ALLOWLIST WAS A THIRD FALSE NEGATIVE OF THIS SAME PATTERN (2026-11-05),
+        // after the window being too narrow and the regex demanding HH:MM. `fac28838`
+        // (战法三 双创恐慌低吸, sharpe 15.58 / implied vol 86%, #5 on the epoch-9 bench) schedules
+        // `run_daily(auction_trade, '09:27')` — dead inside the documented window — and
+        // `auction_trade` calls `order_value(target, buy_value, _mkt(target, True, _auc))` with an
+        // auction order style. The window matched; the NAME rejected it, because `auction_trade`
+        // contains none of buy/order/entry/建仓/买. So the realizability column said nothing about
+        // it, which is the "reads as evidence of absence" failure, again.
+        //
+        // The name is only ever a PROXY for "this handler places orders", so ask the body too.
+        // ⚠ Measured over all 891 files before changing anything, because a loose flag is what
+        // got `limit-up-entry` deleted:
+        //   name only (old)      32  (0.036)  — misses fac28838
+        //   + `trade|交易`        38  (0.043)  — catches it, but 3 FALSE POSITIVES
+        //                                        (before_trading_start / before_trading /
+        //                                         generate_trade_time are prep hooks & helpers)
+        //   body only            29  (0.033)  — 0 false positives, but DROPS `st_buy` and
+        //                                        `check_emergency_buy`, whose 3–5 line bodies
+        //                                        delegate the order to a helper
+        //   name OR body, no sells  28 (0.031) — catches fac28838, keeps both delegators, 0 FPs
+        // So the union is TIGHTER than the rule it replaces (0.031 vs 0.036, guard 0.25) while
+        // strictly covering more. Keep both arms: neither alone is correct.
+        if (/buy|order|entry|建仓|买/i.test(fn)) return true;
+        return scheduledBodyOrders(lines, fn);
       });
       return hit < 0 ? null : `line ${hit + 1}: ${code(lines[hit]).trim().slice(0, 90)}`;
     },

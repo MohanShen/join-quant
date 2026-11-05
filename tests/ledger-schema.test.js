@@ -1086,7 +1086,18 @@ test('the daily chain stops only for the budget, a lock, or an empty board', asy
     // This is what makes ceding safe: a stage whose own run did not move its own queue is added
     // to `stalled` and skipped for the rest of the chain.
     assert.match(src, /const after = depth\(p\.stage, queues\(\)\)/);
-    assert.match(src, /after >= before\[p\.stage\]/);
+    // ⚠ This used to pin the literal `after >= before[p.stage]`, a single comparison for every
+    // stage. That is no longer correct and was never right: a consuming stage makes progress by
+    // DRAINING, while `discover` ADMITS and its depth is the uncopied count, so a crawl that
+    // opens a backlog RAISES it. Pinning the one-size operator is what let discover be stalled
+    // at 0 -> 530 and ended 2026-11-04 at used=147/180 with 33 minutes unspent. Assert the
+    // DECISION (a stage that did not move its queue is stalled), not the arithmetic.
+    assert.match(src, /after < before\[p\.stage\]/,
+      'a consuming stage must still DRAIN to count as productive');
+    assert.match(src, /after !== before\[p\.stage\]/,
+      'the admitting stage counts as productive when its depth MOVES');
+    assert.ok(!/if \(after >= before\[p\.stage\]\)/.test(src),
+      'the one-size-fits-all comparison must not come back');
     assert.match(src, /stalled\.add\(p\.stage\)/);
   });
 
@@ -1345,5 +1356,61 @@ test('the poller detects a phantom instead of burning to the cap', async (t) => 
     assert.match(block.slice(0, 1200), /break;/, 'the account just phantomed — stop, do not spend');
     assert.ok(!/state\.defer/.test(block.slice(0, 800)),
       'a phantom must not be parked in the deferred pool — nothing was learned about the cap');
+  });
+});
+
+/**
+ * call-auction-entry: the NAME of a scheduled handler is only a proxy for "it places orders".
+ *
+ * Third false negative of this one pattern (2026-11-05), after the window being too narrow and
+ * the regex demanding HH:MM. `fac28838` (战法三 双创恐慌低吸, sharpe 15.58 / implied vol 86%,
+ * #5 on the epoch-9 bench) schedules `run_daily(auction_trade, '09:27')` — inside the documented
+ * window — and auction_trade calls order_value(...). The window matched; the name allowlist
+ * rejected it, so the realizability column said nothing about it.
+ */
+test('call-auction-entry asks the BODY when the name is not order-ish', async (t) => {
+  const rl2 = require('../utils/realizability-lint');
+  const strat2 = fs.readdirSync(path.join(ROOT, 'strategies')).filter(f => f.endsWith('.py'));
+  const fired = f => rl2.lintFile(`strategies/${f}`).some(r => r.id === 'call-auction-entry');
+
+  await t.test('its own worked example is flagged', () => {
+    const book = strat2.find(f => f.includes('fac28838'));
+    assert.ok(book, 'fac28838 must still be in the library for this to mean anything');
+    assert.ok(fired(book),
+      'run_daily(auction_trade, 09:27) places orders — a flag that misses it reads as absence');
+  });
+
+  await t.test('BOTH arms are kept — neither alone is correct', () => {
+    // Body-only drops st_buy / check_emergency_buy (3-5 line bodies that delegate the order);
+    // name-only drops auction_trade. Measured over all 891 files.
+    assert.ok(fired(strat2.find(f => f.includes('5511f8f0'))), 'st_buy, caught by NAME');
+    assert.ok(fired(strat2.find(f => f.includes('6a0e4b0f'))), 'check_emergency_buy, caught by NAME');
+  });
+
+  await t.test('an EXIT in the window is not an ENTRY claim', () => {
+    // The union otherwise pulls in sell_check_open x2 / process_pending_sells, stretching the
+    // flag past its own name and past the a30641fb basis it is grounded in.
+    const src = fs.readFileSync(path.join(ROOT, 'utils/realizability-lint.js'), 'utf8');
+    assert.match(src, /sell\|卖\|清仓\|平仓/, 'sell-side handlers stay excluded by name');
+  });
+
+  await t.test('the prep hooks a looser rule would have caught stay OUT', () => {
+    // A bare `trade|交易` widening flagged before_trading_start / before_trading /
+    // generate_trade_time — prep hooks and a time helper. 3 wrong entries in the column is what
+    // taught readers to ignore limit-up-entry.
+    for (const frag of ['3138195d', '2e02fb4c']) {
+      const f = strat2.find(x => x.includes(frag));
+      if (!f) continue;                       // library churns; absence is not a failure here
+      const detail = rl2.lintFile(`strategies/${f}`).find(r => r.id === 'call-auction-entry');
+      if (!detail) continue;
+      assert.doesNotMatch(String(detail.detail), /before_trading|generate_trade_time/,
+        `${f}: a preparation hook or time helper must not be read as an order`);
+    }
+  });
+
+  await t.test('and it stays PRECISE', () => {
+    const hits = strat2.filter(fired).length;
+    assert.ok(hits / strat2.length < 0.25,
+      `call-auction-entry fired on ${hits}/${strat2.length} — a noisy flag gets skipped`);
   });
 });
