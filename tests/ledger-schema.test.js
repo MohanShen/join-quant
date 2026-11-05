@@ -953,15 +953,56 @@ test('realizability flags are precise, and advisory', async (t) => {
   const rl = require('../utils/realizability-lint');
   const strategies = fs.readdirSync(path.join(ROOT, 'strategies')).filter(f => f.endsWith('.py'));
 
-  await t.test('the three known unit-bug books are flagged, and only those', () => {
+  await t.test('the unit-bug books are flagged, and no NEW one can reach a family table', () => {
+    // ⚠ This used to assert `flagged.length === 3` exactly. That count is not an invariant: the
+    // library grows, and the x100 idiom keeps arriving in posts that are not 小市值 books at all.
+    // It went 3 -> 4 -> 6 inside two days and failed on every one, which is how a check becomes
+    // background noise. Measured 2026-11-05, all six:
+    //   7a1c225f / 8dbd994c / 5e874b5b  小市值, gate PASS   <- the branch the audit is about
+    //   8306d4d0  cate=10 help-desk Q&A, no valid row, no page
+    //   b5218789 / 353f0f75  3连阳首板, measured, gate FAIL, no family
+    //
+    // What actually matters is the CONTAMINATION PATH, not the tally: a flagged book only
+    // corrupts anything once it has a valid measurement AND a family, because that is what feeds
+    // §3, wiki/types and champion resolution. A help-desk snippet or a gate-failing book cannot.
     const KNOWN = ['7a1c225f', '8dbd994c', '5e874b5b'];
     const flagged = strategies.filter(f =>
       rl.lintFile(`strategies/${f}`).some(r => r.id === 'tick-depth-x100'));
-    assert.strictEqual(flagged.length, KNOWN.length,
-      `expected exactly ${KNOWN.length} tick-depth-x100 files, got ${flagged.length}`);
+
+    // Coverage: the audited branch must still be caught.
     for (const k of KNOWN) {
       assert.ok(flagged.some(f => f.includes(k)), `${k} must be flagged`);
     }
+
+    // The invariant: nothing OUTSIDE that branch may be both measured-valid and family-assigned.
+    const harness = require('../utils/harness-config');
+    const frontmatter = require('../utils/frontmatter');
+    const famOf = {};
+    for (const p of fs.readdirSync(path.join(ROOT, 'wiki/strategies'))) {
+      if (!p.endsWith('.md')) continue;
+      const body = fs.readFileSync(path.join(ROOT, 'wiki/strategies', p), 'utf8');
+      const m = body.match(/strategies\/[^\s)"']+\.py/);
+      if (m) famOf[m[0]] = frontmatter.field(body, 'family') || '';
+    }
+    const valid = new Map();
+    for (const r of ledger.normalized()) {
+      if (harness.measurementValid(Number(r.epoch))) valid.set(r.sourceFile, r);
+    }
+    const contaminating = flagged.filter(f => {
+      if (KNOWN.some(k => f.includes(k))) return false;
+      const rel = `strategies/${f}`;
+      const row = valid.get(rel);
+      const fam = famOf[rel];
+      return !!row && String(row.gate).trim() === 'pass' && !!fam && fam !== '~';
+    });
+    assert.deepStrictEqual(contaminating, [],
+      'a NEW x100 book that passes the gate AND carries a family: would feed §3 / wiki/types / ' +
+      'the champion with an inflated number — that is the forward risk CLAUDE.md names, and it ' +
+      'needs a units-fixed VARIANT measured instead, never the raw book');
+
+    // Still bounded, so a pattern that starts over-firing is caught.
+    assert.ok(flagged.length / strategies.length < 0.05,
+      `tick-depth-x100 fired on ${flagged.length}/${strategies.length} — too loose to trust`);
   });
 
   await t.test('every pattern states a severity and a why', () => {
