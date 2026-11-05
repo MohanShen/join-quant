@@ -69,6 +69,7 @@ bestObjectiveEpoch: 9
 |---|---|---|---|---|---|---|---|---|
 | [[fa0d3bd9_PT多策略并行]] | raw | 无 | normalized-raw | 0 | 0 | 0 | — | 基类；epoch-6 锚点逐位复现 epoch-4 行；§3 里的 3.5952 是 epoch-2 无参与上限的数 |
 | [[c70281d3_PT多策略分仓隔离插件V1.3]] | raw | 09:30 last_price 作信号 + −5%/+10% 止损止盈 + 4,200 行死代码 | normalized-raw | −0.0144 | +0.05 | −1.64 | — | q-struct：同一 sleeve，差异近乎惰性；「分仓隔离插件」从不执行 |
+| [[f07038e2_PT多策略分仓隔离插件V1.5]] | raw | 相对 V1.3 只改分仓插件（get_positions→context.portfolio.positions、部分撤单重下、买入资金校验、注释），全部落在模块级 `'''` 死代码里 | normalized-raw (epoch 9) | 与 c70281d3 逐位相同（367.78 / 17.10 / 4.36 / 3.6342） | 0 | 0 | — | q-struct 第二次复现：插件升级对回测零影响；§3 里它与 V1.3 是同一本书测了两次。2026-11-05 Step-0 logged-only |
 | u-1 流动 band 5e7–1e8 | understand | band 一行 | [[study-u-1]] | −1.8516 | −10.21 | +12.16 | informative | 流动性溢价 (a)：流动基金上 DQ（sharpe 0.94），两年仍为正 |
 | u-2 去 2e7 上界 | understand | band 一行 | [[study-u-2]] | −0.0537 | −1.85 | +4.17 | informative | 流动性溢价 (b)：上界是回撤过滤器，收益不变、回撤 +4.2pp |
 | u-3 镜像买最高溢价 | understand | 排序降序 + premium>0 | [[study-u-3]] | −3.4756 | −16.39 | +81.40 | informative | 均值回归 measured：镜像 −91%，对数对称，上涨日 14% |
