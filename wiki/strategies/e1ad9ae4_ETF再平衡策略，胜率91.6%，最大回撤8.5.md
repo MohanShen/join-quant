@@ -2,6 +2,7 @@
 postId: e1ad9ae48564e02ff3b0c60b0de1197f
 title: ETF再平衡策略，胜率91.6%，最大回撤8.57%
 sourceFile: strategies/2026-11-05_ETF再平衡策略_胜率91_6_最大回撤8_57-e1ad9ae4.py
+family: 资产配置
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/75217
 concepts: [未分类]
 factors:

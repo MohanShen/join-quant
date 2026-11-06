@@ -28,7 +28,7 @@ realism: "⚠⚠ 头条不可实现，且已定量：收益 100% 是「在集合
 realizability: 1
 realizabilityBasis: "own realism declares 不可实现 (matches integrate-queue's declaredUnrealizable)"
 status: active
-updatedAt: 2026-11-05
+updatedAt: 2026-11-06
 bestObjectiveEpoch: 9
 ---
 
@@ -88,7 +88,7 @@ bestObjectiveEpoch: 9
 | 2 | [[c70281d3_PT多策略分仓隔离插件V1.3]] | 3.6342 | 17.10 | 367.78 | 4.36 | ✅ | 9 |
 | 3 | [[f07038e2_PT多策略分仓隔离插件V1.5]] | 3.6342 | 17.10 | 367.78 | 4.36 | ✅ | 9 |
 
-*3 gate-pass / 3 members. 快照 2026-11-05（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*3 gate-pass / 3 members. 快照 2026-11-06（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 - **人类裁决：status → DQ-realizability？** 两条 edge 都 measured、VAL 也过（sharpe 12.82），但 u-7 证明收益只存在于集合竞价的成交价上。按 wiki-schema 家族 `status` 只有 active / deprecated / DQ；本轮不改，留给人裁决。整合层在裁决前不得引用本家族的任何 objective。

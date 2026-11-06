@@ -36,7 +36,7 @@ realizabilityBasis: "**liq-1（2026-11-01，epoch 9 TRAIN 2024，本台实测）
 realizabilityScope: xpetf-e9-base
 realizabilityScopeBasis: "**设于 2026-11-01（VAL 归档后）**：产品 validated_strategies/xpetf-e9-base.py 的正文 = study/小盘ETF双轨切换/baseline.py（build-baseline.js：py2to3(0d1bbe83) + OVERRIDE，零改动，逐字节核对），而 liq-1 / liq-2 由 build-liq.js 以**同一 SRC、同一 py2to3 + OVERRIDE** 构建、仅在偷鸡 get_peg 后插入地板——即 liq 变体 = 本产品 + 地板。所以 R=2 的测量本来就是对这本书做的，scope 从 base 改写为产品是同一本书的两个名字，不是把分数转移给另一本书。"
 status: active
-updatedAt: 2026-11-05
+updatedAt: 2026-11-06
 ---
 
 # 小盘ETF双轨切换
@@ -95,7 +95,7 @@ updatedAt: 2026-11-05
 |---|---|---|---|---|---|---|---|
 | **1** | **[[0d1bbe83_年化51%的晴雨双轨：小盘游击+ETF防御]]** | 0.7266 | 2.85 | 89.75 | 17.09 | ✅ | 9 |
 
-*1 gate-pass / 1 members. 快照 2026-11-05（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*1 gate-pass / 1 members. 快照 2026-11-06（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 

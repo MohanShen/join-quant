@@ -2,6 +2,7 @@
 postId: 18a1dbac3d2151cd4f2a169389bad14e
 title: 复刻金元顺安元启基金。
 sourceFile: strategies/2026-11-05_复刻金元顺安元启基金-18a1dbac.py
+family: 其他
 concepts: [小市值因子]
 factors:
   选股: [规模价值·小市值]
