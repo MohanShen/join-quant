@@ -134,5 +134,13 @@
     "lastCapMin": 45,
     "maxCapTried": 45,
     "lastDeferredAt": "2026-11-05T21:33:01.883Z"
+  },
+  "strategies/2026-11-07_昨日强势股_今日开盘情绪过滤_打板接力-79f34919.py": {
+    "attempts": 1,
+    "firstDeferredAt": "2026-11-06T21:30:12.987Z",
+    "reason": "slow-skipped",
+    "lastCapMin": 45,
+    "maxCapTried": 45,
+    "lastDeferredAt": "2026-11-06T21:30:12.987Z"
   }
 }

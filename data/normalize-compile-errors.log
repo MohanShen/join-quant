@@ -254,3 +254,10 @@
 2026-11-05T20:37:35.719Z	strategies/2026-11-06_收益模型与风险模型的比较-da1d065b.py	TabError: inconsistent use of tabs and spaces in indentation
 2026-11-05T20:38:23.979Z	strategies/2026-11-06_冰晶龙的策略_帮忙实现-0940ee77.py	AttributeError: 'DataFrame' object has no attribute 'sort'
 2026-11-05T20:43:19.926Z	strategies/2026-11-06_回测年化174_的创业板活跃股策略-d40cbb6a.py	jqboson.core.exception.ReadRemoteFileError: read_file res_data/sel_cyb.csv: 文件'/opt/research-files/655/65568519426/res_data/sel_cyb.csv'不存在
+2026-11-06T18:26:31.117Z	strategies/2026-11-06_人工智能1号-f20893a9.py	jqdata.exceptions.ParamsError: 概念板块 'GN201' 不存在
+2026-11-06T19:27:46.429Z	strategies/2026-11-07_量化学习-KD指标量化交易策略-1cecd2d3.py	TypeError: '&gt;=' not supported between instances of 'dict' and 'int'
+2026-11-06T19:36:36.553Z	strategies/2026-11-07_异动罗盘_寻找特例独行的股票_研究-468129e8.py	jqdata.exceptions.FutureDataError: avoid_future_data=True时, get_money_flow只能在盘后15:00之后才能获取标的的资金流数据，current_dt= 2024-01-02 09:30:00
+2026-11-06T19:52:09.346Z	strategies/2026-11-07_中证1000指数增强-60a524ac.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-11-06T20:23:08.184Z	strategies/2026-11-07_大于M5_1_01买入_10_止盈_3_止损-ecfb915c.py	NameError: name 'avg_cost' is not defined
+2026-11-06T21:44:15.341Z	strategies/2026-11-07_向导式_12年价值投资_0_0_2_01_2988_98_年化34_Sharpe_0_937-aa4b3f65.py	AttributeError: 'DataFrame' object has no attribute 'sort'
+2026-11-06T22:22:24.689Z	strategies/2026-11-07_最热股票最小市值_10年年华100-887353ec.py	NameError: name 'codes' is not defined
