@@ -2,6 +2,7 @@
 postId: 8de9c8bd942565b1e015bcb1c202f728
 title: 全市场ETF轮动策略
 sourceFile: strategies/2026-11-07_全市场ETF轮动策略-8de9c8bd.py
+family: 五福闹新春
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/79968
 concepts: [ETF轮动, 动量与趋势, 期货与套利]
 factors:

@@ -2,6 +2,7 @@
 postId: efef8e6a4e4a7f1d6dba7c24ccc9dcc2
 title: 多 ETF 轮动 + 自适应市场状态 + 严格风控的量化策略
 sourceFile: strategies/2026-11-07_多_ETF_轮动_自适应市场状态_严格风控的量化策略-efef8e6a.py
+family: 五福闹新春
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/69446
 concepts: [ETF轮动, 动量与趋势]
 factors:

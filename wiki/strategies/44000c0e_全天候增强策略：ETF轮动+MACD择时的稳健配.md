@@ -2,6 +2,7 @@
 postId: 44000c0e83c8b2b02fc2ac004be74061
 title: 全天候增强策略：ETF轮动 + MACD择时的稳健配置
 sourceFile: strategies/2026-11-07_全天候增强策略_ETF轮动_MACD择时的稳健配置-44000c0e.py
+family: 资产配置
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/62944
 concepts: [未分类]
 factors:

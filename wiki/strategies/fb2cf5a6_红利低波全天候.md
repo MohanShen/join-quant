@@ -2,6 +2,7 @@
 postId: fb2cf5a642df783cee037e41407ac213
 title: 红利低波全天候
 sourceFile: strategies/2026-11-07_红利低波全天候-fb2cf5a6.py
+family: 资产配置
 concepts: [动量与趋势]
 factors:
   选股: [动量]

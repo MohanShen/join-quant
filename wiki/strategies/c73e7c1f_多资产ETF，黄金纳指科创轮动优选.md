@@ -2,6 +2,7 @@
 postId: c73e7c1ffc0817cacad07236f4bd5ae4
 title: 多资产ETF，黄金/纳指/科创轮动优选
 sourceFile: strategies/2026-11-07_多资产ETF_黄金_纳指_科创轮动优选-c73e7c1f.py
+family: 七星高照
 joinquantPost: https://www.joinquant.com/post/joinquant.com/post/73201
 concepts: [ETF轮动, 动量与趋势]
 factors:
