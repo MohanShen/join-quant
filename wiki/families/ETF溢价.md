@@ -22,7 +22,7 @@ universeSecondOpinion: 混合   # ⚠ disagrees — LLM wins, see universeBasis
 universeAt: 2026-10-07
 bestVariant: [[c1966f8e_【开源分享】年化590%ETF溢价套利策略，2年]]
 bestObjective: 3.3347
-memberCount: 4
+memberCount: 6
 sources: { normalized: 2, study: 6, enhance: 4 }
 realism: "⚠⚠ 头条不可实现，且已定量：收益 ≈100% 是「在集合竞价的开盘成交价上按全天成交量 5% 买到开盘价低于 T−1 净值的薄 ETF」这一件事。同一信号把成交挪到 14:50 → 两年 +321% 变 +10%、sharpe 0.07（u-1）；在收盘看折价、收盘买、等次日回归 → −53%、回撤 54%（ep-imp-3）。偏离幅度由薄度供给：下界 1e8 股的流动 universe 上只剩年化 34% / sharpe 1.04（DQ，u-4）。5% 参与上限已把 epoch-2 的 178% 压到 105%（baseline-e6），而薄 ETF 的集合竞价成交量远小于全天的 5%。零滑点台。TRAIN 174–182% / VAL 214% 都建立在同一不可成交假设上；与 [[PT多策略]] 是同一机制的两个实现（两条 edge 同名、同 status），整合层不得把本家族当作可拼接 sleeve，引用时按 u-4 的 34% / 1.04 估值。建议 status → DQ-realizability，由人裁决"
 realizability: 1
@@ -84,11 +84,13 @@ bestObjectiveEpoch: 9
 | 排名 | 变体 | obj | sharpe | annual% | maxDD% | gate | epoch |
 |---|---|---|---|---|---|---|---|
 | **1** | **[[c1966f8e_【开源分享】年化590%ETF溢价套利策略，2年]]** | 3.3347 | 13.55 | 344.06 | 10.59 | ✅ | 9 |
-| 2 | [[15c36e0c_ETF溢价改进版]] | 2.2695 | 10.69 | 238.43 | 11.48 | ✅ | 9 |
-| 3 | [[edd94ebc_ETF溢价回撤]] | 1.3862 | 6.93 | 144.30 | 5.68 | ✅ | 9 |
-| 4 | [[c002a821_分享一个我实战中高收益回撤还行的策略]] | 0.8536 | 4.04 | 93.78 | 8.42 | ✅ | 9 |
+| 2 | [[1ea53f3f_实盘长期跟踪更新]] | 2.7859 | 16.17 | 282.43 | 3.84 | ✅ | 9 |
+| 3 | [[15c36e0c_ETF溢价改进版]] | 2.2695 | 10.69 | 238.43 | 11.48 | ✅ | 9 |
+| 4 | [[e70f8129_ETF小回撤优化，稳定！]] | 2.2086 | 14.73 | 225.43 | 4.57 | ✅ | 9 |
+| 5 | [[edd94ebc_ETF溢价回撤]] | 1.3862 | 6.93 | 144.30 | 5.68 | ✅ | 9 |
+| 6 | [[c002a821_分享一个我实战中高收益回撤还行的策略]] | 0.8536 | 4.04 | 93.78 | 8.42 | ✅ | 9 |
 
-*4 gate-pass / 4 members. 快照 2026-11-07（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*6 gate-pass / 6 members. 快照 2026-11-07（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 - **人类裁决：status → DQ-realizability？** 两条 edge 都 measured、VAL 也过（sharpe 7.60），但 u-1 + ep-imp-3 证明开盘折价与收盘折价两头都不可实现。与 [[PT多策略]] 同一裁决；本轮不改 status。整合层在裁决前不得引用本家族的任何 objective；`edge-redundancy.js` 会把两家族标为 INTEGRATION-REDUNDANT（两条 edge 同名同 status）。

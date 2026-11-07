@@ -2,6 +2,7 @@
 postId: befee99dd015a7b5f019fdac8d0745a3
 title: 低位三连阳改进版，年化392.69%，最大回撤18%
 sourceFile: strategies/2026-11-07_低位三连阳改进版_年化392_69_最大回撤18-befee99d.py
+family: 打板短线
 concepts: [小市值因子, 打板与涨停]
 factors:
   选股: [规模价值·小市值]
