@@ -22,7 +22,7 @@ universeSecondOpinion: 全A   # ⚠ disagrees — LLM wins, see universeBasis
 universeAt: 2026-10-07
 bestVariant: [[62c2664f_三部曲ETF动量3]]
 bestObjective: 2.0078
-memberCount: 46
+memberCount: 47
 sources: { normalized: 27, study: 0, enhance: 0 }
 realism: "⚠ epoch-6 base objective 0.1868 / sharpe 1.41（epoch 2 的 0.2965 高估 59%）；收益 85% 在 2022 一年；11 只池写于 2026（2022 年初只有约 6 只有行情），换成 A 股宽基池 objective −0.27——池子是事后选成的必要条件，VAL 2024–25 对它不是干净样本外；零滑点台仍偏乐观（单持仓日频换仓）"
 valRevalGranted: 9
@@ -132,9 +132,10 @@ bestObjectiveEpoch: 9
 | 43 | [[0717871e_全自动拟合神器别再当拟合怪的奴隶了我要让人人都能]] | -0.0950 | 0.29 | 15.91 | 25.41 | ❌ | 9 |
 | 44 | [[0593c701_大类ETF轮动回测]] | -0.1286 | 0.05 | 5.00 | 17.86 | ❌ | 9 |
 | 45 | [[02d397c0_简单的择时基金轮动策略]] | -0.1990 | 0.12 | 8.60 | 28.50 | ❌ | 9 |
-| 46 | [[24fd2813_行业ETF轮动研究代码]] | DQ/— | — | — | — | — | — |
+| 46 | [[8633c898_我就不凑孙割热度了，上周量化策略榜单]] | -0.2454 | 0.01 | 4.19 | 28.73 | ❌ | 9 |
+| 47 | [[24fd2813_行业ETF轮动研究代码]] | DQ/— | — | — | — | — | — |
 
-*32 gate-pass / 46 members. 快照 2026-11-07（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
+*32 gate-pass / 47 members. 快照 2026-11-07（TRAIN 2022–2023, 冻结零滑点 ⚠）。由 `wiki-family-build.js` 生成，勿手改。*
 
 ## 4. 待研究 / 空白 (research gaps)
 - ⚠⚠ **【更正，2026-10-27】下面那条「点时池 → 未通过 ⇒ VAL 不该花」是 epoch-6 的结论，不适用于本台，且把两个不同的操作混成了一个。** 它引的 [[study-pit-pool]] 是在 **base 0aa4028d** 上把作者的名单换成一个**宽的生成池**（epoch 6，objective 0.1868→−0.0313）。那证伪的是 `动量` 排序，不是「去掉上市日期后见性」。
