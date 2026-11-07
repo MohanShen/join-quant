@@ -2,6 +2,8 @@
 postId: ddb2bc1d69cc46014e0de410aeb45f05
 title: 请问该如何使用聚宽量化系统
 sourceFile: strategies/2026-11-03_请问该如何使用聚宽量化系统-ddb2bc1d.py
+familyDeclined: true
+familyDeclinedBasis: "45 lines of the JQ worked example (order_value then order_target on one symbol). Title asks how to use the JoinQuant system at all — help-desk."
 concepts: [未分类]
 factors:
   选股: [未分类]

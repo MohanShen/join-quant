@@ -2,6 +2,8 @@
 postId: f2aa5cd95410c3fbb303972848a1b214
 title: 我只说一句，为什么按照官方教程的都做不对
 sourceFile: strategies/2026-11-03_我只说一句_为什么按照官方教程的都做不对-f2aa5cd9.py
+familyDeclined: true
+familyDeclinedBasis: "JQ tutorial template, 11 lines: order(g.security, 100) on one hardcoded symbol, no selection/ranking/timing. The post asks why the official tutorial does not work — help-desk, no lineage."
 concepts: [未分类]
 factors:
   选股: [未分类]

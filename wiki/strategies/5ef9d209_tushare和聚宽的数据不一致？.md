@@ -2,6 +2,8 @@
 postId: 5ef9d209382bdd8f2523dd29ab37704b
 title: tushare和聚宽的数据不一致？
 sourceFile: strategies/2026-11-04_tushare和聚宽的数据不一致-5ef9d209.py
+familyDeclined: true
+familyDeclinedBasis: "19 lines: a set_order_cost call plus order(g.security, 100) on one symbol, used to compare tushare vs JQ data. A data-discrepancy report, not a strategy."
 concepts: [ETF轮动]
 factors:
   选股: [ETF动量]

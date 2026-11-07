@@ -2,6 +2,7 @@
 postId: 9e2ddaae1ffe901a08296d9c0a9dbbab
 title: 五福5.3纳指防御版，大幅降低五福波动与回撤和过拟合概率
 sourceFile: strategies/2026-11-07_五福5_3纳指防御版_大幅降低五福波动与回撤和过拟合概率-9e2ddaae.py
+family: 五福闹新春
 concepts: [ETF轮动, 动量与趋势]
 factors:
   选股: [ETF动量, 动量]

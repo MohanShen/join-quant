@@ -2,6 +2,8 @@
 postId: d8bdd38d02484ae91d3beb4370eda808
 title: 分层分组的结构为什么不同组都是一样的结果
 sourceFile: strategies/2026-11-04_分层分组的结构为什么不同组都是一样的结果-d8bdd38d.py
+familyDeclined: true
+familyDeclinedBasis: "JQ worked example, identical body to the other help-desk pastes. Post asks why stratified groups all return the same result — a methodology question, no strategy of its own."
 concepts: [未分类]
 factors:
   选股: [未分类]

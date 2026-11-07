@@ -2,6 +2,8 @@
 postId: ab17f6f13ff914d74c671cea6c326d7f
 title: get_bars返回数据有问题导致收益大爆炸！
 sourceFile: strategies/2026-11-01_get_bars返回数据有问题导致收益大爆炸-ab17f6f1.py
+familyDeclined: true
+familyDeclinedBasis: "JQ worked example iterating g.securitys with order_value(security, 24000). Post reports get_bars returning bad data and inflating returns — a data bug report."
 concepts: [未分类]
 factors:
   选股: [未分类]

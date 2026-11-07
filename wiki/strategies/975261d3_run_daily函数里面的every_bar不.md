@@ -2,6 +2,8 @@
 postId: 975261d3668353475205078109831d74
 title: run_daily函数里面的every_bar不起作用吗？
 sourceFile: strategies/2026-11-04_run_daily函数里面的every_bar不起作用吗-975261d3.py
+familyDeclined: true
+familyDeclinedBasis: "JQ worked example. Post asks whether every_bar inside run_daily works — an API-semantics question."
 concepts: [未分类]
 factors:
   选股: [未分类]

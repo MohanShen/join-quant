@@ -2,6 +2,8 @@
 postId: a2e9b54e9bd8f526fe28934330cb5077
 title: 回测有个bug啊？无量一字板怎么还能买的进去呢？
 sourceFile: strategies/2026-11-01_回测有个bug啊_无量一字板怎么还能买的进去呢-a2e9b54e.py
+familyDeclined: true
+familyDeclinedBasis: "38 lines: order_value(security, cash) on one symbol, with the sell commented out. Post asks how a sealed 一字板 could be filled — a fill-semantics bug report."
 concepts: [未分类]
 factors:
   选股: [未分类]

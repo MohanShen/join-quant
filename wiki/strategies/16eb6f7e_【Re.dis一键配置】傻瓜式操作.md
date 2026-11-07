@@ -2,6 +2,8 @@
 postId: 16eb6f7e61c901d0d26f630312bc38ad
 title: 【Re.dis一键配置】傻瓜式操作
 sourceFile: strategies/2026-11-07_Re_dis一键配置_傻瓜式操作-16eb6f7e.py
+familyDeclined: true
+familyDeclinedBasis: "JQ worked example attached to a Redis one-click-configuration write-up (Re.dis一键配置). Infrastructure tooling, not a trading mechanism."
 concepts: [未分类]
 factors:
   选股: [未分类]

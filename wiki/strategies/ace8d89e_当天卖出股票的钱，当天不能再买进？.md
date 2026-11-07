@@ -2,6 +2,8 @@
 postId: ace8d89ecd7fc2a3fe08b274c6f50f1d
 title: 当天卖出股票的钱，当天不能再买进？
 sourceFile: strategies/2026-11-03_当天卖出股票的钱_当天不能再买进-ace8d89e.py
+familyDeclined: true
+familyDeclinedBasis: "23 lines: order_target then order_value on hardcoded 000001.XSHE to demonstrate that T+0 sale proceeds are not reusable same-day. A platform-semantics question."
 concepts: [未分类]
 factors:
   选股: [未分类]
