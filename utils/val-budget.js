@@ -182,6 +182,41 @@ function check(family, { epoch = activeEpoch(), kind = 'family' } = {}) {
              why: `no VAL recorded for ${family} on a bench epoch ${epoch} accepts`, prior };
   }
 
+  // ⚠⚠ The CAP IS A POLICY VALUE, read from the epoch config beside its OOS sibling — not a
+  // constant here. `valPolicy.maxPerFamilyPerBench: null` means unlimited, which is what the user
+  // set on 2026-11-07, removing the one-VAL-per-(family, bench) rule.
+  //
+  // ⚠ Counting does NOT stop when blocking does. The prior VALs are still filtered, counted and
+  // returned, and the reason says `policy-unlimited` with how many came before — so "this is the
+  // third validation of this family" stays visible to any caller and in the CLI history. Deleting
+  // the check outright would have thrown that away, and the ledger is the only record of which
+  // VALs were spent under which regime.
+  //
+  // ⚠ What this costs, recorded because it is irreversible: a second validation on the same family
+  // is selection on the held-out window one run at a time, which makes VAL a second training set.
+  // The policy note in harness/config/epoch-9.json states the trade in full. OOS is untouched.
+  const cap = (() => {
+    try { const v = harness.config().valPolicy; return v && 'maxPerFamilyPerBench' in v ? v.maxPerFamilyPerBench : 1; }
+    catch { return 1; }           // unreadable config ⇒ the historical rule, never a free pass
+  })();
+
+  if (cap === null || (typeof cap === 'number' && blocking.length < cap)) {
+    const last = blocking[blocking.length - 1];
+    return {
+      allowed: true,
+      reason: cap === null ? 'policy-unlimited' : 'within-policy',
+      prior,
+      priorCount: blocking.length,
+      why: `${family} has ${blocking.length} prior VAL(s) on this bench (latest ` +
+           `"${last.runId || 'unnamed'}" -> ${last.outcome || '?'} on ${String(last.at || '').slice(0, 10)}), ` +
+           (cap === null
+             ? 'and valPolicy.maxPerFamilyPerBench is null (unlimited, set 2026-11-07 by user ' +
+               'decision). ⚠ Each extra validation is a further look at the held-out window: the ' +
+               'number above is how many times this family has already been selected on VAL.'
+             : `and the policy allows ${cap} per (family, bench).`),
+    };
+  }
+
   const p = blocking[blocking.length - 1];
   const when = String(p.at || '').slice(0, 10);
   const unknown = !p.epoch;

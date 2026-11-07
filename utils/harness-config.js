@@ -319,6 +319,13 @@ if (require.main === module) {
     console.log(`  costs    slippage ${c.costs.slippage.kind}(${c.costs.slippage.value}), ` +
                 `commission ${c.costs.commission.buy}/${c.costs.commission.sell} min ${c.costs.commission.minCost}`);
     console.log(`  OOS      <= ${c.oosPolicy.maxTestsPerCandidate} test/candidate, <= ${c.oosPolicy.maxTestsPerEpoch}/epoch`);
+    // ⚠ Printed beside OOS on purpose: these are the repo's two irreversible budgets, and the VAL
+    // one was invisible here while being enforced in code — so a reader checking "what are the
+    // limits" saw only half of them.
+    {
+      const cap = c.valPolicy && 'maxPerFamilyPerBench' in c.valPolicy ? c.valPolicy.maxPerFamilyPerBench : 1;
+      console.log(`  VAL      ${cap === null ? 'UNLIMITED per (family, bench)  ⚠ selection on the held-out window is no longer capped' : `<= ${cap} per (family, bench)`}`);
+    }
     if (c.changedFromPreviousEpoch) {
       console.log('  changed from the previous epoch:');
       c.changedFromPreviousEpoch.forEach(x => console.log(`     ${x}`));

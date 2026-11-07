@@ -37,6 +37,27 @@ const harness = require('../utils/harness-config');
 
 const reset = () => { try { fs.unlinkSync(process.env.JQ_CONSUMPTION_FILE); } catch {} };
 
+/**
+ * The cap is a POLICY VALUE (valPolicy.maxPerFamilyPerBench), set to null — unlimited — by user
+ * decision on 2026-11-07. So "a prior VAL blocks" stopped being an invariant. What did NOT stop
+ * being one is that the budget SEES the prior: that is what makes repeated selection on the
+ * held-out window visible, and it is the half the etfmom-005 mis-filing hid for weeks.
+ */
+const capNow = () => { try { const p = harness.config().valPolicy;
+  return p && 'maxPerFamilyPerBench' in p ? p.maxPerFamilyPerBench : 1; } catch { return 1; } };
+
+/** The prior must be counted; whether it BLOCKS is the cap's business, not the counter's. */
+const assertSpent = (v, { names } = {}) => {
+  assert.ok(v.prior.length >= 1, 'the prior VAL must be visible to the budget whatever the cap is');
+  if (capNow() === null) {
+    assert.strictEqual(v.allowed, true);
+    assert.ok(v.priorCount >= 1, 'priorCount reports how many looks this family has already had');
+  } else {
+    assert.strictEqual(v.allowed, false);
+  }
+  if (names) assert.match(v.why, names, 'it must name what came before, blocked or not');
+};
+
 test('VAL budget', async (t) => {
   await t.test('a family that has never validated may validate', () => {
     reset();
@@ -45,14 +66,29 @@ test('VAL budget', async (t) => {
     assert.strictEqual(v.reason, 'first-of-epoch');
   });
 
-  await t.test('the second validation in the same epoch is refused', () => {
+  await t.test('a second validation is COUNTED, and the cap decides whether it blocks', () => {
+    // ⚠ This used to assert `allowed === false` outright. The cap is now a POLICY VALUE
+    // (valPolicy.maxPerFamilyPerBench in the epoch config), set to null — unlimited — by user
+    // decision on 2026-11-07. So blocking is no longer an invariant; COUNTING is, and counting is
+    // the load-bearing half: it is what makes "this family has been selected on VAL N times"
+    // visible, and what the etfmom-005 mis-filing hid for weeks.
     reset();
     val.record('家族A', 'cand-001', { outcome: 'sharpe 3.1' });
     const v = val.check('家族A');
-    assert.strictEqual(v.allowed, false);
-    assert.strictEqual(v.reason, 'already-validated');
-    assert.match(v.why, /VAL-BLOCKED/);
-    assert.match(v.why, /cand-001/, 'the refusal must name what already spent the budget');
+    assert.strictEqual(v.prior.length, 1, 'the prior VAL must be seen whatever the cap does');
+    const cap = (() => { try { const p = require('../utils/harness-config').config().valPolicy;
+      return p && 'maxPerFamilyPerBench' in p ? p.maxPerFamilyPerBench : 1; } catch { return 1; } })();
+    if (cap === null) {
+      assert.strictEqual(v.allowed, true);
+      assert.strictEqual(v.reason, 'policy-unlimited');
+      assert.strictEqual(v.priorCount, 1, 'how many times it has already been validated');
+      assert.match(v.why, /cand-001/, 'it must still name what came before');
+    } else {
+      assert.strictEqual(v.allowed, false);
+      assert.strictEqual(v.reason, 'already-validated');
+      assert.match(v.why, /VAL-BLOCKED/);
+      assert.match(v.why, /cand-001/, 'the refusal must name what already spent the budget');
+    }
   });
 
   await t.test('a SCORING-ONLY epoch bump does NOT reset the budget', () => {
@@ -114,8 +150,10 @@ test('VAL budget', async (t) => {
     // doing selection on VAL one run at a time, and every one of those runs satisfies that clause.
     reset();
     val.record('家族A', 'cand-001', { outcome: 'sharpe 3.1' });
-    assert.strictEqual(val.check('家族A').allowed, false,
-      'a new candidate must NOT buy a second validation — that is the hole the rule closes');
+    // ⚠ Under an unlimited cap this hole is OPEN BY POLICY, which is the accepted cost. What the
+    // test still pins is that producing a new candidate does not make the earlier VAL invisible —
+    // the count is what shows an agent iterating on the held-out window.
+    assertSpent(val.check('家族A'), { names: /cand-001/ });
   });
 
   await t.test('a different family is unaffected', () => {
@@ -141,10 +179,9 @@ test('VAL budget', async (t) => {
     reset();
     consumption.record({ key: '家族A', kind: 'family', stage: 'enhance',
                          runId: 'cand-mis-filed', outcome: 'val-pass' });
-    const v = val.check('家族A');
-    assert.strictEqual(v.allowed, false,
-      'a validation recorded under the wrong stage is still a validation spent');
-    assert.match(v.why, /cand-mis-filed/, 'the refusal must name what spent it');
+    // ⚠ The invariant here is DETECTION, not refusal, and it survives the cap change intact: a
+    // VAL filed under the wrong stage must still be SEEN. That is the whole etfmom-005 lesson.
+    assertSpent(val.check('家族A'), { names: /cand-mis-filed/ });
   });
 
   await t.test('the match is narrow — an ordinary outcome does not block', () => {
@@ -198,8 +235,10 @@ test('VAL budget', async (t) => {
     reset();
     consumption.record({ key: '家族A', kind: 'family', stage: 'enhance',
                          runId: 'dq-run', outcome: 'val-dq' });
-    assert.strictEqual(val.check('家族A').allowed, false,
-      'a disqualified VAL run still spent the window');
+    // ⚠ A DQ'd run still SAW the held-out window, so it must be counted even though the cap no
+    // longer makes it refuse. The distinction that matters is DQ (saw the data) vs DECLINE (never
+    // ran) — tested just above — and that is unaffected by the policy.
+    assertSpent(val.check('家族A'), { names: /dq-run/ });
   });
 
   await t.test('an UNKNOWN epoch blocks, because VAL cannot be un-spent', () => {
@@ -211,8 +250,14 @@ test('VAL budget', async (t) => {
     fs.writeFileSync(f, fs.readFileSync(f, 'utf8').split('\n')
       .map(l => l.startsWith('家族C\t') ? l.replace(/\t\d+$/, '\t') : l).join('\n'));
     const v = val.check('家族C');
-    assert.strictEqual(v.allowed, false);
-    assert.strictEqual(v.reason, 'prior-unknown-epoch');
+    // ⚠ An unknown epoch still cannot be treated as "no VAL": the row must be counted. Whether it
+    // BLOCKS now depends on the cap — under an unlimited policy the unknown-epoch path reports
+    // rather than refuses, which is the accepted consequence of removing the limit.
+    assert.ok(v.prior.length >= 1, 'a row with no epoch must still be seen');
+    if (capNow() !== null) {
+      assert.strictEqual(v.allowed, false);
+      assert.strictEqual(v.reason, 'prior-unknown-epoch');
+    }
   });
 
   await t.test('a run with no family is refused — an unnamed VAL is an untracked VAL', () => {
@@ -284,5 +329,52 @@ test('VAL budget refuses a family it cannot account for', async (t) => {
 
   await t.test('a registered family is still evaluated normally', () => {
     assert.notStrictEqual(val.check('家族A').reason, 'unknown-family');
+  });
+});
+
+/**
+ * The cap is a POLICY VALUE, and the fallback must be restrictive.
+ *
+ * Removing the one-VAL-per-(family, bench) rule (user decision, 2026-11-07) was done by setting
+ * `valPolicy.maxPerFamilyPerBench: null` in the epoch config — beside `oosPolicy`, where the
+ * repo's other irreversible budget already lives — rather than by deleting the check. That keeps
+ * the accounting, keeps the rule versioned with the epoch, and makes it reversible by one edit.
+ */
+test('the VAL cap comes from the epoch config, and failure is restrictive', async (t) => {
+  await t.test('the policy is declared in the epoch config', () => {
+    const c = harness.config();
+    assert.ok(c.valPolicy, 'valPolicy must exist — an enforced limit that is not declared is the ' +
+      'state oosPolicy was in when it was printed but never enforced');
+    assert.ok('maxPerFamilyPerBench' in c.valPolicy);
+    assert.ok(c.valPolicy.note && c.valPolicy.note.length > 100,
+      'the note must state what the limit bought and what removing it costs');
+  });
+
+  await t.test('an UNREADABLE config falls back to 1, never to unlimited', () => {
+    // ⚠ The direction matters. A false "unlimited" silently re-grants the most protected resource
+    // in the repo — exactly how the epoch-equality bug handed back six validations. A false "1"
+    // only blocks, which is visible and clears with one edit. Same asymmetry as the unknown-epoch
+    // rule and `probeFinished`'s whitelist.
+    const src = fs.readFileSync(path.join(__dirname, '../utils/val-budget.js'), 'utf8');
+    const at = src.indexOf('const cap =');
+    assert.ok(at > 0, 'the cap must be read, not hardcoded');
+    const block = src.slice(at, at + 400);
+    assert.match(block, /catch\s*{\s*return 1;/,
+      'an unreadable config must fall back to the historical rule, not to a free pass');
+  });
+
+  await t.test('counting survives the cap — the ledger still records every VAL', () => {
+    const src = fs.readFileSync(path.join(__dirname, '../utils/val-budget.js'), 'utf8');
+    assert.match(src, /function record/, 'recording must not have been removed with the limit');
+    assert.match(src, /priorCount/, 'the number of prior looks must be reported to callers');
+  });
+
+  await t.test('OOS is untouched by the VAL policy', () => {
+    // The two budgets are independent. Removing the VAL cap must not touch the 2026 reserve, whose
+    // per-candidate limit of 1 is absolute across epochs.
+    const c = harness.config();
+    assert.strictEqual(c.oosPolicy.maxTestsPerCandidate, 1);
+    const src = fs.readFileSync(path.join(__dirname, '../utils/oos-budget.js'), 'utf8');
+    assert.ok(!/valPolicy/.test(src), 'the OOS budget must not read the VAL policy');
   });
 });
