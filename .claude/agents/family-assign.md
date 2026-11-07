@@ -46,9 +46,29 @@ nothing to score against. Decide from the SOURCE and the family pages' §1, not 
    `--combination-ack`, which is your statement that you looked at this specifically.
 3. **Genuinely new?** If no registered family shares its base, that is a legitimate answer. Pass
    `--new-family`, and register the name per `wiki-schema.md` §2.2 first.
-4. **Not a strategy?** Analysis write-ups, comparisons and future-function audits get normalized
-   like anything else but have no lineage. Say so and leave them unassigned — that is a correct
-   outcome, not a failure to decide.
+4. **Not a strategy?** Analysis write-ups, comparisons, API demos, help-desk pastes and
+   future-function audits get normalized like anything else but have no lineage. That is a correct
+   outcome, not a failure to decide — but **record it, do not merely leave it unassigned**:
+
+   ```bash
+   node utils/family-assign.js --decline <sourceFile> --why "<what you read, and why no lineage>"
+   ```
+
+   ⚠⚠ Saying so in your report is NOT enough, and that was the bug. The queue is derived as "pages
+   with no `family:`", so a page you reviewed and declined came back tomorrow and every day after.
+   Measured 2026-11-07 at depth 87: **24 were cate=10 help-desk** (「怎么删除？」 — whose attachment
+   is JoinQuant's own OTC-fund API demo), and your own commits recorded the loop:
+   「43 help-desk posts reviewed in db270d0 stay unassigned」. Worse, once only declinable items
+   were left the depth stopped moving, so the daily chain's no-progress guard **stalled the whole
+   stage** (`27 -> 27`) — punishing a run that had done its job.
+   ⚠ `--why` is mandatory for the same reason as on `--assign`: a decline with no basis reads
+   exactly like a page nobody looked at. Name what you READ — the entry, the universe, what it
+   trades — never the title. Titles mislead (see `b3751277`, where 「涨停优选后再买入」 is a
+   historical screen, not a limit-up entry).
+   ⚠ A decline is permanent until `--undecline`: nothing reopens it, because `strategies/` is
+   immutable so the source never changes. It is NOT epoch-scoped, unlike `valDeclined:` — a
+   help-desk paste has no lineage on any bench.
+   ⚠ Decline only "this has no lineage". If it HAS a lineage you cannot name yet, leave it pending.
 
 ## Writing it
 
@@ -60,6 +80,8 @@ node utils/family-assign.js --assign <sourceFile> --family <name> \
 `--why` is mandatory and goes in an append-only ledger (`data/family-assignments.tsv`) with the
 matcher's top score and runner-up. State **what you compared**, not that you are confident.
 `--revert <sourceFile>` undoes one, because a wrong assignment is silent and reversing must be cheap.
+`--declined` lists what has been reviewed-and-declined (kept out of the queue, never deleted), and
+`--undecline <sourceFile>` puts one back. Both decline and undecline append to the same ledger.
 
 After any assignment: `node utils/wiki-family-build.js` so §3 and `memberCount` pick it up.
 

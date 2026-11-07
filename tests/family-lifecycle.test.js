@@ -448,3 +448,92 @@ st('无选择压力 is scoped to the idea type', async (t) => {
       'the only column-indexed parser must remain scoped to §3');
   });
 });
+
+/**
+ * `familyDeclined:` — a reviewed-and-declined page must leave the assign queue.
+ *
+ * Measured 2026-11-07 at depth 87: 24 were cate=10 help-desk posts that will never have a family
+ * (「怎么删除？」, whose attachment is JoinQuant's own OTC-fund API demo). The queue is derived as
+ * "pages with no family:", so nothing recorded the decision and the agent re-reviewed them every
+ * day — its own commits say so («43 help-desk posts reviewed in db270d0 stay unassigned»). Worse,
+ * once only declinable items remained the depth stopped moving, so daily-pipeline's no-progress
+ * guard stalled the whole stage (27 -> 27) and skipped it for the rest of the chain.
+ *
+ * Same class as the `discover` sign bug: the guard assumes queue depth measures OUTSTANDING work.
+ * There the sign was wrong; here the denominator was.
+ */
+const assignTest = require('node:test');
+const assignAssert = require('node:assert');
+const assignFs = require('fs');
+const assignPath = require('path');
+
+assignTest('a reviewed-and-declined page leaves the assign queue', async (t) => {
+  const fa = require('../utils/family-assign');
+
+  await t.test('pages() exposes the decline and its basis', () => {
+    const decl = fa.declined();
+    for (const d of decl) {
+      assignAssert.ok(d.basis && String(d.basis).trim().length >= 15,
+        `${d.page}: a decline with no basis reads exactly like a page nobody reviewed`);
+    }
+  });
+
+  await t.test('pending() excludes declined pages, and declined() reports them', () => {
+    const pendingFiles = new Set(fa.pending().map(p => p.sourceFile));
+    for (const d of fa.declined()) {
+      assignAssert.ok(!pendingFiles.has(d.sourceFile),
+        `${d.page} is declined but still offered by pending() — the queue would re-ask forever`);
+    }
+  });
+
+  await t.test('a basis is MANDATORY', () => {
+    const victim = fa.pending()[0];
+    if (!victim) return;                            // nothing pending: nothing to assert on
+    const r = fa.decline(victim.sourceFile, { basis: 'too short' });
+    assignAssert.strictEqual(r.ok, false, 'a short basis must be refused');
+    assignAssert.match(r.why, /15 chars/);
+  });
+
+  await t.test('a page that HAS a family cannot be declined — that is --revert', () => {
+    const assigned = fa.pages().find(p => p.family);
+    if (!assigned) return;
+    const r = fa.decline(assigned.sourceFile, { basis: 'a long enough basis to pass the guard' });
+    assignAssert.strictEqual(r.ok, false);
+    assignAssert.match(r.why, /--revert/);
+  });
+
+  await t.test('it is NOT epoch-scoped, unlike valDeclined', () => {
+    // A lineage is not bench-scoped: a help-desk paste has no family on any epoch, and
+    // strategies/ is immutable so the source never changes. So nothing reopens a decline.
+    const src = assignFs.readFileSync(assignPath.join(__dirname, '../utils/family-assign.js'), 'utf8');
+    assignAssert.match(src, /familyDeclined:\s*true/,
+      'the marker is a bare boolean, not an epoch');
+    assignAssert.ok(!/familyDeclined:\s*\$\{[^}]*epoch/i.test(src),
+      'writing an epoch into it would imply something reopens it');
+    assignAssert.match(src, /function undecline/, 'reversing must be explicit and available');
+  });
+
+  await t.test('both decline and undecline are auditable', () => {
+    const src = assignFs.readFileSync(assignPath.join(__dirname, '../utils/family-assign.js'), 'utf8');
+    // ⚠ The paren is load-bearing: `indexOf('function decline')` matches `function declined()`,
+    // the reporter, which is defined EARLIER — so the test sliced the wrong function and failed
+    // on correct code. A prefix is not a name.
+    for (const fn of ['function decline(', 'function undecline(']) {
+      const at = src.indexOf(fn);
+      assignAssert.ok(at > 0, `${fn} must exist`);
+      // ⚠ Slice to the NEXT top-level function, not a fixed window: decline()'s refusal strings
+      // are long enough that a 1400-char guess cut the ledger write off and failed on correct code.
+      const rest = src.slice(at + fn.length);
+      const end = rest.search(/\n(?:\/\*\*|function )/);
+      const body = end < 0 ? rest : rest.slice(0, end);
+      assignAssert.match(body, /appendFileSync\(LEDGER/,
+        `${fn} must append to the assignment ledger — a silent state change cannot be audited`);
+    }
+  });
+
+  await t.test('the planner reads the same pending(), so the depth follows', () => {
+    const dp = assignFs.readFileSync(assignPath.join(__dirname, '../utils/daily-pipeline.js'), 'utf8');
+    assignAssert.match(dp, /require\('\.\/family-assign'\)\.pending\(\)/,
+      'if the planner ever derives the assign depth itself, declines stop reaching it');
+  });
+});

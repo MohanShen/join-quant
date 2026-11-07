@@ -63,23 +63,61 @@ const registered = () => {
   catch { return [SINGLETON_BUCKET]; }
 };
 
-/** page file -> { sourceFile, family } for every strategy page. */
+/** page file -> { sourceFile, family, declined, declinedBasis } for every strategy page. */
 function pages() {
   const out = [];
   for (const f of fs.readdirSync(PAGES).filter(x => x.endsWith('.md'))) {
     const t = fs.readFileSync(path.join(PAGES, f), 'utf8');
-    out.push({ page: f, sourceFile: fm(t, 'sourceFile'), family: fm(t, 'family').replace(/[[\]]/g, '') });
+    out.push({
+      page: f,
+      sourceFile: fm(t, 'sourceFile'),
+      family: fm(t, 'family').replace(/[[\]]/g, ''),
+      declined: /^familyDeclined:\s*true\b/mi.test(t),
+      declinedBasis: fm(t, 'familyDeclinedBasis'),
+    });
   }
   return out;
 }
 
-/** Normalized strategies with no family — the ones the queue cannot see. */
+/**
+ * Normalized strategies with no family — the ones the queue cannot see.
+ *
+ * ⚠⚠ A page the agent REVIEWED and judged to have no lineage is excluded via
+ * `familyDeclined: true`. Without that this queue counted work it had already decided not to do,
+ * and three separate things went wrong (measured 2026-11-07, depth 87):
+ *   - 24 of the 87 were cate=10 help-desk posts — 「怎么删除？」,
+ *     「在每分钟回测时限价单按市价单成交的问题」 — which will never have a family, correctly;
+ *   - the agent kept re-reviewing them, because nothing recorded the decision. Its own commits
+ *     say so: 「43 help-desk posts reviewed in db270d0 stay unassigned」;
+ *   - worst, once only declinable items remained the depth stopped moving, so `daily-pipeline`'s
+ *     no-progress guard stalled the stage (`27 -> 27`) and skipped it for the rest of the chain —
+ *     penalising a stage that had done its job exactly right.
+ * Same class as the `discover` sign bug fixed the day before: the guard assumes queue depth
+ * measures OUTSTANDING work. There the sign was wrong; here the denominator was.
+ *
+ * ⚠ Precedent is `valDeclined:` in family-page frontmatter, and the reason is identical: it stops
+ * the loop re-deriving a decision it already made. One difference, deliberate: `valDeclined`
+ * carries an EPOCH because a validation is bench-scoped, while a lineage is not — a help-desk post
+ * has no family whatever the bench, and `strategies/` is immutable so its source never changes.
+ * So `familyDeclined` is a bare boolean and NOTHING reopens it automatically. Reversing it is an
+ * explicit `--undecline`, which is why the basis is mandatory and the ledger records both.
+ */
 function pending() {
   const fq = require('./family-queue');
   const byFile = new Map(pages().map(p => [p.sourceFile, p]));
   return fq.normalized()
-    .filter(r => { const p = byFile.get(r.sourceFile); return !p || !p.family; })
+    .filter(r => {
+      const p = byFile.get(r.sourceFile);
+      if (p && p.declined) return false;
+      return !p || !p.family;
+    })
     .map(r => ({ ...r, page: (byFile.get(r.sourceFile) || {}).page || null }));
+}
+
+/** The reviewed-and-declined set, reported so a hold is never silent. */
+function declined() {
+  return pages().filter(p => p.declined)
+    .map(p => ({ page: p.page, sourceFile: p.sourceFile, basis: p.declinedBasis }));
 }
 
 /**
@@ -183,6 +221,57 @@ function assign(sourceFile, family, opts = {}) {
   return { ok: true, page: p.page, family, evidence: ev };
 }
 
+/**
+ * Record that a page was reviewed and has NO lineage, so the queue stops offering it.
+ *
+ * ⚠ This is a JUDGEMENT about the book, not a rejection of it: the page stays, the strategy stays
+ * measured, and its row stays in the ledger. All that changes is that `pending()` stops asking.
+ * ⚠ The basis is MANDATORY and must name what was read. A silent decline is indistinguishable
+ * from a page nobody looked at, which is the state this whole mechanism exists to end — and the
+ * repo has already paid for one guess-based rule that permanently discarded 287 of 549 strategies.
+ * ⚠ A page that already has a family: cannot be declined — that would be a contradiction, and the
+ * caller means `--revert`.
+ */
+function decline(sourceFile, opts = {}) {
+  const { basis = '', decidedBy = 'agent' } = opts;
+  const p = pages().find(x => x.sourceFile === sourceFile);
+  if (!p) return { ok: false, why: `no strategy page has sourceFile ${sourceFile}` };
+  if (p.family) return { ok: false, why: `${p.page} has family: ${p.family} — use --revert, not --decline` };
+  if (p.declined) return { ok: false, why: `${p.page} is already declined: ${p.declinedBasis || '(no basis!)'}` };
+  if (String(basis).trim().length < 15) {
+    return { ok: false, why: 'a --why of at least 15 chars is required: a decline with no basis reads exactly like a page nobody reviewed, which is the state this exists to end' };
+  }
+
+  const file = path.join(PAGES, p.page);
+  const text = fs.readFileSync(file, 'utf8');
+  const block = `familyDeclined: true\nfamilyDeclinedBasis: ${JSON.stringify(String(basis).trim())}`;
+  const next = text.replace(/^(sourceFile:.*)$/m, `$1\n${block}`);
+  if (next === text) return { ok: false, why: `could not place familyDeclined: in ${p.page} (no sourceFile: line)` };
+  fs.writeFileSync(file, next);
+
+  ensureLedger();
+  fs.appendFileSync(LEDGER, [
+    new Date().toISOString(), sourceFile, p.page, 'DECLINED', '', decidedBy, basis, '', '',
+  ].map(clean).join('\t') + '\n');
+  return { ok: true, page: p.page };
+}
+
+/** Reverse a decline. Deliberately explicit: nothing reopens one on its own. */
+function undecline(sourceFile) {
+  const p = pages().find(x => x.sourceFile === sourceFile);
+  if (!p) return { ok: false, why: `no page for ${sourceFile}` };
+  if (!p.declined) return { ok: false, why: `${p.page} is not declined` };
+  const file = path.join(PAGES, p.page);
+  const text = fs.readFileSync(file, 'utf8')
+    .replace(/^familyDeclined:.*\n/mi, '')
+    .replace(/^familyDeclinedBasis:.*\n/mi, '');
+  fs.writeFileSync(file, text);
+  ensureLedger();
+  fs.appendFileSync(LEDGER, [new Date().toISOString(), sourceFile, p.page, 'UNDECLINED',
+    '', 'undecline', `was: ${p.declinedBasis || ''}`, '', ''].map(clean).join('\t') + '\n');
+  return { ok: true, page: p.page };
+}
+
 /** Undo an assignment. A wrong one is silent, so reversing must be cheap. */
 function revert(sourceFile) {
   const p = pages().find(x => x.sourceFile === sourceFile);
@@ -197,7 +286,7 @@ function revert(sourceFile) {
   return { ok: true, page: p.page, was: p.family };
 }
 
-module.exports = { pending, evidence, assign, revert, history, registered, pages };
+module.exports = { pending, declined, evidence, assign, decline, undecline, revert, history, registered, pages };
 
 if (require.main === module) {
   const argv = process.argv.slice(2);
@@ -208,6 +297,25 @@ if (require.main === module) {
     console.log(`[assign] ${h.length} decision(s)`);
     for (const r of h) console.log(`  ${r.at.slice(0, 10)}  ${r.family.padEnd(14)} ${r.confidence.padEnd(6)} ${r.sourceFile.slice(0, 48)}`);
     process.exit(0);
+  }
+
+  if (argv.includes('--declined')) {
+    const d = declined();
+    console.log(`[assign] ${d.length} page(s) reviewed and declined — kept OUT of the queue, not deleted`);
+    for (const x of d) console.log(`  ${x.page.slice(0, 44).padEnd(44)}  ${String(x.basis).slice(0, 70)}`);
+    process.exit(0);
+  }
+
+  if (arg('--decline')) {
+    const r = decline(arg('--decline'), { basis: arg('--why') || '', decidedBy: arg('--by') || 'agent' });
+    console.log(r.ok ? `[assign] declined ${r.page} — the queue will stop offering it` : `[assign] REFUSED: ${r.why}`);
+    process.exit(r.ok ? 0 : 1);
+  }
+
+  if (arg('--undecline')) {
+    const r = undecline(arg('--undecline'));
+    console.log(r.ok ? `[assign] un-declined ${r.page} — back in the queue` : `[assign] REFUSED: ${r.why}`);
+    process.exit(r.ok ? 0 : 1);
   }
 
   if (argv.includes('--evidence')) {
